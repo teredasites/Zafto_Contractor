@@ -13944,6 +13944,5830 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ---
 
+## PHASE RE: FULL REALTOR PLATFORM (S144) — RE1-RE20 (~594h, 20 sprints)
+*Source: 53_REALTOR_PLATFORM_SPEC.md + 21 research files (9 realtor + 12 adjacent). 6 Opus research agents (S144). Full specs replace the one-line stubs from S129.*
+*Execution order: RE1 → RE2 → RE3 → RE4 → RE5 → RE6 → RE7 → RE8 → RE9 → RE10 → RE11 → RE12 → RE13 → RE14 → RE15 → RE16 → RE17 → RE18 → RE19 → RE20*
+*Depends on: CUST1 (cascading settings), CUST9 (app builder). Builds AFTER contractor DEPTH sprints.*
+
+### RE1 — Portal Scaffold + Auth + RBAC (~24h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md sections 1-5, realtor-app-customization-research.md*
+*Depends on: None (foundation sprint)*
+*Covers: all realtor entity types (realtor_solo, realtor_team, brokerage)*
+*CUST9 Modules: REALTOR_PORTAL, REALTOR_AUTH, REALTOR_RBAC*
+
+**What this builds:** The foundation for the entire Zafto Realtor platform. Adds a `company_type` column to the existing `companies` table so the system can distinguish contractor companies from realtor/brokerage companies. Adds 7 new RBAC roles (brokerageOwner, managingBroker, teamLead, realtor, tc, isa, officeAdmin) to the existing UserRole enum. Scaffolds the `realtor-portal/` Next.js 15 app with auth middleware that gates access by company_type. Implements an entity-type gate so users are redirected to the correct portal on login. The realtor portal uses the same premium dark theme as the contractor CRM but with a high-gloss near-black variant (CSS custom properties only — same design system, different tokens). This sprint produces zero user-facing features beyond login/dashboard shell — it is pure infrastructure that every subsequent RE sprint depends on.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `auth.users`
+- Writes to: `companies` (new column), `users` (new role values), `realtor_portal_settings`, `realtor_teams`
+- Calls: existing `requesting_company_id()`, `requesting_user_role()` RLS helpers
+- Called by: every subsequent RE sprint
+- Wires to: Supabase Auth (JWT app_metadata), all 4 existing portals (entity-type gate redirect)
+
+#### Database Layer (~6h)
+
+- [ ] Create migration `20260220000129_re1_portal_scaffold.sql`
+- [ ] Add `company_type` column to `companies` table via expand-contract pattern (nullable first, default later):
+  ```sql
+  ALTER TABLE companies ADD COLUMN company_type text NOT NULL DEFAULT 'contractor'
+    CHECK (company_type IN (
+      'contractor', 'realtor_solo', 'realtor_team', 'brokerage',
+      'inspector', 'adjuster', 'preservation', 'homeowner', 'hybrid'
+    ));
+  CREATE INDEX idx_companies_company_type ON companies (company_type);
+  ```
+- [ ] Create table `realtor_teams`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  name text NOT NULL
+  description text
+  team_lead_user_id uuid FK auth.users(id)
+  parent_team_id uuid FK realtor_teams(id) — for nested teams
+  is_active boolean NOT NULL DEFAULT true
+  settings jsonb DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `realtor_team_members`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  team_id uuid NOT NULL FK realtor_teams(id) ON DELETE CASCADE
+  user_id uuid NOT NULL FK auth.users(id) ON DELETE CASCADE
+  role text NOT NULL DEFAULT 'member' CHECK (role IN ('lead', 'member', 'isa', 'tc', 'admin'))
+  joined_at timestamptz NOT NULL DEFAULT now()
+  left_at timestamptz
+  is_active boolean NOT NULL DEFAULT true
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  UNIQUE(team_id, user_id)
+  ```
+- [ ] Create table `realtor_portal_settings`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE UNIQUE
+  brokerage_name text
+  brokerage_license_number text
+  brokerage_license_state text
+  designated_broker_user_id uuid FK auth.users(id)
+  primary_color text DEFAULT '#0a0a0a'
+  accent_color text DEFAULT '#3b82f6'
+  logo_url text
+  dark_logo_url text
+  email_signature_html text
+  default_commission_rate decimal(5,3) DEFAULT 3.000
+  mls_ids text[] DEFAULT '{}'
+  service_areas text[] DEFAULT '{}'
+  office_phone text
+  office_address text
+  office_city text
+  office_state text
+  office_zip text
+  timezone text DEFAULT 'America/New_York'
+  business_hours jsonb DEFAULT '{"mon":{"start":"09:00","end":"17:00"},"tue":{"start":"09:00","end":"17:00"},"wed":{"start":"09:00","end":"17:00"},"thu":{"start":"09:00","end":"17:00"},"fri":{"start":"09:00","end":"17:00"}}'
+  features_enabled jsonb DEFAULT '{"cma":true,"transactions":true,"seller_finder":true,"dispatch":true,"marketing":true}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `realtor_role_permissions`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  role_name text NOT NULL — 'brokerageOwner', 'managingBroker', 'teamLead', 'realtor', 'tc', 'isa', 'officeAdmin'
+  permission_key text NOT NULL — e.g. 'leads.view_all', 'transactions.edit', 'commission.view', 'showings.manage'
+  -- Note: showing management uses a permission flag 'showings.manage' on existing roles
+  -- instead of a dedicated showing_assistant role. Any role with this permission
+  -- can manage showings. Set via realtor_role_permissions per company.
+  is_granted boolean NOT NULL DEFAULT false
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  UNIQUE(company_id, role_name, permission_key)
+  ```
+- [ ] RLS on `realtor_teams`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`. DELETE soft-delete only.
+- [ ] RLS on `realtor_team_members`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`. INSERT/UPDATE restricted to roles `requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker','teamLead')`.
+- [ ] RLS on `realtor_portal_settings`: SELECT where `company_id = requesting_company_id()`. INSERT/UPDATE where `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker')`.
+- [ ] RLS on `realtor_role_permissions`: SELECT where `company_id = requesting_company_id()`. INSERT/UPDATE where `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner')`.
+- [ ] Triggers: `update_updated_at()` on all 4 new tables. `audit_trigger_fn()` on all 4.
+- [ ] Indexes: `idx_realtor_teams_company` on `realtor_teams(company_id)`, `idx_realtor_team_members_user` on `realtor_team_members(user_id)`, `idx_realtor_team_members_team` on `realtor_team_members(team_id)`, `idx_realtor_role_perms_company_role` on `realtor_role_permissions(company_id, role_name)`
+- [ ] Seed default permission rows for all 7 realtor roles matching the permission matrix from spec section 2 (49 permission keys x 7 roles = 343 seed rows per company — use a function to generate on company creation when company_type is realtor/brokerage)
+- [ ] Create `seed_realtor_default_permissions(p_company_id uuid)` function that inserts default permission matrix rows
+- [ ] Verify: `dart analyze` — 0 errors
+
+#### Flutter — UserRole Extension (~4h)
+
+- [ ] Update `lib/core/user_role.dart` — add 7 new enum values:
+  ```dart
+  enum UserRole {
+    // Existing
+    owner, admin, office, tech, inspector, cpa, client, tenant,
+    // New realtor roles
+    brokerageOwner, managingBroker, teamLead, realtor, tc, isa, officeAdmin,
+  }
+  ```
+- [ ] Update `UserRoleExtension.label` with labels: 'Brokerage Owner', 'Managing Broker', 'Team Lead', 'Realtor', 'Transaction Coordinator', 'Inside Sales Agent', 'Office Admin'
+- [ ] Update `UserRoleExtension.shortLabel` with short labels: 'Broker', 'MB', 'TL', 'Agent', 'TC', 'ISA', 'OA'
+- [ ] Add `bool get isRealtorRole` — returns true for all 7 new roles
+- [ ] Add `bool get isRealtorManagementRole` — returns true for brokerageOwner, managingBroker, teamLead
+- [ ] Add `bool get isRealtorSupportRole` — returns true for tc, isa, officeAdmin
+- [ ] Update `isBusinessRole` to include brokerageOwner, managingBroker
+- [ ] Update `isFieldRole` to include realtor (field agent)
+- [ ] Update `fromString()` to handle camelCase role strings from JWT
+- [ ] Create `lib/models/realtor_team.dart` — immutable model with `fromJson()`, `toJson()`, `copyWith()`, `Equatable`
+- [ ] Create `lib/models/realtor_team_member.dart` — same pattern
+- [ ] Create `lib/models/realtor_portal_settings.dart` — same pattern
+- [ ] Create `lib/repositories/realtor_team_repository.dart` — abstract + concrete, CRUD for teams and members
+- [ ] Create `lib/repositories/realtor_portal_settings_repository.dart` — abstract + concrete
+- [ ] Create `lib/providers/realtor_team_provider.dart` — StreamProvider for teams, AsyncNotifierProvider for mutations
+- [ ] Create `lib/providers/realtor_portal_settings_provider.dart` — same pattern
+- [ ] Create `lib/core/company_type.dart`:
+  ```dart
+  enum CompanyType {
+    contractor, realtorSolo, realtorTeam, brokerage,
+    inspector, adjuster, preservation, homeowner, hybrid;
+    bool get isRealtorType => this == realtorSolo || this == realtorTeam || this == brokerage;
+    bool get isContractorType => this == contractor;
+    static CompanyType fromString(String v) { ... }
+  }
+  ```
+- [ ] Update `lib/models/company.dart` — add `companyType` field (CompanyType), update `fromJson`/`toJson`
+- [ ] Create `lib/screens/realtor/realtor_shell_screen.dart` — role-based bottom navigation scaffold:
+  - brokerageOwner/managingBroker: Home | Pipeline | Agents | Listings | More
+  - teamLead: Home | Pipeline | Team | Listings | More
+  - realtor: Home | Leads | Deals | Tools | More
+  - tc: Home | Transactions | Tasks | Docs | More
+  - isa: Home | Call Queue | Leads | Scripts | More
+- [ ] Update main app navigation to detect `companyType` and route to correct shell screen
+- [ ] Create placeholder screens for each tab (loading state only — filled in RE2+):
+  - `lib/screens/realtor/realtor_home_screen.dart` (placeholder dashboard)
+  - `lib/screens/realtor/realtor_pipeline_screen.dart` (placeholder)
+  - `lib/screens/realtor/realtor_more_screen.dart` (placeholder with settings link)
+- [ ] All placeholder screens: show app bar with title, body with "Coming soon" empty state using existing `EmptyState` widget
+- [ ] Verify: `dart analyze` — 0 errors
+
+#### Realtor Portal Scaffold (~8h)
+
+- [ ] Create `realtor-portal/` directory at project root (sibling to web-portal, team-portal, etc.)
+- [ ] Initialize Next.js 15 app with app router:
+  ```
+  realtor-portal/
+  ├── src/
+  │   ├── app/
+  │   │   ├── layout.tsx            # Root layout — dark theme, Inter, Lucide
+  │   │   ├── page.tsx              # Redirect to /dashboard or /login
+  │   │   ├── login/
+  │   │   │   └── page.tsx          # Login page (password-based)
+  │   │   ├── (dashboard)/
+  │   │   │   ├── layout.tsx        # Dashboard layout — sidebar + topbar
+  │   │   │   ├── page.tsx          # Dashboard home (role-based redirect)
+  │   │   │   └── settings/
+  │   │   │       └── page.tsx      # Settings placeholder
+  │   │   └── middleware.ts         # Auth + company_type + RBAC middleware
+  │   ├── lib/
+  │   │   ├── supabase.ts           # createClient() — same pattern as web-portal
+  │   │   ├── supabase-server.ts    # Server-side Supabase client
+  │   │   ├── hooks/                # Empty — hooks added per sprint
+  │   │   ├── mappers.ts            # snake_case to camelCase mapper
+  │   │   ├── types.ts              # Realtor-specific TypeScript types
+  │   │   ├── permissions.ts        # Permission check helpers
+  │   │   └── constants.ts          # Role constants, permission keys
+  │   ├── components/
+  │   │   ├── sidebar.tsx           # Role-based sidebar navigation (Lucide icons)
+  │   │   ├── topbar.tsx            # Company name, user avatar, notifications bell, search
+  │   │   ├── theme-provider.tsx    # Dark theme with high-gloss near-black tokens
+  │   │   ├── loading-state.tsx     # Shared loading spinner
+  │   │   ├── empty-state.tsx       # Shared empty state with icon + message
+  │   │   └── error-state.tsx       # Shared error state with retry
+  │   └── types/
+  │       └── database.types.ts     # Generated from Supabase (shared)
+  ├── public/
+  │   └── favicon.ico
+  ├── package.json
+  ├── next.config.ts
+  ├── tailwind.config.ts            # Dark theme tokens: --bg-primary: #000, --bg-secondary: #0a0a0a, --bg-tertiary: #111, --border: #222, --text-primary: #f5f5f5, --accent: #3b82f6
+  ├── tsconfig.json
+  ├── postcss.config.js
+  └── .env.local.example            # NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ```
+- [ ] `package.json` dependencies: `next@15`, `react@19`, `react-dom@19`, `@supabase/supabase-js`, `@supabase/ssr`, `lucide-react`, `tailwindcss`, `postcss`, `autoprefixer`, `typescript`
+- [ ] `middleware.ts` logic:
+  1. Check for Supabase session (redirect to /login if none)
+  2. Read `app_metadata.company_id` from JWT
+  3. Query `companies.company_type` — reject if NOT in ('realtor_solo', 'realtor_team', 'brokerage')
+  4. Read `app_metadata.role` — store in request headers for downstream use
+  5. Route protection: `/agents/*` requires brokerageOwner or managingBroker role
+  6. Route protection: `/settings/company` requires brokerageOwner role
+- [ ] Sidebar navigation items (role-gated, Lucide icons):
+  - Dashboard (LayoutDashboard) — all roles
+  - Leads (Users) — brokerageOwner, managingBroker, teamLead, realtor, isa
+  - Contacts (Contact) — all roles
+  - Transactions (FileText) — brokerageOwner, managingBroker, teamLead, realtor, tc
+  - Listings (Home) — brokerageOwner, managingBroker, teamLead, realtor, officeAdmin
+  - Smart CMA (BarChart3) — brokerageOwner, managingBroker, teamLead, realtor
+  - Agents (UserCheck) — brokerageOwner, managingBroker only
+  - Reports (TrendingUp) — brokerageOwner, managingBroker, teamLead
+  - Settings (Settings) — all roles (scoped per role)
+- [ ] CSS custom properties for high-gloss near-black theme in `tailwind.config.ts`:
+  ```
+  colors: {
+    surface: { DEFAULT: '#000', secondary: '#0a0a0a', tertiary: '#111', elevated: '#1a1a1a' },
+    border: { DEFAULT: '#222', subtle: '#1a1a1a', strong: '#333' },
+    text: { primary: '#f5f5f5', secondary: '#a0a0a0', muted: '#666' },
+    accent: { DEFAULT: '#3b82f6', hover: '#2563eb', muted: '#1e3a5f' },
+  }
+  ```
+- [ ] Login page: email + password form, Supabase `signInWithPassword()`, error handling, redirect to /dashboard on success
+- [ ] Dashboard page: role-based greeting ("Welcome back, [name]"), placeholder cards for key metrics
+- [ ] Settings page: placeholder with "Brokerage Settings" heading
+- [ ] `npm run build` — 0 errors
+
+#### Entity-Type Gate (~3h)
+
+- [ ] Create Edge Function `supabase/functions/portal-redirect/index.ts`:
+  - Accepts POST with JWT
+  - Reads user's company_id from JWT
+  - Queries `companies.company_type`
+  - Returns redirect URL:
+    - `contractor` -> `https://zafto.cloud`
+    - `realtor_solo`, `realtor_team`, `brokerage` -> `https://realtor.zafto.cloud`
+    - `inspector` -> `https://zafto.cloud` (same portal, different dashboard)
+    - `adjuster` -> `https://zafto.cloud` (same portal, different dashboard)
+    - `homeowner` -> `https://client.zafto.cloud`
+  - Auth: JWT required
+  - CORS: from `_shared/cors.ts`
+  - Rate limiting: from `_shared/rate-limiter.ts` (10 req/min per user)
+- [ ] Update web-portal login page to call `portal-redirect` after successful auth and redirect if company_type is not contractor
+- [ ] Update client-portal login page similarly
+- [ ] Update realtor-portal login page to call `portal-redirect` and redirect if company_type is contractor
+- [ ] Create `lib/hooks/use-portal-redirect.ts` in realtor-portal for client-side redirect check
+
+#### CUST9 Module Registration (~1h)
+
+- [ ] Register `REALTOR_PORTAL` module in ModuleRegistry: `{ id: 'realtor_portal', name: 'Realtor Portal', icon: 'Home', category: 'platform', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: [], isMandatory: true }`
+- [ ] Register `REALTOR_RBAC` module: `{ id: 'realtor_rbac', name: 'Realtor Roles & Permissions', icon: 'Shield', category: 'platform', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_portal'], isMandatory: true }`
+- [ ] Register `REALTOR_TEAMS` module: `{ id: 'realtor_teams', name: 'Team Management', icon: 'Users', category: 'platform', entityTypes: ['realtor_team', 'brokerage'], dependencies: ['realtor_portal', 'realtor_rbac'], isMandatory: false }`
+
+#### Security Verification (~2h)
+
+- [ ] TEST: RLS — company A (contractor) cannot read company B (brokerage) `realtor_portal_settings`
+- [ ] TEST: RLS — realtor role cannot INSERT into `realtor_role_permissions` (brokerageOwner only)
+- [ ] TEST: RLS — tc role cannot access agent management routes
+- [ ] TEST: RLS — isa role can read leads but not transactions
+- [ ] TEST: Middleware — contractor company_type user gets 403 on realtor-portal
+- [ ] TEST: Middleware — brokerage user with realtor role cannot access /agents routes
+- [ ] TEST: Entity-type gate — login with contractor account redirects away from realtor-portal
+- [ ] TEST: Entity-type gate — login with brokerage account redirects away from web-portal
+- [ ] TEST: `requesting_user_role()` correctly returns new camelCase role strings
+- [ ] `dart analyze` — 0 errors
+- [ ] `realtor-portal/`: `npm run build` — 0 errors
+- [ ] `web-portal/`: `npm run build` — 0 errors (entity-type gate changes)
+- [ ] Commit: `[RE1] Portal scaffold + auth + RBAC — company_type column, 7 realtor roles, realtor-portal Next.js app, entity-type gate, team management tables`
+
+---
+
+### RE2 — CRM Foundation (~28h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 9, realtor-platform-deep-research-s129.md (CRM Features), realtor-professional-types-deep-research.md (workflows)*
+*Depends on: RE1 (portal scaffold, RBAC, company_type)*
+*Covers: all realtor entity types*
+*CUST9 Modules: REALTOR_CRM, REALTOR_LEADS, REALTOR_PIPELINE*
+
+**What this builds:** The full CRM foundation for the realtor platform. A new `realtor_contacts` table (separate from the contractor `customers` table — different schema, different fields, different pipeline) with 10 contact types, 15 lead sources, 12-stage pipeline, and 3-factor lead scoring (demographic 40% + behavioral 40% + source 20%). Implements speed-to-lead automation (auto-text within 60 seconds, escalation at 10 and 30 minutes). Implements 8 configurable lead routing modes (round robin, weighted, geographic, price point, source-based, performance-based, first-to-claim, language-based). Builds Kanban pipeline view in both realtor-portal and Flutter. Every interaction is logged to an activity timeline. This is the data backbone that RE3 (CMA), RE4-RE5 (Transactions), RE6-RE7 (Seller Finder), and RE14 (Lead Gen) all depend on.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_teams`, `realtor_team_members`, `realtor_portal_settings`, `properties`
+- Writes to: `realtor_contacts`, `realtor_contact_activities`, `realtor_lead_scores`, `realtor_lead_routing_rules`, `realtor_pipeline_stages`, `realtor_speed_to_lead_config`, `realtor_auto_responses`
+- Calls: `requesting_company_id()`, `requesting_user_role()`, existing notification EFs
+- Called by: RE3 (CMA links to contacts), RE4-RE5 (transactions reference contacts), RE6-RE7 (seller finder creates contacts), RE8 (commission links to agent contacts), RE14 (lead gen feeds contacts)
+- Wires to: Notification system (push + email for speed-to-lead), client-portal (contact's client view)
+
+#### Database Layer (~8h)
+
+- [ ] Create migration `20260220000130_re2_crm_foundation.sql`
+- [ ] Create table `realtor_contacts`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  assigned_to uuid FK auth.users(id) — agent user_id
+  team_id uuid FK realtor_teams(id) — team assignment
+  created_by uuid NOT NULL FK auth.users(id)
+  -- Identity
+  first_name text NOT NULL
+  last_name text NOT NULL
+  email text
+  phone text
+  secondary_phone text
+  preferred_contact_method text DEFAULT 'phone' CHECK (preferred_contact_method IN ('call', 'text', 'email'))
+  preferred_language text DEFAULT 'en'
+  -- Address
+  address text
+  city text
+  state text
+  zip_code text
+  latitude double precision
+  longitude double precision
+  -- Classification
+  contact_type text NOT NULL DEFAULT 'buyer' CHECK (contact_type IN ('buyer', 'seller', 'investor', 'renter', 'past_client', 'soi', 'referral_partner', 'agent_referral', 'builder', 'relocation'))
+  lead_source text CHECK (lead_source IN ('zillow', 'realtor_com', 'facebook', 'google', 'sign_call', 'open_house', 'referral', 'door_knock', 'cold_call', 'fsbo', 'expired', 'direct_mail', 'text_code', 'website', 'seller_finder', 'instagram', 'tiktok', 'manual'))
+  lead_source_detail text — e.g. "Zillow Premier Agent - 90210"
+  -- Pipeline
+  pipeline_stage text NOT NULL DEFAULT 'new' CHECK (pipeline_stage IN ('new', 'attempted', 'connected', 'qualified', 'appointment', 'showing', 'offer', 'under_contract', 'closed', 'past_client', 'lost', 'nurture'))
+  pipeline_stage_changed_at timestamptz DEFAULT now()
+  lost_reason text
+  -- Scoring
+  score integer NOT NULL DEFAULT 0 CHECK (score >= 0 AND score <= 100)
+  score_category text NOT NULL DEFAULT 'cold' CHECK (score_category IN ('hot', 'warm', 'cold'))
+  demographic_score integer DEFAULT 0
+  behavioral_score integer DEFAULT 0
+  source_score integer DEFAULT 0
+  -- Buyer-specific
+  buyer_preferences jsonb DEFAULT '{}' — {beds_min, beds_max, baths_min, sqft_min, sqft_max, price_min, price_max, neighborhoods:[], must_haves:[], deal_breakers:[], property_types:[], timeline}
+  pre_approved boolean DEFAULT false
+  pre_approval_amount decimal(12,2)
+  pre_approval_expires_at timestamptz
+  lender_name text
+  lender_contact text
+  -- Seller-specific
+  seller_property_address text
+  seller_estimated_value decimal(12,2)
+  seller_motivation text
+  seller_timeline text
+  -- Financial
+  company_name text — for commercial/B2B contacts
+  annual_income decimal(12,2)
+  -- Engagement tracking
+  tags text[] DEFAULT '{}'
+  notes text
+  last_contacted_at timestamptz
+  next_follow_up_at timestamptz
+  response_time_seconds integer — time from lead creation to first agent response
+  total_interactions integer DEFAULT 0
+  -- Linked records
+  linked_property_id uuid FK properties(id)
+  linked_customer_id uuid FK customers(id) — cross-reference to contractor CRM if same person
+  -- Lifecycle
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `realtor_contact_activities`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  contact_id uuid NOT NULL FK realtor_contacts(id) ON DELETE CASCADE
+  user_id uuid FK auth.users(id) — who performed the activity (null for system activities)
+  activity_type text NOT NULL CHECK (activity_type IN ('call_outbound', 'call_inbound', 'call_missed', 'text_sent', 'text_received', 'email_sent', 'email_received', 'email_opened', 'meeting', 'showing', 'open_house', 'note', 'stage_change', 'score_change', 'property_view', 'property_save', 'auto_text', 'auto_email', 'assignment_change', 'document_signed', 'offer_submitted', 'system'))
+  title text NOT NULL — e.g. "Called — left voicemail", "Stage changed: new -> connected"
+  description text
+  metadata jsonb DEFAULT '{}' — flexible: {call_duration, email_subject, property_id, old_stage, new_stage, old_score, new_score}
+  channel text CHECK (channel IN ('phone', 'sms', 'email', 'in_person', 'social', 'system'))
+  is_automated boolean DEFAULT false
+  created_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `realtor_pipeline_stages`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  stage_key text NOT NULL — matches pipeline_stage CHECK values
+  display_name text NOT NULL
+  display_order integer NOT NULL
+  color text NOT NULL DEFAULT '#3b82f6'
+  is_active boolean DEFAULT true
+  is_system boolean DEFAULT true — system stages cannot be deleted, only renamed
+  auto_actions jsonb DEFAULT '{}' — {auto_text: bool, auto_email: bool, auto_assign: bool}
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  UNIQUE(company_id, stage_key)
+  ```
+- [ ] Create table `realtor_lead_routing_rules`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  name text NOT NULL
+  routing_mode text NOT NULL CHECK (routing_mode IN ('round_robin', 'weighted', 'geographic', 'price_point', 'source_based', 'performance_based', 'first_to_claim', 'language_based'))
+  priority integer NOT NULL DEFAULT 0 — higher = evaluated first
+  is_active boolean DEFAULT true
+  -- Criteria filters (all optional — null means "match all")
+  filter_lead_sources text[] — match any of these sources
+  filter_contact_types text[] — match any of these types
+  filter_zip_codes text[] — match any of these ZIPs
+  filter_price_min decimal(12,2)
+  filter_price_max decimal(12,2)
+  filter_languages text[] — match preferred_language
+  -- Routing config
+  assigned_agents uuid[] — user_ids eligible to receive
+  assigned_team_id uuid FK realtor_teams(id)
+  weights jsonb DEFAULT '{}' — for weighted mode: {user_id: weight_pct}
+  timeout_minutes integer DEFAULT 10 — for first-to-claim
+  escalation_agent_id uuid FK auth.users(id) — backup if no one responds
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `realtor_speed_to_lead_config`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE UNIQUE
+  auto_text_enabled boolean DEFAULT true
+  auto_text_template text DEFAULT 'Hi {{first_name}}, thanks for reaching out! I''m {{agent_name}} with {{brokerage_name}}. I''ll be in touch shortly.'
+  auto_text_delay_seconds integer DEFAULT 30
+  auto_email_enabled boolean DEFAULT true
+  auto_email_subject text DEFAULT 'Welcome from {{agent_name}} — {{brokerage_name}}'
+  auto_email_template text — HTML template with {{variables}}
+  escalation_1_minutes integer DEFAULT 10 — escalate to backup agent
+  escalation_2_minutes integer DEFAULT 30 — flag as uncontacted
+  escalation_1_action text DEFAULT 'reassign' CHECK (escalation_1_action IN ('reassign', 'notify_manager', 'both'))
+  escalation_2_action text DEFAULT 'flag' CHECK (escalation_2_action IN ('flag', 'notify_manager', 'both'))
+  notify_push boolean DEFAULT true
+  notify_email boolean DEFAULT true
+  notify_sms boolean DEFAULT false
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `realtor_contacts`:
+  - SELECT: `company_id = requesting_company_id()` (all company members see contacts)
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()` (further role-scoping in app logic — team_lead sees only team contacts)
+  - Note: Team-scoped visibility enforced at query level, not RLS (RLS is company-level, app filters by team/agent)
+- [ ] RLS on `realtor_contact_activities`: SELECT/INSERT where `company_id = requesting_company_id()`
+- [ ] RLS on `realtor_pipeline_stages`: SELECT where `company_id = requesting_company_id()`. INSERT/UPDATE where `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker')`.
+- [ ] RLS on `realtor_lead_routing_rules`: SELECT where `company_id = requesting_company_id()`. INSERT/UPDATE where `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker','teamLead')`.
+- [ ] RLS on `realtor_speed_to_lead_config`: SELECT where `company_id = requesting_company_id()`. INSERT/UPDATE where `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker')`.
+- [ ] Triggers: `update_updated_at()` on contacts, stages, routing_rules, speed_to_lead_config. `audit_trigger_fn()` on all 5 tables.
+- [ ] Trigger: `realtor_contact_score_category_fn()` — auto-set `score_category` based on `score` (0-39=cold, 40-69=warm, 70-100=hot) on INSERT/UPDATE of `realtor_contacts`
+- [ ] Trigger: `realtor_contact_stage_changed_fn()` — auto-set `pipeline_stage_changed_at` to now() and insert `realtor_contact_activities` row with type='stage_change' when `pipeline_stage` changes
+- [ ] Indexes:
+  - `idx_rc_company_assigned` on `realtor_contacts(company_id, assigned_to)`
+  - `idx_rc_company_stage` on `realtor_contacts(company_id, pipeline_stage)`
+  - `idx_rc_company_score` on `realtor_contacts(company_id, score DESC)`
+  - `idx_rc_company_type` on `realtor_contacts(company_id, contact_type)`
+  - `idx_rc_company_source` on `realtor_contacts(company_id, lead_source)`
+  - `idx_rc_next_followup` on `realtor_contacts(next_follow_up_at)` WHERE `deleted_at IS NULL`
+  - `idx_rc_phone` on `realtor_contacts(phone)` WHERE `phone IS NOT NULL`
+  - `idx_rc_email` on `realtor_contacts(email)` WHERE `email IS NOT NULL`
+  - `idx_rca_contact` on `realtor_contact_activities(contact_id, created_at DESC)`
+  - `idx_rca_company_type` on `realtor_contact_activities(company_id, activity_type)`
+- [ ] Seed 12 default pipeline stages per company (via function called on company creation when realtor type):
+  ```
+  new (1, #6b7280), attempted (2, #f59e0b), connected (3, #3b82f6),
+  qualified (4, #8b5cf6), appointment (5, #ec4899), showing (6, #14b8a6),
+  offer (7, #f97316), under_contract (8, #eab308), closed (9, #22c55e),
+  past_client (10, #06b6d4), lost (11, #ef4444), nurture (12, #a855f7)
+  ```
+- [ ] Verify: `dart analyze` — 0 errors
+
+#### Edge Functions (~4h)
+
+- [ ] Create `supabase/functions/realtor-lead-score/index.ts`:
+  - Recalculates lead score for a given contact_id
+  - Demographic scoring (40%): pre_approved +15, motivated seller (fsbo/expired/life event source) +15, timeline <30d +10, timeline 1-3mo +5, budget aligns +5
+  - Behavioral scoring (40%): responded to outreach +10, viewed properties +5 each (max 25), saved properties +8 each (max 24), requested showing +15, attended open house +10, return visitor +5, mortgage calc used +8, same property 3x +10, price range narrowed +5
+  - Source scoring (20%): referral +20, soi +15, open house +10, website organic +8, social media +5, paid lead +3, cold call +2
+  - Input: `{ contact_id: uuid }`
+  - Auth: JWT required, validates contact belongs to requesting company
+  - CORS from `_shared/cors.ts`
+  - Rate limiting: 60 req/min
+  - Updates `realtor_contacts.score`, `demographic_score`, `behavioral_score`, `source_score`, `score_category`
+  - Logs score change in `realtor_contact_activities`
+
+- [ ] Create `supabase/functions/realtor-lead-route/index.ts`:
+  - Routes a new lead to the appropriate agent based on active routing rules
+  - Evaluates rules in priority order (highest first)
+  - For each rule, checks if lead matches all non-null filters
+  - First matching rule determines routing
+  - Round robin: queries last assignment, picks next agent in `assigned_agents` array
+  - Weighted: random selection weighted by `weights` JSON
+  - Geographic: matches contact ZIP against `filter_zip_codes`
+  - First-to-claim: sends push notification to all eligible agents, first to claim wins
+  - If no rule matches, assigns to brokerage owner as fallback
+  - Input: `{ contact_id: uuid }`
+  - Auth: JWT or service_role (called by speed-to-lead automation)
+  - Updates `realtor_contacts.assigned_to` and logs activity
+
+- [ ] Create `supabase/functions/realtor-speed-to-lead/index.ts`:
+  - Triggered when new contact is created (called by client or webhook)
+  - Reads company's `realtor_speed_to_lead_config`
+  - If `auto_text_enabled`: sends text via SignalWire (existing integration) with template variables replaced
+  - If `auto_email_enabled`: sends email via Mailgun (existing integration) with template variables replaced
+  - Sends push notification to assigned agent (via existing notification system)
+  - Starts escalation timer: schedules check at `escalation_1_minutes` and `escalation_2_minutes`
+  - Logs all auto-actions in `realtor_contact_activities` with `is_automated: true`
+  - Input: `{ contact_id: uuid }`
+  - Auth: service_role key (internal call)
+
+- [ ] Create `supabase/functions/realtor-lead-escalate/index.ts`:
+  - Called by pg_cron or scheduled invocation every 1 minute
+  - Queries contacts where `pipeline_stage = 'new'` AND `response_time_seconds IS NULL` AND `created_at < now() - interval 'X minutes'` (X from company's config)
+  - For escalation_1: reassign to backup agent OR notify manager based on config
+  - For escalation_2: set flag `tags = array_append(tags, 'uncontacted')`, notify manager
+  - Auth: service_role key
+  - Rate limiting: N/A (cron job)
+
+#### Flutter (~6h)
+
+- [ ] Create `lib/models/realtor_contact.dart` — full model with all columns, `fromJson()`, `toJson()`, `copyWith()`, `Equatable`, computed getters: `fullName`, `isHot`, `isWarm`, `isCold`, `daysSinceContact`, `isOverdueFollowUp`
+- [ ] Create `lib/models/realtor_contact_activity.dart` — same pattern
+- [ ] Create `lib/models/realtor_pipeline_stage.dart` — same pattern
+- [ ] Create `lib/repositories/realtor_contact_repository.dart`:
+  - `getContacts({String? assignedTo, String? stage, String? type, String? source, String? scoreCategory, int limit, int offset})` — paginated with filters, soft delete filter
+  - `getContact(String id)` — single contact with activities
+  - `createContact(RealtorContact contact)` — insert, then call speed-to-lead EF
+  - `updateContact(String id, Map updates)` — optimistic locking with `updated_at` check
+  - `deleteContact(String id)` — soft delete
+  - `getContactActivities(String contactId, {int limit, int offset})` — paginated
+  - `addActivity(RealtorContactActivity activity)` — insert activity
+  - `getContactsByStage(String stage)` — for pipeline view
+  - `getContactCounts()` — counts per stage for pipeline badges
+  - `searchContacts(String query)` — full-text search on name, email, phone
+- [ ] Create `lib/providers/realtor_contact_provider.dart`:
+  - `realtorContactsProvider` — StreamProvider with Realtime subscription on `realtor_contacts`
+  - `realtorContactProvider(String id)` — family provider for single contact
+  - `realtorContactActivitiesProvider(String id)` — activities for one contact
+  - `realtorPipelineCountsProvider` — stage counts for badges
+  - `realtorContactMutationsProvider` — AsyncNotifier for create/update/delete
+- [ ] Create `lib/screens/realtor/realtor_leads_screen.dart`:
+  - Kanban board view with 12 pipeline stage columns (horizontally scrollable)
+  - Each card shows: name, score badge (color-coded), source icon, days in stage, next follow-up
+  - Drag-and-drop between columns updates pipeline_stage (use `ReorderableListView` or custom drag target)
+  - Filter bar: source dropdown, type dropdown, score category, assigned agent (if manager)
+  - Sort: by score (desc), by next follow-up, by created_at
+  - FAB: "Add Lead" (opens create form)
+  - Tab bar toggle: Kanban | List view
+  - 4 states: loading, error, empty ("No leads yet — add your first lead"), data
+- [ ] Create `lib/screens/realtor/realtor_lead_detail_screen.dart`:
+  - Header: name, score badge, pipeline stage chip (tappable to change), assigned agent avatar
+  - Contact info section: phone (tap to call), email (tap to email), address
+  - Buyer preferences section (if buyer): beds, baths, price range, must-haves, deal-breakers
+  - Seller info section (if seller): property address, estimated value, motivation, timeline
+  - Pre-approval section (if buyer): amount, lender, expiration
+  - Quick actions bar: Call, Text, Email, Note, Schedule Follow-up
+  - Activity timeline (reverse chronological): each activity with icon, title, description, timestamp, automated badge
+  - Tags section: add/remove tags
+  - Notes section: editable
+  - "Score Breakdown" expandable: demographic, behavioral, source scores with individual factors
+- [ ] Create `lib/screens/realtor/realtor_contact_form_screen.dart`:
+  - Full contact creation/edit form
+  - Sections: Basic Info, Contact Details, Classification (type, source), Address, Buyer Preferences (conditional), Seller Info (conditional), Pre-Approval (conditional), Tags, Notes
+  - Validation: first_name required, at least one contact method (phone or email)
+  - On create: calls repository.createContact which triggers speed-to-lead
+- [ ] Update `lib/screens/realtor/realtor_shell_screen.dart` — wire Leads tab to `realtor_leads_screen.dart`
+- [ ] Verify: `dart analyze` — 0 errors
+
+#### Realtor Portal (~8h)
+
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-contacts.ts`:
+  - `useRealtorContacts({assignedTo?, stage?, type?, source?, scoreCategory?, search?, page, pageSize})` — paginated list with Realtime subscription, soft delete filter `.is('deleted_at', null)`
+  - Returns `{ contacts, loading, error, totalCount, createContact, updateContact, deleteContact, refetch }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-contact.ts`:
+  - `useRealtorContact(id)` — single contact with Realtime
+  - Returns `{ contact, loading, error, updateContact }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-contact-activities.ts`:
+  - `useRealtorContactActivities(contactId, {limit, offset})` — paginated activities
+  - Returns `{ activities, loading, error, addActivity, hasMore, loadMore }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-pipeline.ts`:
+  - `useRealtorPipeline()` — contacts grouped by stage with counts
+  - Returns `{ stages: {stage: string, contacts: Contact[], count: number}[], loading, error, moveContact }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-lead-routing.ts`:
+  - `useRealtorLeadRouting()` — CRUD for routing rules
+  - Returns `{ rules, loading, error, createRule, updateRule, deleteRule }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-speed-to-lead.ts`:
+  - `useRealtorSpeedToLead()` — config CRUD
+  - Returns `{ config, loading, error, updateConfig }`
+- [ ] Create `realtor-portal/src/app/(dashboard)/leads/page.tsx`:
+  - Kanban pipeline view (12 columns, drag-and-drop via HTML drag API or `@dnd-kit/core`)
+  - Column headers with stage name, color dot, count badge
+  - Cards: name, score badge (red/orange/green), source, days in stage, next follow-up date
+  - Drag between columns calls `moveContact(contactId, newStage)`
+  - Filter bar: source, type, score, agent (if manager role)
+  - Toggle: Kanban | Table view
+  - "Add Lead" button (opens modal or navigates to /leads/new)
+  - Empty state: "Your pipeline is empty. Add your first lead to get started."
+- [ ] Create `realtor-portal/src/app/(dashboard)/leads/new/page.tsx`:
+  - Full contact creation form matching Flutter fields
+  - Sections with collapsible panels
+  - On submit: insert via hook, then invoke `realtor-speed-to-lead` EF
+- [ ] Create `realtor-portal/src/app/(dashboard)/leads/[id]/page.tsx`:
+  - Contact detail page matching Flutter layout
+  - Left column: contact info, classification, buyer/seller details
+  - Right column: activity timeline, score breakdown
+  - Quick action buttons: Log Call, Send Text, Send Email, Add Note, Schedule Follow-up
+  - Edit mode toggle for inline editing
+  - Stage selector dropdown at top
+- [ ] Create `realtor-portal/src/app/(dashboard)/contacts/page.tsx`:
+  - Table view of ALL contacts (not just pipeline — includes past_client, soi, nurture)
+  - Columns: Name, Type, Source, Score, Stage, Assigned To, Last Contact, Next Follow-up
+  - Sortable columns, search bar, filters
+  - Bulk actions: assign, tag, delete, export CSV
+- [ ] Create `realtor-portal/src/app/(dashboard)/contacts/[id]/page.tsx`:
+  - Same as lead detail but for any contact type
+- [ ] Create `realtor-portal/src/app/(dashboard)/settings/lead-routing/page.tsx`:
+  - List of routing rules with priority ordering (drag to reorder)
+  - Create/edit rule modal: name, mode, filters, agents, weights, timeout, escalation
+  - Test rule: enter sample lead data, see which agent would be assigned
+  - Only visible to brokerageOwner, managingBroker, teamLead roles
+- [ ] Create `realtor-portal/src/app/(dashboard)/settings/speed-to-lead/page.tsx`:
+  - Toggle auto-text and auto-email
+  - Template editor with variable picker ({{first_name}}, {{agent_name}}, {{brokerage_name}}, etc.)
+  - Escalation timing config (minutes for each level)
+  - Preview of auto-text and auto-email
+  - Only visible to brokerageOwner, managingBroker roles
+- [ ] Wire sidebar: "Leads" and "Contacts" navigation items
+- [ ] Wire settings sidebar: "Lead Routing" and "Speed to Lead" sub-items under Settings
+- [ ] `npm run build` — 0 errors
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `REALTOR_CRM` module: `{ id: 'realtor_crm', name: 'Contact Management', icon: 'Contact', category: 'crm', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_portal'], isMandatory: true }`
+- [ ] Register `REALTOR_LEADS` module: `{ id: 'realtor_leads', name: 'Lead Pipeline', icon: 'Filter', category: 'crm', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_crm'], isMandatory: true }`
+- [ ] Register `REALTOR_SPEED_TO_LEAD` module: `{ id: 'realtor_speed_to_lead', name: 'Speed to Lead Automation', icon: 'Zap', category: 'crm', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_leads'], isMandatory: false }`
+
+#### Security Verification (~1.5h)
+
+- [ ] TEST: RLS — company A cannot see company B's realtor_contacts
+- [ ] TEST: RLS — realtor role can CRUD own contacts but app-level filtering limits to assigned_to = self
+- [ ] TEST: RLS — isa role can read/update contacts (lead qualification) but not access transactions
+- [ ] TEST: RLS — tc role cannot modify lead routing rules
+- [ ] TEST: RLS — only brokerageOwner/managingBroker can modify speed_to_lead_config
+- [ ] TEST: Speed-to-lead fires within 60 seconds of contact creation
+- [ ] TEST: Lead routing correctly assigns based on each of the 8 modes
+- [ ] TEST: Score recalculation produces correct values for known test inputs
+- [ ] TEST: Pipeline stage change triggers activity log entry
+- [ ] TEST: Optimistic locking on contact update — concurrent edits produce conflict error
+- [ ] TEST: Soft delete on contacts filters from all queries
+- [ ] `dart analyze` — 0 errors
+- [ ] `realtor-portal/`: `npm run build` — 0 errors
+- [ ] Commit: `[RE2] CRM foundation — contacts, leads, 12-stage pipeline, lead scoring, speed-to-lead automation, 8 routing modes, Kanban views`
+
+---
+
+### RE3 — Smart CMA Engine (~32h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 6, realtor-platform-deep-research-s129.md (Free API Stack), s135-realtor-api-gaps.md, s132-realtor-cross-reference.md*
+*Depends on: RE1 (portal scaffold), RE2 (contacts — CMA links to contact/property)*
+*Covers: brokerageOwner, managingBroker, teamLead, realtor*
+*CUST9 Modules: REALTOR_CMA*
+
+**What this builds:** The most sophisticated CMA (Comparative Market Analysis) tool in any realtor platform. Agent enters an address, system auto-generates a complete property profile from free public records (county assessor, FEMA flood, EPA environmental, Walk Score, school ratings, crime data). Agent selects comparable sales (manual for now, AI-assisted in Phase E). System calculates traditional adjustments (sqft, beds/baths, lot size, garage, pool) plus Zafto-exclusive repair cost integration from the contractor estimation engine. Outputs a branded PDF report, shareable web link with view tracking, and versioned CMA history. The AI analysis portions (AI comp selection, AI condition adjustment, AI renovation value adjustment) are marked as Phase E dependencies -- until then, agents manually select comps and enter adjustments, with the data pipeline and UI fully operational. This is the "Zillow Killer" feature -- the counter-report section shows exactly why the Zestimate is wrong with specific data points.
+
+**System Connectivity:**
+- Reads from: `properties`, `property_scans` (Recon), `realtor_contacts`, `companies`, `users`, `realtor_portal_settings`, estimation engine tables (for repair cost integration)
+- Writes to: `cma_reports`, `cma_comps`, `cma_adjustments`, `cma_shares`, `cma_data_sources`
+- Calls: `requesting_company_id()`, FRED API (mortgage rates), Walk Score API, FEMA NFHL API, FBI Crime Data API, Census ACS API, EPA Envirofacts API, county assessor APIs (Socrata/SODA)
+- Called by: RE10 (listing management references CMAs), RE12 (marketing uses CMA data), client-portal (client views CMA)
+- Wires to: Recon engine (property intelligence), Estimation engine (repair cost integration), ZForge (PDF generation), Properties system (property_id linkage)
+
+#### Database Layer (~6h)
+
+- [ ] Create migration `20260220000131_re3_smart_cma.sql`
+- [ ] Create table `cma_reports`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  agent_id uuid NOT NULL FK auth.users(id)
+  contact_id uuid FK realtor_contacts(id) -- linked buyer/seller contact
+  property_id uuid FK properties(id) -- linked subject property
+  subject_address text NOT NULL
+  subject_city text NOT NULL
+  subject_state text NOT NULL
+  subject_zip text NOT NULL
+  subject_latitude double precision
+  subject_longitude double precision
+  subject_beds integer
+  subject_baths decimal(3,1)
+  subject_sqft integer
+  subject_lot_sqft integer
+  subject_year_built integer
+  subject_stories integer
+  subject_garage_spaces integer DEFAULT 0
+  subject_pool boolean DEFAULT false
+  subject_property_type text DEFAULT 'single_family' CHECK (subject_property_type IN ('single_family','condo','townhouse','multi_family','land','commercial'))
+  subject_style text
+  subject_condition text CHECK (subject_condition IN ('C1','C2','C3','C4','C5','C6'))
+  ownership_history jsonb DEFAULT '[]'
+  tax_assessment_history jsonb DEFAULT '[]'
+  permit_history jsonb DEFAULT '[]'
+  structural_age_analysis jsonb DEFAULT '{}'
+  flood_zone text
+  flood_zone_description text
+  environmental_hazards jsonb DEFAULT '[]'
+  school_ratings jsonb DEFAULT '{}'
+  walk_score integer
+  transit_score integer
+  bike_score integer
+  crime_score integer
+  crime_data jsonb DEFAULT '{}'
+  utility_estimate_monthly decimal(8,2)
+  recommended_price_low decimal(12,2)
+  recommended_price_mid decimal(12,2)
+  recommended_price_high decimal(12,2)
+  pricing_strategy text CHECK (pricing_strategy IN ('generate_offers','at_market','negotiation_room'))
+  pricing_strategy_rationale text
+  absorption_rate_months decimal(4,1)
+  market_type text CHECK (market_type IN ('sellers','balanced','buyers'))
+  estimated_dom integer
+  zestimate_value decimal(12,2)
+  zestimate_counter_points jsonb DEFAULT '[]'
+  repair_estimates jsonb DEFAULT '[]'
+  total_repair_cost_low decimal(12,2)
+  total_repair_cost_high decimal(12,2)
+  repair_roi_analysis text
+  status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','complete','shared','archived'))
+  version integer NOT NULL DEFAULT 1
+  parent_cma_id uuid FK cma_reports(id)
+  notes text
+  ai_analysis_status text DEFAULT 'pending' CHECK (ai_analysis_status IN ('pending','processing','complete','manual','error'))
+  ai_analysis_result jsonb DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `cma_comps`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  cma_id uuid NOT NULL FK cma_reports(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  address text NOT NULL
+  city text NOT NULL
+  state text NOT NULL
+  zip text NOT NULL
+  latitude double precision
+  longitude double precision
+  sale_price decimal(12,2) NOT NULL
+  sale_date date NOT NULL
+  dom integer
+  list_price decimal(12,2)
+  beds integer
+  baths decimal(3,1)
+  sqft integer
+  lot_sqft integer
+  year_built integer
+  garage_spaces integer DEFAULT 0
+  pool boolean DEFAULT false
+  stories integer
+  property_type text
+  condition text CHECK (condition IN ('C1','C2','C3','C4','C5','C6'))
+  condition_notes text
+  distance_miles decimal(4,2)
+  similarity_score decimal(5,2)
+  source text DEFAULT 'manual' CHECK (source IN ('manual','mls','public_records','ai_suggested'))
+  source_id text
+  photo_urls text[] DEFAULT '{}'
+  is_selected boolean DEFAULT true
+  agent_notes text
+  display_order integer DEFAULT 0
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] Create table `cma_adjustments`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  cma_id uuid NOT NULL FK cma_reports(id) ON DELETE CASCADE
+  comp_id uuid NOT NULL FK cma_comps(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  adjustment_type text NOT NULL CHECK (adjustment_type IN ('sqft','beds','baths','lot_size','garage','pool','age','condition','location','view','upgrades','time','other'))
+  label text NOT NULL
+  amount decimal(12,2) NOT NULL
+  calculation_basis text
+  is_auto boolean DEFAULT true
+  agent_override_notes text
+  display_order integer DEFAULT 0
+  created_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `cma_shares`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  cma_id uuid NOT NULL FK cma_reports(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  share_token text NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(32), 'hex')
+  recipient_email text
+  recipient_name text
+  recipient_type text DEFAULT 'client' CHECK (recipient_type IN ('client','agent','lender','other'))
+  share_type text DEFAULT 'link' CHECK (share_type IN ('link','email','portal'))
+  view_count integer DEFAULT 0
+  first_viewed_at timestamptz
+  last_viewed_at timestamptz
+  expires_at timestamptz
+  is_active boolean DEFAULT true
+  created_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] Create table `cma_data_sources`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  cma_id uuid NOT NULL FK cma_reports(id) ON DELETE CASCADE
+  source_name text NOT NULL
+  source_url text
+  data_retrieved_at timestamptz NOT NULL DEFAULT now()
+  raw_response jsonb
+  status text DEFAULT 'success' CHECK (status IN ('success','error','partial','unavailable'))
+  error_message text
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `cma_reports`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`
+- [ ] RLS on `cma_comps`: SELECT/INSERT/UPDATE/DELETE where `company_id = requesting_company_id()`
+- [ ] RLS on `cma_adjustments`: SELECT/INSERT/UPDATE/DELETE where `company_id = requesting_company_id()`
+- [ ] RLS on `cma_shares`: company-scoped SELECT/INSERT + public SELECT by `share_token` for view tracking
+- [ ] RLS on `cma_data_sources`: SELECT where `company_id = requesting_company_id()`
+- [ ] Triggers: `update_updated_at()` on `cma_reports`, `cma_comps`. `audit_trigger_fn()` on `cma_reports`, `cma_comps`, `cma_shares`.
+- [ ] Indexes: `idx_cma_company_agent` on `cma_reports(company_id, agent_id)`, `idx_cma_company_status` on `cma_reports(company_id, status)`, `idx_cma_contact` on `cma_reports(contact_id)`, `idx_cma_comps_cma` on `cma_comps(cma_id)`, `idx_cma_adj_comp` on `cma_adjustments(comp_id)`, `idx_cma_shares_token` on `cma_shares(share_token)`
+- [ ] Verify: `dart analyze` -- 0 errors
+
+#### Edge Functions (~8h)
+
+- [ ] Create `supabase/functions/smart-cma-generate/index.ts`:
+  - Orchestrates full CMA data pipeline for a subject property address
+  - Input: `{ address, city, state, zip, contact_id?, property_id? }`
+  - Auth: JWT required, realtor+ role
+  - Steps: (1) Geocode address, (2) Query county assessor via Socrata SODA API for ownership/tax/property/permits, (3) Query FEMA NFHL API for flood zone, (4) Query EPA Envirofacts for environmental hazards within 1mi, (5) Query Walk Score API for walk/transit/bike scores, (6) Query FBI Crime Data API for crime stats, (7) Query Census ACS API for demographics, (8) Query FRED API for current mortgage rates, (9) Pull Recon data from `property_scans` if property_id exists, (10) Calculate structural age analysis, (11) Calculate utility estimate, (12) Create `cma_reports` row, (13) Cache all responses in `cma_data_sources`
+  - Graceful degradation: any API failure continues with others, marks source status as 'error'
+  - CORS from `_shared/cors.ts`, rate limiting 10 req/min
+  - All external APIs: $0/month
+
+- [ ] Create `supabase/functions/smart-cma-adjustments/index.ts`:
+  - Calculates standard adjustments between subject and each selected comp
+  - Input: `{ cma_id }`, Auth: JWT
+  - Adjustments: sqft (local $/sqft), beds ($5K default), baths ($3.5K default), lot size (proportional if >20% diff), garage ($8K), pool ($15-25K by climate zone), age (depreciation if >10yr diff), time (monthly appreciation for older sales), condition (C1-C6 manual until Phase E)
+  - Inserts `cma_adjustments` rows per comp
+  - Configurable default adjustment values from `realtor_portal_settings.settings` JSON
+
+- [ ] Create `supabase/functions/smart-cma-pricing/index.ts`:
+  - Calculates recommended pricing from adjusted comp values
+  - Input: `{ cma_id }`, Auth: JWT
+  - Weighted average by similarity_score, price range (low/mid/high), absorption rate, market type, estimated DOM, pricing strategy rationale
+  - Updates `cma_reports` pricing fields
+
+- [ ] Create `supabase/functions/smart-cma-export/index.ts`:
+  - Generates branded PDF from CMA data
+  - Input: `{ cma_id, format: 'pdf' }`, Auth: JWT
+  - Sections: Cover (agent branding) -> Subject Profile -> Comps Grid -> Adjustment Grid -> Pricing Strategy -> Repair Costs (if available) -> Zestimate Counter (if present) -> Methodology -> Agent Credentials
+  - Uploads to Supabase Storage `documents` bucket
+  - Returns: `{ pdf_url }`
+
+- [ ] Create `supabase/functions/smart-cma-share/index.ts`:
+  - Creates shareable link with optional email notification
+  - Input: `{ cma_id, recipient_email?, recipient_name?, expires_in_days?: 30 }`, Auth: JWT
+  - Creates `cma_shares` row, optionally sends email via Mailgun
+  - Returns: `{ share_url, share_id }`
+
+- [ ] Create `supabase/functions/smart-cma-view/index.ts`:
+  - Public endpoint for viewing shared CMA (no auth -- token-based)
+  - Input: `{ token }`, validates token active + not expired
+  - Increments view_count, updates viewed timestamps
+  - Returns filtered CMA data (no internal notes, no raw API responses)
+
+#### Flutter (~6h)
+
+- [ ] Create `lib/models/cma_report.dart` -- full model, `fromJson()`, `toJson()`, `copyWith()`, `Equatable`
+- [ ] Create `lib/models/cma_comp.dart` -- same pattern
+- [ ] Create `lib/models/cma_adjustment.dart` -- same pattern
+- [ ] Create `lib/repositories/cma_repository.dart` -- paginated list, single report with comps/adjustments, create/addComp/removeComp/updateComp/overrideAdjustment, calculateAdjustments/calculatePricing (call EFs), exportPdf/shareCma, archiveCma, createVersion
+- [ ] Create `lib/providers/cma_provider.dart` -- StreamProvider with Realtime, family provider per CMA, AsyncNotifier for mutations
+- [ ] Create `lib/screens/realtor/realtor_cma_screen.dart` -- CMA report list with status filters, "New CMA" FAB, 4 states
+- [ ] Create `lib/screens/realtor/realtor_cma_create_screen.dart` -- address entry, "Generate CMA" with step-by-step progress indicator
+- [ ] Create `lib/screens/realtor/realtor_cma_detail_screen.dart` -- tabbed view: Overview (property profile, all public record data) | Comps (list with add/select/deselect) | Adjustments (editable grid with override capability) | Pricing (range, strategy, market stats, repair costs) | Report (PDF preview, export, share, version history). Phase E AI analysis shown as "Manual Mode" -- clean UX, not broken feature.
+- [ ] Create `lib/screens/realtor/realtor_cma_comp_form_screen.dart` -- manual comp entry form
+- [ ] Verify: `dart analyze` -- 0 errors
+
+#### Realtor Portal (~8h)
+
+- [ ] Create `realtor-portal/src/lib/hooks/use-cma-reports.ts` -- paginated list with Realtime, filters
+- [ ] Create `realtor-portal/src/lib/hooks/use-cma-report.ts` -- single CMA with comps, adjustments, shares
+- [ ] Create `realtor-portal/src/lib/hooks/use-cma-actions.ts` -- mutation hooks for all CMA operations
+- [ ] Create `realtor-portal/src/app/(dashboard)/smart-cma/page.tsx` -- CMA list, "New CMA" button, search, filters
+- [ ] Create `realtor-portal/src/app/(dashboard)/smart-cma/new/page.tsx` -- address entry with autocomplete, optional contact/property linking, progress indicator
+- [ ] Create `realtor-portal/src/app/(dashboard)/smart-cma/[id]/page.tsx` -- tabbed detail: Overview | Comps (table/card, add modal, select toggles) | Adjustments (editable grid, inline override, color coded) | Pricing (range visualization, strategy selector, market indicators, repair table) | Report (PDF preview, export, share modal with history)
+- [ ] Create `realtor-portal/src/app/(dashboard)/smart-cma/view/[token]/page.tsx` -- public view (no auth), agent-branded, read-only, view tracking, "Contact Agent" CTA
+- [ ] Wire sidebar: "Smart CMA" navigation item
+- [ ] `npm run build` -- 0 errors
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `REALTOR_CMA` module: `{ id: 'realtor_cma', name: 'Smart CMA Engine', icon: 'BarChart3', category: 'tools', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_portal'], isMandatory: false }`
+
+#### Security Verification (~3.5h)
+
+- [ ] TEST: RLS -- company A cannot see company B's CMA reports
+- [ ] TEST: RLS -- tc and isa roles cannot create CMAs (realtor+ roles only)
+- [ ] TEST: Public CMA view returns filtered data (no internal notes, no raw API data)
+- [ ] TEST: Expired/invalid share tokens return 404
+- [ ] TEST: Share view count increments correctly on each view
+- [ ] TEST: CMA generation gracefully handles API failures (partial data returned, failed sources logged)
+- [ ] TEST: Adjustment override preserves original auto value in metadata
+- [ ] TEST: Version chain -- v2 correctly links parent_cma_id to v1
+- [ ] TEST: All external API calls verified at $0/month
+- [ ] `dart analyze` -- 0 errors
+- [ ] `realtor-portal/`: `npm run build` -- 0 errors
+- [ ] Commit: `[RE3] Smart CMA engine -- property intelligence pipeline, comp management, adjustment grid, pricing strategy, branded PDF export, shareable links, view tracking`
+
+---
+
+### RE4 — Transaction Engine 1: Core Pipeline (~32h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 7, realtor-platform-deep-research-s129.md (200+ step workflow), realtor-professional-types-deep-research.md (TC workflow)*
+*Depends on: RE1 (portal scaffold, RBAC), RE2 (contacts — transactions reference contacts)*
+*Covers: brokerageOwner, managingBroker, teamLead, realtor, tc*
+*CUST9 Modules: REALTOR_TRANSACTIONS, REALTOR_MILESTONES*
+
+**What this builds:** The first half of the Autonomous Transaction Engine -- the core deal pipeline that tracks real estate transactions from contract to close. Creates the `realtor_transactions` table with 7 transaction types, links to buyer/seller contacts, property, and multiple parties. Builds the full milestone/timeline system with state-specific closing checklists (seed data for all 50 states covering attorney-state vs title-state differences, required disclosures, and timing rules). Implements multi-party coordination where each party (buyer agent, listing agent, lender, title company, inspector, appraiser, TC) gets role-specific visibility. Builds the deal health score system that monitors milestone progress and flags risk (GREEN/YELLOW/RED). AI contract parsing is a Phase E dependency -- until then, agents manually enter deal data, but the timeline auto-generates from contract dates and transaction type. This sprint focuses on the data model, milestone engine, multi-party system, and deal health -- RE5 adds the client tracker, document management, and post-close automation.
+
+**System Connectivity:**
+- Reads from: `realtor_contacts`, `properties`, `companies`, `users`, `realtor_teams`, `realtor_portal_settings`, `cma_reports` (optional CMA linkage)
+- Writes to: `realtor_transactions`, `transaction_milestones`, `transaction_parties`, `transaction_notes`, `transaction_health_log`, `transaction_templates`, `transaction_template_items`
+- Calls: `requesting_company_id()`, `requesting_user_role()`, notification EFs
+- Called by: RE5 (document management, client tracker), RE8 (commission records transaction_id), RE10 (listing creates transaction), client-portal (client views deal)
+- Wires to: Notification system (milestone reminders), Calendar system (deadline sync), ZForge (document generation in RE5)
+
+#### Database Layer (~10h)
+
+- [ ] Create migration `20260220000132_re4_transaction_engine.sql`
+- [ ] Create table `realtor_transactions`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  created_by uuid NOT NULL FK auth.users(id)
+  -- Type and status
+  transaction_type text NOT NULL CHECK (transaction_type IN ('purchase_buyer','purchase_listing','lease_buyer','lease_listing','dual_agency','commercial','referral'))
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','active','under_contract','contingent','clear_to_close','closed','cancelled','expired','withdrawn'))
+  status_changed_at timestamptz DEFAULT now()
+  -- Property
+  property_id uuid FK properties(id)
+  property_address text NOT NULL
+  property_city text NOT NULL
+  property_state text NOT NULL
+  property_zip text NOT NULL
+  property_county text
+  property_type text DEFAULT 'single_family'
+  mls_number text
+  -- Financials
+  list_price decimal(12,2)
+  sale_price decimal(12,2)
+  earnest_money decimal(12,2)
+  earnest_money_holder text
+  commission_rate decimal(5,3)
+  commission_amount decimal(12,2)
+  seller_concessions decimal(12,2)
+  seller_concessions_pct decimal(5,3)
+  -- Key dates (extracted from contract)
+  contract_date date
+  contract_expiration_date date
+  earnest_money_deadline date
+  inspection_deadline date
+  appraisal_deadline date
+  financing_deadline date
+  title_deadline date
+  closing_date date
+  possession_date date
+  -- Contingencies
+  has_inspection_contingency boolean DEFAULT true
+  has_appraisal_contingency boolean DEFAULT true
+  has_financing_contingency boolean DEFAULT true
+  has_sale_contingency boolean DEFAULT false
+  inspection_contingency_days integer DEFAULT 10
+  appraisal_contingency_days integer DEFAULT 21
+  financing_contingency_days integer DEFAULT 30
+  -- Contacts
+  buyer_contact_id uuid FK realtor_contacts(id)
+  seller_contact_id uuid FK realtor_contacts(id)
+  buyer_agent_id uuid FK auth.users(id) -- if internal agent
+  listing_agent_id uuid FK auth.users(id) -- if internal agent
+  -- External agents (if other brokerage)
+  external_buyer_agent_name text
+  external_buyer_agent_email text
+  external_buyer_agent_phone text
+  external_buyer_agent_brokerage text
+  external_listing_agent_name text
+  external_listing_agent_email text
+  external_listing_agent_phone text
+  external_listing_agent_brokerage text
+  -- Service providers
+  lender_name text
+  lender_contact_name text
+  lender_email text
+  lender_phone text
+  loan_type text CHECK (loan_type IN ('conventional','fha','va','usda','jumbo','cash','hard_money','other'))
+  loan_amount decimal(12,2)
+  title_company_name text
+  title_contact_name text
+  title_email text
+  title_phone text
+  escrow_company_name text
+  escrow_contact_name text
+  escrow_email text
+  -- Attorney (for attorney states)
+  buyer_attorney_name text
+  buyer_attorney_email text
+  seller_attorney_name text
+  seller_attorney_email text
+  -- Deal health
+  health_score integer DEFAULT 100 CHECK (health_score >= 0 AND health_score <= 100)
+  health_status text DEFAULT 'green' CHECK (health_status IN ('green','yellow','red'))
+  health_factors jsonb DEFAULT '[]'
+  -- State compliance
+  state_code text NOT NULL -- 2-letter state code for compliance rules
+  is_attorney_state boolean DEFAULT false
+  required_disclosures jsonb DEFAULT '[]'
+  -- CMA linkage
+  cma_id uuid FK cma_reports(id)
+  -- Contract document
+  contract_document_url text
+  contract_parsed boolean DEFAULT false
+  contract_parsed_data jsonb DEFAULT '{}'
+  -- Notes
+  special_stipulations text
+  included_items text
+  excluded_items text
+  notes text
+  -- Assigned TC
+  assigned_tc_id uuid FK auth.users(id)
+  -- Metadata
+  source text DEFAULT 'manual' CHECK (source IN ('manual','listing','offer','import'))
+  tags text[] DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_milestones`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  template_item_id uuid FK transaction_template_items(id)
+  -- Milestone details
+  name text NOT NULL
+  description text
+  category text NOT NULL CHECK (category IN ('pre_contract','earnest_money','inspection','appraisal','financing','title','disclosure','compliance','closing','post_close','custom'))
+  -- Timing
+  due_date date
+  due_date_basis text -- how due_date was calculated: 'contract_date+10', 'closing_date-5', 'manual'
+  completed_at timestamptz
+  completed_by uuid FK auth.users(id)
+  -- Assignment
+  responsible_party text NOT NULL CHECK (responsible_party IN ('buyer','seller','buyer_agent','listing_agent','lender','title','inspector','appraiser','tc','attorney','other'))
+  responsible_party_name text -- display name
+  responsible_user_id uuid FK auth.users(id)
+  -- Status
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','in_progress','completed','overdue','waived','na'))
+  -- Dependencies
+  depends_on_milestone_id uuid FK transaction_milestones(id)
+  blocks_milestone_ids uuid[] DEFAULT '{}'
+  -- Reminders
+  reminder_7_day_sent boolean DEFAULT false
+  reminder_3_day_sent boolean DEFAULT false
+  reminder_1_day_sent boolean DEFAULT false
+  reminder_same_day_sent boolean DEFAULT false
+  -- Ordering
+  display_order integer NOT NULL DEFAULT 0
+  is_critical boolean DEFAULT false -- critical milestones affect health score more
+  is_required boolean DEFAULT true
+  notes text
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_parties`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  -- Party identity
+  party_role text NOT NULL CHECK (party_role IN ('buyer','seller','buyer_agent','listing_agent','buyer_lender','seller_lender','title_officer','escrow_officer','inspector','appraiser','tc','buyer_attorney','seller_attorney','other'))
+  -- Internal user (if Zafto user)
+  user_id uuid FK auth.users(id)
+  contact_id uuid FK realtor_contacts(id)
+  -- External party (if not Zafto user)
+  name text NOT NULL
+  email text
+  phone text
+  company_name text
+  -- Visibility
+  portal_access boolean DEFAULT false -- can view deal in client portal
+  email_notifications boolean DEFAULT true
+  sms_notifications boolean DEFAULT false
+  -- Access level
+  visibility_level text DEFAULT 'basic' CHECK (visibility_level IN ('full','standard','basic','minimal'))
+  -- full: sees everything (agent, TC)
+  -- standard: sees milestones, docs assigned to them, timeline (lender, title)
+  -- basic: sees progress tracker, docs to sign, next steps (buyer, seller)
+  -- minimal: sees only items assigned to them (inspector, appraiser)
+  notes text
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  UNIQUE(transaction_id, party_role, COALESCE(user_id, contact_id, email))
+  ```
+- [ ] Create table `transaction_notes`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  author_id uuid NOT NULL FK auth.users(id)
+  content text NOT NULL
+  note_type text DEFAULT 'general' CHECK (note_type IN ('general','call_log','email_log','meeting','milestone_update','issue','resolution','system'))
+  is_internal boolean DEFAULT true -- internal notes not visible to clients
+  channel text CHECK (channel IN ('phone','email','text','in_person','portal','system'))
+  related_milestone_id uuid FK transaction_milestones(id)
+  related_party_id uuid FK transaction_parties(id)
+  attachments jsonb DEFAULT '[]'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_health_log`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  score integer NOT NULL CHECK (score >= 0 AND score <= 100)
+  status text NOT NULL CHECK (status IN ('green','yellow','red'))
+  factors jsonb NOT NULL DEFAULT '[]' -- [{factor, impact, description}]
+  calculated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_templates`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid FK companies(id) ON DELETE CASCADE -- NULL for system templates
+  name text NOT NULL
+  description text
+  transaction_type text NOT NULL
+  state_code text -- 2-letter, NULL for universal templates
+  is_system boolean DEFAULT false -- system templates cannot be deleted
+  is_active boolean DEFAULT true
+  item_count integer DEFAULT 0
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_template_items`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  template_id uuid NOT NULL FK transaction_templates(id) ON DELETE CASCADE
+  name text NOT NULL
+  description text
+  category text NOT NULL
+  responsible_party text NOT NULL
+  due_date_formula text -- 'contract_date+10', 'closing_date-5', 'inspection_deadline+0', etc.
+  depends_on_item_id uuid FK transaction_template_items(id)
+  is_critical boolean DEFAULT false
+  is_required boolean DEFAULT true
+  display_order integer NOT NULL DEFAULT 0
+  state_specific_notes text
+  created_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `realtor_transactions`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`. TC role can SELECT/UPDATE realtor_transactions where `assigned_tc_id = auth.uid()`.
+- [ ] RLS on `transaction_milestones`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`
+- [ ] RLS on `transaction_parties`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`
+- [ ] RLS on `transaction_notes`: SELECT where `company_id = requesting_company_id()`. INSERT where `company_id = requesting_company_id()`. For client-portal: SELECT where `is_internal = false` and party has portal_access.
+- [ ] RLS on `transaction_health_log`: SELECT where `company_id = requesting_company_id()`
+- [ ] RLS on `transaction_templates`: SELECT where `company_id = requesting_company_id() OR company_id IS NULL` (system + company templates). INSERT/UPDATE where `company_id = requesting_company_id()` (cannot modify system templates).
+- [ ] RLS on `transaction_template_items`: SELECT via template RLS. INSERT/UPDATE/DELETE on company-owned templates only.
+- [ ] Triggers: `update_updated_at()` on transactions, milestones, parties, notes, templates. `audit_trigger_fn()` on transactions, milestones, parties, notes.
+- [ ] Trigger: `transaction_status_changed_fn()` -- auto-set `status_changed_at` and log health entry on status change
+- [ ] Trigger: `transaction_milestone_overdue_fn()` -- on milestone update, if `due_date < CURRENT_DATE` and `status NOT IN ('completed','waived','na')`, auto-set `status = 'overdue'`
+- [ ] Indexes:
+  - `idx_txn_company_status` on `transactions(company_id, status)`
+  - `idx_txn_company_agent` on `transactions(company_id, buyer_agent_id)` and `(company_id, listing_agent_id)`
+  - `idx_txn_company_tc` on `transactions(company_id, assigned_tc_id)`
+  - `idx_txn_closing_date` on `transactions(closing_date)` WHERE `status NOT IN ('closed','cancelled')`
+  - `idx_txn_buyer_contact` on `transactions(buyer_contact_id)`
+  - `idx_txn_seller_contact` on `transactions(seller_contact_id)`
+  - `idx_milestone_txn_status` on `transaction_milestones(transaction_id, status)`
+  - `idx_milestone_due` on `transaction_milestones(due_date)` WHERE `status IN ('pending','in_progress','overdue')`
+  - `idx_milestone_responsible` on `transaction_milestones(responsible_user_id)`
+  - `idx_parties_txn` on `transaction_parties(transaction_id)`
+  - `idx_notes_txn` on `transaction_notes(transaction_id, created_at DESC)`
+  - `idx_health_txn` on `transaction_health_log(transaction_id, calculated_at DESC)`
+  - `idx_templates_type_state` on `transaction_templates(transaction_type, state_code)`
+
+- [ ] Seed system transaction templates for all 50 states (3 types each = 150 templates):
+  - **Purchase (buyer side)**: 30-45 items per state. Universal items: contract review, earnest money deposit, home inspection scheduling, inspection negotiation, appraisal order, appraisal review, financing conditional approval, title search, title insurance, HOA document review, final walkthrough, closing prep, closing day, key delivery. State-specific items: attorney review period (attorney states: CT, DE, GA, MA, MD, NJ, NY, SC, WV + others), specific disclosure forms, transfer tax details, title insurance requirements.
+  - **Purchase (listing side)**: 25-35 items per state. Universal: listing agreement, disclosure preparation, property prep, marketing launch, showing management, offer review, counter-offer, contract execution, inspection response, appraisal coordination, title work, closing coordination. State-specific: seller disclosures (varies dramatically by state), lead paint disclosure (pre-1978), natural hazard disclosure (CA/some states), property condition disclosure form requirements.
+  - **Lease**: 15-20 items. Application, credit check, lease prep, security deposit, move-in inspection, key handover.
+- [ ] Seed state compliance data (attorney states, required disclosures, retention periods):
+  ```
+  Attorney states (attorney required at closing): CT, DE, GA, MA, MD, NJ, NY, SC, WV, NH, VT, RI, NC (varies)
+  Title states (title company handles closing): all others
+  Hybrid states: some transactions require attorney
+  Required disclosures per state (jsonb seed data): seller property condition, lead paint (federal), natural hazard, flood zone, HOA, mold, sex offender registry, military ordnance, mine subsidence, radon, etc.
+  Document retention: 3-7 years by state
+  ```
+- [ ] Verify: `dart analyze` -- 0 errors
+
+#### Edge Functions (~6h)
+
+- [ ] Create `supabase/functions/transaction-create-from-template/index.ts`:
+  - Creates a new transaction and populates milestones from the matching state/type template
+  - Input: `{ transaction_type, state_code, contract_date, closing_date, inspection_deadline?, appraisal_deadline?, financing_deadline?, ... }`
+  - Auth: JWT required, realtor/tc+ role
+  - Steps: (1) Find matching template by type + state, (2) Create transaction row, (3) For each template item: calculate due_date from formula using contract dates, create milestone row, (4) Set initial health score to 100
+  - Returns: `{ transaction_id, milestone_count }`
+
+- [ ] Create `supabase/functions/transaction-health-check/index.ts`:
+  - Recalculates deal health score for a transaction
+  - Input: `{ transaction_id }` OR called by cron for all active transactions
+  - Auth: JWT or service_role
+  - Health score calculation:
+    - Start at 100
+    - Each overdue milestone: -15 (critical) or -8 (non-critical)
+    - Each milestone completing late: -5
+    - Approaching deadlines within 2 days: -3 each
+    - Financing not secured within 75% of financing_deadline: -10
+    - Appraisal gap (if detected): -20
+    - No activity in 5+ days: -10
+    - All milestones on track: bonus +5 (cap at 100)
+  - Status: 90-100=green, 60-89=yellow, 0-59=red
+  - Inserts `transaction_health_log` entry
+  - Updates `transactions.health_score`, `health_status`, `health_factors`
+  - If status changes (e.g. green->yellow), sends notification to assigned agent + TC
+
+- [ ] Create `supabase/functions/transaction-reminders/index.ts`:
+  - Cron job (runs every hour): sends milestone deadline reminders
+  - Auth: service_role
+  - Logic: query milestones where status IN ('pending','in_progress') and due_date is approaching
+  - Sends reminder at 7 days, 3 days, 1 day, and same-day (based on boolean flags)
+  - Marks reminder flags to prevent re-sending
+  - Notification to: responsible_user_id (push + email), plus agent + TC if milestone is critical
+
+- [ ] Create `supabase/functions/transaction-milestone-notify/index.ts`:
+  - Sends notifications when milestone status changes
+  - Input: `{ milestone_id, old_status, new_status }`
+  - Auth: service_role (triggered by app logic or trigger)
+  - Notifies all relevant parties based on `transaction_parties` visibility level
+  - Email for external parties, push for internal users
+
+#### Flutter (~6h)
+
+- [ ] Create `lib/models/transaction.dart` -- full model with all columns, computed getters: `daysToClosing`, `completionPercentage`, `isOverdue`, `healthColor`
+- [ ] Create `lib/models/transaction_milestone.dart` -- model with computed: `isOverdue`, `daysUntilDue`, `statusColor`
+- [ ] Create `lib/models/transaction_party.dart` -- model
+- [ ] Create `lib/models/transaction_note.dart` -- model
+- [ ] Create `lib/repositories/transaction_repository.dart`:
+  - `getTransactions({String? status, String? agentId, String? tcId, int limit, int offset})`
+  - `getTransaction(String id)` -- with milestones, parties, notes
+  - `createTransaction(Transaction txn)` -- calls `transaction-create-from-template` EF
+  - `updateTransaction(String id, Map updates)` -- optimistic locking
+  - `updateMilestoneStatus(String milestoneId, String status)` -- completes/waives milestone
+  - `addParty(TransactionParty party)`
+  - `addNote(TransactionNote note)`
+  - `getUpcomingDeadlines({int days: 7})` -- milestones due within N days across all deals
+  - `getOverdueMilestones()` -- all overdue across all deals
+- [ ] Create `lib/providers/transaction_provider.dart`:
+  - `transactionsProvider` -- StreamProvider with Realtime
+  - `transactionProvider(String id)` -- family provider with milestones, parties
+  - `transactionMilestonesProvider(String txnId)` -- milestones for one deal
+  - `upcomingDeadlinesProvider` -- cross-deal deadlines
+  - `transactionMutationsProvider` -- AsyncNotifier
+- [ ] Create `lib/screens/realtor/realtor_deals_screen.dart`:
+  - Deal list with cards: property address, type badge, status badge, health indicator (green/yellow/red dot), closing date, completion %, parties count
+  - Filter: status dropdown, type dropdown, agent (if manager), date range
+  - Sort: closing date, health score, created date
+  - Summary bar: X active deals, Y closing this month, Z overdue milestones
+  - FAB: "New Deal"
+  - 4 states: loading, error, empty ("No active deals"), data
+- [ ] Create `lib/screens/realtor/realtor_deal_detail_screen.dart`:
+  - Header: property address, status chip, health score badge with color, closing date countdown
+  - Tabbed content:
+    - **Timeline tab**: Visual milestone timeline (vertical). Each milestone: name, due date, status icon (check/clock/warning), responsible party, category badge. Overdue items in red. Tap to update status, add notes. Grouped by category.
+    - **Parties tab**: All transaction parties. Internal: avatar + name + role. External: name + company + contact info. Tap to call/email. "Add Party" button.
+    - **Details tab**: All transaction financials (prices, EMD, commission), contingencies with toggle switches, service providers (lender, title, escrow, attorneys), special stipulations.
+    - **Notes tab**: Reverse-chronological communication log. Filter: all, calls, emails, meetings, internal. "Add Note" FAB with type selector.
+    - **Health tab**: Current health score visualization, factor breakdown, historical score chart, risk alerts.
+- [ ] Create `lib/screens/realtor/realtor_deal_create_screen.dart`:
+  - Step-by-step form: (1) Transaction type, (2) Property address (search or manual), (3) Key dates (contract, closing, contingency deadlines), (4) Buyer/seller contacts (search existing or create), (5) Financial details, (6) Service providers
+  - On submit: calls repository which calls EF to create + populate milestones
+  - Phase E note: "Contract Upload" section shown as "Coming Soon -- AI Contract Parsing" with manual entry as primary flow
+- [ ] Create `lib/screens/tc/tc_dashboard_screen.dart`:
+  - TC-specific dashboard: Today's deadlines, This week's milestones, Overdue items (red), All assigned transactions
+  - Quick actions per milestone: mark complete, add note, call responsible party
+  - Deal health summary: X green, Y yellow, Z red
+- [ ] Update `realtor_shell_screen.dart` -- wire Deals tab and TC tabs
+- [ ] Verify: `dart analyze` -- 0 errors
+
+#### Realtor Portal (~8h)
+
+- [ ] Create `realtor-portal/src/lib/hooks/use-transactions.ts` -- paginated list with Realtime, filters (status, type, agent, tc, date range)
+- [ ] Create `realtor-portal/src/lib/hooks/use-transaction.ts` -- single transaction with milestones, parties, notes, health log
+- [ ] Create `realtor-portal/src/lib/hooks/use-transaction-actions.ts` -- mutations: create, update, updateMilestone, addParty, addNote
+- [ ] Create `realtor-portal/src/lib/hooks/use-upcoming-deadlines.ts` -- cross-deal deadlines for dashboard
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/page.tsx`:
+  - Transaction list with table view: property, type, status, health dot, closing date, agent, TC, completion %
+  - Kanban view toggle: columns by status (pending, active, under_contract, contingent, clear_to_close)
+  - Filters bar: status, type, agent, TC, date range
+  - Summary cards at top: Total Active, Closing This Month, Total Pipeline Value, Overdue Items
+  - "New Transaction" button
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/new/page.tsx`:
+  - Multi-step form matching Flutter: type -> property -> dates -> contacts -> financials -> providers
+  - Contact search with autocomplete from `realtor_contacts`
+  - Date picker with business day awareness
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/[id]/page.tsx`:
+  - Tabbed layout: Timeline | Parties | Details | Notes | Health
+  - **Timeline**: Visual milestone list grouped by category. Status toggle (click to mark complete). Due date with countdown. Responsible party avatar. Overdue items highlighted red. Drag to reorder custom milestones.
+  - **Parties**: Card grid of all parties with contact info, role, visibility level. Add/edit/remove.
+  - **Details**: Two-column form: financials left, providers right. Inline editing.
+  - **Notes**: Communication log with type filters, search. Add note modal with rich text editor.
+  - **Health**: Score gauge visualization, factor list with impact indicators, history chart (line graph over time), risk alerts with recommended actions.
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/templates/page.tsx`:
+  - Template management: list system + company templates
+  - Create custom template: name, type, state, add items with due_date_formula
+  - Clone system template to customize
+  - Only brokerageOwner/managingBroker can manage templates
+- [ ] Wire sidebar: "Transactions" navigation item
+- [ ] `npm run build` -- 0 errors
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `REALTOR_TRANSACTIONS` module: `{ id: 'realtor_transactions', name: 'Transaction Engine', icon: 'FileText', category: 'transactions', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_portal', 'realtor_crm'], isMandatory: false }`
+- [ ] Register `REALTOR_MILESTONES` module: `{ id: 'realtor_milestones', name: 'Milestone Tracking', icon: 'CheckSquare', category: 'transactions', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_transactions'], isMandatory: true }`
+
+#### Security Verification (~1.5h)
+
+- [ ] TEST: RLS -- company A cannot see company B's transactions
+- [ ] TEST: RLS -- TC can only see transactions where assigned_tc_id = self
+- [ ] TEST: RLS -- isa role cannot access transactions at all
+- [ ] TEST: RLS -- officeAdmin can read transactions but not modify financials
+- [ ] TEST: Milestone status change triggers notification to responsible party
+- [ ] TEST: Health score recalculation produces correct values for overdue milestones
+- [ ] TEST: Template milestone date formulas calculate correctly from contract dates
+- [ ] TEST: System templates cannot be modified by company users
+- [ ] TEST: Optimistic locking on transaction update
+- [ ] TEST: Overdue trigger correctly marks past-due milestones
+- [ ] `dart analyze` -- 0 errors
+- [ ] `realtor-portal/`: `npm run build` -- 0 errors
+- [ ] Commit: `[RE4] Transaction engine 1 -- deal pipeline, milestone tracking, multi-party coordination, deal health scoring, 50-state templates, TC dashboard`
+
+---
+
+### RE5 — Transaction Engine 2: Client Tracker + Docs + Post-Close (~24h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 7 (steps 6-8), realtor-platform-deep-research-s129.md (200+ steps, post-close), realtor-professional-types-deep-research.md (TC workflow), s135-realtor-api-gaps.md (DocuSeal e-signature)*
+*Depends on: RE4 (transaction core pipeline, milestones, parties)*
+*Covers: brokerageOwner, managingBroker, teamLead, realtor, tc, officeAdmin, client (via client-portal)*
+*CUST9 Modules: REALTOR_DEAL_TRACKER, REALTOR_TRANSACTION_DOCS, REALTOR_POST_CLOSE*
+
+**What this builds:** The second half of the Transaction Engine, completing three critical features. First: the "Domino's Tracker" -- a client-facing deal progress view in the client portal where buyers/sellers see their transaction progress as a visual timeline ("Your home purchase is 62% complete. Next: Home inspection on Thursday at 2 PM."), branded to the agent. Second: full document management for transactions -- document checklist auto-generated per transaction type, organized by category (contracts, disclosures, inspections, appraisal, title, closing), upload/download, missing document alerts, and compliance tracking. E-signature integration uses DocuSeal (open-source, $0/month) for document signing within Zafto. Third: post-close automation -- when a deal is marked closed, the system auto-triggers thank-you messages, review/testimonial requests (7-day delay), "Just Sold" marketing content, contact pipeline stage change to past_client, commission recording (wires to RE8), file archival for compliance (state-specific retention), and branded vendor list sent to buyer.
+
+**System Connectivity:**
+- Reads from: `realtor_transactions`, `transaction_milestones`, `transaction_parties`, `realtor_contacts`, `companies`, `users`, `realtor_portal_settings`
+- Writes to: `transaction_documents`, `transaction_document_checklists`, `transaction_esignatures`, `transaction_post_close_actions`, `transaction_client_views`
+- Calls: DocuSeal API (self-hosted, $0/month), notification EFs, `realtor-lead-score` (re-score contact as past_client)
+- Called by: RE8 (commission recorded on close), RE12 (marketing "Just Sold"), client-portal (client views tracker)
+- Wires to: ZForge (document generation), client-portal (deal tracker view), notification system, marketing system (RE12), commission engine (RE8), Supabase Storage (document uploads)
+
+#### Database Layer (~5h)
+
+- [ ] Create migration `20260220000133_re5_transaction_docs_tracker.sql`
+- [ ] Create table `transaction_documents`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  uploaded_by uuid NOT NULL FK auth.users(id)
+  -- Document info
+  name text NOT NULL
+  description text
+  category text NOT NULL CHECK (category IN ('contract','addendum','disclosure','inspection','appraisal','title','insurance','financing','closing','post_close','correspondence','other'))
+  subcategory text -- e.g. 'seller_property_disclosure', 'lead_paint', 'home_inspection_report'
+  -- File
+  file_path text NOT NULL -- Supabase Storage path
+  file_name text NOT NULL
+  file_size integer
+  file_type text -- 'pdf', 'docx', 'jpg', etc.
+  -- Signature tracking
+  requires_signature boolean DEFAULT false
+  signature_status text CHECK (signature_status IN ('not_required','pending','partially_signed','completed','declined','expired'))
+  esignature_id uuid FK transaction_esignatures(id)
+  signed_at timestamptz
+  -- Compliance
+  is_required boolean DEFAULT false -- part of compliance checklist
+  checklist_item_id uuid FK transaction_document_checklists(id)
+  -- Visibility
+  is_internal boolean DEFAULT false -- internal docs not visible to client portal
+  visible_to_parties text[] DEFAULT '{}' -- party roles that can see this doc
+  -- Versioning
+  version integer DEFAULT 1
+  parent_document_id uuid FK transaction_documents(id)
+  is_latest boolean DEFAULT true
+  -- Metadata
+  received_from text -- who provided this doc
+  notes text
+  tags text[] DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_document_checklists`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  -- Checklist item
+  name text NOT NULL
+  description text
+  category text NOT NULL
+  is_required boolean DEFAULT true
+  is_state_specific boolean DEFAULT false
+  state_code text
+  -- Status
+  status text NOT NULL DEFAULT 'missing' CHECK (status IN ('missing','uploaded','signed','verified','waived','na'))
+  document_id uuid FK transaction_documents(id)
+  -- Responsibility
+  responsible_party text NOT NULL
+  due_date date
+  -- Ordering
+  display_order integer DEFAULT 0
+  -- Auto-generated from template
+  template_source text -- 'system' or 'company'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_esignatures`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  document_id uuid FK transaction_documents(id)
+  -- DocuSeal integration
+  docuseal_submission_id text -- DocuSeal submission ID
+  docuseal_template_id text -- DocuSeal template ID
+  -- Signers
+  signers jsonb NOT NULL DEFAULT '[]' -- [{name, email, role, status, signed_at, ip_address}]
+  signing_order text DEFAULT 'parallel' CHECK (signing_order IN ('parallel','sequential'))
+  -- Status
+  status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','sent','partially_signed','completed','declined','expired','voided'))
+  sent_at timestamptz
+  completed_at timestamptz
+  expires_at timestamptz
+  -- Audit trail
+  audit_trail jsonb DEFAULT '[]' -- [{event, timestamp, ip, user_agent, details}]
+  completion_certificate_url text
+  -- Metadata
+  subject text
+  message text
+  created_by uuid NOT NULL FK auth.users(id)
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] Create table `transaction_post_close_actions`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK realtor_transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  -- Action definition
+  action_type text NOT NULL CHECK (action_type IN ('thank_you_email','thank_you_text','review_request','just_sold_marketing','contact_stage_update','commission_record','file_archive','vendor_list_send','anniversary_reminder_schedule','referral_ask','custom'))
+  -- Scheduling
+  trigger_delay_days integer DEFAULT 0 -- 0=immediate, 7=7 days after close
+  scheduled_for timestamptz
+  -- Execution
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','scheduled','completed','failed','skipped','cancelled'))
+  executed_at timestamptz
+  result jsonb DEFAULT '{}' -- {success, error_message, details}
+  retry_count integer DEFAULT 0
+  -- Config
+  config jsonb DEFAULT '{}' -- action-specific config: {template_id, channel, recipient}
+  notes text
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] Create table `transaction_client_views`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  transaction_id uuid NOT NULL FK transactions(id) ON DELETE CASCADE
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  -- Client access
+  client_contact_id uuid NOT NULL FK realtor_contacts(id)
+  client_user_id uuid FK auth.users(id) -- if client has Zafto account
+  access_token text NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(32), 'hex')
+  -- Branding
+  agent_name text NOT NULL
+  agent_photo_url text
+  agent_phone text
+  agent_email text
+  brokerage_name text
+  brokerage_logo_url text
+  -- Customization
+  welcome_message text
+  completion_message text
+  show_financial_details boolean DEFAULT false
+  show_all_parties boolean DEFAULT false
+  visible_milestone_categories text[] DEFAULT '{}'
+  -- Tracking
+  view_count integer DEFAULT 0
+  last_viewed_at timestamptz
+  is_active boolean DEFAULT true
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `transaction_documents`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`. Client-portal: SELECT where transaction_id matches client's transaction AND `is_internal = false` AND party role in `visible_to_parties`.
+- [ ] RLS on `transaction_document_checklists`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`
+- [ ] RLS on `transaction_esignatures`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`
+- [ ] RLS on `transaction_post_close_actions`: SELECT/INSERT/UPDATE where `company_id = requesting_company_id()`
+- [ ] RLS on `transaction_client_views`: SELECT where `company_id = requesting_company_id()` OR `access_token` matches (public client access). INSERT/UPDATE where `company_id = requesting_company_id()`.
+- [ ] Triggers: `update_updated_at()` on all 5 tables. `audit_trigger_fn()` on documents, esignatures, post_close_actions, client_views.
+- [ ] Trigger: `transaction_doc_checklist_status_fn()` -- when document_id is set on checklist item, auto-update status to 'uploaded'
+- [ ] Indexes:
+  - `idx_txn_docs_txn` on `transaction_documents(transaction_id, category)`
+  - `idx_txn_docs_company` on `transaction_documents(company_id)`
+  - `idx_txn_checklist_txn` on `transaction_document_checklists(transaction_id, status)`
+  - `idx_txn_esign_txn` on `transaction_esignatures(transaction_id)`
+  - `idx_txn_esign_status` on `transaction_esignatures(status)` WHERE `status NOT IN ('completed','voided')`
+  - `idx_txn_postclose_txn` on `transaction_post_close_actions(transaction_id, status)`
+  - `idx_txn_postclose_scheduled` on `transaction_post_close_actions(scheduled_for)` WHERE `status = 'scheduled'`
+  - `idx_txn_client_view_token` on `transaction_client_views(access_token)` WHERE `is_active = true`
+  - `idx_txn_client_view_txn` on `transaction_client_views(transaction_id)`
+- [ ] Seed document checklist templates per transaction type and state (linked to `transaction_templates` from RE4):
+  - Purchase (buyer): Purchase agreement, buyer agency agreement, pre-approval letter, earnest money receipt, home inspection report, wood-destroying organism report, appraisal report, title commitment, title insurance policy, survey, HOA docs, closing disclosure, deed, homeowner's insurance binder. State-specific: lead paint disclosure (pre-1978 federal), seller property disclosure (varies), natural hazard disclosure (CA), mold disclosure (varies), radon disclosure (varies).
+  - Purchase (listing): Listing agreement, seller disclosure, lead paint disclosure (pre-1978), MLS data sheet, marketing materials, offer to purchase, counter-offer, inspection response, repair addendum, closing instructions, commission disbursement authorization, 1099-S reporting.
+- [ ] Verify: `dart analyze` -- 0 errors
+
+#### Edge Functions (~5h)
+
+- [ ] Create `supabase/functions/transaction-docuseal-send/index.ts`:
+  - Sends document for e-signature via DocuSeal (self-hosted)
+  - Input: `{ document_id, signers: [{name, email, role}], signing_order, subject, message }`
+  - Auth: JWT required, realtor/tc+ role
+  - Steps: (1) Get document from storage, (2) Create DocuSeal submission via REST API, (3) Add signers with roles, (4) Send for signature, (5) Create `transaction_esignatures` row, (6) Update `transaction_documents.signature_status = 'pending'`
+  - Returns: `{ esignature_id, docuseal_submission_id }`
+  - DocuSeal webhook callback URL registered for status updates
+
+- [ ] Create `supabase/functions/transaction-docuseal-webhook/index.ts`:
+  - Receives DocuSeal webhook events (signer completed, all completed, declined, expired)
+  - Auth: webhook signature verification
+  - Idempotency: check `webhook_events` table for duplicate event_id
+  - Updates `transaction_esignatures` status and signer statuses
+  - On all signed: updates document `signature_status = 'completed'`, `signed_at`
+  - Triggers notification to agent/TC
+  - Stores audit trail entry
+
+- [ ] Create `supabase/functions/transaction-post-close/index.ts`:
+  - Triggered when transaction status changes to 'closed'
+  - Auth: service_role (internal trigger)
+  - Creates post-close action schedule:
+    - Immediate: thank_you_email, thank_you_text, contact_stage_update (->past_client), commission_record, file_archive
+    - +7 days: review_request
+    - +14 days: just_sold_marketing
+    - +30 days: vendor_list_send (for buyers -- list of trusted contractors from dispatch)
+    - +365 days: anniversary_reminder_schedule
+    - +180 days: referral_ask
+  - Creates `transaction_post_close_actions` rows with scheduled_for dates
+  - Returns: `{ actions_scheduled: number }`
+
+- [ ] Create `supabase/functions/transaction-post-close-execute/index.ts`:
+  - Cron job (runs every 15 minutes): executes due post-close actions
+  - Auth: service_role
+  - Queries `transaction_post_close_actions` WHERE `status = 'scheduled'` AND `scheduled_for <= now()`
+  - Per action type:
+    - `thank_you_email`: send templated email via Mailgun to buyer/seller
+    - `thank_you_text`: send via SignalWire
+    - `review_request`: send email with review links (Google, Zillow)
+    - `contact_stage_update`: update `realtor_contacts.pipeline_stage = 'past_client'`, recalculate score
+    - `commission_record`: insert into commission tables (RE8 dependency -- skip if RE8 not complete, mark as 'pending')
+    - `file_archive`: move documents to archive storage path, mark transaction as archived
+    - `vendor_list_send`: generate vendor list from dispatch data, send to buyer
+    - `anniversary_reminder_schedule`: create future notification for home anniversary
+    - `referral_ask`: send polite referral request email
+  - On success: status = 'completed', executed_at = now()
+  - On failure: status stays 'scheduled', retry_count++, logs error. Max 3 retries then 'failed'.
+
+- [ ] Create `supabase/functions/transaction-client-tracker/index.ts`:
+  - Public endpoint for the Domino's-style client tracker view
+  - Input: `{ access_token }`
+  - Auth: NONE (token-based, like CMA share)
+  - Validates token, increments view_count
+  - Returns filtered transaction data: milestone progress (name, status, due_date -- grouped as completed/current/upcoming), completion percentage, next action for client, agent branding info, deal stage summary
+  - Does NOT return: financials (unless show_financial_details=true), internal notes, health score details, party contact info (unless show_all_parties=true)
+
+#### Flutter (~5h)
+
+- [ ] Create `lib/models/transaction_document.dart` -- full model
+- [ ] Create `lib/models/transaction_document_checklist.dart` -- full model
+- [ ] Create `lib/models/transaction_esignature.dart` -- full model
+- [ ] Create `lib/repositories/transaction_document_repository.dart`:
+  - `getDocuments(String transactionId, {String? category})` -- list with filters
+  - `uploadDocument(String transactionId, File file, String category, {String? subcategory, bool isRequired})` -- upload to Supabase Storage + create row
+  - `deleteDocument(String id)` -- soft delete
+  - `getChecklist(String transactionId)` -- full document checklist with status
+  - `updateChecklistItem(String id, Map updates)` -- link document to checklist item
+  - `sendForSignature(String documentId, List<Signer> signers)` -- calls DocuSeal EF
+  - `getSignatureStatus(String esignatureId)` -- check signing progress
+- [ ] Create `lib/providers/transaction_document_provider.dart` -- providers for documents, checklist, esignatures
+- [ ] Create `lib/screens/realtor/realtor_deal_docs_screen.dart`:
+  - Document list organized by category tabs (Contract, Disclosure, Inspection, Appraisal, Title, Closing, Other)
+  - Each doc: file name, uploaded by, date, signature status badge
+  - Upload button per category (camera + file picker)
+  - "Send for Signature" button on eligible docs (opens signer selection)
+  - Missing document alerts (red badges on categories with required but missing docs)
+- [ ] Create `lib/screens/realtor/realtor_deal_checklist_screen.dart`:
+  - Compliance checklist: required documents per transaction type + state
+  - Status per item: missing (red), uploaded (yellow), signed (green), verified (green check), waived (gray), N/A (gray)
+  - Tap to link an uploaded document or upload new
+  - Completion percentage at top
+  - Filter: required only, missing only, all
+- [ ] Create `lib/screens/realtor/realtor_deal_tracker_preview_screen.dart`:
+  - Preview of what the client sees in client portal
+  - Agent can customize: welcome message, visible categories, financial visibility
+  - "Share Tracker" button: generates access link, copies to clipboard, sends to client
+- [ ] Update `lib/screens/realtor/realtor_deal_detail_screen.dart` -- add Docs and Checklist tabs to existing deal detail
+- [ ] Verify: `dart analyze` -- 0 errors
+
+#### Realtor Portal (~5h)
+
+- [ ] Create `realtor-portal/src/lib/hooks/use-transaction-documents.ts` -- document CRUD, upload, checklist, signature actions
+- [ ] Create `realtor-portal/src/lib/hooks/use-transaction-esignatures.ts` -- signature status tracking
+- [ ] Create `realtor-portal/src/lib/hooks/use-transaction-post-close.ts` -- post-close action status
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/[id]/docs/page.tsx`:
+  - Document management page: category tabs, upload area (drag-and-drop), document list with preview
+  - Signature status indicators per doc
+  - "Send for Signature" flow: select doc -> add signers (from parties) -> set order -> send
+  - Signing progress tracker: who signed, who hasn't, timeline
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/[id]/checklist/page.tsx`:
+  - Compliance checklist with completion gauge
+  - Missing items highlighted
+  - Link documents to checklist items
+  - Print checklist for file
+- [ ] Create `realtor-portal/src/app/(dashboard)/transactions/[id]/tracker/page.tsx`:
+  - Client tracker preview + configuration
+  - Toggle: show financials, show parties, visible categories
+  - Custom welcome/completion messages
+  - "Generate Client Link" button
+  - QR code generation for printed materials
+
+#### Client Portal (~3h)
+
+- [ ] Create `client-portal/src/lib/hooks/use-deal-tracker.ts`:
+  - `useDealTracker(accessToken)` -- fetches client-visible deal data from `transaction-client-tracker` EF
+  - Returns `{ transaction, milestones, completionPct, nextAction, agentInfo, loading, error }`
+- [ ] Create `client-portal/src/app/deal/[token]/page.tsx`:
+  - The "Domino's Tracker" view
+  - Agent branding header: agent photo, name, phone, email, brokerage logo
+  - Visual progress timeline: completed steps (green checks) -> current step (pulsing blue) -> upcoming steps (gray)
+  - "Your home purchase is [X]% complete"
+  - Next action callout card: "Next: Home inspection on [date] at [time]" with responsible party
+  - Completed milestones section (collapsed by default, expandable)
+  - Upcoming milestones section with dates
+  - If show_financial_details: key numbers section
+  - "Questions? Contact [Agent Name]" CTA with call/text/email buttons
+  - Mobile-responsive (most clients will view on phone from text link)
+  - Light theme (client portal is light theme per design system)
+- [ ] `client-portal/`: `npm run build` -- 0 errors
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `REALTOR_DEAL_TRACKER` module: `{ id: 'realtor_deal_tracker', name: 'Client Deal Tracker', icon: 'Eye', category: 'transactions', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_transactions'], isMandatory: false }`
+- [ ] Register `REALTOR_TRANSACTION_DOCS` module: `{ id: 'realtor_transaction_docs', name: 'Transaction Documents', icon: 'FolderOpen', category: 'transactions', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_transactions'], isMandatory: true }`
+- [ ] Register `REALTOR_POST_CLOSE` module: `{ id: 'realtor_post_close', name: 'Post-Close Automation', icon: 'PartyPopper', category: 'transactions', entityTypes: ['realtor_solo', 'realtor_team', 'brokerage'], dependencies: ['realtor_transactions', 'realtor_crm'], isMandatory: false }`
+
+#### Security Verification (~1.5h)
+
+- [ ] TEST: RLS -- documents marked `is_internal = true` not visible in client portal
+- [ ] TEST: RLS -- client portal access token only returns filtered data (no financials unless enabled, no internal notes)
+- [ ] TEST: DocuSeal webhook validates signature before processing
+- [ ] TEST: DocuSeal webhook idempotency -- duplicate event_id is ignored
+- [ ] TEST: E-signature audit trail captures IP, timestamp, user agent for legal compliance (ESIGN/UETA)
+- [ ] TEST: Post-close actions execute on schedule (mock time-based test)
+- [ ] TEST: Failed post-close actions retry up to 3 times then mark 'failed'
+- [ ] TEST: Client tracker token expiry works (inactive tokens rejected)
+- [ ] TEST: Document upload respects Supabase Storage bucket policies
+- [ ] TEST: Compliance checklist auto-populates correctly for different state/type combos
+- [ ] TEST: Document version chain -- new version correctly links parent_document_id
+- [ ] `dart analyze` -- 0 errors
+- [ ] `realtor-portal/`: `npm run build` -- 0 errors
+- [ ] `client-portal/`: `npm run build` -- 0 errors
+- [ ] Commit: `[RE5] Transaction engine 2 -- client deal tracker (Dominos view), document management, DocuSeal e-signatures, compliance checklists, post-close automation, client portal integration`
+
+---
+
+### RE6 — Seller Finder Engine 1: Territory Claiming, Data Ingestion, Scoring, Enrichment, Command Center (~32h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md Section 8, realtor-lead-gen-apis-research.md, s135-realtor-api-gaps.md*
+*Depends on: RE1 (auth/RBAC — realtor role exists), RE2 (CRM contacts table — prospects feed into contacts pipeline)*
+*Covers: All realtor entity types (listing agents, buyer agents, team leads, ISAs, investor-focused agents)*
+*CUST9 Modules: `seller_finder_territories`, `seller_finder_prospects`, `seller_finder_scoring`, `seller_finder_enrichment`*
+
+**What this builds:** The predictive prospecting engine that replaces $500+/mo tools (SmartZip, REDX, Vulcan7, PropStream) with a $10-20/mo pipeline built from free public records. Agents draw territory polygons on a map or select by ZIP/subdivision, the system ingests county assessor, recorder, court, tax, and municipal data via Socrata SODA API ($0/mo), scores every property on a 0-100 propensity-to-sell scale using 16+ weighted signals, enriches HOT leads with contact info via skip tracing ($0.02/record), and presents everything in a territory command center with map view, list view, metrics dashboard, and goal tracking.
+
+This is the first half of the Seller Finder. RE6 handles the data pipeline and intelligence layer. RE7 handles outreach, market reports, door-knock routing, and attribution. Together they form a complete lead generation engine that turns public data into qualified seller leads at 1/25th the cost of competitors.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `properties`, `property_scans` (Recon data for vacancy/condition), `realtor_contacts` (check if prospect already in CRM)
+- Writes to: `seller_finder_territories` (NEW), `seller_finder_prospects` (NEW), `seller_finder_data_sources` (NEW), `seller_finder_scoring_rules` (NEW), `seller_finder_enrichment_log` (NEW), `realtor_contacts` (auto-create contact when prospect promoted)
+- Calls: existing Recon EFs for property data, existing geocoding utilities
+- Called by: RE7 (outreach engine reads scored prospects), RE2 CRM (promoted prospects become contacts), RE14 (lead gen pipeline uses same data layer)
+- Wires to: Recon (property intelligence feeds scoring signals), CRM (prospect-to-contact promotion), Map components (territory polygon drawing)
+
+#### Database Layer (~8h)
+- [ ] Create table `seller_finder_territories`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  agent_id uuid NOT NULL FK users(id)
+  name text NOT NULL — e.g., "Oakwood Heights Farm"
+  description text
+  territory_type text NOT NULL CHECK (polygon, zip_code, subdivision, neighborhood, custom)
+  polygon_geojson jsonb — GeoJSON Polygon/MultiPolygon for map-drawn territories
+  zip_codes text[] — for ZIP-based territories
+  subdivision_name text
+  center_lat decimal(10,7)
+  center_lng decimal(10,7)
+  total_properties integer DEFAULT 0
+  hot_count integer DEFAULT 0
+  warm_count integer DEFAULT 0
+  cold_count integer DEFAULT 0
+  last_ingested_at timestamptz
+  last_scored_at timestamptz
+  ingestion_status text DEFAULT 'pending' CHECK (pending, ingesting, complete, error)
+  ingestion_error text
+  market_share_pct decimal(5,2) DEFAULT 0
+  goal_market_share_pct decimal(5,2)
+  goal_closings_annual integer
+  is_active boolean DEFAULT true
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id)`, `(agent_id)`, `(company_id, agent_id)`, `(is_active) WHERE deleted_at IS NULL`. RLS: SELECT/INSERT/UPDATE/DELETE scoped to company_id from JWT. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_prospects`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  territory_id uuid NOT NULL FK seller_finder_territories(id)
+  property_address text NOT NULL
+  property_city text
+  property_state text
+  property_zip text
+  property_lat decimal(10,7)
+  property_lng decimal(10,7)
+  parcel_id text — county APN/parcel number
+  owner_first_name text
+  owner_last_name text
+  owner_mailing_address text
+  owner_mailing_city text
+  owner_mailing_state text
+  owner_mailing_zip text
+  is_absentee boolean DEFAULT false — mailing != property
+  property_type text — sfh, condo, townhouse, multi_family, land, commercial
+  bedrooms integer
+  bathrooms decimal(3,1)
+  sqft integer
+  lot_sqft integer
+  year_built integer
+  assessed_value decimal(12,2)
+  last_sale_date date
+  last_sale_price decimal(12,2)
+  estimated_equity decimal(12,2)
+  mortgage_amount decimal(12,2)
+  mortgage_date date
+  mortgage_lender text
+  ownership_years decimal(5,1)
+  score integer DEFAULT 0 CHECK (0-100)
+  score_category text CHECK (hot, warm, cold)
+  score_signals jsonb DEFAULT '{}' — signal breakdown: {pre_foreclosure: 30, absentee: 15, ...}
+  score_updated_at timestamptz
+  contact_phone text
+  contact_email text
+  contact_phone_secondary text
+  contact_source text — assessor, skip_trace, manual
+  dnc_status boolean DEFAULT false
+  enrichment_status text DEFAULT 'pending' CHECK (pending, enriched, failed, skipped)
+  enrichment_date timestamptz
+  social_linkedin text
+  social_facebook text
+  has_pre_foreclosure boolean DEFAULT false
+  has_probate boolean DEFAULT false
+  has_divorce boolean DEFAULT false
+  has_tax_delinquent boolean DEFAULT false
+  has_code_violations boolean DEFAULT false
+  has_vacant_indicator boolean DEFAULT false
+  has_recent_permit boolean DEFAULT false
+  is_listed boolean DEFAULT false — already on market (competitor)
+  listing_agent_name text
+  listing_price decimal(12,2)
+  contact_id uuid FK realtor_contacts(id) — linked when promoted to CRM
+  status text DEFAULT 'prospect' CHECK (prospect, contacted, nurture, promoted, not_interested, do_not_contact)
+  last_contacted_at timestamptz
+  next_follow_up_at timestamptz
+  notes text
+  tags text[]
+  raw_data jsonb — full raw ingestion data for audit
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, territory_id)`, `(territory_id, score DESC)`, `(company_id, score_category)`, `(property_zip)`, `(property_address)`, `(owner_last_name, owner_first_name)`, `(status) WHERE deleted_at IS NULL`, `(enrichment_status)`, `(has_pre_foreclosure) WHERE has_pre_foreclosure = true`, `(has_probate) WHERE has_probate = true`. GIN index on `tags`. RLS: SELECT/INSERT/UPDATE/DELETE scoped to company_id. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_data_sources`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  territory_id uuid NOT NULL FK seller_finder_territories(id)
+  source_type text NOT NULL CHECK (assessor, recorder, court_probate, court_divorce, tax_collector, municipal_code, municipal_permit, usps_vacancy, census)
+  source_url text — Socrata endpoint or county URL
+  source_name text NOT NULL — e.g., "Cook County Assessor"
+  county_name text
+  state text NOT NULL
+  fips_code text
+  last_fetch_at timestamptz
+  next_fetch_at timestamptz
+  fetch_frequency text DEFAULT 'monthly' CHECK (daily, weekly, biweekly, monthly, quarterly)
+  records_fetched integer DEFAULT 0
+  records_matched integer DEFAULT 0
+  fetch_status text DEFAULT 'pending' CHECK (pending, fetching, complete, error)
+  fetch_error text
+  api_type text CHECK (socrata_soda, direct_csv, web_scrape, manual)
+  api_config jsonb — endpoint, filters, field mappings
+  is_active boolean DEFAULT true
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, territory_id)`, `(source_type)`, `(state)`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_scoring_rules`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  signal_name text NOT NULL — pre_foreclosure, probate, tax_delinquent, divorce, code_violations, vacant, absentee, ownership_15plus, high_equity, recent_permit, property_age_30plus, neighborhood_turnover, expired_listing, fsbo, death_in_family, job_relocation
+  default_weight integer NOT NULL
+  custom_weight integer — agent override
+  is_active boolean DEFAULT true
+  description text
+  logic_description text — human-readable scoring logic
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id)`, `(company_id, signal_name) UNIQUE WHERE deleted_at IS NULL`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_enrichment_log`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  prospect_id uuid NOT NULL FK seller_finder_prospects(id)
+  provider text NOT NULL CHECK (tracerfy, manual, recon, public_record)
+  request_payload jsonb
+  response_payload jsonb
+  records_enriched integer DEFAULT 0
+  cost_per_record decimal(6,4)
+  total_cost decimal(8,4)
+  status text CHECK (success, partial, failed, pending)
+  error_message text
+  created_at timestamptz DEFAULT now()
+  ```
+  Indexes: `(company_id, prospect_id)`, `(created_at)`. RLS: company_id scoped. No soft delete needed (audit log).
+- [ ] Seed `seller_finder_scoring_rules` with 16 default signals and weights: pre_foreclosure (+30), probate (+30), tax_delinquent_2yr (+25), divorce (+25), code_violations (+20), vacant_usps (+20), absentee_owner (+15), ownership_15plus (+15), high_equity_2x (+10), recent_permit (+8), property_age_30plus (+5), neighborhood_turnover_above_avg (+5), expired_listing (+25), fsbo_active (+20), death_in_family (+25), multiple_liens (+15). Insert as system defaults (company_id NULL for global defaults, company-specific rows override).
+- [ ] Create migration file following expand-contract pattern. Include all 5 tables, indexes, RLS policies (per-operation: SELECT, INSERT, UPDATE, DELETE), audit triggers, updated_at triggers.
+- [ ] Run `npm run gen-types` in web-portal and copy `database.types.ts` to all 4 portals.
+
+#### Edge Functions (~8h)
+- [ ] Create `seller-finder-territory-setup` EF: POST to create territory (accepts polygon GeoJSON OR ZIP codes OR subdivision name). Validates polygon geometry (max area check — no continent-sized territories, suggest < 5,000 properties). For ZIP-based: validates ZIP exists, calculates bounding polygon from ZIP boundary data. For polygon: calculates center_lat/center_lng from centroid. Returns territory_id. JWT auth, company_id validation, CORS, input validation, rate limiting (10 territories per company max on standard plan).
+- [ ] Create `seller-finder-ingest` EF: Triggered by territory creation or scheduled cron (weekly for court records, monthly for assessor/tax, quarterly for census). Accepts territory_id. For each configured data_source: (1) Fetch from Socrata SODA API using `$where` clause with geographic bounding box or ZIP filter, (2) Parse response, normalize field names to Zafto schema, (3) Upsert into seller_finder_prospects (match on property_address + property_zip), (4) Update territory counts (total_properties, ingestion_status). Handles pagination (Socrata default 1000 records/page, use `$offset`). Error handling: per-source errors don't block other sources, log to data_sources table. Rate limiting: respect Socrata 1000 req/hr throttle token. Timeout: 5 minutes max per source.
+- [ ] Create `seller-finder-score` EF: Triggered after ingestion completes or on-demand. Accepts territory_id (score all prospects) or prospect_id (score single). For each prospect: (1) Read all boolean signal flags (has_pre_foreclosure, has_probate, etc.), (2) Calculate ownership_years from last_sale_date, (3) Calculate is_absentee from address comparison, (4) Calculate high_equity from assessed_value vs mortgage_amount, (5) Look up scoring_rules for company (custom weights) or use defaults, (6) Sum weighted signals, cap at 100, (7) Assign score_category: 70-100=hot, 40-69=warm, 0-39=cold, (8) Store score, score_signals JSON breakdown, score_category, score_updated_at, (9) Update territory hot/warm/cold counts. Batch processing: score up to 1000 prospects per invocation. If more, queue continuation.
+- [ ] Create `seller-finder-enrich` EF: POST with prospect_ids array (max 100 per request) or territory_id + filter (e.g., "enrich all HOT"). For each prospect: (1) Check if already enriched within 90 days — skip if so, (2) Call Tracerfy API with owner_name + mailing_address ($0.02/record), (3) Parse response: phone, email, secondary_phone, DNC status, social profiles, (4) Update prospect record, (5) Log to enrichment_log with cost tracking. DNC handling: if phone flagged DNC, set dnc_status=true — DO NOT include in cold call lists (TCPA compliance). Error handling: per-record errors logged, partial success OK. Budget guard: track monthly enrichment spend per company, warn at $50, hard-stop at $100 (configurable in company settings).
+- [ ] Create `seller-finder-promote` EF: POST with prospect_id. Promotes prospect to CRM contact: (1) Create new record in `realtor_contacts` table with all prospect data mapped (owner_name → first_name/last_name, contact_phone → phone, etc.), (2) Set contact.source = 'seller_finder', (3) Set contact.pipeline_stage = 'new', (4) Set contact.score from prospect score, (5) Link prospect.contact_id to new contact, (6) Update prospect.status = 'promoted'. Prevents duplicate promotion (check if contact_id already set). JWT auth, company_id validation.
+- [ ] All EFs: JWT auth via `supabase.auth.getUser()`, CORS from `_shared/cors.ts`, input validation (Zod schemas), rate limiting from `_shared/rate-limiter.ts`, structured error responses.
+
+#### Flutter (~8h)
+- [ ] Create `SellerFinderTerritoriesScreen` — list of agent's territories with summary cards: territory name, total properties, HOT/WARM/COLD counts (color-coded badges), last ingested date, ingestion status indicator. FAB: "Create Territory". Pull-to-refresh. Empty state: "Draw your first farm territory to start finding sellers." Error state with retry. Loading skeleton.
+- [ ] Create `TerritoryCreateScreen` — two modes: (1) Map Draw: full-screen map (Google Maps or MapBox) with polygon drawing tools — tap to place vertices, drag to adjust, close polygon. Shows property count estimate as polygon is drawn. (2) ZIP Select: search field, multi-select ZIP codes, shows combined area on map preview. (3) Subdivision: search by name, auto-fill polygon from known boundaries. Name field, description field, goal fields (market share %, annual closings). Save triggers territory-setup EF.
+- [ ] Create `TerritoryCommandCenterScreen` — tabbed view: **Map Tab**: every property color-coded by score (red pin=HOT 70-100, orange=WARM 40-69, gray=COLD 0-39, green=already listed/competitor). Tap pin → prospect detail bottom sheet. Cluster markers at zoom-out. Filter chips: HOT only, WARM+, with phone, without phone, absentee, pre-foreclosure. **List Tab**: sortable table — owner name, address, score (with category badge), ownership years, equity estimate, signals summary, last contacted, status. Infinite scroll with 50-per-page. Search bar (owner name or address). **Dashboard Tab**: territory metrics — total properties, HOT/WARM/COLD distribution pie chart, market share gauge (current vs goal), avg DOM in territory, median sale price trend (line chart, 12 months), turnover rate, active listings count, pending sales count. Goal tracking: "Goal: 30% market share. Current: 22%. Need 8 more closings this year."
+- [ ] Create `ProspectDetailScreen` — full prospect profile: owner name + mailing address, property details (beds/baths/sqft/year built/lot), financial (assessed value, estimated equity, mortgage info), score breakdown (visual: each signal as a row with weight and whether it triggered), signal flags (badges: PRE-FORECLOSURE, PROBATE, TAX DELINQUENT, etc.), contact info (phone with tap-to-call, email with tap-to-email, DNC warning if flagged), status selector (prospect/contacted/nurture/promoted/not_interested/do_not_contact), notes field (free text, saved on blur), tags (add/remove), action buttons: "Enrich Contact" (if not enriched), "Promote to CRM" (creates contact), "Add to Campaign" (RE7), "Get Directions" (opens maps). Last contact date, next follow-up date picker.
+- [ ] Create `ScoringSettingsScreen` — list of all 16 scoring signals with: signal name, description, default weight, custom weight slider (0-50 range), on/off toggle. "Reset to Defaults" button. Save triggers re-score of all prospects in all territories. Preview: "Changing this weight would move 12 prospects from WARM to HOT."
+- [ ] Create `EnrichmentScreen` — shows enrichment history: date, count, cost, provider, status. Action buttons: "Enrich All HOT" (shows count + estimated cost), "Enrich Selected" (multi-select from prospect list). Monthly spend tracker: "$12.40 of $100.00 budget used." Budget setting field.
+- [ ] All screens: 4 states (loading, error, empty, data). Realtime subscription on seller_finder_prospects for live score updates. Soft delete filter on all queries. Use Riverpod providers. ConsumerWidget pattern.
+
+#### Web CRM Portal (~5h)
+- [ ] Create `useSellerFinderTerritories` hook — CRUD for territories. Realtime subscription. Soft delete filter. Returns `{ territories, loading, error, createTerritory, updateTerritory, deleteTerritory }`.
+- [ ] Create `useSellerFinderProspects` hook — paginated list with filters (territory_id, score_category, status, signals). Sorting. Search. Returns `{ prospects, loading, error, total, page, setPage, filters, setFilters, updateProspect, promoteToContact }`.
+- [ ] Create `useSellerFinderScoring` hook — read/update scoring rules. Returns `{ rules, loading, error, updateRule, resetDefaults }`.
+- [ ] Create `useSellerFinderEnrichment` hook — trigger enrichment, read log. Returns `{ enrichmentLog, loading, error, enrichProspects, monthlySpend, budget }`.
+- [ ] Create Territory Management page at `/dashboard/seller-finder/territories` — list view with create/edit modals, map preview per territory.
+- [ ] Create Territory Command Center page at `/dashboard/seller-finder/[territory_id]` — map view (Mapbox GL JS or Google Maps JS), list view (data table with sort/filter/search), dashboard metrics (Chart.js or Recharts for pie/line/gauge charts). Tabbed layout matching Flutter.
+- [ ] Create Prospect Detail page at `/dashboard/seller-finder/prospects/[prospect_id]` — full profile view matching Flutter screen.
+- [ ] Create Scoring Settings page at `/dashboard/seller-finder/settings/scoring` — signal weight editor with sliders and preview.
+- [ ] Create Enrichment Dashboard page at `/dashboard/seller-finder/settings/enrichment` — enrichment history, budget tracker, bulk enrich actions.
+
+#### Realtor Portal (~2h)
+- [ ] Wire Seller Finder pages into realtor portal navigation: "Seller Finder" top-level nav item with sub-items: Territories, Command Center (per territory), Settings.
+- [ ] Ensure all pages use realtor portal layout/theme (if different from CRM portal).
+
+#### CUST9 Module Registration
+- [ ] Register `seller_finder_territories` module in ModuleRegistry with config: visibility per role (realtor, team_lead, managing_broker, brokerage_owner, isa), customizable scoring weights, enrichment budget limits, territory limits per plan tier.
+- [ ] Register `seller_finder_scoring` module with customizable signal weights and thresholds.
+
+#### Security Verification (~1h)
+- [ ] RLS policies tested: agent can only see own territories (or team territories if team_lead/managing_broker), prospects scoped to company_id, cross-company isolation verified
+- [ ] All EFs: JWT auth tested, invalid token returns 401, missing company_id returns 403, CORS headers present, rate limiting functional
+- [ ] Enrichment budget guard tested: exceeding budget returns friendly error, not silent failure
+- [ ] DNC flag honored: DNC=true prospects excluded from any phone-based outreach lists
+- [ ] Polygon validation: excessively large polygons rejected with helpful error message
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal and realtor-portal
+- [ ] Commit: `[RE6] Seller Finder Engine 1 — territory claiming (polygon/ZIP/subdivision), county data ingestion (Socrata SODA API), 16-signal propensity-to-sell scoring (0-100), contact enrichment (Tracerfy skip trace, DNC scrub, budget guard), territory command center (map/list/dashboard), prospect detail with promote-to-CRM, customizable scoring weights, enrichment tracking`
+
+---
+
+### RE7 — Seller Finder Engine 2: Outreach, Market Reports, Door-Knock Routes, Campaign Tracking, Attribution (~24h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md Section 8 (Steps 6-8), realtor-lead-gen-apis-research.md, s135-realtor-api-gaps.md (OpenRouteService/OSRM routing)*
+*Depends on: RE6 (territories + scored prospects exist), RE2 (CRM contacts for pipeline tracking), RE1 (auth/RBAC)*
+*Covers: All realtor entity types, ISAs (outreach execution), team leads (campaign oversight)*
+*CUST9 Modules: `seller_finder_campaigns`, `seller_finder_interactions`, `seller_finder_market_reports`, `seller_finder_routes`*
+
+**What this builds:** The outreach and attribution engine that turns scored prospects into actual seller clients. Agents create multi-channel campaigns (email, direct mail, SMS, cold call queue) with motivation-specific messaging templates. The door-knock route planner uses OSRM ($0/mo, self-hosted) to optimize walking/driving routes through HOT prospects with per-property talking points. Weekly hyperlocal market reports auto-generate and distribute to farm homeowners, positioning the agent as the neighborhood authority. Every touchpoint is logged and attributed — when a prospect converts to a closing, the system calculates farm ROI down to the penny.
+
+This completes the Seller Finder engine. RE6 + RE7 together replace SmartZip ($500/mo), REDX ($70/mo), Vulcan7 ($149/mo), and Mojo Dialer ($99/mo) — total savings of $818/mo per agent.
+
+**System Connectivity:**
+- Reads from: `seller_finder_territories`, `seller_finder_prospects` (scored leads from RE6), `realtor_contacts` (promoted prospects), `commission_records` (for ROI attribution from RE8), `companies` (branding for market reports)
+- Writes to: `seller_finder_campaigns` (NEW), `seller_finder_interactions` (NEW), `seller_finder_market_reports` (NEW), `seller_finder_routes` (NEW), `seller_finder_campaign_templates` (NEW), `seller_finder_prospects` (update last_contacted_at, status)
+- Calls: SignalWire (SMS — existing), Mailgun/SendGrid (email — existing dispatch infrastructure from REALTOR1), Lob API (direct mail, $0.77/postcard), OSRM (route optimization — free self-hosted)
+- Called by: RE14 (lead gen pipeline orchestration), dashboard widgets
+- Wires to: ZForge (market report PDF generation), REALTOR1 dispatch (email infrastructure reuse), CRM pipeline (prospect→lead→client→closing tracking), Commission Engine RE8 (attribution ROI)
+
+#### Database Layer (~5h)
+- [ ] Create table `seller_finder_campaigns`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  territory_id uuid NOT NULL FK seller_finder_territories(id)
+  agent_id uuid NOT NULL FK users(id)
+  name text NOT NULL
+  campaign_type text NOT NULL CHECK (email_drip, direct_mail, sms_sequence, cold_call, door_knock, multi_channel)
+  status text DEFAULT 'draft' CHECK (draft, active, paused, completed, archived)
+  target_filter jsonb NOT NULL — criteria: {score_category: ['hot','warm'], signals: ['pre_foreclosure','probate'], status: ['prospect','contacted'], min_score: 60, max_score: 100, zip_codes: [...]}
+  target_count integer DEFAULT 0
+  template_id uuid FK seller_finder_campaign_templates(id)
+  motivation_type text CHECK (pre_foreclosure, probate, divorce, fsbo, expired, absentee, equity_rich, long_term_owner, general)
+  channel_config jsonb — {email: {from_name, subject_template, send_time}, sms: {message_template, opt_in_required: true}, mail: {postcard_template_id, mail_class}, call: {script_template, best_call_times}}
+  schedule_type text CHECK (immediate, scheduled, recurring)
+  scheduled_at timestamptz
+  recurrence_rule text — cron expression for recurring
+  started_at timestamptz
+  completed_at timestamptz
+  stats jsonb DEFAULT '{}' — {sent: 0, delivered: 0, opened: 0, clicked: 0, responded: 0, bounced: 0, unsubscribed: 0, converted: 0}
+  total_cost decimal(10,2) DEFAULT 0
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, territory_id)`, `(status)`, `(agent_id)`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_campaign_templates`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid FK companies(id) — NULL for system defaults
+  name text NOT NULL
+  motivation_type text NOT NULL CHECK (pre_foreclosure, probate, divorce, fsbo, expired, absentee, equity_rich, long_term_owner, general, market_report)
+  channel text NOT NULL CHECK (email, sms, mail, call_script, door_knock_script)
+  subject_template text — for email; supports {{owner_first_name}}, {{property_address}}, {{agent_name}}, {{agent_phone}}, {{equity_estimate}}, {{neighborhood}} merge fields
+  body_template text NOT NULL — full template with merge fields
+  tone text CHECK (empathetic, educational, practical, lifestyle, urgent, professional)
+  sequence_position integer — for multi-touch: 1=first, 2=follow-up, etc.
+  days_after_previous integer — delay between sequence touches
+  is_system_default boolean DEFAULT false
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, motivation_type, channel)`, `(is_system_default)`. RLS: company_id scoped (system defaults readable by all). Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_interactions`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  prospect_id uuid NOT NULL FK seller_finder_prospects(id)
+  agent_id uuid NOT NULL FK users(id)
+  campaign_id uuid FK seller_finder_campaigns(id) — NULL for manual interactions
+  channel text NOT NULL CHECK (email, sms, call, door_knock, mail, text, in_person, other)
+  interaction_type text NOT NULL CHECK (outbound_email, outbound_sms, outbound_call, outbound_mail, door_knock, inbound_call, inbound_email, inbound_text, meeting, showing_request, listing_appointment, other)
+  direction text CHECK (outbound, inbound)
+  status text CHECK (sent, delivered, opened, clicked, responded, bounced, no_answer, voicemail, connected, completed, scheduled)
+  subject text
+  body_preview text — first 200 chars
+  notes text — agent notes about the interaction
+  duration_seconds integer — for calls
+  outcome text CHECK (positive, neutral, negative, no_response)
+  next_action text
+  next_action_date timestamptz
+  cost decimal(8,4) — postcard cost, skip trace cost, etc.
+  metadata jsonb — email message_id for tracking, call recording URL, etc.
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, prospect_id)`, `(campaign_id)`, `(agent_id, created_at)`, `(channel)`, `(created_at)`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_market_reports`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  territory_id uuid NOT NULL FK seller_finder_territories(id)
+  agent_id uuid NOT NULL FK users(id)
+  report_date date NOT NULL
+  report_type text DEFAULT 'weekly' CHECK (weekly, monthly, quarterly, custom)
+  title text NOT NULL — e.g., "Your Oakwood Heights Market Update — Feb 17, 2026"
+  data jsonb NOT NULL — {new_listings: [...], price_changes: [...], sold_properties: [...], pending_sales: [...], market_stats: {median_price, avg_dom, inventory_months, absorption_rate, yoy_change}, agent_branding: {name, photo_url, brokerage, phone, email, license}}
+  pdf_url text — Supabase Storage path
+  web_url text — shareable link
+  distribution_status text DEFAULT 'generated' CHECK (generated, sending, sent, failed)
+  distribution_channels text[] — email, mail, sms
+  recipients_count integer DEFAULT 0
+  delivered_count integer DEFAULT 0
+  opened_count integer DEFAULT 0
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, territory_id, report_date)`, `(report_date)`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Create table `seller_finder_routes`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  territory_id uuid NOT NULL FK seller_finder_territories(id)
+  agent_id uuid NOT NULL FK users(id)
+  name text
+  route_type text DEFAULT 'door_knock' CHECK (door_knock, drive_by, hybrid)
+  prospect_ids uuid[] NOT NULL — ordered list of prospects in route
+  waypoints jsonb NOT NULL — [{prospect_id, lat, lng, address, score, talking_points, owner_name}]
+  optimized_order integer[] — index into waypoints for optimal order
+  total_distance_miles decimal(8,2)
+  estimated_duration_minutes integer
+  route_geometry jsonb — polyline for map display
+  status text DEFAULT 'planned' CHECK (planned, in_progress, completed, abandoned)
+  started_at timestamptz
+  completed_at timestamptz
+  prospects_visited integer DEFAULT 0
+  prospects_contacted integer DEFAULT 0
+  notes text
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, territory_id)`, `(agent_id)`, `(status)`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Seed `seller_finder_campaign_templates` with system defaults (is_system_default=true, company_id=NULL): 5 motivation types x 4 channels = 20 templates. Pre-foreclosure email: empathetic tone ("I help homeowners explore all options before foreclosure..."). FSBO/Expired email: educational ("90% of FSBOs don't sell. Here's what top agents do differently..."). Probate email: sensitive ("I specialize in estate sales and can handle the process for your family..."). Equity-rich email: lifestyle ("Your home has appreciated ${{equity_estimate}} since you bought it. Curious what that means for your next chapter?"). Absentee email: practical ("Managing a property from afar? I have investors and families looking in your neighborhood..."). Matching SMS templates (shorter, under 160 chars). Call scripts with opening, qualifying questions, objection handlers. Door-knock scripts with property-specific talking points placeholder.
+- [ ] Create migration file. Run `npm run gen-types` and copy to all portals.
+
+#### Edge Functions (~7h)
+- [ ] Create `seller-finder-campaign-execute` EF: POST with campaign_id. Reads campaign target_filter, queries matching prospects, applies channel_config: (1) Email: compose from template with merge fields, send via SendGrid/Mailgun transactional API (reuse REALTOR1 infrastructure), track delivery/open/click via webhooks, (2) SMS: compose from template, send via SignalWire, REQUIRE opt-in confirmation before first SMS (TCPA compliance — prospect must have texted keyword or signed up), (3) Direct Mail: compose postcard via Lob API ($0.77/postcard), Lob handles printing + mailing + delivery tracking, (4) Cold Call: generate call list with phone numbers + scripts + talking points, push to agent's call queue (in-app list, not auto-dialer). For each send: create interaction record. Update campaign stats. Stagger sends: 20 emails per 3 minutes (same as REALTOR1 pattern). Budget tracking: accumulate cost per interaction. Rate limit: 1 campaign execution per 5 minutes per company.
+- [ ] Create `seller-finder-campaign-webhook` EF: Receives SendGrid/Mailgun delivery webhooks (delivered, opened, clicked, bounced, unsubscribed). Matches to interaction record via metadata.message_id. Updates interaction status. Updates campaign stats. For bounced: update prospect enrichment_status. For unsubscribed: update prospect status to 'do_not_contact'. Idempotency: check webhook_events table for duplicate event_id.
+- [ ] Create `seller-finder-market-report` EF: Cron-triggered (every Monday 6am agent's timezone). For each active territory: (1) Query recent MLS-equivalent data from ingested sources (new listings, sold, price changes, pending in territory polygon), (2) Calculate market stats (median price, avg DOM, inventory months, absorption rate, YoY change), (3) Build report data JSON, (4) Generate branded PDF via ZForge document engine (agent photo, logo, brokerage, contact info), (5) Store PDF in Supabase Storage, generate shareable web URL, (6) If distribution configured: send to all territory homeowners via selected channels. Report data sourced from Redfin Data Center CSV (free, monthly) + county assessor data (already ingested in RE6).
+- [ ] Create `seller-finder-route-optimize` EF: POST with territory_id + filter (score_category, max_stops, route_type). Selects matching prospects with valid addresses. Calls OSRM API (self-hosted, $0/mo) for route optimization: (1) Send prospect lat/lng as waypoints to OSRM `/trip` endpoint (Traveling Salesman solver), (2) Receive optimized order + route geometry + distance + duration, (3) For each waypoint: generate talking points from prospect data ("Owner: John Smith, 18 years, assessed $340K, pre-foreclosure filing 2 months ago. Approach: empathetic, offer free market analysis"), (4) Store route with optimized_order, geometry, waypoints with talking points. Max 30 stops per route. Walking vs driving mode. Return ETA and distance.
+- [ ] Create `seller-finder-attribution` EF: Triggered when a transaction closes (commission_record created in RE8) where contact.source = 'seller_finder'. Traces back: contact_id → prospect (via seller_finder_prospects.contact_id) → territory → all interactions. Calculates: total interactions, total cost (enrichment + mail + outreach), time from first contact to close, GCI from the deal. Computes farm ROI: GCI / total_farm_cost. Updates territory market_share_pct. Logs attribution record.
+- [ ] All EFs: JWT auth, CORS, input validation, rate limiting, structured errors. TCPA compliance: SMS requires prior opt-in, cold calls honor DNC list, direct mail has no restriction (postal mail exempt from DNC). CAN-SPAM: all emails include physical address, one-click unsubscribe, accurate from/subject.
+
+#### Flutter (~6h)
+- [ ] Create `CampaignsListScreen` — list of campaigns with status badge (draft/active/paused/completed), type icon (email/sms/mail/call/multi), target count, sent/delivered/opened stats, last activity date. FAB: "New Campaign". Filter chips: All, Active, Draft, Completed. Pull-to-refresh.
+- [ ] Create `CampaignCreateScreen` — step wizard: (1) Name + motivation type dropdown, (2) Target filter builder: score category multi-select, signal checkboxes, status filter, ZIP filter, min/max score sliders. Shows live count: "147 prospects match this filter", (3) Channel selection: email/sms/mail/call checkboxes (multi-channel supported), (4) Template selection per channel: pick from system defaults or custom, preview with sample prospect data, (5) Schedule: immediate, specific date/time, or recurring (weekly/biweekly/monthly), (6) Review + confirm with cost estimate ("Sending 147 emails: $0. Sending 147 postcards: $113.19."). Save as draft or launch.
+- [ ] Create `CampaignDetailScreen` — campaign stats dashboard: sent/delivered/opened/clicked/responded/bounced funnel visualization, cost tracker, individual interaction list (per prospect: status, date, outcome), pause/resume/archive actions.
+- [ ] Create `MarketReportsScreen` — list of generated reports with date, territory, distribution status. Tap to preview report. "Generate Now" button (manual trigger outside cron). Settings: distribution channels, frequency, branding customization.
+- [ ] Create `MarketReportPreviewScreen` — rendered report view: branded header with agent photo/name/brokerage, market stats section (median price, DOM, inventory, absorption rate with trend arrows), new listings/sold/pending lists with addresses and prices, neighborhood trends chart, agent CTA ("Thinking of selling? Get your free home valuation: [phone]").
+- [ ] Create `DoorKnockRouteScreen` — (1) Route builder: select territory, filter prospects (HOT only, WARM+, custom), set max stops (5-30 slider), route type (walking/driving), tap "Optimize Route". (2) Route view: map with numbered pins in optimal order, route polyline, total distance + ETA. (3) Active route mode: current stop highlighted, talking points card overlay (owner name, signals, approach suggestion, key facts), "Mark Visited" button → log interaction → advance to next stop, "Skip" button, "Add Notes" quick entry. (4) Route summary: stops visited, contacts made, outcomes.
+- [ ] Create `FarmROIDashboardScreen` — territory-level ROI: total investment (enrichment + mail + outreach costs), total GCI from farm closings, ROI percentage, per-closing attribution ("This closing ($8,400 GCI) came from a probate lead you identified 4 months ago. Total farm ROI: 340%."), monthly investment trend chart, conversion funnel (prospects → contacted → appointments → listings → closings).
+- [ ] Create `InteractionLogScreen` — chronological feed of all touchpoints for a prospect: icon per channel, timestamp, status, notes. Quick-add interaction button (manual log for phone calls, in-person meetings). Linked to prospect detail screen.
+- [ ] All screens: 4 states, Riverpod providers, ConsumerWidget, Realtime subscriptions on campaigns and interactions.
+
+#### Web CRM Portal (~5h)
+- [ ] Create `useSellerFinderCampaigns` hook — CRUD campaigns, trigger execution, pause/resume, read stats. Realtime subscription for live stat updates during active campaign.
+- [ ] Create `useSellerFinderInteractions` hook — read interactions by prospect or campaign, create manual interactions.
+- [ ] Create `useSellerFinderMarketReports` hook — list reports, trigger generation, configure distribution.
+- [ ] Create `useSellerFinderRoutes` hook — create/optimize routes, update route progress, log visits.
+- [ ] Create Campaigns page at `/dashboard/seller-finder/campaigns` — list + create/detail views.
+- [ ] Create Market Reports page at `/dashboard/seller-finder/reports` — report list, preview, distribution settings.
+- [ ] Create Door-Knock Routes page at `/dashboard/seller-finder/routes` — route builder with map, active route view, route history.
+- [ ] Create Farm ROI Dashboard at `/dashboard/seller-finder/roi` — investment tracking, attribution timeline, conversion funnel.
+
+#### Realtor Portal (~1h)
+- [ ] Wire all RE7 pages into realtor portal under "Seller Finder" nav: Campaigns, Market Reports, Routes, ROI Dashboard.
+
+#### CUST9 Module Registration
+- [ ] Register `seller_finder_campaigns` module: configurable template library (add custom templates per motivation), channel enable/disable per company, budget limits per channel.
+- [ ] Register `seller_finder_market_reports` module: frequency config, distribution channel toggle, branding customization (logo, colors, tagline).
+
+#### Security Verification (~1h)
+- [ ] TCPA compliance verified: SMS only sent to prospects with opt-in flag, cold calls exclude DNC-flagged numbers, unsubscribe immediately honored
+- [ ] CAN-SPAM compliance: all outbound emails include physical address, one-click unsubscribe, accurate sender info
+- [ ] Campaign execution rate limits tested: cannot flood 10,000 emails in one burst
+- [ ] Attribution data isolated per company — no cross-company data leakage
+- [ ] Lob API key stored in Supabase vault, never exposed to client
+- [ ] OSRM self-hosted — no prospect location data sent to third-party services (privacy)
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal and realtor-portal
+- [ ] Commit: `[RE7] Seller Finder Engine 2 — multi-channel campaign engine (email/SMS/mail/call with motivation-specific templates, TCPA/CAN-SPAM compliance), weekly hyperlocal market reports (auto-generated, branded PDF, auto-distributed), door-knock route optimizer (OSRM, talking points per property), interaction logging, farm ROI attribution (GCI tracking, per-closing attribution, investment tracking), campaign webhooks (delivery/open/click/bounce tracking)`
+
+---
+
+### RE8 — Commission Engine: Plan Builder, Per-Transaction Calc, CDA Generation, Cap Tracking, 1099, Agent Dashboard (~24h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md Section 10, realtor-professional-types-deep-research.md (commission structures section), s132-realtor-cross-reference.md*
+*Depends on: RE1 (auth/RBAC — brokerage_owner, managing_broker roles), RE4/RE5 (Transaction Engine — transactions that generate commissions)*
+*Note: RE13 (Brokerage Admin) reads from RE8's commission tables — NOT a dependency. RE8 defines the commission data model; RE13 provides the admin UI for managing it.*
+*Covers: brokerage_owner (plan creation), managing_broker (plan assignment, reporting), team_lead (team split oversight), realtor (personal dashboard), tc (CDA generation), office_admin (1099 export)*
+*CUST9 Modules: `commission_plans`, `commission_calculator`, `commission_cda`, `commission_dashboard`*
+
+**What this builds:** A complete commission tracking engine that supports ALL 7 brokerage commission models simultaneously — traditional split, cap (KW model), flat fee, hybrid, team split, referral fee, and bonus structures. Brokers create plans with every possible fee type (franchise fees, transaction fees, E&O fees, desk fees, tech fees). Per-transaction calculations show the exact dollar breakdown from gross commission to agent net. CDA (Commission Disbursement Authorization) documents are generated as professional PDFs via ZForge and sent to title/escrow companies. Cap tracking shows agents their progress toward cap with projections. Year-end 1099 data export handles tax reporting.
+
+**CRITICAL: This is TRACKING ONLY. We do NOT move money, manage trust accounts, handle escrow, or process ACH transfers. No money transmitter licensing required. Commission calculations are informational — the title company disburses funds based on the CDA.**
+
+**System Connectivity:**
+- Reads from: `companies`, `users` (agent profiles), `realtor_transactions` (from RE4/RE5 — sale_price, commission_rate, closing_date), `realtor_contacts` (referral sources)
+- Writes to: `commission_plans` (NEW), `commission_plan_fees` (NEW), `commission_records` (NEW), `commission_caps` (NEW), `commission_cdas` (NEW), `commission_bonuses` (NEW)
+- Calls: ZForge document engine (CDA PDF generation), existing notification system (cap milestone alerts)
+- Called by: RE4/RE5 Transaction Engine (triggers commission calc on deal close), RE13 Brokerage Admin (plan management), RE7 Seller Finder (attribution ROI uses GCI data)
+- Wires to: ZForge (CDA PDF generation), Transaction Engine (commission linked to transaction), Brokerage Admin (plan assignment, 1099 generation), Seller Finder (GCI for farm ROI attribution)
+
+#### Database Layer (~6h)
+- [ ] Create table `commission_plans`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  name text NOT NULL — e.g., "Standard 70/30", "Team Plan", "Veteran Plan", "New Agent Plan", "100% Cap Plan"
+  description text
+  plan_type text NOT NULL CHECK (split, cap, flat_fee, hybrid)
+  agent_split_pct decimal(5,2) NOT NULL — agent's share (e.g., 70.00)
+  broker_split_pct decimal(5,2) NOT NULL — broker's share (e.g., 30.00)
+  cap_amount decimal(12,2) — annual cap (e.g., 16000.00 for KW model)
+  cap_period text CHECK (calendar_year, anniversary) DEFAULT 'calendar_year'
+  post_cap_agent_split_pct decimal(5,2) DEFAULT 100.00 — after cap: agent keeps 100%
+  post_cap_broker_split_pct decimal(5,2) DEFAULT 0.00
+  franchise_fee_pct decimal(5,2) DEFAULT 0 — KW: 6%
+  franchise_fee_cap decimal(12,2) — KW: $3,000/yr
+  transaction_fee decimal(10,2) DEFAULT 0 — flat per-deal fee
+  eao_fee decimal(10,2) DEFAULT 0 — Errors & Omissions per-deal fee
+  eao_fee_cap decimal(10,2) — annual E&O cap
+  desk_fee_monthly decimal(10,2) DEFAULT 0 — monthly desk/office fee
+  tech_fee_monthly decimal(10,2) DEFAULT 0 — monthly technology fee
+  team_split_enabled boolean DEFAULT false
+  team_split_pct decimal(5,2) DEFAULT 0 — team lead takes X% of agent's share
+  team_lead_id uuid FK users(id) — for team plans
+  referral_fee_default_pct decimal(5,2) DEFAULT 25.00
+  minimum_commission decimal(10,2) — floor (e.g., $3,000 minimum per deal)
+  effective_date date NOT NULL
+  end_date date
+  is_default boolean DEFAULT false — new agents get this plan
+  is_active boolean DEFAULT true
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  CHECK (agent_split_pct + broker_split_pct = 100)
+  ```
+  Indexes: `(company_id)`, `(company_id, is_default) WHERE is_active = true AND deleted_at IS NULL`, `(team_lead_id)`. RLS: SELECT for all company members (agents see plans assigned to them), INSERT/UPDATE/DELETE for brokerage_owner and managing_broker only. Audit trigger. updated_at trigger.
+- [ ] Create table `commission_plan_assignments`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  agent_id uuid NOT NULL FK users(id)
+  plan_id uuid NOT NULL FK commission_plans(id)
+  effective_date date NOT NULL
+  end_date date
+  override_agent_split_pct decimal(5,2) — per-agent override of plan default
+  override_cap_amount decimal(12,2)
+  notes text — e.g., "Negotiated higher split for top producer"
+  assigned_by uuid NOT NULL FK users(id) — who assigned
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  UNIQUE (agent_id, plan_id, effective_date) WHERE deleted_at IS NULL
+  ```
+  Indexes: `(company_id, agent_id)`, `(agent_id, effective_date)`. RLS: agent can SELECT own assignments, brokerage_owner/managing_broker can all CRUD. Audit trigger. updated_at trigger.
+- [ ] Create table `commission_records`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  agent_id uuid NOT NULL FK users(id)
+  transaction_id uuid FK realtor_transactions(id) — from RE4/RE5
+  plan_id uuid NOT NULL FK commission_plans(id)
+  plan_assignment_id uuid FK commission_plan_assignments(id)
+  transaction_date date NOT NULL
+  property_address text NOT NULL
+  sale_price decimal(14,2) NOT NULL
+  commission_rate_pct decimal(5,3) NOT NULL — e.g., 2.500 for 2.5%
+  listing_or_buyer_side text NOT NULL CHECK (listing, buyer, dual, referral)
+  gross_commission decimal(12,2) NOT NULL — sale_price * commission_rate
+  referral_fee_pct decimal(5,2) DEFAULT 0
+  referral_fee_amount decimal(12,2) DEFAULT 0
+  referral_to text — referral agent/company name
+  net_after_referral decimal(12,2) NOT NULL
+  agent_split_pct_used decimal(5,2) NOT NULL — actual split used (may be post-cap)
+  broker_split_pct_used decimal(5,2) NOT NULL
+  broker_share decimal(12,2) NOT NULL
+  franchise_fee decimal(12,2) DEFAULT 0
+  transaction_fee decimal(12,2) DEFAULT 0
+  eao_fee decimal(12,2) DEFAULT 0
+  team_split_amount decimal(12,2) DEFAULT 0
+  team_lead_id uuid FK users(id)
+  other_deductions decimal(12,2) DEFAULT 0
+  other_deductions_notes text
+  agent_net decimal(12,2) NOT NULL — final amount to agent after ALL deductions
+  is_post_cap boolean DEFAULT false — was agent capped when this deal closed?
+  cap_contribution decimal(12,2) DEFAULT 0 — amount this deal contributed toward cap
+  breakdown_json jsonb NOT NULL — full waterfall calculation for audit: {gross_commission, referral_deduction, net_after_referral, broker_share, franchise_fee, transaction_fee, eao_fee, team_split, other_deductions, agent_net, notes_per_step}
+  status text DEFAULT 'pending' CHECK (pending, approved, paid, disputed, void)
+  cda_id uuid FK commission_cdas(id)
+  notes text
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, agent_id)`, `(agent_id, transaction_date)`, `(transaction_id)`, `(company_id, status)`, `(transaction_date)`. RLS: agent SELECT own records, brokerage_owner/managing_broker SELECT/INSERT/UPDATE all, team_lead SELECT team member records. Audit trigger. updated_at trigger.
+- [ ] Create table `commission_caps`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  agent_id uuid NOT NULL FK users(id)
+  plan_id uuid NOT NULL FK commission_plans(id)
+  period_type text NOT NULL CHECK (calendar_year, anniversary)
+  period_start date NOT NULL
+  period_end date NOT NULL
+  cap_amount decimal(12,2) NOT NULL
+  amount_contributed decimal(12,2) DEFAULT 0 — running total of broker share accumulated toward cap
+  franchise_fee_contributed decimal(12,2) DEFAULT 0
+  franchise_fee_cap decimal(12,2)
+  eao_fee_contributed decimal(12,2) DEFAULT 0
+  eao_fee_cap decimal(12,2)
+  is_capped boolean DEFAULT false
+  capped_at timestamptz
+  transactions_count integer DEFAULT 0
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  UNIQUE (agent_id, plan_id, period_start) WHERE deleted_at IS NULL
+  ```
+  Indexes: `(company_id, agent_id, period_start)`, `(agent_id, is_capped)`. RLS: agent SELECT own, broker all CRUD. Audit trigger. updated_at trigger.
+- [ ] Create table `commission_cdas`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  commission_record_id uuid NOT NULL FK commission_records(id)
+  transaction_id uuid FK realtor_transactions(id)
+  document_number text NOT NULL — auto-generated: CDA-{company_prefix}-{YYYY}-{sequence}
+  generated_by uuid NOT NULL FK users(id)
+  approved_by uuid FK users(id) — broker signature
+  approved_at timestamptz
+  pdf_url text — Supabase Storage path
+  pdf_generated_at timestamptz
+  title_company_name text
+  title_company_email text
+  sent_to_title_at timestamptz
+  status text DEFAULT 'draft' CHECK (draft, pending_approval, approved, sent, acknowledged, void)
+  void_reason text
+  voided_by uuid FK users(id)
+  voided_at timestamptz
+  data_snapshot jsonb NOT NULL — full commission breakdown at time of CDA generation (immutable record)
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  UNIQUE (document_number)
+  ```
+  Indexes: `(company_id)`, `(commission_record_id)`, `(status)`. RLS: tc/office_admin can INSERT/UPDATE, broker can approve, agent can SELECT own. Audit trigger. updated_at trigger.
+- [ ] Create table `commission_bonuses`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  agent_id uuid NOT NULL FK users(id)
+  bonus_type text NOT NULL CHECK (production_milestone, recruiting, gci_threshold, transaction_count, team_bonus, anniversary, custom)
+  name text NOT NULL — e.g., "Q1 Production Bonus", "10-Deal Milestone"
+  trigger_condition jsonb — {type: 'gci_threshold', threshold: 100000, period: 'calendar_year'} or {type: 'transaction_count', count: 20, period: 'quarter'}
+  bonus_amount decimal(10,2)
+  bonus_pct decimal(5,2) — percentage of next deal
+  is_recurring boolean DEFAULT false
+  earned_at timestamptz
+  status text DEFAULT 'pending' CHECK (pending, earned, paid, void)
+  notes text
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id, agent_id)`, `(status)`. RLS: company_id scoped. Audit trigger. updated_at trigger.
+- [ ] Create migration file. Run `npm run gen-types` and copy to all portals.
+
+#### Edge Functions (~6h)
+- [ ] Create `commission-calculate` EF: POST with {transaction_id, agent_id, sale_price, commission_rate_pct, listing_or_buyer_side, referral_fee_pct, referral_to, other_deductions, other_deductions_notes}. (1) Look up agent's active commission_plan_assignment (effective_date <= today, end_date IS NULL or > today), (2) Look up or create current cap period record, (3) Calculate full waterfall: gross_commission = sale_price * commission_rate / 100, agent_side = gross_commission (or split if dual), referral_deduction = agent_side * referral_fee_pct / 100, net_after_referral = agent_side - referral_deduction, (4) Check cap status: if amount_contributed >= cap_amount → use post_cap splits, else use standard splits, (5) broker_share = net_after_referral * broker_split_pct / 100, (6) franchise_fee = min(broker_share * franchise_fee_pct / 100, remaining_franchise_cap), (7) transaction_fee from plan, (8) eao_fee = min(plan.eao_fee, remaining_eao_cap), (9) team_split = (net_after_referral - broker_share) * team_split_pct / 100 (if team plan), (10) agent_net = net_after_referral - broker_share - franchise_fee - transaction_fee - eao_fee - team_split - other_deductions, (11) Apply minimum_commission floor if set, (12) Update cap: add broker_share to amount_contributed, check if now capped, (13) Store full breakdown_json, (14) Return commission_record. Handle edge cases: deal where agent hits cap mid-deal (split the calculation at cap point), negative agent_net (warn, don't allow), void/re-calculate scenarios.
+- [ ] Create `commission-generate-cda` EF: POST with commission_record_id. (1) Read commission_record with full breakdown, (2) Read agent profile (name, license, brokerage), (3) Read company branding (logo, address), (4) Generate document_number (CDA-{prefix}-{YYYY}-{sequential}), (5) Build CDA data: property address, sale price, commission rate, gross commission, each deduction line item, agent net, broker approval line, title company info, (6) Call ZForge document engine to generate PDF (professional format matching industry CDA standards), (7) Upload PDF to Supabase Storage, (8) Create commission_cdas record with data_snapshot (immutable), (9) Return CDA with PDF URL. CDA format: header (brokerage name, address, phone), transaction details, commission breakdown table, agent information, broker signature line, title company delivery instructions.
+- [ ] Create `commission-approve-cda` EF: POST with cda_id. Only brokerage_owner or managing_broker can approve. Updates status to 'approved', sets approved_by and approved_at. Optionally: auto-send to title company email via SendGrid/Mailgun if title_company_email provided.
+- [ ] Create `commission-1099-export` EF: POST with {year, format: 'csv' | 'json'}. Queries all commission_records for company where transaction_date in year and status = 'paid'. Groups by agent_id. Calculates total agent_net per agent for the year. Returns CSV/JSON with: agent name, agent SSN/EIN (from secure agent profile — encrypted at rest), total compensation, agent address. Only brokerage_owner can call this (1099 generation is a broker responsibility). SECURITY: SSN/EIN data encrypted in database, decrypted only in this EF, never logged, never cached.
+- [ ] Create `commission-cap-check` EF: Called after every commission-calculate. If agent crosses 75% of cap: send push notification ("You're 75% to your cap! $4,000 remaining"). At 90%: "Almost there! $1,600 to cap." At 100%: "Congratulations! You've hit your cap. All future deals are at {post_cap_agent_split}% split." Also checks franchise fee cap and E&O cap milestones.
+- [ ] All EFs: JWT auth, CORS, input validation (Zod — validate all financial amounts as positive numbers, percentages 0-100), rate limiting, structured errors. Financial calculations use DECIMAL types throughout, never floating point. All money amounts stored to 2 decimal places.
+
+#### Flutter (~6h)
+- [ ] Create `CommissionDashboardScreen` — agent's personal commission dashboard: (1) YTD GCI total (large number, prominent), (2) YTD Agent Net total, (3) Cap progress bar: "${amount_contributed} of ${cap_amount} cap used ({pct}%)" with color gradient (green→yellow→red), projected cap date based on current pace, (4) Pending GCI: deals under contract not yet closed, (5) Monthly breakdown: bar chart showing GCI by month (current year vs prior year overlay), (6) Per-transaction history: expandable cards showing property address, sale price, commission rate, gross commission, all deductions, agent net. Tap for full breakdown detail. Sort by date (newest first). Filter by status (pending/approved/paid). (7) Commission forecast: based on pipeline deals, projected GCI for next 3 months.
+- [ ] Create `CommissionCalculatorScreen` — quick what-if calculator (not tied to a transaction). Input: sale price, commission rate, side (listing/buyer), referral fee %, agent's current plan (auto-selected). Output: full breakdown in real-time as inputs change. "What would I make on a $450,000 sale?" → instant answer with every line item. Pre-cap vs post-cap toggle: "If I've already capped, I'd make $X. Before cap: $Y." Save calculation to notes or share via text/email.
+- [ ] Create `CommissionRecordDetailScreen` — full waterfall view for a single transaction: property photo (if available), address, sale price, closing date. Breakdown as a visual waterfall chart: gross → referral → net_after_referral → broker_share → franchise → transaction_fee → eao → team_split → other → AGENT NET. Each step shows amount and percentage. CDA section: status, download PDF, request approval. Notes field. Status badge.
+- [ ] Create `CDAListScreen` — list of generated CDAs: document number, property address, amount, status badge (draft/pending/approved/sent), date. Filter by status. Tap to view/download PDF. For brokers: approve button inline. For TCs: generate CDA button from transaction.
+- [ ] Create `CommissionPlansScreen` (broker only) — list of all commission plans: name, type badge (split/cap/flat/hybrid), agent/broker split, cap amount, agent count assigned. Tap to edit. Create new plan button. Default plan star indicator.
+- [ ] Create `CommissionPlanEditorScreen` (broker only) — full plan creation/edit form: name, description, plan_type selector (changes visible fields), agent_split/broker_split sliders (must sum to 100), cap fields (amount, period, post-cap splits), franchise fee fields, transaction fee, E&O fee (with caps), desk fee, tech fee, team split toggle (shows team_lead selector), referral default, minimum commission, effective date, end date. Preview section: "On a $400K sale at 2.5%, an agent on this plan would net: $X." Save/update.
+- [ ] Create `PlanAssignmentScreen` (broker only) — assign plans to agents: agent roster list, current plan per agent, "Change Plan" action → plan picker + effective date + optional overrides (custom split, custom cap). Bulk assign: select multiple agents → assign same plan.
+- [ ] Create `Cap1099Screen` — cap tracking leaderboard (broker view): all agents ranked by cap progress, color-coded (green=capped, yellow=75%+, gray=below). 1099 section: year selector, "Generate 1099 Data" button → downloads CSV. Preview: agent list with YTD totals.
+- [ ] All screens: 4 states, Riverpod providers, ConsumerWidget. Currency formatting with locale-appropriate symbols. All financial displays show 2 decimal places.
+
+#### Web CRM Portal (~4h)
+- [ ] Create `useCommissionPlans` hook — CRUD plans, list with counts. broker/owner role check.
+- [ ] Create `useCommissionPlanAssignments` hook — assign/change plans for agents.
+- [ ] Create `useCommissionRecords` hook — paginated list, filter by agent/date/status, calculate totals.
+- [ ] Create `useCommissionCaps` hook — read cap status per agent, milestone data.
+- [ ] Create `useCommissionCDAs` hook — generate, approve, send CDAs. PDF download.
+- [ ] Create Commission Dashboard page at `/dashboard/commissions` — agent view (personal stats) or broker view (company-wide).
+- [ ] Create Commission Plans page at `/dashboard/commissions/plans` — plan CRUD (broker only).
+- [ ] Create Plan Assignment page at `/dashboard/commissions/assignments` — agent roster with plan assignment.
+- [ ] Create CDA Management page at `/dashboard/commissions/cdas` — list, generate, approve, send.
+- [ ] Create 1099 Export page at `/dashboard/commissions/1099` — year selector, generate, download.
+
+#### Realtor Portal (~1h)
+- [ ] Wire Commission pages into realtor portal: "Commissions" nav item with sub-items: Dashboard, Calculator, CDAs, Plans (broker only), 1099 (broker only).
+
+#### CUST9 Module Registration
+- [ ] Register `commission_plans` module: configurable plan types, fee structures, cap periods.
+- [ ] Register `commission_calculator` module: quick calculator visibility per role.
+- [ ] Register `commission_cda` module: CDA template customization, auto-send toggle, title company defaults.
+
+#### Security Verification (~1h)
+- [ ] RLS tested: agents see only own commission records, brokers see all company records, cross-company isolation verified
+- [ ] SSN/EIN data: encrypted at rest, only decrypted in 1099-export EF, never appears in logs or API responses other than 1099
+- [ ] Financial calculations: verified with 10+ test cases covering all plan types (split, cap, post-cap, team, referral, franchise, minimum commission). Results match manual calculations to the penny
+- [ ] CDA immutability: data_snapshot cannot be modified after generation (RLS policy: no UPDATE on data_snapshot column, only status changes)
+- [ ] Broker-only operations verified: only brokerage_owner/managing_broker can create plans, assign plans, approve CDAs, generate 1099s
+- [ ] No money movement: verified no payment processing, no trust account, no ACH — tracking only
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal and realtor-portal
+- [ ] Commit: `[RE8] Commission Engine — 7 commission models (split/cap/flat/hybrid/team/referral/bonus), plan builder with all fee types (franchise/transaction/E&O/desk/tech), per-transaction waterfall calculation, cap tracking with milestone notifications (75%/90%/100%), CDA generation via ZForge (PDF, broker approval, title company send), agent commission dashboard (YTD GCI, net, cap progress, forecast), what-if calculator, plan assignment with per-agent overrides, 1099 data export, commission bonuses`
+
+---
+
+### RE9 — Dispatch Engine: Work Orders, Contractor DB, Email Dispatch, Bid Collection, Landing Pages, Tracking, Ratings (~28h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md Section 13, REALTOR1 full dispatch spec (07_SPRINT_SPECS.md lines 13786-13842), s132-realtor-cross-reference.md*
+*Depends on: RE1 (auth/RBAC — realtor role), RE2 (CRM contacts — customer/property context), REALTOR1 (absorbs and REPLACES REALTOR1 — this is the definitive dispatch sprint)*
+*Covers: realtor (dispatch jobs), team_lead (oversight), managing_broker (contractor DB management), tc (work order coordination)*
+*CUST9 Modules: `dispatch_work_orders`, `dispatch_contractor_directory`, `dispatch_bid_collection`, `dispatch_ratings`*
+
+**What this builds:** The cross-platform flywheel engine. When a realtor needs repairs, inspections, staging, cleaning, or any trade work done on a property, they dispatch a work order to up to 200 trade-matched contractors within a configurable radius. Contractors receive professional email invitations with property photos and AI-enhanced descriptions, click through to a public landing page, and submit bids — creating a Zafto account in the process (the acquisition flywheel). The realtor compares bids side-by-side, selects a winner, tracks the work to completion with GPS-stamped photo documentation, and rates the contractor. Two-way ratings build trust on both sides.
+
+**This sprint ABSORBS and EXPANDS REALTOR1.** REALTOR1 was the original dispatch spec. RE9 is the definitive version within the RE sprint sequence, incorporating everything from REALTOR1 plus: expanded contractor DB (50-state licensing ETL, not just top 10), deeper bid comparison analytics, enhanced work order lifecycle, inspector dispatch (not just contractors), staging company dispatch, and integration with the full realtor CRM pipeline. When building, reference REALTOR1 for detailed implementation notes but follow RE9 as the execution checklist.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (property owner context), `properties` (property data for work order context), `property_scans` (Recon data for AI enhancement), existing contractor `jobs` table schema (reference for compatibility)
+- Writes to: `dispatch_work_orders` (NEW), `dispatch_bids` (NEW), `dispatch_contractor_directory` (NEW), `dispatch_email_events` (NEW), `dispatch_ratings` (NEW), `email_domain_health` (NEW), `dispatch_bid_messages` (NEW)
+- Calls: SendGrid (email dispatch — transactional), SignalWire (SMS notifications), Google Places API (contractor enrichment), Supabase Storage (photo hosting)
+- Called by: REALTOR2 (one-click dispatch from property scan report), RE10 (dispatch for listing repairs), Transaction Engine RE4/RE5 (dispatch for inspection/repair requests during transaction)
+- Wires to: Existing contractor job system (contractors who bid and win enter the standard job pipeline), Recon (property intelligence feeds AI enhancement), Estimation Engine (ZIP-specific pricing for cost estimates), ZForge (work order documentation)
+
+#### Database Layer (~7h)
+- [ ] Create table `dispatch_contractor_directory`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  source text NOT NULL CHECK (licensing_board, google_places, zafto_user, manual)
+  zafto_user_id uuid FK users(id) — NULL if external; linked when they create account and bid
+  zafto_company_id uuid FK companies(id) — linked Zafto company if they're a subscriber
+  company_name text NOT NULL
+  contact_first_name text
+  contact_last_name text
+  email text
+  phone text
+  secondary_phone text
+  website text
+  address_street text
+  address_city text
+  address_state text NOT NULL
+  address_zip text NOT NULL
+  lat decimal(10,7)
+  lng decimal(10,7)
+  trades text[] NOT NULL — standardized Zafto trade codes: roofing, plumbing, electrical, hvac, painting, gc, handyman, flooring, drywall, landscaping, gutters, fencing, concrete, siding, windows, pest_control, tree_service, cleaning, locksmith, chimney, demolition, staging, photography, inspection
+  license_number text
+  license_state text
+  license_status text CHECK (active, inactive, expired, suspended, revoked, unknown)
+  license_type text — contractor classification from state board
+  license_verified_at timestamptz
+  insurance_verified boolean DEFAULT false
+  insurance_expiry date
+  google_place_id text
+  google_rating decimal(2,1)
+  google_review_count integer
+  zafto_rating decimal(2,1) DEFAULT 0
+  zafto_review_count integer DEFAULT 0
+  zafto_approved boolean DEFAULT false — star qualification from REALTOR3
+  total_dispatches_received integer DEFAULT 0
+  total_bids_submitted integer DEFAULT 0
+  total_jobs_won integer DEFAULT 0
+  total_jobs_completed integer DEFAULT 0
+  avg_response_time_hours decimal(6,1)
+  engagement_score integer DEFAULT 50 — 0-100, based on open/click/bid rates
+  bounce_count integer DEFAULT 0
+  is_suppressed boolean DEFAULT false — hard bounce or unsubscribe
+  suppressed_reason text
+  last_dispatched_at timestamptz
+  last_bid_at timestamptz
+  profile_completeness_pct integer DEFAULT 0
+  portfolio_photos text[] — Supabase Storage URLs
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(address_state, address_zip)`, `(trades) USING GIN`, `(engagement_score DESC)`, `(zafto_approved) WHERE zafto_approved = true`, `(is_suppressed) WHERE is_suppressed = false`, `(zafto_user_id) WHERE zafto_user_id IS NOT NULL`, `(email)`, `(license_number, license_state)`. NO company_id — shared directory. RLS: all authenticated users can SELECT (public directory), only system/EFs can INSERT/UPDATE (no direct user writes to directory). Audit trigger. updated_at trigger.
+- [ ] Create table `dispatch_work_orders`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) — realtor's company
+  created_by uuid NOT NULL FK users(id) — realtor user
+  property_address text NOT NULL
+  property_city text
+  property_state text
+  property_zip text NOT NULL
+  property_lat decimal(10,7)
+  property_lng decimal(10,7)
+  property_id uuid FK properties(id) — link to properties table if property exists
+  contact_id uuid FK realtor_contacts(id) — property owner from CRM
+  transaction_id uuid FK realtor_transactions(id) — link to transaction if dispatch from deal
+  trade_needed text NOT NULL — from standardized trades list
+  title text NOT NULL
+  description_raw text NOT NULL — realtor's original description
+  description_ai text — AI-enhanced description from Sonnet 4.5
+  urgency text DEFAULT 'routine' CHECK (routine, urgent, emergency)
+  estimated_cost_low decimal(10,2) — from estimation engine
+  estimated_cost_high decimal(10,2)
+  photos text[] — Supabase Storage URLs (GPS-stamped)
+  scan_report_id uuid FK — link to REALTOR2 scan report if dispatched from scan
+  work_order_type text DEFAULT 'standard' CHECK (standard, quick_job, scan_dispatch, inspection_request)
+  dispatch_radius_miles integer DEFAULT 50
+  max_dispatches integer DEFAULT 200
+  status text DEFAULT 'draft' CHECK (draft, dispatching, bids_open, contractor_selected, scheduled, in_progress, documentation, review, complete, cancelled)
+  bid_deadline timestamptz — e.g., 3 days from dispatch
+  dispatched_at timestamptz
+  dispatched_count integer DEFAULT 0
+  delivered_count integer DEFAULT 0
+  opened_count integer DEFAULT 0
+  clicked_count integer DEFAULT 0
+  bids_received_count integer DEFAULT 0
+  selected_bid_id uuid FK dispatch_bids(id)
+  selected_contractor_id uuid FK dispatch_contractor_directory(id)
+  scheduled_date date
+  scheduled_time_start time
+  scheduled_time_end time
+  started_at timestamptz
+  completed_at timestamptz
+  final_cost decimal(10,2)
+  completion_photos text[]
+  completion_notes text
+  warranty_info text
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(company_id)`, `(created_by)`, `(status)`, `(property_zip)`, `(trade_needed)`, `(dispatched_at)`. RLS: company_id scoped for realtor CRUD. Audit trigger. updated_at trigger.
+- [ ] Create table `dispatch_bids`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  work_order_id uuid NOT NULL FK dispatch_work_orders(id)
+  contractor_directory_id uuid NOT NULL FK dispatch_contractor_directory(id)
+  contractor_user_id uuid FK users(id) — if they have a Zafto account
+  contractor_company_name text NOT NULL
+  contractor_email text NOT NULL
+  contractor_phone text
+  bid_amount decimal(10,2) NOT NULL
+  bid_amount_high decimal(10,2) — range bid: $500-$800
+  estimated_timeline_days integer
+  estimated_start_date date
+  description text — contractor's notes/approach
+  portfolio_photos text[] — before work examples
+  license_number text
+  insurance_verified boolean DEFAULT false
+  zafto_approved boolean DEFAULT false
+  google_rating decimal(2,1)
+  distance_miles decimal(6,1)
+  response_time_hours decimal(6,1)
+  status text DEFAULT 'submitted' CHECK (submitted, viewed, shortlisted, accepted, declined, withdrawn)
+  viewed_at timestamptz
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(work_order_id)`, `(contractor_directory_id)`, `(status)`, `(bid_amount)`. RLS: realtor (work order owner) can SELECT all bids for their work orders, contractor can SELECT/INSERT own bids. Audit trigger. updated_at trigger.
+- [ ] Create table `dispatch_email_events`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  work_order_id uuid NOT NULL FK dispatch_work_orders(id)
+  contractor_directory_id uuid NOT NULL FK dispatch_contractor_directory(id)
+  email_address text NOT NULL
+  event_type text NOT NULL CHECK (queued, sent, delivered, opened, clicked, bounced, unsubscribed, spam_report)
+  message_id text — SendGrid message ID for webhook matching
+  timestamp timestamptz DEFAULT now()
+  metadata jsonb
+  ```
+  Indexes: `(work_order_id)`, `(message_id)`, `(contractor_directory_id)`, `(event_type)`. No company_id needed (event log, not business data). No soft delete (immutable log).
+- [ ] Create table `dispatch_ratings`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id)
+  work_order_id uuid NOT NULL FK dispatch_work_orders(id)
+  rater_id uuid NOT NULL FK users(id) — who gave the rating
+  rated_id uuid NOT NULL — who received (could be contractor_directory_id or user_id)
+  rater_type text NOT NULL CHECK (realtor, contractor)
+  rated_type text NOT NULL CHECK (realtor, contractor)
+  overall_rating integer NOT NULL CHECK (1-5)
+  communication_rating integer CHECK (1-5)
+  quality_rating integer CHECK (1-5)
+  timeliness_rating integer CHECK (1-5)
+  professionalism_rating integer CHECK (1-5)
+  scope_clarity_rating integer CHECK (1-5) — contractor rates realtor: how clear was the job scope?
+  payment_speed_rating integer CHECK (1-5) — contractor rates realtor
+  review_text text
+  is_public boolean DEFAULT true
+  response_text text — rated party can respond
+  response_at timestamptz
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  UNIQUE (work_order_id, rater_id) WHERE deleted_at IS NULL — one rating per party per job
+  ```
+  Indexes: `(work_order_id)`, `(rated_id, rated_type)`, `(rater_id)`. RLS: company_id scoped for realtor, public SELECT for contractor profiles. Audit trigger. updated_at trigger.
+- [ ] Create table `dispatch_bid_messages`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  bid_id uuid NOT NULL FK dispatch_bids(id)
+  sender_id uuid NOT NULL FK users(id)
+  sender_type text CHECK (realtor, contractor)
+  message text NOT NULL
+  attachments text[]
+  read_at timestamptz
+  created_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(bid_id, created_at)`. RLS: participants of the bid can read/write. Audit trigger.
+- [ ] Create table `email_domain_health`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  domain text NOT NULL UNIQUE
+  daily_send_limit integer NOT NULL
+  current_daily_sends integer DEFAULT 0
+  warmup_day integer DEFAULT 1
+  warmup_schedule jsonb — {day_1: 50, day_7: 100, day_14: 500, day_21: 2000}
+  bounce_rate_7d decimal(5,2) DEFAULT 0
+  spam_rate_7d decimal(5,2) DEFAULT 0
+  is_healthy boolean DEFAULT true
+  last_reset_at timestamptz DEFAULT now()
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Index: `(domain)`.
+- [ ] Create table `guest_contractors`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  dispatch_bid_id uuid FK dispatch_bids(id) — the bid that triggered guest access
+  contractor_directory_id uuid NOT NULL FK dispatch_contractor_directory(id)
+  email text NOT NULL
+  company_name text NOT NULL
+  trade text NOT NULL
+  accept_token text NOT NULL UNIQUE — cryptographically random, 32 bytes hex; used in email acceptance link
+  token_expires_at timestamptz NOT NULL DEFAULT (now() + interval '7 days')
+  status text DEFAULT 'pending' CHECK (pending, accepted, completed, upgraded)
+  jobs_completed_as_guest integer DEFAULT 0
+  upgrade_nudge_shown_count integer DEFAULT 0
+  last_upgrade_nudge_at timestamptz
+  zafto_user_id uuid FK users(id) — populated when guest upgrades to full account
+  zafto_company_id uuid FK companies(id) — populated when guest upgrades
+  guest_dashboard_last_accessed_at timestamptz
+  created_at timestamptz DEFAULT now()
+  updated_at timestamptz DEFAULT now()
+  deleted_at timestamptz
+  ```
+  Indexes: `(email)`, `(accept_token)`, `(status)`, `(contractor_directory_id)`, `(jobs_completed_as_guest)`. RLS: guest can SELECT own record via token match, realtor can SELECT for their work orders. Audit trigger. updated_at trigger.
+- [ ] Create ZIP centroid lookup table (or verify existing): `zip_centroids` — all ~41K US ZIP codes with lat/lng centroid for PostGIS distance queries. Seed from Census ZCTA data (free).
+- [ ] Create migration file. Run `npm run gen-types` and copy to all portals.
+
+#### Edge Functions (~8h)
+- [ ] Create `dispatch-ingest-contractors` EF: Scheduled cron (monthly). Ingests contractor data from state licensing board websites. Start with all 50 states (expand from REALTOR1's top-10). Per state: (1) Fetch from state licensing API/website/Socrata, (2) Parse contractor records: name, company, license number, classification, city/ZIP, status, email if available, (3) Map state license classifications to standardized Zafto trades, (4) Upsert into dispatch_contractor_directory (match on license_number + license_state), (5) Log fetch stats to data_sources. Handle per-state format differences with pluggable parsers. Graceful degradation: if one state fails, continue with others.
+- [ ] Create `dispatch-enrich-google` EF: For contractors without email in licensing data. Batch process: query Google Places API with contractor name + city + trade. Extract: email, phone, website, rating, review_count, place_id. Respect Google API free tier limits. Update directory records. Skip if already enriched within 90 days.
+- [ ] Create `dispatch-create-work-order` EF: POST with work order data + optional photos. (1) Validate inputs (trade, address, description required), (2) If photos included: upload to Supabase Storage with GPS metadata, (3) AI enhancement: send description + photos to Sonnet 4.5 for professional enhancement (reuse REALTOR1 pattern — identify equipment, suggest scope, enhance language), (4) Get cost estimate from estimation engine (trade + ZIP → price range), (5) Create work_order record, (6) Return work_order_id. Rate limit: 5 work orders per realtor per day (free tier: 3 total, then upgrade prompt).
+- [ ] Create `dispatch-send-emails` EF: POST with work_order_id. (1) Query contractors matching: trade IN work_order.trade_needed AND within radius (PostGIS ST_DWithin on ZIP centroids) AND NOT suppressed AND engagement_score > 20. Sort by: Zafto Approved first, then engagement_score DESC, then distance ASC. Limit to max_dispatches (default 200). (2) Check email_domain_health — respect warmup schedule and daily limit. (3) Compose email from professional HTML template: property photo (hosted URL, not embedded), AI-enhanced description, property address + city, trade needed, urgency badge, estimated cost range, realtor name + brokerage + license number, big blue CTA "View Full Details & Submit Bid" → links to landing page. Footer: Zafto branding, one-click unsubscribe, physical address (CAN-SPAM). (4) Stagger sending: batches of 20 every 3 minutes over ~30 minutes via SendGrid transactional API. (5) Create dispatch_email_events record per send (queued → sent). (6) Update work_order dispatch counts. (7) Update contractor last_dispatched_at and total_dispatches_received.
+- [ ] Create `dispatch-email-webhook` EF: Receives SendGrid webhook events (delivered, opened, clicked, bounced, unsubscribed, spam_report). (1) Check webhook_events for idempotency (duplicate event_id → return 200), (2) Match to dispatch_email_events via message_id, (3) Update event record, (4) Update work order aggregate counts (delivered_count, opened_count, clicked_count), (5) Bounce handling: hard bounce → set contractor is_suppressed=true, suppressed_reason='hard_bounce'. Soft bounce → increment bounce_count, suppress after 3 soft bounces in 30 days. (6) Unsubscribe → set is_suppressed=true, suppressed_reason='unsubscribed'. (7) Update engagement_score: opens+clicks increase score, no activity after 5 dispatches decreases score. Engagement score algorithm: base 50, +5 per open (max 20), +10 per click (max 20), +15 per bid (max 30), -10 per 5 dispatches with 0 opens.
+- [ ] Create `dispatch-landing-page` EF: GET `jobs.zafto.cloud/[work-order-id]` — serves public landing page (SSR or static). Full job details: photos (carousel), AI description, property address, trade, urgency, budget range, realtor name/brokerage/license. "Submit a Bid" CTA. No login required to VIEW. SEO-friendly meta tags (Google indexes → organic contractor traffic). Security: no sensitive data exposed (no owner name, no exact budget, no internal notes).
+- [ ] Create `dispatch-submit-bid` EF: POST from landing page. (1) If contractor has Zafto account: authenticate, (2) If new: collect email + company name + trade + ZIP (30 seconds, no credit card), create minimal Zafto account (the flywheel — every bid submission creates a potential subscriber), (3) Validate bid data: amount (positive, reasonable range check), timeline, description, (4) Create dispatch_bids record, (5) Link to contractor_directory record (create if new), (6) Notify realtor: push notification + email "New bid received on [property address] from [contractor name]: $[amount]", (7) Track response_time_hours from dispatch to bid. Progressive onboarding: after first bid, prompt "Complete your profile to win more jobs" → license, insurance, portfolio.
+- [ ] Create `dispatch-accept-bid` EF: POST with bid_id. (1) Update bid status to 'accepted', (2) Update work_order: selected_bid_id, selected_contractor_id, status='contractor_selected', (3) Notify winning contractor immediately: email + push "You've been selected for [job] at [address]! Confirm your start date.", (4) Notify declined contractors: professional decline email "Another contractor was selected. You'll be notified of future opportunities." (no ghosting), (5) Update all other bids to 'declined'.
+- [ ] Create `dispatch-update-status` EF: POST with work_order_id + new_status + optional photos/notes. Contractor can update: scheduled (with date), in_progress, documentation (with completion photos + notes). Realtor can update: review → complete. Each status change: create interaction log, notify other party (push + email). GPS-stamped photo upload verification.
+- [ ] Create `dispatch-rate` EF: POST with work_order_id + ratings + review_text. Both parties can rate after status='complete'. Contractor rates realtor on: communication, scope_clarity, payment_speed, professionalism. Realtor rates contractor on: quality, timeliness, communication, professionalism. Update contractor's zafto_rating (rolling average), zafto_review_count. Check Zafto Approved qualification thresholds.
+- [ ] Create `dispatch-guest-accept` EF: GET/POST `jobs.zafto.cloud/accept/[token]` — contractor clicks email link to accept a job WITHOUT creating a full Zafto account. (1) Validate token exists, not expired, status='pending', (2) Update guest_contractors.status = 'accepted', (3) Update dispatch_bids.status = 'accepted' for linked bid, (4) Update work_order status to 'contractor_selected', (5) Notify realtor: "Contractor [name] accepted the job", (6) Return minimal guest dashboard URL with session cookie (no full auth needed — token-based access). NO signup required. Email link is the only auth. Token expires after 7 days if not used.
+- [ ] Create `dispatch-guest-dashboard` EF: GET — serves minimal contractor dashboard (SSR page at `jobs.zafto.cloud/dashboard/[token]`). Shows: accepted job details (property address, trade, description, photos), status update buttons (scheduled/in_progress/documentation/complete), photo upload for progress/completion, notes field, realtor contact info. NO access to any other Zafto features. Persistent upgrade banner: "Want to manage all your jobs, get more leads, and grow your business? Create your free Zafto account." After 3rd completed job: full-screen upgrade prompt with benefits list.
+- [ ] Create `dispatch-guest-auto-upgrade` EF: Triggered when guest_contractors.jobs_completed_as_guest reaches 3. Sends email: "You've completed 3 jobs through Zafto! Create your free account to: manage all your jobs in one place, build your portfolio, get matched to more work, track your earnings. [Create Free Account]". Links to signup page pre-filled with guest data (email, company_name, trade). On account creation: (1) Create full Zafto user + company, (2) Link all past guest work orders to new account, (3) Copy ratings/reviews to new profile, (4) Update guest_contractors.status = 'upgraded', zafto_user_id, zafto_company_id, (5) Update contractor_directory: link zafto_user_id.
+- [ ] All EFs: JWT auth (except landing page GET and guest-accept/guest-dashboard which use token auth), CORS, input validation, rate limiting, structured errors.
+
+#### Flutter (~7h)
+- [ ] Create `DispatchDashboardScreen` — active work orders hub: cards per open work order showing status badge, bid count badge, property address, trade icon, time since posted, latest activity. Sorted by most recent activity. FAB: "Post Quick Job" (primary, prominent) + "Post Work Order" (secondary). Bid alert badge: "3 new bids on 123 Oak St." Pull-to-refresh. Tabs: Active, Completed, All. Empty state: "Post your first job to find contractors."
+- [ ] Create `QuickJobScreen` — streamlined flow (under 60 seconds): (1) Camera button → take photo (or select from gallery), (2) Trade dropdown (roofing, plumbing, electrical, hvac, painting, etc.), (3) Description text field with AI assist button, (4) Property address (autocomplete from recent addresses or CRM properties), (5) Urgency toggle (routine/urgent/emergency), (6) "Dispatch to 200 Contractors" button. AI enhancement: if enabled, photo analyzed by Sonnet 4.5 → description auto-enhanced with equipment identification, scope suggestion, professional language. Equipment identification: if photo shows equipment (HVAC unit, water heater, electrical panel), AI reads visible labels → identifies make/model/year → appends known issues. One-tap from photo to dispatch.
+- [ ] Create `WorkOrderCreateScreen` — full work order form: title, trade, property address (with map pin), photos (multi-select, camera, GPS stamp), detailed description, urgency, dispatch radius slider (10-100 miles), max dispatches slider (50-200), bid deadline (date picker, default 3 days), link to transaction (if dispatching from deal), link to scan report (if dispatching from REALTOR2). Preview before send: shows email template preview + estimated contractor count.
+- [ ] Create `WorkOrderDetailScreen` — full lifecycle view: (1) Header: property address, trade, urgency, status pipeline visualization (draft → dispatching → bids open → contractor selected → scheduled → in progress → complete), (2) Dispatch stats: emails sent / delivered / opened / clicked (mini funnel), (3) Bid inbox: list of bids sorted by recommended (Zafto Approved first, then price/rating/distance weighted). Each bid card: contractor name, Zafto Approved badge, Google rating, bid amount, timeline, distance, response time, profile completeness. Tap to expand: full bid details, portfolio photos, license info. (4) Compare mode: select up to 3 bids → side-by-side overlay highlighting price delta, rating gap, distance, timeline difference. (5) Action buttons: Accept Bid, Decline, Message Contractor. (6) Tracking section (after contractor selected): status updates with timestamps, GPS-stamped photos from contractor, contractor notes, scheduled date/time. (7) Completion section: before/after photos, final cost, warranty info, rate contractor button.
+- [ ] Create `ContractorDirectoryScreen` — searchable directory: search by trade, ZIP, name. Filter: Zafto Approved only, minimum rating, verified license. Results: card per contractor with name, trades badges, rating, review count, distance, Approved badge. Tap for full profile: portfolio photos, reviews, license info, response stats, jobs completed.
+- [ ] Create `RatingScreen` — after work order complete: overall stars (1-5, required), category ratings (communication, quality, timeliness, professionalism — 1-5 each, optional), review text field, submit. Contractor version: rate realtor on communication, scope clarity, payment speed, fairness.
+- [ ] Create `BidMessageScreen` — chat-style messaging between realtor and contractor per bid: text messages, photo attachments, timestamp, read receipts. Used for clarifying scope, negotiating, scheduling.
+- [ ] All screens: 4 states, Riverpod providers, Realtime subscriptions (new bids appear instantly), soft delete filters.
+
+#### Guest Contractor Flow (~2h)
+- [ ] Build `jobs.zafto.cloud/accept/[token]` — public page (no auth): "You've been selected for [job title] at [address]. [Accept Job] [Decline]". Accept calls `dispatch-guest-accept` EF. Decline sends polite decline notification to realtor.
+- [ ] Build `jobs.zafto.cloud/dashboard/[token]` — minimal guest dashboard: job card (address, trade, description, photos), status update buttons, photo upload (GPS-stamped), notes field, realtor contact info. Persistent upgrade banner. Mobile-optimized. Works without any app download.
+- [ ] Build upgrade prompt flow: after 3 completed guest jobs, show full-screen prompt with value props (manage jobs, build portfolio, get more work, track earnings). "Create Free Account" button → pre-filled signup. "Maybe Later" dismisses for 7 days.
+
+#### Web CRM Portal (~4h)
+- [ ] Create `useDispatchWorkOrders` hook — CRUD work orders, filter by status/trade, realtime bid count updates.
+- [ ] Create `useDispatchBids` hook — read bids per work order, accept/decline, compare mode data.
+- [ ] Create `useDispatchContractorDirectory` hook — search/filter contractors, read profiles.
+- [ ] Create `useDispatchRatings` hook — submit ratings, read ratings per contractor/realtor.
+- [ ] Create `useDispatchMessages` hook — bid messaging, realtime message subscription.
+- [ ] Create Dispatch Dashboard page at `/dashboard/dispatch` — work order list + quick job form.
+- [ ] Create Work Order Detail page at `/dashboard/dispatch/[work-order-id]` — full lifecycle view with bid inbox, compare, tracking.
+- [ ] Create Contractor Directory page at `/dashboard/dispatch/contractors` — searchable directory.
+
+#### Realtor Portal (~1h)
+- [ ] Wire Dispatch pages into realtor portal: "Dispatch" top-level nav with sub-items: Dashboard, New Job, Contractor Directory.
+
+#### Public Landing Page (~1h)
+- [ ] Build `jobs.zafto.cloud/[id]` public page: responsive, professional layout. Property photo carousel, AI-enhanced description, trade/urgency/budget badges, realtor info. "Submit a Bid" form: bid amount, timeline, description, contractor info (email, company, trade, ZIP). Account creation for new contractors (minimal friction). Mobile-optimized. SEO meta tags. OG tags for social sharing.
+
+#### CUST9 Module Registration
+- [ ] Register `dispatch_work_orders` module: configurable dispatch radius, max dispatches per plan tier, AI enhancement toggle, urgency levels.
+- [ ] Register `dispatch_ratings` module: configurable rating categories, minimum ratings for Zafto Approved.
+
+#### Security Verification (~1h)
+- [ ] RLS tested: realtors see only own company work orders, contractors see only bids they submitted, cross-company isolation verified
+- [ ] Landing page: no sensitive data exposed (no owner SSN, no internal pricing, no agent commission data)
+- [ ] Email dispatch: CAN-SPAM compliant (physical address, unsubscribe, accurate sender), bounce/suppress handling tested
+- [ ] Bid submission: rate limited (max 1 bid per contractor per work order), input validated (no SQL injection in description field)
+- [ ] Contractor directory: no company_id scoping (shared resource), but write-protected from direct user manipulation
+- [ ] Photo uploads: virus scan consideration, file type validation (JPEG/PNG only), max size 10MB
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal and realtor-portal
+- [ ] Commit: `[RE9] Dispatch Engine — 50-state contractor directory (licensing board ETL + Google Places enrichment), work order creation (standard + quick job with AI enhancement), staggered email dispatch (200/job, SendGrid, warmup, engagement scoring), public contractor landing page (jobs.zafto.cloud), bid submission + account creation flywheel, guest contractor flow (token-based acceptance, minimal dashboard, no signup required, auto-upgrade after 3 jobs), bid comparison (side-by-side, weighted scoring), work order lifecycle tracking (GPS-stamped photos, status pipeline), two-way rating system (5 categories each), bid messaging, contractor directory search, CAN-SPAM compliance`
+
+---
+
+
+### RE10 — Listing Management (~56h) — S144
+
+*Source: `re10-listing-ops-research-s144.md` (open house, showing, listing lifecycle research), `listing-engine-deep-research-s132.md` (MLS/RESO, competitor analysis), `53_REALTOR_PLATFORM_SPEC.md` section 11*
+*Depends on: RE1 (portal scaffold + RBAC), RE2 (CRM contacts pipeline)*
+*This is the LARGEST single RE sprint — covers listing creation, showing management, open house management, and listing lifecycle in one unified system. No competitor connects all four.*
+
+**System Connectivity:**
+- Reads from: `property_scans` (Recon auto-populate address/sqft/beds/baths/year_built/roof/equipment), `realtor_contacts` (RE2 — seller/buyer contact records), `company_app_profiles` (CUST9 — module enablement), `realtor_teams` / `realtor_team_members` (RE1 — team delegation)
+- Writes to: `realtor_listings`, `listing_photos`, `listing_status_history`, `listing_health_scores`, `listing_alerts`, `price_change_requests`, `seller_reports`, `showing_rules`, `showing_requests`, `showing_feedback`, `open_houses`, `open_house_visitors`, `visitor_events`, `open_house_follow_ups`
+- Wires to: Recon (property data auto-populate), Sketch Engine (floor plans as listing media), ZForge (seller report PDF generation), RE2 (open house visitors → CRM contacts pipeline), RE12 (marketing materials from listing data), RE11 (showing requests from buyer tour scheduler), Scheduler (showing calendar sync), client-portal (seller dashboard)
+- EFs call: `_shared/cors.ts`, `_shared/rate-limiter.ts`, Seam API (smart lock access codes), SignalWire (SMS showing notifications + follow-up drips), FCM (push notifications)
+- CUST9 Module IDs: `listing_management`, `showing_management`, `open_house`, `listing_lifecycle`
+
+---
+
+## A. Database Layer (~16h)
+
+### Migration: `20260220000200_re10_listing_management.sql`
+
+### Table 1: `realtor_listings`
+
+- [ ] Create table `realtor_listings`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  created_by_user_id uuid NOT NULL FK auth.users(id)
+  assigned_agent_user_id uuid FK auth.users(id)
+  team_id uuid FK realtor_teams(id)
+
+  -- Property identity
+  property_scan_id uuid FK property_scans(id) — Recon auto-populate link
+  address_line1 text NOT NULL
+  address_line2 text
+  city text NOT NULL
+  state text NOT NULL
+  zip text NOT NULL
+  county text
+  country text NOT NULL DEFAULT 'US'
+  latitude numeric(10,7)
+  longitude numeric(10,7)
+  parcel_number text
+  legal_description text
+
+  -- Property details
+  property_type text NOT NULL CHECK (property_type IN (
+    'single_family', 'condo', 'townhouse', 'multi_family', 'land',
+    'commercial', 'mobile_home', 'co_op', 'farm_ranch', 'other'
+  ))
+  property_subtype text
+  beds smallint
+  baths_full smallint
+  baths_half smallint
+  baths_total numeric(3,1) GENERATED ALWAYS AS (COALESCE(baths_full,0) + COALESCE(baths_half,0) * 0.5) STORED
+  sqft_living integer
+  sqft_lot integer
+  sqft_garage integer
+  stories smallint
+  year_built smallint
+  year_renovated smallint
+  parking_spaces smallint
+  parking_type text CHECK (parking_type IN ('garage_attached', 'garage_detached', 'carport', 'driveway', 'street', 'none'))
+  pool boolean DEFAULT false
+  pool_type text
+  hoa_fee numeric(10,2)
+  hoa_frequency text CHECK (hoa_frequency IN ('monthly', 'quarterly', 'annually', 'none'))
+  tax_amount numeric(10,2)
+  tax_year smallint
+  zoning text
+
+  -- Listing details
+  listing_status text NOT NULL DEFAULT 'draft' CHECK (listing_status IN (
+    'draft', 'coming_soon', 'active', 'active_under_contract', 'pending',
+    'contingent', 'withdrawn', 'temporarily_off_market', 'canceled',
+    'expired', 'closed_sold', 'relisted'
+  ))
+  list_price numeric(12,2)
+  original_list_price numeric(12,2)
+  sold_price numeric(12,2)
+  price_per_sqft numeric(10,2) GENERATED ALWAYS AS (
+    CASE WHEN sqft_living > 0 AND list_price IS NOT NULL
+    THEN ROUND(list_price / sqft_living, 2) ELSE NULL END
+  ) STORED
+  price_history jsonb DEFAULT '[]' — [{price, date, change_type, changed_by}]
+  commission_rate numeric(5,3)
+  buyer_agent_commission_rate numeric(5,3)
+  listing_agreement_start date
+  listing_agreement_end date
+  mls_number text
+  mls_name text
+
+  -- Dates / DOM tracking
+  listed_date date
+  pending_date date
+  sold_date date
+  withdrawn_date date
+  expired_date date
+  dom integer DEFAULT 0 — days on market (computed by trigger)
+  domp integer DEFAULT 0 — cumulative days on market for property
+  dom_last_calculated_at timestamptz
+
+  -- Description + features
+  public_remarks text — MLS description (max varies by MLS, typically 512-2500 chars)
+  private_remarks text — agent-only notes
+  showing_instructions text
+  features jsonb DEFAULT '{}' — {interior:[], exterior:[], community:[], appliances:[], flooring:[], heating:[], cooling:[], utilities:[]}
+  room_details jsonb DEFAULT '[]' — [{name, level, dimensions, description}]
+  school_district text
+  elementary_school text
+  middle_school text
+  high_school text
+  directions text
+
+  -- Media
+  virtual_tour_url_branded text — agent-branded tour URL
+  virtual_tour_url_unbranded text — MLS-compliant (no branding)
+  floor_plan_url text — from Sketch Engine
+  video_url text
+  primary_photo_id uuid — FK listing_photos(id) set after insert
+
+  -- RESO / MLS compliance
+  reso_property_type text
+  reso_property_sub_type text
+  reso_standard_status text
+  reso_listing_id text
+  reso_originating_system_name text
+  reso_modification_timestamp timestamptz
+
+  -- Seller info (denormalized for quick access)
+  seller_contact_id uuid FK realtor_contacts(id)
+  seller_name text
+  seller_email text
+  seller_phone text
+
+  -- Template
+  listing_template text CHECK (listing_template IN (
+    'luxury', 'starter_home', 'investment', 'fixer_upper', 'condo_townhouse',
+    'new_construction', 'land', 'commercial', 'custom'
+  ))
+
+  -- Fair Housing
+  fair_housing_scanned boolean DEFAULT false
+  fair_housing_scan_result jsonb — {passed: bool, violations: [{word, suggestion, severity}]}
+  fair_housing_scan_at timestamptz
+
+  -- Metadata
+  is_featured boolean DEFAULT false
+  is_pocket_listing boolean DEFAULT false
+  source text DEFAULT 'manual' CHECK (source IN ('manual', 'recon_import', 'mls_import', 'api'))
+  tags text[] DEFAULT '{}'
+  custom_fields jsonb DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `realtor_listings`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker','teamLead','realtor')`
+  - UPDATE: `company_id = requesting_company_id() AND (created_by_user_id = auth.uid() OR assigned_agent_user_id = auth.uid() OR requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker'))`
+  - DELETE: `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker')`
+- [ ] Indexes: `idx_realtor_listings_company` on `(company_id)`, `idx_realtor_listings_status` on `(company_id, listing_status)`, `idx_realtor_listings_agent` on `(assigned_agent_user_id)`, `idx_realtor_listings_mls` on `(mls_number)`, `idx_realtor_listings_zip` on `(zip)`, `idx_realtor_listings_price` on `(list_price)`, `idx_realtor_listings_dom` on `(dom)`, `idx_realtor_listings_seller` on `(seller_contact_id)`, `idx_realtor_listings_deleted` on `(deleted_at) WHERE deleted_at IS NULL`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+- [ ] Trigger: `calculate_dom_trigger` — on UPDATE of `listing_status`, if status changes to/from 'active'/'active_under_contract', recalculate `dom` as date diff between `listed_date` and now (or off-market date). Update `domp` by summing all active periods from `listing_status_history`.
+
+### Table 2: `listing_photos`
+
+- [ ] Create table `listing_photos`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  storage_path text NOT NULL — Supabase Storage path
+  url text NOT NULL — public or signed URL
+  thumbnail_url text
+  caption text
+  alt_text text — accessibility
+  sort_order integer NOT NULL DEFAULT 0
+  is_primary boolean DEFAULT false
+  photo_type text DEFAULT 'interior' CHECK (photo_type IN (
+    'exterior_front', 'exterior_back', 'exterior_side', 'aerial',
+    'interior', 'kitchen', 'living_room', 'bedroom', 'bathroom',
+    'garage', 'yard', 'pool', 'view', 'floor_plan', 'virtual_staging',
+    'twilight', 'drone', 'other'
+  ))
+  width integer
+  height integer
+  file_size_bytes integer
+  mime_type text
+  is_virtually_staged boolean DEFAULT false — CA AB 723 compliance
+  original_photo_id uuid FK listing_photos(id) — link to original if virtually staged
+  uploaded_by_user_id uuid FK auth.users(id)
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `listing_photos`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: `company_id = requesting_company_id()`
+- [ ] Indexes: `idx_listing_photos_listing` on `(listing_id, sort_order)`, `idx_listing_photos_primary` on `(listing_id) WHERE is_primary = true`, `idx_listing_photos_deleted` on `(deleted_at) WHERE deleted_at IS NULL`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+- [ ] Trigger: `enforce_single_primary_photo` — on INSERT/UPDATE where `is_primary = true`, set all other photos for same listing to `is_primary = false`
+
+### Table 3: `listing_status_history`
+
+- [ ] Create table `listing_status_history`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  previous_status text
+  new_status text NOT NULL
+  changed_by_user_id uuid NOT NULL FK auth.users(id)
+  change_reason text
+  notes text
+  mls_updated boolean DEFAULT false
+  mls_updated_at timestamptz
+  mls_compliance_deadline timestamptz — 2 business days from change
+  notification_sent boolean DEFAULT false
+  notification_sent_at timestamptz
+  created_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `listing_status_history`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: none (immutable log)
+  - DELETE: none (immutable log)
+- [ ] Indexes: `idx_listing_status_history_listing` on `(listing_id, created_at DESC)`, `idx_listing_status_history_compliance` on `(mls_compliance_deadline) WHERE mls_updated = false`
+- [ ] Trigger: `audit_trigger_fn()`
+- [ ] Trigger: `auto_insert_status_history` on `realtor_listings` — on UPDATE of `listing_status`, auto-insert row into `listing_status_history`
+- [ ] Trigger: `validate_status_transition` — enforce valid RESO status transitions:
+  ```
+  draft → coming_soon, active
+  coming_soon → active, withdrawn, canceled
+  active → active_under_contract, pending, contingent, withdrawn, temporarily_off_market, canceled, expired
+  active_under_contract → active (back on market), pending, withdrawn
+  pending → active (back on market), closed_sold, withdrawn
+  contingent → active, pending, closed_sold, withdrawn
+  withdrawn → active (relisted), relisted
+  temporarily_off_market → active
+  canceled → (new listing only)
+  expired → (new listing only)
+  closed_sold → (terminal)
+  relisted → active
+  ```
+
+### Table 4: `listing_health_scores`
+
+- [ ] Create table `listing_health_scores`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE UNIQUE
+  overall_score smallint NOT NULL CHECK (overall_score BETWEEN 0 AND 100)
+  dom_score smallint CHECK (dom_score BETWEEN 0 AND 25) — 25 pts max
+  showing_score smallint CHECK (showing_score BETWEEN 0 AND 25) — 25 pts max
+  feedback_score smallint CHECK (feedback_score BETWEEN 0 AND 25) — 25 pts max
+  market_position_score smallint CHECK (market_position_score BETWEEN 0 AND 25) — 25 pts max
+  showings_this_week integer DEFAULT 0
+  showings_total integer DEFAULT 0
+  feedback_count integer DEFAULT 0
+  avg_price_opinion numeric(3,1) — avg of buyer agent price opinions (1-5 scale)
+  positive_feedback_pct numeric(5,2)
+  negative_feedback_pct numeric(5,2)
+  offer_likelihood_avg numeric(3,1) — avg of "likely to make offer" ratings
+  absorption_rate_neighborhood numeric(5,2) — % homes sold / total available
+  price_vs_neighborhood_avg numeric(5,2) — listing $/sqft vs neighborhood avg $/sqft (positive = above avg)
+  health_trend text CHECK (health_trend IN ('improving', 'stable', 'declining'))
+  last_calculated_at timestamptz NOT NULL DEFAULT now()
+  recommendations jsonb DEFAULT '[]' — [{type, message, priority, action_url}]
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `listing_health_scores`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none
+- [ ] Indexes: `idx_listing_health_listing` on `(listing_id)`, `idx_listing_health_score` on `(company_id, overall_score)`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+
+### Table 5: `listing_alerts`
+
+- [ ] Create table `listing_alerts`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  recipient_user_id uuid NOT NULL FK auth.users(id)
+  alert_type text NOT NULL CHECK (alert_type IN (
+    'dom_7', 'dom_14', 'dom_21', 'dom_30', 'dom_45', 'dom_60', 'dom_90',
+    'no_showings', 'low_showings', 'negative_feedback_trend',
+    'price_above_market', 'listing_expiring', 'mls_compliance_deadline',
+    'status_change', 'price_change_approved', 'showing_request',
+    'feedback_received', 'open_house_summary', 'health_score_drop',
+    'back_on_market', 'custom'
+  ))
+  title text NOT NULL
+  message text NOT NULL
+  severity text NOT NULL DEFAULT 'info' CHECK (severity IN ('info', 'warning', 'critical', 'urgent'))
+  action_url text — deep link to relevant screen/page
+  action_label text — "Review CMA", "Reduce Price", etc.
+  is_read boolean DEFAULT false
+  read_at timestamptz
+  is_dismissed boolean DEFAULT false
+  dismissed_at timestamptz
+  notification_channels text[] DEFAULT '{in_app}' — in_app, email, sms, push
+  notification_sent_at timestamptz
+  metadata jsonb DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `listing_alerts`:
+  - SELECT: `company_id = requesting_company_id() AND recipient_user_id = auth.uid()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id() AND recipient_user_id = auth.uid()`
+  - DELETE: none (immutable)
+- [ ] Indexes: `idx_listing_alerts_recipient` on `(recipient_user_id, is_read, created_at DESC)`, `idx_listing_alerts_listing` on `(listing_id, alert_type)`, `idx_listing_alerts_unread` on `(recipient_user_id) WHERE is_read = false`
+- [ ] Trigger: `audit_trigger_fn()`
+
+### Table 6: `price_change_requests`
+
+- [ ] Create table `price_change_requests`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  requested_by_user_id uuid NOT NULL FK auth.users(id)
+  current_price numeric(12,2) NOT NULL
+  proposed_price numeric(12,2) NOT NULL
+  price_change_amount numeric(12,2) GENERATED ALWAYS AS (proposed_price - current_price) STORED
+  price_change_pct numeric(5,2) GENERATED ALWAYS AS (
+    CASE WHEN current_price > 0 THEN ROUND(((proposed_price - current_price) / current_price) * 100, 2) ELSE NULL END
+  ) STORED
+  reason text NOT NULL
+  supporting_data jsonb DEFAULT '{}' — {comp_addresses:[], avg_neighborhood_price, dom_at_request, showing_count, feedback_summary}
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'expired'))
+  approved_by_user_id uuid FK auth.users(id)
+  approved_at timestamptz
+  rejected_reason text
+  seller_notified boolean DEFAULT false
+  seller_notified_at timestamptz
+  seller_response text CHECK (seller_response IN ('approved', 'rejected', 'counter'))
+  seller_counter_price numeric(12,2)
+  mls_updated boolean DEFAULT false
+  mls_updated_at timestamptz
+  marketing_refresh_triggered boolean DEFAULT false
+  expires_at timestamptz DEFAULT (now() + interval '7 days')
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `price_change_requests`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker','teamLead','realtor')`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none
+- [ ] Indexes: `idx_price_change_listing` on `(listing_id, status)`, `idx_price_change_pending` on `(company_id) WHERE status = 'pending'`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+- [ ] Trigger: `apply_approved_price_change` — on UPDATE of `status` to 'approved', auto-update `realtor_listings.list_price`, append to `price_history` JSONB, and insert `listing_alerts` for saved-search buyer notifications
+
+### Table 7: `seller_reports`
+
+- [ ] Create table `seller_reports`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  generated_by_user_id uuid FK auth.users(id)
+  report_type text NOT NULL DEFAULT 'weekly' CHECK (report_type IN ('weekly', 'biweekly', 'monthly', 'open_house', 'price_change', 'custom'))
+  report_period_start date
+  report_period_end date
+  report_data jsonb NOT NULL DEFAULT '{}' — full report payload:
+  -- {
+  --   listing_performance: {views, saves, shares, inquiries_by_platform},
+  --   showing_activity: {total_showings, showings_per_week_trend[], feedback_summary},
+  --   open_house_results: {visitors, sign_ins, lead_quality_breakdown, follow_up_status},
+  --   market_position: {price_vs_comps, price_per_sqft_vs_neighborhood, dom_vs_market_avg},
+  --   feedback_themes: {positive[], negative[], actionable_items[]},
+  --   competitive_analysis: {new_listings_in_area, recent_sales, competitor_price_changes},
+  --   next_steps: {recommendations[], upcoming_marketing[], next_open_house}
+  -- }
+  agent_commentary text — personalized agent notes
+  pdf_storage_path text — ZForge-generated PDF
+  pdf_url text
+  is_published boolean DEFAULT false — visible to seller in client portal
+  published_at timestamptz
+  seller_viewed boolean DEFAULT false
+  seller_viewed_at timestamptz
+  email_sent boolean DEFAULT false
+  email_sent_at timestamptz
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `seller_reports`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: `company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','brokerageOwner','managingBroker')`
+- [ ] Indexes: `idx_seller_reports_listing` on `(listing_id, report_type, created_at DESC)`, `idx_seller_reports_published` on `(listing_id) WHERE is_published = true`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+
+### Table 8: `showing_rules`
+
+- [ ] Create table `showing_rules`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE UNIQUE
+  approval_model text NOT NULL DEFAULT 'appointment_required' CHECK (approval_model IN (
+    'go_and_show', 'appointment_required', 'agent_first',
+    'seller_first', 'agent_and_seller', 'conditional'
+  ))
+  access_type text NOT NULL DEFAULT 'lockbox' CHECK (access_type IN (
+    'lockbox', 'smart_lock', 'key_pickup', 'agent_accompanied', 'seller_lets_in', 'open_access'
+  ))
+  -- Time windows
+  showing_windows jsonb DEFAULT '[]' — [{day_of_week, start_time, end_time}]
+  blackout_dates jsonb DEFAULT '[]' — [{start_date, end_date, reason}]
+  blackout_recurring jsonb DEFAULT '[]' — [{day_of_week, start_time, end_time, reason}]
+  -- Rules
+  minimum_notice_hours smallint DEFAULT 2
+  allow_same_day boolean DEFAULT true
+  max_showings_per_day smallint
+  minimum_duration_minutes smallint DEFAULT 30
+  maximum_duration_minutes smallint DEFAULT 60
+  buffer_minutes smallint DEFAULT 15 — gap between showings
+  require_accompanied boolean DEFAULT false — listing agent must attend
+  require_buyer_agent_licensed boolean DEFAULT false
+  require_pre_approval boolean DEFAULT false
+  -- Conditional auto-approve rules (used when approval_model = 'conditional')
+  conditional_rules jsonb DEFAULT '{}' — {auto_approve_hours: {start, end}, auto_approve_days: [], require_approval_days: []}
+  -- Access details
+  lockbox_code text — encrypted
+  lockbox_location text
+  smart_lock_device_id text — Seam device ID
+  access_instructions text
+  pet_instructions text
+  alarm_code text — encrypted
+  alarm_instructions text
+  -- Notification preferences
+  notify_seller_on_request boolean DEFAULT true
+  notify_seller_on_confirm boolean DEFAULT true
+  notify_seller_on_cancel boolean DEFAULT true
+  seller_notification_lead_minutes smallint DEFAULT 60 — notify seller X min before showing
+  -- Feedback
+  feedback_questions jsonb DEFAULT '[
+    {"id":"overall","type":"rating","question":"Overall impression of the home?","scale":5,"required":true},
+    {"id":"price","type":"multiple_choice","question":"How does the listing price compare to similar homes?","options":["5-10% overpriced","3-5% overpriced","At market","Great value"],"required":true},
+    {"id":"liked_most","type":"text","question":"What did you like most?","required":false},
+    {"id":"liked_least","type":"text","question":"What did you like least?","required":false},
+    {"id":"offer_likelihood","type":"multiple_choice","question":"How likely is your client to make an offer?","options":["Very likely","Somewhat likely","Unlikely","Already found another"],"required":true},
+    {"id":"improvements","type":"text","question":"Anything the seller could do to improve appeal?","required":false}
+  ]'
+  feedback_auto_send_delay_minutes smallint DEFAULT 60
+  feedback_reminder_hours smallint[] DEFAULT '{24, 48}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `showing_rules`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none (soft delete)
+- [ ] Indexes: `idx_showing_rules_listing` on `(listing_id)`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+
+### Table 9: `showing_requests`
+
+- [ ] Create table `showing_requests`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  -- Requester info (buyer's agent)
+  requester_user_id uuid FK auth.users(id) — if internal user
+  requester_name text NOT NULL
+  requester_email text
+  requester_phone text
+  requester_company_name text — buyer agent brokerage
+  requester_license_number text
+  -- Buyer info
+  buyer_name text
+  buyer_pre_approved boolean
+  -- Schedule
+  requested_date date NOT NULL
+  requested_start_time time NOT NULL
+  requested_end_time time NOT NULL
+  confirmed_date date
+  confirmed_start_time time
+  confirmed_end_time time
+  -- Status pipeline
+  status text NOT NULL DEFAULT 'requested' CHECK (status IN (
+    'requested', 'pending_seller', 'confirmed', 'declined',
+    'rescheduled', 'canceled_by_agent', 'canceled_by_seller',
+    'no_show', 'completed'
+  ))
+  decline_reason text
+  reschedule_reason text
+  cancellation_reason text
+  -- Approval chain
+  approved_by_agent boolean
+  approved_by_agent_at timestamptz
+  approved_by_agent_user_id uuid FK auth.users(id)
+  approved_by_seller boolean
+  approved_by_seller_at timestamptz
+  auto_approved boolean DEFAULT false
+  auto_approved_rule text — which conditional rule triggered auto-approve
+  -- Access
+  access_code text — time-bound smart lock code
+  access_code_valid_from timestamptz
+  access_code_valid_until timestamptz
+  seam_access_code_id text — Seam API access code ID for revocation
+  -- Delegation
+  delegated_to_user_id uuid FK auth.users(id)
+  delegated_at timestamptz
+  delegation_reason text
+  -- Post-showing
+  actual_start_at timestamptz
+  actual_end_at timestamptz
+  feedback_requested boolean DEFAULT false
+  feedback_requested_at timestamptz
+  feedback_received boolean DEFAULT false
+  -- Notification tracking
+  notification_chain jsonb DEFAULT '[]' — [{recipient, channel, sent_at, type}]
+  -- Source
+  source text DEFAULT 'direct' CHECK (source IN ('direct', 'open_house', 'buyer_tour', 'mls', 'website'))
+  open_house_visitor_id uuid FK open_house_visitors(id) — if originated from open house sign-in
+  notes text
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `showing_requests`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none (soft delete)
+- [ ] Indexes: `idx_showing_requests_listing` on `(listing_id, status)`, `idx_showing_requests_date` on `(listing_id, requested_date)`, `idx_showing_requests_agent` on `(company_id, approved_by_agent_user_id)`, `idx_showing_requests_status` on `(company_id, status)`, `idx_showing_requests_delegated` on `(delegated_to_user_id) WHERE delegated_to_user_id IS NOT NULL`, `idx_showing_requests_deleted` on `(deleted_at) WHERE deleted_at IS NULL`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+- [ ] Trigger: `auto_approve_showing` — on INSERT, check `showing_rules` for the listing. If `approval_model = 'go_and_show'`, auto-set `status = 'confirmed'` and `auto_approved = true`. If `approval_model = 'conditional'`, evaluate conditional_rules and auto-approve if within allowed window.
+
+### Table 10: `showing_feedback`
+
+- [ ] Create table `showing_feedback`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  showing_request_id uuid NOT NULL FK showing_requests(id) ON DELETE CASCADE UNIQUE
+  submitted_by_user_id uuid FK auth.users(id)
+  submitted_by_name text
+  submitted_by_email text
+  -- Structured ratings (10 dimensions)
+  overall_rating smallint CHECK (overall_rating BETWEEN 1 AND 5)
+  price_opinion text CHECK (price_opinion IN ('5_10_overpriced', '3_5_overpriced', 'at_market', 'great_value'))
+  curb_appeal_rating smallint CHECK (curb_appeal_rating BETWEEN 1 AND 5)
+  interior_condition_rating smallint CHECK (interior_condition_rating BETWEEN 1 AND 5)
+  kitchen_rating smallint CHECK (kitchen_rating BETWEEN 1 AND 5)
+  bathroom_rating smallint CHECK (bathroom_rating BETWEEN 1 AND 5)
+  layout_rating smallint CHECK (layout_rating BETWEEN 1 AND 5)
+  location_rating smallint CHECK (location_rating BETWEEN 1 AND 5)
+  value_rating smallint CHECK (value_rating BETWEEN 1 AND 5)
+  yard_outdoor_rating smallint CHECK (yard_outdoor_rating BETWEEN 1 AND 5)
+  -- Qualitative
+  liked_most text
+  liked_least text
+  offer_likelihood text CHECK (offer_likelihood IN ('very_likely', 'somewhat_likely', 'unlikely', 'already_found_another'))
+  would_see_again boolean
+  improvement_suggestions text
+  buyer_concerns text
+  compared_to_top_choice text CHECK (compared_to_top_choice IN ('better', 'same', 'worse'))
+  -- Custom question responses
+  custom_responses jsonb DEFAULT '{}' — key=question_id, value=response
+  -- Metadata
+  agent_visible boolean DEFAULT true — listing agent can see
+  seller_visible boolean DEFAULT false — seller can see (agent controls)
+  is_anonymous boolean DEFAULT false
+  submitted_at timestamptz NOT NULL DEFAULT now()
+  reminder_count smallint DEFAULT 0
+  last_reminder_at timestamptz
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `showing_feedback`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id() AND submitted_by_user_id = auth.uid()`
+  - DELETE: none (immutable)
+- [ ] Indexes: `idx_showing_feedback_listing` on `(listing_id)`, `idx_showing_feedback_showing` on `(showing_request_id)`, `idx_showing_feedback_price` on `(listing_id, price_opinion)`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+- [ ] Trigger: `update_health_score_on_feedback` — on INSERT, update `listing_health_scores` for the listing (recalculate feedback_score component, update avg_price_opinion, positive/negative pct)
+
+### Table 11: `open_houses`
+
+- [ ] Create table `open_houses`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  host_user_id uuid NOT NULL FK auth.users(id)
+  cohost_user_ids uuid[] DEFAULT '{}'
+  -- Schedule
+  event_date date NOT NULL
+  start_time time NOT NULL
+  end_time time NOT NULL
+  timezone text NOT NULL DEFAULT 'America/New_York'
+  -- Type
+  event_type text NOT NULL DEFAULT 'public' CHECK (event_type IN (
+    'public', 'broker_open', 'twilight', 'mega_open_house',
+    'virtual', 'hybrid', 'by_appointment'
+  ))
+  is_virtual boolean DEFAULT false
+  virtual_meeting_url text — Daily.co / Jitsi room URL
+  virtual_meeting_id text
+  -- Promotion
+  promotion_settings jsonb DEFAULT '{}' — {social_post_generated, email_blast_sent, mls_synced, flyer_generated}
+  social_media_post_text text
+  social_media_image_url text
+  flyer_pdf_url text
+  -- Sign-in configuration
+  sign_in_enabled boolean DEFAULT true
+  sign_in_fields jsonb DEFAULT '[
+    {"id":"first_name","label":"First Name","type":"text","required":true},
+    {"id":"last_name","label":"Last Name","type":"text","required":true},
+    {"id":"email","label":"Email","type":"email","required":true},
+    {"id":"phone","label":"Phone","type":"phone","required":true},
+    {"id":"working_with_agent","label":"Are you working with an agent?","type":"boolean","required":true},
+    {"id":"agent_name","label":"Agent name (if yes)","type":"text","required":false},
+    {"id":"timeline","label":"When are you looking to buy?","type":"select","options":["0-3 months","3-6 months","6-12 months","Just looking"],"required":true},
+    {"id":"pre_approved","label":"Are you pre-approved?","type":"select","options":["Yes","No","In process"],"required":true},
+    {"id":"how_heard","label":"How did you hear about this open house?","type":"multi_select","options":["Sign","Zillow","Realtor.com","Social media","Agent referral","Neighbor","Other"],"required":false},
+    {"id":"non_agency_disclosure","label":"I acknowledge the hosting agent represents the seller","type":"checkbox","required":true}
+  ]'
+  custom_questions jsonb DEFAULT '[]' — additional agent-defined questions
+  -- Branding
+  agent_branding jsonb DEFAULT '{}' — {logo_url, agent_photo_url, colors, brokerage_name}
+  -- QR code
+  qr_code_url text — sign-in page QR code for physical display
+  sign_in_page_url text — public sign-in URL
+  -- Analytics
+  estimated_visitors integer
+  actual_visitor_count integer DEFAULT 0
+  sign_in_count integer DEFAULT 0
+  lead_count integer DEFAULT 0
+  -- Status
+  status text NOT NULL DEFAULT 'scheduled' CHECK (status IN ('draft', 'scheduled', 'in_progress', 'completed', 'canceled'))
+  cancellation_reason text
+  -- Follow-up
+  follow_up_drip_enabled boolean DEFAULT true
+  follow_up_sequence jsonb DEFAULT '[
+    {"delay_minutes":0,"channel":"sms","template":"thanks_for_visiting"},
+    {"delay_hours":24,"channel":"email","template":"follow_up_day1"},
+    {"delay_hours":72,"channel":"email","template":"similar_listings"},
+    {"delay_hours":168,"channel":"email","template":"neighborhood_guide"},
+    {"delay_hours":336,"channel":"email","template":"price_update_or_new_listings"},
+    {"delay_hours":720,"channel":"email","template":"monthly_market_report"}
+  ]'
+  -- Seller report
+  seller_report_generated boolean DEFAULT false
+  seller_report_id uuid FK seller_reports(id)
+  notes text
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  deleted_at timestamptz
+  ```
+- [ ] RLS on `open_houses`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none (soft delete)
+- [ ] Indexes: `idx_open_houses_listing` on `(listing_id, event_date)`, `idx_open_houses_host` on `(host_user_id, event_date)`, `idx_open_houses_date` on `(company_id, event_date)`, `idx_open_houses_status` on `(company_id, status)`, `idx_open_houses_deleted` on `(deleted_at) WHERE deleted_at IS NULL`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+
+### Table 12: `open_house_visitors`
+
+- [ ] Create table `open_house_visitors`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  open_house_id uuid NOT NULL FK open_houses(id) ON DELETE CASCADE
+  -- Visitor info
+  first_name text NOT NULL
+  last_name text NOT NULL
+  email text
+  phone text
+  current_address text
+  current_zip text
+  -- Qualification
+  working_with_agent boolean
+  agent_name text
+  agent_brokerage text
+  purchase_timeline text CHECK (purchase_timeline IN ('0_3_months', '3_6_months', '6_12_months', 'just_looking'))
+  pre_approved text CHECK (pre_approved IN ('yes', 'no', 'in_process'))
+  budget_min numeric(12,2)
+  budget_max numeric(12,2)
+  property_type_interest text[]
+  preferred_areas text[]
+  how_heard text[] — multi-select: sign, zillow, social, agent, neighbor, other
+  -- Classification
+  visitor_type text NOT NULL DEFAULT 'buyer' CHECK (visitor_type IN ('buyer', 'neighbor', 'agent', 'investor', 'lender', 'other'))
+  is_neighbor boolean DEFAULT false — auto-classified based on address proximity
+  -- Lead scoring
+  lead_score smallint CHECK (lead_score BETWEEN 0 AND 100)
+  lead_tier text CHECK (lead_tier IN ('hot', 'warm', 'cool', 'neighbor'))
+  lead_score_factors jsonb DEFAULT '{}' — {pre_approved: 30, timeline_0_3: 25, no_agent: 20, ...}
+  -- Compliance
+  non_agency_disclosure_acknowledged boolean DEFAULT false
+  -- Verification
+  email_verified boolean DEFAULT false
+  phone_verified boolean DEFAULT false
+  -- Follow-up
+  follow_up_status text DEFAULT 'pending' CHECK (follow_up_status IN ('pending', 'in_progress', 'completed', 'opted_out'))
+  follow_up_sequence_position smallint DEFAULT 0
+  last_follow_up_at timestamptz
+  next_follow_up_at timestamptz
+  opted_out_at timestamptz
+  -- CRM link
+  contact_id uuid FK realtor_contacts(id) — linked after import to CRM
+  contact_imported boolean DEFAULT false
+  contact_imported_at timestamptz
+  -- Showing request link
+  showing_request_id uuid FK showing_requests(id) — if visitor requests private showing
+  -- Virtual attendance
+  is_virtual_attendee boolean DEFAULT false
+  virtual_join_at timestamptz
+  virtual_leave_at timestamptz
+  virtual_duration_minutes integer
+  -- Custom responses
+  custom_responses jsonb DEFAULT '{}'
+  agent_notes text
+  signed_in_at timestamptz NOT NULL DEFAULT now()
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `open_house_visitors`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()` (also allow unauthenticated insert via EF for public sign-in)
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none (immutable visitor record)
+- [ ] Indexes: `idx_oh_visitors_open_house` on `(open_house_id)`, `idx_oh_visitors_email` on `(company_id, email)`, `idx_oh_visitors_lead_tier` on `(company_id, lead_tier)`, `idx_oh_visitors_follow_up` on `(next_follow_up_at) WHERE follow_up_status = 'pending'`, `idx_oh_visitors_contact` on `(contact_id) WHERE contact_id IS NOT NULL`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+- [ ] Trigger: `auto_score_visitor_lead` — on INSERT, compute `lead_score` and `lead_tier`:
+  ```
+  Hot (90-100): pre_approved='yes' + timeline='0_3_months' + working_with_agent=false
+  Warm (60-89): working_with_agent=true OR timeline='3_6_months'
+  Cool (30-59): timeline='6_12_months' OR just_looking
+  Neighbor (0-29): is_neighbor=true OR visitor_type='neighbor'
+  ```
+- [ ] Trigger: `increment_open_house_counts` — on INSERT, increment `open_houses.sign_in_count` and `actual_visitor_count`; if `lead_tier IN ('hot','warm')`, increment `lead_count`
+
+### Table 13: `visitor_events`
+
+- [ ] Create table `visitor_events`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  visitor_email text NOT NULL — cross-event matching key
+  visitor_phone text
+  visitor_name text NOT NULL
+  open_house_visitor_id uuid NOT NULL FK open_house_visitors(id) ON DELETE CASCADE
+  open_house_id uuid NOT NULL FK open_houses(id) ON DELETE CASCADE
+  listing_id uuid NOT NULL FK realtor_listings(id) ON DELETE CASCADE
+  event_date date NOT NULL
+  event_count integer DEFAULT 1 — how many events this person has attended (company-wide)
+  is_repeat_visitor boolean DEFAULT false
+  previous_event_ids uuid[] DEFAULT '{}'
+  created_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `visitor_events`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: none
+  - DELETE: none
+- [ ] Indexes: `idx_visitor_events_email` on `(company_id, visitor_email)`, `idx_visitor_events_open_house` on `(open_house_id)`, `idx_visitor_events_repeat` on `(company_id) WHERE is_repeat_visitor = true`
+- [ ] Trigger: `audit_trigger_fn()`
+- [ ] Trigger: `track_cross_event_visitors` — on INSERT into `open_house_visitors`, look up previous `visitor_events` rows with same email+company_id. If found, set `is_repeat_visitor = true`, populate `previous_event_ids`, increment `event_count`. Insert new `visitor_events` row.
+
+### Table 14: `open_house_follow_ups`
+
+- [ ] Create table `open_house_follow_ups`:
+  ```
+  id uuid PK DEFAULT gen_random_uuid()
+  company_id uuid NOT NULL FK companies(id) ON DELETE CASCADE
+  open_house_visitor_id uuid NOT NULL FK open_house_visitors(id) ON DELETE CASCADE
+  sequence_step smallint NOT NULL — 0=immediate, 1=day1, 2=day3, 3=day7, 4=day14, 5=day30
+  channel text NOT NULL CHECK (channel IN ('sms', 'email', 'push'))
+  template_key text NOT NULL
+  subject text
+  body text
+  status text NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'sent', 'delivered', 'opened', 'clicked', 'bounced', 'failed', 'skipped'))
+  scheduled_at timestamptz NOT NULL
+  sent_at timestamptz
+  delivered_at timestamptz
+  opened_at timestamptz
+  clicked_at timestamptz
+  bounce_reason text
+  failure_reason text
+  external_message_id text — SignalWire/SMTP message ID
+  created_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now()
+  ```
+- [ ] RLS on `open_house_follow_ups`:
+  - SELECT: `company_id = requesting_company_id()`
+  - INSERT: `company_id = requesting_company_id()`
+  - UPDATE: `company_id = requesting_company_id()`
+  - DELETE: none
+- [ ] Indexes: `idx_oh_follow_ups_visitor` on `(open_house_visitor_id, sequence_step)`, `idx_oh_follow_ups_scheduled` on `(scheduled_at) WHERE status = 'scheduled'`, `idx_oh_follow_ups_status` on `(company_id, status)`
+- [ ] Triggers: `update_updated_at()`, `audit_trigger_fn()`
+
+### Summary: 14 new tables total
+- [ ] Verify all 14 tables have: `company_id` FK, RLS enabled per-operation, `audit_trigger_fn()`, `update_updated_at()` (where applicable), `deleted_at` (where applicable), appropriate indexes
+- [ ] Run migration: `npx supabase db push`
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+---
+
+## B. Edge Functions (~8h)
+
+### EF 1: `listing-management` (~2h)
+
+- [ ] Create `supabase/functions/listing-management/index.ts`
+- [ ] Import `_shared/cors.ts`, `_shared/rate-limiter.ts`
+- [ ] JWT auth via `supabase.auth.getUser()` — extract `company_id` from `app_metadata`
+- [ ] Rate limit: 30 req/min per user
+- [ ] CORS headers on all responses
+- [ ] Endpoints (via method + action query param):
+  - `POST ?action=create` — Create listing from manual input OR Recon auto-populate:
+    - If `property_scan_id` provided, fetch `property_scans` row and pre-fill: address, sqft, beds, baths, year_built, property_type, roof data, equipment data
+    - Validate required fields: address_line1, city, state, zip, property_type
+    - Set `listing_status = 'draft'`, `source` appropriately
+    - Insert into `realtor_listings`, return full row
+  - `POST ?action=update` — Update listing fields:
+    - Optimistic locking: check `updated_at` in WHERE clause
+    - If `listing_status` changed, validate transition via allowed transitions map
+    - If `list_price` changed, append to `price_history` JSONB
+    - Return updated row
+  - `POST ?action=update_status` — Dedicated status change endpoint:
+    - Validate RESO-compliant transition
+    - Require `change_reason` for: withdrawn, canceled, expired
+    - Set date fields: `pending_date`, `sold_date`, `withdrawn_date`, `expired_date` as appropriate
+    - Trigger notification cascade (via `listing_alerts` inserts for all relevant parties)
+    - Set `mls_compliance_deadline` = now + 2 business days
+  - `POST ?action=recon_import` — Bulk import from Recon scan:
+    - Accept `property_scan_id`, fetch all scan data
+    - Map Recon fields → listing fields
+    - Create draft listing with Recon data pre-filled
+  - `GET ?action=list` — List all company listings with filters:
+    - Filter by: status, agent, team, price range, zip, property_type, DOM range
+    - Pagination: `page`, `per_page` (default 25, max 100)
+    - Sort by: created_at, list_price, dom, listing_status
+    - Include: primary photo URL, showing count, health score
+  - `GET ?action=detail` — Single listing full detail:
+    - Include: all photos (sorted), status history, health score, showing stats, active open houses
+- [ ] Input validation: sanitize all text fields, validate price > 0, validate dates, validate enums against CHECK constraints
+- [ ] Fair Housing scan on `public_remarks`: reject descriptions containing discriminatory terms (race, religion, familial status, disability references to occupants). Return `fair_housing_scan_result` with violations.
+- [ ] Error handling: typed errors, never expose raw DB errors
+
+### EF 2: `showing-management` (~2h)
+
+- [ ] Create `supabase/functions/showing-management/index.ts`
+- [ ] JWT auth, CORS, rate limit (20 req/min)
+- [ ] Endpoints:
+  - `POST ?action=request` — Create showing request:
+    - Validate listing exists, is active status
+    - Check `showing_rules`: validate against blackout dates, time windows, minimum notice, max per day
+    - If `approval_model = 'go_and_show'` → auto-confirm, generate access code
+    - If `approval_model = 'conditional'` → evaluate rules, auto-confirm if met
+    - Otherwise → set status to 'requested', send notification to listing agent
+    - If smart lock configured, call Seam API to create time-bound access code
+    - Insert notification_chain entries
+  - `POST ?action=respond` — Agent/seller responds to request:
+    - Accept: `status` (confirmed/declined/rescheduled), `reason`, `alternative_times`
+    - If confirmed: generate access code if smart lock, send confirmation to requester
+    - If declined: send decline notification with reason
+    - If rescheduled: send alternative times
+  - `POST ?action=complete` — Mark showing as completed:
+    - Set `actual_end_at`, `status = 'completed'`
+    - Revoke access code via Seam API if applicable
+    - Schedule feedback request (insert `open_house_follow_ups` equivalent or trigger feedback send after `feedback_auto_send_delay_minutes`)
+  - `POST ?action=delegate` — Delegate showing to team member:
+    - Validate delegatee is in same company and team
+    - Update `delegated_to_user_id`, notify delegatee
+  - `POST ?action=submit_feedback` — Submit showing feedback:
+    - Validate showing_request exists and was completed
+    - Insert into `showing_feedback`
+    - Trigger health score recalculation
+    - Notify listing agent
+  - `GET ?action=calendar` — Get showing calendar for date range:
+    - Filter by listing_id, agent, team, date range
+    - Include: request details, status, access info
+  - `GET ?action=feedback_summary` — Aggregated feedback for a listing:
+    - Compute: avg overall rating, price opinion distribution, offer likelihood distribution, common themes (from liked_most/liked_least), trend over time
+- [ ] Seam API integration:
+  - `POST https://connect.getseam.com/access_codes/create` — time-bound access code
+  - `DELETE https://connect.getseam.com/access_codes/delete` — revoke after showing
+  - Handle Seam errors gracefully (lock offline, battery low, etc.)
+  - Only call if `showing_rules.access_type = 'smart_lock'` and `smart_lock_device_id` is set
+- [ ] SignalWire integration for SMS notifications in showing chain
+
+### EF 3: `open-house-management` (~2h)
+
+- [ ] Create `supabase/functions/open-house-management/index.ts`
+- [ ] JWT auth for management endpoints, PUBLIC access for sign-in endpoint (rate limited heavily)
+- [ ] CORS, rate limit (management: 20 req/min; sign-in: 5 req/min per IP)
+- [ ] Endpoints:
+  - `POST ?action=create` — Create open house:
+    - Validate listing exists, is active
+    - Validate date/time not conflicting with existing open houses for same listing
+    - Generate QR code URL and sign-in page URL
+    - Insert into `open_houses`
+  - `POST ?action=update` — Update open house details
+  - `POST ?action=cancel` — Cancel open house:
+    - Set status to 'canceled'
+    - Notify all registered virtual attendees
+  - `POST ?action=start` — Begin open house (set status to 'in_progress')
+  - `POST ?action=complete` — End open house:
+    - Set status to 'completed'
+    - Trigger drip sequences for all visitors with `follow_up_drip_enabled`
+    - Schedule seller report generation
+  - `POST ?action=sign_in` — **PUBLIC endpoint** — Visitor sign-in:
+    - No JWT required (public sign-in form)
+    - Validate open_house_id exists and status is 'in_progress' or 'scheduled'
+    - Validate required fields from sign-in configuration
+    - Auto-classify visitor_type based on address proximity (if current_zip matches listing zip = neighbor candidate)
+    - Compute lead_score and lead_tier
+    - Check for cross-event matches (same email in visitor_events)
+    - Insert into `open_house_visitors`
+    - Insert into `visitor_events`
+    - If `email_verified` requested in config, send SMS OTP via SignalWire
+    - Trigger immediate follow-up (sequence step 0): send "Thanks for visiting" SMS
+    - Return success with visitor_id
+  - `POST ?action=verify_visitor` — Verify email/phone OTP for sign-in
+  - `POST ?action=import_to_crm` — Import visitor as realtor_contact:
+    - Create or update `realtor_contacts` record
+    - Set `contact_imported = true` on visitor record
+    - Set appropriate pipeline stage based on lead_tier
+  - `GET ?action=visitors` — List all visitors for an open house:
+    - Include: lead_tier, follow_up_status, is_repeat_visitor, event_count
+    - Sort by: signed_in_at, lead_score DESC
+  - `GET ?action=analytics` — Open house performance analytics:
+    - Visitor count, sign-in rate, lead tier distribution
+    - Follow-up completion rate, conversion to showing request
+    - Repeat visitor count, source attribution breakdown
+  - `POST ?action=generate_seller_report` — Generate post-open-house seller report:
+    - Aggregate: visitor count, sign-in count, lead quality breakdown, feedback themes
+    - Insert into `seller_reports` with `report_type = 'open_house'`
+- [ ] Virtual open house support:
+  - If `event_type = 'virtual'` or `'hybrid'`, generate Daily.co room URL via API
+  - Daily.co: `POST https://api.daily.co/v1/rooms` (free tier: 10K min/mo)
+  - Track virtual attendees separately (`is_virtual_attendee = true`)
+
+### EF 4: `listing-lifecycle` (~2h)
+
+- [ ] Create `supabase/functions/listing-lifecycle/index.ts`
+- [ ] JWT auth, CORS, rate limit (15 req/min)
+- [ ] Endpoints:
+  - `POST ?action=calculate_health_score` — Compute listing health score:
+    - DOM score (25 pts): DOM < 7 = 25, < 14 = 20, < 21 = 15, < 30 = 10, < 45 = 5, < 60 = 2, 60+ = 0
+    - Showing score (25 pts): showings/week >= 5 = 25, >= 3 = 20, >= 2 = 15, >= 1 = 10, 0 = 0
+    - Feedback score (25 pts): avg_overall_rating >= 4 = 25, >= 3 = 15, >= 2 = 5, < 2 = 0. Penalize if price_opinion skews "overpriced"
+    - Market position score (25 pts): price_per_sqft within 5% of neighborhood avg = 25, within 10% = 15, within 20% = 5, > 20% = 0
+    - Set `health_trend`: compare to previous calculation (improving if +5, declining if -5, stable otherwise)
+    - Generate `recommendations` array based on component scores
+    - Upsert into `listing_health_scores`
+  - `POST ?action=check_dom_alerts` — Check all active listings for DOM threshold alerts:
+    - For each active listing, check DOM against thresholds: 7, 14, 21, 30, 45, 60, 90
+    - If threshold just crossed (no existing alert for this threshold+listing), create `listing_alerts`
+    - Alert content per threshold:
+      - 7: "First week complete — {X} showings, {Y} feedback responses" (info)
+      - 14: "2 weeks on market — showing pace assessment needed" (info)
+      - 21: "Marketing audit recommended — review photos, description, pricing" (warning)
+      - 30: "Price re-evaluation time — consider updated CMA" (warning)
+      - 45: "Price reduction strongly recommended — DOM significantly above market" (critical)
+      - 60: "Listing at risk — strategy overhaul needed" (critical)
+      - 90+: "Consider withdrawal and relist strategy" (urgent)
+  - `POST ?action=request_price_change` — Agent proposes price change:
+    - Insert into `price_change_requests`
+    - Notify seller (if seller portal configured)
+    - Set expiration at 7 days
+  - `POST ?action=approve_price_change` — Seller/agent approves:
+    - Update `price_change_requests.status = 'approved'`
+    - Trigger fires: update listing price, append price_history, create alerts
+    - Optionally trigger marketing refresh (alert to RE12)
+  - `POST ?action=generate_seller_report` — Generate periodic seller report:
+    - Aggregate all data for report period: showing activity, feedback, market position, open house results
+    - Insert into `seller_reports`
+    - Optionally generate PDF via ZForge
+    - If `is_published = true`, visible in client portal
+  - `GET ?action=absorption_rate` — Calculate absorption rate:
+    - Accept: zip, neighborhood, date_range
+    - Formula: (sold listings in period / total active+sold listings) * 100
+    - Compute from `realtor_listings` where `listing_status IN ('active', 'closed_sold')`
+    - Return: rate, market_type (buyer/balanced/seller), months_of_inventory
+  - `GET ?action=price_trends` — Price per sqft trending:
+    - Accept: zip, property_type, period (3mo/6mo/12mo)
+    - Compute from `realtor_listings` price_history and sold data
+    - Return: monthly avg $/sqft, trend direction, listing's position vs avg
+  - `GET ?action=listing_expiration_check` — Check for expiring listings:
+    - Find listings where `listing_agreement_end` is within 30/14/7 days
+    - Create `listing_alerts` for upcoming expirations
+    - Return list of expiring listings with days remaining
+- [ ] Scheduled invocation: `check_dom_alerts` and `listing_expiration_check` should run daily via Supabase cron (`pg_cron`):
+  ```sql
+  SELECT cron.schedule('dom-alerts-daily', '0 8 * * *', $$SELECT net.http_post(url:='https://[project].supabase.co/functions/v1/listing-lifecycle?action=check_dom_alerts', headers:='{"Authorization":"Bearer [service_role_key]"}')$$);
+  SELECT cron.schedule('expiration-check-daily', '0 9 * * *', $$SELECT net.http_post(url:='https://[project].supabase.co/functions/v1/listing-lifecycle?action=listing_expiration_check', headers:='{"Authorization":"Bearer [service_role_key]"}')$$);
+  ```
+
+---
+
+## C. Flutter Screens (~12h)
+
+### Screen 1: Listing Create Wizard (`lib/screens/realtor/listings/listing_create_wizard_screen.dart`)
+
+- [ ] Multi-step wizard (5 steps):
+  - Step 1: Property Source — "Start from scratch" OR "Import from Recon scan" (shows list of property_scans for company)
+  - Step 2: Property Details — address, property type, beds/baths/sqft/year_built, lot size, parking, pool, HOA
+  - Step 3: Listing Details — list price, commission rates, listing agreement dates, MLS info, template selection
+  - Step 4: Description + Features — public_remarks (with Fair Housing scan button), private_remarks, features JSONB editor (checkboxes per category: interior, exterior, community, appliances, flooring, heating, cooling, utilities), room_details, school info
+  - Step 5: Photos + Media — photo upload with drag-to-reorder, caption editor, primary photo selector, virtual tour URL, floor plan link, video URL. "Virtually Staged" toggle per photo (CA AB 723).
+  - Step 6: Review + Publish — full preview, Fair Housing scan result, status selector (draft/coming_soon/active), save button
+- [ ] If Recon import selected, pre-fill all available fields from `property_scans`
+- [ ] Fair Housing compliance scanner: button that checks `public_remarks` for discriminatory language. Show violations with suggested alternatives. Block publish if violations found.
+- [ ] 4 states: loading (fetching Recon data), error (with retry), empty (new listing form), data (editing existing)
+- [ ] Save draft at each step (persist partial listing)
+- [ ] `ConsumerWidget` with `ref.watch()` for data, `ref.read()` for mutations
+
+### Screen 2: Listing Detail Screen (`lib/screens/realtor/listings/listing_detail_screen.dart`)
+
+- [ ] Full listing detail with tabs:
+  - Overview tab: all property + listing details, health score badge, DOM counter, status chip
+  - Photos tab: photo grid with reorder capability, add/remove/edit captions
+  - Showings tab: upcoming/past showings list, showing stats (total, this week, avg per week)
+  - Feedback tab: all feedback entries with aggregate summary at top (avg ratings, price opinion pie chart, offer likelihood breakdown)
+  - Open Houses tab: scheduled/past open houses, visitor counts, lead quality
+  - Lifecycle tab: status history timeline, price history chart, DOM timeline
+  - Reports tab: seller reports list, generate new button
+- [ ] Quick actions bar: Edit, Change Status, Request Price Change, Schedule Open House, Share Listing
+- [ ] Health score card: overall score (0-100) with color coding, 4 component scores, trend arrow, top recommendation
+
+### Screen 3: Listing List Screen (`lib/screens/realtor/listings/listing_list_screen.dart`)
+
+- [ ] Filterable list of all company listings
+- [ ] Filter chips: status, price range, agent, team, property type, DOM range
+- [ ] Sort by: newest, price (high/low), DOM (high/low), health score
+- [ ] List item card: primary photo thumbnail, address, price, status badge, DOM, beds/baths/sqft, health score mini-badge, next showing date
+- [ ] Floating action button: + Create Listing
+- [ ] Pull to refresh, infinite scroll pagination
+- [ ] Empty state: "No listings yet. Create your first listing."
+
+### Screen 4: Showing Calendar Screen (`lib/screens/realtor/showings/showing_calendar_screen.dart`)
+
+- [ ] Calendar view (day/week/month toggle) showing all showings across all listings
+- [ ] Color-coded by status: requested (yellow), confirmed (green), completed (blue), declined (red), canceled (gray)
+- [ ] Tap showing → bottom sheet with details + quick actions (approve, decline, reschedule, delegate)
+- [ ] Filter by: listing, agent, status
+- [ ] Day view: timeline layout with showing blocks
+- [ ] Today indicator, upcoming showing highlight
+
+### Screen 5: Showing Request Inbox (`lib/screens/realtor/showings/showing_request_inbox_screen.dart`)
+
+- [ ] List of pending showing requests requiring action
+- [ ] Each card: requester name, listing address, requested date/time, buyer info, status
+- [ ] Swipe actions: swipe right = approve, swipe left = decline
+- [ ] Tap → full request detail with: approve, decline (with reason), suggest alternative time, delegate to team member
+- [ ] Badge count on tab for unresolved requests
+- [ ] Filter: all, pending, today's, this week's
+
+### Screen 6: Showing Rules Config (`lib/screens/realtor/showings/showing_rules_screen.dart`)
+
+- [ ] Per-listing showing configuration screen
+- [ ] Sections:
+  - Approval Model: radio buttons for 6 models (Go & Show, Appointment Required, Agent First, Seller First, Agent + Seller, Conditional)
+  - Access Type: dropdown (lockbox, smart lock, key pickup, agent accompanied, seller lets in, open access)
+  - Time Windows: day-of-week grid with start/end time pickers
+  - Blackout Dates: date picker for one-off blackouts + recurring blackout patterns
+  - Rules: minimum notice slider (1-48hrs), same-day toggle, max per day, duration range, buffer minutes, accompanied toggle, require licensed agent, require pre-approval
+  - Conditional Rules (shown only when approval_model = 'conditional'): auto-approve hours, auto-approve days
+  - Access Details: lockbox code, location, smart lock device selector (Seam Connect Webview), instructions, pet/alarm info
+  - Feedback Config: editable question list (add/remove/reorder), auto-send delay, reminder schedule
+- [ ] Smart Lock section: if Seam connected, show device selector via Seam Connect Webview. If not connected, show "Connect Smart Lock" button that opens Seam authorization flow.
+
+### Screen 7: Open House Manager (`lib/screens/realtor/open_houses/open_house_manager_screen.dart`)
+
+- [ ] List of all open houses (upcoming and past) for the company
+- [ ] Upcoming: event cards with date, time, listing address, host, visitor count (if in progress), status
+- [ ] Past: analytics summary per event — visitors, sign-ins, leads, follow-up status
+- [ ] Create Open House button → creation form:
+  - Select listing, date, start/end time, timezone
+  - Event type selector (public, broker open, twilight, mega, virtual, hybrid, by appointment)
+  - Co-host selector (team members)
+  - Sign-in field configuration (toggle required fields, add custom questions)
+  - Follow-up drip sequence editor (toggle on/off, customize timing/templates)
+  - Branding settings (logo, colors, agent photo)
+  - Generate QR code preview
+- [ ] "Start Open House" button → transitions to live mode (showing real-time sign-in count)
+- [ ] "End Open House" button → completes event, triggers drip sequences
+
+### Screen 8: Visitor Sign-In Screen (`lib/screens/realtor/open_houses/visitor_sign_in_screen.dart`)
+
+- [ ] **Tablet/phone optimized** — large touch targets, minimal scrolling
+- [ ] Agent branding: logo, agent photo, listing address, agent name
+- [ ] Configurable fields from `open_houses.sign_in_fields`
+- [ ] Non-Agency Disclosure checkbox (mandatory when configured)
+- [ ] Optional SMS verification (send OTP, verify before submit)
+- [ ] QR code display for touchless sign-in (visitor scans QR → web form on their phone)
+- [ ] Success screen: "Thanks for visiting! We'll be in touch." with listing photo
+- [ ] Works OFFLINE: queue sign-ins in local storage, sync when online
+- [ ] Kiosk mode: auto-reset form after 10 seconds of inactivity on success screen
+
+### Screen 9: Feedback View Screen (`lib/screens/realtor/showings/feedback_view_screen.dart`)
+
+- [ ] Per-listing feedback aggregation dashboard
+- [ ] Summary cards at top: total feedback count, avg overall rating, price opinion distribution (pie chart), offer likelihood distribution
+- [ ] Individual feedback entries: expandable cards with all ratings + text responses
+- [ ] Trend chart: avg rating over time, price opinion shift over time
+- [ ] Filter by: date range, rating, offer likelihood
+- [ ] "Share with Seller" toggle per feedback entry
+- [ ] Feedback themes extraction: most common positive mentions, most common negative mentions (keyword frequency)
+
+### Screen 10: Seller Report Screen (`lib/screens/realtor/reports/seller_report_screen.dart`)
+
+- [ ] List of generated seller reports for a listing
+- [ ] Report card: period, type, generated date, published status, seller viewed status
+- [ ] Generate New Report button → select type (weekly/biweekly/monthly/custom), date range, add commentary
+- [ ] Report detail view: full report data visualization
+  - Listing performance section: views, saves, shares (placeholder data until MLS integration)
+  - Showing activity: total, per week trend line, feedback summary
+  - Open house results: if any during period
+  - Market position: price vs comps, $/sqft vs neighborhood
+  - Feedback themes: top positive, top negative, actionable items
+  - Next steps: agent recommendations (editable)
+- [ ] Publish button → makes visible in client portal, sends email notification to seller
+- [ ] Download PDF button (ZForge integration — generates PDF from report_data)
+
+### Screen 11: Listing Lifecycle Dashboard (`lib/screens/realtor/listings/listing_lifecycle_screen.dart`)
+
+- [ ] Overview of listing lifecycle metrics across all company listings
+- [ ] Active listings count, avg DOM, avg health score, listings needing attention
+- [ ] DOM alert queue: listings that have crossed thresholds, grouped by severity
+- [ ] Expiring listings: countdown to listing agreement end
+- [ ] Price change requests: pending approvals
+- [ ] Absorption rate by ZIP/neighborhood (chart)
+- [ ] Price per sqft trending (line chart by month)
+- [ ] Quick navigation to any listing from this dashboard
+
+---
+
+## D. Dart Models + Repositories + Providers (~4h)
+
+### Models
+
+- [ ] Create `lib/models/realtor_listing.dart` — immutable, `fromJson()`, `toJson()`, `copyWith()`, `Equatable`. All 80+ fields mapped.
+- [ ] Create `lib/models/listing_photo.dart` — same pattern
+- [ ] Create `lib/models/listing_status_change.dart` — same pattern (maps `listing_status_history`)
+- [ ] Create `lib/models/listing_health_score.dart` — same pattern
+- [ ] Create `lib/models/listing_alert.dart` — same pattern
+- [ ] Create `lib/models/price_change_request.dart` — same pattern
+- [ ] Create `lib/models/seller_report.dart` — same pattern
+- [ ] Create `lib/models/showing_rule.dart` — same pattern
+- [ ] Create `lib/models/showing_request.dart` — same pattern
+- [ ] Create `lib/models/showing_feedback.dart` — same pattern
+- [ ] Create `lib/models/open_house.dart` — same pattern
+- [ ] Create `lib/models/open_house_visitor.dart` — same pattern
+- [ ] Create `lib/models/visitor_event.dart` — same pattern
+- [ ] Create `lib/models/open_house_follow_up.dart` — same pattern
+
+### Repositories
+
+- [ ] Create `lib/repositories/realtor_listing_repository.dart` — abstract + concrete: CRUD, list with filters/pagination, status update, price change
+- [ ] Create `lib/repositories/listing_photo_repository.dart` — CRUD, reorder, set primary
+- [ ] Create `lib/repositories/showing_repository.dart` — request, respond, complete, delegate, calendar query, feedback CRUD
+- [ ] Create `lib/repositories/open_house_repository.dart` — CRUD, sign-in (unauthenticated path), visitors list, analytics query
+- [ ] Create `lib/repositories/listing_lifecycle_repository.dart` — health scores, alerts, price changes, seller reports, absorption rate, price trends
+
+### Providers
+
+- [ ] Create `lib/providers/realtor_listing_provider.dart`:
+  - `realtorListingRepositoryProvider` — singleton
+  - `realtorListingsProvider` — StreamProvider.family (filtered by status)
+  - `realtorListingDetailProvider` — FutureProvider.family(id)
+  - `realtorListingMutationsProvider` — AsyncNotifier for create/update/delete
+- [ ] Create `lib/providers/showing_provider.dart`:
+  - `showingRepositoryProvider`, `showingRequestsProvider`, `showingCalendarProvider`, `showingFeedbackProvider`, `showingMutationsProvider`
+- [ ] Create `lib/providers/open_house_provider.dart`:
+  - `openHouseRepositoryProvider`, `openHousesProvider`, `openHouseVisitorsProvider`, `openHouseMutationsProvider`
+- [ ] Create `lib/providers/listing_lifecycle_provider.dart`:
+  - `lifecycleRepositoryProvider`, `listingHealthScoreProvider`, `listingAlertsProvider`, `priceChangeRequestsProvider`, `sellerReportsProvider`, `absorptionRateProvider`
+
+---
+
+## E. Realtor Portal (Next.js) Pages + Hooks (~8h)
+
+### Hooks
+
+- [ ] Create `realtor-portal/src/lib/hooks/use-realtor-listings.ts`:
+  - Fetch listings with filters (status, agent, price range, property_type, zip, DOM range)
+  - Realtime subscription on `realtor_listings` changes
+  - Mutations: create, update, updateStatus, softDelete
+  - Soft delete filter: `.is('deleted_at', null)`
+  - Return `{ listings, loading, error, createListing, updateListing, updateStatus, deleteListing }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-listing-detail.ts`:
+  - Fetch single listing with joins: photos, health score, status history, active showings count, active open houses
+  - Realtime subscription on listing + photos + health score
+  - Return `{ listing, photos, healthScore, statusHistory, loading, error }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-listing-photos.ts`:
+  - CRUD for photos, reorder (bulk update sort_order), set primary
+  - Realtime on `listing_photos`
+  - Return `{ photos, loading, error, uploadPhoto, deletePhoto, reorderPhotos, setPrimary }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-showing-requests.ts`:
+  - Fetch showing requests with filters (listing, status, date range, agent)
+  - Realtime subscription on `showing_requests`
+  - Mutations: respond (approve/decline/reschedule), delegate, complete
+  - Return `{ requests, loading, error, approveShowing, declineShowing, rescheduleShowing, delegateShowing, completeShowing }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-showing-calendar.ts`:
+  - Fetch showings for date range across all/filtered listings
+  - Calendar event format transformation
+  - Return `{ events, loading, error, dateRange, setDateRange }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-showing-feedback.ts`:
+  - Fetch feedback for a listing with aggregation
+  - Realtime subscription
+  - Return `{ feedback, summary, priceOpinionDistribution, offerLikelihood, loading, error }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-showing-rules.ts`:
+  - Fetch/update showing rules for a listing
+  - Return `{ rules, loading, error, updateRules }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-open-houses.ts`:
+  - CRUD for open houses
+  - Realtime subscription
+  - Return `{ openHouses, loading, error, createOpenHouse, updateOpenHouse, cancelOpenHouse, startOpenHouse, completeOpenHouse }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-open-house-visitors.ts`:
+  - Fetch visitors for an open house with lead scoring
+  - Import to CRM action
+  - Return `{ visitors, loading, error, importToCRM, leadTierBreakdown }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-listing-lifecycle.ts`:
+  - Health score, DOM alerts, absorption rate, price trends
+  - Return `{ healthScore, alerts, absorptionRate, priceTrends, loading, error, dismissAlert, markAlertRead }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-price-changes.ts`:
+  - CRUD for price change requests
+  - Return `{ priceChanges, loading, error, requestPriceChange, approvePriceChange, rejectPriceChange }`
+- [ ] Create `realtor-portal/src/lib/hooks/use-seller-reports.ts`:
+  - Fetch/generate seller reports
+  - Return `{ reports, loading, error, generateReport, publishReport }`
+
+### Pages
+
+- [ ] Create `realtor-portal/src/app/(dashboard)/listings/page.tsx` — Listings list page:
+  - Table view with sortable columns: address, price, status, DOM, showings, health score, agent
+  - Filter bar: status dropdown, price range inputs, property type, agent selector
+  - Bulk actions: change status, assign agent
+  - Link to create listing wizard
+- [ ] Create `realtor-portal/src/app/(dashboard)/listings/new/page.tsx` — Listing creation wizard (multi-step form matching Flutter wizard)
+- [ ] Create `realtor-portal/src/app/(dashboard)/listings/[id]/page.tsx` — Listing detail with tabs (overview, photos, showings, feedback, open houses, lifecycle, reports)
+- [ ] Create `realtor-portal/src/app/(dashboard)/listings/[id]/edit/page.tsx` — Edit listing form
+- [ ] Create `realtor-portal/src/app/(dashboard)/listings/[id]/showing-rules/page.tsx` — Showing rules configuration
+- [ ] Create `realtor-portal/src/app/(dashboard)/showings/page.tsx` — Showing calendar + request inbox
+- [ ] Create `realtor-portal/src/app/(dashboard)/open-houses/page.tsx` — Open house management (upcoming/past, create new)
+- [ ] Create `realtor-portal/src/app/(dashboard)/open-houses/[id]/page.tsx` — Open house detail (visitors, analytics, seller report)
+- [ ] Create `realtor-portal/src/app/(dashboard)/open-houses/[id]/sign-in/page.tsx` — Public sign-in page (no auth required, agent branding, mobile-optimized)
+- [ ] Create `realtor-portal/src/app/(dashboard)/lifecycle/page.tsx` — Listing lifecycle dashboard (DOM alerts, health scores, expiring listings, absorption rate)
+- [ ] Create `realtor-portal/src/app/(dashboard)/reports/page.tsx` — Seller reports management (generate, publish, download)
+
+---
+
+## F. Client Portal — Seller Dashboard (~4h)
+
+### Hooks
+
+- [ ] Create `client-portal/src/lib/hooks/use-seller-listing.ts`:
+  - Fetch listing data for the seller's listing(s) — scoped by `seller_contact_id` linked to client portal user
+  - Return `{ listing, loading, error }`
+- [ ] Create `client-portal/src/lib/hooks/use-seller-showings.ts`:
+  - Fetch showing activity for seller's listing(s)
+  - Seller-appropriate view: upcoming showings (date/time only, no buyer info), completed count, feedback themes (agent-curated, not raw)
+  - Return `{ upcomingShowings, completedCount, feedbackThemes, loading, error }`
+- [ ] Create `client-portal/src/lib/hooks/use-seller-reports-client.ts`:
+  - Fetch published seller reports
+  - Return `{ reports, loading, error, markAsViewed }`
+- [ ] Create `client-portal/src/lib/hooks/use-seller-price-changes.ts`:
+  - Fetch pending price change requests for seller approval
+  - Return `{ pendingChanges, loading, error, approvePriceChange, rejectPriceChange, counterOffer }`
+
+### Pages
+
+- [ ] Create `client-portal/src/app/(dashboard)/listings/page.tsx` — Seller listing overview:
+  - Listing card: photo, address, price, status, DOM, health score (simplified: Good/Fair/Needs Attention)
+  - Quick stats: total showings, this week's showings, upcoming open houses
+  - Latest feedback themes (positive + areas for improvement — curated by agent)
+  - Next steps from latest seller report
+- [ ] Create `client-portal/src/app/(dashboard)/listings/[id]/page.tsx` — Seller listing detail:
+  - Showing activity timeline (date/time, no buyer PII)
+  - Open house results summary
+  - Price history chart
+  - Market position: listing vs neighborhood avg
+  - Published seller reports (expandable)
+- [ ] Create `client-portal/src/app/(dashboard)/listings/[id]/showings/page.tsx` — Seller showing view:
+  - Calendar view of upcoming confirmed showings
+  - Approve/decline buttons (if approval_model involves seller)
+  - Preparation checklist before showing ("Secure pets", "Turn on lights", etc.)
+- [ ] Create `client-portal/src/app/(dashboard)/listings/[id]/price-change/page.tsx` — Price change approval:
+  - Agent's proposal with supporting data
+  - Approve / Reject / Counter buttons
+  - Counter-offer input with slider
+
+---
+
+## G. Team Portal (~1h)
+
+- [ ] Create `team-portal/src/lib/hooks/use-team-showings.ts`:
+  - Fetch showings delegated to the current team member
+  - Return `{ myShowings, loading, error, confirmAttendance, reportComplete }`
+- [ ] Create `team-portal/src/app/(dashboard)/showings/page.tsx` — Delegated showings list:
+  - Today's showings with listing details, time, access instructions
+  - "I'm on my way" confirmation button
+  - Mark as completed with notes
+  - Upcoming delegated showings this week
+
+---
+
+## H. Ops Portal (~1h)
+
+- [ ] Create `ops-portal/src/lib/hooks/use-platform-listing-analytics.ts`:
+  - Aggregate listing analytics across ALL companies (super_admin only)
+  - Return `{ totalListings, byStatus, avgDOM, avgHealthScore, topPerformingListings, loading, error }`
+- [ ] Create `ops-portal/src/app/(dashboard)/listing-analytics/page.tsx` — Platform-wide listing analytics:
+  - Total listings by status (pie chart)
+  - Average DOM across platform
+  - Average health score
+  - Showing volume trends (line chart, weekly)
+  - Open house activity trends
+  - Top performing agents/companies by showing-to-close rate
+
+---
+
+## I. CUST9 Module Registration (~1h)
+
+- [ ] Register 4 modules in CUST9 customization system:
+  - `listing_management`: controls listing creation, listing detail, listing list screens
+  - `showing_management`: controls showing rules, showing calendar, showing request inbox, feedback screens
+  - `open_house`: controls open house manager, visitor sign-in, open house analytics screens
+  - `listing_lifecycle`: controls lifecycle dashboard, DOM alerts, price change workflow, seller reports, absorption rate
+- [ ] Each module:
+  - `is_enabled` default: `true`
+  - `custom_fields` support: listings can have company-specific custom JSONB fields
+  - `permissions_override`: company can override default role permissions per module
+- [ ] Verify modules appear in CUST9 settings page and can be toggled
+
+---
+
+## J. Security Verification
+
+- [ ] RLS per-operation verified on all 14 new tables (SELECT, INSERT, UPDATE, DELETE policies)
+- [ ] Every table has `company_id` FK with index
+- [ ] Every table has `audit_trigger_fn()` trigger
+- [ ] Every table with mutable data has `update_updated_at()` trigger
+- [ ] Every table that allows deletion uses `deleted_at` soft delete (physical delete only on junction tables)
+- [ ] All 4 Edge Functions have: JWT auth (except public sign-in endpoint), CORS headers, input validation, rate limiting
+- [ ] Public sign-in endpoint (`open-house-management?action=sign_in`) has aggressive rate limiting (5/min per IP) and input sanitization
+- [ ] Lockbox codes and alarm codes stored encrypted (pgcrypto `encrypt()` or application-level encryption)
+- [ ] Seam API key stored as Edge Function secret, never exposed to client
+- [ ] SignalWire credentials stored as Edge Function secrets
+- [ ] Fair Housing scan rejects discriminatory content before listing can be published
+- [ ] Seller portal shows only agent-curated feedback (seller_visible = true), never raw buyer PII
+- [ ] Showing access codes are time-bound and auto-expire
+- [ ] Optimistic locking on `realtor_listings` UPDATE (check `updated_at`)
+- [ ] All Flutter screens handle 4 states (loading, error, empty, data)
+- [ ] All hooks filter by `.is('deleted_at', null)`
+- [ ] All hooks include Realtime subscriptions
+- [ ] Verify: `dart analyze` — 0 errors
+- [ ] Verify: `npm run build` in realtor-portal — 0 errors
+- [ ] Verify: `npm run build` in client-portal — 0 errors
+- [ ] Verify: `npm run build` in team-portal — 0 errors
+- [ ] Verify: `npm run build` in ops-portal — 0 errors
+
+---
+
+## K. Commit
+
+- [ ] Commit: `[RE10] Listing management — 14 tables, 4 EFs, 11 Flutter screens, listing creation wizard, showing management (6 approval models + Seam smart lock), open house (digital sign-in + lead scoring + drip sequences + cross-event tracking), listing lifecycle (health scores + DOM alerts + price change workflow + seller reports + absorption rate), seller dashboard in client portal`
+
+---
+
+## Checklist Summary
+
+**Database:** 14 tables, ~25 indexes, ~20 triggers, ~56 RLS policies
+**Edge Functions:** 4 (listing-management, showing-management, open-house-management, listing-lifecycle)
+**Flutter Screens:** 11 new screens
+**Dart Models:** 14 new models
+**Dart Repositories:** 5 new repositories
+**Dart Providers:** 4 new provider files
+**Realtor Portal Hooks:** 12 new hooks
+**Realtor Portal Pages:** 11 new pages
+**Client Portal Hooks:** 4 new hooks
+**Client Portal Pages:** 4 new pages
+**Team Portal Hooks:** 1 new hook
+**Team Portal Pages:** 1 new page
+**Ops Portal Hooks:** 1 new hook
+**Ops Portal Pages:** 1 new page
+**CUST9 Modules:** 4 registered
+**Cron Jobs:** 2 (DOM alerts daily, expiration check daily)
+**External APIs:** Seam ($0 for 10 devices), Daily.co ($0 for 10K min/mo), SignalWire (per-use), FCM (free)
+**Total checklist items:** ~85
+
+---
+
+### RE11 — Buyer Management & NAR Compliance (~72h) — S144
+*Source: re11-buyer-ops-research-s144.md, 53_REALTOR_PLATFORM_SPEC.md Section 12, realtor-professional-types-deep-research.md*
+*Depends on: RE1 (Realtor CRM foundation), RE4-RE5 (Transaction Engine), F10 (ZForge e-signatures), CUST9 (Module Registry)*
+*CUST9 Modules: BUYER_PROFILES, BUYER_TOURS, BUYER_FEEDBACK, BUYER_COMPLIANCE, BUYER_MATCHING, BUYER_OFFERS*
+
+**What this builds:** Complete buyer lifecycle management — from preference profiles and weighted property matching, through tour scheduling/routing/feedback, to offer tracking and buyer-to-transaction handoff. Includes NAR settlement compliance with hard-gate BRA enforcement. Six sub-systems: Matching Engine, Tour Management, Feedback System, Offer Tracking, NAR Compliance Gate, and Transaction Handoff Bridge.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `properties` (D5), `recon_scans` (Phase P), `realtor_transactions` (RE4-RE5), `documents` (F10/ZForge), `commission_records` (RE8), `realtor_contact_activities` (RE2)
+- Writes to: 17 new tables (see below), `realtor_contacts` (status updates), `realtor_transactions` (handoff creation)
+- Wires to: Recon Engine (auto-populate tour sheets), ZForge (BRA e-signatures), Transaction Engine (buyer-to-transaction handoff), OSRM (route optimization), Walk Score API (enrichment), GreatSchools API (school data), Census API (demographics), FBI Crime Data API (safety), FEMA NFHL (flood zones), CUST9 ModuleRegistry
+
+#### Database Layer (~16h)
+
+- [ ] Create `buyer_profiles` table: `id uuid PK DEFAULT gen_random_uuid()`, `company_id uuid NOT NULL REFERENCES companies(id)`, `contact_id uuid NOT NULL REFERENCES realtor_contacts(id)`, `buyer_type text NOT NULL DEFAULT 'standard' CHECK (buyer_type IN ('first_time','luxury','investor','relocation','standard'))`, `budget_min numeric(12,2)`, `budget_max numeric(12,2)`, `pre_approval_amount numeric(12,2)`, `pre_approval_date date`, `pre_approval_lender text`, `monthly_payment_max numeric(10,2)`, `loan_type text CHECK (loan_type IN ('conventional','fha','va','usda','jumbo','cash','other'))`, `down_payment_pct numeric(5,2)`, `timeline text CHECK (timeline IN ('immediate','1_3_months','3_6_months','6_12_months','12_plus'))`, `status text NOT NULL DEFAULT 'active' CHECK (status IN ('active','under_contract','paused','closed','lost'))`, `notes text`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`, `created_by uuid REFERENCES auth.users(id)`. Indexes: `(company_id)`, `(customer_id)`, `(status)`, `(deleted_at)`. RLS: SELECT/INSERT/UPDATE/DELETE scoped to `company_id = auth.company_id()`. Audit trigger. `update_updated_at` trigger.
+
+- [ ] Create `buyer_search_criteria` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `name text NOT NULL DEFAULT 'Default Search'`, `is_primary boolean DEFAULT false`, `locations jsonb` (array of {type: 'zip'|'city'|'county'|'radius', value: text, lat/lng for radius, radius_miles: numeric}), `property_types text[]` (sfh, condo, townhouse, multi_family, land, commercial), `beds_min int`, `beds_max int`, `baths_min numeric(3,1)`, `baths_max numeric(3,1)`, `sqft_min int`, `sqft_max int`, `lot_sqft_min int`, `lot_sqft_max int`, `year_built_min int`, `year_built_max int`, `stories_min int`, `stories_max int`, `garage_min int`, `hoa_max numeric(10,2)`, `must_haves text[]` (pool, basement, garage, fireplace, waterfront, view, corner_lot, gated, elevator, etc), `deal_breakers text[]` (hoa, flood_zone, busy_road, no_garage, stairs, septic, well_water, etc), `school_rating_min int CHECK (1-10)`, `commute_addresses jsonb` (array of {label, address, max_minutes}), `walk_score_min int`, `style_preferences text[]` (ranch, colonial, modern, craftsman, etc), `match_threshold int DEFAULT 70 CHECK (1-100)`, `notification_frequency text DEFAULT 'daily' CHECK (notification_frequency IN ('instant','daily','weekly','off'))`, `notification_channels text[] DEFAULT '{push,email}'`, `weight_overrides jsonb` (optional per-field weight override, e.g., {"price": 35, "location": 20}), `is_active boolean DEFAULT true`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(is_active)`, `(deleted_at)`. RLS scoped to company_id. Audit trigger.
+
+- [ ] Create `buyer_match_scores` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `search_criteria_id uuid NOT NULL REFERENCES buyer_search_criteria(id)`, `property_address text NOT NULL`, `property_data jsonb NOT NULL` (listing details: price, beds, baths, sqft, lot_sqft, year_built, type, hoa, style, lat, lng, mls_number), `overall_score numeric(5,2) NOT NULL CHECK (0-100)`, `dimension_scores jsonb NOT NULL` (per-field breakdown: {price: {score: 85, weight: 30, weighted: 25.5}, location: {...}, ...}), `deal_breaker_flags text[]`, `has_deal_breaker boolean DEFAULT false`, `enrichment_data jsonb` (walk_score, transit_score, bike_score, school_rating, flood_zone, crime_index, commute_minutes), `source text DEFAULT 'manual' CHECK (source IN ('manual','mls_feed','auto_match'))`, `agent_notes text`, `buyer_reaction text CHECK (buyer_reaction IN ('loved','liked','neutral','disliked','rejected',null))`, `status text DEFAULT 'new' CHECK (status IN ('new','presented','viewed','toured','offered','rejected','archived'))`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(search_criteria_id)`, `(overall_score DESC)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_notifications` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `search_criteria_id uuid REFERENCES buyer_search_criteria(id)`, `notification_type text NOT NULL CHECK (notification_type IN ('new_match','price_drop','status_change','back_on_market','bra_expiring','tour_reminder'))`, `channel text NOT NULL CHECK (channel IN ('push','email','sms','in_app'))`, `payload jsonb NOT NULL`, `sent_at timestamptz`, `read_at timestamptz`, `status text DEFAULT 'pending' CHECK (status IN ('pending','sent','delivered','read','failed'))`, `created_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(status)`, `(notification_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_tours` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `tour_name text`, `tour_date date NOT NULL`, `start_time time`, `end_time time`, `status text NOT NULL DEFAULT 'planned' CHECK (status IN ('planned','in_progress','completed','cancelled'))`, `route_data jsonb` (OSRM optimized route: waypoints, total_distance_miles, total_duration_minutes, leg details), `agent_id uuid NOT NULL REFERENCES company_members(id)`, `co_agent_id uuid REFERENCES company_members(id)`, `buyer_names text[]`, `meeting_point text`, `parking_notes text`, `general_notes text`, `post_tour_summary text`, `post_tour_recommendation text`, `tour_sheet_pdf_url text`, `comparison_pdf_url text`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(tour_date)`, `(agent_id)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_tour_properties` table: `id uuid PK`, `company_id uuid NOT NULL`, `tour_id uuid NOT NULL REFERENCES buyer_tours(id)`, `match_score_id uuid REFERENCES buyer_match_scores(id)`, `property_address text NOT NULL`, `property_data jsonb NOT NULL` (full property details for tour sheet), `tour_order int NOT NULL`, `showing_time time`, `showing_duration_minutes int DEFAULT 20`, `access_type text CHECK (access_type IN ('lockbox_supra','lockbox_sentrilock','call_before','tenant_occupied','vacant_land','open_access','agent_present'))`, `access_instructions text`, `lockbox_code text`, `gate_code text`, `listing_agent_name text`, `listing_agent_phone text`, `listing_agent_email text`, `mls_confidential_remarks text`, `agent_talking_points text`, `comparable_sales_notes text`, `negotiation_notes text`, `recon_scan_id uuid` (link to existing Recon scan if available), `enrichment_data jsonb` (walk_score, schools, flood, crime, commute times), `status text DEFAULT 'scheduled' CHECK (status IN ('scheduled','checked_in','completed','skipped','cancelled'))`, `checked_in_at timestamptz`, `checked_out_at timestamptz`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(tour_id)`, `(tour_order)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_tour_notes` table: `id uuid PK`, `company_id uuid NOT NULL`, `tour_id uuid NOT NULL REFERENCES buyer_tours(id)`, `tour_property_id uuid NOT NULL REFERENCES buyer_tour_properties(id)`, `author_type text NOT NULL CHECK (author_type IN ('agent','buyer','co_agent'))`, `author_id uuid REFERENCES auth.users(id)`, `note_type text NOT NULL CHECK (note_type IN ('text','voice_transcript','photo_annotation'))`, `content text NOT NULL`, `voice_note_url text`, `room_tag text` (kitchen, living_room, master_bedroom, bathroom, exterior, garage, yard, etc), `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(tour_property_id)`, `(author_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_tour_photos` table: `id uuid PK`, `company_id uuid NOT NULL`, `tour_id uuid NOT NULL REFERENCES buyer_tours(id)`, `tour_property_id uuid NOT NULL REFERENCES buyer_tour_properties(id)`, `photo_url text NOT NULL`, `thumbnail_url text`, `captured_by text NOT NULL CHECK (captured_by IN ('agent','buyer'))`, `captured_by_user_id uuid REFERENCES auth.users(id)`, `room_tag text`, `caption text`, `is_highlight boolean DEFAULT false`, `sort_order int`, `created_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(tour_property_id)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_feedback_responses` table: `id uuid PK`, `company_id uuid NOT NULL`, `tour_id uuid NOT NULL REFERENCES buyer_tours(id)`, `tour_property_id uuid NOT NULL REFERENCES buyer_tour_properties(id)`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `overall_impression int NOT NULL CHECK (1-5)`, `price_perception text CHECK (price_perception IN ('too_low','fair','slightly_high','too_high'))`, `condition_rating int CHECK (1-5)`, `layout_rating int CHECK (1-5)`, `location_rating int CHECK (1-5)`, `curb_appeal_rating int CHECK (1-5)`, `kitchen_rating int CHECK (1-5)`, `bathroom_rating int CHECK (1-5)`, `yard_rating int CHECK (1-5)`, `storage_rating int CHECK (1-5)`, `quick_tags text[]` (loved_it, liked_it, neutral, didnt_like, hated_it, would_offer, need_to_think, definitely_not, better_than_expected, as_expected, worse_than_expected), `deal_breakers_flagged text[]`, `has_deal_breaker boolean DEFAULT false`, `offer_interest_score int CHECK (1-10)`, `comments text`, `voice_note_url text`, `comparison_vs_others text`, `what_liked_most text`, `what_liked_least text`, `would_help_offer text`, `submitted_at timestamptz DEFAULT now()`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(tour_property_id)`, `(offer_interest_score DESC)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_feedback_templates` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `description text`, `is_default boolean DEFAULT false`, `question_config jsonb NOT NULL` (array of {id, label, type: 'stars'|'multiple_choice'|'text'|'tags', options: [...], required: bool}), `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(is_default)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_preference_history` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `search_criteria_id uuid NOT NULL REFERENCES buyer_search_criteria(id)`, `change_type text NOT NULL CHECK (change_type IN ('manual','auto_suggested','auto_applied'))`, `field_changed text NOT NULL`, `old_value text`, `new_value text`, `reason text` (e.g., "Buyer rated 3-bed homes higher than 4-bed despite searching for 4+"), `accepted boolean`, `created_at timestamptz DEFAULT now()`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(search_criteria_id)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_representation_agreements` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `agent_id uuid NOT NULL REFERENCES company_members(id)`, `agreement_type text NOT NULL CHECK (agreement_type IN ('exclusive','non_exclusive','single_property'))`, `status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','sent','signed','expired','terminated'))`, `start_date date NOT NULL`, `end_date date NOT NULL`, `compensation_type text NOT NULL CHECK (compensation_type IN ('percentage','flat_fee','hourly'))`, `compensation_amount numeric(10,2) NOT NULL`, `compensation_paid_by text CHECK (compensation_paid_by IN ('buyer','seller','either'))`, `state_code text NOT NULL` (2-letter state abbreviation), `state_specific_requirements jsonb` (state variations: e.g., CA requires BRA for ALL property types per AB 2992), `property_address text` (for single_property type only), `document_url text`, `zforge_document_id uuid` (link to ZForge e-signature document), `signed_at timestamptz`, `signed_by_buyer_at timestamptz`, `signed_by_agent_at timestamptz`, `expiration_alert_sent_at timestamptz`, `negotiability_statement_included boolean NOT NULL DEFAULT true`, `compensation_cap_statement_included boolean NOT NULL DEFAULT true`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(agent_id)`, `(status)`, `(end_date)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_compliance_audit_log` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `action text NOT NULL` (e.g., 'showing_scheduled', 'bra_signed', 'bra_expired', 'showing_blocked_no_bra', 'compensation_agreed', 'compensation_paid'), `bra_id uuid REFERENCES buyer_representation_agreements(id)`, `tour_id uuid REFERENCES buyer_tours(id)`, `details jsonb`, `performed_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(action)`, `(created_at)`. RLS scoped. No soft delete (audit logs are immutable).
+
+- [ ] Create `buyer_offers` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `match_score_id uuid REFERENCES buyer_match_scores(id)`, `property_address text NOT NULL`, `property_data jsonb`, `offer_price numeric(12,2) NOT NULL`, `earnest_money numeric(10,2)`, `earnest_money_due_date date`, `earnest_money_deposited boolean DEFAULT false`, `earnest_money_deposited_at timestamptz`, `down_payment_pct numeric(5,2)`, `loan_type text`, `closing_date date`, `possession_date date`, `contingencies jsonb` (array of {type: 'inspection'|'appraisal'|'financing'|'sale_of_home'|'other', deadline_date, status: 'pending'|'waived'|'satisfied'|'failed'}), `seller_concessions_requested numeric(10,2)`, `escalation_clause jsonb` ({enabled: bool, max_price: numeric, increment: numeric}), `appraisal_gap_coverage numeric(10,2)`, `status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','submitted','countered','accepted','rejected','withdrawn','expired'))`, `counter_offers jsonb` (array of {date, from: 'buyer'|'seller', price, terms_changed, response}), `listing_price numeric(12,2)`, `final_price numeric(12,2)`, `concessions_received numeric(10,2)`, `agent_strategy_notes text`, `document_url text`, `submitted_at timestamptz`, `responded_at timestamptz`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(status)`, `(property_address)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `buyer_transaction_handoffs` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `offer_id uuid NOT NULL REFERENCES buyer_offers(id)`, `transaction_id uuid REFERENCES realtor_transactions(id)`, `handoff_status text NOT NULL DEFAULT 'pending' CHECK (handoff_status IN ('pending','in_progress','completed','failed','reversed'))`, `data_transferred jsonb` (checklist of what was transferred: buyer_info, property_info, offer_terms, agent_info, financial, showing_history, documents, preferences), `search_notifications_paused boolean DEFAULT true`, `auto_resume_if_failed boolean DEFAULT true`, `handoff_initiated_by uuid REFERENCES auth.users(id)`, `handoff_completed_at timestamptz`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(offer_id)`, `(handoff_status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `tour_sheet_templates` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `description text`, `is_default boolean DEFAULT false`, `layout_config jsonb NOT NULL` (which sections to include, field ordering, branding options), `cover_page_enabled boolean DEFAULT true`, `comparison_page_enabled boolean DEFAULT true`, `agent_branding jsonb` (logo_url, colors, contact_info), `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(is_default)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Seed default `buyer_feedback_templates`: 3 templates — "Standard Post-Showing" (10-dimension + quick tags + deal-breakers), "Quick Feedback" (overall + tags + comments only), "Listing Agent Feedback" (ShowingTime-compatible 6-question format for sharing with listing agents)
+
+- [ ] Seed default `tour_sheet_templates`: 2 templates — "Professional Tour Sheet" (cover + per-property cards + comparison grid), "Compact Tour Sheet" (condensed single-page per property)
+
+- [ ] Seed default `buyer_search_criteria` weight_overrides reference data: JSON document defining default weights (price: 28, location: 22, beds: 12, property_type: 10, sqft: 8, baths: 6, school_district: 5, commute: 4, lot_size: 2, year_built: 1.5, style: 1, garage: 0.5)
+
+#### Edge Functions (~12h)
+
+- [ ] `buyer-match-score` EF: POST — accepts buyer_profile_id + property data, runs weighted scoring algorithm. For each of 14 dimensions: normalize to 0-10, multiply by weight, sum. Price: linear interpolation within budget range (100% if in range, -2pts per 1% over, +1pt per 1% under up to 10% under). Location: radius distance from target centers, nearest ZIP match. Beds/baths: exact match=10, +/-1=7, +/-2=3. SqFt: percentage of target range. Deal-breakers: if property has ANY flagged deal-breaker, overall score capped at 20 regardless of other scores. Returns {overall_score, dimension_scores, deal_breaker_flags, has_deal_breaker}. Auth: JWT required. Rate limit: 100/min per company.
+
+- [ ] `buyer-enrich-property` EF: POST — accepts address (lat/lng), calls Walk Score API (walk/transit/bike scores), GreatSchools NearbySchools API (school ratings within 2mi), Census ACS API (median income, demographics), FBI Crime Data API (crime index for jurisdiction), FEMA NFHL API (flood zone designation). Returns unified enrichment_data JSON. All external API calls wrapped in try/catch with graceful degradation (if any API fails, return partial data with null for failed fields). Auth: JWT required. Rate limit: 50/min per company. Cache results by address for 24h in `buyer_match_scores.enrichment_data`.
+
+- [ ] `buyer-tour-optimize-route` EF: POST — accepts array of property addresses (lat/lng) + start point, calls OSRM table service for distance matrix, then solves TSP (nearest-neighbor heuristic for < 8 properties, or-tools style for larger sets). Returns optimized order + route_data with per-leg distance/duration. Auth: JWT required. Rate limit: 20/min per company.
+
+- [ ] `buyer-tour-sheet-generate` EF: POST — accepts tour_id, generates PDF tour sheet using @react-pdf/renderer. Cover page: map image (static map from OSM tiles), property list, agent branding, buyer name, tour date. Per-property pages: all property data + enrichment data + agent notes + blank buyer note space + primary photo. Comparison page: side-by-side grid of key metrics. Upload PDF to Supabase Storage, return URL. Auth: JWT required.
+
+- [ ] `buyer-post-tour-report` EF: POST — accepts tour_id (tour must be status=completed), aggregates all feedback_responses for the tour. Generates comparison matrix sorted by offer_interest_score DESC. Highlights deal-breaker-free properties. Includes photo gallery per property. Agent recommendation section. Next steps section. Generates PDF, uploads to storage. Auth: JWT required.
+
+- [ ] `buyer-feedback-analytics` EF: GET — accepts buyer_profile_id, analyzes all feedback across tours. Returns: deal_breaker_frequency (which deal-breakers appear most often), price_perception_trend (how buyer's price sensitivity evolves), dimension_averages (which dimensions consistently rate high/low), preference_drift_suggestions (detected mismatches between search criteria and actual feedback patterns, e.g., "Buyer rates 3-bed homes 4.2/5 vs 4-bed homes 3.1/5 — suggest including 3-bed in search"). Auth: JWT required.
+
+- [ ] `buyer-compliance-check` EF: POST — accepts buyer_profile_id + action (e.g., 'schedule_showing'). Checks: (1) does buyer have a signed, non-expired BRA? (2) does the BRA type cover this property (single_property BRAs only cover specific address)? (3) is the BRA signed date before the showing date? Returns {compliant: bool, blocking_reason: text, bra_status, bra_expiration, days_until_expiration}. This is the HARD GATE — tour scheduling blocked without passing this check. Auth: JWT required.
+
+- [ ] `buyer-offer-to-transaction` EF: POST — accepts offer_id + acceptance confirmation. Creates transaction_record in RE4-RE5 tables with: buyer profile data, property data, offer terms, agent assignments, financial data, document references. Pauses buyer search notifications. Creates compliance audit log entry. Creates initial transaction timeline from contract dates. Returns {transaction_record_id, handoff_status}. Auth: JWT required.
+
+- [ ] `buyer-notification-dispatch` EF: CRON (runs every 15 min) — checks for pending notifications: new match scores above threshold, price drops on saved properties, BRA expiring within 7 days, tour reminders (24h before). Sends via appropriate channel (push via FCM, email via SendGrid/Mailgun, in-app via Supabase Realtime). Respects notification_frequency and notification_channels settings. Rate limit: max 15 instant notifications per buyer per day (overflow batched into end-of-day digest, same as Zillow pattern).
+
+#### Flutter (~20h)
+
+- [ ] `BuyerProfileScreen` — Create/edit buyer profile: buyer type selector (first-time, luxury, investor, relocation, standard), financial details (budget range, pre-approval, loan type, down payment, monthly payment max), timeline selector. Form validation: budget_max >= budget_min, pre_approval >= budget_max warning. 4-state screen.
+
+- [ ] `BuyerSearchCriteriaScreen` — Create/edit saved searches: location selector (multi-ZIP, city, radius on map), property type multi-select, beds/baths/sqft range sliders, year built range, HOA max, must-haves chip selector (from predefined list + custom), deal-breakers chip selector, school rating min, commute address(es) with max minutes, style preferences, weight adjustment sliders (14 dimensions), match threshold slider (0-100%), notification frequency + channel picker. Preview: show sample scoring calculation.
+
+- [ ] `BuyerMatchListScreen` — List of matched properties sorted by score DESC. Each card: address, primary photo, price, beds/baths/sqft, match score badge (green >80%, yellow 50-80%, red <50%), deal-breaker warning icon if applicable. Filter: score range, status, has_deal_breaker. Pull-to-refresh. Tap to view details. Bulk actions: add to tour, archive, mark as viewed.
+
+- [ ] `BuyerMatchDetailScreen` — Full property detail with score breakdown: radar chart showing 14 dimensions, enrichment data (Walk Score, school ratings, flood zone, crime index, commute times). Map with property pin + school markers + flood zone overlay. Agent notes section. Buyer reaction quick-tag selector (loved/liked/neutral/disliked/rejected). "Add to Tour" action button. "Track Offer" action button.
+
+- [ ] `BuyerTourListScreen` — List of tours: tour name, date, status badge, property count, agent name. Filter by status. Tap to manage tour. "Create New Tour" FAB.
+
+- [ ] `BuyerTourBuilderScreen` — Build a tour: select date, start time, add properties from match list or manual entry. Drag-to-reorder property order. "Optimize Route" button (calls OSRM EF, reorders for minimum drive time). Per-property: set showing time, access type, instructions, talking points. Preview: map with numbered pins + route line + estimated total tour time. "Generate Tour Sheet PDF" button. Compliance check: validates BRA exists and is valid before allowing save — shows hard-gate error with "Create Agreement" CTA if missing.
+
+- [ ] `BuyerTourDayScreen` — Tour-day companion: top section shows current property card with address, time, access info. Map with turn-by-turn preview (OSRM directions link to Google Maps/Apple Maps for navigation). "Check In" button starts showing timer. Photo capture button (auto-tagged to current property + room tag picker). Voice note recorder (stored as audio file + transcript attempt). Quick note text field. "Next Property" button advances tour. Status indicator: 2/5 properties visited.
+
+- [ ] `BuyerFeedbackFormScreen` — Post-showing feedback: 10-dimension star ratings (overall, price, condition, layout, location, curb appeal, kitchen, bathrooms, yard, storage). Quick tags (one-tap multi-select). Deal-breaker checklist (multi-select from predefined + custom). "Would you make an offer?" slider (1-10). Open text fields: what liked most, what liked least, what would help offer, comparison to others. Voice note option. Submit button. Auto-saves draft on back-press.
+
+- [ ] `BuyerPostTourComparisonScreen` — Side-by-side comparison of all toured properties: sortable grid with key metrics (price, beds, baths, sqft, score, buyer rating, deal-breakers). Color-coded: green=loved, yellow=neutral, red=rejected. Tap property to see full feedback. "Generate Report" button (calls post-tour-report EF). "Create Offer" shortcut for highest-rated properties.
+
+- [ ] `BuyerOfferTrackerScreen` — List of offers across properties: property address, offer price, status badge (draft, submitted, countered, accepted, rejected, withdrawn). Tap to manage offer. "New Offer" FAB.
+
+- [ ] `BuyerOfferDetailScreen` — Full offer form: property address, offer price, earnest money (amount + due date + deposited toggle), down payment %, loan type, closing date, possession date, contingencies (inspection/appraisal/financing/sale_of_home with deadlines), seller concessions, escalation clause (toggle + max + increment), appraisal gap coverage, agent strategy notes. Counter-offer section: timeline of all offers/counters with terms. Status management: submit, counter, accept, reject, withdraw actions. When accepted → "Start Transaction" button (triggers handoff EF).
+
+- [ ] `BuyerBRAManagementScreen` — List of buyer representation agreements: status badge, type, dates, agent. "Create New BRA" button. Per-BRA: view details, check expiration, download document, renewal option. Expiration warnings: amber at 14 days, red at 7 days. For single_property type: shows linked property address. Integration with ZForge for e-signature flow.
+
+- [ ] `BuyerBRACreatorScreen` — Agreement builder: select type (exclusive, non-exclusive, single_property). Duration picker (start/end dates). Compensation: type (percentage/flat/hourly), amount, paid_by. State auto-detected from agent profile. State-specific requirements auto-applied (e.g., CA AB 2992 notice). Required statements auto-included: negotiability + compensation cap. Preview agreement. Send for e-signature via ZForge. Tracks signing status.
+
+- [ ] `BuyerFeedbackAnalyticsScreen` — Analytics dashboard: deal-breaker frequency bar chart, price perception trend line across tours, dimension average radar chart, preference drift alerts with "Update Search" action buttons, comparison of stated preferences vs actual feedback patterns. Agent insight: which property characteristics predict high buyer ratings.
+
+- [ ] Create `BuyerMatchScoreWidget` — reusable score badge widget: circular progress indicator with score, color-coded, deal-breaker overlay icon. Used in lists and detail screens.
+
+- [ ] Create `BuyerEnrichmentDataWidget` — reusable widget showing Walk Score/Transit Score/Bike Score badges, school rating, flood zone status, crime index, commute times. Used in match detail and tour sheets.
+
+- [ ] Add buyer-specific screens to realtor role navigation: Buyers tab with sub-navigation (Profiles, Matches, Tours, Offers, BRAs, Analytics)
+
+#### Realtor Portal (~16h)
+
+- [ ] `BuyerDashboard` page — overview: active buyer count, tours this week, pending offers, expiring BRAs, match alerts pending review. Quick actions: new buyer, new tour, compliance report.
+
+- [ ] `BuyerProfileManager` page — CRUD for buyer profiles with inline search criteria editor. Tabbed: Profile | Searches | Matches | Tours | Offers | Documents | Compliance. Bulk import from CSV.
+
+- [ ] `BuyerMatchBoard` page — Kanban-style board: columns = new, presented, viewed, toured, offered, closed, rejected. Cards show property thumbnail, address, price, match score. Drag between columns. Filter by buyer. Add property manually or from match engine.
+
+- [ ] `BuyerTourPlanner` page — Calendar view showing scheduled tours. Drag-and-drop tour builder: select properties from match list, reorder, optimize route. Map preview with numbered pins. Generate tour sheet PDF. Print-friendly layout. Compliance gate: blocks save without valid BRA.
+
+- [ ] `BuyerFeedbackDashboard` page — Aggregate feedback analytics across all buyers: most common deal-breakers, price perception distribution, average ratings by property type/price range. Per-buyer drill-down. "Listing Agent Feedback" generator: auto-creates ShowingTime-compatible feedback from buyer's in-app feedback, agent edits/approves before sharing.
+
+- [ ] `BuyerOfferManager` page — table of all active offers across buyers: buyer name, property, offer price, listing price, difference %, status, days since submission. Counter-offer timeline per offer. Offer comparison dashboard for same-buyer multi-property offers. Earnest money tracker with deposit confirmation workflow.
+
+- [ ] `BuyerComplianceDashboard` page — NAR compliance scoreboard: total active buyers, buyers with valid BRA (%), buyers with expiring BRA (7/14/30 day warnings), showings without BRA (ZERO TOLERANCE — highlighted red), compensation tracking (agreed vs actual). Export compliance report for brokerage audit. Per-agent compliance score.
+
+- [ ] `BuyerTransactionHandoff` page — one-click "Offer Accepted" workflow: pre-populates transaction record from buyer+offer data, shows data transfer checklist (8 categories), confirms all documents available, triggers multi-party notifications, shows transaction timeline preview. "Create Transaction" button.
+
+- [ ] `BuyerBRAManager` page — table of all BRAs: buyer, agent, type, status, start/end dates, days remaining. Expiration alerts panel. Renewal workflow: one-click renewal with updated terms. State-specific form selector. E-signature via ZForge integration. Audit trail: every BRA action logged.
+
+- [ ] All portal pages use `use-buyer-profiles`, `use-buyer-searches`, `use-buyer-matches`, `use-buyer-tours`, `use-buyer-feedback`, `use-buyer-offers`, `use-buyer-bras`, `use-buyer-compliance` hooks with real-time subscriptions
+
+#### Web CRM Hooks (~4h)
+
+- [ ] `use-buyer-profiles.ts` — CRUD + real-time for buyer_profiles. Filter by status, buyer_type. Include customer join.
+- [ ] `use-buyer-searches.ts` — CRUD + real-time for buyer_search_criteria. Scoped to buyer_profile_id.
+- [ ] `use-buyer-matches.ts` — CRUD + real-time for buyer_match_scores. Filter by score range, status, has_deal_breaker. Sort by overall_score DESC.
+- [ ] `use-buyer-tours.ts` — CRUD + real-time for buyer_tours + buyer_tour_properties (joined). Filter by date range, status.
+- [ ] `use-buyer-feedback.ts` — CRUD + real-time for buyer_feedback_responses. Aggregate functions for analytics.
+- [ ] `use-buyer-offers.ts` — CRUD + real-time for buyer_offers. Filter by status, buyer_profile_id.
+- [ ] `use-buyer-bras.ts` — CRUD + real-time for buyer_representation_agreements. Expiration tracking computed field.
+- [ ] `use-buyer-compliance.ts` — read-only for buyer_compliance_audit_log. Compliance score computation.
+
+#### CUST9 Module Registration (~1h)
+
+- [ ] Register `BUYER_PROFILES` module: default ON for realtor entity type, OFF for contractor/inspector/adjuster
+- [ ] Register `BUYER_TOURS` module: default ON for realtor entity type
+- [ ] Register `BUYER_FEEDBACK` module: default ON for realtor entity type
+- [ ] Register `BUYER_COMPLIANCE` module: default ON for realtor entity type, MANDATORY (cannot be disabled) for NAR compliance
+- [ ] Register `BUYER_MATCHING` module: default ON for realtor entity type
+- [ ] Register `BUYER_OFFERS` module: default ON for realtor entity type
+
+#### Security Verification (~3h)
+
+- [ ] RLS policies verified: all 17 tables have SELECT/INSERT/UPDATE/DELETE policies scoped to `company_id = auth.company_id()`
+- [ ] All tables have: `company_id` column, index on `company_id`, audit trigger, `updated_at` trigger, `deleted_at` column
+- [ ] All EFs: JWT auth via `supabase.auth.getUser()`, CORS headers, input validation (Zod schemas), rate limiting
+- [ ] Compliance hard gate verified: `buyer-compliance-check` EF called before tour scheduling in both Flutter and portal
+- [ ] BRA document storage: private bucket, signed URLs with 1h expiry
+- [ ] Access instructions / lockbox codes: encrypted at rest, visible only to assigned agent + company admins
+- [ ] Buyer notification preferences respected: no notifications sent on disabled channels
+- [ ] All hooks use `deleted_at IS NULL` filter
+- [ ] Optimistic locking on shared entities: buyer_profiles, buyer_tours, buyer_offers use `updated_at` in WHERE clause
+- [ ] `flutter analyze` passes with 0 errors
+- [ ] `npm run build` passes for realtor-portal with 0 errors
+- [ ] Commit: `[RE11] Buyer management — profiles, matching engine, tour management, feedback system, offer tracking, NAR compliance hard gate, transaction handoff`
+
+---
+
+### RE12 — Marketing Factory (~36h) — S144
+*Source: listing-engine-deep-research-s132.md, 53_REALTOR_PLATFORM_SPEC.md Section 18*
+*Depends on: RE1 (Realtor CRM), RE2 (Listing Management foundation), F10 (ZForge PDF generation), CUST9*
+*CUST9 Modules: MARKETING_FACTORY, LISTING_DESCRIPTIONS, SOCIAL_MEDIA_MARKETING, PRINT_MARKETING, PROPERTY_WEBSITES, DIRECT_MAIL*
+
+**What this builds:** One-click listing marketing engine. Agent enters listing data, system generates: listing descriptions (template-based Phase 1, AI Phase E), social media posts, print-ready flyers (PDF), single-property microsite, email blast template, direct mail postcards (Lob integration point), video slideshow from photos. All output passes Fair Housing compliance scanner. Replaces $100-200/month in marketing tools.
+
+**System Connectivity:**
+- Reads from: `listings` (RE10), `properties` (D5), `recon_scans` (Phase P), `companies`, `users`, `realtor_contacts`
+- Writes to: 7 new tables (see below), Supabase Storage (marketing assets)
+- Wires to: ZForge PDF engine (flyer generation), Recon Engine (property data auto-fill), Listing Management (RE2), SendGrid/Mailgun (email blasts), Lob API integration point (direct mail, $0.77/piece — optional), CUST9 ModuleRegistry
+
+#### Database Layer (~8h)
+
+- [ ] Create `marketing_campaigns` table: `id uuid PK DEFAULT gen_random_uuid()`, `company_id uuid NOT NULL REFERENCES companies(id)`, `listing_id uuid NOT NULL` (references listing record from RE2), `name text NOT NULL`, `status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','generating','review','approved','published','paused','completed'))`, `campaign_type text NOT NULL CHECK (campaign_type IN ('full_launch','price_reduction','open_house','just_listed','just_sold','coming_soon'))`, `property_address text NOT NULL`, `property_data jsonb NOT NULL` (listing details snapshot used for generation), `target_audience text` (first_time_buyers, luxury, investors, families, etc), `generated_assets jsonb` (map of asset_type → {status, url, content}), `fair_housing_scan_passed boolean`, `fair_housing_scan_results jsonb`, `approved_by uuid REFERENCES auth.users(id)`, `approved_at timestamptz`, `published_at timestamptz`, `created_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(listing_id)`, `(status)`, `(campaign_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `marketing_descriptions` table: `id uuid PK`, `company_id uuid NOT NULL`, `campaign_id uuid NOT NULL REFERENCES marketing_campaigns(id)`, `format text NOT NULL CHECK (format IN ('mls','zillow_seo','social_short','email','sms','print_flyer','full_narrative'))`, `content text NOT NULL`, `character_count int NOT NULL`, `word_count int NOT NULL`, `is_approved boolean DEFAULT false`, `fair_housing_flags jsonb` (array of {term, reason, suggestion, severity: 'warning'|'violation'}), `has_violations boolean DEFAULT false`, `source text DEFAULT 'template' CHECK (source IN ('template','manual','ai_generated'))`, `template_id uuid REFERENCES marketing_description_templates(id)`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(campaign_id)`, `(format)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `marketing_description_templates` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `format text NOT NULL`, `property_type text NOT NULL` (luxury, starter, investment, fixer, condo, new_construction, land, commercial), `tone text NOT NULL CHECK (tone IN ('aspirational','warm','professional','numbers_driven','opportunity','lifestyle'))`, `template_body text NOT NULL` (with merge fields: {{beds}}, {{baths}}, {{sqft}}, {{price}}, {{neighborhood}}, {{features}}, {{year_built}}, {{hoa}}, {{school_rating}}, etc), `character_limit int`, `is_system boolean DEFAULT false`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(format)`, `(property_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `marketing_social_posts` table: `id uuid PK`, `company_id uuid NOT NULL`, `campaign_id uuid NOT NULL REFERENCES marketing_campaigns(id)`, `platform text NOT NULL CHECK (platform IN ('instagram','facebook','tiktok','linkedin','twitter','google_business','pinterest'))`, `post_type text NOT NULL CHECK (post_type IN ('image','carousel','video','story','reel','text'))`, `caption text NOT NULL`, `hashtags text[]`, `media_urls text[]`, `scheduled_at timestamptz`, `published_at timestamptz`, `status text DEFAULT 'draft' CHECK (status IN ('draft','scheduled','published','failed'))`, `engagement_data jsonb` (likes, comments, shares, views — manual entry or webhook), `fair_housing_flags jsonb`, `has_violations boolean DEFAULT false`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(campaign_id)`, `(platform)`, `(status)`, `(scheduled_at)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `marketing_flyers` table: `id uuid PK`, `company_id uuid NOT NULL`, `campaign_id uuid NOT NULL REFERENCES marketing_campaigns(id)`, `template_name text NOT NULL`, `layout_config jsonb NOT NULL` (sections, photo placement, branding, color scheme), `property_data_snapshot jsonb NOT NULL`, `pdf_url text`, `thumbnail_url text`, `page_count int DEFAULT 1`, `paper_size text DEFAULT 'letter' CHECK (paper_size IN ('letter','legal','a4','postcard_4x6','postcard_6x9'))`, `is_print_ready boolean DEFAULT false`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(campaign_id)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `marketing_property_websites` table: `id uuid PK`, `company_id uuid NOT NULL`, `campaign_id uuid NOT NULL REFERENCES marketing_campaigns(id)`, `slug text NOT NULL UNIQUE`, `custom_domain text`, `is_published boolean DEFAULT false`, `page_config jsonb NOT NULL` (hero_image, photo_gallery, description, property_details, map, agent_contact, lead_capture_form, virtual_tour_embed, open_house_schedule), `lead_capture_enabled boolean DEFAULT true`, `branding jsonb` (agent_photo_url, agent_name, brokerage_name, colors, logo_url), `analytics jsonb` (views, unique_visitors, lead_form_submissions, avg_time_on_page), `published_at timestamptz`, `unpublished_at timestamptz`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(campaign_id)`, `(slug)`, `(is_published)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `marketing_email_templates` table: `id uuid PK`, `company_id uuid NOT NULL`, `campaign_id uuid REFERENCES marketing_campaigns(id)`, `name text NOT NULL`, `subject_line text NOT NULL`, `html_body text NOT NULL`, `text_body text`, `template_type text NOT NULL CHECK (template_type IN ('just_listed','price_reduction','open_house','just_sold','market_update','custom'))`, `merge_fields_used text[]`, `is_system boolean DEFAULT false`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(template_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `fair_housing_dictionary` table: `id uuid PK`, `term text NOT NULL`, `category text NOT NULL CHECK (category IN ('race','color','religion','national_origin','sex','disability','familial_status','state_local'))`, `severity text NOT NULL CHECK (severity IN ('violation','warning','context_dependent'))`, `suggestion text`, `notes text`, `is_active boolean DEFAULT true`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`. No company_id — system-wide reference table. Index: `(term)`, `(category)`, `(is_active)`.
+
+- [ ] Seed `fair_housing_dictionary` with 200+ terms: "family-friendly" (familial_status/violation), "walking distance to church" (religion/warning), "exclusive neighborhood" (race/context_dependent), "master bedroom" (context_dependent — some MLSs ban), "man cave" (sex/warning), "no children" (familial_status/violation), "steps" (disability/context_dependent), "wheelchair" (disability/warning — describe feature not occupant), "perfect for young professionals" (familial_status/violation), "ethnic" (national_origin/violation), etc. Include positive alternatives for each.
+
+- [ ] Seed `marketing_description_templates` — 8 property-type templates x 7 formats = 56 templates. Property types: luxury, starter, investment, fixer-upper, condo/townhouse, new construction, land, commercial. Formats: MLS (512-2500 chars varies by MLS), Zillow SEO (keyword-rich), social (punchy, <280 chars), email (medium, benefits-focused), SMS (160 chars), print flyer (headline + 3-5 bullet points), full narrative (600-1000 words sensory language). Each with merge fields and tone guidance.
+
+#### Edge Functions (~8h)
+
+- [ ] `marketing-generate-description` EF: POST — accepts campaign_id + format + template_id (or 'manual'). If template: merges property data into template merge fields, respects character limits. Runs Fair Housing scanner on output: regex + dictionary lookup against `fair_housing_dictionary`, flags any matches with term, category, severity, suggestion. Saves to `marketing_descriptions`. Returns {content, character_count, fair_housing_flags, has_violations}. Auth: JWT required.
+
+- [ ] `marketing-fair-housing-scan` EF: POST — accepts text content. Scans against `fair_housing_dictionary`. Case-insensitive regex matching. Context-aware: "master bedroom" flagged as warning only (some MLSs allow, some don't). "Family-friendly" flagged as violation always. Returns {flags: [{term, location_in_text, category, severity, suggestion}], has_violations: bool, safe_score: 0-100}. Auth: JWT required. Rate limit: 100/min.
+
+- [ ] `marketing-generate-flyer` EF: POST — accepts campaign_id + template selection + branding overrides. Uses @react-pdf/renderer to create print-ready PDF. Pulls property photos from storage, property data from campaign snapshot. Layouts: "Luxury" (full-bleed hero, minimal text), "Professional" (grid layout, detailed specs), "Open House" (date/time prominent, QR code), "Just Listed/Sold" banner variant, "Postcard" (4x6 and 6x9 for direct mail). Generates thumbnail. Uploads to storage. Auth: JWT required.
+
+- [ ] `marketing-generate-social-posts` EF: POST — accepts campaign_id + platforms (array). Generates platform-specific posts: Instagram (caption + 30 hashtags, square crop guidance), Facebook (longer caption, link to property website), LinkedIn (professional tone, market context), TikTok (hook-first, short), Twitter (280 char limit). Each post passes Fair Housing scanner. Saves to `marketing_social_posts`. Auth: JWT required.
+
+- [ ] `marketing-property-website-deploy` EF: POST — accepts campaign_id + page_config. Generates static page config stored in `marketing_property_websites`. The actual hosting is via a dynamic route on the realtor portal: `properties.zafto.cloud/[slug]`. Page includes: hero image, photo gallery (lightbox), property details grid, description, map embed (OSM), agent contact card with lead capture form, virtual tour embed (if available), open house schedule. Lead capture form submits to Supabase → creates customer + lead in agent's CRM. Auth: JWT required.
+
+- [ ] `marketing-email-blast-prepare` EF: POST — accepts campaign_id + email_template_id + recipient_list_filter (CRM segment). Merges property data into email template. Generates personalized HTML + text versions. Returns preview + recipient count. Does NOT send — agent must approve. When approved, queues via SendGrid/Mailgun with CAN-SPAM compliance: physical address, unsubscribe link, honest subject line. Auth: JWT required.
+
+- [ ] `marketing-campaign-analytics` EF: GET — accepts campaign_id. Aggregates: property website views + lead form submissions, social post engagement (manual entry), email open/click rates (webhook from SendGrid), flyer download count. Returns unified analytics dashboard data. Auth: JWT required.
+
+#### Flutter (~8h)
+
+- [ ] `MarketingCampaignListScreen` — List of marketing campaigns: listing address, type badge, status, asset count, created date. Filter by status/type. "Launch New Campaign" FAB. 4-state screen.
+
+- [ ] `MarketingCampaignBuilderScreen` — Campaign creation wizard: (1) Select listing from RE2 listings or enter manually, (2) Select campaign type (full_launch, price_reduction, open_house, etc), (3) Select which assets to generate (description, social, flyer, website, email — all toggled on by default), (4) Select target audience, (5) Review property data snapshot, (6) Generate all assets. Shows generation progress per asset.
+
+- [ ] `MarketingDescriptionEditorScreen` — Edit generated descriptions: tabbed by format (MLS, Zillow, Social, Email, SMS, Print, Full). Character count tracker with limit indicator. Fair Housing flag panel: shows flagged terms highlighted in text with suggestions. "Scan" button re-runs scanner after edits. Approve/reject per format. Copy-to-clipboard for each.
+
+- [ ] `MarketingSocialPostsScreen` — View/edit generated social posts by platform. Preview mockup per platform (Instagram post preview, Facebook post preview, etc). Hashtag editor. Media selector (pick from listing photos). Schedule date/time picker. "Copy to Clipboard" for manual posting (Phase 1 — direct API posting is Phase 2).
+
+- [ ] `MarketingFlyerPreviewScreen` — Flyer template selector (5 layouts). Live preview of selected template with property data. Branding customization (agent photo, logo, colors). Download PDF. Share via messaging. Print option.
+
+- [ ] `MarketingPropertyWebsiteScreen` — Configure property microsite: select photos for gallery, edit description, toggle lead capture, set agent branding. Preview in WebView. Publish/unpublish toggle. Copy URL. QR code generator for yard signs. View analytics (visits, leads captured).
+
+- [ ] `MarketingEmailEditorScreen` — Select email template, preview with merge data, edit subject line and body. Recipient list: select CRM segment (all contacts, past buyers, active leads, custom tag). Preview count. "Send Test" to self. "Queue Send" with confirmation.
+
+- [ ] Add Marketing tab to realtor navigation with campaign list as default view
+
+#### Realtor Portal (~8h)
+
+- [ ] `MarketingDashboard` page — overview: active campaigns, total assets generated, leads captured from property websites, top-performing campaign by leads. Quick launch: "New Campaign" with listing selector.
+
+- [ ] `MarketingCampaignManager` page — full campaign CRUD with tabbed asset management. Per-campaign tabs: Descriptions | Social Posts | Flyers | Property Website | Email | Analytics. Bulk operations: approve all assets, publish campaign, pause campaign. Timeline view of all campaign activities.
+
+- [ ] `MarketingDescriptionStudio` page — side-by-side editor: property data on left, description editor on right. Format tabs. Fair Housing scanner with real-time inline highlighting. Template selector dropdown. Merge field reference panel. Character count with MLS-specific limits (configurable per MLS). Copy all button for each format.
+
+- [ ] `MarketingSocialMediaPlanner` page — calendar view of scheduled posts across platforms. Drag-to-reschedule. Bulk approve. Platform-specific preview panels. Hashtag analytics (most used, best performing). Content library: save posts as reusable templates.
+
+- [ ] `MarketingFlyerDesigner` page — template gallery with live previews. Property photo picker with drag-to-position. Branding panel (logo upload, color picker, font selection). Print settings (paper size, bleed, crop marks). Batch generate: multiple flyer variants from same listing. PDF download + direct print.
+
+- [ ] `MarketingPropertyWebsiteBuilder` page — WYSIWYG-lite editor: section ordering, photo gallery management, lead form customization, SEO fields (title, meta description), custom domain setup instructions. Analytics panel: chart of views over time, lead conversion rate.
+
+- [ ] `MarketingEmailCampaignManager` page — template library (system + custom), visual editor with merge field insertion, recipient segment builder (CRM filters), A/B subject line testing (Phase 2), send scheduling, delivery analytics (opens, clicks, bounces from SendGrid webhook).
+
+- [ ] `FairHousingComplianceReport` page — aggregate Fair Housing scan results across all campaigns: most common violations, violation trend over time, agent compliance score (% of descriptions passing clean on first scan). Training resource links. Brokerage-wide report export.
+
+- [ ] All portal pages use hooks: `use-marketing-campaigns`, `use-marketing-descriptions`, `use-marketing-social-posts`, `use-marketing-flyers`, `use-marketing-websites`, `use-marketing-emails`, `use-fair-housing-scanner`
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `MARKETING_FACTORY` module: default ON for realtor entity type
+- [ ] Register `LISTING_DESCRIPTIONS` module: default ON for realtor entity type
+- [ ] Register `SOCIAL_MEDIA_MARKETING` module: default ON for realtor entity type
+- [ ] Register `PRINT_MARKETING` module: default ON for realtor entity type
+- [ ] Register `PROPERTY_WEBSITES` module: default ON for realtor entity type
+- [ ] Register `DIRECT_MAIL` module: default ON for realtor entity type
+
+#### Security Verification (~2h)
+
+- [ ] RLS policies on all 7 new tables + `fair_housing_dictionary` (public read, admin write)
+- [ ] All tables have company_id, indexes, audit trigger, updated_at trigger, deleted_at
+- [ ] All EFs: JWT auth, CORS, Zod input validation, rate limiting
+- [ ] Marketing assets stored in private storage bucket with signed URLs
+- [ ] Property website lead capture: CSRF protection, rate limiting (10 submissions/hour per IP), honeypot field for spam
+- [ ] Email sending: CAN-SPAM compliance enforced (unsubscribe link, physical address, honest subject line)
+- [ ] Fair Housing scanner: cannot publish description with severity=violation flags — hard gate
+- [ ] `flutter analyze` passes
+- [ ] `npm run build` passes for realtor-portal
+- [ ] Commit: `[RE12] Marketing factory — description generator, fair housing scanner, social posts, flyers, property websites, email campaigns`
+
+---
+
+### RE13 — Brokerage Admin Panel (~32h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md Section 19, realtor-app-customization-research.md, realtor-professional-types-deep-research.md*
+*Depends on: RE1 (Realtor CRM), RE8 (Commission Engine), CUST9 (Module Registry)*
+*CUST9 Modules: BROKERAGE_ADMIN, AGENT_ROSTER, AGENT_ONBOARDING, COMPLIANCE_DASHBOARD, COMMISSION_PLANS, RECRUITING_PIPELINE, BROKERAGE_REPORTING*
+
+**What this builds:** Complete brokerage management toolkit for brokers and managing brokers. Agent roster with production tracking, 18-step onboarding workflow, compliance dashboard (license/E&O/CE tracking with auto-alerts), commission plan creation and assignment (wires to RE8 commission engine), lead routing configuration, recruiting pipeline, agent performance leaderboard, brokerage-wide reporting, and 1099 year-end generation. This is the tool that makes managing brokers choose Zafto over BoldTrail ($299-$1,800/mo) and SkySlope ($25-$60/user/mo).
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `commission_plans` (RE8), `commission_plan_assignments` (RE8), `commission_records` (RE8), `realtor_transactions` (RE4-RE5), `realtor_contacts` (RE2), `realtor_lead_routing_rules` (RE2), `buyer_representation_agreements` (RE11)
+- Writes to: 8 new tables (see below), `company_members` (status/compliance updates)
+- Wires to: Commission Engine (RE8), Transaction Engine (RE4-RE5), Lead Routing (RE1), Buyer Compliance (RE11), ZForge (1099 PDF generation), CUST9 ModuleRegistry
+
+#### Database Layer (~8h)
+
+- [ ] Create `agent_onboarding_workflows` table: `id uuid PK`, `company_id uuid NOT NULL`, `member_id uuid NOT NULL REFERENCES company_members(id)`, `status text NOT NULL DEFAULT 'in_progress' CHECK (status IN ('in_progress','completed','cancelled','on_hold'))`, `started_at timestamptz DEFAULT now()`, `completed_at timestamptz`, `assigned_to uuid REFERENCES auth.users(id)` (onboarding coordinator), `notes text`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(member_id)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `agent_onboarding_steps` table: `id uuid PK`, `company_id uuid NOT NULL`, `workflow_id uuid NOT NULL REFERENCES agent_onboarding_workflows(id)`, `step_number int NOT NULL`, `step_name text NOT NULL`, `step_category text NOT NULL CHECK (step_category IN ('legal','licensing','financial','technology','training','compliance','administrative'))`, `description text`, `is_required boolean DEFAULT true`, `status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','in_progress','completed','skipped','blocked'))`, `completed_at timestamptz`, `completed_by uuid REFERENCES auth.users(id)`, `document_url text`, `notes text`, `due_date date`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(workflow_id)`, `(step_number)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `agent_compliance_records` table: `id uuid PK`, `company_id uuid NOT NULL`, `member_id uuid NOT NULL REFERENCES company_members(id)`, `compliance_type text NOT NULL CHECK (compliance_type IN ('real_estate_license','broker_license','e_and_o_insurance','nar_membership','mls_membership','ce_credits','background_check','w9_tax_form','ica_agreement','fair_housing_cert','ethics_training','safety_training','anti_harassment'))`, `status text NOT NULL DEFAULT 'active' CHECK (status IN ('active','expiring_soon','expired','pending','not_applicable'))`, `license_number text`, `issuing_authority text`, `state_code text`, `effective_date date`, `expiration_date date`, `renewal_date date`, `document_url text`, `ce_credits_completed numeric(5,1)`, `ce_credits_required numeric(5,1)`, `last_verified_at timestamptz`, `verified_by uuid REFERENCES auth.users(id)`, `alert_30_sent boolean DEFAULT false`, `alert_60_sent boolean DEFAULT false`, `alert_90_sent boolean DEFAULT false`, `notes text`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(member_id)`, `(compliance_type)`, `(expiration_date)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `agent_production_metrics` table: `id uuid PK`, `company_id uuid NOT NULL`, `member_id uuid NOT NULL REFERENCES company_members(id)`, `period_type text NOT NULL CHECK (period_type IN ('monthly','quarterly','annual'))`, `period_start date NOT NULL`, `period_end date NOT NULL`, `gci numeric(12,2) DEFAULT 0`, `units_closed int DEFAULT 0`, `volume numeric(14,2) DEFAULT 0`, `listings_taken int DEFAULT 0`, `listings_sold int DEFAULT 0`, `buyer_sides int DEFAULT 0`, `avg_sale_price numeric(12,2)`, `avg_days_on_market numeric(6,1)`, `list_to_sale_ratio numeric(5,2)`, `avg_commission_pct numeric(5,2)`, `leads_assigned int DEFAULT 0`, `leads_converted int DEFAULT 0`, `conversion_rate numeric(5,2)`, `ranking_in_office int`, `ranking_in_company int`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(member_id)`, `(period_type, period_start)`, `(gci DESC)`, `(deleted_at)`. RLS scoped. Audit trigger. Unique constraint on `(company_id, member_id, period_type, period_start)`.
+
+- [ ] **DO NOT create `brokerage_commission_plans` or `agent_plan_assignments`** — these are defined in RE8 as `commission_plans` and `commission_plan_assignments`. RE13 reads from and provides admin UI for RE8's commission tables. No duplicate tables needed.
+
+- [ ] Create `recruiting_prospects` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `email text`, `phone text`, `current_brokerage text`, `license_number text`, `license_state text`, `years_experience int`, `annual_gci_estimate numeric(12,2)`, `annual_volume_estimate numeric(14,2)`, `specialties text[]`, `status text NOT NULL DEFAULT 'prospect' CHECK (status IN ('prospect','contacted','interested','meeting_scheduled','offer_extended','accepted','declined','not_interested'))`, `source text` (referral, event, social_media, cold_outreach, inbound), `notes text`, `last_contact_date date`, `next_follow_up_date date`, `assigned_recruiter_id uuid REFERENCES company_members(id)`, `value_proposition_sent boolean DEFAULT false`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(status)`, `(next_follow_up_date)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `agent_1099_records` table: `id uuid PK`, `company_id uuid NOT NULL`, `member_id uuid NOT NULL REFERENCES company_members(id)`, `tax_year int NOT NULL`, `total_compensation numeric(12,2) NOT NULL`, `agent_name text NOT NULL`, `agent_address text`, `agent_ssn_last4 text` (last 4 digits only for display), `agent_ssn_encrypted text` (full SSN encrypted at rest for 1099 generation), `agent_tin text` (EIN if incorporated), `payer_name text NOT NULL`, `payer_address text NOT NULL`, `payer_ein text NOT NULL`, `status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','generated','sent_to_agent','filed','corrected'))`, `pdf_url text`, `generated_at timestamptz`, `sent_at timestamptz`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(member_id)`, `(tax_year)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger. Unique constraint: `(company_id, member_id, tax_year)`.
+
+- [ ] Seed default onboarding steps (18 steps): 1-License verification (licensing), 2-Background check (compliance), 3-ICA/Independent Contractor Agreement signed (legal), 4-W-9 collected (financial), 5-NAR membership verified (compliance), 6-State association membership (compliance), 7-Local MLS membership (compliance), 8-E&O insurance certificate (compliance), 9-Fair Housing certification (compliance), 10-Ethics training completed (training), 11-Brokerage policies handbook signed (legal), 12-Commission plan assigned (financial), 13-CRM access provisioned (technology), 14-MLS access provisioned (technology), 15-Email/phone setup (technology), 16-Office orientation scheduled (administrative), 17-Mentor assigned (training), 18-First week goals set (training)
+
+#### Edge Functions (~6h)
+
+- [ ] `brokerage-compliance-check` EF: CRON (runs daily at 6am) — scans all `agent_compliance_records` for upcoming expirations. Sends alerts: 90 days (email only), 60 days (email + in-app), 30 days (email + push + in-app — URGENT), 7 days (all channels + notify managing broker), expired (all channels + flag agent as non-compliant). Updates `alert_*_sent` flags. Also checks: CE credit progress (if < 50% complete and > 50% through renewal period → warning). Auth: service role (cron).
+
+- [ ] `brokerage-production-aggregate` EF: CRON (runs weekly Sunday night) — aggregates transaction data from `realtor_transactions` and `commission_records` into `agent_production_metrics`. Calculates: GCI, units, volume, listings taken/sold, buyer sides, avg sale price, avg DOM, list-to-sale ratio, conversion rate. Generates monthly, quarterly, annual periods. Computes office and company rankings. Auth: service role (cron).
+
+- [ ] `brokerage-1099-generate` EF: POST — accepts tax_year + member_ids (array, or 'all'). For each agent: sums all commission payments in the tax year from `commission_records`. Generates IRS Form 1099-NEC PDF using @react-pdf/renderer. Stores encrypted SSN only for PDF generation, then immediately clears from memory. Saves PDF to private storage bucket. Auth: JWT required + role = owner or admin.
+
+- [ ] `brokerage-agent-scorecard` EF: GET — accepts member_id. Returns comprehensive agent scorecard: production metrics (current period vs prior), compliance status (all types), onboarding completion %, active listings, active buyers, pipeline value, lead response time avg, client satisfaction score (from reviews), GCI trajectory (quarterly trend). Auth: JWT required + role = owner, admin, or office_manager.
+
+- [ ] `brokerage-lead-routing-engine` EF: POST — accepts new lead data (source, type, zip, price, property_type). Matches against lead routing rules (round robin, blast, criteria-based). Supports: round-robin with percentage weighting, blast-to-group with timeout/reassignment, criteria filters (zip code, price range, property type, lead source, buyer/seller type), listing agent bypass, ISA-first routing (ISA qualifies, then routes to agent group). Creates assignment in CRM. Sends notification to assigned agent. Auth: JWT required.
+
+- [ ] `brokerage-compliance-report` EF: GET — accepts optional date_range, agent_ids filter. Returns: overall compliance score (% of agents fully compliant), per-agent compliance matrix, expiring items by category, missing items, BRA compliance from RE11 data, audit-ready export (JSON or CSV). Auth: JWT required + role = owner, admin, or office_manager.
+
+#### Flutter (~6h)
+
+- [ ] `BrokerageAgentRosterScreen` — List of all agents: name, photo, role, status (active/inactive/on_hold), compliance status indicator (green/yellow/red), current GCI, current units. Sort by: name, GCI, compliance. Filter by: office, team, status. Tap for detail. "Add Agent" FAB with onboarding workflow launch.
+
+- [ ] `BrokerageAgentDetailScreen` — Full agent profile: personal info, license details, compliance records (all types with status badges), production metrics (GCI chart, units chart, volume chart over time), commission plan assignment, active listings/buyers, pipeline value, onboarding progress (if still onboarding). Actions: edit profile, change plan, mark inactive, view 1099.
+
+- [ ] `BrokerageOnboardingTrackerScreen` — List of in-progress onboarding workflows. Per-agent: progress bar (completed/total steps), current step highlighted, days since start, assigned coordinator. Tap to manage: mark steps complete, upload documents, add notes, reassign coordinator.
+
+- [ ] `BrokerageComplianceDashboardScreen` — At-a-glance: total agents, % fully compliant, expiring items count (30/60/90 days), expired items count (CRITICAL). Grouped by compliance type: licenses, E&O, CE credits, memberships. Color-coded timeline: green (valid), yellow (expiring), red (expired). Tap any item to manage.
+
+- [ ] `BrokerageLeaderboardScreen` — Agent rankings: GCI, units, volume, conversion rate, client satisfaction. Period selector (month, quarter, year, custom). Podium view for top 3. Full list below. Comparison mode: select 2 agents to compare side-by-side.
+
+- [ ] `BrokerageCommissionPlanScreen` — List of commission plans with type, agent count, status. Create/edit plans: visual config builder per plan type (split slider, cap threshold, graduated tiers, flat fee input). Assign to agents: drag or select. Show projected revenue per plan.
+
+- [ ] `BrokerageRecruitingScreen` — Kanban board: prospect → contacted → interested → meeting → offer → accepted/declined. Per-prospect card: name, current brokerage, estimated GCI, last contact. Add prospect manually. Set follow-up reminders. Track value proposition sent.
+
+- [ ] `Brokerage1099Screen` — Tax year selector. List of agents with: total compensation, 1099 status (draft/generated/sent/filed). "Generate All" button for batch. "Generate" per agent. Preview PDF. Send to agent (email with encrypted link). Export for accountant.
+
+#### Realtor Portal (~8h)
+
+- [ ] `BrokerageAdminDashboard` page — managing broker overview: agent count, total GCI, compliance score, recruiting pipeline value, 1099 status. Quick actions: add agent, compliance report, production report. Alerts panel: expiring compliance items, overdue onboarding steps.
+
+- [ ] `AgentRosterManager` page — searchable, sortable, filterable table of all agents. Inline status editing. Bulk actions: send compliance reminder, export roster, generate 1099s. Column customization. Office/team grouping. Agent profile detail panel (slide-out).
+
+- [ ] `OnboardingWorkflowManager` page — manage onboarding workflows and templates. Customize step list per brokerage (add/remove/reorder steps). Track all in-progress onboardings. Overdue step alerts. Document upload per step. Coordinator assignment.
+
+- [ ] `ComplianceDashboardPage` page — comprehensive compliance matrix: agents (rows) x compliance types (columns). Cell = status badge. Click cell to view/edit details. Expiration timeline view (Gantt-style). Auto-alert configuration: customize which alerts go when. Export compliance report for MLS/association audit.
+
+- [ ] `CommissionPlanBuilder` page — visual commission plan builder: split calculator (agent/brokerage/franchise pie chart), cap progress tracker, graduated tier editor, 100% plan fee calculator. Plan comparison tool: show agent net income under different plans at various GCI levels. Assign plans to agents with effective date management.
+
+- [ ] `AgentProductionReports` page — production analytics: GCI over time (line chart), units/volume (bar chart), per-agent breakdown (table), office comparison, period-over-period growth. Drill down: by agent, office, team, property type, price range. Export to CSV/PDF.
+
+- [ ] `RecruitingPipelinePage` page — full recruiting CRM: prospect management, conversation log, value proposition templates, interview scheduling, offer letter builder (merge fields for compensation plan details), acceptance workflow. Pipeline analytics: conversion rate, avg time in pipeline, source attribution.
+
+- [ ] `YearEnd1099Manager` page — 1099 generation center: select tax year, review agent compensation totals, verify agent tax information (SSN/EIN + address), generate in bulk, review PDFs, send to agents electronically, mark as filed. Audit trail: who generated, when sent, corrections. Integration with ZForge for PDF generation.
+
+- [ ] Access restricted to roles: owner, admin, office_manager. Agents see their OWN production/compliance data only.
+
+- [ ] All portal pages use hooks: `use-agent-roster`, `use-agent-onboarding`, `use-agent-compliance`, `use-agent-production`, `use-commission-plans`, `use-recruiting`, `use-1099-records`
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `BROKERAGE_ADMIN` module: default ON for realtor entity type + role = owner/admin/office_manager
+- [ ] Register `AGENT_ROSTER` module: default ON when BROKERAGE_ADMIN enabled
+- [ ] Register `AGENT_ONBOARDING` module: default ON when BROKERAGE_ADMIN enabled
+- [ ] Register `COMPLIANCE_DASHBOARD` module: default ON when BROKERAGE_ADMIN enabled
+- [ ] Register `COMMISSION_PLANS` module: default ON when BROKERAGE_ADMIN enabled
+- [ ] Register `RECRUITING_PIPELINE` module: default ON when BROKERAGE_ADMIN enabled
+- [ ] Register `BROKERAGE_REPORTING` module: default ON when BROKERAGE_ADMIN enabled
+
+#### Security Verification (~2h)
+
+- [ ] RLS on all 8 new tables scoped to company_id
+- [ ] Role-based access: brokerage admin pages visible ONLY to owner, admin, office_manager roles
+- [ ] Agent SSN/TIN: encrypted at rest using pgcrypto, decrypted only during 1099 PDF generation, never exposed via API except last 4 digits
+- [ ] 1099 PDFs stored in private bucket, signed URLs with 30-minute expiry
+- [ ] Compliance document uploads: private bucket, company-scoped paths
+- [ ] Production metrics: agents see own data only, managers see office data, owner/admin see all
+- [ ] Recruiting prospect data: no PII shared outside company boundaries
+- [ ] All EFs: JWT auth, CORS, Zod validation, rate limiting
+- [ ] Optimistic locking on: `agent_compliance_records`, `brokerage_commission_plans`, `agent_plan_assignments`
+- [ ] `flutter analyze` passes
+- [ ] `npm run build` passes for realtor-portal
+- [ ] Commit: `[RE13] Brokerage admin — agent roster, onboarding workflow, compliance dashboard, commission plans, recruiting pipeline, production reports, 1099 generation`
+
+---
+
+### RE14 — Lead Generation Pipeline (~28h) — S144
+*Source: realtor-lead-gen-apis-research.md, 53_REALTOR_PLATFORM_SPEC.md Section 17, s135-realtor-api-gaps.md*
+*Depends on: RE1 (Realtor CRM foundation), CUST9 (Module Registry)*
+*CUST9 Modules: LEAD_GEN_PIPELINE, PUBLIC_RECORDS_INGESTION, SKIP_TRACING, OUTREACH_CAMPAIGNS, DNC_COMPLIANCE, LEAD_SCORING*
+
+**What this builds:** 5-layer lead generation pipeline from free public data. Layer 1: Data ingestion from county assessor/recorder/tax records via Socrata SODA API ($0/month). Layer 2: ETL processing with propensity scoring (pre-foreclosure, tax delinquent, absentee owner, long ownership, code violations, probate, divorce signals). Layer 3: Contact enrichment via skip tracing integration point (designed for plug-in, Tracerfy at $0.02/record as reference). Layer 4: CRM integration with auto-segmentation + multi-channel campaign management. Layer 5: Organic amplifiers (open house digitization, GBP optimization, social automation). Total cost: $10-20/month for 500 scored leads, replacing $99-500+/month competitors.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `realtor_contact_activities` (RE2), `realtor_lead_routing_rules` (RE2)
+- Writes to: 8 new tables (see below), `realtor_contacts` (new leads created from pipeline), `realtor_contact_activities` (outreach logged)
+- Wires to: Socrata SODA API (free public records), FTC DNC Registry ($0 for <5 area codes), CRM (RE1), Lead Routing (RE1/RE13), SendGrid/Mailgun (email campaigns), SignalWire (SMS with opt-in), CUST9 ModuleRegistry
+
+#### Database Layer (~7h)
+
+- [ ] Create `lead_data_sources` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `source_type text NOT NULL CHECK (source_type IN ('socrata_soda','county_website','csv_import','manual','api_integration'))`, `endpoint_url text`, `api_key_encrypted text`, `dataset_id text` (for Socrata SODA datasets), `data_category text NOT NULL CHECK (data_category IN ('assessor','tax_delinquent','foreclosure','probate','divorce','code_violation','building_permit','fsbo','expired_listing'))`, `county text`, `state_code text`, `last_sync_at timestamptz`, `sync_frequency text DEFAULT 'weekly' CHECK (sync_frequency IN ('daily','weekly','monthly','manual'))`, `records_imported int DEFAULT 0`, `is_active boolean DEFAULT true`, `config jsonb` (source-specific config: column mappings, filters, date formats), `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(source_type)`, `(data_category)`, `(is_active)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `lead_raw_records` table: `id uuid PK`, `company_id uuid NOT NULL`, `source_id uuid NOT NULL REFERENCES lead_data_sources(id)`, `external_id text` (ID from source system for dedup), `property_address text NOT NULL`, `property_address_normalized text` (standardized format for matching), `owner_name text`, `owner_mailing_address text`, `property_data jsonb NOT NULL` (all raw fields from source: assessed_value, tax_amount, year_built, sqft, beds, baths, lot_size, property_type, last_sale_date, last_sale_price, mortgage_amount, mortgage_date), `signal_data jsonb` (distress signals: {pre_foreclosure: bool, tax_delinquent: bool, tax_delinquent_amount: numeric, absentee_owner: bool, out_of_state: bool, ownership_years: int, code_violations: int, building_permits_recent: int, probate_filing: bool, divorce_filing: bool, vacant: bool, equity_estimate: numeric}), `processing_status text DEFAULT 'raw' CHECK (processing_status IN ('raw','normalized','scored','enriched','imported_to_crm','rejected'))`, `rejection_reason text`, `imported_at timestamptz DEFAULT now()`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(source_id)`, `(property_address_normalized)`, `(processing_status)`, `(deleted_at)`. Unique constraint: `(company_id, source_id, external_id)`. RLS scoped. Audit trigger.
+
+- [ ] Create `lead_scores` table: `id uuid PK`, `company_id uuid NOT NULL`, `raw_record_id uuid NOT NULL REFERENCES lead_raw_records(id)`, `total_score int NOT NULL CHECK (0-100)`, `score_breakdown jsonb NOT NULL` (per-signal scores: {pre_foreclosure: 30, tax_delinquent: 25, probate: 30, divorce: 25, code_violations: 20, vacant: 20, absentee: 15, long_ownership: 15, high_equity: 10, aging_no_permits: 10, out_of_state: 5, multiple_properties: 5, owner_65_plus: 5}), `temperature text NOT NULL CHECK (temperature IN ('on_fire','hot','warm','cold'))` (on_fire: 61+, hot: 41-60, warm: 21-40, cold: 0-20), `scored_at timestamptz DEFAULT now()`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(raw_record_id)`, `(total_score DESC)`, `(temperature)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `skip_trace_requests` table: `id uuid PK`, `company_id uuid NOT NULL`, `raw_record_id uuid NOT NULL REFERENCES lead_raw_records(id)`, `provider text NOT NULL DEFAULT 'manual' CHECK (provider IN ('tracerfy','datazapp','batch_data','manual'))`, `request_data jsonb` (name, address sent to provider), `response_data jsonb` (phones: [{number, type, carrier, dnc_status}], emails: [{address, verified}], demographics: {age, household_size}), `status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','completed','failed','no_results'))`, `phone_found boolean DEFAULT false`, `email_found boolean DEFAULT false`, `cost_per_record numeric(6,4)`, `dnc_checked boolean DEFAULT false`, `dnc_status text CHECK (dnc_status IN ('clean','on_dnc','on_state_dnc','litigator'))`, `requested_at timestamptz DEFAULT now()`, `completed_at timestamptz`, `created_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(raw_record_id)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `dnc_registry` table: `id uuid PK`, `company_id uuid NOT NULL`, `phone_number text NOT NULL`, `source text NOT NULL CHECK (source IN ('federal_dnc','state_dnc','internal','litigator_scrub'))`, `state_code text` (for state DNC lists), `added_at timestamptz DEFAULT now()`, `expires_at timestamptz`, `created_at timestamptz DEFAULT now()`. Indexes: `(company_id, phone_number)` UNIQUE, `(source)`. RLS scoped. No audit trigger needed (high-volume reference data).
+
+- [ ] Create `outreach_campaigns` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `campaign_type text NOT NULL CHECK (campaign_type IN ('email_drip','sms_drip','direct_mail','cold_call','multi_channel'))`, `status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','active','paused','completed','cancelled'))`, `target_temperature text[]` (which lead temperatures to include), `target_data_categories text[]` (which signal types to target), `target_geographies jsonb` (zip codes, counties, cities), `max_leads int`, `schedule jsonb` (start_date, end_date, frequency, time_windows), `compliance_config jsonb` ({email: {can_spam: true, physical_address: text, unsubscribe_url: text}, sms: {tcpa_opt_in_required: true, opt_in_keyword: text}, phone: {dnc_scrub: true, calling_hours: {start: '08:00', end: '21:00', timezone: 'recipient_local'}}}), `template_ids jsonb` (references to email/sms/mail templates), `stats jsonb` (leads_targeted, contacts_attempted, responses, appointments_set, conversions), `created_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(status)`, `(campaign_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `outreach_actions` table: `id uuid PK`, `company_id uuid NOT NULL`, `campaign_id uuid NOT NULL REFERENCES outreach_campaigns(id)`, `raw_record_id uuid REFERENCES lead_raw_records(id)`, `contact_id uuid REFERENCES realtor_contacts(id)`, `channel text NOT NULL CHECK (channel IN ('email','sms','phone','direct_mail','social'))`, `action_type text NOT NULL CHECK (action_type IN ('sent','delivered','opened','clicked','replied','bounced','unsubscribed','opted_out','call_attempted','call_connected','call_voicemail','appointment_set','not_interested'))`, `content_preview text` (first 200 chars of message), `metadata jsonb` (email: message_id, sms: twilio_sid, phone: call_duration, mail: tracking_number), `performed_at timestamptz DEFAULT now()`, `performed_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`. Indexes: `(company_id)`, `(campaign_id)`, `(raw_record_id)`, `(customer_id)`, `(channel)`, `(action_type)`, `(performed_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `outreach_templates` table: `id uuid PK`, `company_id uuid NOT NULL`, `name text NOT NULL`, `channel text NOT NULL CHECK (channel IN ('email','sms','direct_mail'))`, `template_type text NOT NULL CHECK (template_type IN ('initial_contact','follow_up_1','follow_up_2','follow_up_3','nurture','re_engage','appointment_confirm'))`, `subject_line text` (email only), `body_template text NOT NULL` (with merge fields: {{owner_name}}, {{property_address}}, {{agent_name}}, {{agent_phone}}, {{company_name}}, {{unsubscribe_url}}), `target_lead_type text` (pre_foreclosure, absentee, fsbo, expired, probate, general), `is_system boolean DEFAULT false`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(channel)`, `(template_type)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Seed `outreach_templates` — 30 system templates: 5 email sequences x 3 lead types (pre-foreclosure, absentee owner, FSBO) = 15 email templates. 5 SMS sequences x 2 types = 10 SMS templates. 5 direct mail templates (just listed, market update, home value, neighborhood expert, service offer). All CAN-SPAM/TCPA compliant. Include merge fields. Include unsubscribe mechanism text.
+
+- [ ] Seed `lead_data_sources` — pre-configured Socrata SODA endpoints for top 50 counties: NYC (property assessment, DOF, HPD violations), Cook County IL (assessor, delinquent tax, foreclosures), LA County, Harris County TX, Maricopa County AZ, San Diego, Orange County CA, Miami-Dade, etc. Each with correct dataset_id and column mappings.
+
+#### Edge Functions (~7h)
+
+- [ ] `leadgen-ingest-socrata` EF: POST — accepts source_id. Calls Socrata SODA API with dataset_id and configured filters. Paginates through results (limit 1000 per page). Normalizes addresses (uppercase, standardize St/Street/Ave/Avenue, remove apt/unit for matching). Deduplicates against existing `lead_raw_records` by normalized address. Inserts new records with raw property data. Updates `lead_data_sources.last_sync_at` and `records_imported`. Auth: JWT required. Rate limit: 5/min per company (SODA API is generous but we throttle to be respectful).
+
+- [ ] `leadgen-score-records` EF: POST — accepts record_ids (array) or source_id (score all unscored from source). For each record: checks signal_data fields, applies scoring formula (pre_foreclosure: +30, tax_delinquent_2yr: +25, probate: +30, divorce: +25, code_violations: +20, vacant: +20, absentee: +15, ownership_15yr: +15, high_equity: +10, aging_no_permits: +10, out_of_state_absentee: +5, multiple_properties: +5). Caps at 100. Assigns temperature: 61+=on_fire, 41-60=hot, 21-40=warm, 0-20=cold. Creates `lead_scores` records. Auth: JWT required.
+
+- [ ] `leadgen-skip-trace` EF: POST — accepts record_ids (array). Designed as a plug-in architecture: `provider` parameter selects integration. Phase 1: manual entry only (agent enters contact info found through their own research). Phase 2: Tracerfy API integration ($0.02/record). For each record: sends owner name + mailing address to provider, receives phone(s) + email(s). Auto-checks received phones against `dnc_registry`. Stores results in `skip_trace_requests`. Auth: JWT required. Rate limit: 50/min.
+
+- [ ] `leadgen-dnc-scrub` EF: POST — accepts phone numbers (array). Checks against: (1) `dnc_registry` internal table (federal + state + company internal), (2) FTC DNC Registry API ($0 for up to 5 area codes per subscription). Returns per-number: {clean, on_federal_dnc, on_state_dnc, on_internal_dnc, is_litigator}. HARD GATE: any number flagged as DNC is blocked from outbound calling. No override possible. Auth: JWT required.
+
+- [ ] `leadgen-import-to-crm` EF: POST — accepts record_ids (array, must be scored + enriched). Creates `realtor_contacts` records in RE2 CRM from lead_raw_records: maps owner_name → contact name, property_address → contact address, phone/email from skip_trace. Sets lead source, temperature tag, signal tags. Creates initial `realtor_contact_activities` log entry. Triggers lead routing (RE1/RE13) if configured. Updates `lead_raw_records.processing_status` = 'imported_to_crm'. Auth: JWT required.
+
+- [ ] `leadgen-campaign-execute` EF: CRON (runs every 15 min for active campaigns) — for each active campaign: check schedule (day of week, time window). Select next batch of leads matching campaign criteria (temperature, category, geography). For email: merge template, send via SendGrid/Mailgun with CAN-SPAM headers. For SMS: verify TCPA opt-in exists, merge template, send via SignalWire. For phone: add to cold call queue (agent sees list in app, makes manual calls — NO auto-dialer per TCPA). Log each action in `outreach_actions`. Respect frequency caps (max 1 email/day, max 1 SMS/week, max 1 call attempt/week per lead). Auth: service role (cron).
+
+- [ ] `leadgen-campaign-analytics` EF: GET — accepts campaign_id. Returns: total leads targeted, per-channel stats (sent, delivered, opened, clicked, replied, appointments set), conversion funnel (lead → contact → appointment → listing → close), cost per lead (skip tracing cost / leads), ROI estimate (commission from closed leads vs campaign cost), comparison to prior campaigns. Auth: JWT required.
+
+- [ ] `leadgen-compliance-report` EF: GET — returns DNC compliance report: total outbound calls, calls to DNC numbers (should be 0), internal DNC additions, CAN-SPAM compliance (unsubscribe rate, bounce rate), TCPA compliance (all SMS have opt-in record), state-specific compliance flags (NY = no cold calling). Auth: JWT required.
+
+#### Flutter (~6h)
+
+- [ ] `LeadGenDashboardScreen` — overview: total leads in pipeline, temperature distribution (pie chart: on_fire/hot/warm/cold), leads imported this period, active campaigns, appointments set, conversion rate. Quick actions: sync data sources, import to CRM, launch campaign.
+
+- [ ] `LeadGenDataSourcesScreen` — List of configured data sources: name, type, county/state, last sync, records count, status. "Add Source" button: select type (Socrata SODA, CSV import, manual), configure endpoint/dataset, set sync frequency. "Sync Now" button per source. Sync status indicator.
+
+- [ ] `LeadGenPipelineScreen` — Tabbed by temperature: On Fire | Hot | Warm | Cold. Each tab: list of lead records with property address, owner name, score, signal badges (pre-foreclosure, tax delinquent, absentee, etc), skip trace status, CRM status. Bulk actions: score, skip trace, import to CRM, add to campaign. Sort by score DESC. Search by address.
+
+- [ ] `LeadGenRecordDetailScreen` — Full lead record detail: property data, signal breakdown with scores, skip trace results (phones with DNC status, emails), outreach history timeline, CRM link (if imported). Actions: skip trace, import to CRM, log call manually, add to campaign.
+
+- [ ] `LeadGenCampaignListScreen` — List of outreach campaigns: name, type, status, leads targeted, responses, appointments. "New Campaign" FAB. Per-campaign: view details, pause/resume, view analytics.
+
+- [ ] `LeadGenCampaignBuilderScreen` — Campaign wizard: (1) Select type (email drip, SMS, direct mail, cold call, multi-channel), (2) Define audience (temperature, signal types, geography), (3) Select templates or create custom, (4) Configure compliance (CAN-SPAM address, TCPA opt-in enforcement, DNC auto-scrub toggle — ON by default, cannot be turned OFF for phone), (5) Set schedule + frequency caps, (6) Review and activate.
+
+- [ ] `LeadGenColdCallQueueScreen` — Agent's personal cold call queue: prioritized list of leads to call. Per-lead: property address, owner name, phone (with DNC badge if clean), score, signals, previous attempts. "Call" button (dials via phone app). Post-call log: disposition (connected, voicemail, no_answer, not_interested, appointment_set, wrong_number, add_to_internal_dnc). Calling hours enforcement: blocks calls outside 8am-9pm recipient local time.
+
+- [ ] `LeadGenComplianceScreen` — DNC compliance dashboard: total numbers in internal DNC registry, federal DNC check status, state-specific DNC compliance. CAN-SPAM: unsubscribe rate, bounce management. TCPA: opt-in records. NY cold calling block. State DNC list status (CO, FL, IN, LA, MA, MO, OK, PA, TN, TX, WY).
+
+#### Realtor Portal (~6h)
+
+- [ ] `LeadGenDashboard` page — comprehensive pipeline analytics: funnel visualization (raw records → scored → enriched → imported → contacted → appointment → listing → close), cost analysis (skip tracing spend vs commission earned), source performance (which counties produce best leads), temperature distribution heatmap on map.
+
+- [ ] `LeadGenSourceManager` page — CRUD for data sources. Socrata SODA source builder: browse available datasets by county, preview data, configure column mappings. CSV import: drag-and-drop upload, column mapping wizard, dedup preview. Sync scheduler. Import history log.
+
+- [ ] `LeadGenScoringConfig` page — customize scoring weights: adjustable multipliers per signal (admin-only). A/B test scoring models: run two formulas simultaneously, compare conversion rates. Score distribution histogram. Temperature threshold adjustment.
+
+- [ ] `LeadGenCampaignCenter` page — campaign management: create, edit, schedule, monitor. Template library with preview. Multi-channel campaign builder: combine email + SMS + direct mail + cold call into one workflow with configurable touchpoint sequence. Campaign calendar view. Performance comparison table.
+
+- [ ] `LeadGenComplianceDashboard` page — DNC registry management: bulk upload internal DNC numbers, FTC DNC sync status, state DNC list integration. CAN-SPAM audit trail. TCPA consent records. Compliance score per campaign. Export for legal review.
+
+- [ ] `LeadGenBulkOperations` page — batch operations: bulk score (select source, score all), bulk skip trace (select leads, estimate cost), bulk import to CRM (select leads, map fields, preview, import). Progress tracking for large batches.
+
+- [ ] All portal pages use hooks: `use-lead-sources`, `use-lead-records`, `use-lead-scores`, `use-skip-traces`, `use-outreach-campaigns`, `use-outreach-actions`, `use-dnc-registry`
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `LEAD_GEN_PIPELINE` module: default ON for realtor entity type
+- [ ] Register `PUBLIC_RECORDS_INGESTION` module: default ON when LEAD_GEN_PIPELINE enabled
+- [ ] Register `SKIP_TRACING` module: default ON when LEAD_GEN_PIPELINE enabled
+- [ ] Register `OUTREACH_CAMPAIGNS` module: default ON when LEAD_GEN_PIPELINE enabled
+- [ ] Register `DNC_COMPLIANCE` module: MANDATORY (cannot disable) when OUTREACH_CAMPAIGNS enabled
+- [ ] Register `LEAD_SCORING` module: default ON when LEAD_GEN_PIPELINE enabled
+
+#### Security Verification (~2h)
+
+- [ ] RLS on all 8 new tables scoped to company_id
+- [ ] DNC compliance HARD GATE: no phone call or SMS can be initiated to a number in `dnc_registry` — enforced at EF level AND Flutter UI level (phone button disabled for DNC numbers)
+- [ ] Skip trace API keys encrypted at rest in `lead_data_sources.api_key_encrypted`
+- [ ] Outreach actions: all email includes CAN-SPAM required elements (physical address, unsubscribe, honest subject), all SMS verifies TCPA opt-in record exists
+- [ ] Cold call queue: calling hours enforced (8am-9pm recipient local time), NY numbers blocked entirely
+- [ ] Lead raw records: PII (owner name, address, phone, email) accessible only to company members
+- [ ] Campaign execution: rate limited to prevent spam flagging (email: 200/hr, SMS: 50/hr)
+- [ ] All EFs: JWT auth, CORS, Zod validation, rate limiting
+- [ ] `flutter analyze` passes
+- [ ] `npm run build` passes for realtor-portal
+- [ ] Commit: `[RE14] Lead gen pipeline — public records ingestion, lead scoring, skip trace integration, outreach campaigns, DNC/TCPA/CAN-SPAM compliance`
+
+---
+
+### RE15 — Cross-Platform Intelligence Sharing (~24h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md Section 20, homeowner-types-cross-entity-research-s134.md*
+*Depends on: RE1 (Realtor CRM), Phase P (Recon), Phase SK (Sketch Engine), D8 (Estimate Engine), CUST9*
+*CUST9 Modules: CROSS_PLATFORM_SHARING, CONTRACTOR_LINKING, DATA_SHARING_CONTROLS, SHARING_AUDIT_TRAIL*
+
+**What this builds:** THE network effect flywheel feature. When a realtor and a contractor both use Zafto, they can optionally link accounts and share data bidirectionally with granular controls. Realtor dispatches work to Zafto contractor → system detects contractor's Zafto account → prompts both to link → both opt in → bidirectional data sharing begins. Data types: Recon scans, inspection reports, repair estimates, floor plans (Sketch), work order status, reviews/ratings, job photos, material costs. Every share is logged in an immutable audit trail. Either party can revoke at any time. This creates unprecedented cross-platform intelligence that makes Zafto unkillable.
+
+**System Connectivity:**
+- Reads from: `companies`, `company_members`, `recon_scans` (Phase P), `sketch_projects` (Phase SK), `estimates` (D8), `jobs`, `job_photos`, `inspection_reports`, `reviews`, `work_orders` (RE dispatch), `properties` (D5)
+- Writes to: 5 new tables (see below)
+- Wires to: Recon Engine (Phase P), Sketch Engine (Phase SK), Estimate Engine (D8), Dispatch Engine (RE dispatch), Review System, Job Management, CUST9 ModuleRegistry
+
+#### Database Layer (~6h)
+
+- [ ] Create `cross_company_links` table: `id uuid PK DEFAULT gen_random_uuid()`, `company_a_id uuid NOT NULL REFERENCES companies(id)`, `company_b_id uuid NOT NULL REFERENCES companies(id)`, `company_a_type text NOT NULL CHECK (company_a_type IN ('contractor','realtor','inspector','adjuster','preservation','homeowner'))`, `company_b_type text NOT NULL CHECK (company_b_type IN ('contractor','realtor','inspector','adjuster','preservation','homeowner'))`, `status text NOT NULL DEFAULT 'pending_b' CHECK (status IN ('pending_a','pending_b','active','suspended_a','suspended_b','revoked_a','revoked_b','expired'))`, `initiated_by_company uuid NOT NULL` (which company started the link), `initiated_by_user uuid NOT NULL REFERENCES auth.users(id)`, `accepted_by_user uuid REFERENCES auth.users(id)`, `link_context text` (e.g., 'work_order_dispatch', 'direct_invitation', 'marketplace_match'), `work_order_id uuid` (optional: the work order that triggered the link prompt), `linked_at timestamptz`, `suspended_at timestamptz`, `revoked_at timestamptz`, `revoked_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_a_id)`, `(company_b_id)`, `(status)`, `(company_a_id, company_b_id)` UNIQUE WHERE `deleted_at IS NULL`, `(deleted_at)`. RLS: custom policy — SELECT/UPDATE allowed if `company_id = company_a_id OR company_id = company_b_id`. Audit trigger.
+
+- [ ] Create `cross_company_share_permissions` table: `id uuid PK`, `company_id uuid NOT NULL` (the company GRANTING the permission — "I allow them to see my X"), `link_id uuid NOT NULL REFERENCES cross_company_links(id)`, `data_type text NOT NULL CHECK (data_type IN ('recon_scans','inspection_reports','repair_estimates','floor_plans','work_order_status','reviews_ratings','job_photos','material_costs','property_data','contact_info'))`, `direction text NOT NULL CHECK (direction IN ('outbound','inbound','bidirectional'))`, `is_enabled boolean NOT NULL DEFAULT false`, `scope text DEFAULT 'all' CHECK (scope IN ('all','per_property','per_job'))`, `scope_filter jsonb` (for per_property: {property_ids: [...]}, for per_job: {job_ids: [...]}), `enabled_at timestamptz`, `disabled_at timestamptz`, `enabled_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(link_id)`, `(data_type)`, `(is_enabled)`, `(deleted_at)`. Unique: `(link_id, company_id, data_type)` WHERE `deleted_at IS NULL`. RLS: custom policy — allowed if company_id matches. Audit trigger.
+
+- [ ] Create `cross_company_share_log` table: `id uuid PK`, `link_id uuid NOT NULL REFERENCES cross_company_links(id)`, `sharing_company_id uuid NOT NULL` (company whose data was shared), `receiving_company_id uuid NOT NULL` (company that accessed the data), `data_type text NOT NULL`, `record_id uuid NOT NULL` (ID of the shared record: recon scan ID, estimate ID, etc), `record_table text NOT NULL` (table name of the shared record), `action text NOT NULL CHECK (action IN ('viewed','downloaded','exported','printed','linked_to_job','shared_further'))`, `accessed_by uuid NOT NULL REFERENCES auth.users(id)`, `ip_address inet`, `user_agent text`, `metadata jsonb`, `created_at timestamptz DEFAULT now()`. Indexes: `(link_id)`, `(sharing_company_id)`, `(receiving_company_id)`, `(data_type)`, `(record_id)`, `(created_at)`. RLS: custom policy — allowed if company_id = sharing_company_id OR receiving_company_id. NO soft delete — audit logs are immutable. NO update — write-once.
+
+- [ ] Create `cross_company_invitations` table: `id uuid PK`, `company_id uuid NOT NULL` (inviting company), `invited_email text NOT NULL`, `invited_company_id uuid` (if matched to existing Zafto company), `invitation_type text NOT NULL CHECK (invitation_type IN ('link_existing','invite_to_platform'))`, `message text`, `status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','accepted','declined','expired'))`, `token text NOT NULL UNIQUE` (secure random token for invitation URL), `expires_at timestamptz NOT NULL DEFAULT (now() + interval '30 days')`, `accepted_at timestamptz`, `created_by uuid REFERENCES auth.users(id)`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(invited_email)`, `(token)`, `(status)`, `(deleted_at)`. RLS scoped. Audit trigger.
+
+- [ ] Create `cross_company_shared_views` — materialized view or view: joins cross_company_links + cross_company_share_permissions to provide a quick lookup: given company_id + partner_company_id + data_type → is sharing enabled? Refreshed on permission changes. Used by data access layer to gate cross-company reads.
+
+- [ ] RLS custom policies for cross-company data access: Create `can_access_cross_company_data(accessor_company_id, owner_company_id, data_type)` PostgreSQL function that checks: (1) active link exists between companies, (2) owner company has enabled outbound sharing for this data_type, (3) accessor company has enabled inbound for this data_type. This function is called by modified RLS policies on `recon_scans`, `inspection_reports`, `estimates`, `sketch_projects`, `jobs`, `job_photos`, `reviews` to allow cross-company SELECT when sharing is enabled.
+
+#### Edge Functions (~5h)
+
+- [ ] `cross-company-detect-match` EF: POST — accepts email address (from work order dispatch or direct input). Checks if email exists in any Zafto company's `company_members`. If match found: returns {match: true, company_name, company_type, company_id (ONLY if both companies are on the same link already)}. If no match: returns {match: false, can_invite: true}. PRIVACY: never returns member details or company internals to non-linked companies. Auth: JWT required.
+
+- [ ] `cross-company-initiate-link` EF: POST — accepts target_company_id + link_context (or invitation email for new invites). Creates `cross_company_links` record with status='pending_b' (awaiting target company acceptance). Sends notification to target company's admins: "Company X wants to link with you on Zafto. [Accept] [Decline] [Learn More]". If target has no Zafto account: creates `cross_company_invitations` record with secure token, sends invitation email. Auth: JWT required + role = owner or admin.
+
+- [ ] `cross-company-accept-link` EF: POST — accepts link_id + acceptance. Updates link status to 'active'. Sets linked_at timestamp. Creates default share permissions for both companies: all data_types set to is_enabled=false (opt-in model — nothing shared by default). Sends confirmation to both companies. Auth: JWT required + role = owner or admin of the accepting company.
+
+- [ ] `cross-company-update-permissions` EF: POST — accepts link_id + permission changes (array of {data_type, is_enabled, scope, scope_filter}). Only the company_id from JWT can update THEIR OWN permissions (what they share outbound). Cannot modify the other company's permissions. Creates audit log entry for every permission change. Auth: JWT required + role = owner or admin.
+
+- [ ] `cross-company-revoke-link` EF: POST — accepts link_id. Sets status to 'revoked_[a|b]' based on which company is revoking. Immediately disables all share permissions for both directions. Does NOT delete any data — just removes access. Logs revocation in audit trail. Sends notification to other company: "Company X has revoked the data sharing link." Auth: JWT required + role = owner or admin.
+
+- [ ] `cross-company-access-data` EF: GET — accepts link_id + data_type + optional filters. Validates: link is active, sharing permission exists and is enabled for this data_type + direction. If valid: queries the shared data (recon scans, estimates, photos, etc) and returns. If not valid: returns 403 with reason. Every successful access logged to `cross_company_share_log`. Auth: JWT required. Rate limit: 100/min.
+
+- [ ] `cross-company-activity-report` EF: GET — accepts optional link_id filter. Returns: sharing activity summary (data accessed, by whom, when), permission change history, link health status. For brokerage compliance: shows what data your company has shared externally and who accessed it. Auth: JWT required + role = owner or admin.
+
+#### Flutter (~5h)
+
+- [ ] `CrossPlatformPartnersScreen` — List of linked companies: company name, type badge (contractor/inspector/adjuster), link status, data sharing summary (which types enabled). "Link New Partner" FAB. "Pending Invitations" section. Per-partner: tap to manage.
+
+- [ ] `CrossPlatformPartnerDetailScreen` — Partner detail: company name, type, linked date, link status. Two-panel sharing controls: "What We Share With Them" (outbound toggles per data type) and "What They Share With Us" (read-only display of their permissions). Per data type toggle: recon scans, inspection reports, estimates, floor plans, work order status, reviews, job photos, material costs. Scope selector: all data / per property / per job. "Revoke Link" button with confirmation dialog ("This will immediately remove all shared data access. They will no longer see your data. Existing data they've already downloaded is their copy. Are you sure?").
+
+- [ ] `CrossPlatformSharedDataBrowser` — Browse data shared by partners: tabbed by data type (Scans | Reports | Estimates | Floor Plans | Photos). Per item: source company, property, date, preview. Tap to view full detail. "Link to My Job" action (imports reference into agent's job file). All views logged to audit trail.
+
+- [ ] `CrossPlatformAuditTrailScreen` — Chronological log of all sharing activity: who accessed what, when, from which company. Filter by: partner, data type, action, date range. Export to CSV for compliance. Immutable — no edits or deletions.
+
+- [ ] `CrossPlatformInvitationScreen` — Send invitation: enter email, detect if Zafto user, send link or platform invitation. Pending invitations list with resend/cancel. Received invitations with accept/decline.
+
+- [ ] Add Cross-Platform section to realtor app settings, accessible from partner/vendor management area
+
+#### Realtor Portal (~5h)
+
+- [ ] `CrossPlatformDashboard` page — overview: active links count, data shared/received counts, recent activity feed, pending invitations. Network visualization: company at center, linked partners around it with data flow arrows.
+
+- [ ] `CrossPlatformPartnerManager` page — full partner management: search Zafto directory by email/name/company, initiate links, manage permissions via toggle matrix (data types as rows, enabled/disabled as columns for both outbound and inbound). Bulk operations: enable/disable all sharing for a partner.
+
+- [ ] `CrossPlatformPermissionMatrix` page — master matrix: partners (columns) x data types (rows). Each cell: toggle for outbound, read-only indicator for inbound. Green = both sharing, yellow = one-way, gray = neither. Click cell to edit. Scope indicators per cell.
+
+- [ ] `CrossPlatformSharedDataExplorer` page — browse all data shared with you: filterable table/grid by partner, data type, property, date. Preview pane. "Import to Job" action. Download option (logged). Comparison view: see how contractor's estimate compares to your CMA.
+
+- [ ] `CrossPlatformAuditReport` page — comprehensive audit trail: full activity log with export, permission change history, link lifecycle timeline. Compliance view: what data has left your company, who accessed it, when. For brokerage: shows all cross-company sharing activity across all agents.
+
+- [ ] All portal pages use hooks: `use-cross-company-links`, `use-cross-company-permissions`, `use-cross-company-shared-data`, `use-cross-company-audit-log`, `use-cross-company-invitations`
+
+#### CUST9 Module Registration (~0.5h)
+
+- [ ] Register `CROSS_PLATFORM_SHARING` module: default ON for all entity types (contractor, realtor, inspector, adjuster, preservation, homeowner)
+- [ ] Register `CONTRACTOR_LINKING` module: default ON when CROSS_PLATFORM_SHARING enabled
+- [ ] Register `DATA_SHARING_CONTROLS` module: default ON when CROSS_PLATFORM_SHARING enabled
+- [ ] Register `SHARING_AUDIT_TRAIL` module: MANDATORY (cannot disable) when CROSS_PLATFORM_SHARING enabled
+
+#### Security Verification (~3h)
+
+- [ ] Custom RLS policies on `cross_company_links`: both companies can read/update their own link records
+- [ ] Custom RLS policies on `cross_company_share_permissions`: each company can only modify their OWN permissions (outbound sharing)
+- [ ] `cross_company_share_log`: append-only (INSERT only, no UPDATE/DELETE policies)
+- [ ] Cross-company data access: validated through `can_access_cross_company_data()` function — NEVER returns data without checking active link + enabled permissions
+- [ ] Invitation tokens: cryptographically random (32 bytes hex), single-use, 30-day expiry
+- [ ] Company discovery: NEVER reveals company member list, internal data, or financial information during link detection — only company name and type
+- [ ] Revocation is immediate: the moment a link is revoked, all cross-company RLS queries return empty for that partner
+- [ ] Audit trail is immutable: no UPDATE or DELETE policies on `cross_company_share_log`
+- [ ] Data shared does NOT transfer ownership — source company retains full control, can revoke at any time
+- [ ] All EFs: JWT auth, CORS, Zod validation, rate limiting
+- [ ] Permission changes require owner or admin role — regular agents cannot modify sharing settings
+- [ ] `flutter analyze` passes
+- [ ] `npm run build` passes for realtor-portal
+- [ ] Commit: `[RE15] Cross-platform intelligence sharing — company linking, granular permissions, bidirectional data sharing, immutable audit trail, invitation system`
+
+---
+
+## BATCH SUMMARY
+
+| Sprint | Tables | EFs | Flutter Screens | Portal Pages | Hooks | Est Hours |
+|--------|--------|-----|-----------------|-------------|-------|-----------|
+| RE11 | 17 | 9 | 16 | 9 | 8 | ~72h |
+| RE12 | 7 | 7 | 8 | 8 | 7 | ~36h |
+| RE13 | 8 | 6 | 8 | 8 | 7 | ~32h |
+| RE14 | 8 | 8 | 7 | 6 | 7 | ~28h |
+| RE15 | 5 | 7 | 6 | 5 | 6 | ~24h |
+| **TOTAL** | **45** | **37** | **45** | **36** | **35** | **~192h** |
+
+*All sprints: $0/month API cost (Socrata, Walk Score, GreatSchools, Census, FBI, FEMA, OSRM all free). Skip tracing is pay-per-use at $0.02/record (agent's cost, not platform cost).*
+
+---
+
+### RE16 — Settings Architecture: Cascading Business Settings (~16h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 23, realtor-app-customization-research.md sections 5-9, s132-enterprise-customization-research.md*
+*Depends on: RE1 (portal scaffold + RBAC + company_type), RE8 (commission engine — default plans referenced), RE9 (dispatch engine — contractor DB settings), CUST1 (cascading settings foundation — resolve_setting() function, system_settings/company_settings/team_settings/user_settings tables)*
+*CUST9 Modules: settings, notifications, branding, integrations*
+
+**What this builds:** 4-level cascading BUSINESS settings for realtor entities: Company → Office → Team → Agent. This is NOT module visibility (that is CUST9). RE16 handles: notification preferences (per event type x per channel), branding (logo, colors, email templates, marketing templates), integration settings (MLS credentials, showing service config, smart lock config), business rules (default commission plan, lead response SLA, showing auto-approve rules, lead routing defaults, dispatch preferences). Higher levels set defaults; lower levels override IF the parent level permits overrides. Uses CUST1's `resolve_setting()` PostgreSQL function as the cascading resolution engine. Adds realtor-specific setting schemas on top of CUST1's generic foundation.
+
+**System Connectivity:**
+- Reads from: `companies`, `company_offices` (RE1), `teams` (existing), `employees` (existing), `commission_plans` (RE8), `realtor_lead_routing_rules` (RE2), `system_settings` (CUST1), `company_settings` (CUST1)
+- Writes to: `realtor_settings` (NEW), `realtor_notification_configs` (NEW), `realtor_branding_configs` (NEW), `realtor_integration_configs` (NEW), `realtor_setting_audit` (NEW)
+- Wires to: RE2 (lead routing rules read default SLA from settings), RE8 (commission engine reads default plan from settings), RE9 (dispatch reads contractor DB preferences from settings), RE10 (listing management reads showing auto-approve from settings), RE12 (marketing factory reads branding from settings), RE13 (brokerage admin reads compliance settings), CUST9 (module visibility — complementary, not overlapping)
+
+#### Database Layer (~4h)
+
+- [ ] Create migration `XXX_re16_realtor_settings.sql`:
+  - `realtor_settings` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL FK companies ON DELETE CASCADE, scope_type TEXT NOT NULL CHECK (scope_type IN ('company', 'office', 'team', 'agent')), scope_id UUID NOT NULL (company_id for company scope, office_id for office scope, team_id for team scope, employee_id for agent scope), category TEXT NOT NULL CHECK (category IN ('general', 'notifications', 'branding', 'integrations', 'business_rules', 'dispatch', 'client_portal', 'compliance', 'lead_routing', 'showing', 'commission')), settings JSONB NOT NULL DEFAULT '{}', allow_child_override BOOLEAN NOT NULL DEFAULT true (if false, children CANNOT override this category), version INTEGER NOT NULL DEFAULT 1 (optimistic locking), created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_by UUID FK auth.users, deleted_at TIMESTAMPTZ. UNIQUE(company_id, scope_type, scope_id, category) WHERE deleted_at IS NULL.
+  - `realtor_notification_configs` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL FK companies, scope_type TEXT NOT NULL CHECK IN ('company', 'office', 'team', 'agent'), scope_id UUID NOT NULL, event_type TEXT NOT NULL CHECK IN ('new_lead', 'lead_response_overdue', 'showing_request', 'showing_confirmed', 'showing_cancelled', 'showing_feedback', 'offer_received', 'offer_accepted', 'offer_countered', 'offer_rejected', 'transaction_milestone', 'transaction_deadline', 'transaction_health_change', 'document_uploaded', 'document_signed', 'commission_disbursed', 'compliance_alert', 'license_expiring', 'ce_due', 'eando_expiring', 'dispatch_bid_received', 'dispatch_work_complete', 'marketing_campaign_sent', 'open_house_signin', 'client_message', 'agent_risk_alert', 'market_report_ready', 'cap_reached', 'new_listing_alert', 'price_change_alert'), channel_email BOOLEAN NOT NULL DEFAULT true, channel_push BOOLEAN NOT NULL DEFAULT true, channel_sms BOOLEAN NOT NULL DEFAULT false, channel_in_app BOOLEAN NOT NULL DEFAULT true, is_enabled BOOLEAN NOT NULL DEFAULT true, quiet_hours_start TIME, quiet_hours_end TIME, quiet_hours_timezone TEXT DEFAULT 'America/New_York', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), deleted_at TIMESTAMPTZ. UNIQUE(company_id, scope_type, scope_id, event_type) WHERE deleted_at IS NULL.
+  - `realtor_branding_configs` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL FK companies, scope_type TEXT NOT NULL CHECK IN ('company', 'office', 'team', 'agent'), scope_id UUID NOT NULL, logo_url TEXT, logo_dark_url TEXT, favicon_url TEXT, primary_color TEXT DEFAULT '#2563EB' CHECK (primary_color ~ '^#[0-9A-Fa-f]{6}$'), secondary_color TEXT CHECK (secondary_color ~ '^#[0-9A-Fa-f]{6}$'), accent_color TEXT CHECK (accent_color ~ '^#[0-9A-Fa-f]{6}$'), font_family TEXT DEFAULT 'Inter', email_header_html TEXT, email_footer_html TEXT, email_signature_html TEXT, report_header_html TEXT, report_footer_html TEXT, marketing_disclaimer TEXT, headshot_url TEXT (agent-level only), bio TEXT (agent-level only), credentials TEXT[] DEFAULT '{}' (agent-level: CLHMS, CRP, MRP, etc.), social_links JSONB DEFAULT '{}' (facebook, instagram, linkedin, twitter, tiktok, youtube URLs), website_url TEXT, tagline TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), deleted_at TIMESTAMPTZ. UNIQUE(company_id, scope_type, scope_id) WHERE deleted_at IS NULL.
+  - `realtor_integration_configs` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL FK companies, scope_type TEXT NOT NULL CHECK IN ('company', 'office', 'agent'), scope_id UUID NOT NULL, integration_type TEXT NOT NULL CHECK IN ('mls', 'showing_service', 'smart_lock', 'email_provider', 'social_facebook', 'social_instagram', 'social_linkedin', 'social_tiktok', 'calendar_google', 'calendar_outlook', 'accounting_quickbooks', 'accounting_xero', 'crm_import', 'zillow', 'realtor_com', 'docusign', 'dotloop', 'skyslope'), config JSONB NOT NULL DEFAULT '{}' (encrypted-at-rest for API keys via Supabase Vault), status TEXT NOT NULL DEFAULT 'disconnected' CHECK IN ('connected', 'disconnected', 'error', 'pending'), last_sync_at TIMESTAMPTZ, error_message TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), deleted_at TIMESTAMPTZ. UNIQUE(company_id, scope_type, scope_id, integration_type) WHERE deleted_at IS NULL.
+  - `realtor_setting_audit` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL, table_name TEXT NOT NULL, record_id UUID NOT NULL, changed_by UUID NOT NULL FK auth.users, changed_at TIMESTAMPTZ NOT NULL DEFAULT now(), change_type TEXT NOT NULL CHECK IN ('created', 'updated', 'deleted', 'reset_to_default'), previous_value JSONB, new_value JSONB, diff JSONB, ip_address INET. INSERT-ONLY — no UPDATE or DELETE policies.
+- [ ] RLS on `realtor_settings`: SELECT — any company member (company_id match via JWT), INSERT/UPDATE — owner + admin + office_manager (scope_type = 'company' requires owner/admin; scope_type = 'office' requires owner/admin/office_manager for that office; scope_type = 'team' requires owner/admin/team_lead; scope_type = 'agent' requires owner/admin or the agent themselves), DELETE — owner + admin only (soft delete). Policy names: `realtor_settings_select`, `realtor_settings_insert`, `realtor_settings_update`, `realtor_settings_delete`.
+- [ ] RLS on `realtor_notification_configs`: SELECT — own scope or higher scope in hierarchy (agent sees own + team + office + company), INSERT/UPDATE — same hierarchy rules as realtor_settings, DELETE — soft delete, owner/admin only.
+- [ ] RLS on `realtor_branding_configs`: SELECT — any company member, INSERT/UPDATE — scope-appropriate role (company = owner/admin, office = office_manager+, agent = self + admin), DELETE — soft delete, owner/admin.
+- [ ] RLS on `realtor_integration_configs`: SELECT — scope-appropriate (company-level visible to all, agent-level visible to self + admin), INSERT/UPDATE — owner/admin for company scope, self + admin for agent scope, DELETE — soft delete, owner/admin.
+- [ ] RLS on `realtor_setting_audit`: SELECT — owner + admin only, INSERT — via trigger only (no direct client inserts), NO UPDATE, NO DELETE.
+- [ ] Trigger `log_realtor_setting_change()` on `realtor_settings`, `realtor_notification_configs`, `realtor_branding_configs`, `realtor_integration_configs` — auto-writes to `realtor_setting_audit` on INSERT/UPDATE/DELETE with previous_value, new_value, computed JSONB diff.
+- [ ] Trigger `update_updated_at()` on all 4 config tables.
+- [ ] Create `resolve_realtor_setting(p_company_id UUID, p_scope_type TEXT, p_scope_id UUID, p_category TEXT)` PostgreSQL function — walks the hierarchy: agent → team → office → company → system_settings (CUST1). Returns merged JSONB where most-specific wins. Respects `allow_child_override` flag — if parent disallows override, parent value wins regardless of child setting. Uses CUST1's `resolve_setting()` as fallback for non-realtor-specific categories.
+- [ ] Indexes: `realtor_settings(company_id, scope_type, scope_id)`, `realtor_notification_configs(company_id, scope_type, scope_id, event_type)`, `realtor_branding_configs(company_id, scope_type, scope_id)`, `realtor_integration_configs(company_id, scope_type, scope_id, integration_type)`, `realtor_setting_audit(company_id, changed_at DESC)`.
+- [ ] Seed default notification configs for company scope: all 30 event types with sensible defaults (new_lead: all channels ON; compliance_alert: email + push ON; marketing_campaign_sent: in_app only; etc.)
+- [ ] Seed default business rules for company scope: lead_response_sla_minutes = 5, showing_auto_approve = false, default_commission_plan_id = null (set during RE8), lead_routing_method = 'round_robin', dispatch_bid_threshold = 3, client_portal_enabled = true, document_retention_years = 3.
+
+#### Edge Functions (~3h)
+
+- [ ] Create `realtor-settings-resolve` EF — GET `/realtor-settings-resolve?scope_type=agent&scope_id=UUID&category=notifications` — calls `resolve_realtor_setting()` function, returns fully resolved settings for any scope/category combination. Auth: JWT required, company_id match. Validates scope_id belongs to requesting company. Returns resolved settings + metadata (which level each value came from for admin transparency). Rate limit: 60/min.
+- [ ] Create `realtor-settings-bulk-update` EF — POST — accepts array of {scope_type, scope_id, category, settings} for batch updates (e.g., "set all agents to same notification config"). Auth: owner/admin only. Validates: optimistic locking version check on each record, allow_child_override respected, JSONB schema validation per category. Returns success/failure per item. Rate limit: 10/min.
+- [ ] Create `realtor-settings-reset` EF — POST — resets a scope level to inherit from parent. Soft-deletes the scope-level record so resolution falls through to parent. Auth: appropriate role per scope level. Logs reset to audit table. Rate limit: 10/min.
+- [ ] Create `realtor-branding-upload` EF — POST multipart — handles logo/headshot/favicon uploads to Supabase Storage `company-logos` bucket. Validates: image type (PNG, JPG, SVG for logo), max 2MB, dimensions (logo: max 500x200, headshot: max 800x800, favicon: 32x32 or 64x64). Returns public URL. Auth: scope-appropriate role. Rate limit: 5/min.
+- [ ] All EFs: CORS validation, input sanitization (especially email_header_html / email_footer_html — strip script tags, validate against allowlist of HTML tags), JWT validation, company_id extraction from JWT.
+
+#### Flutter (~4h)
+
+- [ ] Create `lib/models/realtor_setting.dart` — RealtorSetting model: id, companyId, scopeType, scopeId, category, settings (Map<String, dynamic>), allowChildOverride, version, createdAt, updatedAt, deletedAt. With fromJson/toJson/copyWith/Equatable.
+- [ ] Create `lib/models/realtor_notification_config.dart` — RealtorNotificationConfig model: id, companyId, scopeType, scopeId, eventType, channelEmail, channelPush, channelSms, channelInApp, isEnabled, quietHoursStart, quietHoursEnd, quietHoursTimezone, createdAt, updatedAt, deletedAt. With fromJson/toJson/copyWith/Equatable.
+- [ ] Create `lib/models/realtor_branding_config.dart` — RealtorBrandingConfig model: all columns. With fromJson/toJson/copyWith/Equatable.
+- [ ] Create `lib/repositories/realtor_settings_repository.dart` — abstract + concrete. Methods: getSettings(companyId, scopeType, scopeId, category), resolveSettings(scopeType, scopeId, category) → calls EF, updateSettings(id, settings, version) → optimistic locking, resetToDefault(scopeType, scopeId, category), getNotificationConfigs(scopeType, scopeId), updateNotificationConfig(id, updates), getBrandingConfig(scopeType, scopeId), updateBrandingConfig(id, updates), getIntegrationConfigs(scopeType, scopeId), getAuditLog(companyId, limit, offset).
+- [ ] Create `lib/providers/realtor_settings_provider.dart` — Riverpod AsyncNotifierProvider. Caches resolved settings to Hive box `realtor_settings_cache`. Subscribes to Supabase Realtime on `realtor_settings` table. Exposes: `getResolvedSetting(category, key)`, `getNotificationConfig(eventType)`, `getBranding()`, `getBusinessRule(key)`. Falls back to hardcoded defaults if fetch fails.
+- [ ] Create `lib/screens/realtor/settings/realtor_settings_screen.dart` — settings hub with sections: General, Notifications, Branding, Integrations, Business Rules, Compliance, Client Portal. Each section navigates to dedicated sub-screen. Shows current scope level and inherited values with "Customized" / "Inherited from [parent]" badges.
+- [ ] Create `lib/screens/realtor/settings/notification_settings_screen.dart` — list of all 30 event types grouped by category (Leads, Showings, Transactions, Commission, Compliance, Marketing, Dispatch). Each row: event name + 4 channel toggles (email/push/SMS/in-app) + enabled/disabled switch. Quiet hours config at top. Shows inherited values dimmed with "Override" button.
+- [ ] Create `lib/screens/realtor/settings/branding_settings_screen.dart` — logo upload (camera/gallery), color pickers for primary/secondary/accent, font selector (Inter, Roboto, Lato, Montserrat, Playfair Display), headshot upload (agent scope only), bio text field, credentials tag chips, social media URL fields, website URL, tagline. Live preview panel showing how branding appears on email header / report header / marketing material.
+- [ ] Create `lib/screens/realtor/settings/integration_settings_screen.dart` — list of available integrations grouped by category (MLS, Showing Services, Smart Locks, Email, Social, Calendar, Accounting, Document Management). Each row: integration name + icon + status badge (Connected/Disconnected/Error) + Configure button. Configuration opens bottom sheet with integration-specific fields. "Test Connection" button for each.
+- [ ] Create `lib/screens/realtor/settings/business_rules_screen.dart` — lead response SLA (minutes picker), showing auto-approve toggle, default commission plan selector (dropdown from RE8 commission_plans), lead routing method selector (round_robin, weighted, blast, first_come, manual, isa_first), dispatch bid threshold (number), document retention years (number), client portal toggle. Each field shows "Inherited from [scope]" or "Custom" badge.
+- [ ] All 5 settings sub-screens: loading state (shimmer), error state (retry button), empty state (first-time setup wizard), data state. 4-state handling mandatory.
+
+#### Realtor Portal (~4h)
+
+- [ ] Create `web-portal/src/lib/hooks/use-realtor-settings.ts` — hook for CRUD on realtor_settings. Methods: fetchSettings(scopeType, scopeId, category), resolveSettings(scopeType, scopeId, category) via EF call, updateSettings(id, settings, version) with optimistic locking + 409 conflict handling, resetToDefault(scopeType, scopeId, category), Supabase Realtime subscription for live updates. Returns { settings, loading, error, mutations }.
+- [ ] Create `web-portal/src/lib/hooks/use-notification-configs.ts` — CRUD for notification configs. Batch update support (toggle all email off, toggle category on/off). Returns { configs, loading, error, updateConfig, batchUpdate }.
+- [ ] Create `web-portal/src/lib/hooks/use-branding-config.ts` — CRUD for branding. Image upload via `realtor-branding-upload` EF. Returns { branding, loading, error, updateBranding, uploadLogo, uploadHeadshot }.
+- [ ] Create `web-portal/src/lib/hooks/use-integration-configs.ts` — CRUD for integrations. Test connection support. Returns { integrations, loading, error, updateIntegration, testConnection, disconnect }.
+- [ ] Create `/settings/company` page — company-level settings. Scope selector at top for owner/admin (switch between viewing company/office/team/agent settings). Tabs: General | Notifications | Branding | Integrations | Business Rules | Compliance | Client Portal | Audit Log. Each tab renders the appropriate settings form. "Inherited" values shown in lighter color with "Override" button. "Lock" toggle per category to prevent child overrides.
+- [ ] Create `/settings/notifications` page — notification matrix view. Rows = 30 event types grouped by category. Columns = 4 channels (email, push, SMS, in-app). Checkboxes at intersections. Bulk actions: "Enable all email", "Disable all SMS", "Reset to defaults". Quiet hours config with timezone picker. Scope indicator showing which level is being edited.
+- [ ] Create `/settings/branding` page — two-column layout: left = form fields (logo upload with drag-drop, color pickers with hex input, font selector with preview, headshot, bio, credentials, social links, website, tagline), right = live preview panel (email preview, report preview, marketing material preview). "Apply to all offices/teams" button (owner/admin only) with confirmation.
+- [ ] Create `/settings/integrations` page — integration cards in grid layout. Each card: integration logo + name + status badge + last sync time + Configure/Connect button. Connected integrations show sync status and error details. Configuration modal per integration type with type-specific fields. "Test Connection" button with success/failure toast. Disconnect with confirmation.
+- [ ] Create `/settings/roles` page — RBAC configuration. Shows all 7 realtor roles (brokerage_owner, managing_broker, team_lead, agent, tc, isa, office_admin). Per-role: list of 60+ granular permissions with toggles (including `showings.manage` for showing management access). "Create Custom Role" button. Role assignment to employees. Cannot modify owner role permissions. Cannot remove last admin. Note: showing management is a permission flag, not a separate role.
+- [ ] Create `/settings/commission` page — redirect to RE8 commission plan builder with settings context. Default plan selector. Plan assignment to offices/teams/agents.
+- [ ] Create `/settings/ai` page — AI budget allocation. Pool vs per-agent mode selector. Total monthly AI budget input. Per-agent allocation (if per-agent mode). Overflow behavior (stop, alert, auto-approve small). Usage dashboard showing current period spend.
+- [ ] Create `/settings/templates` page — email template manager. List of template categories (lead response, showing confirmation, transaction updates, marketing, open house follow-up). Per template: subject line, HTML body with merge tags ({agent_name}, {client_name}, {property_address}, etc.), preview, test send. Scope-level templates (company default, agent override).
+- [ ] Audit log tab on `/settings/company`: timeline view of all setting changes. Each entry: who, when, what category, what changed (diff view with before/after). Filter by: date range, category, user. Export to CSV.
+
+#### Ops Portal (~1h)
+
+- [ ] Create `ops-portal/src/lib/hooks/use-realtor-settings-admin.ts` — super_admin read access to any company's settings for support. Read-only. No mutation capability.
+- [ ] Add settings overview card to ops company detail page: shows per-company settings completeness (% of categories configured), integration status summary, branding status (has logo Y/N), notification config status.
+
+#### CUST9 Module Registration
+
+- [ ] Register modules in ModuleRegistry: `realtor_settings_general` (mandatory for realtor entity types), `realtor_settings_notifications`, `realtor_settings_branding`, `realtor_settings_integrations`, `realtor_settings_business_rules`, `realtor_settings_compliance`, `realtor_settings_client_portal`, `realtor_settings_ai`, `realtor_settings_templates`. All default to fullAccess for owner/admin, readOnly for agents (except agent-scope settings which are fullAccess for the agent).
+
+#### Security Verification
+
+- [ ] TEST: Company A cannot read Company B's realtor_settings (RLS)
+- [ ] TEST: Agent cannot modify company-level settings (RLS rejects)
+- [ ] TEST: Office manager can modify office-level but not company-level settings
+- [ ] TEST: Team lead can modify team-level but not office/company-level settings
+- [ ] TEST: Agent can modify only their own agent-level settings
+- [ ] TEST: `allow_child_override = false` prevents child scope from overriding
+- [ ] TEST: Optimistic locking — concurrent updates return 409
+- [ ] TEST: `realtor_setting_audit` — INSERT-ONLY, no UPDATE/DELETE via client
+- [ ] TEST: Branding upload rejects non-image files, oversized files, wrong dimensions
+- [ ] TEST: Integration config JSONB with API keys is not exposed in SELECT to non-admin roles (sensitive fields filtered)
+- [ ] TEST: HTML content in email templates sanitized (no script tags, no onclick, no iframe)
+- [ ] TEST: Soft delete only — no .delete() calls
+- [ ] `dart analyze` — 0 errors
+- [ ] `npm run build` on web-portal — 0 errors
+- [ ] `npm run build` on ops-portal — 0 errors
+- [ ] Commit: `[RE16] Settings architecture — 4-level cascading business settings, notification configs, branding, integrations, business rules, audit trail`
+
+---
+
+### RE17 — Recon + Sketch + Property Management Access for Realtors (~12h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 4 (Shared Components table), 53_REALTOR_PLATFORM_SPEC.md section 25 (Lifecycle Workflows)*
+*Depends on: RE1 (portal scaffold + RBAC + company_type), Phase P (Recon engine), Phase SK (Sketch Engine), D5 (Property Management)*
+*CUST9 Modules: recon, sketch_engine, properties*
+
+**What this builds:** Role-based access to three EXISTING features (Recon, Sketch Engine, Property Management) for realtor entity types. These features already exist for contractors — RE17 adds realtor-specific views, role gating, and portal route wiring. A realtor using Recon sees property intelligence through a "listing readiness" lens (repair needs, estimated repair cost from contractor pricing data, curb appeal assessment, comparable property data). A realtor using Sketch Engine gets floor plans for listings and CMAs. A realtor using Property Management gets property detail views for their listings/transactions. This sprint is about WIRING existing features to the realtor portal and adding realtor-specific data overlays — NOT building these features from scratch.
+
+**System Connectivity:**
+- Reads from: `recon_scans` (Phase P), `recon_results` (Phase P), `sketch_plans` (Phase SK), `sketch_rooms` (Phase SK), `properties` (D5), `property_units` (D5), `listings` (RE10), `realtor_transactions` (RE4), `cma_reports` (RE3), `realtor_settings` (RE16), `dispatch_work_orders` (RE9), `users` (RE1 roles)
+- Writes to: `recon_scan_realtor_overlays` (NEW — realtor-specific annotations on existing scans), `realtor_property_notes` (NEW — agent notes on properties)
+- Wires to: RE3 (Smart CMA pulls Recon data + Sketch floor plans), RE10 (listing management pulls property data + floor plans + Recon), RE9 (dispatch creates work orders from Recon repair findings), RE12 (marketing factory uses floor plans + property photos from Recon)
+
+#### Database Layer (~2h)
+
+- [ ] Create migration `XXX_re17_realtor_feature_access.sql`:
+  - `recon_scan_realtor_overlays` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL FK companies, recon_scan_id UUID NOT NULL FK recon_scans, listing_id UUID FK listings (nullable — overlay may exist before listing), agent_id UUID NOT NULL FK employees, listing_readiness_score INTEGER CHECK (0-100) (calculated: deducts for each repair need), repair_items JSONB NOT NULL DEFAULT '[]' (array of {description, trade, estimated_cost, severity: 'critical'|'major'|'minor'|'cosmetic', affects_appraisal: bool, photo_url}), curb_appeal_score INTEGER CHECK (0-10), curb_appeal_notes TEXT, recommended_improvements JSONB DEFAULT '[]' (array of {description, estimated_cost, estimated_value_add, roi_percentage}), pre_listing_checklist JSONB DEFAULT '[]' (array of {item, status: 'needed'|'in_progress'|'complete'|'skipped', notes}), estimated_total_repair_cost DECIMAL(12,2), estimated_value_after_repairs DECIMAL(12,2), comparable_properties JSONB DEFAULT '[]' (array of {address, sold_price, sqft, condition, adjustments}), notes TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), deleted_at TIMESTAMPTZ. UNIQUE(recon_scan_id, agent_id) WHERE deleted_at IS NULL.
+  - `realtor_property_notes` — id UUID PK DEFAULT gen_random_uuid(), company_id UUID NOT NULL FK companies, property_id UUID FK properties (nullable), listing_id UUID FK listings (nullable), agent_id UUID NOT NULL FK employees, note_type TEXT NOT NULL CHECK IN ('general', 'showing_prep', 'listing_readiness', 'buyer_feedback', 'repair_needed', 'staging_suggestion', 'pricing_note', 'neighborhood', 'disclosure'), content TEXT NOT NULL, is_private BOOLEAN NOT NULL DEFAULT true (private = agent only, not shared to client portal), attachments JSONB DEFAULT '[]' (array of {url, type, name}), created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), deleted_at TIMESTAMPTZ. CHECK (property_id IS NOT NULL OR listing_id IS NOT NULL).
+- [ ] RLS on `recon_scan_realtor_overlays`: SELECT — company_id match + (agent sees own overlays, broker/admin sees all company overlays), INSERT — agent + admin + owner, UPDATE — creator or admin/owner, DELETE — soft delete, creator or admin/owner.
+- [ ] RLS on `realtor_property_notes`: SELECT — company_id match + (private notes: creator only + admin/owner, non-private: all company members), INSERT — any company member with agent/admin/owner role, UPDATE — creator or admin/owner, DELETE — soft delete, creator or admin/owner.
+- [ ] Trigger `update_updated_at()` on both new tables.
+- [ ] Audit trigger on both new tables.
+- [ ] Indexes: `recon_scan_realtor_overlays(company_id, recon_scan_id)`, `recon_scan_realtor_overlays(company_id, listing_id)`, `realtor_property_notes(company_id, property_id)`, `realtor_property_notes(company_id, listing_id)`, `realtor_property_notes(company_id, agent_id)`.
+
+#### Edge Functions (~2h)
+
+- [ ] Create `realtor-recon-overlay` EF — POST/PUT — creates or updates a realtor overlay on an existing Recon scan. Calculates `listing_readiness_score` from repair_items (100 base, -20 per critical, -10 per major, -5 per minor, -2 per cosmetic). Calculates `estimated_total_repair_cost` by summing repair_items[].estimated_cost. Auth: JWT required, company_id match, realtor roles only (not contractor roles). Validates recon_scan_id exists and belongs to same company. Rate limit: 30/min.
+- [ ] Create `realtor-recon-listing-readiness` EF — GET — returns a comprehensive "listing readiness report" for a property. Aggregates: Recon scan data + realtor overlay + Sketch floor plan (if exists) + property data (if exists) + comparable properties. Output: listing_readiness_score, repair_items_by_severity, estimated_repair_cost, curb_appeal_score, floor_plan_available (bool), sqft_from_sketch, comparable_properties, recommended_improvements_with_roi. Auth: JWT, company_id match. Rate limit: 30/min.
+- [ ] Modify existing Recon EFs to support `company_type` gating: if company_type IN ('realtor_solo', 'realtor_team', 'brokerage'), return realtor-specific overlays alongside standard Recon data. If company_type = 'contractor', return standard Recon data only (no realtor overlay fields).
+
+#### Flutter (~4h)
+
+- [ ] Create `lib/models/recon_scan_realtor_overlay.dart` — model with all columns. fromJson/toJson/copyWith/Equatable.
+- [ ] Create `lib/models/realtor_property_note.dart` — model with all columns. fromJson/toJson/copyWith/Equatable.
+- [ ] Create `lib/repositories/recon_realtor_repository.dart` — abstract + concrete. Methods: getOverlay(reconScanId), createOverlay(overlay), updateOverlay(id, updates, version), getListingReadiness(propertyId) via EF, getPropertyNotes(propertyId, listingId), createNote(note), updateNote(id, updates), deleteNote(id) soft delete.
+- [ ] Create `lib/providers/recon_realtor_provider.dart` — Riverpod. Caches overlay data. Exposes: overlayForScan(scanId), listingReadiness(propertyId), propertyNotes(propertyId).
+- [ ] Create `lib/screens/realtor/recon/realtor_recon_screen.dart` — wrapper around existing Recon scan screen with realtor-specific UI additions:
+  - "Listing Readiness" tab alongside existing Recon tabs
+  - Listing readiness score gauge (0-100, color-coded: 0-40 red, 41-70 yellow, 71-100 green)
+  - Repair items list with add/edit/remove, severity picker, estimated cost input, trade selector, photo attachment
+  - Curb appeal score slider (0-10) with notes
+  - Recommended improvements list with ROI calculation (estimated_cost vs estimated_value_add)
+  - Pre-listing checklist with status toggles
+  - "Create Work Order" button per repair item → navigates to RE9 dispatch with pre-filled data
+  - "Add to CMA" button → passes data to RE3 Smart CMA
+  - "Generate Listing Readiness Report" → PDF via ZForge (F10)
+- [ ] Create `lib/screens/realtor/recon/realtor_recon_overlay_form.dart` — form for creating/editing realtor overlay. Repair item entry: description, trade (dropdown from 35 trades), estimated cost (currency input), severity (radio: critical/major/minor/cosmetic), affects appraisal (toggle), photo (camera/gallery). Curb appeal section. Comparable properties section (manual entry or pull from RE3 CMA data).
+- [ ] Create `lib/screens/realtor/sketch/realtor_sketch_screen.dart` — wrapper around existing Sketch Engine with realtor-specific actions:
+  - "Use for Listing" button → attaches floor plan to listing (RE10)
+  - "Use for CMA" button → attaches floor plan to CMA report (RE3)
+  - "Share with Client" button → generates shareable link
+  - Room measurement summary card (total sqft, room count, room dimensions)
+  - Annotation layer: agent can mark "staging suggestion here", "repair needed here" with pins on floor plan
+- [ ] Create `lib/screens/realtor/properties/realtor_property_detail_screen.dart` — enhanced property detail for realtors:
+  - Property basics (address, type, beds, baths, sqft, lot, year built)
+  - Recon data section (if scanned): satellite view, roof data, structure data, listing readiness score
+  - Floor plans section (if sketched): interactive floor plan viewer
+  - Agent notes section: list of notes by type with add/edit capability
+  - Linked listings section: listings associated with this property
+  - Linked transactions section: transactions associated with this property
+  - Dispatch history section: work orders created for this property
+  - "Scan with Recon" CTA if no scan exists
+  - "Create Floor Plan" CTA if no sketch exists
+- [ ] Modify `lib/navigation/role_navigation.dart` — add Recon, Sketch, and Properties to realtor role navigation:
+  - Agent bottom nav "Tools" tab → includes Recon, Sketch, Properties
+  - Broker "More" menu → includes Recon, Sketch, Properties
+  - TC: read-only access to property details (no Recon/Sketch creation)
+  - ISA: no access to Recon/Sketch/Properties
+  - Showing assistant: read-only property details for assigned properties only
+
+#### Realtor Portal (~3h)
+
+- [ ] Create `web-portal/src/lib/hooks/use-recon-realtor.ts` — hook for realtor Recon overlay CRUD + listing readiness data. Methods: getOverlay(scanId), createOverlay(data), updateOverlay(id, data), getListingReadiness(propertyId) via EF, getPropertyNotes(propertyId), createNote(data), updateNote(id, data).
+- [ ] Create `/recon/scan` page — adapts existing Recon scan page for realtor portal:
+  - Property address input with autocomplete
+  - Scan initiation
+  - Results view with "Listing Readiness" tab
+  - Realtor overlay form (repair items, curb appeal, improvements, checklist)
+  - "Create Work Order" action per repair item → navigates to /dispatch/work-orders/new with pre-fill
+  - "Add to CMA" action → navigates to /smart-cma/new with property data pre-filled
+- [ ] Create `/recon/[id]` page — Recon scan results with realtor overlay:
+  - Standard Recon results (satellite imagery, property data, roof condition, structure data)
+  - Realtor overlay panel: listing readiness score, repair items, curb appeal, improvements, checklist
+  - Side-by-side comparison with comparable properties
+  - PDF export: "Listing Readiness Report"
+- [ ] Create `/recon/area` page — area scan for territory analysis:
+  - Map view with area selector (polygon draw on map)
+  - Bulk property data for selected area
+  - Aggregate statistics: avg home value, avg age, common repair needs, turnover rate
+  - "Add to Seller Finder" action → passes area data to RE6
+- [ ] Create `/sketch/editor` page — Konva web editor wrapper with realtor actions:
+  - Floor plan creation/editing (existing Sketch Engine)
+  - "Attach to Listing" dropdown (select from active listings)
+  - "Attach to CMA" dropdown (select from CMA reports)
+  - "Share" button with public link generation
+  - "Download as PDF/PNG/SVG" export options
+  - Room labels with dimensions and sqft
+- [ ] Create `/sketch/[id]` page — floor plan viewer:
+  - Interactive floor plan with zoom/pan
+  - Room details sidebar (click room to see dimensions, sqft, notes)
+  - Agent annotation pins (staging suggestions, repair notes)
+  - Print-friendly view
+- [ ] Create `/properties/[id]` page (realtor-specific view):
+  - Property overview card (address, type, beds/baths/sqft, year built, lot size)
+  - Recon section: latest scan results + listing readiness overlay
+  - Floor plans section: all sketches for this property
+  - Notes section: agent notes with CRUD, filter by note_type, privacy toggle
+  - Linked records: listings, transactions, work orders, CMA reports
+  - "Actions" dropdown: Scan with Recon, Create Floor Plan, Create Listing, Create CMA, Create Work Order
+- [ ] Wire Recon/Sketch/Properties routes into realtor portal sidebar navigation under "Property Tools" group. Visible to: agent, team_lead, managing_broker, brokerage_owner. Hidden from: tc (except /properties/[id] read-only), isa.
+
+#### Client Portal (~1h)
+
+- [ ] Create `client-portal/src/lib/hooks/use-property-client.ts` — read-only property data for homeowner clients:
+  - View floor plans shared by their agent
+  - View listing readiness report (if agent shares it)
+  - View Recon scan summary (non-sensitive fields only — no pricing data, no agent notes)
+- [ ] Create `/property/[id]` page in client portal — shared property view:
+  - Property overview (address, beds/baths/sqft)
+  - Floor plan viewer (if shared)
+  - Repair status (if agent shares listing readiness data, shows progress on repair items)
+  - "Contact My Agent" CTA
+
+#### CUST9 Module Registration
+
+- [ ] Register/verify modules in ModuleRegistry: `recon` (entityTypes: ['contractor', 'realtor_solo', 'realtor_team', 'brokerage']), `sketch_engine` (same), `properties` (same). Ensure these modules respect entity-type-specific views (contractor view vs realtor view) based on company_type.
+
+#### Security Verification
+
+- [ ] TEST: Realtor company can access Recon features (company_type check passes)
+- [ ] TEST: Realtor overlay RLS — Company A overlay not visible to Company B
+- [ ] TEST: Private agent notes visible only to creator + admin/owner
+- [ ] TEST: Non-private notes visible to all company members
+- [ ] TEST: ISA role cannot access Recon/Sketch (navigation gating + RLS)
+- [ ] TEST: TC role gets read-only property access (cannot create Recon scans or sketches)
+- [ ] TEST: Showing assistant access limited to assigned properties only
+- [ ] TEST: Client portal shows only shared data (no agent notes, no pricing data)
+- [ ] TEST: Listing readiness EF validates company_id match on recon_scan
+- [ ] TEST: Soft delete only — no .delete() calls on business data
+- [ ] `dart analyze` — 0 errors
+- [ ] `npm run build` on web-portal — 0 errors
+- [ ] `npm run build` on client-portal — 0 errors
+- [ ] Commit: `[RE17] Recon + Sketch + PM realtor access — listing readiness overlay, realtor-specific views, property notes, portal wiring`
+
+---
+
+### RE18 — Mobile Screens: All Realtor/Broker/TC/ISA Flutter Screens (~28h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md sections 3-4 (Portal Map, Mobile App Integration), realtor-professional-types-deep-research.md*
+*Depends on: RE1 (portal scaffold + RBAC), RE2 (CRM/leads), RE3 (Smart CMA), RE4-RE5 (Transaction Engine), RE6-RE7 (Seller Finder), RE8 (Commission), RE9 (Dispatch), RE10 (Listings), RE11 (Buyer Management), RE12 (Marketing), RE13 (Brokerage Admin), RE14 (Lead Gen), RE15 (Cross-Platform), RE16 (Settings), RE17 (Recon/Sketch/PM access)*
+*CUST9 Modules: All realtor modules*
+
+**What this builds:** All realtor-specific Flutter mobile screens organized by role: 15 realtor/agent screens, 8 broker screens, 4 TC screens, 3 ISA screens = 30 new screens total. The Flutter app is ONE app — RE18 adds role-based screens that display based on user's role and company_type. Navigation is role-aware: bottom nav tabs + drawer/more menu adapt per role. Every screen handles 4 states (loading, error, empty, data). Every screen uses existing providers/repositories built in RE1-RE17 — this sprint is the MOBILE UI LAYER only, not new backend work.
+
+**System Connectivity:**
+- Reads from: ALL RE1-RE17 tables and providers (this sprint is the mobile consumer of all previous RE sprints)
+- Writes to: No new tables — all writes go through existing RE1-RE17 repositories/providers
+- Wires to: All RE1-RE17 providers, existing Flutter shared components (calculators, inspection engine, photo capture, calendar, documents, chat, PDF generation), CUST9 app config provider (module visibility filtering)
+
+#### Navigation Architecture (~3h)
+
+- [ ] Modify `lib/navigation/role_navigation.dart` — add realtor role configurations:
+  - `brokerage_owner` tabs: Home | Pipeline | Agents | Listings | More
+  - `managing_broker` tabs: Home | Pipeline | Agents | Listings | More
+  - `team_lead` tabs: Home | Pipeline | Team | Listings | More
+  - `agent` (realtor) tabs: Home | Leads | Deals | Tools | More
+  - `tc` tabs: Home | Transactions | Tasks | Docs | More
+  - `isa` tabs: Home | Call Queue | Leads | Scripts | More
+  - Users with `showings.manage` permission flag (any role): showing-specific screens accessible via More menu
+  - Note: `showing_assistant` is NOT a separate role. Showing management is a permission flag (`showings.manage`) that can be granted to any existing role via `realtor_role_permissions`. Users with this permission see showing-related screens in their navigation.
+  - All tab lists filtered through CUST9 `appConfigProvider.isModuleEnabled()` before rendering
+  - Minimum 2 tabs enforced (Home + More) even if config hides everything
+  - Fallback to hardcoded defaults if config provider is loading/error
+- [ ] Modify `lib/navigation/app_shell.dart` — role-aware screen builder:
+  - `_buildTabScreens()` checks `company_type` from company model
+  - If `company_type IN ('realtor_solo', 'realtor_team', 'brokerage')`: builds realtor tab screens per role
+  - If `company_type = 'contractor'`: existing contractor tab screens (no change)
+  - IndexedStack only includes enabled modules (memory optimization — don't build hidden screens)
+  - "More" menu items dynamically populated from enabled modules not in bottom nav
+- [ ] Create `lib/navigation/realtor_routes.dart` — GoRouter route definitions for all realtor screens:
+  - `/realtor/home` → RealtorHomeScreen
+  - `/realtor/leads` → RealtorLeadsScreen, `/realtor/leads/:id` → RealtorLeadDetailScreen
+  - `/realtor/deals` → RealtorDealsScreen, `/realtor/deals/:id` → RealtorDealDetailScreen
+  - `/realtor/deals/:id/tracker` → RealtorDealTrackerScreen
+  - `/realtor/cma` → RealtorCmaScreen, `/realtor/cma/:id` → RealtorCmaDetailScreen
+  - `/realtor/listings` → RealtorListingScreen, `/realtor/listings/:id` → RealtorListingDetailScreen
+  - `/realtor/showings` → RealtorShowingScreen
+  - `/realtor/buyers/:id` → RealtorBuyerProfileScreen
+  - `/realtor/dispatch` → RealtorDispatchScreen
+  - `/realtor/seller-finder` → RealtorSellerFinderScreen
+  - `/realtor/commission` → RealtorCommissionScreen
+  - `/realtor/marketing` → RealtorMarketingScreen
+  - `/realtor/settings` → RealtorSettingsScreen (from RE16)
+  - `/realtor/more` → RealtorMoreScreen
+  - `/broker/dashboard` → BrokerDashboardScreen
+  - `/broker/agents` → BrokerAgentsScreen, `/broker/agents/:id` → BrokerAgentDetailScreen
+  - `/broker/compliance` → BrokerComplianceScreen
+  - `/broker/commission-plans` → BrokerCommissionPlansScreen
+  - `/broker/office` → BrokerOfficeManagementScreen
+  - `/broker/analytics` → BrokerPerformanceAnalyticsScreen
+  - `/broker/recruiting` → BrokerRecruitingScreen
+  - `/broker/settings` → BrokerSettingsScreen
+  - `/tc/dashboard` → TcDashboardScreen
+  - `/tc/transactions` → TcTransactionScreen, `/tc/transactions/:id` → TcTransactionDetailScreen
+  - `/tc/checklist/:id` → TcChecklistScreen
+  - `/tc/documents` → TcDocumentsScreen
+  - `/isa/dashboard` → IsaDashboardScreen (reuse as IsaCallQueueScreen is separate)
+  - `/isa/call-queue` → IsaCallQueueScreen
+  - `/isa/leads` → IsaLeadsScreen
+  - `/isa/scripts` → IsaScriptsScreen
+  - All routes guarded by role check — redirect to `/unauthorized` if role doesn't match
+  - All routes guarded by CUST9 module check — redirect to `/module-unavailable` if module disabled
+
+#### Realtor Agent Screens (15 screens, ~10h)
+
+- [ ] Create `lib/screens/realtor/realtor_home_screen.dart` — "What Should I Do Now?" priority engine:
+  - Priority action cards sorted by urgency: overdue tasks (RED), due today (ORANGE), new leads needing response (YELLOW with timer showing time since lead came in), upcoming showings (BLUE), transaction milestones due this week (GREEN)
+  - Today's agenda section: scheduled showings, appointments, tasks, open houses
+  - Quick stats row: active leads count, active deals count, pending commission, month GCI
+  - Speed-to-lead ticker: average response time this week vs SLA from RE16 settings
+  - "Quick Actions" row: New Lead, New Listing, Start CMA, Create Work Order, Scan Property
+  - Pull-to-refresh. Realtime updates via Supabase subscription on leads + transactions + showings.
+  - Empty state: "Welcome to Zafto! Start by importing your contacts or creating your first lead." with CTA buttons.
+  - Loading state: shimmer placeholders for each section.
+  - Error state: "Couldn't load your dashboard. Pull to retry." with retry button.
+
+- [ ] Create `lib/screens/realtor/realtor_leads_screen.dart` — lead pipeline:
+  - Kanban board view (horizontal scroll): New → Contacted → Qualifying → Nurturing → Appointment Set → Showing → Offer → Won → Lost
+  - Each card: contact name, source badge, score badge (hot/warm/cold), last activity time, assigned agent avatar
+  - Tap card → navigates to lead detail
+  - List view toggle (alternative to Kanban): sortable table with columns (name, source, score, stage, last activity, assigned to)
+  - Filter bar: stage, source, score range, assigned agent, date range
+  - FAB: + New Lead (opens quick-add bottom sheet: name, phone, email, source, notes)
+  - Pull-to-refresh. Realtime badge showing new leads count.
+  - Swipe actions on list view: call (left swipe), text (right swipe)
+  - Empty state: "No leads yet. Import contacts or set up lead capture to get started."
+
+- [ ] Create `lib/screens/realtor/realtor_lead_detail_screen.dart` — lead detail + activity timeline:
+  - Header: contact name, phone (tap to call), email (tap to email), source, score gauge, stage badge
+  - Quick actions row: Call, Text, Email, Set Appointment, Assign, Convert to Transaction
+  - Activity timeline (reverse chronological): calls, texts, emails, notes, stage changes, showings, form submissions. Each entry: icon + description + timestamp + user avatar
+  - "Add Note" floating button → bottom sheet with text input + attachments
+  - Contact info card: all contact fields with edit capability
+  - Property interests section: saved properties, search criteria, showing history
+  - Automation status: which drip campaigns enrolled in, next scheduled touch
+  - "Convert to Transaction" button → creates transaction from lead data, moves to RE4 deal flow
+  - Tags section: add/remove tags for categorization
+
+- [ ] Create `lib/screens/realtor/realtor_deals_screen.dart` — active transactions:
+  - List of active transactions sorted by next deadline
+  - Each row: property address, buyer/seller name, transaction type (buyer/seller/dual), deal health badge (GREEN/YELLOW/RED), next milestone name + due date, transaction amount
+  - Filter: type (buyer/seller/all), health (green/yellow/red/all), agent (broker/team lead view)
+  - Sort: deadline, amount, health, created date
+  - Tap → navigates to deal detail
+  - FAB: + New Transaction
+  - Summary bar at top: X active deals, $Y total pipeline value, Z milestones due this week
+  - Empty state: "No active transactions. Convert a lead or create a new transaction to get started."
+
+- [ ] Create `lib/screens/realtor/realtor_deal_detail_screen.dart` — deal detail + timeline + parties:
+  - Header: property address, transaction type badge, deal health gauge (0-100), amount
+  - Tab bar: Timeline | Documents | Parties | Notes | Financials
+  - Timeline tab: visual milestone timeline (vertical line with dots). Each milestone: name, due date, status (complete/in-progress/upcoming/overdue), responsible party, dependencies. Overdue milestones in RED. Tap milestone → mark complete or update.
+  - Documents tab: document checklist organized by category (contract, disclosures, inspection, financing, title, closing). Each doc: name, status (needed/uploaded/signed/verified), uploaded_by, date. Tap to view. Upload button per doc.
+  - Parties tab: all parties (buyer, seller, buyer agent, seller agent, lender, title company, inspector, appraiser, TC, attorney). Each: name, role, phone, email, company. Tap to call/text/email.
+  - Notes tab: communication log. Add note with visibility control (internal/client-visible).
+  - Financials tab: sale price, commission calculation (from RE8), closing costs estimate, net to seller/buyer.
+  - "Share with Client" button → sends deal tracker link to client (RE5 Domino's view).
+
+- [ ] Create `lib/screens/realtor/realtor_deal_tracker_screen.dart` — client-visible deal progress (Domino's tracker):
+  - Simplified view designed for sharing with buyers/sellers
+  - Horizontal progress bar showing major phases: Contract → Inspection → Appraisal → Financing → Title → Closing
+  - Current phase highlighted with animation
+  - Upcoming action items visible to client (what they need to do)
+  - Agent contact info + "Message Agent" button
+  - Timeline of completed steps with dates
+  - Estimated closing date prominent
+  - NO financial details (commission, agent notes, internal data)
+
+- [ ] Create `lib/screens/realtor/realtor_cma_screen.dart` — Smart CMA:
+  - "Generate New CMA" button → wizard flow:
+    1. Property address input with autocomplete
+    2. Property details confirmation (beds, baths, sqft, lot, year, condition)
+    3. Comp selection: auto-suggested comps from public records + manual add. Each comp: address, sold price, sqft, beds/baths, sold date, distance, adjustments
+    4. Adjustment grid: per-comp adjustments (sqft, beds, baths, garage, pool, condition, lot size, age, location). Auto-calculated suggested adjustments + manual override
+    5. Review: estimated value range (low/mid/high), price per sqft, DOM prediction, recommended list price
+    6. Generate: PDF/web report with branding from RE16
+  - CMA history list: all generated CMAs with property, date, value range, status (draft/shared/expired)
+  - Tap CMA → view/edit/share/regenerate
+  - Recon data integration: if property has been scanned, auto-populate condition data + repair costs
+  - Sketch integration: if floor plan exists, include in CMA report
+
+- [ ] Create `lib/screens/realtor/realtor_listing_screen.dart` — listing management:
+  - Active listings grid/list view. Each: property photo, address, price, DOM, showing count, feedback summary, status (active/pending/contingent/sold/withdrawn/expired)
+  - Filter: status, price range, property type, agent (broker view)
+  - Sort: price, DOM, showing count, newest
+  - Tap → listing detail: full property info, showing schedule, feedback list, marketing materials, price history, open house schedule
+  - FAB: + New Listing → wizard: property address → details → pricing (from CMA) → photos → description → marketing plan
+  - Quick actions on each listing: schedule showing, view feedback, create open house, adjust price, generate marketing
+  - Empty state: "No listings yet. Create your first listing or import from MLS."
+
+- [ ] Create `lib/screens/realtor/realtor_showing_screen.dart` — showing schedule + route:
+  - Calendar view (day/week modes) showing all scheduled showings
+  - Each showing: property address, time, buyer name, status (requested/confirmed/completed/cancelled/no-show)
+  - Day view: chronological list with drive time between showings
+  - "Optimize Route" button → reorders showings by geographic proximity (uses route optimization from master API registry — OSRM)
+  - Tap showing → detail: property info, buyer info, showing instructions (lockbox code, gate code, alarm code), agent notes
+  - Quick actions: confirm, cancel, reschedule, mark complete, add feedback
+  - Feedback form after showing: buyer interest level (1-5), comments, likelihood of offer, objections
+  - Showing request inbox: pending requests needing confirmation
+  - Auto-approve setting link (from RE16 settings)
+
+- [ ] Create `lib/screens/realtor/realtor_buyer_profile_screen.dart` — buyer preferences + matching:
+  - Buyer info header: name, phone, email, pre-approval status + amount, timeline
+  - Preferences section: price range (min/max slider), beds (min), baths (min), sqft (min), property types (checkboxes: SFR, condo, townhome, multi), areas/neighborhoods (tag chips), must-haves (list), nice-to-haves (list), deal-breakers (list)
+  - Search criteria section: radius from point, school district, commute to workplace, HOA preference, age of home, garage, pool, etc.
+  - Showing history: list of properties shown with date + feedback + interest level
+  - Offer history: offers submitted with status
+  - Saved properties: properties buyer has saved/favorited
+  - "Find Matching Properties" button → searches based on criteria (manual at launch, MLS Phase 2)
+  - "Create Tour" button → selects multiple properties → creates showing schedule → route optimization
+
+- [ ] Create `lib/screens/realtor/realtor_dispatch_screen.dart` — dispatch contractor/inspector:
+  - Active work orders list: property, trade needed, status (draft/sent/bidding/accepted/in_progress/complete), bid count, urgent badge
+  - Tap → work order detail: description, photos, bids comparison (side-by-side, up to 3), contractor info, status updates, GPS-stamped progress photos
+  - FAB: + New Work Order → form: property (dropdown or address), trade (dropdown from 35 trades), description, photos (camera/gallery), urgency (routine/urgent/emergency), special instructions
+  - "From Recon" shortcut: if navigated from RE17 Recon repair item, pre-fills trade + description + photos
+  - Bid comparison view: side-by-side comparison of up to 3 bids (price, timeline, contractor rating, previous work photos)
+  - Accept bid → contractor notified → project tracking begins
+  - Contractor directory: searchable list of contractors by trade + distance + rating
+
+- [ ] Create `lib/screens/realtor/realtor_seller_finder_screen.dart` — territory map + prospects:
+  - Map view: claimed territory polygon on map with colored pins for prospects
+  - Pin colors: hot (red), warm (orange), cold (blue), contacted (green), not-interested (gray)
+  - Tap pin → prospect detail bottom sheet: address, owner name, likelihood score, last contact, property data from Recon
+  - List view toggle: sortable prospect table (address, owner, score, last contact, status)
+  - Territory stats card: total properties, contacted %, response rate, estimated sellers, market share
+  - "Start Door-Knock Route" button → optimized walking route through territory (OSRM)
+  - "Launch Campaign" button → navigates to RE7 outreach campaign with territory pre-selected
+  - "Generate Market Report" button → creates area market report for mailers
+
+- [ ] Create `lib/screens/realtor/realtor_commission_screen.dart` — commission tracking dashboard:
+  - Year-to-date summary card: total GCI, total net commission, cap progress (progress bar to cap amount), transactions closed, avg commission per deal
+  - Monthly bar chart: GCI by month (current year)
+  - Pending commissions list: deals in pipeline with estimated commission, expected close date
+  - Paid commissions list: closed deals with actual commission, payment date, breakdown (gross - split - fees - franchise = net)
+  - Commission plan summary: current plan type, split percentage, cap amount, remaining to cap
+  - "View Statement" button per transaction → detailed CDA (Commission Disbursement Authorization)
+  - If agent: own data only. If team lead: team aggregate + per-agent. If broker: company-wide + per-office + per-agent.
+
+- [ ] Create `lib/screens/realtor/realtor_marketing_screen.dart` — marketing factory:
+  - Campaign list: active/completed/draft campaigns. Each: name, type (email/social/mail/flyer), status, sent count, open rate, click rate
+  - Template browser: listing flyer templates, social post templates, email templates, direct mail templates. Thumbnails with "Use Template" button.
+  - Quick actions: "Create Social Post" (listing photo + AI-generated caption), "Create Flyer" (listing data → template → PDF), "Send Email Campaign" (select contacts + template + schedule)
+  - Social media accounts: connected accounts with post preview
+  - "Create Listing Description" → AI-assisted listing description generator (Phase E placeholder — shows form but AI button disabled until Phase E)
+  - Marketing calendar: upcoming scheduled posts/emails/mailers on calendar view
+  - Performance dashboard: email open rates, social engagement, mailer response rates
+
+- [ ] Create `lib/screens/realtor/realtor_more_screen.dart` — settings + overflow menu:
+  - Grid of additional feature icons: Settings (→ RE16), Notifications, Reports, Recon (→ RE17), Sketch Engine (→ RE17), Properties (→ RE17), Cross-Platform (→ RE15), Profile, Help, Calculators (existing), Inspection Engine (existing)
+  - Each tile: icon + label + badge (notification count where applicable)
+  - Filtered through CUST9 appConfigProvider — only enabled modules shown
+  - Tile reordering respects nav_order from CUST9 profile
+  - "Request Feature" link → in-app feedback form
+
+#### Broker Screens (8 screens, ~6h)
+
+- [ ] Create `lib/screens/broker/broker_dashboard_screen.dart` — brokerage-wide dashboard:
+  - Company KPI cards row: total GCI (current month/YTD), active deals count, pending volume, closed volume, agent count, average production per agent
+  - Pipeline funnel: leads → qualified → showing → offer → under contract → closed (with conversion rates between stages)
+  - Agent leaderboard: top 5 agents by GCI this month with spark line charts
+  - Recent activity feed: new leads, deals closed, showings completed, compliance alerts
+  - Office selector (if multi-office): switch between company-wide and per-office view
+  - Compliance alert banner: agents with expiring licenses/CE/E&O → tap to see detail
+  - Revenue chart: monthly revenue trend line (12 months)
+  - Quick actions: View All Agents, Run Report, Manage Commission Plans, Settings
+  - Empty state: "Welcome! Add your first agent to get started." with "Add Agent" CTA.
+
+- [ ] Create `lib/screens/broker/broker_agents_screen.dart` — agent roster + production:
+  - Agent list: photo, name, role, status (active/on leave/probation), current month GCI, YTD GCI, active deals, compliance status badge (green/yellow/red)
+  - Sort: name, GCI, deals, compliance status
+  - Filter: office, team, status, role
+  - Search: by name, email, phone
+  - Tap → agent detail screen
+  - FAB: + Add Agent (invite flow: email + role + office + team + commission plan)
+  - Bulk actions: send announcement, change commission plan, assign to team
+  - Empty state: "No agents yet. Invite your first agent to join."
+
+- [ ] Create `lib/screens/broker/broker_agent_detail_screen.dart` — individual agent view:
+  - Agent header: photo, name, role, license number, status
+  - Tab bar: Production | Compliance | Commission | Activity | Settings
+  - Production tab: GCI chart (monthly, 12 months), transaction history, pipeline, lead conversion rates, listing inventory
+  - Compliance tab: license status + expiry, CE hours (completed/remaining with deadline), E&O insurance status + expiry, required documents checklist, buyer agreement compliance rate
+  - Commission tab: current plan, cap progress, YTD earnings breakdown (gross, split, fees, net), pending commissions, payment history
+  - Activity tab: login frequency, CRM usage, lead response times, listings posted, showings conducted, training attended
+  - Settings tab: notification preferences (what broker notifications for this agent), territory assignments, AI budget allocation, commission plan assignment
+  - "Impersonate" button (broker only) → view app as this agent sees it (read-only preview)
+  - Risk score badge if agent departure model (RE22) is active
+
+- [ ] Create `lib/screens/broker/broker_compliance_screen.dart` — license, CE, E&O tracking:
+  - Dashboard: agents with upcoming expirations (30/60/90 day warnings)
+  - Agent compliance matrix: rows = agents, columns = license, CE, E&O, buyer agreements. Cells: green (compliant), yellow (expiring within 60 days), red (expired/non-compliant)
+  - Tap cell → detail: document view, expiration date, renewal link
+  - Compliance score: company-wide compliance percentage
+  - Auto-alerts: configured per RE16 settings (email + push when agent enters yellow/red zone)
+  - Buyer agreement compliance: percentage of showings with buyer agreement on file (post-NAR requirement)
+  - Document retention dashboard: documents by age, retention policy compliance
+  - Export: compliance report CSV/PDF for audit purposes
+
+- [ ] Create `lib/screens/broker/broker_commission_plans_screen.dart` — commission plan builder:
+  - Plan list: all company commission plans. Each: name, type, agent count assigned, status (active/archived)
+  - Tap → plan detail/editor:
+    - Plan name, description, status
+    - Split type selector: traditional (% split), graduated (tiers), cap-based, 100% (desk fee), team split, franchise
+    - For traditional: agent split %, broker split %, franchise fee %
+    - For graduated: tier table (GCI range → split %). Add/remove tiers. Validate no gaps.
+    - For cap-based: cap amount, pre-cap split, post-cap split, cap period (annual/rolling), cap reset date
+    - For 100% model: monthly desk fee amount, per-transaction fee amount, E&O contribution
+    - For team split: team lead split %, agent split %, team cap (if any)
+    - Deductions section: E&O insurance, technology fee, marketing fee, franchise fee (each: amount or %, frequency)
+    - Preview calculator: input a hypothetical sale price → shows full commission breakdown
+  - FAB: + New Plan
+  - "Assign to Agents" button → multi-select agent list, bulk assign plan
+  - Archive plan (cannot delete if agents are assigned — must reassign first)
+
+- [ ] Create `lib/screens/broker/broker_office_management_screen.dart` — office management (multi-office brokerages):
+  - Office list: name, address, agent count, manager, monthly GCI, active deals
+  - Tap → office detail: agent roster for this office, office-specific settings (RE16), office performance metrics
+  - Office comparison: side-by-side KPIs across offices
+  - "Add Office" → form: name, address, phone, manager assignment
+  - Office settings: override company defaults per RE16 cascading settings
+
+- [ ] Create `lib/screens/broker/broker_performance_analytics_screen.dart` — performance analytics:
+  - Date range selector (this month, this quarter, this year, custom range)
+  - KPI cards: total GCI, total transactions, avg sale price, avg DOM, lead conversion rate, showing-to-offer ratio
+  - Charts section:
+    - Line chart: monthly GCI trend (company + top 3 agents overlay)
+    - Bar chart: transactions by agent (horizontal bars)
+    - Pie chart: revenue by source (referral, online, sign call, open house, etc.)
+    - Funnel: lead → contact → qualify → show → offer → close (with conversion rates)
+  - Agent comparison table: all agents with key metrics, sortable
+  - Market share: if seller finder data available, show market share in claimed territories
+  - Export: full analytics report PDF
+
+- [ ] Create `lib/screens/broker/broker_recruiting_screen.dart` — recruiting pipeline:
+  - Kanban board: Identified → Contacted → Meeting Set → Presented → Negotiating → Signed → Onboarding
+  - Each card: prospect name, current brokerage, production level, estimated GCI, last contact
+  - Tap → prospect detail: name, phone, email, current brokerage, license number, production history (if available), notes, meeting history, value proposition sent
+  - "Add Prospect" FAB: name, phone, email, current brokerage, source, notes
+  - Activity timeline per prospect: calls, emails, meetings, documents shared
+  - "Send Value Proposition" action → generates branded recruiting packet (from RE16 branding + commission plan comparison)
+  - Conversion tracker: recruiting pipeline value, conversion rates, time-to-sign
+  - Onboarding workflow trigger: when prospect moves to "Signed", auto-creates onboarding checklist (18 steps from 53_spec section 25)
+
+- [ ] Create `lib/screens/broker/broker_settings_screen.dart` — broker-level settings:
+  - Wraps RE16 settings screen with company scope pre-selected
+  - Additional broker-specific sections: commission plan management link, office management link, compliance settings, recruiting settings
+  - "Global Announcements" section: create company-wide announcements that appear on all agent dashboards
+  - "Data Export" section: export all company data (GDPR compliance, data portability)
+
+#### TC Screens (4 screens, ~4h)
+
+- [ ] Create `lib/screens/tc/tc_dashboard_screen.dart` — today's deadlines + milestones:
+  - Priority alert banner: overdue milestones in RED with count
+  - Today's deadlines section: list of milestones due today across all assigned transactions. Each: transaction address, milestone name, responsible party, status
+  - This week section: upcoming milestones for the next 7 days
+  - Transaction health summary: count by health (GREEN/YELLOW/RED)
+  - Quick stats: total assigned transactions, milestones completed today, documents pending
+  - "Urgent" filter toggle: show only YELLOW/RED health transactions
+  - Tap any milestone → navigates to transaction detail at that milestone
+  - Empty state: "No transactions assigned. Your managing broker will assign transactions to you."
+
+- [ ] Create `lib/screens/tc/tc_transaction_screen.dart` — transaction workflow execution:
+  - Transaction list: all assigned transactions sorted by next deadline. Each row: address, buyer/seller, type, health badge, next milestone, days until next deadline
+  - Filter: health (green/yellow/red), type (buyer/seller), date range
+  - Sort: deadline, health, amount, created
+  - Tap → full transaction detail (reuses realtor_deal_detail_screen with TC-specific actions: mark milestone complete, upload document, send reminder to party, update status)
+  - Bulk actions: send deadline reminders to all parties with upcoming milestones
+  - Weekly summary: transactions closed this week, milestones completed, average days to close
+
+- [ ] Create `lib/screens/tc/tc_checklist_screen.dart` — closing checklist + tasks:
+  - Transaction-specific closing checklist: organized by phase (contract, inspection, financing, title, closing)
+  - Each item: name, status (needed/in_progress/complete/waived/na), responsible party, due date, notes, document attachment
+  - Tap item → update status, add notes, attach document, assign to party
+  - Progress bar at top: X of Y items complete
+  - Filter: status, phase, responsible party
+  - "Send Reminder" button per item → sends email/push to responsible party
+  - State-specific checklists: template varies by state (from RE5 transaction_templates). Auto-selects based on property state.
+  - Dependencies: some items blocked until predecessor is complete (e.g., can't order title until contract is signed). Visual dependency indicators.
+  - Batch actions: mark multiple items complete, assign multiple items to same party
+
+- [ ] Create `lib/screens/tc/tc_documents_screen.dart` — document management:
+  - Document list across all assigned transactions. Filter by: transaction, document type, status
+  - Each document: name, transaction, type (contract/disclosure/inspection/financing/title/closing/other), status (needed/uploaded/signed/verified), uploaded_by, upload_date
+  - Upload: camera (photo of physical doc), gallery, file picker (PDF, DOC, IMG)
+  - Document preview: inline PDF/image viewer
+  - E-signature status: pending signatures highlighted, "Send for Signature" action (Phase E — DocuSeal integration from ZForge F10)
+  - Document checklist view: grouped by transaction, shows missing documents per transaction
+  - Compliance flags: required documents not yet uploaded highlighted in RED
+  - "Generate Document" button → select from templates (RE5 transaction_templates) → fill in data → generate PDF
+  - Search: document name, transaction address, party name
+
+#### ISA Screens (3 screens, ~3h)
+
+- [ ] Create `lib/screens/isa/isa_call_queue_screen.dart` — prioritized dial list:
+  - Queue list: leads ordered by priority algorithm (speed-to-lead timer > hot leads > warm leads > scheduled callbacks > cold leads). Each: name, phone, source, score, time in queue, last contact attempt, attempts count
+  - Speed-to-lead timer: for new leads, shows elapsed time since lead entered system. RED if over SLA. Timer ticks in real-time.
+  - Tap lead → bottom sheet with: call button (tap-to-dial), text button, lead summary, previous call notes, script suggestion
+  - After call: disposition bottom sheet → outcome picker (connected/voicemail/no-answer/wrong-number/do-not-call/callback-requested), notes, follow-up date (if callback), qualification status update
+  - "Skip" action → moves lead to back of queue with reason
+  - Queue stats header: calls made today, connections made, appointments set, average handle time
+  - Auto-advance: after disposition, automatically shows next lead in queue
+  - Manual refresh: pull to refresh queue (new leads may have entered)
+  - "Do Not Call" flag: instantly removes lead from queue + flags in CRM
+  - Empty state: "Great work! Your call queue is clear. New leads will appear here automatically."
+
+- [ ] Create `lib/screens/isa/isa_lead_qualify_screen.dart` — lead qualification form:
+  - Structured qualification form based on LPMAMA framework:
+    - Location: where looking (area/neighborhood selector), current location
+    - Price: budget range (min/max), pre-approved (Y/N), pre-approval amount, lender name
+    - Motivation: why moving (relocation, upsizing, downsizing, investing, first-time), timeline (0-3mo, 3-6mo, 6-12mo, 12+mo)
+    - Agent: currently working with another agent? (Y/N), if Y: who, exclusive agreement?
+    - Mortgage: cash buyer, conventional, FHA, VA, USDA, other
+    - Appointment: scheduling picker for consultation appointment (date/time/location/virtual)
+  - Score auto-calculation as form is filled: updates lead score in real-time
+  - "Qualified — Set Appointment" button → schedules appointment + assigns to agent based on routing rules (RE2)
+  - "Not Qualified — Nurture" button → enrolls in drip campaign + returns to queue
+  - "Not Qualified — Remove" button → marks as disqualified with reason
+  - Notes section: free-form notes from conversation
+  - Quick info sidebar: lead's previous interactions, source, current stage, assigned campaigns
+
+- [ ] Create `lib/screens/isa/isa_scripts_screen.dart` — scripts + objection handlers:
+  - Script library organized by category: initial outreach, follow-up, cold call, FSBO, expired listing, open house follow-up, referral ask, objection handling
+  - Each script: title, category, full text with highlighted merge tags ({lead_name}, {property_address}, etc.), effectiveness rating, usage count
+  - Objection handlers section: organized by objection ("I'm already working with an agent", "I'm not ready yet", "Just looking", "I can't afford it", "I need to sell first"). Each: objection text, recommended response, alternative responses, do's and don'ts
+  - Active script view during call: large readable text, scroll-through, tap to copy sections
+  - "Practice Mode": reads script aloud, user practices responses (text display only at launch — TTS in Phase E)
+  - Custom scripts: ISA can create/save personal scripts. Company scripts are read-only (managed by admin on web portal).
+  - Search: keyword search across all scripts and objection handlers
+  - Empty state: "No scripts configured yet. Your admin can add scripts from the web portal."
+
+#### Cross-Role Shared Screens (~2h)
+
+- [ ] Create `lib/screens/realtor/realtor_profile_screen.dart` — personal profile:
+  - Profile photo/headshot (upload from camera/gallery)
+  - Personal info: name, phone, email, license number, license state, license expiry
+  - Credentials: designation tags (CRS, ABR, GRI, SRS, CLHMS, MRP, CRP, etc.) — add/remove chips
+  - Bio: text field
+  - Social links: Facebook, Instagram, LinkedIn, TikTok, YouTube, personal website
+  - Agent branding: personal logo (if different from brokerage), tagline, email signature
+  - Availability schedule: weekly calendar with available/unavailable blocks for showings
+  - Auto-response templates: text template, email template for when unavailable
+  - "Preview" button → shows how profile appears to clients/prospects
+
+- [ ] Create `lib/screens/realtor/realtor_notifications_screen.dart` — notification center:
+  - Notification list: all notifications grouped by today, yesterday, this week, earlier
+  - Each notification: icon (type-specific), title, description, timestamp, read/unread badge, action button
+  - Notification types with specific actions:
+    - New lead → "View Lead" button
+    - Showing request → "Approve/Decline" buttons
+    - Transaction milestone → "View Deal" button
+    - Document uploaded → "View Document" button
+    - Commission disbursed → "View Statement" button
+    - Compliance alert → "View Details" button
+  - Mark all as read, clear all actions
+  - Filter: by type, read/unread
+  - Notification settings link → navigates to RE16 notification settings screen
+  - Push notification tap: deep link to relevant screen
+
+#### All Screens Common Requirements
+
+- [ ] Every screen: loading state (shimmer placeholders matching final layout), error state (error icon + message + "Retry" button), empty state (illustration + descriptive message + primary CTA button), data state (actual content)
+- [ ] Every screen: pull-to-refresh on scrollable content
+- [ ] Every screen: ConsumerWidget with ref.watch() for data, ref.read() for actions
+- [ ] Every screen: filtered through CUST9 appConfigProvider — if module disabled, redirect to /module-unavailable
+- [ ] Every list screen: pagination (20 items per page, infinite scroll)
+- [ ] Every form screen: input validation, unsaved changes warning on back navigation
+- [ ] All screens respect `company_type` check — realtor screens only render for realtor/brokerage company types
+
+#### CUST9 Module Registration
+
+- [ ] Register all 30 screens in ScreenRegistry with appropriate module IDs, entity types, categories. Each screen: id, name, subtitle, icon, category (realtor, broker, tc, isa), searchTags, builder, trade = null (realtor screens are not trade-specific).
+- [ ] Verify all screens filtered through appConfigProvider.isModuleEnabled()
+
+#### Security Verification
+
+- [ ] TEST: Contractor company_type cannot access any realtor screen (role_navigation returns contractor tabs)
+- [ ] TEST: ISA role cannot navigate to broker screens
+- [ ] TEST: TC role cannot navigate to ISA/broker/seller-finder screens
+- [ ] TEST: Users with `showings.manage` permission flag can access showing-related screens; users without the flag cannot
+- [ ] TEST: Agent cannot see other agents' leads/deals/commissions (RLS enforced at data layer)
+- [ ] TEST: Deep link to unauthorized screen → redirect to /unauthorized
+- [ ] TEST: Deep link to disabled module screen → redirect to /module-unavailable
+- [ ] TEST: All screens handle offline gracefully (cached data shown, mutations queued)
+- [ ] `dart analyze` — 0 errors
+- [ ] Commit: `[RE18] Mobile screens — 30 realtor/broker/TC/ISA Flutter screens, role-aware navigation, 4-state handling, CUST9 module filtering`
+
+---
+
+### RE19 — Portal Polish: Responsive Design, Performance, UX (~16h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md, realtor-app-customization-research.md section 9 (universal complaints)*
+*Depends on: RE1-RE18 (all realtor features and screens must exist before polishing)*
+*CUST9 Modules: All realtor modules (polish touches every module)*
+
+**What this builds:** The "make it perfect" sprint. Every realtor portal page becomes responsive (mobile/tablet/desktop). Every interactive element has proper loading/hover/active/disabled states. Every empty state has a helpful message + CTA. Command+K global search across all realtor modules. Keyboard shortcuts for power users. Print-friendly views for CMA reports, commission statements, and listing materials. Performance: <2s initial load, lazy loading for heavy components, virtualized lists for contacts/leads/listings. Accessibility: ARIA labels, focus management, color contrast, screen reader support.
+
+**System Connectivity:**
+- Reads from: All RE1-RE18 tables (search indexes everything)
+- Writes to: `realtor_user_preferences` (NEW — user-specific UI preferences like keyboard shortcut customization, sidebar collapsed state, default views)
+- Wires to: All realtor portal routes, CUST9 module visibility, RE16 branding (applies branding throughout)
+
+#### Database Layer (~1h)
+
+- [ ] Create migration `XXX_re19_user_preferences.sql`:
+  - `realtor_user_preferences` — id UUID PK DEFAULT gen_random_uuid(), user_id UUID NOT NULL FK auth.users, company_id UUID NOT NULL FK companies, preferences JSONB NOT NULL DEFAULT '{}' (keys: sidebar_collapsed BOOLEAN, default_lead_view TEXT 'kanban'|'list', default_transaction_sort TEXT, default_listing_view TEXT 'grid'|'list', keyboard_shortcuts_enabled BOOLEAN DEFAULT true, items_per_page INTEGER DEFAULT 20 CHECK (items_per_page IN (10, 20, 50, 100)), timezone TEXT DEFAULT 'America/New_York', date_format TEXT DEFAULT 'MM/DD/YYYY', theme TEXT DEFAULT 'system' CHECK IN ('light', 'dark', 'system'), search_history JSONB DEFAULT '[]' (last 20 searches), pinned_shortcuts JSONB DEFAULT '[]'), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(). UNIQUE(user_id, company_id).
+- [ ] RLS: SELECT/INSERT/UPDATE — own row only (user_id = auth.uid()). No DELETE.
+- [ ] Trigger `update_updated_at()`.
+- [ ] Index: `realtor_user_preferences(user_id, company_id)`.
+
+#### Edge Functions (~1h)
+
+- [ ] Create `realtor-global-search` EF — GET `/realtor-global-search?q=search+term&types=leads,contacts,listings,transactions,properties&limit=10` — searches across multiple tables:
+  - `realtor_contacts`: name, email, phone ILIKE
+  - `realtor_leads`: name, email, phone ILIKE (joins contacts)
+  - `listings`: address, mls_number ILIKE
+  - `realtor_transactions`: address ILIKE, party names
+  - `properties`: address ILIKE
+  - `dispatch_work_orders`: description ILIKE, address
+  - `cma_reports`: address ILIKE
+  - `seller_finder_prospects`: owner_name, address ILIKE
+  - Returns unified results: [{type, id, title, subtitle, icon, url}] sorted by relevance (exact match first, then starts-with, then contains). Max 50 results across all types. Auth: JWT required, company_id scoping on all queries. Rate limit: 60/min.
+
+#### Realtor Portal — Responsive Design (~4h)
+
+- [ ] Audit ALL realtor portal pages for responsive breakpoints:
+  - Mobile (<640px): single column, stacked cards, hamburger menu, bottom sheet modals, full-width buttons
+  - Tablet (640-1024px): 2-column layouts where appropriate, sidebar collapsible, cards in 2-col grid
+  - Desktop (>1024px): full sidebar, 3-4 column grids, side-by-side panels, keyboard shortcuts visible
+- [ ] `/dashboard` responsive: KPI cards → 4-col desktop, 2-col tablet, 1-col stacked mobile. Charts resize. Activity feed becomes scrollable card on mobile.
+- [ ] `/leads/pipeline` responsive: Kanban board → horizontal scroll on all sizes, card width adapts. Mobile: single column with stage header tabs. List view default on mobile.
+- [ ] `/leads/[id]` responsive: desktop = 2-column (info left, timeline right). Tablet = same but narrower. Mobile = single column with tab bar switching between info and timeline.
+- [ ] `/transactions/active` responsive: table → card list on mobile. Columns hidden progressively (mobile: address + health + deadline only).
+- [ ] `/transactions/[id]` responsive: desktop = 3-panel (header, timeline left, detail right). Mobile = full-width tabs.
+- [ ] `/listings/active` responsive: grid → 3-col desktop, 2-col tablet, 1-col mobile. Card layout adapts.
+- [ ] `/listings/[id]` responsive: photo gallery → carousel on mobile. Info panels stack vertically. Showing schedule becomes list.
+- [ ] `/contacts` responsive: table → card list on mobile. Search bar full-width on mobile.
+- [ ] `/buyers/[id]` responsive: preference form → single column on mobile. Map (if used) → full-width.
+- [ ] `/dispatch` responsive: work order cards stack vertically. Bid comparison → swipeable cards on mobile.
+- [ ] `/recon` responsive: scan results → single column. Map → full screen with overlay cards.
+- [ ] `/sketch/editor` responsive: Konva canvas → limited on mobile (view-only with pinch zoom, edit only on tablet+). Warning on mobile: "Floor plan editing works best on tablet or desktop."
+- [ ] `/seller-finder` responsive: map → full screen on mobile with floating prospect cards. Table view default on mobile.
+- [ ] `/marketing` responsive: template gallery → 2-col mobile, 4-col desktop. Preview → modal on mobile.
+- [ ] `/settings/*` responsive: form layouts → single column on mobile, 2-column on desktop. Tab navigation → horizontal scroll on mobile.
+- [ ] `/agents/*` (broker) responsive: agent roster → card list on mobile. Performance charts resize.
+- [ ] `/reports/*` responsive: charts → stacked on mobile with horizontal scroll for wide charts. Export button prominent.
+- [ ] All modals/dialogs responsive: full-screen on mobile (<640px), centered modal on desktop. Bottom sheet on mobile where appropriate.
+- [ ] Sidebar: collapsible on tablet/desktop (persistent collapsed with icons only). Hidden on mobile with hamburger toggle. Remember collapsed state in user preferences.
+
+#### Realtor Portal — Loading/Empty/Error States (~3h)
+
+- [ ] Create `web-portal/src/components/realtor/LoadingState.tsx` — reusable loading component:
+  - Skeleton/shimmer placeholders that match the final layout of each section
+  - Variants: card-skeleton, table-skeleton, chart-skeleton, form-skeleton, list-skeleton, kanban-skeleton
+  - Animated pulse effect
+  - Used via `<LoadingState variant="card" count={4} />`
+- [ ] Create `web-portal/src/components/realtor/EmptyState.tsx` — reusable empty state:
+  - Illustration (Lucide icon, large + muted), title, description, primary CTA button, optional secondary CTA
+  - Variants per module:
+    - leads: "No leads yet" + "Import Contacts" / "Set Up Lead Capture"
+    - contacts: "Your contact list is empty" + "Import from CSV" / "Add Contact"
+    - transactions: "No active transactions" + "Create Transaction" / "Convert a Lead"
+    - listings: "No listings yet" + "Create Listing" / "Import from MLS"
+    - buyers: "No buyer profiles yet" + "Add Buyer"
+    - dispatch: "No work orders yet" + "Create Work Order"
+    - seller-finder: "No territories claimed" + "Claim Territory"
+    - commission: "No commission data yet" + "Commissions will appear as you close deals"
+    - marketing: "No campaigns yet" + "Create Campaign"
+    - agents (broker): "No agents yet" + "Invite Agent"
+    - recruiting: "No prospects yet" + "Add Prospect"
+  - All empty states context-sensitive (different message for first-time vs filtered-to-empty)
+- [ ] Create `web-portal/src/components/realtor/ErrorState.tsx` — reusable error component:
+  - Error icon, title ("Something went wrong"), description (user-friendly, no stack traces), "Retry" button, optional "Contact Support" link
+  - Variants: full-page error (500), inline error (single section failed), toast error (non-blocking)
+  - Error boundary wrapper: wraps each page section independently so one section failure doesn't crash entire page
+- [ ] Apply loading/empty/error states to ALL realtor portal pages (every page that fetches data must handle all 3 non-data states)
+- [ ] Button loading states: every submit/action button shows spinner + disabled state during async operation. "Save" → "Saving..." → "Saved ✓" (2s) → "Save". Prevent double-click.
+- [ ] Form validation states: inline validation on blur, red border + error message below field, success green border on valid. Form-level error summary at top on submit.
+- [ ] Toast notifications: success (green), error (red), warning (yellow), info (blue). Auto-dismiss after 5s. Stackable (up to 3 visible). Swipe to dismiss on mobile.
+
+#### Realtor Portal — Command+K Search (~2h)
+
+- [ ] Create `web-portal/src/components/realtor/CommandPalette.tsx` — Cmd+K global search:
+  - Keyboard trigger: Cmd+K (Mac) / Ctrl+K (Windows) opens modal overlay
+  - Search input with placeholder "Search leads, contacts, listings, transactions..."
+  - Real-time search as user types (debounced 300ms)
+  - Results grouped by type: Contacts, Leads, Listings, Transactions, Properties, Work Orders, CMA Reports, Prospects
+  - Each result: type icon + title + subtitle (e.g., "John Smith — Lead — Hot — Active since Jan 15")
+  - Arrow key navigation between results, Enter to select, Escape to close
+  - Recent searches section (from user preferences, last 10)
+  - Quick actions section: "New Lead", "New Listing", "New Transaction", "New CMA", "New Work Order" — type "new" to see these
+  - Navigation shortcuts: type "settings" → go to settings, "reports" → go to reports, "agents" → go to agent roster
+  - Calls `realtor-global-search` EF for data results
+  - Maximum 10 results per type, 50 total
+  - No results state: "No results for '[query]'. Try a different search or [create a new record]."
+  - Search results filtered through CUST9 module visibility — disabled module results hidden
+- [ ] Create `web-portal/src/lib/hooks/use-command-palette.ts` — hook managing palette state, search queries, result caching, keyboard event listeners, recent searches CRUD.
+
+#### Realtor Portal — Keyboard Shortcuts (~1h)
+
+- [ ] Create `web-portal/src/lib/hooks/use-keyboard-shortcuts.ts` — global keyboard shortcut handler:
+  - Shortcuts (when not in input/textarea):
+    - `Cmd+K` / `Ctrl+K`: Open command palette
+    - `Cmd+N` / `Ctrl+N`: New record (context-sensitive: on leads page → new lead, on listings → new listing)
+    - `G then L`: Go to Leads
+    - `G then D`: Go to Deals/Transactions
+    - `G then I`: Go to Listings
+    - `G then C`: Go to Contacts
+    - `G then S`: Go to Settings
+    - `G then R`: Go to Reports
+    - `G then A`: Go to Agents (broker only)
+    - `?`: Show keyboard shortcuts help modal
+    - `Escape`: Close any open modal/dialog/palette
+    - `J/K`: Navigate up/down in lists
+    - `Enter`: Open selected item
+  - Shortcut registration system: pages can register context-specific shortcuts
+  - Shortcut help modal: full list of shortcuts with descriptions, grouped by category
+  - Enable/disable via user preferences (realtor_user_preferences.keyboard_shortcuts_enabled)
+  - Shortcuts suppressed when input/textarea/select is focused
+
+#### Realtor Portal — Print Views (~1h)
+
+- [ ] Create `@media print` CSS for all printable pages:
+  - CMA reports (`/smart-cma/[id]`): print-optimized layout with proper page breaks, branding header, comparable grid, adjustment table, value conclusion. Hide navigation, sidebar, action buttons.
+  - Commission statements (`/transactions/[id]` financials tab): CDA format, agent info, transaction details, commission breakdown, brokerage info, signatures area
+  - Listing reports (`/listings/[id]`): property details, photos (1 per row for quality), showing feedback summary, marketing metrics
+  - Agent production reports (`/agents/[id]` production tab): GCI summary, transaction list, pipeline, charts
+  - Market reports (`/reports/market`): area statistics, charts, data tables
+  - Compliance reports (`/agents/compliance`): agent compliance matrix, expiration details
+- [ ] "Print" button on all printable pages. Opens native print dialog with print-optimized CSS applied.
+- [ ] PDF export option alongside print: generates PDF via client-side rendering (html2canvas + jspdf or react-pdf) for email sharing.
+
+#### Realtor Portal — Performance Optimization (~2h)
+
+- [ ] Implement route-level code splitting: every `/settings/*`, `/reports/*`, `/agents/*` route dynamically imported with `next/dynamic`. Reduces initial bundle size.
+- [ ] Implement virtualized lists for large datasets:
+  - `/contacts` page: use `react-window` or `@tanstack/react-virtual` for contact list (handles 10K+ contacts without DOM overflow)
+  - `/leads/pipeline` list view: virtualized rows
+  - `/transactions/active`: virtualized table rows
+  - `/seller-finder/prospects`: virtualized prospect list
+- [ ] Implement lazy loading for heavy components:
+  - Charts: lazy-loaded (only load chart library when chart section scrolls into viewport)
+  - Map views: lazy-loaded (Leaflet/Mapbox bundle only loaded on map pages)
+  - Konva editor: lazy-loaded (only on /sketch/editor)
+  - PDF viewer: lazy-loaded (only when document is opened)
+- [ ] Image optimization:
+  - All listing photos: `next/image` with responsive sizes, WebP format, lazy loading
+  - Agent headshots: `next/image` with fixed sizes, priority loading on agent roster
+  - Logo/branding images: cached aggressively
+- [ ] API response caching:
+  - SWR/React-Query stale-while-revalidate for all list endpoints (30s stale time)
+  - Global search results cached for 60s
+  - Settings cached until realtime update received
+  - Commission calculations cached for 5 minutes
+- [ ] Realtime subscription optimization:
+  - Single Supabase Realtime channel per page (not per component)
+  - Unsubscribe on route change (cleanup in useEffect)
+  - Batch realtime updates (debounce 500ms before re-render)
+- [ ] Performance benchmarks (must meet):
+  - Initial page load (dashboard): <2s on 4G connection
+  - Navigation between pages: <500ms (client-side routing)
+  - Search results appear: <300ms after typing stops
+  - List scroll: 60fps (no jank on 1000+ item lists)
+  - Form submission feedback: <200ms (optimistic UI update)
+- [ ] Lighthouse audit: all realtor portal pages must score >90 on Performance, >90 on Accessibility, >90 on Best Practices
+
+#### Flutter — Polish (~2h)
+
+- [ ] Implement `web-portal/src/lib/hooks/use-user-preferences.ts` — hook for CRUD on realtor_user_preferences. Methods: getPreferences(), updatePreference(key, value), resetPreferences(). Syncs to local state for instant UI updates.
+- [ ] Flutter: Apply consistent animations across all realtor screens:
+  - Page transitions: `SlideTransition` for forward navigation, `FadeTransition` for tab switches
+  - List item animations: `AnimatedList` for item add/remove in lead pipeline, transaction list
+  - Shimmer loading: consistent shimmer package usage across all screens
+  - Pull-to-refresh: `RefreshIndicator` with consistent behavior
+  - FAB animation: scale-in on page load, hero transition on tap
+- [ ] Flutter: Offline indicators on all realtor screens:
+  - Connection banner: "You're offline. Changes will sync when connected." (yellow banner at top)
+  - Offline badge: sync icon with pending count badge on screens with queued mutations
+  - Last synced timestamp on data-heavy screens
+
+#### CUST9 Module Registration
+
+- [ ] Verify all polish components (CommandPalette, LoadingState, EmptyState, ErrorState) respect CUST9 module visibility in search results and empty state CTAs.
+
+#### Security Verification
+
+- [ ] TEST: `realtor-global-search` EF respects company_id scoping (no cross-company data leaks)
+- [ ] TEST: Search results respect RLS (agent cannot search other agents' private notes)
+- [ ] TEST: User preferences accessible only to own user (RLS)
+- [ ] TEST: Keyboard shortcuts do not trigger when in input fields (prevent accidental navigation during form entry)
+- [ ] TEST: Print views do not include sensitive data (internal notes, raw commission splits of other agents)
+- [ ] TEST: Performance benchmarks met on all pages (documented in test results)
+- [ ] `npm run build` on web-portal — 0 errors
+- [ ] `dart analyze` — 0 errors
+- [ ] Lighthouse audit run on 5 key pages (dashboard, leads, transactions, listings, contacts) — scores documented
+- [ ] Commit: `[RE19] Portal polish — responsive design, Cmd+K search, keyboard shortcuts, print views, performance optimization, loading/empty/error states`
+
+---
+
+### RE20 — QA + Security: Comprehensive Audit of RE1-RE19 (~16h) — S144
+*Source: 53_REALTOR_PLATFORM_SPEC.md section 28, SPRINT_SECURITY_TEMPLATE.md*
+*Depends on: RE1-RE19 (ALL realtor sprints must be complete before security audit)*
+*CUST9 Modules: N/A (this is a testing sprint, not a feature sprint)*
+
+**What this builds:** Comprehensive security audit and QA verification of ALL RE1-RE19 tables, edge functions, portal routes, Flutter screens, and cross-platform data flows. No new features — only testing, verification, and fixing. Every new table gets RLS tested for company isolation and role-based access. Every EF gets input validation and auth tested. Every portal gets cross-company data leak testing. Full integration tests for realtor lifecycle workflows.
+
+**System Connectivity:**
+- Tests ALL tables created in RE1-RE19 (~45-60 tables)
+- Tests ALL EFs created in RE1-RE19 (~15-20 EFs)
+- Tests ALL portal routes (~85-100 realtor portal routes)
+- Tests ALL Flutter screens (30 screens from RE18 + RE16/RE17 screens)
+
+#### RLS Audit — Per Table (~4h)
+
+- [ ] TEST: `realtor_contacts` — Company A cannot SELECT/INSERT/UPDATE/DELETE Company B's contacts. Agent can only see contacts in their scope (own + team if team lead + all if broker). TC/ISA role access is read-only on contact financial data.
+- [ ] TEST: `realtor_leads` — Company isolation. Lead routing respects role scope. ISA can see assigned leads only (unless lead pool access). Agent cannot see other agents' leads unless broker/team lead.
+- [ ] TEST: `realtor_lead_activities` — Company isolation. Inherits lead visibility (if you can't see the lead, you can't see its activities).
+- [ ] TEST: `realtor_lead_routing_rules` — Company isolation. Only admin/owner can create/modify routing rules.
+- [ ] TEST: `realtor_automations` — Company isolation. Creator + admin can modify. Agent can only manage their own automations.
+- [ ] TEST: `realtor_automation_steps` — Inherits automation visibility.
+- [ ] TEST: `realtor_automation_enrollments` — Company isolation. Agent sees enrollments for their contacts only.
+- [ ] TEST: `realtor_transactions` — Company isolation. TC sees only assigned transactions. Agent sees own + team (if lead). Broker sees all.
+- [ ] TEST: `transaction_milestones` — Inherits transaction visibility.
+- [ ] TEST: `transaction_parties` — Inherits transaction visibility. External parties can only see their own record via client portal.
+- [ ] TEST: `transaction_documents` — Inherits transaction visibility. Uploaded documents scoped by company.
+- [ ] TEST: `transaction_templates` — Company-level + system templates. Company cannot modify system templates.
+- [ ] TEST: `transaction_notes` — Inherits transaction visibility. Private notes visible only to creator + admin.
+- [ ] TEST: `transaction_health_log` — Inherits transaction visibility. Insert-only (no manual edits to health history).
+- [ ] TEST: `listings` — Company isolation. All agents in company can see listings. External showing requests from other brokerages handled via separate flow (not direct table access).
+- [ ] TEST: `listing_showings` — Company isolation. Buyer's agent info visible but cross-company data not leaked.
+- [ ] TEST: `listing_feedback` — Company isolation. Feedback visible to listing agent + broker.
+- [ ] TEST: `listing_marketing` — Company isolation. Marketing materials tied to listing, inherits listing access.
+- [ ] TEST: `listing_open_houses` — Company isolation.
+- [ ] TEST: `listing_open_house_signins` — Company isolation. Sign-in data visible to listing agent + broker.
+- [ ] TEST: `cma_reports` — Company isolation. Creator + admin can modify. Shared CMAs have read-only public links (no auth needed for share links, but share links don't expose internal data).
+- [ ] TEST: `cma_comps` — Inherits CMA visibility.
+- [ ] TEST: `cma_shares` — Company isolation. Share links expire after configured period.
+- [ ] TEST: `commission_plans` — Company isolation. Only admin/owner can create/modify plans. Agents can view their assigned plan only.
+- [ ] TEST: `commission_records` — Company isolation. Agent sees own records only. Team lead sees team records. Broker sees all.
+- [ ] TEST: `commission_caps` — Company isolation. Agent sees own cap progress only.
+- [ ] TEST: `commission_1099` — Company isolation. Agent sees own 1099 data only. Broker sees all.
+- [ ] TEST: `seller_finder_territories` — Company isolation. Agent sees own territories. Broker sees all.
+- [ ] TEST: `seller_finder_prospects` — Inherits territory visibility.
+- [ ] TEST: `seller_finder_interactions` — Inherits prospect visibility.
+- [ ] TEST: `seller_finder_campaigns` — Company isolation. Creator + admin manage.
+- [ ] TEST: `seller_finder_market_reports` — Inherits territory visibility.
+- [ ] TEST: `dispatch_work_orders` — Company isolation. Dispatched contractors see only the work order they're invited to (via separate flow, not direct RLS).
+- [ ] TEST: `dispatch_bids` — Company isolation. Contractor sees own bid only. Realtor sees all bids for their work order.
+- [ ] TEST: `dispatch_contractor_directory` — Company-specific + shared system contractors. Company cannot see another company's custom contractor entries.
+- [ ] TEST: `dispatch_email_events` — Company isolation. Insert-only audit trail.
+- [ ] TEST: `dispatch_ratings` — Company isolation. Ratings are mutual (both parties rate each other).
+- [ ] TEST: `agent_compliance` — Company isolation. Agent sees own. Broker sees all.
+- [ ] TEST: `agent_onboarding` — Company isolation. Agent sees own. Broker/admin manages.
+- [ ] TEST: `recruiting_prospects` — Company isolation. Only broker + admin can access.
+- [ ] TEST: `cross_company_links` — Both companies must approve link. Neither can access the other's data until link is approved.
+- [ ] TEST: `cross_company_shares` — Only shared data types with explicit permission are accessible. Revoking share immediately blocks access.
+- [ ] TEST: `cross_company_share_log` — Insert-only. Both companies can read their own share log.
+- [ ] TEST: `marketing_campaigns` — Company isolation.
+- [ ] TEST: `marketing_templates` — Company + system templates. Companies cannot modify system templates.
+- [ ] TEST: `marketing_social_posts` — Company isolation.
+- [ ] TEST: `realtor_settings` (RE16) — Company isolation. Scope-appropriate write access enforced.
+- [ ] TEST: `realtor_notification_configs` (RE16) — Company isolation. Scope-appropriate access.
+- [ ] TEST: `realtor_branding_configs` (RE16) — Company isolation.
+- [ ] TEST: `realtor_integration_configs` (RE16) — Company isolation. API keys not exposed to non-admin roles.
+- [ ] TEST: `realtor_setting_audit` (RE16) — Insert-only. No UPDATE/DELETE.
+- [ ] TEST: `recon_scan_realtor_overlays` (RE17) — Company isolation. Agent overlay scope enforced.
+- [ ] TEST: `realtor_property_notes` (RE17) — Company isolation. Private note visibility enforced.
+- [ ] TEST: `realtor_user_preferences` (RE19) — User can only read/write own preferences.
+
+#### RBAC Permission Testing (~2h)
+
+- [ ] TEST: `brokerage_owner` role — full access to all realtor features, settings, commission plans, agent management, compliance, recruiting. Cannot be removed or demoted.
+- [ ] TEST: `managing_broker` role — same as owner except: cannot modify owner's settings, cannot change subscription, cannot delete company. Can manage agents, compliance, commission plans, offices.
+- [ ] TEST: `team_lead` role — sees team pipeline, team agents, team leads. Cannot see other teams' data. Can modify team-level settings (RE16). Cannot modify office/company settings.
+- [ ] TEST: `agent` role — sees own leads, deals, commissions, settings only. Cannot see other agents' data (except when viewing shared listings). Cannot access brokerage admin screens.
+- [ ] TEST: `tc` role — sees only assigned transactions. Full access to transaction documents and milestones for assigned deals. NO access to: leads, commission data, CMA (except linked to transaction), seller finder, recruiting, agent management. Read-only access to contact info for transaction parties.
+- [ ] TEST: `isa` role — sees lead pool (based on routing rules). Full access to: call queue, lead qualification, scripts. NO access to: transactions, listings, commission, dispatch, seller finder, brokerage admin, settings (except personal notification prefs).
+- [ ] TEST: `showings.manage` permission flag — users with this permission can access showing screens and assigned showing details. Access to other features determined by their actual role (agent, tc, etc.), not showing permission. Permission flag tested: granted → showing screens visible; revoked → showing screens hidden.
+- [ ] TEST: Role downgrade — if user role changes from broker to agent, immediately loses broker-level access. No cached permissions.
+- [ ] TEST: Role removal — if user is removed from company, immediately loses all access. Realtime subscription terminates.
+- [ ] TEST: Multi-role — if user has multiple roles (e.g., team lead + agent), highest permission wins for each feature.
+- [ ] TEST: Custom roles (if implemented via RE16) — custom role permissions enforced correctly. Cannot exceed parent role's permissions.
+
+#### Cross-Company Data Isolation (~2h)
+
+- [ ] TEST: Create two test companies (Company A = brokerage, Company B = solo realtor). Each with full data (leads, contacts, listings, transactions, commissions, dispatch orders, settings, etc.)
+- [ ] TEST: Company A user queries — zero Company B records returned across ALL tables. Test every SELECT query in every hook.
+- [ ] TEST: Company A user attempts INSERT with Company B's company_id — RLS rejects.
+- [ ] TEST: Company A user attempts UPDATE on Company B's records — RLS rejects (0 rows affected).
+- [ ] TEST: Company A user attempts DELETE (soft) on Company B's records — RLS rejects.
+- [ ] TEST: Global search (`realtor-global-search` EF) — Company A search returns zero Company B results even if same names/addresses exist.
+- [ ] TEST: Supabase Realtime subscriptions — Company A user does NOT receive realtime events for Company B's data changes.
+- [ ] TEST: Cross-company links (RE15) — when two companies are linked, ONLY explicitly shared data types are accessible. Non-shared data remains fully isolated.
+- [ ] TEST: Client portal — homeowner sees only data shared by their agent. Cannot access any brokerage internal data.
+
+#### Edge Function Security (~2h)
+
+- [ ] TEST: All realtor EFs — missing Authorization header → 401 Unauthorized
+- [ ] TEST: All realtor EFs — invalid JWT → 401 Unauthorized
+- [ ] TEST: All realtor EFs — expired JWT → 401 Unauthorized
+- [ ] TEST: All realtor EFs — valid JWT but wrong company_id → 403 Forbidden (no data returned, not even empty arrays)
+- [ ] TEST: All realtor EFs — valid JWT but insufficient role → 403 Forbidden
+- [ ] TEST: All realtor EFs — CORS headers validated (only allowed origins)
+- [ ] TEST: All realtor EFs — rate limiting enforced (exceed limit → 429 Too Many Requests)
+- [ ] TEST: SQL injection on all EFs that accept string parameters:
+  - `realtor-global-search`: search query parameter — inject `'; DROP TABLE realtor_contacts; --`
+  - All EFs with UUID parameters: inject non-UUID strings
+  - All EFs with JSONB inputs: inject malformed JSON
+  - Verify: parameterized queries used everywhere, no string concatenation in SQL
+- [ ] TEST: XSS on all EFs that accept user-generated content:
+  - Lead notes: inject `<script>alert('xss')</script>`
+  - Property notes: inject `<img onerror="alert(1)" src="x">`
+  - Email templates (RE16): inject script tags, onclick handlers, iframes
+  - CMA report notes: inject HTML entities
+  - Verify: all user input sanitized before storage and escaped before rendering
+- [ ] TEST: Input validation on all EFs:
+  - Email fields: reject invalid email formats
+  - Phone fields: reject non-numeric (after stripping formatting)
+  - URL fields: reject invalid URLs, reject javascript: protocol
+  - Amount fields: reject negative values, reject non-numeric
+  - Date fields: reject invalid dates, reject dates before 1900 or after 2100
+  - JSONB fields: reject malformed JSON, reject oversized payloads (>1MB)
+  - UUID fields: reject non-UUID formats
+  - Text fields: enforce max length (names: 255, notes: 10000, descriptions: 50000)
+- [ ] TEST: File upload security (branding upload EF):
+  - Reject non-image MIME types
+  - Reject files >2MB
+  - Reject SVG files with embedded scripts
+  - Verify Content-Type validation on server (not just client-side)
+  - Verify files stored in private bucket, accessible only via signed URLs
+
+#### Soft Delete Verification (~1h)
+
+- [ ] GREP entire codebase for `.delete()` calls on all RE1-RE19 tables — zero results expected. All deletes must use `.update({ deleted_at: new Date().toISOString() })`
+- [ ] TEST: Deleted records (with deleted_at set) do NOT appear in any SELECT query (all list hooks filter `.is('deleted_at', null)`)
+- [ ] TEST: Deleted records are NOT returned by global search
+- [ ] TEST: Deleted records are NOT included in reports/analytics
+- [ ] TEST: Deleted records CAN be restored by admin (set deleted_at back to null)
+- [ ] TEST: Soft-deleted leads/contacts do not receive automation emails
+- [ ] TEST: Soft-deleted transactions do not trigger milestone reminders
+
+#### Supabase Realtime Authorization (~1h)
+
+- [ ] TEST: Realtime subscriptions on realtor tables respect RLS — user only receives changes for rows they can SELECT
+- [ ] TEST: Company A user subscribing to `realtor_leads` channel receives ZERO events from Company B
+- [ ] TEST: Agent subscribing to `realtor_transactions` channel receives only events for transactions they have access to (not all company transactions unless broker)
+- [ ] TEST: Realtime subscription cleanup — when user navigates away from page, subscription is unsubscribed (no zombie subscriptions)
+- [ ] TEST: Realtime subscription on `realtor_settings` — when admin changes settings, all affected users receive update
+
+#### Integration Tests (~2h)
+
+- [ ] TEST: Full Realtor Listing Lifecycle:
+  1. Agent creates contact → qualifies as lead → scores lead
+  2. Agent scans property with Recon → creates listing readiness overlay
+  3. Agent creates floor plan with Sketch Engine
+  4. Agent generates Smart CMA (pulls Recon data + Sketch floor plan)
+  5. Agent creates listing (from CMA data)
+  6. Showing requests come in → agent approves → feedback collected
+  7. Agent receives offer → creates transaction
+  8. Transaction timeline generated → milestones tracked
+  9. TC assigned → manages document checklist
+  10. Deal closes → commission calculated → CDA generated
+  11. Post-close: marketing automation triggers "Just Sold" campaign
+  12. Verify: all data persisted correctly, all RLS enforced, all audit trails complete
+
+- [ ] TEST: Full Buyer Lifecycle:
+  1. Lead enters via lead gen pipeline (RE14)
+  2. ISA receives in call queue → qualifies → sets appointment
+  3. Lead routed to agent (via routing rules)
+  4. Agent creates buyer profile with preferences
+  5. Agent schedules showings → route optimized
+  6. Agent collects feedback per showing
+  7. Agent writes offer → submits
+  8. Offer accepted → transaction created
+  9. Agent dispatches inspector → work order created → bids collected
+  10. Transaction milestone tracking → closing
+  11. Verify: handoff from ISA to agent preserved all data, routing rules respected, dispatch created correctly
+
+- [ ] TEST: Cross-Platform Dispatch Lifecycle:
+  1. Realtor identifies repair need from Recon scan
+  2. Creates work order with repair details + photos
+  3. System matches contractors by trade + proximity
+  4. Email dispatch sent (staggered batches)
+  5. Contractor clicks → views job → submits bid
+  6. If contractor has no Zafto account → creates one (verify: new company created with company_type = 'contractor')
+  7. Realtor compares bids → accepts one
+  8. Contractor updates status → uploads progress photos
+  9. Work complete → both parties rate each other
+  10. Verify: cross-company data isolation maintained throughout, only shared data visible
+
+- [ ] TEST: Brokerage Agent Lifecycle:
+  1. Broker identifies recruiting prospect → adds to pipeline
+  2. Prospect moves through recruiting stages → signs ICA
+  3. Onboarding workflow triggered → 18 steps
+  4. Agent account created → role assigned → commission plan assigned → office/team assigned
+  5. Agent starts working → leads routed → transactions created
+  6. Broker monitors: production dashboard, compliance, commission tracking
+  7. Agent approaches cap → notification triggered
+  8. Agent reaches cap → post-cap split applied automatically
+  9. Year-end: 1099 data generated for all agents
+  10. Verify: all commission calculations correct, compliance tracking accurate, cap tracking precise
+
+#### Performance Benchmarks (~1h)
+
+- [ ] TEST: Dashboard page load <2s (measure with Lighthouse, repeated 5 times, median)
+- [ ] TEST: Leads pipeline page load <2s with 500 leads
+- [ ] TEST: Contacts page load <2s with 5000 contacts (virtualized list)
+- [ ] TEST: Transactions list load <2s with 200 transactions
+- [ ] TEST: Global search returns results <500ms for common queries
+- [ ] TEST: Listing detail page load <2s (including photos)
+- [ ] TEST: CMA generation <5s (data assembly + calculation + render)
+- [ ] TEST: Commission calculation <1s per transaction
+- [ ] TEST: Route optimization for 10 showings <3s
+- [ ] TEST: Flutter app cold start <3s on mid-range Android device
+- [ ] TEST: Flutter screen navigation <200ms between any two realtor screens
+- [ ] TEST: Memory usage: Flutter app stays under 250MB with all realtor screens loaded
+
+#### Accessibility Audit (WCAG 2.2 AA) (~1h)
+
+- [ ] TEST: All realtor portal pages pass axe-core automated audit (0 critical, 0 serious violations)
+- [ ] TEST: All interactive elements have ARIA labels (buttons, links, form inputs, toggles)
+- [ ] TEST: All images have alt text (listing photos, agent headshots, logos)
+- [ ] TEST: Color contrast ratio ≥4.5:1 for normal text, ≥3:1 for large text (WCAG AA)
+- [ ] TEST: All functionality accessible via keyboard alone (no mouse-only interactions)
+- [ ] TEST: Focus management: modals trap focus, closing modal returns focus to trigger element
+- [ ] TEST: Screen reader flow: logical reading order, heading hierarchy (h1→h2→h3), landmark regions
+- [ ] TEST: Form error announcements: error messages associated with fields via aria-describedby
+- [ ] TEST: Skip navigation link on all pages
+- [ ] TEST: No autoplay media, no content that flashes more than 3 times per second
+- [ ] TEST: Touch targets ≥44x44px on all mobile interactive elements
+- [ ] TEST: Flutter: Semantics widgets on all interactive elements, proper traversal order
+
+#### Final Verification
+
+- [ ] All RE1-RE19 sprints have every checklist item checked [x]
+- [ ] All new tables have: company_id, RLS policies (SELECT/INSERT/UPDATE/DELETE), audit trigger, update_updated_at trigger, deleted_at column, appropriate indexes
+- [ ] All new EFs have: JWT auth, CORS, input validation, rate limiting, company_id scoping
+- [ ] All new hooks have: loading/error/empty/data handling, soft delete filtering, Realtime subscriptions where appropriate
+- [ ] All new Flutter screens handle: loading, error, empty, data states
+- [ ] All new portal routes: responsive at 3 breakpoints (mobile/tablet/desktop)
+- [ ] Shared TypeScript types regenerated: `npm run gen-types` in web-portal, types copied to all 4 portals
+- [ ] `dart analyze` — 0 errors
+- [ ] `npm run build` on web-portal — 0 errors
+- [ ] `npm run build` on team-portal — 0 errors
+- [ ] `npm run build` on client-portal — 0 errors
+- [ ] `npm run build` on ops-portal — 0 errors
+- [ ] All security test results documented in test report
+- [ ] All performance benchmark results documented
+- [ ] All accessibility audit results documented
+- [ ] Commit: `[RE20] QA + Security — comprehensive RLS audit, RBAC testing, cross-company isolation, SQL injection/XSS testing, integration tests, performance benchmarks, accessibility audit`
+
+---
+
+**RE16-RE20 Totals:** RE16 (~16h) + RE17 (~12h) + RE18 (~28h) + RE19 (~16h) + RE20 (~16h) = **5 sprints, ~88h**. ~8 new tables (RE16: 5, RE17: 2, RE19: 1). ~4 new EFs (RE16: 4, RE19: 1). 30 new Flutter screens (RE18). ~85-100 portal routes polished (RE19). 50+ security test items (RE20).
+
+
+**RE Platform Totals (S144):** RE1 (~24h) + RE2 (~28h) + RE3 (~32h) + RE4 (~32h) + RE5 (~24h) + RE6 (~32h) + RE7 (~24h) + RE8 (~24h) + RE9 (~28h) + RE10 (~56h) + RE11 (~72h) + RE12 (~36h) + RE13 (~32h) + RE14 (~28h) + RE15 (~24h) + RE16 (~16h) + RE17 (~12h) + RE18 (~28h) + RE19 (~16h) + RE20 (~16h) = **20 sprints, ~594h**. ~95-100 new tables.
+
+---
+
 ## PHASE RE EXPANDED: 10 MISSING REALTOR FEATURES (S132) — RE21-RE30 (~236h)
 *Source: s132-realtor-10-gaps-spec.md. Execution: after RE1-RE20 (see Expansion/53_REALTOR_PLATFORM_SPEC.md). These fill the 10 gaps identified in S132 competitive analysis.*
 
