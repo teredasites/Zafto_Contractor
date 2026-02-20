@@ -763,14 +763,20 @@ Tech opens app -> Taps "Field Tools"
 - Edge Functions: schedule-calculate, schedule-import, schedule-export, schedule-weather-check, schedule-level-resources, schedule-baseline, schedule-sync-realtime, schedule-sync-progress, schedule-recalc-cpm, schedule-reminders (~10 EFs).
 - Spec: `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`
 
-### Phase RE: Realtor Platform -- SPEC'D (S129)
-- [ ] RE1-RE20: ~45-60 new tables, ~15+ Edge Functions, 6th portal (realtor.zafto.cloud, ~85-100 routes), ~444 hours.
+### Phase RE: Realtor Platform -- FULLY SPEC'D (S129+S144)
+- [ ] RE1-RE20: **~100 new tables, ~70 Edge Functions, ~80 Flutter screens**, 6th portal (realtor.zafto.cloud, ~85-100 routes), ~594 hours. **FULLY SPEC'D S144** (5,823 lines of enterprise checklists).
 - 3 flagship engines: Smart CMA Engine (repair-aware comps), Autonomous Transaction Engine (deal lifecycle), Seller Finder Engine (pre-market leads from public data).
 - Brokerage RBAC: brokerage_owner, managing_broker, team_lead, realtor, tc, isa, office_admin + dispatched tech/inspector roles.
 - Commission tracking engine (NOT trust accounts). Cross-platform intelligence sharing with Zafto Contractor.
-- Dispatched contractors/inspectors get same field tools using realtor's AI budget.
+- Dispatch engine with guest contractor flow (bid without account, email-based acceptance, auto-convert on 3rd job).
+- Listing management: MLS syndication, open house management, showing scheduler, listing lifecycle state machine.
+- Buyer management: buyer profile + needs matching, tour sheets, feedback questionnaire, NAR settlement compliance (BRA required).
+- Marketing factory: listing materials, social templates, email campaigns, print-ready flyers.
+- High-gloss near-black UI (Vercel-style dark theme: `#000`, `#0a0a0a`, `#111`, `#222` borders).
 - JUR4 wires 50-state compliance: disclosures, agency rules, attorney states, commission regulations, license reciprocity.
-- Spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md`
+- Legal hard gates: NAR settlement (BRA), Fair Housing (200+ terms scanner), DNC/TCPA, CAN-SPAM.
+- [ ] RE21-RE30: Realtor expansion (~300h, S132). Negotiation AI, agent departure prediction, rental analysis, HOA health, insurance estimation, power dialer, IDX websites.
+- Spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md` + `07_SPRINT_SPECS.md` lines 13952-19773
 
 ### Plan Review (Phase E/BA) -- SPEC'D (S97)
 - [ ] BA1-BA8: 6 tables (blueprint_analyses, blueprint_sheets, blueprint_rooms, blueprint_elements, blueprint_takeoff_items, blueprint_revisions), 3 EFs (blueprint-upload, blueprint-process, blueprint-compare), ~128 hours.

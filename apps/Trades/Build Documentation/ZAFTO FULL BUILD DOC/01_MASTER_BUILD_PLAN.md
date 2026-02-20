@@ -142,7 +142,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | LAUNCH: Launch Prep | PARTIAL | PARTIAL | LAUNCH1+LAUNCH9 DONE. LAUNCH2-8 PENDING |
 | **Phase E AI (PREMATURE)** | **Code exists** | **PAUSED** | **NOT TESTED — AI goes LAST** |
 | **Phase JUR: Jurisdiction** | PLANNED | NO | JUR1-JUR4 (~54-64h). Pre-AI |
-| **Phase RE: Realtor Platform** | SPEC'D (S129) | NO | RE1-RE30, ~744h, 30 sprints. 6th portal |
+| **Phase RE: Realtor Platform** | **FULLY SPEC'D (S129+S144)** | NO | RE1-RE30, ~894h, 30 sprints. RE1-RE20 fully spec'd with enterprise checklists (594h, S144). RE21-RE30 spec'd (300h, S132). 6th portal |
 | **Phase INTEG: Integration** | SPEC'D (S132) | NO | INTEG1-8, ~312h. Ecosystem wiring |
 | **Phase FLIP: Flip-It Engine** | SPEC'D (S127-S128) | NO | FLIP1-6, ~112h. Investment property |
 | **Phase MOV: Moving Company** | SPEC'D (S131) | NO | MOV1-8, ~80h. Full moving trade |
@@ -463,7 +463,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| RE1-RE20 | Core Realtor Platform | ~444 | 6th portal (realtor.zafto.cloud). Smart CMA Engine, Autonomous Transaction Engine, Seller Finder Engine. Brokerage RBAC. Commission tracking. Cross-platform sharing. Full spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md` |
+| RE1-RE20 | Core Realtor Platform | ~594 | **FULLY SPEC'D (S144).** 6th portal (realtor.zafto.cloud). ~100 new tables, ~70 EFs, ~80 Flutter screens, 5,823 lines. Smart CMA Engine, Autonomous Transaction Engine, Seller Finder Engine. Brokerage RBAC (8 roles). Commission engine. Dispatch with guest contractor flow. Listing lifecycle + open house. Buyer management + NAR compliance. Marketing factory. Cross-platform sharing. High-gloss near-black UI. Checklists: `07_SPRINT_SPECS.md` lines 13952-19773. |
 | RE21-RE30 | Realtor Expansion (S132) | ~300 | Negotiation AI, agent departure prediction, rental analysis, HOA health, insurance estimation, power dialer, IDX websites, inspection AI, storm alerts. Spec: `memory/s132-realtor-10-gaps-spec.md` |
 
 ### PHASE CLIENT: HOMEOWNER PLATFORM (~378h, 17 sprints, S132)
@@ -649,7 +649,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 |---------|--------|:-----:|--------|-------|
 | Feature Depth Audit (remaining) | 07_SPRINT_SPECS | ~784 | DEPTH2-44 NEXT | DEPTH |
 | Ecosystem Integration | Expansion/52 + 07_SPRINT_SPECS | ~312 | SPEC'D (S127+S132) | INTEG |
-| Realtor Platform | Expansion/53 + memory | ~744 | SPEC'D (S129+S132) | RE |
+| Realtor Platform | Expansion/53 + 07_SPRINT_SPECS | ~894 | **FULLY SPEC'D (S129+S132+S144)** | RE |
 | Flip-It Reality Engine | 07_SPRINT_SPECS + memory | ~112 | SPEC'D (S127-S128) | FLIP |
 | Moving Company Trade | 07_SPRINT_SPECS | ~80 | SPEC'D (S131) | MOV |
 | Security Hardening (remaining) | 07_SPRINT_SPECS | ~76 | SEC2-5+SEC9-10 PENDING | SEC |
