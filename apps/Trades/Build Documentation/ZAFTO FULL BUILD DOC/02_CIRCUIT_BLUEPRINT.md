@@ -212,7 +212,7 @@ DEFERRED -- Specified but intentionally postponed
 
 | Group | Pages | Backend | Notes |
 |-------|:-----:|:-------:|-------|
-| Operations (Dashboard, Bids x4, Jobs x3, Invoices x3) | 11 | LIVE Supabase | **DONE (B4b S50)** -- useJobs/useBids/useInvoices/useCustomers/useStats hooks. Real-time subscriptions. **D1 (S62):** JobTypeBadge, type filter, conditional metadata. Calendar color-coded. Bids: +optimize page (E4c). |
+| Operations (Dashboard, Bids x4, Jobs x3, Invoices x3) | 11 | LIVE Supabase | **DONE (B4b S50)** -- useJobs/useBids/useInvoices/useCustomers/useStats hooks. Real-time subscriptions. **D1 (S62):** JobTypeBadge, type filter, conditional metadata. Calendar color-coded. Bids: +optimize page (E4c). **DEPTH4 (S143):** createInvoiceFromJob fixed — customer_name/email/phone text cols (was JSONB), tax_amount (was tax), created_by_user_id added (was missing NOT NULL). |
 | Customers (List, Detail, New) | 3 | LIVE Supabase | **DONE (B4b S50 + B4c S51)** -- useCustomers + useCustomer(id). |
 | Scheduling (Calendar, Time Clock) | 2 | LIVE Supabase | **DONE (B4b S50)** -- useSchedule + useTeam. |
 | Resources (Team) | 1 | LIVE Supabase | **DONE (B4b S50)** -- useTeam + useJobs. Dispatch board. **U18 (S114):** Enhanced with drag-drop, haversine ETA, customer SMS, map view. |
@@ -270,7 +270,7 @@ DEFERRED -- Specified but intentionally postponed
 | Auth | 1 | LIVE Supabase | **DONE (B6 S56)** -- Magic link auth (signInWithOtp). Password login added (S60). Middleware. AuthProvider. |
 | Home | 1 | LIVE Supabase | **DONE (B6 S56)** -- Real project/payment data. **D5g (S73):** Tenant-aware. |
 | Projects (List, Detail, Estimate, Agreement, Tracker) | 5 | LIVE Supabase | **DONE (B6 S56)** -- use-projects hook. **D2h (S68):** Insurance claim timeline. **D8j (S89):** Estimate review page (approve/reject, digital signature). |
-| Payments (List, Detail, History, Methods) | 4 | LIVE Supabase | **DONE (B6 S56)** -- use-invoices + use-bids hooks. IDOR fix (S61). |
+| Payments (List, Detail, History, Methods) | 4 | LIVE Supabase | **DONE (B6 S56)** -- use-invoices + use-bids hooks. IDOR fix (S61). **DEPTH4 (S143):** useInvoice deleted_at filter added, totalOwed uses amount_due not total, amountDue field added to InvoiceData. |
 | Settings | 1 | LIVE Supabase | **DONE (B6 S56)** -- Profile settings. |
 | Rent (List, Detail) | 2 | LIVE Supabase | **DONE (D5g S73)** -- rent balance + charge list + payment history. |
 | Lease | 1 | LIVE Supabase | **DONE (D5g S73)** -- lease terms, expiry countdown. |
