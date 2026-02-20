@@ -31071,15 +31071,15 @@ CREATE TABLE negotiation_analyses (
   comparable_concessions JSONB,
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'in_negotiation', 'closed', 'archived')),
   created_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE negotiation_analyses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "neg_analyses_select" ON negotiation_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "neg_analyses_select" ON negotiation_analyses FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "neg_analyses_insert" ON negotiation_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "neg_analyses_update" ON negotiation_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "neg_analyses_update" ON negotiation_analyses FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "neg_analyses_delete" ON negotiation_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_neg_analyses_company ON negotiation_analyses (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_neg_analyses_property ON negotiation_analyses (property_id) WHERE deleted_at IS NULL;
@@ -31106,15 +31106,15 @@ CREATE TABLE negotiation_outcomes (
   agent_notes TEXT,
   lessons_learned TEXT,
   created_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE negotiation_outcomes ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "neg_outcomes_select" ON negotiation_outcomes FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "neg_outcomes_select" ON negotiation_outcomes FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "neg_outcomes_insert" ON negotiation_outcomes FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "neg_outcomes_update" ON negotiation_outcomes FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "neg_outcomes_update" ON negotiation_outcomes FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "neg_outcomes_delete" ON negotiation_outcomes FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_neg_outcomes_company ON negotiation_outcomes (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_neg_outcomes_analysis ON negotiation_outcomes (negotiation_analysis_id) WHERE deleted_at IS NULL;
@@ -31142,7 +31142,7 @@ CREATE TABLE market_snapshots (
   mortgage_rate_15yr NUMERIC(5,3),
   yoy_appreciation NUMERIC(5,2),
   data_sources JSONB NOT NULL DEFAULT '[]',
-  created_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- market_snapshots: NO company_id — this is shared reference data populated by CRON
@@ -31276,17 +31276,17 @@ CREATE TABLE agent_risk_scores (
   broker_notes TEXT,
   action_taken TEXT,
   action_outcome TEXT,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE agent_risk_scores ENABLE ROW LEVEL SECURITY;
 -- CRITICAL: Only managing_broker/owner/admin can see risk scores. Agents CANNOT see their own scores.
 CREATE POLICY "risk_scores_select" ON agent_risk_scores FOR SELECT USING (
-  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin', 'office_manager')
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin', 'office_manager') AND deleted_at IS NULL
 );
-CREATE POLICY "risk_scores_insert" ON agent_risk_scores FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "risk_scores_insert" ON agent_risk_scores FOR INSERT WITH CHECK (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin', 'office_manager'));
 CREATE POLICY "risk_scores_update" ON agent_risk_scores FOR UPDATE USING (
   company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin', 'office_manager')
 );
@@ -31321,7 +31321,7 @@ CREATE TABLE agent_activity_metrics (
   marketing_campaigns_launched INT DEFAULT 0,
   dispatch_orders_sent INT DEFAULT 0,
   support_tickets_filed INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   -- No updated_at — daily metrics are immutable snapshots
   -- No deleted_at — activity metrics are never deleted (audit trail)
 );
@@ -31429,6 +31429,7 @@ CREATE TABLE investment_analyses (
   company_id UUID NOT NULL REFERENCES companies(id),
   property_id UUID REFERENCES properties(id),
   contact_id UUID REFERENCES realtor_contacts(id),
+  transaction_id UUID REFERENCES realtor_transactions(id),
   analysis_type TEXT NOT NULL DEFAULT 'buy_and_hold' CHECK (analysis_type IN ('buy_and_hold', 'brrrr', 'short_term_rental', 'house_hack', 'commercial_multi')),
   property_address TEXT NOT NULL,
   property_details JSONB NOT NULL DEFAULT '{}',
@@ -31455,21 +31456,24 @@ CREATE TABLE investment_analyses (
   shared_with_client BOOLEAN DEFAULT false,
   pdf_generated_at TIMESTAMPTZ,
   pdf_url TEXT,
+  is_favorite BOOLEAN DEFAULT false,
   created_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE investment_analyses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "invest_analyses_select" ON investment_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "invest_analyses_select" ON investment_analyses FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "invest_analyses_insert" ON investment_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "invest_analyses_update" ON investment_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "invest_analyses_update" ON investment_analyses FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "invest_analyses_delete" ON investment_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_invest_analyses_company ON investment_analyses (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_invest_analyses_property ON investment_analyses (property_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_invest_analyses_contact ON investment_analyses (contact_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_invest_analyses_type ON investment_analyses (analysis_type) WHERE deleted_at IS NULL;
+CREATE INDEX idx_invest_analyses_transaction ON investment_analyses (transaction_id) WHERE deleted_at IS NULL AND transaction_id IS NOT NULL;
+CREATE INDEX idx_invest_analyses_favorite ON investment_analyses (company_id, is_favorite) WHERE deleted_at IS NULL AND is_favorite = true;
 CREATE TRIGGER invest_analyses_updated BEFORE UPDATE ON investment_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER invest_analyses_audit AFTER INSERT OR UPDATE OR DELETE ON investment_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -31494,7 +31498,7 @@ CREATE TABLE rental_market_data (
   median_home_price NUMERIC(12,2),
   cap_rate_area_avg NUMERIC(5,2),
   data_sources JSONB NOT NULL DEFAULT '[]',
-  created_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- rental_market_data: NO company_id — shared reference data populated by CRON
@@ -31610,6 +31614,8 @@ CREATE INDEX idx_rental_market_county ON rental_market_data (county_fips) WHERE 
 *Depends on: RE1 (Realtor CRM), RE5 (Transaction Engine), F10 (ZForge), CUST9 (Module Registry)*
 *CUST9 Modules: HOA_ANALYSIS, HOA_DOCUMENTS, HOA_RISK_SCORING, HOA_REPORTS*
 
+**AI DEPENDENCY NOTE**: This sprint uses Claude Vision API for document OCR/analysis. While Phase E (AI Layer) is paused, document analysis using Claude's vision capabilities is a first-party tool integration, not a Phase E AI feature. The sprint degrades gracefully to manual-entry-only without Claude API. Owner approval needed before build.
+
 **What this builds:** HOA risk intelligence — Claude OCR reads HOA budgets, reserve studies, meeting minutes and extracts financial health data. Reserve adequacy scoring (A-F grade using percent-funded method), special assessment risk scoring (0-100), fee trending/benchmarking, 12 auto-detected risk flags, 50-state compliance matrix, and client-facing HOA Health Card. Prevents the #1 unexpected cost in homeownership (special assessments). No competitor does HOA financial analysis.
 
 **System Connectivity:**
@@ -31639,15 +31645,15 @@ CREATE TABLE hoa_profiles (
   contact_email TEXT,
   contact_phone TEXT,
   created_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE hoa_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "hoa_profiles_select" ON hoa_profiles FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_profiles_select" ON hoa_profiles FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "hoa_profiles_insert" ON hoa_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "hoa_profiles_update" ON hoa_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_profiles_update" ON hoa_profiles FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "hoa_profiles_delete" ON hoa_profiles FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_hoa_profiles_company ON hoa_profiles (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_hoa_profiles_state ON hoa_profiles (state) WHERE deleted_at IS NULL;
@@ -31681,15 +31687,15 @@ CREATE TABLE hoa_financial_analyses (
   ai_analysis_summary TEXT,
   source_documents JSONB,
   created_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE hoa_financial_analyses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "hoa_fin_select" ON hoa_financial_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_fin_select" ON hoa_financial_analyses FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "hoa_fin_insert" ON hoa_financial_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "hoa_fin_update" ON hoa_financial_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_fin_update" ON hoa_financial_analyses FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "hoa_fin_delete" ON hoa_financial_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_hoa_fin_company ON hoa_financial_analyses (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_hoa_fin_profile ON hoa_financial_analyses (hoa_profile_id) WHERE deleted_at IS NULL;
@@ -31707,12 +31713,12 @@ CREATE TABLE hoa_documents (
   ocr_text TEXT,
   ai_extracted_data JSONB,
   uploaded_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE hoa_documents ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "hoa_docs_select" ON hoa_documents FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_docs_select" ON hoa_documents FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "hoa_docs_insert" ON hoa_documents FOR INSERT WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "hoa_docs_delete" ON hoa_documents FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 -- No UPDATE — documents are immutable after upload. Re-upload to replace.
@@ -31860,9 +31866,9 @@ CREATE TABLE property_risk_profiles (
 );
 
 ALTER TABLE property_risk_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "risk_profiles_select" ON property_risk_profiles FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "risk_profiles_select" ON property_risk_profiles FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "risk_profiles_insert" ON property_risk_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "risk_profiles_update" ON property_risk_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "risk_profiles_update" ON property_risk_profiles FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "risk_profiles_delete" ON property_risk_profiles FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_risk_profiles_company ON property_risk_profiles (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_risk_profiles_property ON property_risk_profiles (property_id) WHERE deleted_at IS NULL;
@@ -32024,13 +32030,17 @@ CREATE TABLE home_profiles (
 );
 
 ALTER TABLE home_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "home_profiles_select" ON home_profiles FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "home_profiles_select" ON home_profiles FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "home_profiles_insert" ON home_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "home_profiles_update" ON home_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "home_profiles_update" ON home_profiles FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "home_profiles_delete" ON home_profiles FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+-- Client portal access (homeowners see their own home profile)
+CREATE POLICY "home_profiles_client_select" ON home_profiles FOR SELECT USING (client_user_id = auth.uid() AND deleted_at IS NULL);
 CREATE INDEX idx_home_profiles_company ON home_profiles (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_home_profiles_contact ON home_profiles (contact_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_home_profiles_climate ON home_profiles (climate_zone) WHERE deleted_at IS NULL;
+CREATE INDEX idx_home_profiles_client_user ON home_profiles (client_user_id) WHERE client_user_id IS NOT NULL AND deleted_at IS NULL;
+CREATE INDEX idx_home_profiles_property ON home_profiles (property_id) WHERE property_id IS NOT NULL AND deleted_at IS NULL;
 CREATE TRIGGER home_profiles_updated BEFORE UPDATE ON home_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER home_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON home_profiles FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -32060,10 +32070,14 @@ CREATE TABLE home_systems (
 );
 
 ALTER TABLE home_systems ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "home_systems_select" ON home_systems FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "home_systems_select" ON home_systems FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "home_systems_insert" ON home_systems FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "home_systems_update" ON home_systems FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "home_systems_update" ON home_systems FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "home_systems_delete" ON home_systems FOR DELETE USING (company_id = requesting_company_id());
+-- Client portal: homeowners see systems via home_profile
+CREATE POLICY "home_systems_client_select" ON home_systems FOR SELECT USING (
+  home_profile_id IN (SELECT id FROM home_profiles WHERE client_user_id = auth.uid() AND deleted_at IS NULL)
+);
 CREATE INDEX idx_home_systems_company ON home_systems (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_home_systems_profile ON home_systems (home_profile_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_home_systems_category ON home_systems (system_category) WHERE deleted_at IS NULL;
@@ -32094,10 +32108,14 @@ CREATE TABLE maintenance_schedules (
 );
 
 ALTER TABLE maintenance_schedules ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "maint_sched_select" ON maintenance_schedules FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "maint_sched_select" ON maintenance_schedules FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "maint_sched_insert" ON maintenance_schedules FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "maint_sched_update" ON maintenance_schedules FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "maint_sched_update" ON maintenance_schedules FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "maint_sched_delete" ON maintenance_schedules FOR DELETE USING (company_id = requesting_company_id());
+-- Client portal: homeowners see maintenance schedules via home_profile
+CREATE POLICY "maint_sched_client_select" ON maintenance_schedules FOR SELECT USING (
+  home_profile_id IN (SELECT id FROM home_profiles WHERE client_user_id = auth.uid() AND deleted_at IS NULL)
+);
 CREATE INDEX idx_maint_sched_company ON maintenance_schedules (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_maint_sched_profile ON maintenance_schedules (home_profile_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_maint_sched_due ON maintenance_schedules (next_due) WHERE deleted_at IS NULL AND overdue = false;
@@ -32128,10 +32146,16 @@ CREATE TABLE home_value_updates (
 
 ALTER TABLE home_value_updates ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "value_updates_select" ON home_value_updates FOR SELECT USING (company_id = requesting_company_id());
+-- Client portal: homeowners see their value updates
+CREATE POLICY "value_updates_client_select" ON home_value_updates FOR SELECT USING (
+  home_profile_id IN (SELECT id FROM home_profiles WHERE client_user_id = auth.uid() AND deleted_at IS NULL)
+);
 -- INSERT via service_role (CRON) or agent action. No client-side inserts
+CREATE POLICY "value_updates_insert" ON home_value_updates FOR INSERT WITH CHECK (company_id = requesting_company_id());
 CREATE INDEX idx_value_updates_company ON home_value_updates (company_id);
 CREATE INDEX idx_value_updates_profile ON home_value_updates (home_profile_id, update_date DESC);
 CREATE INDEX idx_value_updates_refi ON home_value_updates (refinance_opportunity) WHERE refinance_opportunity = true;
+CREATE TRIGGER value_updates_audit AFTER INSERT ON home_value_updates FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 ```
 
 - [ ] Write migration file `20260221000150_re26_maintenance_engine.sql`
@@ -32256,16 +32280,18 @@ CREATE TABLE dialer_sessions (
   total_talk_time_seconds INT DEFAULT 0,
   dispositions_summary JSONB,
   created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE dialer_sessions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "dialer_sessions_select" ON dialer_sessions FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "dialer_sessions_select" ON dialer_sessions FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "dialer_sessions_insert" ON dialer_sessions FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "dialer_sessions_update" ON dialer_sessions FOR UPDATE USING (company_id = requesting_company_id() AND agent_user_id = auth.uid());
+CREATE POLICY "dialer_sessions_update" ON dialer_sessions FOR UPDATE USING (company_id = requesting_company_id() AND agent_user_id = auth.uid() AND deleted_at IS NULL);
 CREATE POLICY "dialer_sessions_delete" ON dialer_sessions FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_dialer_sessions_company ON dialer_sessions (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_dialer_sessions_agent ON dialer_sessions (agent_user_id, started_at DESC) WHERE deleted_at IS NULL;
+CREATE TRIGGER dialer_sessions_updated BEFORE UPDATE ON dialer_sessions FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER dialer_sessions_audit AFTER INSERT OR UPDATE OR DELETE ON dialer_sessions FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
 CREATE TABLE call_records (
@@ -32284,7 +32310,7 @@ CREATE TABLE call_records (
   duration_seconds INT,
   talk_time_seconds INT,
   voicemail_dropped BOOLEAN DEFAULT false,
-  voicemail_recording_id UUID REFERENCES voicemail_recordings(id),
+  voicemail_recording_id UUID, -- FK to voicemail_recordings added after table creation
   recording_url TEXT,
   recording_consent BOOLEAN,
   disposition TEXT CHECK (disposition IN (
@@ -32300,19 +32326,21 @@ CREATE TABLE call_records (
   dnc_checked BOOLEAN DEFAULT false,
   consent_state TEXT,
   created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE call_records ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "call_records_select" ON call_records FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "call_records_select" ON call_records FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "call_records_insert" ON call_records FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "call_records_update" ON call_records FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "call_records_update" ON call_records FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "call_records_delete" ON call_records FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_call_records_company ON call_records (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_contact ON call_records (contact_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_session ON call_records (dialer_session_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_disposition ON call_records (disposition) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_followup ON call_records (follow_up_date) WHERE follow_up_date IS NOT NULL AND deleted_at IS NULL;
+CREATE TRIGGER call_records_updated BEFORE UPDATE ON call_records FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER call_records_audit AFTER INSERT OR UPDATE OR DELETE ON call_records FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
 CREATE TABLE voicemail_recordings (
@@ -32330,14 +32358,16 @@ CREATE TABLE voicemail_recordings (
 );
 
 ALTER TABLE voicemail_recordings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "vm_recordings_select" ON voicemail_recordings FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "vm_recordings_select" ON voicemail_recordings FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "vm_recordings_insert" ON voicemail_recordings FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "vm_recordings_update" ON voicemail_recordings FOR UPDATE USING (company_id = requesting_company_id() AND agent_user_id = auth.uid());
+CREATE POLICY "vm_recordings_update" ON voicemail_recordings FOR UPDATE USING (company_id = requesting_company_id() AND agent_user_id = auth.uid() AND deleted_at IS NULL);
 CREATE POLICY "vm_recordings_delete" ON voicemail_recordings FOR DELETE USING (company_id = requesting_company_id() AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
 CREATE INDEX idx_vm_recordings_company ON voicemail_recordings (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_vm_recordings_agent ON voicemail_recordings (agent_user_id) WHERE deleted_at IS NULL;
 CREATE TRIGGER vm_recordings_updated BEFORE UPDATE ON voicemail_recordings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER vm_recordings_audit AFTER INSERT OR UPDATE OR DELETE ON voicemail_recordings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+-- Deferred FK: call_records references voicemail_recordings
+ALTER TABLE call_records ADD CONSTRAINT fk_call_records_voicemail FOREIGN KEY (voicemail_recording_id) REFERENCES voicemail_recordings(id);
 ```
 
 - [ ] Write migration file `20260221000151_re27_power_dialer.sql`
@@ -32468,10 +32498,12 @@ CREATE TABLE agent_websites (
 );
 
 ALTER TABLE agent_websites ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "agent_websites_select" ON agent_websites FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "agent_websites_select" ON agent_websites FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "agent_websites_insert" ON agent_websites FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "agent_websites_update" ON agent_websites FOR UPDATE USING (company_id = requesting_company_id() AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
-CREATE POLICY "agent_websites_delete" ON agent_websites FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE POLICY "agent_websites_update" ON agent_websites FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+CREATE POLICY "agent_websites_delete" ON agent_websites FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND requesting_user_role() IN ('owner', 'admin'));
+-- Public access for published websites (needed for static site generation and public viewing)
+CREATE POLICY "agent_websites_public_select" ON agent_websites FOR SELECT USING (published = true AND deleted_at IS NULL);
 CREATE INDEX idx_agent_websites_company ON agent_websites (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_agent_websites_agent ON agent_websites (agent_user_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_agent_websites_subdomain ON agent_websites (subdomain) WHERE subdomain IS NOT NULL AND deleted_at IS NULL;
@@ -32507,10 +32539,12 @@ CREATE TABLE single_property_sites (
 );
 
 ALTER TABLE single_property_sites ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "prop_sites_select" ON single_property_sites FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "prop_sites_select" ON single_property_sites FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "prop_sites_insert" ON single_property_sites FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "prop_sites_update" ON single_property_sites FOR UPDATE USING (company_id = requesting_company_id());
-CREATE POLICY "prop_sites_delete" ON single_property_sites FOR DELETE USING (company_id = requesting_company_id());
+CREATE POLICY "prop_sites_update" ON single_property_sites FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+CREATE POLICY "prop_sites_delete" ON single_property_sites FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+-- Public access for published property sites
+CREATE POLICY "prop_sites_public_select" ON single_property_sites FOR SELECT USING (published = true AND deleted_at IS NULL);
 CREATE INDEX idx_prop_sites_company ON single_property_sites (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_prop_sites_listing ON single_property_sites (listing_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_prop_sites_subdomain ON single_property_sites (subdomain) WHERE subdomain IS NOT NULL AND deleted_at IS NULL;
@@ -32521,6 +32555,7 @@ CREATE TABLE neighborhood_pages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   agent_website_id UUID NOT NULL REFERENCES agent_websites(id),
   company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
   neighborhood_name TEXT NOT NULL,
   center_lat NUMERIC(10,7),
   center_lng NUMERIC(10,7),
@@ -32547,10 +32582,12 @@ CREATE TABLE neighborhood_pages (
 );
 
 ALTER TABLE neighborhood_pages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "neighborhood_select" ON neighborhood_pages FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "neighborhood_select" ON neighborhood_pages FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "neighborhood_insert" ON neighborhood_pages FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "neighborhood_update" ON neighborhood_pages FOR UPDATE USING (company_id = requesting_company_id());
-CREATE POLICY "neighborhood_delete" ON neighborhood_pages FOR DELETE USING (company_id = requesting_company_id());
+CREATE POLICY "neighborhood_update" ON neighborhood_pages FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+CREATE POLICY "neighborhood_delete" ON neighborhood_pages FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+-- Public access for published neighborhood pages
+CREATE POLICY "neighborhood_public_select" ON neighborhood_pages FOR SELECT USING (published = true AND deleted_at IS NULL);
 CREATE INDEX idx_neighborhood_company ON neighborhood_pages (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_neighborhood_website ON neighborhood_pages (agent_website_id) WHERE deleted_at IS NULL;
 CREATE TRIGGER neighborhood_updated BEFORE UPDATE ON neighborhood_pages FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -32593,7 +32630,7 @@ CREATE TRIGGER neighborhood_audit AFTER INSERT OR UPDATE OR DELETE ON neighborho
 #### 28.4 Edge Functions (~4h)
 
 - [ ] `website-neighborhood-enrich` EF: POST — accepts neighborhood center lat/lng + radius. Calls Census ACS, FBI Crime, Walk Score, GreatSchools, Overpass, FEMA, Open-Meteo, EPA in parallel. Each wrapped in try/catch. Returns unified neighborhood_data JSON. Auth: JWT required. Rate limit: 20/min per company. Cache by lat/lng (rounded to 0.01) for 7 days
-- [ ] `website-lead-capture` EF: POST — accepts form data (name, email, phone, message, source_page). Creates realtor_contact if new (or updates existing). Sends push + email notification to agent. Returns success. Auth: public (no JWT — website visitors aren't authenticated). Rate limit: 5/min per IP (spam prevention). Honeypot field for bot detection
+- [ ] `website-lead-capture` EF: POST — accepts form data (name, email, phone, message, source_page, agent_website_id). Creates realtor_contact if new (or updates existing). Sends push + email notification to agent. Returns success. Auth: public (no JWT) — determines company_id by looking up agent_website_id from request body, verifying website exists and is published, then uses that website's company_id for the new realtor_contact. Validates: agent_website_id UUID format, website exists, website.published = true. Rate limit: 10/min per website_id (prevent spam). CORS: open (public form submission). Honeypot field for bot detection
 - [ ] `website-generate-static` EF: POST — triggers static site generation for agent's website. Builds Next.js pages, deploys to Vercel. Returns deployment URL. Auth: JWT required. Rate limit: 5/day per agent (prevent abuse)
 - [ ] `website-analytics-track` EF: POST — lightweight page view tracker. Increments views/unique_visitors on property sites. No PII stored. Auth: public
 
@@ -32685,10 +32722,10 @@ CREATE TABLE document_analyses (
 );
 
 ALTER TABLE document_analyses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "document_analyses_select" ON document_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "document_analyses_select" ON document_analyses FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "document_analyses_insert" ON document_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "document_analyses_update" ON document_analyses FOR UPDATE USING (company_id = requesting_company_id());
-CREATE POLICY "document_analyses_delete" ON document_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+CREATE POLICY "document_analyses_update" ON document_analyses FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "document_analyses_delete" ON document_analyses FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND requesting_user_role() IN ('owner','admin'));
 CREATE INDEX idx_document_analyses_company ON document_analyses(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_document_analyses_transaction ON document_analyses(transaction_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_document_analyses_status ON document_analyses(analysis_status) WHERE deleted_at IS NULL;
@@ -32701,7 +32738,7 @@ CREATE TABLE document_findings (
   company_id UUID NOT NULL REFERENCES companies(id),
   document_analysis_id UUID NOT NULL REFERENCES document_analyses(id),
   finding_number INT NOT NULL,  -- sequential within analysis
-  category TEXT NOT NULL,  -- 'structural','roofing','exterior','electrical','plumbing','hvac','interior','insulation','fireplace_chimney','garage','site_grounds','appliances','other'
+  category TEXT NOT NULL CHECK (category IN ('structural','roofing','exterior','electrical','plumbing','hvac','interior','insulation','fireplace_chimney','garage','site_grounds','appliances','other')),
   subcategory TEXT,
   description TEXT NOT NULL,
   severity TEXT NOT NULL CHECK (severity IN ('critical','major','moderate','minor','informational','monitor')),
@@ -32720,17 +32757,21 @@ CREATE TABLE document_findings (
   negotiation_notes TEXT,  -- "Seller likely to push back on this — present radar data"
   disclosure_consistent BOOLEAN,  -- NULL if no disclosure, true/false after cross-reference
   disclosure_conflict_notes TEXT,  -- "Seller said 'No' to water damage, but staining found"
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_by UUID REFERENCES auth.users(id),  -- nullable — AI extraction has no user
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE document_findings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "document_findings_select" ON document_findings FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "document_findings_select" ON document_findings FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "document_findings_insert" ON document_findings FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "document_findings_update" ON document_findings FOR UPDATE USING (company_id = requesting_company_id());
-CREATE POLICY "document_findings_delete" ON document_findings FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
-CREATE INDEX idx_document_findings_company ON document_findings(company_id);
-CREATE INDEX idx_document_findings_analysis ON document_findings(document_analysis_id);
-CREATE INDEX idx_document_findings_severity ON document_findings(severity);
+CREATE POLICY "document_findings_update" ON document_findings FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "document_findings_delete" ON document_findings FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND requesting_user_role() IN ('owner','admin'));
+CREATE INDEX idx_document_findings_company ON document_findings(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_document_findings_analysis ON document_findings(document_analysis_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_document_findings_severity ON document_findings(severity) WHERE deleted_at IS NULL;
+CREATE TRIGGER document_findings_updated BEFORE UPDATE ON document_findings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER audit_document_findings AFTER INSERT OR UPDATE OR DELETE ON document_findings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 ```
 
@@ -32795,7 +32836,9 @@ CREATE TRIGGER audit_document_findings AFTER INSERT OR UPDATE OR DELETE ON docum
 -- 1. storm_events — SHARED REFERENCE TABLE (no company_id)
 -- Government weather data, same storm visible to all companies.
 -- Only service_role CRON inserts. Any authenticated user can SELECT.
-CREATE TABLE storm_events (
+-- NOTE: storm_events is a SHARED table. If INTEG4 runs before RE30, this table already exists.
+-- Use CREATE TABLE IF NOT EXISTS. INTEG4 creates the base table; RE30 adds columns if needed.
+CREATE TABLE IF NOT EXISTS storm_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_type TEXT NOT NULL CHECK (event_type IN ('hail','tornado','high_wind','flood','severe_thunderstorm','hurricane','ice_storm','wildfire','winter_storm')),
   source TEXT NOT NULL CHECK (source IN ('nws','iem','spc','nexrad','noaa_storm_events')),
@@ -32828,7 +32871,7 @@ CREATE INDEX idx_storm_events_date ON storm_events(event_date DESC);
 CREATE INDEX idx_storm_events_type ON storm_events(event_type);
 CREATE INDEX idx_storm_events_zips ON storm_events USING GIN(affected_zips);
 CREATE INDEX idx_storm_events_location ON storm_events(lat, lng);
-CREATE INDEX idx_storm_events_source_dedup ON storm_events(source, source_event_id) WHERE source_event_id IS NOT NULL;
+CREATE UNIQUE INDEX idx_storm_events_source_dedup ON storm_events(source, source_event_id) WHERE source_event_id IS NOT NULL;
 
 -- 2. storm_alerts — company-scoped alerts generated per agent
 CREATE TABLE storm_alerts (
@@ -32862,10 +32905,10 @@ CREATE TABLE storm_alerts (
 );
 
 ALTER TABLE storm_alerts ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "storm_alerts_select" ON storm_alerts FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "storm_alerts_select" ON storm_alerts FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "storm_alerts_insert" ON storm_alerts FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "storm_alerts_update" ON storm_alerts FOR UPDATE USING (company_id = requesting_company_id());
-CREATE POLICY "storm_alerts_delete" ON storm_alerts FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+CREATE POLICY "storm_alerts_update" ON storm_alerts FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "storm_alerts_delete" ON storm_alerts FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND requesting_user_role() IN ('owner','admin'));
 CREATE INDEX idx_storm_alerts_company ON storm_alerts(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_storm_alerts_agent ON storm_alerts(agent_user_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_storm_alerts_storm ON storm_alerts(storm_event_id);
@@ -32878,7 +32921,7 @@ CREATE TABLE storm_outreach_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id UUID NOT NULL REFERENCES companies(id),
   storm_alert_id UUID NOT NULL REFERENCES storm_alerts(id),
-  client_id UUID,  -- NULL if SOI contact
+  client_id UUID REFERENCES customers(id),  -- NULL if SOI contact
   contact_name TEXT NOT NULL,
   contact_phone TEXT,
   contact_email TEXT,
@@ -32892,20 +32935,23 @@ CREATE TABLE storm_outreach_messages (
   reported_damage BOOLEAN DEFAULT false,
   damage_description TEXT,
   contractor_dispatched BOOLEAN DEFAULT false,
-  dispatch_order_id UUID,  -- link to RE9 dispatch
+  dispatch_order_id UUID REFERENCES dispatch_orders(id),  -- link to RE9 dispatch
   follow_up_stage INT DEFAULT 0,  -- 0=initial, 1=day3, 2=day14
   next_follow_up_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE storm_outreach_messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "storm_outreach_select" ON storm_outreach_messages FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "storm_outreach_select" ON storm_outreach_messages FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "storm_outreach_insert" ON storm_outreach_messages FOR INSERT WITH CHECK (company_id = requesting_company_id());
-CREATE POLICY "storm_outreach_update" ON storm_outreach_messages FOR UPDATE USING (company_id = requesting_company_id());
-CREATE POLICY "storm_outreach_delete" ON storm_outreach_messages FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
-CREATE INDEX idx_storm_outreach_company ON storm_outreach_messages(company_id);
-CREATE INDEX idx_storm_outreach_alert ON storm_outreach_messages(storm_alert_id);
-CREATE INDEX idx_storm_outreach_followup ON storm_outreach_messages(next_follow_up_at) WHERE next_follow_up_at IS NOT NULL AND follow_up_stage < 2;
+CREATE POLICY "storm_outreach_update" ON storm_outreach_messages FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "storm_outreach_delete" ON storm_outreach_messages FOR DELETE USING (company_id = requesting_company_id() AND deleted_at IS NULL AND requesting_user_role() IN ('owner','admin'));
+CREATE INDEX idx_storm_outreach_company ON storm_outreach_messages(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_storm_outreach_alert ON storm_outreach_messages(storm_alert_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_storm_outreach_followup ON storm_outreach_messages(next_follow_up_at) WHERE next_follow_up_at IS NOT NULL AND follow_up_stage < 2 AND deleted_at IS NULL;
+CREATE TRIGGER storm_outreach_updated BEFORE UPDATE ON storm_outreach_messages FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER audit_storm_outreach AFTER INSERT OR UPDATE OR DELETE ON storm_outreach_messages FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 ```
 
@@ -37408,8 +37454,8 @@ CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
 | **SHARED** | SHARED-PKG1-3 + RECON-MOBILE1-3 + SKETCH-REALTOR1 + SKETCH-HOMEOWNER1 | ~62h | **S144 Cross-App Packages.** Shared Flutter packages (sketch_core, recon_core, field_toolkit), entity-type configs, homeowner one-time rehab scan. 3 tables. |
 | **ZFORGE** | ZFORGE1-10 | ~388h | **S144 ZForge Document Engine (RESEARCHED).** 354 document types, pdfme WYSIWYG template designer, e-signatures, 50-state lien waivers, FL 12th mandatory state. |
 | **Total (in-pipeline)** | **~168 sprints** | **~3,336h** | S130-S138 additions (see above). **S144: +ZFORGE-FRESH (~26h, 5 sprints) + SHARED cross-app (~62h, 8 sprints) + contractor spec expansion (stubs→enterprise, ~600h hours previously undercounted now properly estimated). RE1-RE20 (~594h). CUST9 (~48h).** |
-| **Formerly Orphaned — NOW IN PIPELINE (S142 owner directive: EVERYTHING SHIPS)** | **~97 sprints** | **~1,594h** | RE21-30 (~160h), CUST1-8 (~280h), CLIENT1-17 (~316h), LIST1-9 (~162h), MOV1-8 (~200h), BV1-6 (~92h), VIZ1-28 (~384h). **Owner directive S142: "everything is fucking shipping" — no orphaned sprints, no "may not ship", everything must be perfect. ALL entity types (contractor, inspector, adjuster, realtor, homeowner, preservation, moving) get equal depth. Zero exceptions.** |
-| **Grand Total (ALL IN PIPELINE)** | **~265+ sprints** | **~4,930h+** | ALL sprints are in-pipeline. Nothing orphaned. Everything ships. **S144: +13 new sprints (ZFORGE-FRESH + SHARED), contractor stubs properly estimated, ZFORGE expansion researched.** |
+| **Formerly Orphaned — NOW IN PIPELINE (S142 owner directive: EVERYTHING SHIPS)** | **~97 sprints** | **~1,670h** | RE21-30 (~236h, S145 enterprise expansion), CUST1-8 (~280h), CLIENT1-17 (~316h), LIST1-9 (~162h), MOV1-8 (~200h), BV1-6 (~92h), VIZ1-28 (~384h). **Owner directive S142: "everything is fucking shipping" — no orphaned sprints, no "may not ship", everything must be perfect. ALL entity types (contractor, inspector, adjuster, realtor, homeowner, preservation, moving) get equal depth. Zero exceptions.** |
+| **Grand Total (ALL IN PIPELINE)** | **~265+ sprints** | **~5,006h+** | ALL sprints are in-pipeline. Nothing orphaned. Everything ships. **S144: +13 new sprints (ZFORGE-FRESH + SHARED), contractor stubs properly estimated, ZFORGE expansion researched. S146: RE21-30 audit (+76h from ~160h→~236h correction).** |
 
 **Execution order (S138-updated — SEC-AUDIT + P-FIX1 + A11Y + LEGAL added before INFRA):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live, DONE) → **LAUNCH1 (monitoring — DONE)** → **LAUNCH9 (ops portal fortress — DONE)** → FIELD1-FIELD5 (DONE) → REST (DONE) → NICHE (DONE) → DEPTH1 (DONE) → **SEC-AUDIT-1→6 (NEXT — critical security remediation, ~28h)** → **P-FIX1 (Recon system fixes, ~6h)** → **A11Y-1→3 (WCAG 2.2 AA accessibility, ~20h)** → **LEGAL-1→4 (legal defense framework + form freshness, ~26h)** → **INFRA-1→5 (enterprise infrastructure, ~20h)** → **TEST-INFRA (TI-1→TI-7, ~36h)** → **COLLAB-ARCH (CA-1→CA-5, ~28h)** → DEPTH2 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → **DATA-ARCH1-4 (data infrastructure — MUST be done before ANY INTEG sprint)** → **INTEG6 (dedup fixes)** → **INTEG2 (engine-to-engine wiring)** → **INTEG3 (client portal activation)** → **INTEG4 (weather engine)** → **INTEG7 (calculator bridge)** → **INTEG8 (free API enrichment)** → **S135-ENTITY sprints (ROUTE1, CHEM1, DRAW1, SEL1 during DEPTH gaps; TC1, SHOW1, ADJ-CONT, ADJ-AUTH after INTEG; INS sprints before DEPTH20; HO sprints after CLIENT phase)** → RE1-RE20 (~444h) → INTEG1 → FLIP1-FLIP4 → **INTEG5 (three-sided marketplace — needs RE + FLIP done)** → SEC2-SEC5 → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (~20h, deployment runbook + disaster recovery)** → Phase G (QA) → Phase JUR (incl JUR4) → Phase E (AI) → **FLIP5 + DEPTH40-AI + DEPTH44** → SEC9-SEC10 → ZERO1-ZERO9 → LAUNCH7 → **LAUNCH-FLAVORS (~16h)** → **APP-DEPTH (~24h — entity type parity audit, MUST be after all entity sprints)** → **[PITR ON]** → SHIP
 
@@ -37463,7 +37509,7 @@ CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
 
 **Every module in the system is now explicitly named in at least one DEPTH sprint. DEPTH23 is the safety net — it scans the actual codebase against these checklists and flags anything unlisted. SEC phase makes the platform a fortress. LAUNCH phase handles every non-feature requirement for going live. LAUNCH7 runs dead last because the onboarding wizard and App Store listing need to showcase the FINAL product with all features built and polished. No blind spots, even for future work.**
 
-**POST-LAUNCH sprints (not in execution order — scheduled after ship based on market demand):** BV1-6 (BIM Viewer ~92h — requires SK10+BA), MOV1-8 (Moving Module ~200h), VIZ1-28 (3D Visualization ~384h), RE21-30 (Realtor gaps ~160h), CUST1-8 (Enterprise Customization ~280h), CLIENT1-17 (Homeowner Platform ~316h), LIST1-9 (Listing Engine ~162h). Total: ~97 sprints, ~1,594h.
+**POST-LAUNCH sprints (not in execution order — scheduled after ship based on market demand):** BV1-6 (BIM Viewer ~92h — requires SK10+BA), MOV1-8 (Moving Module ~200h), VIZ1-28 (3D Visualization ~384h), CUST1-8 (Enterprise Customization ~280h), CLIENT1-17 (Homeowner Platform ~316h), LIST1-9 (Listing Engine ~162h). Total: ~87 sprints, ~1,434h. *(RE21-30 moved to in-pipeline execution order as of S145.)*
 
 **Process per DEPTH sprint:**
 1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
