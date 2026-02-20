@@ -523,7 +523,7 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | 10 | Integration map had zero RE/FLIP/CLIENT/VIZ rows | No developer checks these |
 
 ### Pending Wiring Sections (S132 — to be built)
-**Realtor Platform (RE1-RE30):** 30 sprints, ~744h. Not yet built. Rows will be added as RE sprints complete.
+**Realtor Platform (RE1-RE30):** 30 sprints, ~894h. **RE1-RE20 FULLY SPEC'D (S144)** — 594h, ~100 new tables, ~70 EFs, ~80 Flutter screens, 5,823 lines of enterprise checklists. RE21-RE30 spec'd (S132, 300h). Not yet built. Rows will be added as RE sprints complete.
 **Homeowner Platform (CLIENT1-17):** 17 sprints, ~378h. In masterfile. Rows will be added as CLIENT sprints complete.
 **FLIP-It Engine (FLIP1-6):** 6 sprints, ~92h. Not yet built. Rows will be added as FLIP sprints complete.
 **VIZ Engine (VIZ1-VIZ14):** 14 sprints, ~202h. In masterfile. Rows will be added as VIZ sprints complete.
