@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -31,16 +31,19 @@ import {
   ShoppingBag,
   Satellite,
   Database,
+  Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
 import { useAuth } from '@/components/auth-provider';
 import { useTheme } from '@/components/theme-provider';
+import { getSupabase } from '@/lib/supabase';
 
 interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
+  badgeKey?: string;
 }
 
 interface NavSection {
@@ -111,6 +114,12 @@ const navSections: NavSection[] = [
         label: 'API Costs',
         href: '/dashboard/api-costs',
         icon: <Satellite className="h-4 w-4" />,
+      },
+      {
+        label: 'Compliance Health',
+        href: '/dashboard/compliance-health',
+        icon: <Shield className="h-4 w-4" />,
+        badgeKey: 'compliance_stale',
       },
     ],
   },
@@ -216,6 +225,25 @@ export function Sidebar() {
   const { signOut, profile } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [badges, setBadges] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    async function loadBadges() {
+      try {
+        const supabase = getSupabase();
+        const { count } = await supabase
+          .from('legal_reference_registry')
+          .select('*', { count: 'exact', head: true })
+          .in('status', ['review_due', 'outdated']);
+        if (count && count > 0) {
+          setBadges(prev => ({ ...prev, compliance_stale: count }));
+        }
+      } catch {
+        // Silent — badge is non-critical
+      }
+    }
+    loadBadges();
+  }, []);
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';
@@ -255,7 +283,18 @@ export function Sidebar() {
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-[var(--accent)]" />
                     )}
                     {item.icon}
-                    <span>{item.label}</span>
+                    <span className="flex-1">{item.label}</span>
+                    {item.badgeKey && badges[item.badgeKey] ? (
+                      <span
+                        className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none"
+                        style={{
+                          background: 'rgba(239,68,68,0.15)',
+                          color: '#ef4444',
+                        }}
+                      >
+                        {badges[item.badgeKey]}
+                      </span>
+                    ) : null}
                   </Link>
                 );
               })}
