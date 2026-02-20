@@ -39,7 +39,7 @@ class _BaitStationMapScreenState extends ConsumerState<BaitStationMapScreen> {
       var query = supabase
           .from('bait_stations')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('station_number');
 
       if (widget.propertyId != null) {
@@ -47,7 +47,7 @@ class _BaitStationMapScreenState extends ConsumerState<BaitStationMapScreen> {
             .from('bait_stations')
             .select()
             .eq('property_id', widget.propertyId!)
-            .is_('deleted_at', null)
+            .isFilter('deleted_at', null)
             .order('station_number');
       }
 

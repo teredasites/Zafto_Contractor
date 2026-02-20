@@ -328,6 +328,7 @@ String _inspectionTypeLabel(InspectionType type) {
     InspectionType.electrical => 'Electrical',
     InspectionType.plumbing => 'Plumbing',
     InspectionType.hvac => 'HVAC',
+    InspectionType.quickChecklist => 'Quick Checklist',
   };
 }
 

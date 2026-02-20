@@ -105,7 +105,10 @@ class OwnerMoreScreen extends ConsumerWidget {
             colors,
             icon: Icons.phone_outlined,
             title: 'Phone Settings',
-            screen: const PhoneSettingsScreen(),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PhoneSettingsScreen()),
+            ),
           ),
           _buildMenuItem(
             context,

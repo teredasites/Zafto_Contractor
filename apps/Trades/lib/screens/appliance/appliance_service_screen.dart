@@ -47,7 +47,7 @@ class _ApplianceServiceScreenState extends ConsumerState<ApplianceServiceScreen>
       final res = await _supabase
           .from('appliance_service_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       setState(() {
         _logs = (res as List).map((e) => ApplianceService.fromJson(e)).toList();

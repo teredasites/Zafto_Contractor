@@ -14,7 +14,7 @@ class LocksmithServiceRepository {
       final res = await _client
           .from('locksmith_service_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (res as List).map((e) => LocksmithService.fromJson(e)).toList();
     } catch (e) {
@@ -28,7 +28,7 @@ class LocksmithServiceRepository {
           .from('locksmith_service_logs')
           .select()
           .eq('job_id', jobId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (res as List).map((e) => LocksmithService.fromJson(e)).toList();
     } catch (e) {

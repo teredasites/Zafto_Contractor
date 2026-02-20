@@ -49,7 +49,7 @@ class _GarageDoorServiceScreenState extends ConsumerState<GarageDoorServiceScree
       final res = await _supabase
           .from('garage_door_service_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       setState(() {
         _logs = (res as List).map((e) => GarageDoorService.fromJson(e)).toList();

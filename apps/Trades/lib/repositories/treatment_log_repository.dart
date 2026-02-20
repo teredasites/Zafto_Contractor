@@ -43,7 +43,7 @@ class TreatmentLogRepository {
           .from(_table)
           .select()
           .eq('id', id)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .maybeSingle();
       if (response == null) return null;
       return TreatmentLog.fromJson(response);
@@ -59,7 +59,7 @@ class TreatmentLogRepository {
           .from(_table)
           .select()
           .eq('job_id', jobId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (response as List).map((r) => TreatmentLog.fromJson(r)).toList();
     } catch (e) {
@@ -74,7 +74,7 @@ class TreatmentLogRepository {
           .from(_table)
           .select()
           .eq('property_id', propertyId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (response as List).map((r) => TreatmentLog.fromJson(r)).toList();
     } catch (e) {
@@ -88,7 +88,7 @@ class TreatmentLogRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (response as List).map((r) => TreatmentLog.fromJson(r)).toList();
     } catch (e) {
@@ -102,7 +102,7 @@ class TreatmentLogRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .not('next_service_date', 'is', null)
           .gte('next_service_date', DateTime.now().toIso8601String().split('T')[0])
           .order('next_service_date');

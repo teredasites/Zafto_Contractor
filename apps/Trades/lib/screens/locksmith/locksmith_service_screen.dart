@@ -48,7 +48,7 @@ class _LocksmithServiceScreenState extends ConsumerState<LocksmithServiceScreen>
       final res = await _supabase
           .from('locksmith_service_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       setState(() {
         _logs = (res as List).map((e) => LocksmithService.fromJson(e)).toList();

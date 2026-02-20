@@ -51,7 +51,7 @@ class FireAssessmentRepository {
           .from(_table)
           .select()
           .eq('id', id)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (response == null) return null;
@@ -71,7 +71,7 @@ class FireAssessmentRepository {
           .from(_table)
           .select()
           .eq('job_id', jobId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       return (response as List)
@@ -92,7 +92,7 @@ class FireAssessmentRepository {
           .from(_table)
           .select()
           .eq('insurance_claim_id', claimId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       return (response as List)
@@ -112,7 +112,7 @@ class FireAssessmentRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       return (response as List)

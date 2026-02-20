@@ -14,7 +14,7 @@ class GarageDoorServiceRepository {
       final res = await _client
           .from('garage_door_service_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (res as List).map((e) => GarageDoorService.fromJson(e)).toList();
     } catch (e) {
@@ -28,7 +28,7 @@ class GarageDoorServiceRepository {
           .from('garage_door_service_logs')
           .select()
           .eq('job_id', jobId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (res as List).map((e) => GarageDoorService.fromJson(e)).toList();
     } catch (e) {
@@ -42,7 +42,7 @@ class GarageDoorServiceRepository {
           .from('garage_door_service_logs')
           .select()
           .eq('property_id', propertyId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (res as List).map((e) => GarageDoorService.fromJson(e)).toList();
     } catch (e) {

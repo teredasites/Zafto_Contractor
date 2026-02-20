@@ -43,7 +43,7 @@ class WdiReportRepository {
           .from(_table)
           .select()
           .eq('id', id)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .maybeSingle();
       if (response == null) return null;
       return WdiReport.fromJson(response);
@@ -59,7 +59,7 @@ class WdiReportRepository {
           .from(_table)
           .select()
           .eq('job_id', jobId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (response as List).map((r) => WdiReport.fromJson(r)).toList();
     } catch (e) {
@@ -73,7 +73,7 @@ class WdiReportRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
       return (response as List).map((r) => WdiReport.fromJson(r)).toList();
     } catch (e) {

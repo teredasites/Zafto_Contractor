@@ -53,7 +53,7 @@ class ContentPackoutRepository {
           .from(_table)
           .select()
           .eq('fire_assessment_id', assessmentId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       return (response as List)
@@ -74,7 +74,7 @@ class ContentPackoutRepository {
           .from(_table)
           .select()
           .eq('job_id', jobId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       return (response as List)
@@ -95,7 +95,7 @@ class ContentPackoutRepository {
           .from(_table)
           .select()
           .eq('box_number', boxNumber)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('room_of_origin');
 
       return (response as List)
