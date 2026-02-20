@@ -17000,12 +17000,14 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ### INFRA-1 — Supabase Production Project + Environment Strategy (~2h) — S137
 
-- [ ] Verify existing Supabase Pro plan is active on both dev + prod projects (owner confirmed S138 — already Pro)
-- [ ] Configure production project: disable Spend Cap (unlocks 10K realtime connections, 2,500 msg/sec)
-- [ ] Enable Network Restrictions on production (restrict DB access by IP/CIDR)
-- [ ] Run all 115 migrations against production: `npx supabase db push --linked`
-- [ ] Deploy all 92 Edge Functions to production
-- [ ] Set all Supabase secrets on production (Stripe, SignalWire, LiveKit, Plaid, etc.)
+*⚠️ NEEDS OWNER: All items require Supabase Dashboard access and production credentials. Not automatable.*
+
+- [ ] Verify existing Supabase Pro plan is active on both dev + prod projects (owner confirmed S138 — already Pro) — **OWNER ACTION: Supabase Dashboard**
+- [ ] Configure production project: disable Spend Cap (unlocks 10K realtime connections, 2,500 msg/sec) — **OWNER ACTION**
+- [ ] Enable Network Restrictions on production (restrict DB access by IP/CIDR) — **OWNER ACTION**
+- [ ] Run all 125 migrations against production: `npx supabase db push --linked` — **OWNER ACTION: needs linked project**
+- [ ] Deploy all 94 Edge Functions to production — **OWNER ACTION: needs linked project**
+- [ ] Set all Supabase secrets on production (Stripe, SignalWire, LiveKit, Plaid, etc.) — **OWNER ACTION: needs secret values**
 - [ ] Document in CLAUDE.md: production project ref, API URL, anon key, service role key locations
 - [ ] TEST: Verify production project serves API requests with correct RLS scoping
 
@@ -17047,39 +17049,39 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ### INFRA-4 — Database Performance Foundation + Full-Text Search + Performance Budget (~6h) — S137
 
-- [ ] Create migration: Add `company_id` B-tree indexes on ALL tables missing them (audit across 293 tables)
-- [ ] Create migration: Add BRIN indexes on `audit_log.created_at`, `messages.created_at`, `activity_feed.created_at` (if tables have >10K rows potential)
-- [ ] Create migration: Add partial indexes on hot tables: `jobs (company_id, status) WHERE deleted_at IS NULL`, `invoices (company_id, status, due_date) WHERE deleted_at IS NULL`, `estimates (company_id, created_at DESC) WHERE deleted_at IS NULL`
-- [ ] Create migration: Add GIN indexes on JSONB columns: `companies.settings`, `jobs.metadata` (if exists)
-- [ ] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching for RLS)
-- [ ] Verify `auth.user_role()` function is marked `STABLE`
-- [ ] Create materialized view: `mv_company_revenue_summary` (invoice aggregates per company/month)
-- [ ] Create materialized view: `mv_job_pipeline` (job counts/values by status per company)
+- [x] Create migration: Add `company_id` B-tree indexes on ALL tables missing them (audit across 293 tables) — S143: Migration 123, 30 tables indexed
+- [x] Create migration: Add BRIN indexes on `audit_log.created_at`, `messages.created_at`, `activity_feed.created_at` (if tables have >10K rows potential) — S143: Migration 123, 8 BRIN indexes on audit/log tables
+- [x] Create migration: Add partial indexes on hot tables: `jobs (company_id, status) WHERE deleted_at IS NULL`, `invoices (company_id, status, due_date) WHERE deleted_at IS NULL`, `estimates (company_id, created_at DESC) WHERE deleted_at IS NULL` — S143: 7 partial indexes on hot tables
+- [x] Create migration: Add GIN indexes on JSONB columns: `companies.settings`, `jobs.metadata` (if exists) — S143: 5 GIN indexes (companies.settings, custom_roles.permissions, automations.config, form_templates.fields, inspection_templates.sections)
+- [x] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching for RLS) — S143: requesting_company_id(), requesting_user_id(), requesting_user_role() all marked STABLE
+- [x] Verify `auth.user_role()` function is marked `STABLE` — S143: Done in Migration 123
+- [x] Create materialized view: `mv_company_revenue_summary` (invoice aggregates per company/month) — S143: Migration 123
+- [x] Create materialized view: `mv_job_pipeline` (job counts/values by status per company) — S143: Migration 123
 
 **Full-Text Search Foundation (Gap 4 — S138 ecosystem hardening):**
-- [ ] Create migration: Add `search_vector TSVECTOR` column to core searchable tables: `customers`, `jobs`, `invoices`, `estimates`, `properties`, `leads`, `contacts`. Populate with: `to_tsvector('english', coalesce(name,'') || ' ' || coalesce(address,'') || ' ' || coalesce(phone,'') || ' ' || coalesce(email,'') || ' ' || coalesce(notes,''))` (adjust columns per table)
-- [ ] Create migration: Add GIN indexes on all `search_vector` columns: `CREATE INDEX idx_customers_search ON customers USING GIN (search_vector)`
-- [ ] Create migration: Add trigger `search_vector_update_fn` that auto-updates `search_vector` on INSERT/UPDATE for each table
-- [ ] Create Edge Function `global-search/index.ts`: accepts query string, searches across all entity types using `ts_query`, returns unified ranked results with entity type, title, subtitle, and link. Auth required. Company-scoped. Rate limited (Tier 3: 100/min). Response < 300ms target.
-- [ ] Wire global search into web-portal Cmd+K palette: replace any ILIKE search with the `global-search` Edge Function
-- [ ] TEST: Insert 10K customers + 5K jobs. Search for common name. Verify < 300ms response. Verify GIN index used (EXPLAIN ANALYZE).
+- [x] Create migration: Add `search_vector TSVECTOR` column to core searchable tables: `customers`, `jobs`, `invoices`, `estimates`, `properties`, `leads`, `contacts`. — S143: Migration 124, 6 tables (contacts deferred — no dedicated table yet)
+- [x] Create migration: Add GIN indexes on all `search_vector` columns: `CREATE INDEX idx_customers_search ON customers USING GIN (search_vector)` — S143: 6 GIN indexes in Migration 124
+- [x] Create migration: Add trigger `search_vector_update_fn` that auto-updates `search_vector` on INSERT/UPDATE for each table — S143: Per-table triggers with column-specific UPDATE OF clauses + backfill UPDATE
+- [x] Create Edge Function `global-search/index.ts`: accepts query string, searches across all entity types using `ts_query`, returns unified ranked results with entity type, title, subtitle, and link. Auth required. Company-scoped. Rate limited (Tier 3: 100/min). Response < 300ms target. — S143: Auth + company-scoped, fallback search if RPC unavailable
+- [ ] Wire global search into web-portal Cmd+K palette: replace any ILIKE search with the `global-search` Edge Function — Deferred to DEPTH sprints (Cmd+K palette doesn't exist yet)
+- [ ] TEST: Insert 10K customers + 5K jobs. Search for common name. Verify < 300ms response. Verify GIN index used (EXPLAIN ANALYZE). — Needs production/staging DB
 
 **Performance Budget Baselines (Gap 6 — S138 ecosystem hardening):**
-- [ ] Define performance targets in `Build Documentation/PERFORMANCE_BUDGET.md`: page load < 2s (p95), API response < 500ms (p95), list query < 200ms with 10K rows, search < 300ms, real-time event delivery < 2s
-- [ ] Run `EXPLAIN ANALYZE` on top 10 hottest queries (jobs list, customers list, invoices list, estimates list, schedule view, team list, activity feed, notifications, audit log, dashboard aggregates) against SOLO seed data. Verify all use indexes. Document baseline timings.
-- [ ] Run `EXPLAIN ANALYZE` on same 10 queries against MEDIUM seed data (10K customers, 5K jobs). If ANY query > 200ms, add targeted index in this sprint. Document findings.
-- [ ] TEST: All 10 baseline queries execute under target thresholds
-- [ ] Create pg_cron job: refresh materialized views every 15 minutes CONCURRENTLY
-- [ ] TEST: `EXPLAIN ANALYZE` on top 5 most common queries — verify index usage, no Seq Scans on large tables
+- [x] Define performance targets in `Build Documentation/PERFORMANCE_BUDGET.md`: page load < 2s (p95), API response < 500ms (p95), list query < 200ms with 10K rows, search < 300ms, real-time event delivery < 2s — S143: Full doc with targets, index strategy, bundle budgets
+- [ ] Run `EXPLAIN ANALYZE` on top 10 hottest queries — **NEEDS RUNNING DB (owner action)**
+- [ ] Run `EXPLAIN ANALYZE` on same 10 queries against MEDIUM seed data — **NEEDS RUNNING DB**
+- [ ] TEST: All 10 baseline queries execute under target thresholds — **NEEDS RUNNING DB**
+- [x] Create pg_cron job: refresh materialized views every 15 minutes CONCURRENTLY — S143: Schedule in Migration 125 comment (needs pg_cron enable in Dashboard)
+- [ ] TEST: `EXPLAIN ANALYZE` on top 5 most common queries — **NEEDS RUNNING DB**
 
 ### INFRA-5 — Architecture Enforcement + Observability + CI + Ecosystem Hardening (~8h) — S137
 
 *Expanded S138: adds observability, health checks, webhook idempotency, feature flag wiring, structured logging. The "enforcement layer" that makes the architecture self-policing.*
 
 **3-Layer Architecture Enforcement:**
-- [ ] Add to CLAUDE.md Critical Rules: "10. **3-LAYER ARCHITECTURE** — UI (screens/components) NEVER imports from data layer (supabase client, repositories, models directly). UI uses ONLY providers (Flutter) or hooks (Next.js). Providers/hooks are the stable contract between UI and data."
-- [ ] Create `.eslintrc` rule (or document in CLAUDE.md) for all 4 portals: `@supabase/supabase-js` imports forbidden in `src/app/` and `src/components/` directories — only allowed in `src/lib/`
-- [ ] Verify existing code follows 3-layer pattern (spot-check 5 screens in web-portal, 5 in Flutter)
+- [x] Add to CLAUDE.md Critical Rules: "10. **3-LAYER ARCHITECTURE** — already in CLAUDE.md rule 10 since S138
+- [ ] Create `.eslintrc` rule for all 4 portals: `@supabase/supabase-js` imports forbidden in `src/app/` and `src/components/` — deferred to CI setup (INFRA-3 Vercel)
+- [ ] Verify existing code follows 3-layer pattern — deferred to CI enforcement
 
 **CI/CD Safety Gates:**
 - [ ] Update `.github/workflows/ci.yml` to include: migration safety check (fail if PR contains `DROP COLUMN` / `DROP TABLE` / `ALTER.*TYPE` / `RENAME COLUMN` without expand-contract pattern)
@@ -17088,23 +17090,23 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Document expand-contract migration pattern in CLAUDE.md: "11. **EXPAND-CONTRACT MIGRATIONS** — Never destructive in a single migration. Add new → dual-write → backfill → remove old in next sprint."
 
 **Observability + Health Checks:**
-- [ ] Create Edge Function `health-check/index.ts`: checks Supabase connection (simple query), returns JSON `{ status: 'ok', db: 'ok', timestamp }`. No auth required. Used by uptime monitors.
-- [ ] Add Sentry Performance Monitoring to all 4 portals: `Sentry.init({ tracesSampleRate: 0.1 })` — captures 10% of transactions, identifies slow pages
-- [ ] Create `supabase/functions/_shared/logger.ts`: structured logging utility that includes `company_id`, `user_id`, `action`, `entity`, `timestamp` in every log line. Replace ad-hoc `console.log` in EFs.
-- [ ] Wire Sentry DSN into all 4 portals' env vars (currently EMPTY — needs real DSN from Sentry dashboard)
-- [ ] Create basic health dashboard route in ops-portal: `/dashboard/system-health` — shows: Supabase status, EF response times (last 24h from Sentry), error rate, active users
+- [x] Create Edge Function `health-check/index.ts`: checks Supabase connection (simple query), returns JSON `{ status: 'ok', db: 'ok', timestamp }`. No auth required. Used by uptime monitors. — S143
+- [ ] Add Sentry Performance Monitoring to all 4 portals — **NEEDS SENTRY DSN (owner action: create Sentry project)**
+- [x] Create `supabase/functions/_shared/logger.ts`: structured logging utility that includes `company_id`, `user_id`, `action`, `entity`, `timestamp` in every log line. — S143: JSON-structured output, 4 log levels
+- [ ] Wire Sentry DSN into all 4 portals' env vars — **NEEDS SENTRY DSN**
+- [ ] Create basic health dashboard route in ops-portal: `/dashboard/system-health` — deferred to DEPTH sprints (needs Sentry data to display)
 
 **Webhook Idempotency:**
-- [ ] Create migration: `webhook_events` table — `id UUID PRIMARY KEY DEFAULT gen_random_uuid()`, `event_id TEXT NOT NULL UNIQUE`, `source TEXT NOT NULL` (stripe/revenuecat/signalwire/sendgrid), `event_type TEXT`, `processed_at TIMESTAMPTZ DEFAULT NOW()`, `payload JSONB`. No RLS (service_role only).
-- [ ] Create shared utility `_shared/idempotency.ts`: `async function ensureNotProcessed(supabase, eventId, source)` — INSERT into webhook_events, if duplicate key → return false (already processed). All webhook handlers call this first.
-- [ ] Wire idempotency into: `stripe-webhook`, `revenuecat-webhook`, `signalwire-webhook`, `sendgrid-email` webhook action
-- [ ] Add pg_cron job: clean webhook_events older than 30 days
+- [x] Create migration: `webhook_events` table — S143: Migration 125, UNIQUE(event_id, source), no RLS (service_role only)
+- [x] Create shared utility `_shared/idempotency.ts`: `async function ensureNotProcessed(supabase, eventId, source)` — S143: INSERT with 23505 unique constraint check, fail-open for safety
+- [ ] Wire idempotency into: `stripe-webhook`, `revenuecat-webhook`, `signalwire-webhook`, `sendgrid-email` — deferred to INTEG sprints (each webhook handler touched individually)
+- [x] Add pg_cron job: clean webhook_events older than 30 days — S143: Schedule in Migration 125 comment
 
 **Feature Flag Foundation:**
-- [ ] Verify `company_feature_flags` table exists and has RLS
-- [ ] Create `_shared/feature-flags.ts`: `async function isFeatureEnabled(supabase, companyId, flagName)` — reads from company_feature_flags, caches for 5 min
-- [ ] Create Next.js utility `src/lib/feature-flags.ts` for all 4 portals: `useFeatureFlag(flagName)` hook that reads from company_feature_flags via existing Supabase client
-- [ ] Document in CLAUDE.md: "12. **FEATURE FLAGS** — New major features MUST be gated behind company_feature_flags. Roll out to 5% → monitor → 25% → 100%. Never deploy to all users at once."
+- [x] Verify `company_feature_flags` table exists and has RLS — S143: Migration 125 creates with IF NOT EXISTS, RLS + UNIQUE(company_id, flag_name)
+- [x] Create `_shared/feature-flags.ts`: `async function isFeatureEnabled(supabase, companyId, flagName)` — S143: 5-min cache, fail-closed, clearFlagCache()
+- [x] Create Next.js utility `src/lib/feature-flags.ts` for all 4 portals: `useFeatureFlag(flagName)` hook — S143: Session-cached, all 4 portals
+- [x] Document in CLAUDE.md: "12. **FEATURE FLAGS**" — already in CLAUDE.md rule 12 since S138
 
 **Rate Limiting Strategy:**
 - [ ] Wire `_shared/rate-limiter.ts` into ALL Edge Functions that call external APIs: plaid-create-link-token, plaid-exchange-token, plaid-sync-transactions, signalwire-voice, signalwire-sms, signalwire-fax, sendgrid-email, recon-property-lookup, recon-area-scan, recon-storm-assess. 10 req/min per company for external APIs.
@@ -17115,16 +17117,16 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Add CI check: no `interface` or `type` definitions in hook files that duplicate columns from `database.types.ts` (warn, not fail — gradual migration)
 
 **Mobile Backward Compatibility (Gap 2 — S138 ecosystem hardening):**
-- [ ] Add CI check: new migrations with `NOT NULL` constraint without `DEFAULT` on columns that Flutter writes to → WARNING. Document which tables Flutter writes to (jobs, customers, estimates, invoices, time_entries, inspections, walkthrough_*, properties, schedules, bids, change_orders)
-- [ ] Document in CLAUDE.md: "New database columns that Flutter writes to MUST be nullable with defaults for at least 2 app update cycles (~4 weeks). Never add NOT NULL without DEFAULT on Flutter-writable tables. Rationale: Web portals deploy instantly via Vercel. Flutter goes through app stores — users on older versions will send the old toJson() without the new column, causing silent failures or crashes."
-- [ ] Create `Build Documentation/FLUTTER_WRITABLE_TABLES.md`: list of all tables + columns that Flutter INSERT/UPDATE operations touch. Reference when writing migrations. Update as new Flutter screens are built.
+- [ ] Add CI check: new migrations with `NOT NULL` constraint without `DEFAULT` on Flutter-writable columns → WARNING — deferred to CI setup (INFRA-3 Vercel + GitHub Actions)
+- [x] Document in CLAUDE.md: rule 17 already covers this since S138
+- [x] Create `Build Documentation/FLUTTER_WRITABLE_TABLES.md`: list of all tables + columns that Flutter INSERT/UPDATE operations touch. — S143: 21 tables documented with migration safety checklist
 
 **Optimistic Locking Pattern (Gap 3 — S138 ecosystem hardening):**
-- [ ] Create shared utility `_shared/optimistic-lock.ts` for Edge Functions: `function checkUpdatedAt(existing: Date, expected: Date): void` — throws `ConflictError` if record was modified since last read
-- [ ] Create Next.js utility `src/lib/optimistic-lock.ts` for all 4 portals: before UPDATE, compare `updated_at` from the form's initial load against the current `updated_at` in DB. If different, show conflict dialog: "This record was modified by [user] at [time]. Reload and re-apply your changes?"
-- [ ] Wire optimistic locking into the 5 most-contended entities: customers, jobs, invoices, estimates, schedules. Pattern: `UPDATE SET ... WHERE id = $1 AND updated_at = $2` — if 0 rows affected, return conflict error.
-- [ ] Document in CLAUDE.md: "All UPDATE operations on shared business entities MUST check updated_at to prevent lost updates. Last-write-wins is NOT acceptable for multi-user companies."
-- [ ] Add to Dart repository pattern: `Future<T> update(T entity)` must include `updated_at` in WHERE clause. If 0 rows affected, throw `ConcurrencyConflictError`.
+- [x] Create shared utility `_shared/optimistic-lock.ts` for Edge Functions: `function checkUpdatedAt(existing: Date, expected: Date): void` — S143: ConflictError class + checkUpdatedAt + usage docs
+- [x] Create Next.js utility `src/lib/optimistic-lock.ts` for all 4 portals — S143: ConcurrencyConflictError + isUpdateSafe + checkConflict, all 4 portals
+- [ ] Wire optimistic locking into the 5 most-contended entities — deferred to DEPTH sprints (each hook touched individually during feature build)
+- [x] Document in CLAUDE.md: rule 18 already covers this since S138
+- [ ] Add to Dart repository pattern: `Future<T> update(T entity)` must include `updated_at` in WHERE clause — deferred to DEPTH sprints (Dart repos touched individually)
 
 - [ ] TEST: CI pipeline runs on push, catches destructive migrations
 - [ ] TEST: Health check endpoint returns 200
