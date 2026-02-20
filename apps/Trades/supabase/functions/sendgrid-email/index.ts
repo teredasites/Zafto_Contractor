@@ -1,10 +1,36 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
+import { getCorsHeaders, corsResponse } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// SEC-AUDIT-4: Verify SendGrid Event Webhook ECDSA signature
+async function verifySendGridSignature(
+  publicKeyBase64: string,
+  signatureHeader: string,
+  timestampHeader: string,
+  rawPayload: string,
+): Promise<boolean> {
+  try {
+    const keyBytes = Uint8Array.from(atob(publicKeyBase64), c => c.charCodeAt(0));
+    const key = await crypto.subtle.importKey(
+      'spki',
+      keyBytes,
+      { name: 'ECDSA', namedCurve: 'P-256' },
+      false,
+      ['verify'],
+    );
+    const sigBytes = Uint8Array.from(atob(signatureHeader), c => c.charCodeAt(0));
+    const data = new TextEncoder().encode(timestampHeader + rawPayload);
+    return await crypto.subtle.verify(
+      { name: 'ECDSA', hash: 'SHA-256' },
+      key,
+      sigBytes,
+      data,
+    );
+  } catch (err) {
+    console.error('SendGrid signature verification error:', err);
+    return false;
+  }
+}
 
 interface SendEmailRequest {
   action: 'send' | 'send_template' | 'send_campaign' | 'webhook' | 'get_stats';
@@ -41,8 +67,11 @@ interface SendGridEvent {
 }
 
 serve(async (req: Request) => {
+  const origin = req.headers.get('Origin');
+  const corsHdrs = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return corsResponse(origin);
   }
 
   try {
@@ -51,7 +80,17 @@ serve(async (req: Request) => {
     const sendgridApiKey = Deno.env.get('SENDGRID_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const body: SendEmailRequest = await req.json();
+    // SEC-AUDIT-4: Read raw body first for signature verification, then parse
+    const rawBody = await req.text();
+    const parsed = JSON.parse(rawBody);
+
+    // Detect native SendGrid webhook format (array of events) vs wrapped format
+    let body: SendEmailRequest;
+    if (Array.isArray(parsed)) {
+      body = { action: 'webhook', events: parsed };
+    } else {
+      body = parsed as SendEmailRequest;
+    }
     const { action } = body;
 
     // SEC-AUDIT-1: Extract company_id from auth token
@@ -67,7 +106,7 @@ serve(async (req: Request) => {
     // Only 'webhook' and 'get_stats' can have different auth patterns
     if (['send', 'send_template', 'send_campaign'].includes(action) && !companyId) {
       return new Response(JSON.stringify({ error: 'Authentication required for send actions' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
       });
     }
 
@@ -75,7 +114,7 @@ serve(async (req: Request) => {
       case 'send': {
         if (!body.to_email || !body.subject) {
           return new Response(JSON.stringify({ error: 'to_email and subject required' }), {
-            status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
           });
         }
 
@@ -128,7 +167,7 @@ serve(async (req: Request) => {
               });
             }
             return new Response(JSON.stringify({ error: 'SendGrid send failed', detail: errText }), {
-              status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 502, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
             });
           }
         }
@@ -157,14 +196,14 @@ serve(async (req: Request) => {
           message_id: sendgridMessageId,
           status: sendgridApiKey ? 'sent' : 'queued',
         }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHdrs, 'Content-Type': 'application/json' },
         });
       }
 
       case 'send_template': {
         if (!body.template_id || !body.to_email) {
           return new Response(JSON.stringify({ error: 'template_id and to_email required' }), {
-            status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
           });
         }
 
@@ -177,7 +216,7 @@ serve(async (req: Request) => {
 
         if (tmplErr || !template) {
           return new Response(JSON.stringify({ error: 'Template not found' }), {
-            status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 404, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
           });
         }
 
@@ -232,11 +271,34 @@ serve(async (req: Request) => {
         }
 
         return new Response(JSON.stringify({ success: true, message_id: sendgridMsgId }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHdrs, 'Content-Type': 'application/json' },
         });
       }
 
       case 'webhook': {
+        // SEC-AUDIT-4: Verify SendGrid Event Webhook signature
+        const sgWebhookKey = Deno.env.get('SENDGRID_WEBHOOK_VERIFICATION_KEY');
+        if (!sgWebhookKey) {
+          console.error('SENDGRID_WEBHOOK_VERIFICATION_KEY not configured — rejecting webhook');
+          return new Response(JSON.stringify({ error: 'Webhook verification key not configured' }), {
+            status: 500, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
+          });
+        }
+        const sgSignature = req.headers.get('X-Twilio-Email-Event-Webhook-Signature');
+        const sgTimestamp = req.headers.get('X-Twilio-Email-Event-Webhook-Timestamp');
+        if (!sgSignature || !sgTimestamp) {
+          return new Response(JSON.stringify({ error: 'Missing SendGrid signature headers' }), {
+            status: 401, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
+          });
+        }
+        const isValid = await verifySendGridSignature(sgWebhookKey, sgSignature, sgTimestamp, rawBody);
+        if (!isValid) {
+          console.error('SendGrid webhook signature verification failed');
+          return new Response(JSON.stringify({ error: 'Invalid signature' }), {
+            status: 401, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
+          });
+        }
+
         // SendGrid Event Webhook — updates email_sends with delivery/open/click/bounce status
         const events = body.events || [];
         for (const event of events) {
@@ -300,14 +362,14 @@ serve(async (req: Request) => {
         }
 
         return new Response(JSON.stringify({ processed: events.length }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHdrs, 'Content-Type': 'application/json' },
         });
       }
 
       case 'get_stats': {
         if (!companyId) {
           return new Response(JSON.stringify({ error: 'Authentication required' }), {
-            status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 401, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
           });
         }
 
@@ -341,19 +403,19 @@ serve(async (req: Request) => {
         }
 
         return new Response(JSON.stringify(stats), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHdrs, 'Content-Type': 'application/json' },
         });
       }
 
       default:
         return new Response(JSON.stringify({ error: `Unknown action: ${action}` }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
         });
     }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: message }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500, headers: { ...corsHdrs, 'Content-Type': 'application/json' },
     });
   }
 });
