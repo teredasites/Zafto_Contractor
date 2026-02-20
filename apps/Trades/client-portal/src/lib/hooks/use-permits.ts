@@ -72,6 +72,7 @@ export function useClientPermits() {
           .from('permit_inspections')
           .select('permit_id, result, inspection_date')
           .in('permit_id', permitIds)
+          .is('deleted_at', null)
           .order('inspection_date', { ascending: false });
 
         for (const insp of inspections || []) {

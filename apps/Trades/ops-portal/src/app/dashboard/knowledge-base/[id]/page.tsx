@@ -142,12 +142,12 @@ export default function KBArticleEditorPage() {
 
   const handleDelete = async () => {
     if (isNew || deleting) return;
-    if (!confirm('Delete this article? This cannot be undone.')) return;
+    if (!confirm('Delete this article?')) return;
     setDeleting(true);
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('knowledge_base')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (!err) {
       router.push('/dashboard/knowledge-base');

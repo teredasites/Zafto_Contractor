@@ -101,6 +101,13 @@ export function useCustomers() {
     }
     if (data.tags) updateData.tags = data.tags;
     if (data.notes !== undefined) updateData.notes = data.notes;
+    if (data.alternatePhone !== undefined) updateData.alternate_phone = data.alternatePhone;
+    if (data.accessInstructions !== undefined) updateData.access_instructions = data.accessInstructions;
+    if (data.customerType !== undefined) updateData.type = data.customerType;
+    if (data.preferredContactMethod !== undefined) updateData.preferred_contact_method = data.preferredContactMethod;
+    if (data.emailOptIn !== undefined) updateData.email_opt_in = data.emailOptIn;
+    if (data.smsOptIn !== undefined) updateData.sms_opt_in = data.smsOptIn;
+    if (data.companyName !== undefined) updateData.company_name = data.companyName;
 
     const { error: err } = await supabase.from('customers').update(updateData).eq('id', id);
     if (err) throw err;
@@ -143,6 +150,7 @@ export function useCustomer(id: string | undefined) {
           .from('customers')
           .select('*')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

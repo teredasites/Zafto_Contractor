@@ -57,6 +57,7 @@ export interface Customer {
   preferredContactMethod?: 'phone' | 'email' | 'text';
   emailOptIn?: boolean;
   smsOptIn?: boolean;
+  companyName?: string;
   totalRevenue: number;
   jobCount: number;
   createdAt: Date;

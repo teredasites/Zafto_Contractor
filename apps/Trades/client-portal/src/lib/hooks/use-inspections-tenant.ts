@@ -26,6 +26,7 @@ export function useInspections() {
         .select('*')
         .eq('unit_id', lease.unitId)
         .in('status', ['completed'])
+        .is('deleted_at', null)
         .order('inspection_date', { ascending: false });
 
       setInspections((data || []).map(mapInspection));
@@ -49,8 +50,8 @@ export function useInspection(id: string) {
       const supabase = getSupabase();
 
       const [inspRes, itemsRes] = await Promise.all([
-        supabase.from('pm_inspections').select('*').eq('id', id).single(),
-        supabase.from('pm_inspection_items').select('*').eq('inspection_id', id).order('area'),
+        supabase.from('pm_inspections').select('*').eq('id', id).is('deleted_at', null).single(),
+        supabase.from('pm_inspection_items').select('*').eq('inspection_id', id).is('deleted_at', null).order('area'),
       ]);
 
       if (inspRes.data) setInspection(mapInspection(inspRes.data));

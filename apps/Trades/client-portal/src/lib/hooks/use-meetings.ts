@@ -94,11 +94,12 @@ export function useMeetings() {
     if (!profile?.customerId) { setLoading(false); return; }
     const supabase = getSupabase();
 
-    // Get meetings where this client is a participant
+    // Get meetings where this specific client is a participant
     const { data: participantRows, error: pErr } = await supabase
       .from('meeting_participants')
       .select('meeting_id')
-      .eq('participant_type', 'client');
+      .eq('participant_type', 'client')
+      .eq('participant_id', profile.customerId);
 
     if (pErr) {
       setError(pErr.message);
@@ -117,6 +118,7 @@ export function useMeetings() {
       .from('meetings')
       .select('*')
       .in('id', meetingIds)
+      .is('deleted_at', null)
       .order('scheduled_at', { ascending: false });
 
     if (fetchError) {

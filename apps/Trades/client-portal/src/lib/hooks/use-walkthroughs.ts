@@ -135,9 +135,9 @@ export function useWalkthrough(id: string) {
       const supabase = getSupabase();
 
       const [wtRes, roomsRes, photosRes] = await Promise.all([
-        supabase.from('walkthroughs').select('*').eq('id', id).eq('customer_id', profile.customerId).single(),
-        supabase.from('walkthrough_rooms').select('*').eq('walkthrough_id', id).order('name'),
-        supabase.from('walkthrough_photos').select('*').eq('walkthrough_id', id).order('sort_order'),
+        supabase.from('walkthroughs').select('*').eq('id', id).eq('customer_id', profile.customerId).is('deleted_at', null).single(),
+        supabase.from('walkthrough_rooms').select('*').eq('walkthrough_id', id).is('deleted_at', null).order('name'),
+        supabase.from('walkthrough_photos').select('*').eq('walkthrough_id', id).is('deleted_at', null).order('sort_order'),
       ]);
 
       if (wtRes.error) {
