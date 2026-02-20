@@ -10,6 +10,10 @@ import '../../models/notification.dart';
 import '../../services/notification_service.dart';
 import '../../theme/theme_provider.dart';
 import '../../widgets/error_widgets.dart';
+import '../jobs/job_detail_screen.dart';
+import '../invoices/invoice_detail_screen.dart';
+import '../bids/bid_detail_screen.dart';
+import '../customers/customer_detail_screen.dart';
 
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
@@ -105,6 +109,7 @@ class _NotificationTile extends ConsumerWidget {
         if (!notification.isRead) {
           ref.read(userNotificationsProvider.notifier).markAsRead(notification.id);
         }
+        _navigateToEntity(context, notification);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -198,6 +203,31 @@ class _NotificationTile extends ConsumerWidget {
       NotificationType.customerMessage => LucideIcons.messageSquare,
       NotificationType.system => LucideIcons.bell,
     };
+  }
+
+  void _navigateToEntity(BuildContext context, AppNotification n) {
+    final entityId = n.entityId;
+    if (entityId == null || entityId.isEmpty) return;
+
+    Widget? screen;
+    switch (n.entityType) {
+      case 'job':
+        screen = JobDetailScreen(jobId: entityId);
+        break;
+      case 'invoice':
+        screen = InvoiceDetailScreen(invoiceId: entityId);
+        break;
+      case 'bid':
+        screen = BidDetailScreen(bidId: entityId);
+        break;
+      case 'customer':
+        screen = CustomerDetailScreen(customerId: entityId);
+        break;
+    }
+
+    if (screen != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => screen!));
+    }
   }
 
   Color _getTypeColor(NotificationType type, dynamic colors) {
