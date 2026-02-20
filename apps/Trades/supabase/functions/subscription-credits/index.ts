@@ -174,22 +174,21 @@ async function handleDeductCredits(
   const { scanType } = body as { scanType: string }
   const cost = CREDIT_COSTS[scanType] || 1
 
-  // Get or create user credits
-  let { data: credits } = await supabase
+  // Ensure user has a credit record (create with defaults if not)
+  const { data: existing } = await supabase
     .from('user_credits')
-    .select('*')
+    .select('user_id')
     .eq('user_id', userId)
     .single()
 
-  if (!credits) {
-    // Create with defaults
+  if (!existing) {
     const { data: userData } = await supabase
       .from('users')
       .select('company_id')
       .eq('id', userId)
       .single()
 
-    const { data: newCredits } = await supabase
+    await supabase
       .from('user_credits')
       .insert({
         user_id: userId,
@@ -198,58 +197,47 @@ async function handleDeductCredits(
         paid_credits: 0,
         total_scans: 0,
       })
-      .select()
-      .single()
-
-    credits = newCredits
   }
 
-  if (!credits) {
-    return new Response(JSON.stringify({ error: 'Failed to resolve credits' }), {
+  // Atomic deduction: row-locked, free-first-then-paid, race-condition-proof
+  const { data: result, error: rpcError } = await supabase.rpc('deduct_credits_atomic', {
+    p_user_id: userId,
+    p_amount: cost,
+  })
+
+  if (rpcError) {
+    if (rpcError.message?.includes('INSUFFICIENT_CREDITS')) {
+      // Fetch current balances for the error response
+      const { data: current } = await supabase
+        .from('user_credits')
+        .select('free_credits, paid_credits')
+        .eq('user_id', userId)
+        .single()
+
+      return new Response(JSON.stringify({
+        error: 'Insufficient credits',
+        freeCredits: current?.free_credits ?? 0,
+        paidCredits: current?.paid_credits ?? 0,
+        required: cost,
+      }), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    console.error('deduct_credits_atomic error:', rpcError)
+    return new Response(JSON.stringify({ error: 'Failed to deduct credits' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
-  const totalCredits = credits.free_credits + credits.paid_credits
-  if (totalCredits < cost) {
-    return new Response(JSON.stringify({
-      error: 'Insufficient credits',
-      freeCredits: credits.free_credits,
-      paidCredits: credits.paid_credits,
-      required: cost,
-    }), {
-      status: 402,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
-  }
-
-  // Deduct: free credits first, then paid
-  let newFree = credits.free_credits
-  let newPaid = credits.paid_credits
-
-  if (newFree >= cost) {
-    newFree -= cost
-  } else {
-    const fromPaid = cost - newFree
-    newFree = 0
-    newPaid -= fromPaid
-  }
-
-  await supabase
-    .from('user_credits')
-    .update({
-      free_credits: newFree,
-      paid_credits: newPaid,
-      total_scans: credits.total_scans + 1,
-      last_scan_at: new Date().toISOString(),
-    })
-    .eq('user_id', userId)
+  const row = Array.isArray(result) ? result[0] : result
 
   // Log the scan
   await supabase.from('scan_logs').insert({
     user_id: userId,
-    company_id: credits.company_id,
+    company_id: row?.user_company_id || null,
     scan_type: scanType,
     success: true,
     credits_charged: cost,
@@ -257,8 +245,8 @@ async function handleDeductCredits(
 
   return new Response(JSON.stringify({
     success: true,
-    freeCredits: newFree,
-    paidCredits: newPaid,
+    freeCredits: row?.new_free_credits ?? 0,
+    paidCredits: row?.new_paid_credits ?? 0,
     charged: cost,
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
