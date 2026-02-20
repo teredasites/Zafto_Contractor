@@ -8,16 +8,12 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { getCorsHeaders, corsResponse } from '../_shared/cors.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-function jsonResponse(body: Record<string, unknown>, status = 200): Response {
+function jsonResponse(body: Record<string, unknown>, status = 200, origin?: string | null): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' },
   })
 }
 
@@ -563,17 +559,19 @@ function electricalPipeline(livingSqft: number, stories: number, yearBuilt: numb
 // ============================================================================
 
 serve(async (req) => {
+  const origin = req.headers.get('Origin')
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return corsResponse(origin)
   }
 
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405)
+    return jsonResponse({ error: 'Method not allowed' }, 405, origin)
   }
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {
-    return jsonResponse({ error: 'Missing authorization' }, 401)
+    return jsonResponse({ error: 'Missing authorization' }, 401, origin)
   }
 
   const supabase = createClient(

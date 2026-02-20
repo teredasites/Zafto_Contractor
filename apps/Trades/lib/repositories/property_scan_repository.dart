@@ -13,14 +13,47 @@ import '../core/errors.dart';
 import '../core/supabase_client.dart';
 import '../models/property_scan.dart';
 
-class PropertyScanRepository {
+/// Abstract interface for PropertyScanRepository.
+/// Follows architecture pattern: abstract interface + concrete implementation.
+/// Enables testing with mock repositories.
+abstract class PropertyScanRepositoryInterface {
+  Future<List<PropertyScan>> getScans({int limit = 50});
+  Future<PropertyScan?> getScan(String scanId);
+  Future<PropertyScan?> getScanByJobId(String jobId);
+  Future<RoofMeasurement?> getRoofMeasurement(String scanId);
+  Future<List<RoofFacet>> getRoofFacets(String roofMeasurementId);
+  Future<WallMeasurement?> getWallMeasurement(String scanId);
+  Future<List<TradeBidData>> getTradeBids(String scanId);
+  Future<PropertyLeadScore?> getLeadScore(String scanId);
+  Future<List<ScanHistoryEntry>> getScanHistory(String scanId);
+  Future<void> logHistory({
+    required String scanId,
+    required String action,
+    String? fieldChanged,
+    String? oldValue,
+    String? newValue,
+    String device,
+    String? notes,
+  });
+  Future<void> verifyMeasurement({
+    required String scanId,
+    required String field,
+    required String oldValue,
+    required String newValue,
+    bool isAdjustment,
+  });
+  Future<String?> triggerScan({required String address, String? jobId});
+  Future<void> triggerLeadScore(String scanId);
+}
+
+class PropertyScanRepository implements PropertyScanRepositoryInterface {
   SupabaseClient get _client => supabase;
 
   // ════════════════════════════════════════════════════════════════
   // PROPERTY SCANS
   // ════════════════════════════════════════════════════════════════
 
-  /// Get all scans for the current company
+  @override
   Future<List<PropertyScan>> getScans({int limit = 50}) async {
     try {
       final res = await _client
@@ -36,7 +69,7 @@ class PropertyScanRepository {
     }
   }
 
-  /// Get a single scan by ID
+  @override
   Future<PropertyScan?> getScan(String scanId) async {
     try {
       final res = await _client
@@ -51,7 +84,7 @@ class PropertyScanRepository {
     }
   }
 
-  /// Get scan by job ID (most recent)
+  @override
   Future<PropertyScan?> getScanByJobId(String jobId) async {
     try {
       final res = await _client
@@ -73,7 +106,7 @@ class PropertyScanRepository {
   // ROOF MEASUREMENTS
   // ════════════════════════════════════════════════════════════════
 
-  /// Get roof measurement for a scan
+  @override
   Future<RoofMeasurement?> getRoofMeasurement(String scanId) async {
     try {
       final res = await _client
@@ -89,7 +122,7 @@ class PropertyScanRepository {
     }
   }
 
-  /// Get facets for a roof measurement
+  @override
   Future<List<RoofFacet>> getRoofFacets(String roofMeasurementId) async {
     try {
       final res = await _client
@@ -108,7 +141,7 @@ class PropertyScanRepository {
   // WALL MEASUREMENTS
   // ════════════════════════════════════════════════════════════════
 
-  /// Get wall measurement for a scan
+  @override
   Future<WallMeasurement?> getWallMeasurement(String scanId) async {
     try {
       final res = await _client
@@ -128,7 +161,7 @@ class PropertyScanRepository {
   // TRADE BID DATA
   // ════════════════════════════════════════════════════════════════
 
-  /// Get all trade bids for a scan
+  @override
   Future<List<TradeBidData>> getTradeBids(String scanId) async {
     try {
       final res = await _client
@@ -147,7 +180,7 @@ class PropertyScanRepository {
   // LEAD SCORES
   // ════════════════════════════════════════════════════════════════
 
-  /// Get lead score for a scan
+  @override
   Future<PropertyLeadScore?> getLeadScore(String scanId) async {
     try {
       final res = await _client
@@ -168,7 +201,7 @@ class PropertyScanRepository {
   // SCAN HISTORY
   // ════════════════════════════════════════════════════════════════
 
-  /// Get history for a scan
+  @override
   Future<List<ScanHistoryEntry>> getScanHistory(String scanId) async {
     try {
       final res = await _client
@@ -184,7 +217,7 @@ class PropertyScanRepository {
     }
   }
 
-  /// Log a history entry
+  @override
   Future<void> logHistory({
     required String scanId,
     required String action,
@@ -221,7 +254,7 @@ class PropertyScanRepository {
   // ON-SITE VERIFICATION
   // ════════════════════════════════════════════════════════════════
 
-  /// Verify or adjust a measurement field on-site
+  @override
   Future<void> verifyMeasurement({
     required String scanId,
     required String field,
@@ -286,7 +319,7 @@ class PropertyScanRepository {
   // TRIGGER SCAN (Edge Function)
   // ════════════════════════════════════════════════════════════════
 
-  /// Trigger a new property scan via Edge Function
+  @override
   Future<String?> triggerScan({
     required String address,
     String? jobId,
@@ -321,7 +354,7 @@ class PropertyScanRepository {
     }
   }
 
-  /// Trigger lead score computation via Edge Function
+  @override
   Future<void> triggerLeadScore(String scanId) async {
     try {
       final session = _client.auth.currentSession;

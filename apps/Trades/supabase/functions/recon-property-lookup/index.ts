@@ -12,14 +12,20 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders, corsResponse } from '../_shared/cors.ts'
+import { logApiCall } from '../_shared/api-cost-logger.ts'
+import { checkApiRateLimit } from '../_shared/api-rate-guard.ts'
 
 const SQM_TO_SQFT = 10.764
 const CACHE_DAYS = 30
+
+/** SHA-256 hash for address normalization (cache key) */
+async function hashAddress(address: string): Promise<string> {
+  const normalized = address.trim().toLowerCase().replace(/\s+/g, ' ')
+  const data = new TextEncoder().encode(normalized)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
+}
 
 interface SolarResponse {
   name?: string
@@ -125,21 +131,23 @@ function distanceFt(lat1: number, lng1: number, lat2: number, lng2: number): num
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-// Helper: JSON response
-function jsonResponse(body: Record<string, unknown>, status = 200): Response {
+// Helper: JSON response with CORS
+function jsonResponse(body: Record<string, unknown>, status = 200, origin?: string | null): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' },
   })
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('Origin')
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return corsResponse(origin)
   }
 
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405)
+    return jsonResponse({ error: 'Method not allowed' }, 405, origin)
   }
 
   const authHeader = req.headers.get('Authorization')
@@ -200,13 +208,38 @@ serve(async (req) => {
         Object.keys(solarJson).length > 0
 
       if (hasSolar) {
-        return jsonResponse({ scan_id: cached.id, cached: true })
+        // Update scan_cache hit count
+        const addrHash = await hashAddress(address)
+        await supabase.rpc('increment_scan_cache_hits', { p_company_id: companyId, p_hash: addrHash }).catch(() => {})
+        return jsonResponse({ scan_id: cached.id, cached: true }, 200, origin)
       }
       // Cache miss — previous scan was incomplete, expire stale record and re-scan
       await supabase
         .from('property_scans')
         .update({ cached_until: new Date(0).toISOString() })
         .eq('id', cached.id)
+    }
+
+    // ========================================================================
+    // CHECK scan_cache (dedicated cache table — 30-day TTL)
+    // ========================================================================
+    const addressHash = await hashAddress(address)
+    const { data: scanCacheHit } = await supabase
+      .from('scan_cache')
+      .select('id, scan_data')
+      .eq('company_id', companyId)
+      .eq('address_hash', addressHash)
+      .gt('expires_at', new Date().toISOString())
+      .maybeSingle()
+
+    if (scanCacheHit?.scan_data?.scan_id) {
+      // Increment hit counter
+      await supabase
+        .from('scan_cache')
+        .update({ hit_count: (scanCacheHit.scan_data.hit_count || 0) + 1 })
+        .eq('id', scanCacheHit.id)
+        .catch(() => {})
+      return jsonResponse({ scan_id: scanCacheHit.scan_data.scan_id, cached: true }, 200, origin)
     }
 
     // ========================================================================
@@ -295,9 +328,16 @@ serve(async (req) => {
     let imageryDate: Date | null = null
     let roofMeasurementId: string | null = null
     let totalRoofAreaSqft = 0
+    const apiTimings: Array<{ api: string; ms: number; status: number; cost: number }> = []
 
     if (solarKey) {
       try {
+        // Rate guard — skip Solar if at limit
+        const solarRate = await checkApiRateLimit(supabase, companyId, 'google_solar')
+        if (!solarRate.allowed) {
+          console.warn('[property-lookup] Google Solar rate limited, skipping')
+        } else {
+        const t0 = performance.now()
         const solarRes = await fetch(
           `https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=${lat}&location.longitude=${lng}&requiredQuality=HIGH&key=${solarKey}`
         )
@@ -406,15 +446,18 @@ serve(async (req) => {
             }
           }
         }
+        apiTimings.push({ api: 'google_solar', ms: Math.round(performance.now() - t0), status: solarRes.ok ? 200 : solarRes.status, cost: 0 })
       } catch {
         /* solar failed, continue with other sources */
       }
+      } // close rate guard block
     }
 
     // ========================================================================
     // STEP 3: USGS 3DEP ELEVATION (FREE)
     // ========================================================================
     try {
+      const t1 = performance.now()
       const usgsRes = await fetch(
         `https://epqs.nationalmap.gov/v1/json?x=${lng}&y=${lat}&wkid=4326&units=Feet&includeDate=false`
       )
@@ -426,6 +469,7 @@ serve(async (req) => {
           sources.push('usgs')
         }
       }
+      apiTimings.push({ api: 'usgs_3dep', ms: Math.round(performance.now() - t1), status: usgsRes.ok ? 200 : usgsRes.status, cost: 0 })
     } catch {
       /* USGS failed, non-critical */
     }
@@ -449,6 +493,7 @@ serve(async (req) => {
       // that also includes Microsoft-imported footprints
       const bbox = `${lat - 0.001},${lng - 0.001},${lat + 0.001},${lng + 0.001}`
       const overpassQuery = `[out:json][timeout:10];way["building"](${bbox});out geom;`
+      const t2 = performance.now()
       const overpassRes = await fetch(
         `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`
       )
@@ -557,6 +602,8 @@ serve(async (req) => {
       await supabase.from('property_structures').insert(structureRows)
     }
 
+    apiTimings.push({ api: 'overpass', ms: Math.round(performance.now() - t2), status: 200, cost: 0 })
+
     // ========================================================================
     // STEP 5: ATTOM API (GATED — only if ATTOM_API_KEY exists)
     // ========================================================================
@@ -564,13 +611,19 @@ serve(async (req) => {
     const attomKey = Deno.env.get('ATTOM_API_KEY')
 
     if (attomKey) {
+      const attomRate = await checkApiRateLimit(supabase, companyId, 'attom')
+      if (!attomRate.allowed) {
+        console.warn('[property-lookup] ATTOM rate limited, skipping')
+      } else {
       try {
+        const t3 = performance.now()
         const attomRes = await fetch(
           `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/expandedprofile?address1=${encodeURIComponent(address)}&address2=`,
           {
             headers: { apikey: attomKey, Accept: 'application/json' },
           }
         )
+        apiTimings.push({ api: 'attom', ms: Math.round(performance.now() - t3), status: attomRes.status, cost: 5 })
 
         if (attomRes.ok) {
           const attomJson = await attomRes.json()
@@ -583,6 +636,7 @@ serve(async (req) => {
       } catch {
         /* ATTOM failed, non-critical */
       }
+      }
     }
 
     // ========================================================================
@@ -592,10 +646,16 @@ serve(async (req) => {
     const regridKey = Deno.env.get('REGRID_API_KEY')
 
     if (regridKey) {
+      const regridRate = await checkApiRateLimit(supabase, companyId, 'regrid')
+      if (!regridRate.allowed) {
+        console.warn('[property-lookup] Regrid rate limited, skipping')
+      } else {
       try {
+        const t4 = performance.now()
         const regridRes = await fetch(
           `https://app.regrid.com/api/v1/search.json?query=${encodeURIComponent(address)}&token=${regridKey}`
         )
+        apiTimings.push({ api: 'regrid', ms: Math.round(performance.now() - t4), status: regridRes.status, cost: 2 })
 
         if (regridRes.ok) {
           const regridJson = await regridRes.json()
@@ -625,6 +685,7 @@ serve(async (req) => {
         }
       } catch {
         /* Regrid failed, non-critical */
+      }
       }
     }
 
@@ -765,6 +826,42 @@ serve(async (req) => {
       /* non-blocking — trade data can be generated on-demand */
     }
 
+    // ========================================================================
+    // BATCH LOG: API cost tracking (non-blocking)
+    // ========================================================================
+    for (const timing of apiTimings) {
+      logApiCall(supabase, {
+        company_id: companyId,
+        api_name: timing.api,
+        endpoint: timing.api,
+        response_status: timing.status,
+        latency_ms: timing.ms,
+        cost_cents: timing.cost,
+        created_by: user.id,
+      }).catch(() => {})
+    }
+
+    // ========================================================================
+    // WRITE scan_cache (non-blocking — cache full scan result for reuse)
+    // ========================================================================
+    supabase.from('scan_cache').upsert({
+      company_id: companyId,
+      address_hash: addressHash,
+      address_normalized: address.trim().toLowerCase(),
+      scan_data: {
+        scan_id: scanId,
+        status: finalStatus,
+        sources,
+        confidence_score: confidence,
+        structure_count: structures.length,
+        roof_area_sqft: Math.round(totalRoofAreaSqft * 100) / 100,
+      },
+      source_apis: sources,
+      cached_at: new Date().toISOString(),
+      expires_at: cachedUntil.toISOString(),
+      hit_count: 0,
+    }, { onConflict: 'company_id,address_hash' }).catch(() => {})
+
     return jsonResponse({
       scan_id: scanId,
       status: finalStatus,
@@ -777,9 +874,10 @@ serve(async (req) => {
       roof_measurement_id: roofMeasurementId,
       imagery_date: imageryDate?.toISOString().split('T')[0] || null,
       elevation_ft: elevationFt,
-    })
+    }, 200, origin)
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Internal server error'
-    return jsonResponse({ error: message }, 500)
+    console.error('[property-lookup] Error:', message)
+    return jsonResponse({ error: message }, 500, origin)
   }
 })

@@ -5,30 +5,29 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { getCorsHeaders, corsResponse } from '../_shared/cors.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+function jsonResponse(body: Record<string, unknown>, status = 200, origin?: string | null): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' },
+  })
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('Origin')
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return corsResponse(origin)
   }
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Method not allowed' }, 405, origin)
   }
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Missing authorization' }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Missing authorization' }, 401, origin)
   }
 
   const supabase = createClient(
@@ -39,10 +38,7 @@ serve(async (req) => {
   const token = authHeader.replace('Bearer ', '')
   const { data: { user }, error: authError } = await supabase.auth.getUser(token)
   if (authError || !user) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Unauthorized' }, 401, origin)
   }
 
   try {
@@ -50,13 +46,10 @@ serve(async (req) => {
     const { roof_measurement_id } = body as { roof_measurement_id: string }
 
     if (!roof_measurement_id) {
-      return new Response(JSON.stringify({ error: 'roof_measurement_id required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+      return jsonResponse({ error: 'roof_measurement_id required' }, 400, origin)
     }
 
-    // Get measurement + facets
+    // Get measurement + verify company access via inner join
     const { data: measurement, error: mErr } = await supabase
       .from('roof_measurements')
       .select('*, property_scans!inner(company_id)')
@@ -64,19 +57,14 @@ serve(async (req) => {
       .single()
 
     if (mErr || !measurement) {
-      return new Response(JSON.stringify({ error: 'Measurement not found' }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+      console.error('[roof-calculator] Measurement not found:', { roof_measurement_id, error: mErr?.message })
+      return jsonResponse({ error: 'Measurement not found', detail: mErr?.message }, 404, origin)
     }
 
     // Verify company access
     const companyId = user.app_metadata?.company_id
     if (measurement.property_scans?.company_id !== companyId) {
-      return new Response(JSON.stringify({ error: 'Access denied' }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+      return jsonResponse({ error: 'Access denied' }, 403, origin)
     }
 
     const { data: facets } = await supabase
@@ -88,6 +76,20 @@ serve(async (req) => {
     const facetList = facets || []
     const totalArea = measurement.total_area_sqft || 0
     const facetCount = facetList.length
+
+    // P-FIX1: Log diagnostic data for roof bug investigation
+    console.log('[roof-calculator] Input data:', {
+      roof_measurement_id,
+      totalArea,
+      facetCount,
+      shape: measurement.predominant_shape,
+      pitch: measurement.pitch_degrees,
+      penetrations: measurement.penetration_count,
+    })
+
+    if (totalArea === 0) {
+      console.warn('[roof-calculator] total_area_sqft is 0 — all edge calculations will be 0')
+    }
 
     // Estimate edge lengths from roof geometry
     // Using industry estimation formulas based on roof area and shape
@@ -177,7 +179,7 @@ serve(async (req) => {
 
     if (updateErr) throw updateErr
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
       roof_measurement_id,
       edges: {
         ridge_ft: round(ridgeLength),
@@ -189,15 +191,10 @@ serve(async (req) => {
       complexity_score: complexity,
       shape,
       total_edge_ft: round(ridgeLength + hipLength + valleyLength + eaveLength + rakeLength),
-    }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    }, 200, origin)
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Internal server error'
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    console.error('[roof-calculator] Error:', message)
+    return jsonResponse({ error: message }, 500, origin)
   }
 })
