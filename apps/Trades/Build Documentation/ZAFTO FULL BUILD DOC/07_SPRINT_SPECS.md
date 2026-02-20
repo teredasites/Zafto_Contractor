@@ -31036,7 +31036,7 @@ This completes the Seller Finder engine. RE6 + RE7 together replace SmartZip ($5
 
 ### RE21 — AI Negotiation Intelligence (~28h) — S145
 *Source: s132-realtor-10-gaps-spec.md, realtor-platform-deep-research-s129.md*
-*Depends on: RE1 (Realtor CRM), RE2 (CRM Foundation), RE3 (Smart CMA), RE5 (Transaction Engine), CUST9 (Module Registry)*
+*Depends on: RE1 (Realtor CRM), RE2 (CRM Foundation), RE3 (Smart CMA), RE5 (Transaction Engine), RE10 (Listing Management — negotiation_analyses.listing_id references realtor_listings), CUST9 (Module Registry)*
 *CUST9 Modules: NEGOTIATION_ANALYSIS, NEGOTIATION_COACHING, NEGOTIATION_HISTORY, MARKET_SNAPSHOTS*
 
 **What this builds:** Real-time negotiation intelligence — Price Flexibility Score (PFS) engine analyzing 7 signal dimensions (DOM, price history, market position, listing sentiment, property signals, comparable concessions, financial distress), buyer/seller strategy generation, counter-offer modeling, concession benchmarking, and outcome tracking with learning. First product in real estate to provide data-driven negotiation strategy. No competitor has this — category creator.
@@ -31195,20 +31195,24 @@ CREATE INDEX idx_market_snapshots_date ON market_snapshots (snapshot_date DESC);
 
 #### 21.5 Edge Functions (~4h)
 
-- [ ] `negotiation-calculate-pfs` EF: POST — accepts property data (address, listing_price, dom, price_history, listing_description, property_signals). Runs all 7 scoring dimensions. For sentiment analysis, calls Claude API with listing description. Returns {pfs_score, pfs_components, recommended_strategy, strategy_details}. Auth: JWT required, company_id validated. Rate limit: 50/min per company. **REQUIRES**: Claude API key in env vars. Graceful degradation: if Claude API down, sentiment_score defaults to 5/10 with note "sentiment analysis unavailable"
-- [ ] `negotiation-counter-model` EF: POST — accepts negotiation_analysis_id + scenario array [{offer_price, terms}]. For each scenario, calculates probability of acceptance based on PFS + market data + historical outcomes in area. Returns [{scenario, probability_pct, expected_counter_range, net_to_seller}]. Auth: JWT required. Rate limit: 30/min per company
+> All EFs log errors to Sentry via `Sentry.captureException()`.
+
+- [ ] `negotiation-calculate-pfs` EF: POST — accepts property data (address, listing_price, dom, price_history, listing_description, property_signals). Runs all 7 scoring dimensions. For sentiment analysis, calls Claude API with listing description. Returns {pfs_score, pfs_components, recommended_strategy, strategy_details}. Auth: JWT required, company_id validated. Rate limit: 50/min per company. **REQUIRES**: Claude API key in env vars. Graceful degradation: if Claude API down, sentiment_score defaults to 5/10 with note "sentiment analysis unavailable". CORS via `_shared/cors.ts`
+- [ ] `negotiation-counter-model` EF: POST — accepts negotiation_analysis_id + scenario array [{offer_price, terms}]. For each scenario, calculates probability of acceptance based on PFS + market data + historical outcomes in area. Returns [{scenario, probability_pct, expected_counter_range, net_to_seller}]. Auth: JWT required. Rate limit: 30/min per company. CORS via `_shared/cors.ts`
 - [ ] `market-snapshot-cron` EF: CRON (runs daily at 06:00 UTC) — pulls mortgage rates from FRED API (series MORTGAGE30US, MORTGAGE15US), FHFA HPI quarterly, Census ACS annual. Upserts into market_snapshots for all active ZIPs. Uses service_role. Idempotent: checks snapshot_date before insert
-- [ ] `negotiation-coaching-suggest` EF: POST — accepts negotiation_analysis_id + current negotiation step (offer/counter details). Returns coaching text based on PFS, market conditions, and concession benchmarks. Auth: JWT required
+- [ ] `negotiation-coaching-suggest` EF: POST — accepts negotiation_analysis_id + current negotiation step (offer/counter details). Returns coaching text based on PFS, market conditions, and concession benchmarks. Auth: JWT required. Rate limit: 20/min per company. CORS via `_shared/cors.ts`
 
 #### 21.6 Flutter Screens (~5h)
 
 - [ ] `NegotiationAnalysisScreen` — Build analysis from listing URL or manual input. PFS breakdown with 7-dimension radar chart. Strategy recommendation card. 4-state screen (loading/error/empty/data)
-- [ ] `CounterOfferModelerScreen` — Interactive: input listing price + offer + up to 5 counter scenarios. Per scenario: probability gauge, expected counter range, net-to-seller. Visual comparison
-- [ ] `NegotiationCoachingScreen` — Step-by-step negotiation logging. Each step gets live coaching advice. Timeline view of offer/counter history
-- [ ] `ConcessionBenchmarkingScreen` — ZIP-specific concession data. What to ask for. Historical trends. Comparison to norms
-- [ ] `NegotiationHistoryScreen` — Past negotiations with outcomes. PFS accuracy over time. Strategy effectiveness charts
+- [ ] `CounterOfferModelerScreen` — Interactive: input listing price + offer + up to 5 counter scenarios. Per scenario: probability gauge, expected counter range, net-to-seller. Visual comparison. 4-state screen (loading/error/empty/data)
+- [ ] `NegotiationCoachingScreen` — Step-by-step negotiation logging. Each step gets live coaching advice. Timeline view of offer/counter history. 4-state screen (loading/error/empty/data)
+- [ ] `ConcessionBenchmarkingScreen` — ZIP-specific concession data. What to ask for. Historical trends. Comparison to norms. 4-state screen (loading/error/empty/data)
+- [ ] `NegotiationHistoryScreen` — Past negotiations with outcomes. PFS accuracy over time. Strategy effectiveness charts. 4-state screen (loading/error/empty/data)
 
 #### 21.7 Web Portal (~3h)
+
+**Hooks**: `use-negotiations.ts` — { analyses, outcomes, loading, error, createAnalysis, updateAnalysis }. Real-time subscription on `negotiation_analyses` + `negotiation_outcomes` (postgres_changes, company_id filter). Soft-delete: `.is('deleted_at', null)` on all queries.
 
 - [ ] `/realtor/negotiation` — Negotiation Intelligence dashboard: active analyses, PFS leaderboard, recent outcomes
 - [ ] `/realtor/negotiation/[id]` — Full analysis detail: PFS breakdown, strategy, counter-offer modeler, coaching history
@@ -31224,6 +31228,7 @@ CREATE INDEX idx_market_snapshots_date ON market_snapshots (snapshot_date DESC);
 - [ ] Rate limiting on all EFs to prevent abuse
 - [ ] All tables have deleted_at column (except market_snapshots — immutable reference)
 - [ ] All tables have updated_at trigger (except market_snapshots)
+- [ ] Optimistic locking on negotiation_analyses and negotiation_outcomes UPDATE operations (WHERE updated_at = $expected)
 
 #### Ecosystem Connections
 - [ ] **RE3** (Smart CMA) — market data from market_snapshots powers CMA. PFS score shown alongside CMA report
@@ -31297,6 +31302,7 @@ CREATE INDEX idx_risk_scores_company ON agent_risk_scores (company_id) WHERE del
 CREATE INDEX idx_risk_scores_agent ON agent_risk_scores (agent_user_id, score_date DESC) WHERE deleted_at IS NULL;
 CREATE INDEX idx_risk_scores_level ON agent_risk_scores (risk_level) WHERE deleted_at IS NULL;
 CREATE INDEX idx_risk_scores_date ON agent_risk_scores (score_date DESC) WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX idx_risk_scores_agent_date ON agent_risk_scores (company_id, agent_user_id, score_date) WHERE deleted_at IS NULL;
 CREATE TRIGGER risk_scores_updated BEFORE UPDATE ON agent_risk_scores FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER risk_scores_audit AFTER INSERT OR UPDATE OR DELETE ON agent_risk_scores FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -31365,18 +31371,22 @@ CREATE INDEX idx_activity_metrics_date ON agent_activity_metrics (metric_date DE
 
 #### 22.3 Edge Functions (~3h)
 
+> All EFs are service_role CRON/trigger functions — no CORS needed (not user-facing). All EFs log errors to Sentry via `Sentry.captureException()`.
+
 - [ ] `agent-risk-score-cron` EF: CRON (runs weekly, Sunday at 22:00 UTC) — for each company with brokerage plan, aggregate weekly activity metrics per agent. Run 7-signal scoring algorithm. Upsert agent_risk_scores. If any agent crosses risk_level threshold, queue notification. Uses service_role. Idempotent: checks score_date before insert
 - [ ] `agent-activity-aggregate-cron` EF: CRON (runs daily at 23:00 UTC) — for each company, aggregate daily activity counts per agent from: auth.sessions (logins), realtor_transactions (deals), realtor_contacts (CRM activity), etc. Insert into agent_activity_metrics. Service_role
-- [ ] `agent-risk-digest` EF: CRON (runs Monday 13:00 UTC → ~8AM ET) — for each company with brokerage plan, generate weekly digest email/push with risk summary. Send to users with managing_broker role
-- [ ] `agent-risk-alert` EF: triggered by agent_risk_scores INSERT/UPDATE where risk_score >= 75 — sends immediate push + email to managing broker
+- [ ] `agent-risk-digest` EF: CRON (runs Monday 13:00 UTC → ~8AM ET) — for each company with brokerage plan, generate weekly digest email/push with risk summary. Send to users with managing_broker role. CRON timezone: company-local via `company_settings.timezone` (not hardcoded UTC offset)
+- [ ] `agent-risk-alert` EF: Triggered via Supabase Database Webhook (configured in Supabase Dashboard → Database → Webhooks → INSERT/UPDATE on agent_risk_scores WHERE risk_score >= 75). NOT a PostgreSQL trigger or Realtime subscription. Sends immediate push + email to managing broker
 
 #### 22.4 Flutter Screens (~2h)
 
-- [ ] `AgentRetentionHeatMapScreen` — All agents grid, color-coded by risk level (green/yellow/orange/red). Tap for detail. Only visible to managing_broker/owner/admin role
-- [ ] `AgentRiskDetailScreen` — Full signal breakdown radar chart, activity timeline, action history, ROI calculator. Broker can add notes and log actions
-- [ ] `RetentionPlaybookScreen` — Recommended actions by score range. Action templates. One-tap to schedule 1-on-1
+- [ ] `AgentRetentionDashboardScreen` — All agents grid, color-coded by risk level (green/yellow/orange/red). Tap for detail. Only visible to managing_broker/owner/admin role. 4-state screen (loading/error/empty/data)
+- [ ] `AgentRiskDetailScreen` — Full signal breakdown radar chart, activity timeline, action history, ROI calculator. Broker can add notes and log actions. 4-state screen (loading/error/empty/data)
+- [ ] `RetentionPlaybookScreen` — Recommended actions by score range. Action templates. One-tap to schedule 1-on-1. 4-state screen (loading/error/empty/data)
 
 #### 22.5 Web Portal (~3h)
+
+**Hooks**: `use-agent-retention.ts` — { riskScores, activityMetrics, loading, error }. Real-time subscription on `agent_risk_scores` (postgres_changes). Read-only for non-managing-broker roles. Soft-delete: `.is('deleted_at', null)`.
 
 - [ ] `/realtor/brokerage/retention` — Retention dashboard: heat map, trend charts, company-wide risk over time, seasonal patterns
 - [ ] `/realtor/brokerage/retention/[agentId]` — Agent detail drilldown: full signal breakdown, activity timeline, action history, ROI calc
@@ -31388,12 +31398,17 @@ CREATE INDEX idx_activity_metrics_date ON agent_activity_metrics (metric_date DE
 - [ ] CRON EFs use service_role but iterate per company_id — never cross-company aggregation
 - [ ] Privacy disclosure: brokerage terms must include "Activity data is used for business analytics including retention insights"
 - [ ] Agent data request: agents can request their activity data (transparency principle) — via settings page
+- [ ] Privacy jurisdiction: States requiring employee monitoring disclosure: CA (CalECPA), CT (CGS 31-48d), DE (HB 222), NY (Civil Rights Law S52-c*4). Brokerage terms MUST include agent analytics disclosure per applicable state law
 - [ ] All tables have appropriate indexes and triggers (see migration)
+- [ ] Optimistic locking on agent_risk_scores UPDATE (broker_notes, action_taken fields — WHERE updated_at = $expected)
 
 #### Ecosystem Connections
 - [ ] **RE13** (Brokerage Admin) — retention dashboard embedded in brokerage admin section
 - [ ] **RE2** (CRM) — CRM activity counts feed into engagement signals
 - [ ] **RE4-RE5** (Transaction Engine) — deal pipeline and GCI feed into production signals
+- [ ] **RE14** (Lead Gen) — Declining lead activity is a risk signal, feeds engagement_score
+- [ ] **RE27** (Power Dialer) — Call activity/volume feeds engagement_score
+- [ ] **RE10** (Listing Management) — Listing activity feeds production_score
 - [ ] **CUST9** — AGENT_RETENTION, AGENT_RISK_SCORES, RETENTION_PLAYBOOK modules gated to brokerage-tier plans only
 
 #### i18n Requirements
@@ -31474,6 +31489,7 @@ CREATE INDEX idx_invest_analyses_contact ON investment_analyses (contact_id) WHE
 CREATE INDEX idx_invest_analyses_type ON investment_analyses (analysis_type) WHERE deleted_at IS NULL;
 CREATE INDEX idx_invest_analyses_transaction ON investment_analyses (transaction_id) WHERE deleted_at IS NULL AND transaction_id IS NOT NULL;
 CREATE INDEX idx_invest_analyses_favorite ON investment_analyses (company_id, is_favorite) WHERE deleted_at IS NULL AND is_favorite = true;
+CREATE INDEX idx_invest_analyses_company_type ON investment_analyses (company_id, analysis_type) WHERE deleted_at IS NULL;
 CREATE TRIGGER invest_analyses_updated BEFORE UPDATE ON investment_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER invest_analyses_audit AFTER INSERT OR UPDATE OR DELETE ON investment_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -31503,6 +31519,7 @@ CREATE TABLE rental_market_data (
 
 -- rental_market_data: NO company_id — shared reference data populated by CRON
 ALTER TABLE rental_market_data ENABLE ROW LEVEL SECURITY;
+-- NOTE: Uses auth.role() = 'authenticated' instead of requesting_company_id() because this is shared reference data (no company scoping). Intentional deviation from company-scoped pattern.
 CREATE POLICY "rental_market_select" ON rental_market_data FOR SELECT USING (auth.role() = 'authenticated');
 CREATE UNIQUE INDEX idx_rental_market_zip_date ON rental_market_data (zip_code, data_date DESC);
 CREATE INDEX idx_rental_market_county ON rental_market_data (county_fips) WHERE county_fips IS NOT NULL;
@@ -31561,9 +31578,11 @@ CREATE INDEX idx_rental_market_county ON rental_market_data (county_fips) WHERE 
 
 #### 23.6 Edge Functions (~3h)
 
-- [ ] `investment-calculate` EF: POST — accepts property_details, purchase_assumptions, financing_details, rental_income, operating_expenses. Runs full financial model. Returns all return_metrics, cash_flow_projection, appreciation_forecast, sensitivity_analysis, tax_analysis. Auth: JWT required. Rate limit: 50/min per company. **Legal disclaimer**: "For estimation purposes only. Not professional financial or tax advice. Consult a qualified professional."
-- [ ] `rental-market-cron` EF: CRON (runs monthly on 1st at 04:00 UTC) — pulls HUD FMR (annual), Census ACS rent (annual), calculates vacancy rates and rent growth. Upserts rental_market_data for active ZIPs. Service_role
-- [ ] `investment-pdf-generate` EF: POST — accepts investment_analysis_id. Generates professional PDF via @react-pdf/renderer. Uploads to Supabase Storage. Returns URL. Auth: JWT required
+> EF naming convention: `{entity}-{verb}` (e.g., investment-calculate, investment-pdf-generate). Follow this pattern for consistency. All EFs log errors to Sentry via `Sentry.captureException()`.
+
+- [ ] `investment-calculate` EF: POST — accepts property_details, purchase_assumptions, financing_details, rental_income, operating_expenses. Runs full financial model. Returns all return_metrics, cash_flow_projection, appreciation_forecast, sensitivity_analysis, tax_analysis. Auth: JWT required. Rate limit: 50/min per company. **Legal disclaimer**: "For estimation purposes only. Not professional financial or tax advice. Consult a qualified professional." CORS via `_shared/cors.ts`. Input validation: Required fields per analysis_type (buy_and_hold requires rent_estimate or comparable_rents; brrrr requires rehab_budget + arv). Numeric ranges: down_payment_pct 0-100, interest_rate 0-30, term_years 1-40, property_price > 0. String limits: notes max 5000 chars. Reject invalid analysis_type values
+- [ ] `rental-market-cron` EF: CRON (runs monthly on 1st at 04:00 UTC) — pulls HUD FMR (annual), Census ACS rent (annual), calculates vacancy rates and rent growth. Upserts rental_market_data for active ZIPs. Service_role. No CORS (CRON, not user-facing)
+- [ ] `investment-pdf-generate` EF: POST — accepts investment_analysis_id. Generates professional PDF via @react-pdf/renderer. Uploads to Supabase Storage. Returns URL. Auth: JWT required. Rate limit: 10/min per company. CORS via `_shared/cors.ts`
 
 #### 23.7 Flutter Screens (~4h)
 
@@ -31571,11 +31590,13 @@ CREATE INDEX idx_rental_market_county ON rental_market_data (county_fips) WHERE 
 - [ ] `BRRRRCalculatorScreen` — BRRRR-specific workflow: purchase at discount, rehab budget (link to estimate engine), ARV, refi terms, rent estimate. Shows cash left in deal
 - [ ] `STRAnalysisScreen` — Short-term rental: occupancy slider, nightly rate, seasonal variation, platform fees. STR vs LTR comparison
 - [ ] `SensitivityModelerScreen` — Interactive: sliders for vacancy, rates, rent, appreciation, expenses. Real-time cash flow and ROI updates as sliders move
-- [ ] `InvestmentHistoryScreen` — Past analyses list with key metrics. Compare side-by-side
+- [ ] `InvestmentHistoryScreen` — Past analyses list with key metrics. Compare side-by-side. Includes favorite toggle (star icon) per analysis, filter by favorites
 
 #### 23.8 Web Portal (~3h)
 
-- [ ] `/realtor/investments` — Investment analysis dashboard: recent analyses, saved properties, market data
+**Hooks**: `use-investments.ts` — { analyses, loading, error, createAnalysis, recalculate, generatePDF, toggleFavorite }. Real-time subscription on `investment_analyses` (postgres_changes). `use-rental-market.ts` — { marketData, loading } (read-only, no real-time needed for reference data). Soft-delete: `.is('deleted_at', null)`.
+
+- [ ] `/realtor/investments` — Investment analysis dashboard: recent analyses, saved properties, market data. Favorites filter tab, quick-access favorite analyses
 - [ ] `/realtor/investments/new` — Full analysis builder (web version)
 - [ ] `/realtor/investments/[id]` — Analysis detail with interactive charts and PDF download
 - [ ] `/realtor/rental-market` — Rental market data browser: search by ZIP, compare areas
@@ -31637,7 +31658,7 @@ CREATE TABLE hoa_profiles (
   city TEXT,
   state TEXT,
   zip TEXT,
-  total_units INT,
+  total_units INT CHECK (total_units > 0),  -- nullable: unknown until HOA docs analyzed. Required for reserve adequacy calcs
   property_type TEXT CHECK (property_type IN ('condo', 'townhome', 'sfh', 'mixed')),
   year_established INT,
   state_registration_number TEXT,
@@ -31701,6 +31722,8 @@ CREATE INDEX idx_hoa_fin_company ON hoa_financial_analyses (company_id) WHERE de
 CREATE INDEX idx_hoa_fin_profile ON hoa_financial_analyses (hoa_profile_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_hoa_fin_grade ON hoa_financial_analyses (overall_grade) WHERE deleted_at IS NULL;
 CREATE INDEX idx_hoa_fin_risk ON hoa_financial_analyses (special_assessment_risk_score DESC) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_fin_company_profile ON hoa_financial_analyses (company_id, hoa_profile_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_fin_property ON hoa_financial_analyses (property_id) WHERE deleted_at IS NULL AND property_id IS NOT NULL;
 CREATE TRIGGER hoa_fin_updated BEFORE UPDATE ON hoa_financial_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER hoa_fin_audit AFTER INSERT OR UPDATE OR DELETE ON hoa_financial_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -31709,10 +31732,10 @@ CREATE TABLE hoa_documents (
   company_id UUID NOT NULL REFERENCES companies(id),
   hoa_financial_analysis_id UUID NOT NULL REFERENCES hoa_financial_analyses(id),
   document_type TEXT NOT NULL CHECK (document_type IN ('budget', 'reserve_study', 'meeting_minutes', 'financial_statement', 'cc_rs', 'bylaws', 'insurance_dec_page')),
-  file_url TEXT NOT NULL,
+  file_path TEXT NOT NULL,  -- Supabase Storage path (e.g., hoa-docs/{company_id}/{analysis_id}/{filename}). Generate signed URLs on demand.
   ocr_text TEXT,
   ai_extracted_data JSONB,
-  uploaded_by UUID REFERENCES auth.users(id),
+  uploaded_by UUID NOT NULL REFERENCES auth.users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
@@ -31727,6 +31750,8 @@ CREATE INDEX idx_hoa_docs_analysis ON hoa_documents (hoa_financial_analysis_id) 
 CREATE INDEX idx_hoa_docs_type ON hoa_documents (document_type) WHERE deleted_at IS NULL;
 CREATE TRIGGER hoa_docs_audit AFTER INSERT OR DELETE ON hoa_documents FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 ```
+
+> Duplicate detection: EF checks for existing profile with same (company_id, hoa_name, zip) before INSERT. No UNIQUE constraint because HOA names may vary in spelling.
 
 - [ ] Write migration file `20260221000148_re24_hoa_intelligence.sql`
 - [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
@@ -31752,12 +31777,15 @@ CREATE TRIGGER hoa_docs_audit AFTER INSERT OR DELETE ON hoa_documents FOR EACH R
 - [ ] 50-state disclosure matrix: what HOAs must disclose to buyers per state. FL: financial statements + budget + insurance + reserves + litigation + assessments. CA: CC&Rs + bylaws + financials + litigation
 - [ ] Surfside law compliance (FL): buildings 3+ stories AND 25+ years (within 3mi of coast) or 30+ years → mandatory structural inspection (SIRS). Has inspection been completed?
 - [ ] Overall grade: A (80-100, well-funded >70%, low delinquency), B (60-79, adequate 50-70%), C (40-59, underfunded 30-50%), D (20-39, significantly underfunded), F (0-19, critical — imminent special assessment)
+- [ ] States without HOA registries: no automated verification possible — manual compliance check required. UI shows "State registry not available — verify HOA registration status manually."
 
 #### 24.4 Edge Functions (~3h)
 
-- [ ] `hoa-analyze-document` EF: POST — accepts hoa_document_id, reads file from Storage, sends to Claude for OCR/extraction. Stores ocr_text and ai_extracted_data. Auth: JWT required, company_id validated. Rate limit: 10/min per company. **REQUIRES**: Claude API key. Graceful degradation: if Claude API down, mark document as pending_analysis
-- [ ] `hoa-calculate-scores` EF: POST — accepts hoa_financial_analysis_id, aggregates all document extractions, runs risk scoring algorithm, calculates overall grade. Updates hoa_financial_analyses row. Auth: JWT required
-- [ ] `hoa-generate-report` EF: POST — generates HOA Health Card PDF via @react-pdf/renderer. One-page summary: grade, reserve adequacy, risk score, flags, comparison, recommendation. Upload to Storage. Auth: JWT required
+> All EFs log errors to Sentry via `Sentry.captureException()`.
+
+- [ ] `hoa-analyze-document` EF: POST — accepts hoa_document_id, reads file from Storage, sends to Claude for OCR/extraction. Stores ocr_text and ai_extracted_data. Auth: JWT required, company_id validated. Rate limit: 10/min per company. CORS via `_shared/cors.ts`. **REQUIRES**: Claude API key. Graceful degradation: if Claude API down, mark document as pending_analysis
+- [ ] `hoa-calculate-scores` EF: POST — accepts hoa_financial_analysis_id, aggregates all document extractions, runs risk scoring algorithm, calculates overall grade. Updates hoa_financial_analyses row. Auth: JWT required. Rate limit: 20/min per company. CORS via `_shared/cors.ts`
+- [ ] `hoa-generate-report` EF: POST — generates HOA Health Card PDF via @react-pdf/renderer. One-page summary: grade, reserve adequacy, risk score, flags, comparison, recommendation. Upload to Storage. Auth: JWT required. Rate limit: 10/min per company. CORS via `_shared/cors.ts`
 
 #### 24.5 Flutter Screens (~2h)
 
@@ -31767,6 +31795,8 @@ CREATE TRIGGER hoa_docs_audit AFTER INSERT OR DELETE ON hoa_documents FOR EACH R
 - [ ] `HOARiskDetailScreen` — Deep dive: every risk flag with evidence text, mitigation suggestions
 
 #### 24.6 Web Portal (~2h)
+
+**Hooks**: `use-hoa-analysis.ts` — { profiles, analyses, loading, error, createProfile, analyzeDocument, calculateScores, generateReport }. Real-time subscription on `hoa_profiles` + `hoa_financial_analyses` (postgres_changes). `use-hoa-documents.ts` — { documents, uploadDocument, loading } with OCR status polling. Soft-delete: `.is('deleted_at', null)`.
 
 - [ ] `/realtor/hoa-analysis` — HOA Analysis dashboard: recent analyses, grade distribution
 - [ ] `/realtor/hoa-analysis/[id]` — Full report: grade, scores, documents, risk flags, compliance, buyer advisory
@@ -31779,6 +31809,7 @@ CREATE TRIGGER hoa_docs_audit AFTER INSERT OR DELETE ON hoa_documents FOR EACH R
 - [ ] OCR text stored server-side only — client sees extracted structured data, not raw OCR
 - [ ] HOA documents may contain PII (names, addresses, unit numbers) — handle with care, no logging of raw OCR
 - [ ] All tables have deleted_at, updated_at triggers, audit triggers (except hoa_documents — no updated_at, immutable)
+- [ ] hoa_documents: no UPDATE policy (immutable after upload — intentional deviation from standard UPDATE pattern). No updated_at column. Audit trigger fires on INSERT and soft-DELETE only
 
 #### Ecosystem Connections
 - [ ] **RE3** (Smart CMA) — HOA grade shown in CMA property report
@@ -31873,6 +31904,7 @@ CREATE POLICY "risk_profiles_delete" ON property_risk_profiles FOR DELETE USING 
 CREATE INDEX idx_risk_profiles_company ON property_risk_profiles (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_risk_profiles_property ON property_risk_profiles (property_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_risk_profiles_risk ON property_risk_profiles (composite_risk_score DESC) WHERE deleted_at IS NULL;
+CREATE INDEX idx_risk_profiles_created_by ON property_risk_profiles (created_by) WHERE deleted_at IS NULL;
 CREATE TRIGGER risk_profiles_updated BEFORE UPDATE ON property_risk_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER risk_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON property_risk_profiles FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -31894,6 +31926,7 @@ CREATE TABLE insurance_rate_factors (
 );
 
 -- insurance_rate_factors: NO company_id — shared reference data from NAIC reports
+-- No audit trigger on insurance_rate_factors (shared reference data, no company_id). Changes tracked via data_year + source columns.
 ALTER TABLE insurance_rate_factors ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "ins_rate_select" ON insurance_rate_factors FOR SELECT USING (auth.role() = 'authenticated');
 CREATE UNIQUE INDEX idx_ins_rate_state_county_zip ON insurance_rate_factors (state, county, zip, data_year);
@@ -31934,17 +31967,19 @@ CREATE INDEX idx_ins_rate_state ON insurance_rate_factors (state);
 
 #### 25.4 Edge Functions (~4h)
 
-- [ ] `insurance-assess-risk` EF: POST — accepts property address (lat/lng). Calls all 7 APIs in parallel (FEMA, OpenFEMA, NASA FIRMS, ASCE, NOAA, USGS, FBI). Each wrapped in try/catch with graceful degradation (null if API fails). Calculates composite_risk_score and insurance estimates. Returns full property_risk_profile data. Auth: JWT required. Rate limit: 30/min per company. Cache results by address for 30 days
-- [ ] `insurance-generate-brief` EF: POST — accepts property_risk_profile_id. Generates Insurance Brief PDF via @react-pdf/renderer. Upload to Storage. Return URL. Auth: JWT required
+- [ ] `insurance-assess-risk` EF: POST — accepts property address (lat/lng). CORS via `_shared/cors.ts`. Calls all 7 APIs in parallel (FEMA, OpenFEMA, NASA FIRMS, ASCE, NOAA, USGS, FBI). Each wrapped in try/catch with graceful degradation (null if API fails). Calculates composite_risk_score and insurance estimates. Returns full property_risk_profile data. Auth: JWT required. Rate limit: 30/min per company. Input validation: lat range -90 to 90, lng range -180 to 180, address max 500 chars. UUID format check on property_id if provided. Cache: Results cached in `property_risk_profiles` table (existing row reused if address unchanged and created_at < 30 days). No separate cache table needed. Invalidation: manual re-assess overwrites existing profile
+- [ ] `insurance-generate-brief` EF: POST — accepts property_risk_profile_id. CORS via `_shared/cors.ts`. Generates Insurance Brief PDF via @react-pdf/renderer. Upload to Storage. Return URL. Auth: JWT required. Input validation: UUID format on property_risk_profile_id, verify profile exists and belongs to requesting company. Rate limit: 10/min per company (PDF generation is CPU-intensive)
 - [ ] `insurance-rate-seed` EF: manual trigger — imports NAIC state premium data into insurance_rate_factors. Run when new annual data published. Service_role only
 
 #### 25.5 Flutter Screens (~2h)
 
 - [ ] `InsuranceRiskProfileScreen` — Risk dashboard: composite score gauge (0-100), 7 risk factor cards, premium estimate range, coverage recommendations. 4-state screen
-- [ ] `FloodZoneDetailScreen` — FEMA flood zone map, claims history, NFIP vs private comparison, LOMA eligibility
-- [ ] `InsuranceBriefScreen` — Buyer-friendly summary: estimated cost, top factors, tips. Share to client portal. Download PDF
+- [ ] `FloodZoneDetailScreen` — FEMA flood zone map, claims history, NFIP vs private comparison, LOMA eligibility. 4-state screen (loading/error/empty/data)
+- [ ] `InsuranceBriefScreen` — Buyer-friendly summary: estimated cost, top factors, tips. Share to client portal. Download PDF. 4-state screen (loading/error/empty/data)
 
 #### 25.6 Web Portal (~2h)
+
+**Hooks**: `use-insurance-risk.ts` — { riskProfiles, loading, error, assessRisk, generateBrief }. Real-time subscription on `property_risk_profiles` (postgres_changes, company_id filter). Soft-delete: `.is('deleted_at', null)`. Return shape: `{ data: PropertyRiskProfile[], loading: boolean, error: Error | null, assessRisk: (params) => Promise, generateBrief: (profileId) => Promise<string> }`.
 
 - [ ] `/realtor/insurance` — Insurance estimation dashboard: recent assessments, risk profile list
 - [ ] `/realtor/insurance/[id]` — Full risk profile: all 7 sources, claims map, coverage recommendations
@@ -31983,6 +32018,8 @@ CREATE INDEX idx_ins_rate_state ON insurance_rate_factors (state);
 *Source: s132-realtor-10-gaps-spec.md, proptech-flagship-research-s128.md*
 *Depends on: RE1 (Realtor CRM), RE5 (Transaction Engine), RE9 (Dispatch Engine), F10 (ZForge), CUST9 (Module Registry)*
 *CUST9 Modules: HOME_PROFILES, HOME_SYSTEMS, MAINTENANCE_SCHEDULES, HOME_VALUE_UPDATES, CAPITAL_PLANNING*
+
+**⚠️ INTEG6 DEPENDENCY**: RE26 and CLIENT3 have overlapping scope (home maintenance). INTEG6 sprint will unify these into a single table set. Build RE26 first; INTEG6 handles dedup. See Ecosystem Connections.
 
 **What this builds:** Lifetime client relationship engine — after every closing, buyer's agent sets up Home Health Dashboard at client.zafto.cloud. Tracks every system, sends climate-zone maintenance reminders, warns about warranty expirations, budgets maintenance costs, dispatches contractors, sends annual value updates with refinance detection. 400+ pre-loaded tasks by climate zone. HUD EUL equipment lifespan forecasting. Replaces Homebot ($25/mo) and HomeKeepr ($40-75/mo) with contractor-grade depth.
 
@@ -32062,8 +32099,9 @@ CREATE TABLE home_systems (
   replacement_cost_estimate NUMERIC(10,2),
   annual_maintenance_cost NUMERIC(8,2),
   notes TEXT,
-  photos JSONB,
-  service_history JSONB,
+  photos JSONB,  -- [{url: string, caption: string, taken_at: string (ISO8601)}]
+  service_history JSONB,  -- [{date: string, provider: string, description: string, cost: number, receipt_url?: string}]
+  created_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now(),
   deleted_at TIMESTAMPTZ
@@ -32099,6 +32137,7 @@ CREATE TABLE maintenance_schedules (
   estimated_duration_minutes INT,
   diy_difficulty TEXT CHECK (diy_difficulty IN ('easy', 'moderate', 'hard', 'professional_only')),
   related_system_id UUID REFERENCES home_systems(id),
+  created_by UUID REFERENCES auth.users(id),
   last_completed DATE,
   next_due DATE,
   overdue BOOLEAN DEFAULT false,
@@ -32112,6 +32151,7 @@ CREATE POLICY "maint_sched_select" ON maintenance_schedules FOR SELECT USING (co
 CREATE POLICY "maint_sched_insert" ON maintenance_schedules FOR INSERT WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "maint_sched_update" ON maintenance_schedules FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "maint_sched_delete" ON maintenance_schedules FOR DELETE USING (company_id = requesting_company_id());
+-- NOTE: home_profiles DELETE restricted to owner/admin. Child tables (home_systems, maintenance_schedules) allow any company member to soft-delete — intentional: field agents need to remove obsolete systems/schedules without admin approval.
 -- Client portal: homeowners see maintenance schedules via home_profile
 CREATE POLICY "maint_sched_client_select" ON maintenance_schedules FOR SELECT USING (
   home_profile_id IN (SELECT id FROM home_profiles WHERE client_user_id = auth.uid() AND deleted_at IS NULL)
@@ -32142,6 +32182,7 @@ CREATE TABLE home_value_updates (
   created_at TIMESTAMPTZ DEFAULT now()
   -- No updated_at — value updates are immutable snapshots
   -- No deleted_at — historical record, never deleted
+  -- Intentional deviations: No updated_at (immutable snapshots). No deleted_at (historical records never deleted). These are audit-grade communications — regulatory requirement to preserve.
 );
 
 ALTER TABLE home_value_updates ENABLE ROW LEVEL SECURITY;
@@ -32182,6 +32223,8 @@ CREATE TRIGGER value_updates_audit AFTER INSERT ON home_value_updates FOR EACH R
 
 #### 26.3 Notifications & Contractor Dispatch (~4h)
 
+> Delivery channels: (1) In-app notification via Supabase Realtime (primary), (2) Email via send-email EF (secondary), (3) Push notification via FCM (requires LAUNCH-FLAVORS Firebase integration). Degrade gracefully: if FCM unavailable, email + in-app only.
+
 - [ ] Smart reminders: 2 weeks before seasonal task due → push notification to homeowner. "Time to schedule AC tune-up. Last service: March 2025."
 - [ ] Overdue alerts: 30+ days overdue → escalation. "Furnace hasn't been serviced in 14 months. Neglect can void warranty."
 - [ ] Warranty expiration warnings: 90 days before any warranty expires → alert. "Samsung dishwasher warranty expires June 15."
@@ -32201,18 +32244,20 @@ CREATE TRIGGER value_updates_audit AFTER INSERT ON home_value_updates FOR EACH R
 
 - [ ] `maintenance-reminder-cron` EF: CRON (runs daily at 13:00 UTC) — checks all maintenance_schedules where next_due <= now() + 14 days. Sends push/email to homeowner. Updates overdue flag. Service_role, iterates per company_id
 - [ ] `home-value-update-cron` EF: CRON (runs monthly on 15th at 04:00 UTC) — for each active home_profile, calculate estimated value using FHFA HPI appreciation from purchase. Check FRED rates for refi opportunity. Insert home_value_update. Send agent-branded notification to homeowner. Service_role
-- [ ] `maintenance-setup-from-transaction` EF: POST — accepts transaction_id. Creates home_profile from transaction data. Detects climate zone. Generates 400+ maintenance_schedule rows based on climate zone + home characteristics. Auth: JWT required
-- [ ] `maintenance-weather-alert` EF: triggered by NWS alerts (via RE30 storm detection or separate webhook) — checks for freeze/storm warnings near home_profiles. Sends weather-specific maintenance alerts
+- [ ] `maintenance-setup-from-transaction` EF: POST — accepts transaction_id. CORS via `_shared/cors.ts`. Creates home_profile from transaction data. Detects climate zone. Generates 400+ maintenance_schedule rows based on climate zone + home characteristics. Auth: JWT required. Rate limit: 5/min per company (creates 400+ rows per invocation — prevent flood)
+- [ ] `maintenance-weather-alert` EF: triggered by NWS alerts (via RE30 storm detection or separate webhook) — checks for freeze/storm warnings near home_profiles. Sends weather-specific maintenance alerts. Auth: Service_role. Triggered by NWS webhook (validated via webhook secret in `MAINTENANCE_WEATHER_WEBHOOK_SECRET` env var) OR by `re30-storm-poll` EF via internal service_role call. Not user-facing — no CORS needed
 
 #### 26.6 Flutter Screens (~3h)
 
 - [ ] `MaintenanceCalendarScreen` — Monthly calendar view with colored task dots. Tap day to see tasks. Filter by category/overdue. 4-state screen
-- [ ] `MaintenanceTaskDetailScreen` — Task description, DIY difficulty, estimated cost/duration, related system info, "Get Quotes" contractor dispatch button
-- [ ] `CapitalPlanningScreen` — Timeline chart: system replacement dates + costs. 5yr/10yr toggle. Budget recommendations
-- [ ] `EquipmentHealthScreen` — All systems with lifespan bars (green/yellow/red), warranty status, service history
-- [ ] `HomeSetupWizardScreen` — Step-by-step system inventory with photo capture and OCR
+- [ ] `MaintenanceTaskDetailScreen` — Task description, DIY difficulty, estimated cost/duration, related system info, "Get Quotes" contractor dispatch button. 4-state screen (loading/error/empty/data)
+- [ ] `CapitalPlanningScreen` — Timeline chart: system replacement dates + costs. 5yr/10yr toggle. Budget recommendations. 4-state screen (loading/error/empty/data)
+- [ ] `EquipmentHealthScreen` — All systems with lifespan bars (green/yellow/red), warranty status, service history. 4-state screen (loading/error/empty/data)
+- [ ] `HomeSetupWizardScreen` — Step-by-step system inventory with photo capture and OCR. 4-state screen (loading/error/empty/data)
 
 #### 26.7 Web Portal (~3h)
+
+**Hooks**: `use-home-profiles.ts` — { profiles, loading, error, createProfile, updateProfile }. Real-time on `home_profiles`. `use-maintenance-schedules.ts` — { schedules, overdueCount, loading, error, completeTask, snoozeTask }. Real-time on `maintenance_schedules`. `use-home-value.ts` — { valueUpdates, loading }. Read-only. All hooks: `.is('deleted_at', null)`.
 
 - [ ] `/realtor/maintenance` — Maintenance dashboard: active home profiles, overdue tasks, upcoming reminders
 - [ ] `/realtor/maintenance/[homeId]` — Home detail: system inventory, maintenance calendar, capital plan, value history
@@ -32271,14 +32316,14 @@ CREATE TABLE dialer_sessions (
   session_type TEXT NOT NULL CHECK (session_type IN ('single', 'multi_line')),
   lines_count INT NOT NULL DEFAULT 1 CHECK (lines_count >= 1 AND lines_count <= 3),
   calling_list_name TEXT,
-  calling_list_contacts JSONB,
+  calling_list_contacts JSONB,  -- [{contact_id: UUID, name: string, phone: string, priority: number, status: 'pending'|'called'|'skipped'}]
   started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   ended_at TIMESTAMPTZ,
   calls_attempted INT DEFAULT 0,
   calls_connected INT DEFAULT 0,
   voicemails_dropped INT DEFAULT 0,
   total_talk_time_seconds INT DEFAULT 0,
-  dispositions_summary JSONB,
+  dispositions_summary JSONB,  -- {connected: number, voicemail: number, no_answer: number, busy: number, wrong_number: number, dnc: number, callback: number}
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
@@ -32298,7 +32343,7 @@ CREATE TABLE call_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id UUID NOT NULL REFERENCES companies(id),
   agent_user_id UUID NOT NULL REFERENCES auth.users(id),
-  contact_id UUID REFERENCES realtor_contacts(id),
+  contact_id UUID REFERENCES realtor_contacts(id),  -- nullable: manual/ad-hoc dials without CRM contact linkage
   dialer_session_id UUID REFERENCES dialer_sessions(id),
   direction TEXT NOT NULL DEFAULT 'outbound' CHECK (direction IN ('outbound', 'inbound')),
   from_number TEXT NOT NULL,
@@ -32334,12 +32379,14 @@ ALTER TABLE call_records ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "call_records_select" ON call_records FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "call_records_insert" ON call_records FOR INSERT WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "call_records_update" ON call_records FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+-- NOTE: call_records UPDATE is company-wide (not agent-scoped) — intentional. Office managers review and update dispositions, follow-up dates, and notes for quality assurance. Agent-scoped writes handled at application layer (UI only shows own records by default).
 CREATE POLICY "call_records_delete" ON call_records FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 CREATE INDEX idx_call_records_company ON call_records (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_contact ON call_records (contact_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_session ON call_records (dialer_session_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_disposition ON call_records (disposition) WHERE deleted_at IS NULL;
 CREATE INDEX idx_call_records_followup ON call_records (follow_up_date) WHERE follow_up_date IS NOT NULL AND deleted_at IS NULL;
+CREATE INDEX idx_call_records_agent_time ON call_records (agent_user_id, started_at DESC) WHERE deleted_at IS NULL;
 CREATE TRIGGER call_records_updated BEFORE UPDATE ON call_records FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER call_records_audit AFTER INSERT OR UPDATE OR DELETE ON call_records FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -32398,6 +32445,7 @@ ALTER TABLE call_records ADD CONSTRAINT fk_call_records_voicemail FOREIGN KEY (v
 - [ ] FSBO exception: calling FSBO to discuss specific buyer not solicitation per NAR. Flag exempt
 - [ ] Time zone awareness: auto-detect recipient time zone from area code. Block calls outside 8am-9pm recipient local time (TCPA)
 - [ ] Frequency caps: max 2 calls per contact per 7-day period
+- [ ] Seed data: `supabase/seed/dialer/dnc_state_registries.sql` — 11 state DNC registry endpoints (IN, LA, MO, PA, TX, WY, CO, FL, TN, WI, CT) with check-frequency, API format, and last-updated tracking
 
 #### 27.4 Disposition & Auto-Routing (~4h)
 
@@ -32408,20 +32456,24 @@ ALTER TABLE call_records ADD CONSTRAINT fk_call_records_voicemail FOREIGN KEY (v
 
 #### 27.5 Edge Functions (~3h)
 
+> All EFs log errors to Sentry. SignalWire API errors include request_id for support escalation.
+
 - [ ] `dialer-initiate-call` EF: POST — accepts from_number, to_number, agent_user_id. Creates SignalWire call via REST API. Returns call_sid. Auth: JWT required. Rate limit: 10/min per agent (prevents abuse). DNC check before dial
-- [ ] `dialer-voicemail-drop` EF: POST — triggered when AMD detects voicemail. Plays pre-recorded message via SignalWire. Logs call_record with voicemail_dropped=true. Service_role
+- [ ] `dialer-voicemail-drop` EF: POST — triggered when AMD detects voicemail. Plays pre-recorded message via SignalWire. Logs call_record with voicemail_dropped=true. Service_role. Rate limit: 30/min per company (triggered by AMD detection — prevent runaway loops)
 - [ ] `dialer-dnc-scrub` EF: POST — accepts phone number array. Checks against FTC DNC Registry + state lists + internal DNC. Returns clean list. Auth: JWT required. Rate limit: 5/min per company
 - [ ] `dialer-session-analytics` EF: GET — accepts dialer_session_id or date range. Returns: calls/hr, connect %, disposition breakdown, talk time avg, best time-of-day, conversion funnel. Auth: JWT required
 
 #### 27.6 Flutter Screens (~4h)
 
-- [ ] `DialerSessionScreen` — Active dialing interface: current contact card, call controls (dial/hang up/hold/mute), disposition picker, notes field, script display, objection cards, next button. Multi-line status indicator
-- [ ] `DialerSetupScreen` — Load contacts (from CRM filter/list), set call order, select voicemail recording, single vs multi-line, local presence toggle
-- [ ] `VoicemailLibraryScreen` — Record/manage voicemail drops. Preview playback. Usage stats. Set default
-- [ ] `DialerAnalyticsScreen` — Session history, calls/hr, connect rate, best times, disposition breakdown, conversion funnel
-- [ ] `CallScriptScreen` — Browse/search scripts. View during call. Create custom scripts
+- [ ] `DialerSessionScreen` — Active dialing interface: current contact card, call controls (dial/hang up/hold/mute), disposition picker, notes field, script display, objection cards, next button. Multi-line status indicator. 4-state screen (loading/error/empty/data). Real-time: subscribes to `call_records` postgres_changes (filter: session_id) for live call state updates. SignalWire webhook events (call.connected, call.ended, machine.detected) routed through `dialer-session-manage` EF which updates call_records row
+- [ ] `DialerSetupScreen` — Load contacts (from CRM filter/list), set call order, select voicemail recording, single vs multi-line, local presence toggle. 4-state screen (loading/error/empty/data)
+- [ ] `VoicemailLibraryScreen` — Record/manage voicemail drops. Preview playback. Usage stats. Set default. 4-state screen (loading/error/empty/data)
+- [ ] `DialerAnalyticsScreen` — Session history, calls/hr, connect rate, best times, disposition breakdown, conversion funnel. 4-state screen (loading/error/empty/data)
+- [ ] `CallScriptScreen` — Browse/search scripts. View during call. Create custom scripts. 4-state screen (loading/error/empty/data)
 
 #### 27.7 Web Portal (~3h)
+
+**Hooks**: `use-dialer.ts` — { sessions, activeSession, loading, error, startSession, endSession, nextCall, dropVoicemail }. Real-time on `dialer_sessions` + `call_records` (active session updates). `use-call-records.ts` — { records, stats, loading, error, updateDisposition, scheduleFollowUp }. `use-voicemail-recordings.ts` — { recordings, uploadRecording, loading }. All: `.is('deleted_at', null)`.
 
 - [ ] `/realtor/dialer` — Dialer dashboard: recent sessions, quick-start, analytics summary
 - [ ] `/realtor/dialer/session` — Web-based dialer (WebRTC via SignalWire) with full controls
@@ -32482,13 +32534,16 @@ CREATE TABLE agent_websites (
   -- {primary_color, secondary_color, accent_color, font, logo_url, headshot_url, brokerage_logo_url}
   seo_settings JSONB NOT NULL DEFAULT '{}',
   -- {meta_title, meta_description, og_image_url, ga4_id}
-  analytics_tracking JSONB,
+  analytics_tracking JSONB,  -- {google_analytics_id?: string, facebook_pixel_id?: string, custom_scripts?: string[]}
   contact_form_email TEXT,
-  social_links JSONB,
+  social_links JSONB,  -- {facebook?: string, instagram?: string, linkedin?: string, youtube?: string, tiktok?: string}
+  deploy_status TEXT DEFAULT 'draft' CHECK (deploy_status IN ('draft', 'building', 'deployed', 'failed')),
+  deploy_error TEXT,
+  deployment_url TEXT,
   about_text TEXT,
   specialties TEXT[],
   service_areas TEXT[],
-  testimonials JSONB,
+  testimonials JSONB,  -- [{author: string, text: string, rating?: number, date?: string}]
   certifications TEXT[],
   published BOOLEAN DEFAULT false,
   published_at TIMESTAMPTZ,
@@ -32507,6 +32562,7 @@ CREATE POLICY "agent_websites_public_select" ON agent_websites FOR SELECT USING 
 CREATE INDEX idx_agent_websites_company ON agent_websites (company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_agent_websites_agent ON agent_websites (agent_user_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_agent_websites_subdomain ON agent_websites (subdomain) WHERE subdomain IS NOT NULL AND deleted_at IS NULL;
+CREATE UNIQUE INDEX idx_agent_websites_one_per_agent ON agent_websites (agent_user_id) WHERE deleted_at IS NULL;
 CREATE TRIGGER agent_websites_updated BEFORE UPDATE ON agent_websites FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER agent_websites_audit AFTER INSERT OR UPDATE OR DELETE ON agent_websites FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
@@ -32517,7 +32573,7 @@ CREATE TABLE single_property_sites (
   listing_id UUID REFERENCES realtor_listings(id),
   property_id UUID REFERENCES properties(id),
   listing_address TEXT NOT NULL,
-  listing_price NUMERIC(12,2),
+  listing_price NUMERIC(14,2),  -- supports up to $99,999,999,999.99 for luxury/commercial
   listing_description TEXT,
   property_details JSONB,
   photos JSONB,
@@ -32606,6 +32662,8 @@ CREATE TRIGGER neighborhood_audit AFTER INSERT OR UPDATE OR DELETE ON neighborho
 - [ ] SEO: auto-generated meta titles/descriptions. Schema.org RealEstateAgent markup. Open Graph/Twitter Cards. Sitemap.xml. robots.txt. Lighthouse 90+
 - [ ] Analytics: page views, unique visitors, time on site, lead conversion rate, traffic sources. Optional GA4 integration
 
+Seed data: `supabase/seed/websites/templates.sql` — 5-7 professionally designed templates with CSS variables, layout configs (JSONB), color schemes, and font pairings. Each template includes preview thumbnail path in Supabase Storage.
+
 #### 28.2 Single-Property Sites (~4h)
 
 - [ ] One-click creation from RE10 listing: auto-populate address, price, photos, description, details, floor plan (Sketch Engine), virtual tour link
@@ -32629,17 +32687,17 @@ CREATE TRIGGER neighborhood_audit AFTER INSERT OR UPDATE OR DELETE ON neighborho
 
 #### 28.4 Edge Functions (~4h)
 
-- [ ] `website-neighborhood-enrich` EF: POST — accepts neighborhood center lat/lng + radius. Calls Census ACS, FBI Crime, Walk Score, GreatSchools, Overpass, FEMA, Open-Meteo, EPA in parallel. Each wrapped in try/catch. Returns unified neighborhood_data JSON. Auth: JWT required. Rate limit: 20/min per company. Cache by lat/lng (rounded to 0.01) for 7 days
+- [ ] `website-neighborhood-enrich` EF: POST — accepts neighborhood center lat/lng + radius. Calls Census ACS, FBI Crime, Walk Score, GreatSchools, Overpass, FEMA, Open-Meteo, EPA in parallel. Each wrapped in try/catch. Returns unified neighborhood_data JSON. Auth: JWT required. Rate limit: 20/min per company. Cache by lat/lng (rounded to 0.01) for 7 days. Cache: Results stored in `neighborhood_pages.neighborhood_data` JSONB. Cache key: lat/lng rounded to 0.01 (~1.1km). TTL: 7 days (check `updated_at` before re-enriching). No separate cache table — neighborhood_pages IS the cache.
 - [ ] `website-lead-capture` EF: POST — accepts form data (name, email, phone, message, source_page, agent_website_id). Creates realtor_contact if new (or updates existing). Sends push + email notification to agent. Returns success. Auth: public (no JWT) — determines company_id by looking up agent_website_id from request body, verifying website exists and is published, then uses that website's company_id for the new realtor_contact. Validates: agent_website_id UUID format, website exists, website.published = true. Rate limit: 10/min per website_id (prevent spam). CORS: open (public form submission). Honeypot field for bot detection
-- [ ] `website-generate-static` EF: POST — triggers static site generation for agent's website. Builds Next.js pages, deploys to Vercel. Returns deployment URL. Auth: JWT required. Rate limit: 5/day per agent (prevent abuse)
-- [ ] `website-analytics-track` EF: POST — lightweight page view tracker. Increments views/unique_visitors on property sites. No PII stored. Auth: public
+- [ ] `website-generate-static` EF: POST — triggers static site generation for agent's website. Builds Next.js pages, deploys to Vercel. Returns deployment URL. Auth: JWT required. Rate limit: 5/day per agent (prevent abuse). Deployment flow: (1) Set `agent_websites.deploy_status = 'building'`, (2) Generate static HTML/CSS, (3) Deploy to Vercel via API, (4) On success: set `deploy_status = 'deployed'` + `deployment_url`, (5) On failure: set `deploy_status = 'failed'` + `deploy_error`. Timeout: 120s. Agent notified via Realtime subscription on `agent_websites.deploy_status` change.
+- [ ] `website-analytics-track` EF: POST — lightweight page view tracker. Increments views/unique_visitors on property sites. No PII stored. Auth: public. View counting: Atomic increment via `SET views = views + 1` (not read-modify-write). Unique visitor deduplication via `visitor_hash = SHA256(ip + user_agent + date)` checked against `website_visitor_hashes` junction table (or JSONB set on the row). Rate limit: 100/min per website_id to prevent view inflation.
 
 #### 28.5 Flutter Screens (~3h)
 
-- [ ] `WebsiteBuilderScreen` — Configure website: template picker, branding, about text, specialties, service areas, testimonials. Preview
-- [ ] `SinglePropertySiteScreen` — Create/manage property sites from listings. Preview. QR code generation. Analytics
-- [ ] `NeighborhoodPageScreen` — Create/edit neighborhood pages. View auto-populated data. Add agent narrative
-- [ ] `WebsiteAnalyticsScreen` — Visitor stats, lead conversion, traffic sources, top pages
+- [ ] `WebsiteBuilderScreen` (4-state: loading/error/empty/data) — Configure website: template picker, branding, about text, specialties, service areas, testimonials. Preview
+- [ ] `SinglePropertySiteScreen` (4-state: loading/error/empty/data) — Create/manage property sites from listings. Preview. QR code generation. Analytics
+- [ ] `NeighborhoodPageScreen` (4-state: loading/error/empty/data) — Create/edit neighborhood pages. View auto-populated data. Add agent narrative
+- [ ] `WebsiteAnalyticsScreen` (4-state: loading/error/empty/data) — Visitor stats, lead conversion, traffic sources, top pages
 
 #### 28.6 Web Portal (~3h)
 
@@ -32648,6 +32706,8 @@ CREATE TRIGGER neighborhood_audit AFTER INSERT OR UPDATE OR DELETE ON neighborho
 - [ ] `/realtor/website/properties` — Manage single-property sites
 - [ ] `/realtor/website/neighborhoods` — Manage neighborhood pages
 - [ ] `/realtor/website/leads` — Leads captured from website with source tracking
+
+**Hooks**: `use-agent-websites.ts` — { website, loading, error, createWebsite, updateWebsite, publishWebsite, unpublishWebsite }. Real-time on `agent_websites`. `use-property-sites.ts` — { sites, loading, error, createSite, updateSite, publishSite }. Real-time on `single_property_sites`. `use-neighborhood-pages.ts` — { pages, loading, error, createPage, enrichPage }. All: `.is('deleted_at', null)`.
 
 #### Security Verification
 - [ ] Lead capture EF is PUBLIC (no JWT) — rate limited, honeypot, IP throttling to prevent spam/abuse
@@ -32713,7 +32773,7 @@ CREATE TABLE document_analyses (
   negotiation_strategy JSONB DEFAULT '{}'::jsonb,  -- summary recommendations
   repair_request_generated BOOLEAN DEFAULT false,
   repair_request_storage_path TEXT,
-  ai_model_used TEXT DEFAULT 'claude-opus-4-6',
+  ai_model_used TEXT DEFAULT 'claude-opus-4-6',  -- Runtime config: default may change with model upgrades. Consider reading from company_settings or env var at EF invocation time.
   processing_time_ms INT,
   created_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -32771,22 +32831,25 @@ CREATE POLICY "document_findings_delete" ON document_findings FOR DELETE USING (
 CREATE INDEX idx_document_findings_company ON document_findings(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_document_findings_analysis ON document_findings(document_analysis_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_document_findings_severity ON document_findings(severity) WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX idx_document_findings_analysis_number ON document_findings (document_analysis_id, finding_number) WHERE deleted_at IS NULL;
 CREATE TRIGGER document_findings_updated BEFORE UPDATE ON document_findings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER audit_document_findings AFTER INSERT OR UPDATE OR DELETE ON document_findings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 ```
 
 **Edge Functions (4):**
-- [ ] `re29-analyze-document` — Upload PDF to Storage, invoke Claude to read entire document (20-60 pages), extract inspector info, every finding by system. Parse into document_findings rows with severity scoring. Auth + company_id + rate limit (5/min — expensive AI call). Graceful degradation: if Claude fails, set status='error' with message, don't lose the uploaded PDF. Retry up to 2x with exponential backoff
-- [ ] `re29-estimate-repair-costs` — For each CRITICAL/MAJOR/MODERATE finding, call Zafto estimation engine (DEPTH29 labor tasks + DEPTH31/32 material data) to generate repair cost range by ZIP. Low = basic repair, high = premium with contractor markup. Sum by system and severity. Auth + company_id. Returns cost breakdown. **Legal disclaimer on all output: "Cost estimates are for negotiation guidance only. Not a professional engineering assessment. Actual costs may vary. Obtain contractor bids for accurate pricing."**
-- [ ] `re29-generate-repair-request` — One-click generation of formal repair request letter. Input: document_analysis_id + selected findings + tone (firm/professional/collaborative) + template variant (full/priority-only/credit/hybrid). Output: PDF + DOCX + email body. Includes: property address, inspection date, inspector name, per-item description+severity+cost+requested resolution, total amount, response deadline. Auth + company_id. Store generated document in Supabase Storage
-- [ ] `re29-cross-reference-disclosure` — Upload seller disclosure → Claude extracts every "Yes" answer (issues), every "Unknown" (potential undisclosed), handwritten notes. Cross-reference against inspection findings. Flag inconsistencies: "Seller disclosed 'No' for water damage, but inspection found water staining in basement ceiling." Flag missing items: "Active termite damage found but not disclosed — possible material omission." Auth + company_id
+- [ ] `re29-analyze-document` — Upload PDF to Storage, invoke Claude to read entire document (20-60 pages), extract inspector info, every finding by system. Parse into document_findings rows with severity scoring. Auth + company_id + rate limit (5/min — expensive AI call). Graceful degradation: if Claude fails, set status='error' with message, don't lose the uploaded PDF. Retry up to 2x with exponential backoff. CORS via `_shared/cors.ts`. Input validation: File type whitelist (application/pdf, image/jpeg, image/png, image/heic). Max file size: 50MB. Filename sanitization: strip path separators, limit to 255 chars, reject null bytes. Storage path: `documents/{company_id}/inspection-reports/{analysis_id}/{sanitized_filename}`
+- [ ] `re29-estimate-repair-costs` — For each CRITICAL/MAJOR/MODERATE finding, call Zafto estimation engine (DEPTH29 labor tasks + DEPTH31/32 material data) to generate repair cost range by ZIP. Low = basic repair, high = premium with contractor markup. Sum by system and severity. Auth + company_id. Returns cost breakdown. CORS via `_shared/cors.ts`. **Legal disclaimer on all output: "Cost estimates are for negotiation guidance only. Not a professional engineering assessment. Actual costs may vary. Obtain contractor bids for accurate pricing."**
+- [ ] `re29-generate-repair-request` — One-click generation of formal repair request letter. Input: document_analysis_id + selected findings + tone (firm/professional/collaborative) + template variant (full/priority-only/credit/hybrid). Output: PDF + DOCX + email body. Includes: property address, inspection date, inspector name, per-item description+severity+cost+requested resolution, total amount, response deadline. Auth + company_id. CORS via `_shared/cors.ts`. Store generated document in Supabase Storage
+- [ ] `re29-cross-reference-disclosure` — Upload seller disclosure → Claude extracts every "Yes" answer (issues), every "Unknown" (potential undisclosed), handwritten notes. Cross-reference against inspection findings. Flag inconsistencies: "Seller disclosed 'No' for water damage, but inspection found water staining in basement ceiling." Flag missing items: "Active termite damage found but not disclosed — possible material omission." Auth + company_id. CORS via `_shared/cors.ts`
+
+All EFs check `company_feature_flags` for `realtor_inspection_analysis` module access (CUST9 gating) before processing. Return 403 if module not enabled.
 
 **Flutter Screens (5):**
-- [ ] `InspectionUploadScreen` — Upload inspection report PDF (camera capture or file picker). Progress indicator during analysis. Preview extracted inspector info for verification. Auto-link to active transaction if in transaction context
-- [ ] `FindingsListScreen` — All findings grouped by system (roofing, plumbing, etc.), color-coded by severity (red/orange/yellow/green/blue/gray). Filter by severity, system, recommendation. Tap to expand full detail. Batch select for repair request. Count badges per severity level
-- [ ] `FindingDetailScreen` — Full finding: description, location, page reference, severity badge, repair cost range (low-high bar), repair description, timeline, recommendation with explanation. Edit recommendation (agent override). Toggle "include in repair request." If disclosure conflict: red banner with conflict details
-- [ ] `RepairCostSummaryScreen` — Dashboard: total repair cost (low-high range), breakdown by severity tier (pie chart), breakdown by system (bar chart), top 5 most expensive items. "Recommended credit request: $XX,XXX" with explanation. Legal disclaimer prominent. **Save to job** button per S143 directive. **Set as favorite** for template reuse
-- [ ] `NegotiationBriefScreen` — 2-page summary optimized for agent use: deal-breakers (top), credit recommendations (middle), nice-to-haves to drop (bottom). Market context from RE21 PFS if available. Print/share as PDF. Send to client via client portal
+- [ ] `InspectionUploadScreen` (4-state: loading/error/empty/data) — Upload inspection report PDF (camera capture or file picker). Progress indicator during analysis. Preview extracted inspector info for verification. Auto-link to active transaction if in transaction context
+- [ ] `FindingsListScreen` (4-state: loading/error/empty/data) — All findings grouped by system (roofing, plumbing, etc.), color-coded by severity (red/orange/yellow/green/blue/gray). Filter by severity, system, recommendation. Tap to expand full detail. Batch select for repair request. Count badges per severity level
+- [ ] `FindingDetailScreen` (4-state: loading/error/empty/data) — Full finding: description, location, page reference, severity badge, repair cost range (low-high bar), repair description, timeline, recommendation with explanation. Edit recommendation (agent override). Toggle "include in repair request." If disclosure conflict: red banner with conflict details
+- [ ] `RepairCostSummaryScreen` (4-state: loading/error/empty/data) — Dashboard: total repair cost (low-high range), breakdown by severity tier (pie chart), breakdown by system (bar chart), top 5 most expensive items. "Recommended credit request: $XX,XXX" with explanation. Legal disclaimer prominent. **Save to job** button per S143 directive. **Set as favorite** for template reuse
+- [ ] `NegotiationBriefScreen` (4-state: loading/error/empty/data) — 2-page summary optimized for agent use: deal-breakers (top), credit recommendations (middle), nice-to-haves to drop (bottom). Market context from RE21 PFS if available. Print/share as PDF. Send to client via client portal
 
 **Web Portal Routes (4):**
 - [ ] `/realtor/inspections` — All document analyses for company. Table with: property, type, status, findings count, total repair cost, date. Filter by transaction, status, date range
@@ -32860,18 +32923,23 @@ CREATE TABLE IF NOT EXISTS storm_events (
   property_damage_estimate TEXT,  -- from NOAA official record
   confirmed BOOLEAN DEFAULT false,  -- true = post-event confirmed (IEM/SPC), false = warning only (NWS)
   source_report_url TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 ALTER TABLE storm_events ENABLE ROW LEVEL SECURITY;
 -- Shared reference: any authenticated user can read, only service_role inserts
 CREATE POLICY "storm_events_select" ON storm_events FOR SELECT USING (auth.role() = 'authenticated');
+-- Uses auth.role() = 'authenticated' (not requesting_company_id()) because storm_events is shared reference data visible to all authenticated users. Intentional deviation.
 CREATE POLICY "storm_events_insert" ON storm_events FOR INSERT WITH CHECK (auth.role() = 'service_role');
+CREATE POLICY "storm_events_service_update" ON storm_events FOR UPDATE USING (auth.role() = 'service_role');
+-- Only service_role (CRON EFs) can update storm events (e.g., confirmed status, event_end_date, damage estimates)
 CREATE INDEX idx_storm_events_date ON storm_events(event_date DESC);
 CREATE INDEX idx_storm_events_type ON storm_events(event_type);
 CREATE INDEX idx_storm_events_zips ON storm_events USING GIN(affected_zips);
 CREATE INDEX idx_storm_events_location ON storm_events(lat, lng);
 CREATE UNIQUE INDEX idx_storm_events_source_dedup ON storm_events(source, source_event_id) WHERE source_event_id IS NOT NULL;
+CREATE TRIGGER storm_events_updated BEFORE UPDATE ON storm_events FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 2. storm_alerts — company-scoped alerts generated per agent
 CREATE TABLE storm_alerts (
@@ -32880,7 +32948,7 @@ CREATE TABLE storm_alerts (
   agent_user_id UUID NOT NULL REFERENCES auth.users(id),
   storm_event_id UUID NOT NULL REFERENCES storm_events(id),
   affected_client_count INT DEFAULT 0,
-  affected_clients JSONB DEFAULT '[]'::jsonb,  -- [{client_id, name, address, zip, phone, email, relationship}]
+  affected_clients JSONB DEFAULT '[]'::jsonb,  -- [{client_id, name, address, zip, phone, email, relationship}] — WARNING: Contains PII (name, address, phone, email). For GDPR client deletion: must scrub this JSONB field. Consider migration to junction table (storm_alert_clients) in INTEG6 sprint for proper normalization.
   affected_listing_count INT DEFAULT 0,
   affected_listings JSONB DEFAULT '[]'::jsonb,  -- [{listing_id, address, status}]
   affected_soi_count INT DEFAULT 0,  -- sphere of influence contacts
@@ -32958,16 +33026,20 @@ CREATE TRIGGER audit_storm_outreach AFTER INSERT OR UPDATE OR DELETE ON storm_ou
 **Edge Functions (5):**
 - [ ] `re30-poll-weather-events` — CRON every 5 minutes (service_role). Polls: (1) NWS Weather Alerts API (free, no auth) for active warnings (tornado, severe thunderstorm, flash flood, hurricane, winter storm, high wind). (2) IEM Real-Time Storm Reports (free) for confirmed post-event reports (hail size, tornado touchdowns, wind damage). Dedup by source_event_id. Insert new storm_events. Extract affected_zips from NWS zone→ZIP mapping. Graceful degradation: if any API down, log warning and continue with available sources. **Supabase CRON is UTC-only — EF handles timezone conversion internally**
 - [ ] `re30-match-clients-to-storm` — Triggered after new storm_event insert. For each company with agents who have clients in affected ZIPs: query closed transactions (RE5) for buyer addresses, active listings (RE10), SOI contacts (RE2 CRM). Generate storm_alerts per agent with affected_clients JSONB. Push notification to agent's device (FCM). Email summary with client list + contact info + pre-written outreach. Auth: service_role (triggered by CRON, not user request)
-- [ ] `re30-send-outreach` — Agent-triggered. Input: storm_alert_id + selected clients + channel (sms/email/both) + message text (default template or customized). Send via SignalWire (SMS) and/or Resend (email). Create storm_outreach_messages rows. Track delivery status. Schedule follow-ups: Day 3 ("How are repairs going?"), Day 14 ("If you're thinking about selling..."). Auth + company_id + rate limit (50 messages/min)
+- [ ] `re30-send-outreach` — Agent-triggered. Input: storm_alert_id + selected clients + channel (sms/email/both) + message text (default template or customized). Send via SignalWire (SMS) and/or Resend (email). Create storm_outreach_messages rows. Track delivery status. Schedule follow-ups: Day 3 ("How are repairs going?"), Day 14 ("If you're thinking about selling..."). Auth + company_id + rate limit (50 messages/min). CORS via `_shared/cors.ts`
 - [ ] `re30-process-follow-ups` — CRON daily. Query storm_outreach_messages WHERE next_follow_up_at <= now() AND follow_up_stage < 2. Send appropriate follow-up message. Increment follow_up_stage. Set next_follow_up_at. Skip if client already responded or reported damage (don't nag). **UTC CRON — EF converts internally**
-- [ ] `re30-storm-history-report` — On-demand. Input: property address (lat/lng or ZIP). Query storm_events within configurable radius (default 5 miles) for last 10 years. Return: event list with dates, types, severity, hail size, wind speed, damage estimates. Sources: NOAA Storm Events + SPC SVRGIS. Output: JSON for in-app display + PDF generation for insurance packets. Auth + company_id
+- [ ] `re30-storm-history-report` — On-demand. Input: property address (lat/lng or ZIP). Query storm_events within configurable radius (default 5 miles) for last 10 years. Return: event list with dates, types, severity, hail size, wind speed, damage estimates. Sources: NOAA Storm Events + SPC SVRGIS. Output: JSON for in-app display + PDF generation for insurance packets. Auth + company_id. CORS via `_shared/cors.ts`
+
+`re30-poll-weather-events` and `re30-process-follow-ups` are CRON EFs (service_role) — no CORS needed. `re30-match-clients-to-storm` is internal (triggered by CRON after storm_event insert) — no CORS needed. All user-facing EFs check `company_feature_flags` for `realtor_storm_alerts` module (CUST9 gating).
+
+**Hooks**: `use-storm-alerts.ts` — { alerts, activeAlerts, loading, error }. Real-time on `storm_alerts` (new alert notifications). `use-storm-outreach.ts` — { messages, responseRate, loading, error, sendOutreach, recordResponse }. Real-time on `storm_outreach_messages`. All: `.is('deleted_at', null)`.
 
 **Flutter Screens (5):**
-- [ ] `StormDashboardScreen` — Active storm alerts map (Google Maps with storm polygons/markers), affected client pins (color by outreach status: red=not contacted, yellow=sent, green=responded). Alert feed: newest storms at top with severity badges. Quick stats: active storms, clients affected, outreach sent, responses received, dispatches created. Filter by date range, storm type, severity
-- [ ] `StormAlertDetailScreen` — Single storm: type, severity, time, location, radar data. Affected clients list with: name, address, phone, relationship (past buyer/seller/SOI/listing), outreach status. Batch select + "Send Check-in" button. Affected listings section. Map showing storm area + client locations
-- [ ] `OutreachComposerScreen` — Message template preview (auto-filled: agent name, brokerage, storm type, area). Edit message before sending. Channel selection (SMS/email/both). Preview per-recipient. "Send to All" or select individual clients. Delivery confirmation. Follow-up schedule preview
-- [ ] `StormHistoryScreen` — Property storm history report: all events within radius over 10 years. Timeline view. Severity breakdown (pie chart). Seasonal pattern analysis. "Generate Insurance Documentation Packet" button. PDF export. **Save to job** per S143 directive
-- [ ] `StormAnalyticsScreen` — Territory storm frequency (heat map). Outreach performance: sent vs. responded vs. damage reported vs. dispatched. Referrals generated with estimated GCI value. "This storm alert generated 2 contractor dispatches and 1 referral. Estimated value: $8,400 GCI." Season-over-season comparison
+- [ ] `StormDashboardScreen` (4-state: loading/error/empty/data) — Active storm alerts map (Google Maps with storm polygons/markers), affected client pins (color by outreach status: red=not contacted, yellow=sent, green=responded). Alert feed: newest storms at top with severity badges. Quick stats: active storms, clients affected, outreach sent, responses received, dispatches created. Filter by date range, storm type, severity
+- [ ] `StormAlertDetailScreen` (4-state: loading/error/empty/data) — Single storm: type, severity, time, location, radar data. Affected clients list with: name, address, phone, relationship (past buyer/seller/SOI/listing), outreach status. Batch select + "Send Check-in" button. Affected listings section. Map showing storm area + client locations
+- [ ] `OutreachComposerScreen` (4-state: loading/error/empty/data) — Message template preview (auto-filled: agent name, brokerage, storm type, area). Edit message before sending. Channel selection (SMS/email/both). Preview per-recipient. "Send to All" or select individual clients. Delivery confirmation. Follow-up schedule preview
+- [ ] `StormHistoryScreen` (4-state: loading/error/empty/data) — Property storm history report: all events within radius over 10 years. Timeline view. Severity breakdown (pie chart). Seasonal pattern analysis. "Generate Insurance Documentation Packet" button. PDF export. **Save to job** per S143 directive
+- [ ] `StormAnalyticsScreen` (4-state: loading/error/empty/data) — Territory storm frequency (heat map). Outreach performance: sent vs. responded vs. damage reported vs. dispatched. Referrals generated with estimated GCI value. "This storm alert generated 2 contractor dispatches and 1 referral. Estimated value: $8,400 GCI." Season-over-season comparison
 
 **Web Portal Routes (4):**
 - [ ] `/realtor/storms` — Storm dashboard: active alerts, map overlay, affected client counts. Alert feed with severity badges. Quick-action buttons per alert
@@ -32980,6 +33052,7 @@ CREATE TRIGGER audit_storm_outreach AFTER INSERT OR UPDATE OR DELETE ON storm_ou
 - [ ] All user-facing EFs: auth via `getUser()`, company_id from JWT
 - [ ] CRON EFs: service_role only, no user auth bypass possible
 - [ ] SMS/email sending: rate limiting (50/min per company), DNC compliance check before sending (federal + state lists), TCPA opt-out handling
+- [ ] TCPA opt-out: Check realtor_contacts.communication_preferences before sending. Honor 'no_storm_alerts' preference. DNC list check via RE27 shared dialer infrastructure (if phone outreach). Store opt-out in contact preferences, not a separate table.
 - [ ] Client phone/email data: encrypted at rest, never exposed in logs, never sent to weather APIs
 - [ ] Storm data dedup: source_event_id prevents duplicate storm_events from repeated CRON polls
 - [ ] Optimistic locking on storm_alerts (updated_at in WHERE clause)
