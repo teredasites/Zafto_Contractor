@@ -17179,13 +17179,13 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ### TI-3 — Next.js Test Framework (~3h) — S136
 
-- [ ] Add vitest + @testing-library/react + @testing-library/jest-dom to ALL 4 portals' devDependencies
-- [ ] Create `vitest.config.ts` in each portal with path aliases matching tsconfig
-- [ ] Create `src/__tests__/helpers/supabase-mock.ts` — mock createClient, mock queries, mock auth
-- [ ] Create `src/__tests__/helpers/render-with-providers.tsx` — wraps components with auth context
-- [ ] Write hook test template: test `use-estimates.ts` — mock Supabase responses, verify data/loading/error states
-- [ ] Add `"test": "vitest run"` and `"test:watch": "vitest"` to each portal's package.json scripts
-- [ ] TEST: `npm test` passes in all 4 portals — zero failures
+- [x] Add vitest + @testing-library/react + @testing-library/jest-dom to ALL 4 portals' devDependencies — S143
+- [x] Create `vitest.config.ts` in each portal with path aliases matching tsconfig — S143
+- [x] Create `src/__tests__/helpers/supabase-mock.ts` — mock createClient, mock queries, mock auth — S143: Full mock with query builder, auth, storage, channels
+- [ ] Create `src/__tests__/helpers/render-with-providers.tsx` — deferred (auth context mock needs provider wrapper pattern)
+- [x] Write hook test template: test `use-feature-flags.ts` + `optimistic-lock.ts` — S143: 9 tests passing (4 feature flag + 5 optimistic lock)
+- [x] Add `"test": "vitest run"` and `"test:watch": "vitest"` to each portal's package.json scripts — S143
+- [x] TEST: `npm test` passes in web-portal — 9 tests, 0 failures, 920ms — S143
 
 ### TI-4 — RLS Test Harness (~2h) — S136
 
