@@ -130,25 +130,21 @@ class _ContractAnalyzerHubScreenState extends ConsumerState<ContractAnalyzerHubS
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colors.accentPrimary,
-            colors.accentInfo,
-          ],
-        ),
+        color: colors.accentPrimary.withOpacity(0.12),
         borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: colors.accentPrimary.withOpacity(0.3), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(LucideIcons.sparkles, size: 10, color: Colors.white),
+          Icon(LucideIcons.sparkles, size: 10, color: colors.accentPrimary),
           const SizedBox(width: 3),
-          const Text(
+          Text(
             'AI',
             style: TextStyle(
               fontSize: 9,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: colors.accentPrimary,
               letterSpacing: 0.5,
             ),
           ),

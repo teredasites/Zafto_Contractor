@@ -316,10 +316,11 @@ class _RoomEditorScreenState extends ConsumerState<RoomEditorScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [colors.accentPrimary, colors.accentInfo]),
+                      color: colors.accentPrimary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(3),
+                      border: Border.all(color: colors.accentPrimary.withOpacity(0.3), width: 0.5),
                     ),
-                    child: const Text('AI', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: Colors.white)),
+                    child: Text('AI', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: colors.accentPrimary)),
                   ),
                 ],
               ],
