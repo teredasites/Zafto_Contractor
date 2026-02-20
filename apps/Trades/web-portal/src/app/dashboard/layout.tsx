@@ -25,6 +25,7 @@ import { Sidebar, useSidebarWidth } from '@/components/sidebar';
 import { CommandPalette } from '@/components/command-palette';
 import { ZConsoleProvider, ZConsole, useZConsole } from '@/components/z-console';
 import { cn } from '@/lib/utils';
+import { AxeDevTools } from '@/components/axe-dev-tools';
 
 export default function DashboardLayout({
   children,
@@ -69,6 +70,7 @@ export default function DashboardLayout({
     <AuthProvider>
       <PermissionProvider>
         <ZConsoleProvider>
+          <AxeDevTools />
           <DashboardShell
             sidebarOpen={sidebarOpen}
             onSidebarOpenChange={setSidebarOpen}

@@ -8,6 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
 import { useNotifications } from '@/lib/hooks/use-notifications';
 import AiChatWidget from '@/components/ai-chat-widget';
+import { AxeDevTools } from '@/components/axe-dev-tools';
 
 const tabs = [
   { label: 'Home', href: '/home', icon: Home },
@@ -57,6 +58,7 @@ function PortalShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-main">
+      <AxeDevTools />
       {/* Desktop Top Nav */}
       <header className="sticky top-0 z-40 bg-main/80 backdrop-blur-sm border-b border-main">
         <div className="max-w-5xl mx-auto flex items-center justify-between h-14 px-4 lg:px-8">

@@ -2,10 +2,12 @@
 
 import { AuthProvider } from '@/components/auth-provider';
 import { Sidebar } from '@/components/sidebar';
+import { AxeDevTools } from '@/components/axe-dev-tools';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
+      <AxeDevTools />
       <div className="min-h-screen bg-main">
         <Sidebar />
         <main className="lg:pl-12">

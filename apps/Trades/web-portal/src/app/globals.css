@@ -32,7 +32,7 @@
   --border-light: #333333;
   --text: #ffffff;
   --text-secondary: #a3a3a3;
-  --text-muted: #737373;
+  --text-muted: #808080;
   --accent: #10b981;
   --accent-hover: #34d399;
   --accent-light: #0a1f17;
@@ -663,4 +663,76 @@ table {
 }
 .z-artifact-pane .z-prose hr {
   border-top-color: #e4e7ec;
+}
+
+/* ============================================
+   ACCESSIBILITY — Motion, Contrast, Color Scheme
+   Sprint A11Y-1 | Session 142
+   ============================================ */
+
+/* Reduced motion — disable all animations and transitions */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode — thicker borders, stronger separators */
+@media (prefers-contrast: more) {
+  :root {
+    --border: #999999;
+    --border-light: #bbbbbb;
+    --text-muted: #3d4654;
+  }
+
+  .dark {
+    --border: #888888;
+    --border-light: #666666;
+    --text-muted: #b0b0b0;
+  }
+
+  *:focus-visible {
+    outline-width: 3px;
+  }
+
+  button, a, input, select, textarea {
+    border-width: 2px;
+  }
+}
+
+/* System dark mode preference (auto-detect when no .dark class) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.dark):not(.light) {
+    --bg: #0a0a0a;
+    --bg-secondary: #111111;
+    --surface: #141414;
+    --surface-hover: #1a1a1a;
+    --border: #262626;
+    --border-light: #333333;
+    --text: #ffffff;
+    --text-secondary: #a3a3a3;
+    --text-muted: #808080;
+    --accent: #10b981;
+    --accent-hover: #34d399;
+    --accent-light: #0a1f17;
+    --card: #171717;
+  }
+}
+
+/* Screen reader only — visible to assistive tech, hidden visually */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

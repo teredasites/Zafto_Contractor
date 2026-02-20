@@ -28,7 +28,7 @@
   --border-light: #333333;
   --text: #ffffff;
   --text-secondary: #a3a3a3;
-  --text-muted: #737373;
+  --text-muted: #808080;
   --accent: #10b981;
   --accent-hover: #34d399;
   --accent-light: #0a1f17;
@@ -103,3 +103,31 @@ input, button, select, textarea { font-size: inherit; }
 
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast */
+@media (prefers-contrast: more) {
+  :root { --border: #999999; --border-light: #bbbbbb; --text-muted: #3d4654; }
+  .dark { --border: #888888; --border-light: #666666; --text-muted: #b0b0b0; }
+  *:focus-visible { outline-width: 3px; }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+}
