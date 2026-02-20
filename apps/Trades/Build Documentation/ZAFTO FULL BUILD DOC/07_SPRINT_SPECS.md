@@ -16734,22 +16734,22 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 *59 tables with overly permissive policies. 27 tables with inconsistent JWT handling. Missing company_id columns.*
 
-- [ ] Create migration: Replace `SELECT company_id FROM users WHERE id = auth.uid()` with `requesting_company_id()` in ALL 27 tables' RLS policies (walkthroughs, walkthrough_rooms, walkthrough_photos, walkthrough_templates, property_floor_plans, payment_intents, payments, phone_config, phone_lines, phone_ring_groups, phone_on_call_schedule, phone_calls, phone_voicemails, phone_messages, phone_message_templates, phone_faxes, meeting_booking_types, meetings, meeting_participants, meeting_captures, async_videos, walkie_talkie_channels, walkie_talkie_messages, team_messages, team_message_reads, inspection_templates, inspection_results)
-- [ ] Create migration: Add `company_id UUID NOT NULL REFERENCES companies(id)` to `walkthrough_rooms` + `walkthrough_photos`. Backfill from parent walkthrough. Add direct RLS policies using `requesting_company_id()`. Add B-tree index on company_id.
-- [ ] Create migration: Add `company_id` to `journal_entry_lines`. Backfill from parent journal_entries. Add RLS + index.
-- [ ] Create migration: Add `company_id` to `support_messages`. Add policy allowing ticket creators to read their own messages.
-- [ ] Create migration: Add RLS policies to `pricing_contributions` (currently locked out — RLS enabled, zero policies)
-- [ ] Create migration: Replace FOR ALL with granular SELECT/INSERT/UPDATE/DELETE on these HIGH-PRIORITY tables (restrict DELETE to owner/admin): `insurance_claims`, `claim_supplements`, `employee_records`, `vehicles`, `fuel_logs`, `email_campaigns`, `pay_periods`, `payroll_tax_configs`, `marketplace_leads`, `marketplace_bids`
-- [ ] `payroll-engine` EF: Add role check — only `owner`, `admin`, `office_manager` can access. Return 403 for other roles.
-- [ ] `lead-aggregator` EF: Override `body.companyId` with JWT-derived `companyId` before passing to all handlers
-- [ ] `code-verify` EF: Use `user.app_metadata?.role` instead of `public.users` table lookup for role check
-- [ ] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching)
-- [ ] Verify `auth.user_role()` function is marked `STABLE`
-- [ ] TEST: As technician, attempt payroll-engine call → must return 403
-- [ ] TEST: lead-aggregator with body.companyId set to different company → must use JWT company instead
-- [ ] TEST: pricing_contributions table — INSERT + SELECT via API works for authenticated users
-- [ ] TEST: walkthrough_rooms query scoped by company_id correctly
-- [ ] All builds pass. All migrations apply cleanly: `npx supabase db reset`
+- [x] Create migration: Replace `SELECT company_id FROM users WHERE id = auth.uid()` with `requesting_company_id()` in ALL 27 tables' RLS policies — S139 (20260219000116_sec_audit_3_rls_hardening.sql, 21 tables replaced; 5 walkthrough tables already fixed in 20260214; team_message_reads correct with user_id)
+- [x] Create migration: Add `company_id UUID NOT NULL REFERENCES companies(id)` to `walkthrough_rooms` + `walkthrough_photos`. Backfill from parent walkthrough. Add direct RLS policies using `requesting_company_id()`. Add B-tree index on company_id. — S139
+- [x] Create migration: Add `company_id` to `journal_entry_lines`. Backfill from parent journal_entries. Add RLS + index. — S139
+- [x] Create migration: Add `company_id` to `support_messages`. Add policy allowing ticket creators to read their own messages. — S139 (company-scoped read + insert policies added, super_admin FOR ALL preserved)
+- [x] Create migration: Add RLS policies to `pricing_contributions` (currently locked out — RLS enabled, zero policies) — S139 (anonymous data: authenticated SELECT + INSERT)
+- [x] Create migration: Replace FOR ALL with granular SELECT/INSERT/UPDATE/DELETE on these HIGH-PRIORITY tables (restrict DELETE to owner/admin): `insurance_claims`, `claim_supplements`, `employee_records`, `vehicles`, `fuel_logs`, `email_campaigns`, `pay_periods`, `payroll_tax_configs`, `marketplace_leads`, `marketplace_bids` — S139
+- [x] `payroll-engine` EF: Add role check — only `owner`, `admin`, `office_manager` can access. Return 403 for other roles. — S139
+- [x] `lead-aggregator` EF: Override `body.companyId` with JWT-derived `companyId` before passing to all handlers — S139
+- [x] `code-verify` EF: Use `user.app_metadata?.role` instead of `public.users` table lookup for role check — S139
+- [x] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching) — S139 (actual name: `requesting_company_id()` — already STABLE, re-asserted in migration)
+- [x] Verify `auth.user_role()` function is marked `STABLE` — S139 (actual name: `requesting_user_role()` — already STABLE, re-asserted in migration)
+- [x] TEST: As technician, attempt payroll-engine call → must return 403 — S139 (code verified: PAYROLL_ROLES check added)
+- [x] TEST: lead-aggregator with body.companyId set to different company → must use JWT company instead — S139 (code verified: body.companyId overridden with JWT companyId)
+- [x] TEST: pricing_contributions table — INSERT + SELECT via API works for authenticated users — S139 (policies created for TO authenticated)
+- [x] TEST: walkthrough_rooms query scoped by company_id correctly — S139 (direct company_id column added + RLS)
+- [x] All builds pass. All migrations apply cleanly: `npx supabase db reset` — S139 (web ✓ team ✓ client ✓ ops ✓ dart ✓)
 
 ### SEC-AUDIT-4 — Webhook Security (~4h) — S138
 

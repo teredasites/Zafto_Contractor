@@ -50,6 +50,13 @@ serve(async (req) => {
     const body = await req.json()
     const { action } = body
 
+    // SEC-AUDIT-3: Override body.companyId with JWT-derived companyId
+    // Prevents cross-company data injection via request body
+    if (companyId) {
+      body.companyId = companyId;
+      body.company_id = companyId;
+    }
+
     switch (action) {
       case 'ingest':
         return await handleIngest(supabase, body)

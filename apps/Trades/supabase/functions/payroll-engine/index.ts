@@ -72,18 +72,29 @@ serve(async (req: Request) => {
     const body: PayrollRequest = await req.json();
     const { action } = body;
 
-    // Extract company_id from auth
+    // Extract company_id + role from auth
     const authHeader = req.headers.get('Authorization');
     let companyId: string | null = null;
+    let user: { app_metadata?: Record<string, unknown> } | null = null;
     if (authHeader) {
       const token = authHeader.replace('Bearer ', '');
-      const { data: { user } } = await supabase.auth.getUser(token);
-      companyId = user?.app_metadata?.company_id || null;
+      const { data: { user: authUser } } = await supabase.auth.getUser(token);
+      user = authUser;
+      companyId = authUser?.app_metadata?.company_id as string || null;
     }
 
     if (!companyId) {
       return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // SEC-AUDIT-3: RBAC — only owner, admin, office_manager can access payroll
+    const userRole = user?.app_metadata?.role;
+    const PAYROLL_ROLES = ['owner', 'admin', 'office_manager'];
+    if (!userRole || !PAYROLL_ROLES.includes(userRole)) {
+      return new Response(JSON.stringify({ error: 'Payroll access requires owner, admin, or office_manager role' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 

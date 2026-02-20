@@ -33,7 +33,7 @@ serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // Verify user is super_admin
+  // Verify user is super_admin via JWT app_metadata (no DB roundtrip)
   const token = authHeader.replace('Bearer ', '')
   const { data: { user }, error: authError } = await supabase.auth.getUser(token)
   if (authError || !user) {
@@ -43,13 +43,9 @@ serve(async (req) => {
     })
   }
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile || profile.role !== 'super_admin') {
+  // SEC-AUDIT-3: Use app_metadata.role instead of public.users table lookup
+  const userRole = user.app_metadata?.role
+  if (userRole !== 'super_admin') {
     return new Response(JSON.stringify({ error: 'Requires super_admin role' }), {
       status: 403,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
