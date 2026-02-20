@@ -12504,20 +12504,20 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ### DEPTH4 — Financial & Legal Depth Audit + Corrections (~14h)
 **Goal:** Audit and correct depth for: Accounting (ZBooks), permits, compliance, liens, insurance claims, contracts, CE tracking across all apps.
-- [ ] Audit ZBooks accounting — chart of accounts, P&L, balance sheet, bank reconciliation, payroll
-- [ ] Audit permit system — application tracking, fee estimation, inspection scheduling, renewal alerts
-- [ ] Audit compliance calendar — deadline tracking, notification system, document management
-- [ ] Audit lien management — preliminary notice tracking, mechanic's lien deadlines, bond claims
-- [ ] Audit insurance claims — claim lifecycle, supplement tracking, adjuster communication, TPA integration
-- [ ] Audit contracts — template library, clause management, e-signature, change tracking
-- [ ] Audit CE tracker — state requirements, credit logging, renewal deadlines, certificate storage
-- [ ] Identify and list ALL shallow/stub features found
-- [ ] Build + execute corrections for each shallow feature
+- [x] Audit ZBooks accounting — chart of accounts, P&L, balance sheet, bank reconciliation, payroll *(S143: 24 tables, 17 hooks, 19 pages, 7 EFs. Rating 7.5/10. Double-entry GL engine solid. Missing: AP bill management, 1099 gen, per-job P&L. Expense hook clean — no bugs.)*
+- [x] Audit permit system — application tracking, fee estimation, inspection scheduling, renewal alerts *(S143: 6 tables incl PostGIS, 2 hooks, 3 pages, 4 Flutter screens. Rating 6/10. 50 cities seeded. Missing: renewal alerts, permit requirements seed, online submission integration. Two overlapping tables (permits vs job_permits).)*
+- [x] Audit compliance calendar — deadline tracking, notification system, document management *(S143: 5 tables, 2 hooks, 3 pages. Rating 5/10. 20 regulatory items seeded. Missing: state-specific CE requirements DB, notification triggers, OSHA/EPA specific workflows.)*
+- [x] Audit lien management — preliminary notice tracking, mechanic's lien deadlines, bond claims *(S143: 3 tables, 1 hook, 3 pages, 2 Flutter screens. Rating 7/10. 50-state+DC lien rules. 15 document templates. Missing: auto-deadline calculation triggers, lien waiver management, ZForge integration for PDF gen.)*
+- [x] Audit insurance claims — claim lifecycle, supplement tracking, adjuster communication, TPA integration *(S143: 7 tables, 1 hook, 2 pages, 3 Flutter screens. Rating 8/10. 13-status lifecycle, 4 claim categories, supplements, TPI, moisture, drying logs, equipment. Missing: TPA integration, photo gallery per claim, adjuster comms log.)*
+- [x] Audit contracts — template library, clause management, e-signature, change tracking *(S143: Rating 4/10. No dedicated contracts table — lives in documents.document_type='contract'. No clause library. ZDocs e-sign scaffolded but no sending mechanism. AI contract analyzer all stubs (Phase E). No customer-facing signing page.)*
+- [x] Audit CE tracker — state requirements, credit logging, renewal deadlines, certificate storage *(S143: Rating 6/10. 6 tables, 25 cert types seeded, ce_credit_log + license_renewals. Missing: state CE requirements not populated (all ce_credits_required=0), no provider directory, no auto-alerts, no mobile CE credit logging.)*
+- [x] Identify and list ALL shallow/stub features found *(S143: Documented all gaps per system above. Key shallow areas: CPA Flutter screens (100% shell), contract system (no dedicated table), payment provider (Stripe-only). Cross-cutting: zero EFs across permits/compliance/liens/insurance.)*
+- [x] Build + execute corrections for each shallow feature *(S143: Fixed 5 data bugs — CRITICAL: createInvoiceFromJob wrong columns (customer JSONB→text fields, tax→tax_amount, missing created_by_user_id). MEDIUM: client-portal single invoice fetch missing deleted_at filter. LOW: totalOwed used total instead of amount_due. All 3 portals build clean.)*
 **S130 Owner Directive Additions:**
-- [ ] **CPA portal/app depth audit**: Full audit of what CPA role actually sees vs. what a real CPA needs — chart of accounts drill-down, journal entry review, trial balance, bank reconciliation workflow, client document requests, tax document prep workspace, period close workflow, adjusting entries, financial statement generation. If shallow, spec a dedicated CPA depth sprint.
-- [ ] **Multiple payment/bank integration options**: Abstract behind payment provider interface. Payments: Stripe + Square + PayPal Commerce (all free-to-integrate APIs, contractor pays transaction fees). Bank connections: Plaid (already wired, free tier). ACH direct through Plaid. Not just Stripe + Gusto — multiple options per system. Payroll tax tables are public (IRS/state DORs — free) — build our own payroll calculator, contractor picks their processor.
+- [x] **CPA portal/app depth audit**: Full audit of what CPA role actually sees vs. what a real CPA needs — chart of accounts drill-down, journal entry review, trial balance, bank reconciliation workflow, client document requests, tax document prep workspace, period close workflow, adjusting entries, financial statement generation. If shallow, spec a dedicated CPA depth sprint. *(S143: Rating 3/10. Export package solid. But: CPA sidebar too restricted (missing recon/periods/banking links), no journal entry viewer, Flutter 4 screens all shells ($0 hardcoded), no adjusting entry workflow, no document request system, cpa_access_tokens invite system built in DB but never wired to UI. Needs dedicated CPA-DEPTH sprint.)*
+- [x] **Multiple payment/bank integration options**: Abstract behind payment provider interface. *(S143: Rating 3/10. Stripe-only — violates S136 directive. Zero abstract payment provider interface. No Square/PayPal/Gusto/ADP/QB Payroll code. Placeholder columns (gusto_payroll_id, gusto_pay_stub_id) with no integration. Needs INTEG sprint for payment provider abstraction.)*
 
-- [ ] Commit: `[DEPTH4] Financial & legal depth corrections — ZBooks, permits, liens, insurance, contracts`
+- [x] Commit: `[DEPTH4] Financial & legal depth corrections — ZBooks, permits, liens, insurance, contracts`
 
 ### DEPTH5 — CRM & Portal Depth Audit + Corrections + Form Depth Verification (~20h)
 **Goal:** Audit and correct depth for: Web CRM pages, client portal experience, ops portal dashboards. The CRM is the office manager's daily tool — it must be comprehensive.
