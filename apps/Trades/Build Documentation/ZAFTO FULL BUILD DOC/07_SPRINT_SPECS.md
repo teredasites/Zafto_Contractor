@@ -15739,6 +15739,219 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 **CUST Totals (S132):** CUST1 (~32h) + CUST2 (~40h) + CUST3 (~36h) + CUST4 (~48h) + CUST5 (~28h) + CUST6 (~36h) + CUST7 (~32h) + CUST8 (~28h) = **8 sprints, ~280h**. ~20 new tables.
 
+### CUST9 — Custom App Builder: Module Configuration Engine (~48h) — S144
+*Source: 5 parallel Opus research agents — enterprise app builders (Salesforce/Power Apps/ServiceTitan/Shopify/HubSpot/Retool), realtor platform customization (kvCORE/BoomTown/Chime/Rechat/KW Command/Follow Up Boss), Zafto architecture analysis, 38 edge case failure modes, Apple/Google store guidelines. Research saved to memory/cust9-*.md + memory/realtor-app-customization-research.md.*
+*Depends on: CUST1 (cascading settings foundation). Must be built AFTER CUST1.*
+*Covers: ALL entity types — contractor, realtor, inspector, adjuster, homeowner, preservation, hybrid.*
+*Apple/Google SAFE: remote config for UI layout is explicitly allowed. All widget states compiled in binary. Feature flags fine. Confirmed via Apple Guidelines 2.3.1/2.5.2 and Google Play policies.*
+
+**What this builds:** A CRM settings page where company owners/admins toggle which modules their team sees in the mobile app and web portals, assign module profiles to roles, reorder navigation, and customize the home screen — all without code. Solves the enterprise customization problem permanently: instead of Zafto building custom configs per client, companies build their own from 200+ modules. Every entity type (contractor, realtor, inspector, adjuster, homeowner) gets entity-type-specific defaults that admins can customize further.
+
+**Architecture: Three-Layer Configuration Model**
+```
+Layer 1: SYSTEM DEFAULTS (Zafto-controlled, via seed data/migrations)
+├── All modules enabled per entity type
+├── Standard nav order per entity type + role
+├── Default home screen layout per entity type
+├── Mandatory modules that CANNOT be disabled (OSHA safety, compliance, time clock)
+└── Updated by Zafto team via migrations only
+
+Layer 2: COMPANY CONFIG (Admin-controlled, stored in DB)
+├── Module visibility toggles (enabled/read-only/hidden per module)
+├── Custom navigation order
+├── Home screen widget selection
+├── Named "App Profiles" assigned to roles or individual users
+├── Module dependency enforcement (disable Jobs → auto-disable Invoices/Change Orders)
+└── Stored in company_app_profiles (JSONB, RLS-protected, optimistic locking)
+
+Layer 3: USER PREFERENCES (User-controlled, personal tweaks)
+├── Personal calculator favorites (already exists — Hive)
+├── Personal pinned tools
+├── Collapsed/expanded section memory
+└── Stored in user_module_preferences (JSONB, RLS-protected)
+```
+**Merge logic:** `system_defaults → company_config → role_profile → user_preferences` (most specific wins).
+**Restore cascade:** User resets → inherits role profile. Admin resets role → inherits system defaults. Admin resets company → inherits entity-type defaults.
+
+**Critical Design Decisions (from research):**
+1. **ALLOWLIST, not blocklist** — config lists what IS enabled. Unknown modules = hidden by default. Safe for new feature additions.
+2. **Module-level V1, field-level V2** — start with module visible/read-only/hidden. Field-level permissions deferred to CUST2 custom fields.
+3. **Dependency graph = CODE, visibility prefs = DATA** — module dependencies version-controlled in app, company preferences in DB.
+4. **Visibility ≠ Security** — hiding a module does NOT change RLS. Data access enforced by Supabase RLS independently. Config = UI layer only.
+5. **NO drag-drop page builder** — toggle list + reorder is 95% of the need. Drag-drop page builders (Salesforce pattern) create support nightmares.
+6. **Preset profiles + custom override** — entity-type defaults as starting point, not blank canvas. Matches Jobber/BuilderTrend/HubSpot pattern.
+7. **Fail open on config** — if config can't be loaded (offline, corruption, first-time), show ALL modules. Never blank screen.
+
+**Module Dependency Graph (enforced in code, not DB):**
+```
+jobs → [invoices, change_orders, scheduling, time_clock, materials, inspections, job_costing, punch_list, daily_log]
+invoices → [payments]
+estimates → [jobs]
+bids → [estimates, jobs]
+properties → [recon, sketch_engine]
+scheduling → [jobs]
+walkthrough → [estimates, jobs]
+```
+When admin disables a module, cascade warning shows dependent modules that will also be disabled. Admin must confirm.
+
+**Mandatory Modules (CANNOT be disabled — server-enforced):**
+- ALL entity types: home_dashboard, settings, notifications, help, profile
+- Contractor: safety_checklists (OSHA), time_clock, job_photos
+- Realtor: fair_housing_compliance, disclosure_forms, transaction_records
+- Inspector: report_generation, liability_disclaimers, inspection_records
+- Adjuster: claim_documentation, photo_documentation
+- Homeowner: project_tracking, contractor_communication
+
+#### Database Layer (~8h)
+
+- [ ] Create migration `XXX_cust9_app_profiles.sql` with tables:
+  - `company_app_profiles` — id UUID PK, company_id UUID NOT NULL FK companies, profile_name TEXT NOT NULL, entity_type TEXT NOT NULL, config JSONB NOT NULL, is_default BOOLEAN DEFAULT false, version INTEGER NOT NULL DEFAULT 1 (optimistic locking), schema_version INTEGER NOT NULL DEFAULT 1, created_at, updated_at, updated_by UUID FK auth.users, deleted_at TIMESTAMPTZ. UNIQUE(company_id, profile_name). CHECK(jsonb_typeof(config->'enabled_modules') = 'array'). CHECK(jsonb_array_length(config->'enabled_modules') >= 5).
+  - `company_app_profile_assignments` — id UUID PK, company_id UUID NOT NULL FK companies, profile_id UUID NOT NULL FK company_app_profiles, target_type TEXT NOT NULL CHECK IN ('role', 'user', 'team'), target_id TEXT NOT NULL (role name or user UUID or team UUID), priority INTEGER DEFAULT 0 (higher wins for multi-assignment), created_at, updated_at, updated_by UUID, deleted_at. UNIQUE(company_id, target_type, target_id) WHERE deleted_at IS NULL.
+  - `company_app_profile_audit` — id UUID PK, company_id UUID NOT NULL, profile_id UUID, changed_by UUID NOT NULL FK auth.users, changed_at TIMESTAMPTZ NOT NULL DEFAULT now(), change_type TEXT NOT NULL ('profile_created', 'profile_updated', 'profile_deleted', 'profile_assigned', 'profile_unassigned', 'profile_reset'), previous_config JSONB, new_config JSONB, diff JSONB, ip_address INET, reason TEXT. INSERT-ONLY — no UPDATE or DELETE policies.
+  - `user_module_preferences` — id UUID PK, user_id UUID NOT NULL FK auth.users, company_id UUID NOT NULL FK companies, preferences JSONB NOT NULL DEFAULT '{}' (pinned_tools, collapsed_sections, nav_order_override — only if company allows user overrides), updated_at. UNIQUE(user_id, company_id).
+- [ ] RLS on all 4 tables: company_app_profiles (SELECT: any company member, INSERT/UPDATE/DELETE: owner+admin only), company_app_profile_assignments (same), company_app_profile_audit (SELECT: owner+admin only, INSERT: via trigger only, NO UPDATE/DELETE), user_module_preferences (SELECT/UPDATE: own row only via auth.uid(), INSERT: own row only).
+- [ ] Trigger `log_profile_change()` on company_app_profiles — auto-writes to audit table on INSERT/UPDATE/DELETE with previous_config, new_config, computed diff.
+- [ ] `update_updated_at()` trigger on company_app_profiles, company_app_profile_assignments, user_module_preferences.
+- [ ] Seed default profiles per entity type: contractor_default (all contractor modules enabled, standard nav order), realtor_default (all realtor modules, realtor nav order), inspector_default, adjuster_default, homeowner_default, preservation_default. Each stored as system_settings seed rows with `is_system = true` flag that cannot be deleted by admins.
+- [ ] Index: company_app_profiles(company_id), company_app_profile_assignments(company_id, target_type, target_id), company_app_profile_audit(company_id, changed_at DESC).
+- [ ] Verify: `dart analyze` — 0 errors after migration
+
+#### Flutter: Config Provider + Module Registry Enhancement (~12h)
+
+- [ ] Create `lib/providers/app_config_provider.dart` — Riverpod `AsyncNotifierProvider` that:
+  - Fetches company_app_profiles + assignments from Supabase on init
+  - Resolves the current user's effective profile: system_default → company_default → role_profile → user_profile (most specific wins)
+  - Caches resolved config to Hive box `app_config` for offline use
+  - Subscribes to Supabase Realtime on `company_app_profiles` table for live updates
+  - On Realtime change: sets `configUpdatePending = true`, applies at next natural navigation point (NOT mid-workflow)
+  - Exposes: `isModuleEnabled(String moduleId) → bool`, `getAccessLevel(String moduleId) → AccessLevel {hidden, readOnly, fullAccess}`, `getNavOrder() → List<String>`, `getHomeWidgets() → List<String>`, `isMandatoryModule(String moduleId) → bool`
+  - Falls back to "all modules enabled" if config fetch fails (fail open for visibility, never blank screen)
+  - Reports app version on config fetch for version-aware filtering
+- [ ] Create `lib/core/module_registry.dart` — canonical module definitions:
+  - `ModuleDefinition` class: id, name, description, icon, category, entityTypes (which entity types this module belongs to), platforms (mobile/web/both), dependencies (list of required module IDs), isMandatory map (entity_type → bool), defaultAccessLevel
+  - Static `MODULE_DEPENDENCY_GRAPH` — DAG of module dependencies (jobs→invoices, etc.)
+  - Static `MANDATORY_MODULES` map — entity_type → Set<String> of module IDs that cannot be disabled
+  - `validateConfig(config)` — returns list of violations (dependency breaks, mandatory modules missing, unknown module IDs)
+  - `resolveDependencyCascade(moduleId)` — returns all modules that would be disabled if this module is disabled
+  - Unit test: `module_registry_test.dart` — validates DAG has no cycles, all mandatory modules have valid IDs, all dependencies reference valid modules
+- [ ] Modify `lib/navigation/role_navigation.dart`:
+  - `getTabsForRole()` reads from `appConfigProvider` instead of hardcoded switch
+  - Filters tab list through `isModuleEnabled()` for each tab's associated module
+  - Respects `getNavOrder()` for ordering
+  - Enforces minimum 2 tabs (Home + More) even if config removes everything (blank screen prevention)
+  - Fallback: if provider is loading/error, return hardcoded defaults (current behavior)
+- [ ] Modify `lib/navigation/app_shell.dart`:
+  - `_buildTabScreens()` reads from config provider
+  - Only builds screens for enabled modules (no IndexedStack for hidden modules — saves memory)
+  - "More" menu dynamically populated from enabled modules not in bottom nav
+- [ ] Modify `lib/screens/home_screen_v2.dart`:
+  - `_FeatureCarousel` items filtered through `isModuleEnabled()`
+  - `_buildBusinessTiles` filtered through config
+  - Sections reordered based on `getHomeWidgets()` if company has custom layout
+  - Empty carousel/section → hidden entirely (no empty rows)
+- [ ] Modify `lib/screens/tools/tools_hub_screen.dart`:
+  - Filter `ScreenRegistry` entries through config provider
+  - Only show tools for enabled modules
+  - Trade filter respects entity type (realtor doesn't see welding calcs unless explicitly enabled)
+- [ ] Modify search in `lib/screens/home_screen_v2.dart`:
+  - Search results filtered through `isModuleEnabled()` — disabled modules don't appear in search
+  - If a result is from a disabled module, silently exclude it
+- [ ] Handle deep links to disabled modules — `GoRouter` redirect guard:
+  - Extract module from route path
+  - If module disabled, redirect to `/module-unavailable?module=X`
+  - `/module-unavailable` screen: "[Module] is not available in your current configuration. Contact your admin if you need access." + "Request Access" button that sends notification to admin
+- [ ] Handle notifications for disabled modules:
+  - Notification dispatch checks recipient's config before sending
+  - If module disabled for recipient: suppress notification, notify the assigner instead ("User X doesn't have access to [Module]")
+  - NEVER suppress critical notifications (safety alerts, security, compliance)
+- [ ] Offline behavior: cached config used when offline. Server-wins sync on reconnect. Data created offline in a module that's later disabled still syncs (valid business data). Module visibility updates on next app foreground with connectivity.
+
+#### Web CRM: Module Manager Admin Page (~10h)
+
+- [ ] Create `web-portal/src/lib/hooks/use-app-profiles.ts`:
+  - Fetches company_app_profiles, assignments, audit log for current company
+  - CRUD operations: createProfile, updateProfile, deleteProfile (soft), assignProfile, unassignProfile
+  - `resolveEffectiveConfig(userId)` — shows admin what a specific user would see
+  - Optimistic locking: send `version` on update, handle 409 conflict ("Profile was modified by another admin. Refresh and try again.")
+  - Supabase Realtime subscription for live updates
+  - `seedDefaultProfiles()` — creates entity-type defaults for new companies
+- [ ] Create `/dashboard/settings/app-builder` page — the main admin UI:
+  - Header: "App Builder — Customize what your team sees"
+  - Profile selector dropdown: list company profiles + "Create New Profile" button
+  - Module toggle list organized by category (Core Business, Field Tools, Calculators, Communication, Financial, Compliance, etc.):
+    - Each module row: icon + name + description + 3-state toggle (Full Access / Read Only / Hidden)
+    - Mandatory modules shown with lock icon + tooltip "Required for [reason]"
+    - Dependency warnings inline: when toggling off, yellow banner shows cascade ("Disabling Jobs will also disable: Invoices, Change Orders, Scheduling...")
+    - Toggle confirmation dialog for cascading disables
+  - Navigation order section: drag-and-drop reorder of bottom nav tabs + "More" menu items (using dnd-kit)
+  - Home screen widget selector: checkboxes for which widgets appear on home dashboard
+  - Profile assignment section: assign profile to roles (dropdown) or specific users (search + select)
+  - "Preview as..." button: select a role or user → shows simulated mobile screen with their effective config
+  - "Reset to Defaults" button with confirmation: "This will reset [Profile Name] to the [Entity Type] default. Your current configuration will be saved as a snapshot."
+  - Audit log tab: timeline of all config changes with diffs, who, when, reason
+- [ ] Create `/dashboard/settings/app-builder/[profileId]` page — edit specific profile
+- [ ] Validation on save:
+  - Server-side: reject configs with fewer than 5 enabled modules, reject disabled mandatory modules, validate dependency graph, reject unknown module IDs
+  - Client-side: same validations as preview before submit, dependency cascade shown before save
+  - Schema validation: JSON must match expected structure (schema_version, enabled_modules array, nav_order array)
+  - Optimistic locking: version check, 409 on conflict with "modified by [admin name] at [time]" message
+- [ ] "Admin lockout prevention": cannot remove own admin access, cannot remove last admin from admin profile, owner role immune from profile restrictions (owner always sees everything + app builder)
+- [ ] Config corruption fallback: if stored config fails validation on read, fall back to entity-type default config, log error to Sentry, show admin warning "Your configuration had an issue and was reset to defaults. Previous config saved to history."
+
+#### Team + Client + Ops Portal Hooks (~6h)
+
+- [ ] Create `team-portal/src/lib/hooks/use-app-config.ts`:
+  - Reads effective config for current user
+  - Filters sidebar navigation through enabled modules
+  - Handles "module unavailable" graceful redirect
+- [ ] Create `client-portal/src/lib/hooks/use-app-config.ts`:
+  - Same pattern — homeowner portal modules filtered through config
+  - Homeowner-specific defaults (project tracking, contractor communication, payment)
+- [ ] Create `ops-portal/src/lib/hooks/use-app-config.ts`:
+  - Ops portal has special super_admin override: super_admin ALWAYS sees everything regardless of company config
+  - Platform-wide config analytics: "Which modules are most/least used across all companies?"
+- [ ] Wire all 3 portal sidebars to use config hooks:
+  - Replace hardcoded `navigationGroups` with config-filtered groups
+  - Extend all `NavGroup` items to reference module IDs
+  - `featureFlag` field already exists on NavGroup — extend to also check app profile config
+- [ ] All 4 portals: `npm run build` — 0 errors
+
+#### Edge Case Hardening (~8h)
+
+- [ ] **Blank screen prevention**: mandatory floor enforced at DB level (CHECK constraint) + client level (minimum 2 nav tabs) + fallback to all-enabled
+- [ ] **Mid-workflow protection**: config changes applied at next navigation point, NOT mid-form. User completes current form even if module is disabled. Unsaved form data preserved in local storage.
+- [ ] **Concurrent admin edits**: optimistic locking via `version` column. Second save gets 409 with diff. Admin sees "Modified by [name] at [time]. Review changes."
+- [ ] **Config corruption recovery**: fallback chain — company config → last good from audit log → entity-type default → hardcoded universal default. NEVER blank screen.
+- [ ] **New feature handling**: new modules default to HIDDEN in existing configs (allowlist). Admin notification: "3 new features available. Configure in App Builder." New companies get new modules in their defaults.
+- [ ] **Module rename migration**: `DEPRECATED_MODULES` map in code. Unknown module IDs silently ignored at render. Migration script renames old IDs in configs. Logged for cleanup.
+- [ ] **Version compatibility**: client filters config through its own `ModuleRegistry` — modules unknown to the binary are ignored. Admin UI warns: "AI Estimator requires v3.0+. 12 of 45 employees are on older versions."
+- [ ] **Data retention**: ABSOLUTE RULE — disabling a module NEVER deletes, archives, or modifies data. Visibility toggle only. Data remains intact. Re-enabling restores all previous data immediately. Enforced by RLS being independent of config.
+- [ ] **Notifications for disabled modules**: notification gateway checks config. If recipient can't see module, suppress notification and alert the sender. Never suppress safety/compliance notifications.
+- [ ] **Search results from disabled modules**: filtered out. Disabled module content invisible in global search.
+- [ ] **Dashboard widgets from disabled modules**: filtered out. Layout reflows. No empty cards.
+- [ ] **Bookmarks/favorites to disabled modules**: shown greyed out with "Module not available." Preserved (not auto-deleted) for re-enablement.
+- [ ] **Temporary worker access**: `company_app_profile_assignments.expires_at TIMESTAMPTZ` field. pg_cron hourly job revokes expired assignments. Admin sees "Access expires on [date]." Banner for temp workers. Reminder to admin 3 days before expiration.
+
+#### Security Verification (~4h)
+
+- [ ] TEST: `company_app_profiles` RLS — company A cannot read company B's profiles
+- [ ] TEST: `company_app_profile_audit` — INSERT-ONLY, no UPDATE/DELETE via client
+- [ ] TEST: Non-admin user cannot create/update/delete profiles (RLS rejects)
+- [ ] TEST: Owner role immune from profile restrictions (always sees app builder + all modules)
+- [ ] TEST: Disabling a module via config does NOT affect RLS data access (visibility ≠ security)
+- [ ] TEST: Optimistic locking — concurrent updates return 409, not silent overwrite
+- [ ] TEST: Mandatory modules cannot be disabled via API (server-side validation rejects)
+- [ ] TEST: Config with < 5 enabled modules rejected by CHECK constraint
+- [ ] TEST: Corrupted JSONB in config column → fallback chain works, no blank screen
+- [ ] TEST: Expired temporary access → user loses custom profile, falls back to default
+- [ ] TEST: Admin cannot remove own admin access
+- [ ] TEST: Admin cannot remove last admin from admin profile
+- [ ] `dart analyze` — 0 errors
+- [ ] All 4 portals: `npm run build` — 0 errors
+- [ ] Commit: `[CUST9] Custom App Builder — module configuration engine, app profiles, admin UI, edge case hardening`
+
+**CUST Totals (S144 updated):** CUST1 (~32h) + CUST2 (~40h) + CUST3 (~36h) + CUST4 (~48h) + CUST5 (~28h) + CUST6 (~36h) + CUST7 (~32h) + CUST8 (~28h) + **CUST9 (~48h)** = **9 sprints, ~328h**. ~24 new tables.
+
 ---
 
 ## PHASE CLIENT: HOMEOWNER PLATFORM (S132) — CLIENT1-CLIENT17 (~378h)
