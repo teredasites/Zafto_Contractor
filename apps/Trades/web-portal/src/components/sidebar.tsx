@@ -534,6 +534,8 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           'transform transition-transform duration-200 ease-out lg:hidden',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
+        aria-label="Main navigation"
+        role="navigation"
       >
         {/* Mobile header */}
         <div className="flex items-center justify-between h-12 px-4 border-b border-main">
@@ -544,13 +546,14 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           <button
             className="p-1.5 text-muted hover:text-main rounded-md hover:bg-surface-hover transition-colors"
             onClick={onMobileClose}
+            aria-label="Close navigation menu"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Mobile nav */}
-        <nav className="flex-1 py-2 overflow-y-auto scrollbar-hide">
+        <nav className="flex-1 py-2 overflow-y-auto scrollbar-hide" aria-label="Mobile navigation">
           {/* Dashboard — pinned */}
           <div className="px-2 mb-1">
             <Link
@@ -657,6 +660,8 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           'fixed top-0 left-0 z-40 h-full bg-surface border-r border-main/50 flex-col hidden lg:flex transition-[width] duration-200 ease-out overflow-hidden',
         )}
         style={{ width: sidebarWidth }}
+        aria-label="Main navigation"
+        role="navigation"
       >
         {/* Logo */}
         <div className="h-12 flex items-center border-b border-main flex-shrink-0 px-3 gap-2 min-w-0">
@@ -947,7 +952,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           </div>
 
           {/* Panel items */}
-          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]">
+          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]" aria-label={`${currentDetailGroup.label} navigation`}>
             {currentDetailGroup.items.map(item => renderDetailItem(item))}
           </nav>
         </div>

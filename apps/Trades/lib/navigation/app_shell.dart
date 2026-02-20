@@ -200,28 +200,35 @@ class _AppShellState extends ConsumerState<AppShell> {
   }
 
   Widget _buildZButton(ZaftoColors colors) {
-    return Hero(
-      tag: 'z-button',
-      child: GestureDetector(
-        onLongPress: () {
-          HapticFeedback.heavyImpact();
-          _showQuickActions(context, colors);
-        },
-        child: SizedBox(
-          width: 56,
-          height: 56,
-          child: FloatingActionButton(
-            onPressed: () => showZChatSheet(context),
-            elevation: 8,
-            backgroundColor: colors.accentPrimary,
-            shape: const CircleBorder(),
-            child: Text(
-              'Z',
-              style: TextStyle(
-                color: colors.textOnAccent,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'SF Pro Display',
+    return Semantics(
+      label: 'Z Intelligence assistant. Long press for quick actions.',
+      button: true,
+      child: Hero(
+        tag: 'z-button',
+        child: GestureDetector(
+          onLongPress: () {
+            HapticFeedback.heavyImpact();
+            _showQuickActions(context, colors);
+          },
+          child: SizedBox(
+            width: 56,
+            height: 56,
+            child: FloatingActionButton(
+              onPressed: () => showZChatSheet(context),
+              elevation: 8,
+              backgroundColor: colors.accentPrimary,
+              shape: const CircleBorder(),
+              tooltip: 'Z Intelligence',
+              child: ExcludeSemantics(
+                child: Text(
+                  'Z',
+                  style: TextStyle(
+                    color: colors.textOnAccent,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'SF Pro Display',
+                  ),
+                ),
               ),
             ),
           ),

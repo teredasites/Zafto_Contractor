@@ -219,6 +219,7 @@ export function Sidebar() {
       <button
         onClick={() => setMobileOpen(true)}
         className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-surface border border-main shadow-sm"
+        aria-label="Open navigation menu"
       >
         <Menu size={20} className="text-main" />
       </button>
@@ -227,20 +228,20 @@ export function Sidebar() {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-surface border-r border-main shadow-xl flex flex-col">
+          <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-surface border-r border-main shadow-xl flex flex-col" aria-label="Team navigation" role="navigation">
             {/* Header */}
             <div className="flex items-center justify-between h-12 px-4 border-b border-main">
               <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
                 <Logo className="text-[15px] font-semibold text-accent" />
                 <span className="text-[15px] font-semibold tracking-[0.02em] text-main">ZAFTO</span>
               </Link>
-              <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-md hover:bg-surface-hover">
+              <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-md hover:bg-surface-hover" aria-label="Close navigation menu">
                 <X size={16} className="text-muted" />
               </button>
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 py-2 overflow-y-auto scrollbar-hide">
+            <nav className="flex-1 py-2 overflow-y-auto scrollbar-hide" aria-label="Mobile navigation">
               {navigationGroups.map(group => {
                 const isOpen = mobileSections[group.key] ?? false;
                 const hasActive = groupHasActiveChild(group);
@@ -307,6 +308,8 @@ export function Sidebar() {
       <aside
         ref={railRef}
         className="fixed top-0 left-0 z-40 h-full w-12 bg-surface border-r border-main/50 flex-col hidden lg:flex"
+        aria-label="Team navigation"
+        role="navigation"
       >
         {/* Logo */}
         <div className="h-12 flex items-center justify-center border-b border-main flex-shrink-0">
@@ -454,7 +457,7 @@ export function Sidebar() {
               <X size={14} />
             </button>
           </div>
-          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]">
+          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]" aria-label={`${currentDetailGroup.label} navigation`}>
             {currentDetailGroup.items.map(item => renderItem(item))}
           </nav>
         </div>

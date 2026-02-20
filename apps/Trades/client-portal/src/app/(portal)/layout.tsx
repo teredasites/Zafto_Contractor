@@ -58,9 +58,16 @@ function PortalShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-main">
+      {/* Skip navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--accent)] focus:text-white focus:rounded-lg focus:text-sm focus:font-medium focus:outline-none"
+      >
+        Skip to main content
+      </a>
       <AxeDevTools />
       {/* Desktop Top Nav */}
-      <header className="sticky top-0 z-40 bg-main/80 backdrop-blur-sm border-b border-main">
+      <header className="sticky top-0 z-40 bg-main/80 backdrop-blur-sm border-b border-main" aria-label="Top navigation">
         <div className="max-w-5xl mx-auto flex items-center justify-between h-14 px-4 lg:px-8">
           <div className="flex items-center gap-6">
             <Link href="/home" className="flex items-center gap-2.5">
@@ -69,7 +76,7 @@ function PortalShell({ children }: { children: React.ReactNode }) {
             </Link>
 
             {/* Desktop nav tabs */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
               {desktopTabs.map(tab => {
                 const Icon = tab.icon;
                 const active = isActive(tab.href);
@@ -92,10 +99,13 @@ function PortalShell({ children }: { children: React.ReactNode }) {
               <button
                 onClick={() => setBellOpen(!bellOpen)}
                 className={`relative p-2 rounded-lg transition-colors ${bellOpen ? 'bg-accent-light text-accent' : 'text-muted hover:text-main hover:bg-surface-hover'}`}
+                aria-label={`Notifications${unreadCount > 0 ? ` — ${unreadCount} unread` : ''}`}
+                aria-expanded={bellOpen}
+                aria-haspopup="true"
               >
                 <Bell size={18} />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[14px] h-3.5 px-0.5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute top-1 right-1 min-w-[14px] h-3.5 px-0.5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center" aria-hidden="true">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}
@@ -150,12 +160,12 @@ function PortalShell({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Page Content */}
-      <main className="max-w-5xl mx-auto px-4 lg:px-8 py-6 pb-24 md:pb-8">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 lg:px-8 py-6 pb-24 md:pb-8" aria-label="Page content">
         {children}
       </main>
 
       {/* Mobile Bottom Tab Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-main">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-main" aria-label="Mobile navigation">
         <div className="flex items-center justify-around h-16">
           {tabs.map(tab => {
             const Icon = tab.icon;

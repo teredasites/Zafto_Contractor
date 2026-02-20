@@ -230,7 +230,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6" aria-label="Operations navigation">
         {navSections.map((section) => (
           <div key={section.title}>
             <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-secondary)] sidebar-label">
@@ -323,6 +323,8 @@ export function Sidebar() {
           'lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
+        aria-label="Operations navigation"
+        role="navigation"
       >
         {navContent}
       </aside>

@@ -109,6 +109,14 @@ function DashboardShell({
 
   return (
     <div className="min-h-screen bg-main">
+      {/* Skip navigation — appears on first Tab press */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--accent)] focus:text-white focus:rounded-lg focus:text-sm focus:font-medium focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       <Sidebar
         mobileOpen={sidebarOpen}
         onMobileClose={() => onSidebarOpenChange(false)}
@@ -126,13 +134,14 @@ function DashboardShell({
         }}
       >
         {/* Top bar */}
-        <header className="sticky top-0 z-30 h-14 bg-main/80 backdrop-blur-sm border-b border-main">
+        <header className="sticky top-0 z-30 h-14 bg-main/80 backdrop-blur-sm border-b border-main" aria-label="Top bar">
           <div className="flex items-center justify-between h-full px-4 lg:px-6">
             {/* Left side: hamburger (mobile) + company name */}
             <div className="flex items-center gap-3">
               <button
                 className="lg:hidden text-muted hover:text-main p-1.5 rounded-md hover:bg-surface-hover transition-colors"
                 onClick={() => onSidebarOpenChange(true)}
+                aria-label="Open navigation menu"
               >
                 <Menu size={20} />
               </button>
@@ -156,6 +165,7 @@ function DashboardShell({
                   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
                 }}
                 className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-secondary border border-main rounded-lg w-56 hover:border-accent/40 transition-colors"
+                aria-label="Search or jump to (Ctrl+K)"
               >
                 <Search size={15} className="text-muted" />
                 <span className="text-[13px] text-muted flex-1 text-left">Search or jump to...</span>
@@ -168,7 +178,7 @@ function DashboardShell({
               <button
                 onClick={() => router.push('/dashboard/documents')}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium text-muted hover:text-main hover:bg-surface-hover transition-all"
-                title="Documents & Files"
+                aria-label="Documents and files"
               >
                 <FolderOpen size={16} />
                 <span className="hidden sm:inline">Files</span>
@@ -189,7 +199,8 @@ function DashboardShell({
                     ? 'bg-emerald-500/10 text-emerald-500'
                     : 'text-muted hover:text-main hover:bg-surface-hover',
                 )}
-                title="Z Intelligence (⌘J)"
+                aria-label={`Z Intelligence ${consoleState !== 'collapsed' ? '(active)' : ''} — Ctrl+J`}
+                aria-pressed={consoleState !== 'collapsed'}
               >
                 <ZMark size={16} />
                 <span className="hidden sm:inline">Z</span>
@@ -204,7 +215,7 @@ function DashboardShell({
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-8">
+        <main id="main-content" className="p-4 lg:p-8" aria-label="Page content">
           <CommandPalette />
           {children}
         </main>
@@ -263,20 +274,23 @@ function NotificationBell() {
           'relative p-2 rounded-lg transition-colors',
           open ? 'bg-accent/10 text-accent' : 'text-muted hover:text-main hover:bg-surface-hover',
         )}
+        aria-label={`Notifications${unreadCount > 0 ? ` — ${unreadCount} unread` : ''}`}
+        aria-expanded={open}
+        aria-haspopup="true"
       >
         <Bell size={16} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center" aria-hidden="true">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-main rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
+        <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-main rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in" role="dialog" aria-label="Notifications" aria-modal="false">
           <div className="px-4 py-3 border-b border-main flex items-center justify-between">
             <div>
-              <p className="text-[13px] font-semibold text-main">Notifications</p>
+              <h2 className="text-[13px] font-semibold text-main">Notifications</h2>
               <p className="text-[11px] text-muted">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
             </div>
             {unreadCount > 0 && (
@@ -290,10 +304,10 @@ function NotificationBell() {
             )}
           </div>
 
-          <div className="max-h-[360px] overflow-y-auto">
+          <div className="max-h-[360px] overflow-y-auto" role="list" aria-label="Notification items">
             {notifications.length === 0 ? (
               <div className="py-10 text-center">
-                <Bell size={24} className="mx-auto mb-2 text-muted" />
+                <Bell size={24} className="mx-auto mb-2 text-muted" aria-hidden="true" />
                 <p className="text-[13px] text-muted">No notifications yet</p>
               </div>
             ) : (
@@ -396,10 +410,13 @@ function ActiveWorkDropdown() {
             ? 'bg-accent/10 text-accent'
             : 'text-muted hover:text-main hover:bg-surface-hover',
         )}
+        aria-label="Active work items"
+        aria-expanded={open}
+        aria-haspopup="true"
       >
         <Briefcase size={16} />
         <span className="hidden sm:inline">Active</span>
-        <ChevronDown size={12} className={cn('transition-transform', open && 'rotate-180')} />
+        <ChevronDown size={12} className={cn('transition-transform', open && 'rotate-180')} aria-hidden="true" />
       </button>
 
       {open && (
@@ -496,10 +513,13 @@ function ProModeToggle() {
           ? 'bg-accent text-white'
           : 'text-muted hover:text-main hover:bg-surface-hover',
       )}
+      aria-label={`Pro mode ${isOn ? 'enabled' : 'disabled'}`}
+      aria-pressed={isOn}
+      role="switch"
     >
       <ZMark size={14} />
       <span>PRO</span>
-      <span className={cn('w-7 h-3.5 rounded-full relative transition-colors', isOn ? 'bg-white/30' : 'bg-secondary')}>
+      <span className={cn('w-7 h-3.5 rounded-full relative transition-colors', isOn ? 'bg-white/30' : 'bg-secondary')} aria-hidden="true">
         <span className={cn('absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white shadow-sm transition-all duration-200', isOn ? 'left-3.5' : 'left-0.5')} />
       </span>
     </button>

@@ -55,42 +55,52 @@ class ZaftoSectionHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = ref.watch(zaftoColorsProvider);
 
-    return Padding(
-      // Spec: 20px horizontal padding
-      padding: addPadding
-          ? const EdgeInsets.symmetric(horizontal: 20)
-          : EdgeInsets.zero,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Title - Spec: 11px, w600, textTertiary, letter-spacing 1px
-          Text(
-            uppercase ? title.toUpperCase() : title,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: colors.textTertiary,
-              letterSpacing: 1,
-            ),
-          ),
-          // Action - Spec: 12px, Blue
-          if (action != null)
-            GestureDetector(
-              onTap: () {
-                if (onActionTap != null) {
-                  HapticFeedback.lightImpact();
-                  onActionTap!();
-                }
-              },
+    return Semantics(
+      header: true,
+      label: title,
+      child: Padding(
+        // Spec: 20px horizontal padding
+        padding: addPadding
+            ? const EdgeInsets.symmetric(horizontal: 20)
+            : EdgeInsets.zero,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Title - Spec: 11px, w600, textTertiary, letter-spacing 1px
+            ExcludeSemantics(
               child: Text(
-                action!,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: _blueAccent,
+                uppercase ? title.toUpperCase() : title,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: colors.textTertiary,
+                  letterSpacing: 1,
                 ),
               ),
             ),
-        ],
+            // Action - Spec: 12px, Blue
+            if (action != null)
+              Semantics(
+                button: true,
+                label: action,
+                child: GestureDetector(
+                  onTap: () {
+                    if (onActionTap != null) {
+                      HapticFeedback.lightImpact();
+                      onActionTap!();
+                    }
+                  },
+                  child: Text(
+                    action!,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: _blueAccent,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
