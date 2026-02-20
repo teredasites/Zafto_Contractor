@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft, MapPin, Camera, DoorOpen, Star, Ruler, FileText,
+  ArrowLeft, MapPin, Camera, DoorOpen, Ruler, FileText,
   ChevronDown, ChevronUp, ScanLine, X, Maximize2, Calendar,
   Printer, Layers, CheckCircle2,
 } from 'lucide-react';
@@ -58,23 +58,7 @@ function DetailSkeleton() {
   );
 }
 
-// ==================== CONDITION STARS ====================
 
-function ConditionStars({ rating }: { rating: number | null }) {
-  if (rating === null || rating === undefined) return null;
-  const stars = Math.min(5, Math.max(0, Math.round(rating)));
-  return (
-    <div className="flex items-center gap-0.5" title={`Condition: ${stars}/5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star
-          key={i}
-          size={14}
-          className={i <= stars ? 'text-amber-400 fill-amber-400' : 'text-gray-200'}
-        />
-      ))}
-    </div>
-  );
-}
 
 // ==================== PHOTO LIGHTBOX ====================
 
@@ -187,7 +171,11 @@ function RoomSection({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-semibold text-gray-900 text-sm">{room.name}</h3>
-                <ConditionStars rating={room.conditionRating} />
+                {room.conditionTags.length > 0 && (
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">
+                    {room.conditionTags[0]}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3 mt-0.5">
                 <span className="text-xs text-gray-500 capitalize">
@@ -234,12 +222,20 @@ function RoomSection({
             )}
 
             {/* Condition */}
-            {room.conditionRating !== null && (
+            {(room.conditionTags.length > 0 || room.materialTags.length > 0) && (
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">Condition Rating</span>
-                <div className="flex items-center gap-2">
-                  <ConditionStars rating={room.conditionRating} />
-                  <span className="text-sm font-medium text-gray-700">{room.conditionRating}/5</span>
+                <span className="text-sm text-gray-600">Condition</span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {room.conditionTags.map((tag) => (
+                    <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                      {tag}
+                    </span>
+                  ))}
+                  {room.materialTags.map((tag) => (
+                    <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}
@@ -342,7 +338,7 @@ export default function WalkthroughDetailPage() {
     );
   }
 
-  const completedRooms = rooms.filter((r) => r.status === 'completed').length;
+  const completedRooms = rooms.filter((r) => r.photoCount > 0).length;
   const totalRooms = rooms.length || walkthrough.totalRooms;
 
   // Group rooms by floor

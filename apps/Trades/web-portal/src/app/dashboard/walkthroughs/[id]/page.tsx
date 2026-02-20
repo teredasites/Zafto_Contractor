@@ -11,7 +11,6 @@ import {
   User,
   Briefcase,
   FileText,
-  Star,
   ChevronDown,
   ChevronRight,
   X,
@@ -58,22 +57,16 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; d
   archived: { label: 'Archived', bg: 'bg-slate-100 dark:bg-slate-800', text: 'text-slate-600 dark:text-slate-400', dot: 'bg-slate-400' },
 };
 
-const ROOM_STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
-  pending: { label: 'Pending', bg: 'bg-slate-100 dark:bg-slate-800', text: 'text-slate-600 dark:text-slate-400' },
-  in_progress: { label: 'In Progress', bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300' },
-  completed: { label: 'Completed', bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300' },
-  skipped: { label: 'Skipped', bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400' },
-};
 
 const PHOTO_TYPE_LABELS: Record<string, string> = {
-  overview: 'Overview',
+  general: 'General',
   detail: 'Detail',
   damage: 'Damage',
-  measurement: 'Measurement',
   before: 'Before',
   after: 'After',
+  wide: 'Wide',
   exterior: 'Exterior',
-  interior: 'Interior',
+  selfie: 'Selfie',
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -410,7 +403,6 @@ function RoomsTab({
       {rooms.map((room) => {
         const isExpanded = expandedRooms.has(room.id);
         const roomPhotos = photosByRoom.get(room.id) || [];
-        const statusConf = ROOM_STATUS_CONFIG[room.status] || ROOM_STATUS_CONFIG.pending;
 
         return (
           <Card key={room.id} className="overflow-hidden">
@@ -428,8 +420,8 @@ function RoomsTab({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium text-main truncate">{room.name}</h3>
-                    <span className={cn('px-2 py-0.5 text-[10px] font-medium rounded-full', statusConf.bg, statusConf.text)}>
-                      {statusConf.label}
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize">
+                      {room.floorLevel.replace(/_/g, ' ')}
                     </span>
                   </div>
                   <div className="flex items-center gap-3 mt-0.5 text-xs text-muted">
@@ -443,18 +435,12 @@ function RoomsTab({
                 </div>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
-                {room.conditionRating != null && (
+                {room.conditionTags.length > 0 && (
                   <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star
-                        key={s}
-                        size={12}
-                        className={cn(
-                          s <= (room.conditionRating || 0)
-                            ? 'text-amber-400 fill-amber-400'
-                            : 'text-slate-300 dark:text-slate-600'
-                        )}
-                      />
+                    {room.conditionTags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="secondary" size="sm">
+                        {tag}
+                      </Badge>
                     ))}
                   </div>
                 )}
@@ -494,11 +480,16 @@ function RoomsTab({
                   </div>
                 )}
 
-                {/* Tags */}
-                {room.tags.length > 0 && (
+                {/* Condition & Material Tags */}
+                {(room.conditionTags.length > 0 || room.materialTags.length > 0) && (
                   <div className="flex flex-wrap gap-1.5">
-                    {room.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" size="sm">
+                    {room.conditionTags.map((tag) => (
+                      <Badge key={`c-${tag}`} variant="secondary" size="sm">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {room.materialTags.map((tag) => (
+                      <Badge key={`m-${tag}`} variant="secondary" size="sm">
                         {tag}
                       </Badge>
                     ))}
@@ -522,7 +513,7 @@ function RoomsTab({
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                           <Maximize2 size={16} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
-                        {photo.photoType && photo.photoType !== 'overview' && (
+                        {photo.photoType && photo.photoType !== 'general' && (
                           <span className="absolute bottom-1 left-1 px-1.5 py-0.5 text-[9px] font-medium bg-black/60 text-white rounded">
                             {PHOTO_TYPE_LABELS[photo.photoType] || photo.photoType}
                           </span>
@@ -1025,18 +1016,12 @@ function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: Wal
                     {room.roomType && (
                       <Badge variant="secondary" size="sm">{room.roomType}</Badge>
                     )}
-                    {room.conditionRating != null && (
-                      <div className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <Star
-                            key={s}
-                            size={10}
-                            className={cn(
-                              s <= (room.conditionRating || 0)
-                                ? 'text-amber-400 fill-amber-400'
-                                : 'text-slate-300 dark:text-slate-600'
-                            )}
-                          />
+                    {room.conditionTags.length > 0 && (
+                      <div className="flex items-center gap-1">
+                        {room.conditionTags.slice(0, 2).map((tag) => (
+                          <Badge key={tag} variant="secondary" size="sm">
+                            {tag}
+                          </Badge>
                         ))}
                       </div>
                     )}

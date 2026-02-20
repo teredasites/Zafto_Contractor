@@ -50,12 +50,13 @@ export interface WalkthroughRoom {
   floorLevel: string;
   sortOrder: number;
   dimensions: RoomDimensions | null;
-  conditionRating: number | null;
+  conditionTags: string[];
+  materialTags: string[];
   notes: string;
-  customFields: Record<string, unknown> | null;
-  tags: string[];
-  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
+  voiceNoteUrl: string | null;
+  voiceNoteTranscript: string | null;
   photoCount: number;
+  metadata: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -75,7 +76,7 @@ export interface WalkthroughPhoto {
   storagePath: string;
   thumbnailPath: string | null;
   caption: string;
-  photoType: 'overview' | 'detail' | 'damage' | 'measurement' | 'before' | 'after' | 'exterior' | 'interior';
+  photoType: 'general' | 'damage' | 'before' | 'after' | 'detail' | 'wide' | 'exterior' | 'selfie';
   annotations: Record<string, unknown>[] | null;
   aiAnalysis: Record<string, unknown> | null;
   sortOrder: number;
@@ -135,8 +136,8 @@ export function mapWalkthroughFromDb(row: Record<string, unknown>): Walkthrough 
     completedAt: (row.completed_at as string) || null,
     notes: (row.notes as string) || '',
     weatherConditions: (row.weather_conditions as WeatherConditions) || null,
-    totalRooms: Number(row.total_rooms) || 0,
-    totalPhotos: Number(row.total_photos) || 0,
+    totalRooms: Number(row.room_count) || 0,
+    totalPhotos: Number(row.photo_count) || 0,
     metadata: (row.metadata as Record<string, unknown>) || null,
     createdAt: (row.created_at as string) || '',
     updatedAt: (row.updated_at as string) || '',
@@ -161,8 +162,8 @@ export function mapWalkthroughToDb(data: Partial<Walkthrough>): Record<string, u
   if (data.completedAt !== undefined) result.completed_at = data.completedAt;
   if (data.notes !== undefined) result.notes = data.notes;
   if (data.weatherConditions !== undefined) result.weather_conditions = data.weatherConditions;
-  if (data.totalRooms !== undefined) result.total_rooms = data.totalRooms;
-  if (data.totalPhotos !== undefined) result.total_photos = data.totalPhotos;
+  if (data.totalRooms !== undefined) result.room_count = data.totalRooms;
+  if (data.totalPhotos !== undefined) result.photo_count = data.totalPhotos;
   if (data.metadata !== undefined) result.metadata = data.metadata;
   if (data.customerId !== undefined) result.customer_id = data.customerId;
   if (data.jobId !== undefined) result.job_id = data.jobId;
@@ -181,12 +182,13 @@ function mapRoomFromDb(row: Record<string, unknown>): WalkthroughRoom {
     floorLevel: (row.floor_level as string) || '',
     sortOrder: Number(row.sort_order) || 0,
     dimensions: (row.dimensions as RoomDimensions) || null,
-    conditionRating: row.condition_rating != null ? Number(row.condition_rating) : null,
+    conditionTags: (row.condition_tags as string[]) || [],
+    materialTags: (row.material_tags as string[]) || [],
     notes: (row.notes as string) || '',
-    customFields: (row.custom_fields as Record<string, unknown>) || null,
-    tags: (row.tags as string[]) || [],
-    status: (row.status as WalkthroughRoom['status']) || 'pending',
+    voiceNoteUrl: (row.voice_note_url as string) || null,
+    voiceNoteTranscript: (row.voice_note_transcript as string) || null,
     photoCount: Number(row.photo_count) || 0,
+    metadata: (row.metadata as Record<string, unknown>) || null,
     createdAt: (row.created_at as string) || '',
     updatedAt: (row.updated_at as string) || '',
   };
@@ -200,7 +202,7 @@ function mapPhotoFromDb(row: Record<string, unknown>): WalkthroughPhoto {
     storagePath: (row.storage_path as string) || '',
     thumbnailPath: (row.thumbnail_path as string) || null,
     caption: (row.caption as string) || '',
-    photoType: (row.photo_type as WalkthroughPhoto['photoType']) || 'overview',
+    photoType: (row.photo_type as WalkthroughPhoto['photoType']) || 'general',
     annotations: (row.annotations as Record<string, unknown>[]) || null,
     aiAnalysis: (row.ai_analysis as Record<string, unknown>) || null,
     sortOrder: Number(row.sort_order) || 0,
@@ -244,6 +246,7 @@ export function useWalkthroughs() {
       const { data, error: err } = await supabase
         .from('walkthroughs')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (err) throw err;
@@ -356,8 +359,8 @@ export function useWalkthroughs() {
       started_at: new Date().toISOString(),
       notes: data.notes || '',
       weather_conditions: data.weatherConditions || null,
-      total_rooms: 0,
-      total_photos: 0,
+      room_count: 0,
+      photo_count: 0,
       metadata: data.metadata || null,
     };
 
