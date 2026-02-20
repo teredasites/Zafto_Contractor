@@ -5,16 +5,13 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { getCorsHeaders, corsResponse } from '../_shared/cors.ts'
+import { computeLeadScore } from '../_shared/lead-scoring.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-function jsonResponse(body: Record<string, unknown>, status = 200): Response {
+function jsonResponse(body: Record<string, unknown>, status = 200, origin?: string | null): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' },
   })
 }
 
@@ -99,17 +96,19 @@ async function reverseGeocode(lat: number, lng: number): Promise<string | null> 
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('Origin')
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return corsResponse(origin)
   }
 
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405)
+    return jsonResponse({ error: 'Method not allowed' }, 405, origin)
   }
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {
-    return jsonResponse({ error: 'Missing authorization' }, 401)
+    return jsonResponse({ error: 'Missing authorization' }, 401, origin)
   }
 
   const supabase = createClient(
@@ -293,72 +292,11 @@ serve(async (req) => {
         const stories = Number(features?.stories || structure?.estimated_stories) || 1
         const sources = ['overpass']
 
-        // Inline lead score computation (mirrors recon-lead-score)
-        const currentYear = new Date().getFullYear()
-
-        let roofAreaScore = 0
-        if (roofArea > 5000) roofAreaScore = 20
-        else if (roofArea > 3000) roofAreaScore = 15
-        else if (roofArea > 2000) roofAreaScore = 12
-        else if (roofArea > 1000) roofAreaScore = 8
-        else if (roofArea > 0) roofAreaScore = 5
-
-        let roofComplexityScore = 0
-        if (facetCount > 12) roofComplexityScore = 10
-        else if (facetCount > 8) roofComplexityScore = 8
-        else if (facetCount > 4) roofComplexityScore = 5
-        else if (facetCount > 0) roofComplexityScore = 3
-
-        let buildingSizeScore = 0
-        if (footprint > 3000) buildingSizeScore = 10
-        else if (footprint > 2000) buildingSizeScore = 8
-        else if (footprint > 1000) buildingSizeScore = 5
-        else if (footprint > 0) buildingSizeScore = 3
-
-        const elevationScore = elevation && elevation > 2000 ? 3 : 0
-        const conditionScore = stories > 2 ? 5 : stories > 1 ? 3 : 0
-
-        let roofAgeScore = 0
-        if (yearBuilt) {
-          const age = currentYear - yearBuilt
-          if (age > 25) roofAgeScore = 25
-          else if (age > 20) roofAgeScore = 20
-          else if (age > 15) roofAgeScore = 15
-          else if (age > 10) roofAgeScore = 8
-          else roofAgeScore = 3
-        }
-
-        let propertyValueScore = 0
-        if (assessedValue) {
-          if (assessedValue > 500000) propertyValueScore = 15
-          else if (assessedValue > 300000) propertyValueScore = 12
-          else if (assessedValue > 200000) propertyValueScore = 10
-          else if (assessedValue > 100000) propertyValueScore = 7
-          else propertyValueScore = 4
-        }
-
-        let ownerTenureScore = 0
-        if (lastSaleDate) {
-          const saleYear = new Date(lastSaleDate).getFullYear()
-          const tenure = currentYear - saleYear
-          if (tenure > 15) ownerTenureScore = 10
-          else if (tenure > 10) ownerTenureScore = 8
-          else if (tenure > 5) ownerTenureScore = 5
-          else ownerTenureScore = 2
-        }
-
-        const hasAttom = sources.includes('attom')
-        let totalScore = 0
-        if (hasAttom) {
-          totalScore = roofAreaScore + roofComplexityScore + buildingSizeScore +
-            elevationScore + roofAgeScore + propertyValueScore + ownerTenureScore + conditionScore
-        } else {
-          const freeScore = roofAreaScore + roofComplexityScore + buildingSizeScore +
-            elevationScore + conditionScore
-          totalScore = Math.round(freeScore * 1.4)
-        }
-        totalScore = Math.min(100, Math.max(0, totalScore))
-        const grade = totalScore >= 70 ? 'hot' : totalScore >= 40 ? 'warm' : 'cold'
+        // Lead score via shared module (single source of truth)
+        const { score: totalScore, grade, factors } = computeLeadScore(
+          roofArea, facetCount, footprint, elevation,
+          yearBuilt, assessedValue, lastSaleDate, stories, sources
+        )
 
         if (grade === 'hot') hotCount++
         else if (grade === 'warm') warmCount++
@@ -379,25 +317,13 @@ serve(async (req) => {
           area_scan_id: areaScanId,
           overall_score: totalScore,
           grade,
-          roof_age_score: roofAgeScore,
-          property_value_score: propertyValueScore,
-          owner_tenure_score: ownerTenureScore,
-          condition_score: conditionScore,
+          roof_age_score: factors.roof_age_score,
+          property_value_score: factors.property_value_score,
+          owner_tenure_score: factors.owner_tenure_score,
+          condition_score: factors.condition_score,
           permit_score: 0,
           storm_damage_probability: 0,
-          scoring_factors: {
-            roof_area_score: roofAreaScore,
-            roof_complexity_score: roofComplexityScore,
-            building_size_score: buildingSizeScore,
-            storm_proximity_score: 0,
-            elevation_score: elevationScore,
-            roof_age_score: roofAgeScore,
-            property_value_score: propertyValueScore,
-            owner_tenure_score: ownerTenureScore,
-            condition_score: conditionScore,
-            data_confidence: 'basic',
-            sources_used: sources,
-          },
+          scoring_factors: factors,
         }
 
         if (existingScore) {
