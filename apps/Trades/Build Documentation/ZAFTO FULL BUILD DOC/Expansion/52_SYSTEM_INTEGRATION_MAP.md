@@ -496,6 +496,45 @@ Update this section as sprints are completed. Mark each connection as it's verif
 |-----------|--------|--------|
 | TI → Vitest | TI-3 | WIRED (S143) — vitest.config.ts, setup.ts, supabase-mock.ts in all 4 portals, 9 tests passing |
 
+### Phase ZFORGE-FRESH — Document Freshness Engine (S144: SPEC'D)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| ZFORGE-FRESH → Template Registry | ZFORGE-FRESH1 | PENDING — zdoc_template_registry, zdoc_template_versions, version control schema |
+| ZFORGE-FRESH → Staleness CRON | ZFORGE-FRESH2 | PENDING — doc-freshness-scanner EF, pg_cron weekly, staleness detection |
+| ZFORGE-FRESH → Regulatory Monitor | ZFORGE-FRESH3 | PENDING — zdoc_regulatory_changes, doc-regulatory-monitor CRON, official source links |
+| ZFORGE-FRESH → Generation Audit | ZFORGE-FRESH4 | PENDING — zdoc_generated_audit, generation-time freshness checks, SHA-256 tamper detection |
+| ZFORGE-FRESH → Ops Portal | ZFORGE-FRESH5 | PENDING — /dashboard/document-freshness command center, staleness alerts, impact analysis |
+
+### Phase SHARED — Cross-App Recon + Sketch (S144: SPEC'D)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| SHARED → Sketch Core | SHARED-PKG1 | PENDING — packages/sketch_core/ extraction, SketchConfig entity-type factories |
+| SHARED → Recon Core | SHARED-PKG2 | PENDING — packages/recon_core/ extraction, ReconConfig entity-type factories |
+| SHARED → Field Toolkit | SHARED-PKG3 | PENDING — packages/field_toolkit/ shared utilities, entity gating |
+| SHARED → Contractor Recon | RECON-MOBILE1 | PENDING — Full Recon screens for contractor Flutter app |
+| SHARED → Realtor Recon | RECON-MOBILE2 | PENDING — Listing-focused Recon for realtor Flutter app |
+| SHARED → Homeowner Scan | RECON-MOBILE3 | PENDING — One-time rehab scan, per-system cost estimates, "Find Contractors" marketplace lead |
+| SHARED → Realtor Sketch | SKETCH-REALTOR1 | PENDING — Floor plan listing tools, annotation for realtor |
+| SHARED → Homeowner Sketch | SKETCH-HOMEOWNER1 | PENDING — Read-only floor plan with annotation for homeowner |
+
+### Ecosystem Connections (S144: SPEC'D)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| ECOSYSTEM → referral_connections table | Cross-entity | PENDING — Backbone of flywheel: referral tracking, revenue attribution, conversion funnel |
+| ECOSYSTEM → 14 cross-entity connections | All sprints | PENDING — contractor↔realtor (5), contractor↔homeowner (4), realtor↔homeowner (2), contractor↔inspector (1), contractor↔adjuster (2) |
+| ECOSYSTEM → Mandatory sprint section | All sprints | SPEC'D — Every sprint must have "Ecosystem Connections" section |
+
+### Contractor Spec Expansion (S144: COMPLETE — spec only, no code)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| W1-W8 → Warranty Intelligence | W phase | SPEC'D — 8 sprints, ~56h, full SQL/RLS/EF/Flutter/web specs. 8 audit fixes applied |
+| J1-J6 → Job Cost Autopsy + Smart Pricing | J phase | SPEC'D — 6 sprints, ~64h, autopsy engine, pricing rules |
+| L1-L9 → Permits + Liens + Compliance | L phase | SPEC'D — 9 sprints, ~120h, PostGIS jurisdiction, 50-state lien rules, 12 statutory lien waiver states |
+| GC-WX1-3 → Weather-Aware Scheduling | GC ext | SPEC'D — 3 sprints, weather rules, scanner, reschedule |
+| U-REP/SUB/FIN/MAT/LOG/CO → 6 subsystems | U ext | SPEC'D — 28 sprints, ~148h, reputation/subcontractors/financing/materials/logs/change orders |
+| U-TT/P-DT → Trade Tools + Digital Twin | U ext | SPEC'D — 10 sprints, JSONB schemas for 19 trade tools, property intelligence |
+| ROUTE/CHEM/DRAW/SEL → Operations | S135-ENTITY | SPEC'D — 4 sprints, OSRM routing, EPA compliance, draw schedules, client selections |
+
 ### Phase INTEG — Ecosystem Integration (S132: INTEG2-8 ADDED)
 | Connection | Sprint | Status |
 |-----------|--------|--------|

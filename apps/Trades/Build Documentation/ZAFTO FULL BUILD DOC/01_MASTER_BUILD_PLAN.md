@@ -129,9 +129,9 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Phase SK: Sketch Engine | COMPLETE | YES | S109: SK1-SK14 done |
 | Phase GC: Schedule | COMPLETE | YES | S110: GC1-GC11 done |
 | Phase U: Unification | COMPLETE | YES | S111-S114: U1-U23 done |
-| Phase W: Warranty | COMPLETE | YES | S113: W1 done |
-| Phase J: Job Intelligence | COMPLETE | YES | S113: J1-J2 done |
-| Phase L: Legal/Permits | COMPLETE | YES | S113: L1-L9 done |
+| Phase W: Warranty | COMPLETE | YES | S113: W1 done. **S144: W1-W8 fully spec'd (~56h enterprise checklists, 8 audit fixes)** |
+| Phase J: Job Intelligence | COMPLETE | YES | S113: J1-J2 done. **S144: J1-J6 fully spec'd (~64h enterprise checklists)** |
+| Phase L: Legal/Permits | COMPLETE | YES | S113: L1-L9 done. **S144: L1-L9+GC-WX1-3 fully spec'd (~176h enterprise checklists, 7 audit fixes)** |
 | Phase INS: Inspector | COMPLETE | YES | S121-S124: INS1-INS10 done (~66h) |
 | Phase G: QA/Hardening | IN PROGRESS | PARTIAL | G1-G5 automated DONE, G6-G10 manual QA PENDING |
 | SEC: Security Hardening | PARTIAL | YES | SEC1+SEC6-8 DONE (S131). SEC2-5+SEC9-10 PENDING |
@@ -150,6 +150,10 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase CUST: Customization** | SPEC'D (S132) | NO | CUST1-8, ~190h. Enterprise customization |
 | **Phase ECO: Ecosystem** | SPEC'D (S133) | NO | ECO3+ECO4+ECO7+ECO8, ~48h. Adjuster portal + pricing |
 | **Phase VIZ: 3D Visualization** | RESEARCHED (S132) | NO | VIZ1, ~40h. 3D Gaussian Splatting engine |
+| **ZFORGE-FRESH: Doc Freshness** | SPEC'D (S144) | NO | ZFORGE-FRESH1-5, ~26h. Template versioning, staleness CRON, regulatory monitoring, ops alerts |
+| **SHARED: Cross-App Packages** | SPEC'D (S144) | NO | SHARED-PKG1-3+RECON-MOBILE1-3+SKETCH1-2, ~62h. Shared Recon/Sketch Flutter packages, entity configs |
+| **ZFORGE: Document Engine** | RESEARCHED (S144) | NO | ZFORGE1-10, ~388h. 354 document types, pdfme WYSIWYG, e-signatures, 50-state lien waivers |
+| **Contractor Spec Expansion** | **COMPLETE (S144)** | N/A | ~70 stubs → enterprise specs. W+J+L+GC-WX+U-subsystems+U-TT+P-DT+ROUTE+CHEM+DRAW+SEL. +9,758 lines |
 | **Plan Review (AI)** | SPEC'D (S97) | NO | Phase E feature (BA1-BA8, ~128 hrs) |
 
 **SUMMARY: ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE.** Phase G automated DONE (G1-G5), manual QA pending (G6-G10). SEC1+SEC6-8 DONE. FIELD1-5 DONE. REST1+REST2 DONE. NICHE1+NICHE2 DONE. DEPTH1 DONE. LAUNCH1+LAUNCH9 DONE. S132: Research + ecosystem audit (INTEG2-8 added). S133: Pricing update + adjuster portal deep research. **~215 tables. 114 migrations. 94 EFs. ~150 CRM routes. 43 team routes. 45 client routes. 30 ops routes. ~160+ sprints total (~3,000h listed, ~3,300h realistic). Next: DEPTH2-39 → DEPTH40-nonAI → DEPTH41-43 → INTEG2-4+INTEG6-8 → RE1-20 → INTEG1 → FLIP1-4 → INTEG5 → SEC2-5 → LAUNCH2-6 → LAUNCH8 → G → JUR → E (AI LAST) → FLIP5+DEPTH40-AI+DEPTH44 → SEC9-10 → ZERO1-9 → LAUNCH7 → SHIP.**
