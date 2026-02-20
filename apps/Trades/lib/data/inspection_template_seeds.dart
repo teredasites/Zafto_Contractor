@@ -1362,6 +1362,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
         TemplateItem(name: 'Repair/rework completed to specification', sortOrder: 3, weight: 3),
         TemplateItem(name: 'Re-inspection passed after corrective action', sortOrder: 4, weight: 3),
         TemplateItem(name: 'NCR closed — signed by all parties', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Preventive action — recurrence prevention measures documented', sortOrder: 6, weight: 2),
       ]),
       TemplateSection(name: 'Hold Point Decision', sortOrder: 4, items: [
         TemplateItem(name: 'Cleared to proceed — all criteria met', sortOrder: 0, weight: 3),
@@ -1369,6 +1370,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
         TemplateItem(name: 'Corrective work required — STOP until resolved', sortOrder: 2, weight: 3),
         TemplateItem(name: 'Re-inspection required — date scheduled', sortOrder: 3, weight: 2),
         TemplateItem(name: 'Sign-off — inspector name, date, decision', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Notification — all relevant stakeholders informed of outcome', sortOrder: 5, weight: 2),
       ]),
     ],
     createdAt: _epoch,
@@ -1460,6 +1462,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
         TemplateItem(name: 'Ceiling boards perpendicular to framing', sortOrder: 3, weight: 1),
         TemplateItem(name: 'Cutouts — clean around boxes, fixtures, vents', sortOrder: 4, weight: 1),
         TemplateItem(name: 'No damaged boards — cracks, broken corners, wet', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Board orientation — horizontal on walls (better fire performance, fewer joints)', sortOrder: 6, weight: 1),
       ]),
       TemplateSection(name: 'Fastener Pattern', sortOrder: 1, items: [
         TemplateItem(name: 'Screw spacing — 12" OC field, 8" OC edges (ceiling 7" OC)', sortOrder: 0, weight: 2),
@@ -1467,6 +1470,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
         TemplateItem(name: 'Edge distance — 3/8" min from board edge', sortOrder: 2, weight: 1),
         TemplateItem(name: 'No popped screws or nails', sortOrder: 3, weight: 1),
         TemplateItem(name: 'Adhesive — if used, proper application pattern', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Floating inside corners — no fasteners within 8" of internal angles (reduces cracking)', sortOrder: 5, weight: 1),
       ]),
       TemplateSection(name: 'Fire-Rated Assemblies (IBC 722)', sortOrder: 2, items: [
         TemplateItem(name: '5/8" Type X — all fire-rated walls/ceilings (IBC 722)', sortOrder: 0, weight: 3),
@@ -1482,6 +1486,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
         TemplateItem(name: 'Cement board — behind tile in wet areas', sortOrder: 1, weight: 2),
         TemplateItem(name: 'No standard drywall in wet areas', sortOrder: 2, weight: 3),
         TemplateItem(name: 'Mold-resistant board — if specified', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Vapor barrier — climate zone appropriate class per IRC R702.7', sortOrder: 4, weight: 2),
       ]),
       TemplateSection(name: 'Backing & Blocking', sortOrder: 4, items: [
         TemplateItem(name: 'Backing at all inside corners — nailer present', sortOrder: 0, weight: 1),
@@ -1490,6 +1495,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
         TemplateItem(name: 'Blocking for handrails — stairway walls', sortOrder: 3, weight: 2),
         TemplateItem(name: 'Corner bead — installed plumb, secured', sortOrder: 4, weight: 1),
         TemplateItem(name: 'J-bead / L-bead — at exposed edges', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Acoustic sealant — continuous bead at floor/ceiling junctions on rated walls', sortOrder: 6, weight: 2),
       ]),
     ],
     createdAt: _epoch,
