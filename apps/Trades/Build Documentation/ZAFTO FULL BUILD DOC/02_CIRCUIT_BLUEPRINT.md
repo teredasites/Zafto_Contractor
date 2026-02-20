@@ -778,6 +778,30 @@ Tech opens app -> Taps "Field Tools"
 - [ ] RE21-RE30: Realtor expansion (~300h, S132). Negotiation AI, agent departure prediction, rental analysis, HOA health, insurance estimation, power dialer, IDX websites.
 - Spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md` + `07_SPRINT_SPECS.md` lines 13952-19773
 
+### Phase ZFORGE-FRESH: Document Freshness Engine — SPEC'D (S144)
+- [ ] ZFORGE-FRESH1-5: 5 tables (zdoc_template_registry, zdoc_template_versions, zdoc_generated_audit, zdoc_regulatory_changes, zdoc_template_reports), 2 CRON EFs (doc-freshness-scanner, doc-regulatory-monitor), ~26h.
+- Template versioning, staleness detection, regulatory change monitoring, community reporting, impact analysis.
+- Ops portal command center: /dashboard/document-freshness (staleness alerts, official source links, link verification).
+- Legal Defensive Creation: SHA-256 tamper detection, immutable audit trail, disclaimer injection, official source URLs.
+
+### Phase SHARED: Cross-App Recon + Sketch Packages — SPEC'D (S144)
+- [ ] SHARED-PKG1-3 + RECON-MOBILE1-3 + SKETCH-REALTOR1 + SKETCH-HOMEOWNER1: 3 tables (shared_floor_plans, shared_property_scans, floor_plan_annotations), ~62h.
+- Shared Flutter packages: sketch_core, recon_core, field_toolkit — entity-type configs via SketchConfig/ReconConfig factory constructors.
+- Homeowner one-time rehab scan: property condition → per-system cost estimates → "Find Contractors" → marketplace lead.
+- Entity gating: contractor (full tools), realtor (listing-focused), homeowner (annotation-only), inspector (deficiency-focused), adjuster (scope-focused).
+
+### Ecosystem Connection Backbone — SPEC'D (S144)
+- [ ] referral_connections table: cross-entity referral tracking, revenue attribution, conversion funnel.
+- [ ] 14 cross-entity connections mapped: contractor↔realtor (5), contractor↔homeowner (4), realtor↔homeowner (2), contractor↔inspector (1), contractor↔adjuster (2).
+- [ ] Mandatory "Ecosystem Connections" section in every sprint spec (who uses data, cross-entity triggers, RLS, notifications, flywheel).
+
+### Contractor Spec Expansion — COMPLETE (S144)
+- [x] W1-W8 + J1-J6: Warranty Intelligence + Job Cost Autopsy (14 sprints, ~120h). Full SQL, RLS, audit triggers, EFs, Flutter/web specs. 8 audit fixes applied.
+- [x] L1-L9 + GC-WX1-3: Legal/Permits/Compliance + Weather-Aware Scheduling (12 sprints, ~176h). PostGIS jurisdiction, 50-state lien rules, 12 statutory lien waiver states. 7 audit fixes applied.
+- [x] U-REP/SUB/FIN/MAT/LOG/CO: 6 subsystems (28 sprints, ~148h). Reputation, subcontractors, financing, materials, daily logs, change orders. 8 audit fixes applied.
+- [x] U-TT/P-DT/ROUTE/CHEM/DRAW/SEL: Trade tools + Digital Twin + ops (16 sprints, ~156h). JSONB schemas for 19 trade tools, property intelligence, OSRM routing. 5 audit fixes applied.
+- Total: ~70 stubs → enterprise-grade. +9,758 lines. 28 audit fixes (20 CRITICAL + 8 HIGH).
+
 ### Plan Review (Phase E/BA) -- SPEC'D (S97)
 - [ ] BA1-BA8: 6 tables (blueprint_analyses, blueprint_sheets, blueprint_rooms, blueprint_elements, blueprint_takeoff_items, blueprint_revisions), 3 EFs (blueprint-upload, blueprint-process, blueprint-compare), ~128 hours.
 - Hybrid CV+LLM: MitUNet segmentation + YOLOv12 detection + Claude intelligence. RunPod Serverless GPU.
