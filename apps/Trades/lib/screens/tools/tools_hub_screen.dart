@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../navigation/screen_registry.dart';
+import '../../widgets/zafto/zafto_calculator_scaffold.dart';
 
 /// Tools Hub Screen - Universal Tool Browser
 ///
@@ -478,8 +479,19 @@ class _ToolsHubScreenState extends ConsumerState<ToolsHubScreen> {
 
   void _openTool(ScreenEntry item) {
     HapticFeedback.lightImpact();
+    Widget screen = item.builder();
+
+    // Auto-wrap calculator screens with disclaimer + save-to-job
+    if (item.category == ScreenCategory.calculators) {
+      screen = ZaftoCalculatorWrapper(
+        calculatorId: item.id,
+        calculatorName: item.name,
+        child: screen,
+      );
+    }
+
     Navigator.push(context, PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => item.builder(),
+      pageBuilder: (context, animation, secondaryAnimation) => screen,
       transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
       transitionDuration: const Duration(milliseconds: 200),
     ));
