@@ -30,9 +30,9 @@ export interface WalkthroughRoomData {
   roomType: string;
   floorLevel: string;
   dimensions: { length?: number; width?: number; height?: number; area?: number } | null;
-  conditionRating: number | null;
+  conditionTags: string[];
+  materialTags: string[];
   notes: string;
-  status: string;
   photoCount: number;
 }
 
@@ -62,8 +62,8 @@ function mapWalkthrough(row: Record<string, unknown>): WalkthroughData {
     walkthroughType: row.walkthrough_type as string || 'general',
     status: row.status as string || 'draft',
     address: row.address as string || '',
-    totalRooms: (row.total_rooms as number) || 0,
-    totalPhotos: (row.total_photos as number) || 0,
+    totalRooms: (row.room_count as number) || 0,
+    totalPhotos: (row.photo_count as number) || 0,
     notes: row.notes as string || '',
     createdAt: row.created_at as string || '',
   };
@@ -77,9 +77,9 @@ function mapRoom(row: Record<string, unknown>): WalkthroughRoomData {
     roomType: row.room_type as string || '',
     floorLevel: row.floor_level as string || '',
     dimensions: row.dimensions as WalkthroughRoomData['dimensions'] || null,
-    conditionRating: row.condition_rating as number | null,
+    conditionTags: (row.condition_tags as string[]) || [],
+    materialTags: (row.material_tags as string[]) || [],
     notes: row.notes as string || '',
-    status: row.status as string || 'pending',
     photoCount: (row.photo_count as number) || 0,
   };
 }
@@ -115,6 +115,7 @@ export function useWalkthroughs() {
         .from('walkthroughs')
         .select('*')
         .eq('company_id', profile.companyId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (err) throw err;
@@ -205,11 +206,3 @@ export function useWalkthrough(id: string) {
   return { walkthrough, rooms, photos, loading, error };
 }
 
-export async function markRoomCompleted(roomId: string): Promise<void> {
-  const supabase = getSupabase();
-  const { error } = await supabase
-    .from('walkthrough_rooms')
-    .update({ status: 'completed' })
-    .eq('id', roomId);
-  if (error) throw error;
-}

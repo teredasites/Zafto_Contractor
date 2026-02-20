@@ -5,10 +5,10 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, MapPin, Camera, DoorOpen, ChevronDown, ChevronUp,
-  CheckCircle2, Clock, Ruler, Star, ScanLine, X, Maximize2,
+  CheckCircle2, Clock, Ruler, ScanLine, X, Maximize2,
   Layers, FileText,
 } from 'lucide-react';
-import { useWalkthrough, markRoomCompleted } from '@/lib/hooks/use-walkthroughs';
+import { useWalkthrough } from '@/lib/hooks/use-walkthroughs';
 import type { WalkthroughRoomData, WalkthroughPhotoData } from '@/lib/hooks/use-walkthroughs';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,21 +58,16 @@ function DetailSkeleton() {
   );
 }
 
-// ==================== CONDITION STARS ====================
+// ==================== CONDITION TAGS ====================
 
-function ConditionStars({ rating }: { rating: number | null }) {
-  if (rating === null || rating === undefined) return null;
-  const stars = Math.min(5, Math.max(0, Math.round(rating)));
+function ConditionTagBadges({ tags }: { tags: string[] }) {
+  if (!tags.length) return null;
   return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star
-          key={i}
-          size={12}
-          className={cn(
-            i <= stars ? 'text-amber-400 fill-amber-400' : 'text-slate-300 dark:text-slate-600'
-          )}
-        />
+    <div className="flex items-center gap-1">
+      {tags.slice(0, 3).map((tag) => (
+        <span key={tag} className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+          {tag}
+        </span>
       ))}
     </div>
   );
@@ -174,7 +169,7 @@ function RoomCard({
   const [marking, setMarking] = useState(false);
 
   const roomPhotos = photos.filter((p) => p.roomId === room.id);
-  const isCompleted = room.status === 'completed';
+  const isCompleted = room.photoCount > 0;
 
   const handleMarkComplete = async () => {
     setMarking(true);
@@ -209,7 +204,7 @@ function RoomCard({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-main truncate">{room.name}</p>
-                  <ConditionStars rating={room.conditionRating} />
+                  <ConditionTagBadges tags={room.conditionTags} />
                 </div>
                 <div className="flex items-center gap-3 mt-0.5">
                   <span className="text-xs text-muted capitalize">
@@ -338,13 +333,9 @@ export default function WalkthroughDetailPage() {
   const walkthroughId = params.id as string;
   const { walkthrough, rooms, photos, loading, error } = useWalkthrough(walkthroughId);
 
-  const handleMarkComplete = useCallback(async (roomId: string) => {
-    try {
-      await markRoomCompleted(roomId);
-      // Real-time subscription will pick up the update
-    } catch {
-      // Error handling would go here (toast, etc.)
-    }
+  const handleMarkComplete = useCallback(async (_roomId: string) => {
+    // Room completion is tracked via photo count (rooms with photos are considered complete)
+    // No-op: real-time subscription will reflect state from photo uploads
   }, []);
 
   if (loading) return <DetailSkeleton />;
@@ -372,7 +363,7 @@ export default function WalkthroughDetailPage() {
     );
   }
 
-  const completedRooms = rooms.filter((r) => r.status === 'completed').length;
+  const completedRooms = rooms.filter((r) => r.photoCount > 0).length;
   const totalRooms = rooms.length || walkthrough.totalRooms;
   const progressPct = totalRooms > 0 ? Math.round((completedRooms / totalRooms) * 100) : 0;
 
