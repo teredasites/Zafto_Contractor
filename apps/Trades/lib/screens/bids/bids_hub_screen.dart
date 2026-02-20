@@ -63,15 +63,16 @@ class _BidsHubScreenState extends ConsumerState<BidsHubScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [colors.accentPrimary, colors.accentInfo]),
+                      color: colors.accentPrimary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(3),
+                      border: Border.all(color: colors.accentPrimary.withOpacity(0.3), width: 0.5),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(LucideIcons.sparkles, size: 8, color: Colors.white),
+                        Icon(LucideIcons.sparkles, size: 8, color: colors.accentPrimary),
                         const SizedBox(width: 2),
-                        const Text('AI', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: Colors.white)),
+                        Text('AI', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: colors.accentPrimary)),
                       ],
                     ),
                   ),

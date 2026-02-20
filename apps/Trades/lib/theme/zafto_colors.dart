@@ -77,8 +77,12 @@ class ZaftoColors extends ThemeExtension<ZaftoColors> {
   /// Alias for accentError - destructive actions
   Color get accentDestructive => accentError;
 
-  /// White text for use on accent-colored backgrounds
-  Color get textOnAccent => const Color(0xFFFFFFFF);
+  /// Contrasting text for use on accent-colored backgrounds.
+  /// Automatically picks dark or light text based on accent luminance.
+  Color get textOnAccent =>
+      accentPrimary.computeLuminance() > 0.4
+          ? const Color(0xFF0D0D0D)
+          : const Color(0xFFFFFFFF);
 
   const ZaftoColors({
     required this.bgBase,
