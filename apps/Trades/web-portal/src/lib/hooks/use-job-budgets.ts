@@ -136,7 +136,7 @@ export function useJobBudgets(jobId?: string) {
   const deleteBudgetLine = async (id: string) => {
     try {
       const supabase = getSupabase();
-      const { error: err } = await supabase.from('job_budgets').delete().eq('id', id);
+      const { error: err } = await supabase.from('job_budgets').update({ deleted_at: new Date().toISOString() }).eq('id', id);
       if (err) throw err;
       await fetchBudgets();
     } catch (err) {

@@ -322,7 +322,7 @@ export function useBranches() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('branches')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (err) throw err;
@@ -397,7 +397,7 @@ export function useCustomRoles() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('custom_roles')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (err) throw err;
@@ -480,7 +480,7 @@ export function useFormTemplates() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('form_templates')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (err) throw err;
@@ -600,7 +600,7 @@ export function useCertifications() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('certifications')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (err) throw err;
@@ -719,7 +719,7 @@ export function useApiKeys() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('api_keys')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (err) throw err;

@@ -308,7 +308,7 @@ export function useEmail() {
 
   const deleteTemplate = async (id: string) => {
     const supabase = getSupabase();
-    const { error: err } = await supabase.from('email_templates').delete().eq('id', id);
+    const { error: err } = await supabase.from('email_templates').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
     await fetchAll();
   };

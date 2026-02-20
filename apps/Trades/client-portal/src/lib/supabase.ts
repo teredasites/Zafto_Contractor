@@ -11,3 +11,6 @@ export function getSupabase() {
   }
   return browserClient;
 }
+
+// Alias for consistency with web-portal pattern
+export const createClient = getSupabase;

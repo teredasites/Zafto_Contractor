@@ -463,7 +463,7 @@ export function useZDocs() {
 
   const deleteRender = async (id: string) => {
     const supabase = getSupabase();
-    const { error: err } = await supabase.from('zdocs_renders').delete().eq('id', id);
+    const { error: err } = await supabase.from('zdocs_renders').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
   };
 

@@ -94,7 +94,7 @@ export function useScheduleDependencies(projectId: string | undefined) {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('schedule_dependencies')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
   };

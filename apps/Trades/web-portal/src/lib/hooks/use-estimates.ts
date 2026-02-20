@@ -569,8 +569,8 @@ export function useEstimate(estimateId: string | null) {
 
   const deleteArea = useCallback(async (areaId: string) => {
     const supabase = getSupabase();
-    await supabase.from('estimate_line_items').delete().eq('area_id', areaId);
-    const { error: err } = await supabase.from('estimate_areas').delete().eq('id', areaId);
+    await supabase.from('estimate_line_items').update({ deleted_at: new Date().toISOString() }).eq('area_id', areaId);
+    const { error: err } = await supabase.from('estimate_areas').update({ deleted_at: new Date().toISOString() }).eq('id', areaId);
     if (err) console.error('Delete area failed:', err);
     else fetchAll();
   }, [fetchAll]);
@@ -632,7 +632,7 @@ export function useEstimate(estimateId: string | null) {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('estimate_line_items')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', lineId);
     if (err) console.error('Delete line item failed:', err);
     else fetchAll();

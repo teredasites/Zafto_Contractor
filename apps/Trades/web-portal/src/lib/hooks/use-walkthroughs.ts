@@ -388,7 +388,7 @@ export function useWalkthroughs() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('walkthroughs')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (err) throw err;
