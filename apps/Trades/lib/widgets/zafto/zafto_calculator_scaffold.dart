@@ -7,11 +7,20 @@ import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import 'zafto_save_to_job.dart';
 
+/// Standard disclaimer shown at the bottom of all calculator screens.
+/// Matches the `calculator_general` entry in the `legal_disclaimers` table.
+const String kCalculatorDisclaimer =
+    'For reference only. Results are based on standard conditions and '
+    'provided inputs. Does not replace professional engineering judgment. '
+    'Verify all results with local codes and the authority having '
+    'jurisdiction (AHJ). User assumes all responsibility for code compliance.';
+
 /// ZAFTO Calculator Scaffold - Standard wrapper for all calculators
 ///
 /// Provides:
 /// - Standard AppBar with back, title, clear, and save buttons
 /// - Automatic "Save to Job" functionality via AppBar icon
+/// - Legal disclaimer footer on all calculator output
 /// - Consistent styling across all calculators
 ///
 /// Usage:
@@ -59,6 +68,12 @@ class ZaftoCalculatorScaffold extends ConsumerWidget {
   /// Whether to show the clear button
   final bool showClearButton;
 
+  /// Whether to show the disclaimer footer
+  final bool showDisclaimer;
+
+  /// Optional trade-specific disclaimer override
+  final String? disclaimerText;
+
   const ZaftoCalculatorScaffold({
     super.key,
     required this.title,
@@ -70,6 +85,8 @@ class ZaftoCalculatorScaffold extends ConsumerWidget {
     this.actions,
     this.showSaveButton = true,
     this.showClearButton = true,
+    this.showDisclaimer = true,
+    this.disclaimerText,
   });
 
   @override
@@ -114,7 +131,16 @@ class ZaftoCalculatorScaffold extends ConsumerWidget {
             ),
         ],
       ),
-      body: body,
+      body: Column(
+        children: [
+          Expanded(child: body),
+          if (showDisclaimer)
+            CalculatorDisclaimerFooter(
+              text: disclaimerText,
+              colors: colors,
+            ),
+        ],
+      ),
     );
   }
 
@@ -239,6 +265,68 @@ class ZaftoCalculatorWrapper extends ConsumerWidget {
       calculatorName: calculatorName,
       inputs: inputs,
       outputs: outputs,
+    );
+  }
+}
+
+// ============================================================
+// CALCULATOR DISCLAIMER FOOTER
+// ============================================================
+
+/// Displays a legal disclaimer at the bottom of calculator screens.
+///
+/// Uses the standard disclaimer text unless a trade-specific override
+/// is provided. This widget is automatically included in
+/// [ZaftoCalculatorScaffold] and can be used standalone in calculators
+/// that haven't migrated to the scaffold yet.
+class CalculatorDisclaimerFooter extends StatelessWidget {
+  final String? text;
+  final ZaftoColors colors;
+
+  const CalculatorDisclaimerFooter({
+    super.key,
+    this.text,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: colors.bgElevated,
+        border: Border(
+          top: BorderSide(color: colors.borderSubtle, width: 0.5),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 1),
+              child: Icon(
+                LucideIcons.shieldAlert,
+                size: 12,
+                color: colors.textTertiary,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                text ?? kCalculatorDisclaimer,
+                style: TextStyle(
+                  fontSize: 9,
+                  color: colors.textTertiary,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
