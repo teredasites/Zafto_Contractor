@@ -405,14 +405,22 @@ function LeadCard({ lead, onDragStart, isDragging }: { lead: LeadData; onDragSta
 
 function NewLeadModal({ onClose, onCreate }: {
   onClose: () => void;
-  onCreate: (input: { name: string; email?: string; phone?: string; source?: string; value?: number; notes?: string }) => Promise<string>;
+  onCreate: (input: { name: string; email?: string; phone?: string; companyName?: string; source?: string; value?: number; notes?: string; address?: { street: string; city: string; state: string; zip: string }; trade?: string; urgency?: string; tags?: string[]; nextFollowUp?: string }) => Promise<string>;
 }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [source, setSource] = useState('website');
   const [value, setValue] = useState('');
   const [notes, setNotes] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
+  const [trade, setTrade] = useState('');
+  const [urgency, setUrgency] = useState('normal');
+  const [nextFollowUp, setNextFollowUp] = useState('');
   const [saving, setSaving] = useState(false);
 
   const [emailError, setEmailError] = useState('');
@@ -434,9 +442,14 @@ function NewLeadModal({ onClose, onCreate }: {
         name: name.trim(),
         email: email.trim() || undefined,
         phone: phone.trim() || undefined,
+        companyName: companyName.trim() || undefined,
         source,
         value: value ? parseFloat(value) : undefined,
         notes: notes.trim() || undefined,
+        address: street.trim() ? { street: street.trim(), city: city.trim(), state: state.trim(), zip: zip.trim() } : undefined,
+        trade: trade || undefined,
+        urgency: urgency !== 'normal' ? urgency : undefined,
+        nextFollowUp: nextFollowUp || undefined,
       });
       onClose();
     } catch (e) {
@@ -446,23 +459,23 @@ function NewLeadModal({ onClose, onCreate }: {
     }
   };
 
+  const inputCls = "w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent";
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <CardTitle>Add New Lead</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
+            <div>
               <label className="block text-sm font-medium text-main mb-1.5">Name *</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Smith"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
-              />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Smith" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-main mb-1.5">Company</label>
+              <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="ABC Properties" className={inputCls} />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Email</label>
@@ -487,16 +500,42 @@ function NewLeadModal({ onClose, onCreate }: {
                   setPhone(formatted);
                 }}
                 placeholder="(555) 123-4567"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
+                className={inputCls}
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-main mb-1.5">Trade</label>
+              <select value={trade} onChange={(e) => setTrade(e.target.value)} className={inputCls}>
+                <option value="">Select trade</option>
+                <option value="electrical">Electrical</option>
+                <option value="plumbing">Plumbing</option>
+                <option value="hvac">HVAC</option>
+                <option value="roofing">Roofing</option>
+                <option value="painting">Painting</option>
+                <option value="carpentry">Carpentry</option>
+                <option value="flooring">Flooring</option>
+                <option value="landscaping">Landscaping</option>
+                <option value="general">General Contracting</option>
+                <option value="solar">Solar</option>
+                <option value="restoration">Restoration</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-main mb-1.5">Urgency</label>
+              <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className={inputCls}>
+                <option value="normal">Normal</option>
+                <option value="soon">Soon</option>
+                <option value="urgent">Urgent</option>
+                <option value="emergency">Emergency</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Source</label>
-              <select
-                value={source}
-                onChange={(e) => setSource(e.target.value)}
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
-              >
+              <select value={source} onChange={(e) => setSource(e.target.value)} className={inputCls}>
                 <option value="website">Website</option>
                 <option value="referral">Referral</option>
                 <option value="google">Google</option>
@@ -505,30 +544,39 @@ function NewLeadModal({ onClose, onCreate }: {
                 <option value="instagram">Instagram</option>
                 <option value="nextdoor">Nextdoor</option>
                 <option value="homeadvisor">HomeAdvisor</option>
+                <option value="thumbtack">Thumbtack</option>
+                <option value="angi">Angi</option>
                 <option value="other">Other</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Estimated Value</label>
-              <input
-                type="number"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="5000"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="What are they looking for?"
-                rows={3}
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent resize-none"
-              />
+              <input type="number" value={value} onChange={(e) => setValue(e.target.value)} placeholder="5000" className={inputCls} />
             </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Address</label>
+            <div className="grid grid-cols-1 gap-2">
+              <input type="text" value={street} onChange={(e) => setStreet(e.target.value)} placeholder="123 Main Street" className={inputCls} />
+              <div className="grid grid-cols-6 gap-2">
+                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" className={`col-span-3 ${inputCls}`} />
+                <input type="text" value={state} onChange={(e) => setState(e.target.value)} placeholder="ST" maxLength={2} className={`col-span-1 ${inputCls}`} />
+                <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="ZIP" className={`col-span-2 ${inputCls}`} />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Follow Up Date</label>
+            <input type="date" value={nextFollowUp} onChange={(e) => setNextFollowUp(e.target.value)} className={inputCls} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="What are they looking for?" rows={3} className={`${inputCls} resize-none`} />
+          </div>
+
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
               Cancel

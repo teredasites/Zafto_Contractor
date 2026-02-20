@@ -1254,6 +1254,9 @@ function NewApplicantModal({
     phone?: string;
     source?: ApplicantSource;
     yearsExperience?: number;
+    tradeSpecialties?: string[];
+    certifications?: string[];
+    licenses?: string[];
   }) => Promise<string>;
 }) {
   const [jobPostingId, setJobPostingId] = useState(postings[0]?.id || '');
@@ -1263,10 +1266,30 @@ function NewApplicantModal({
   const [phone, setPhone] = useState('');
   const [source, setSource] = useState<ApplicantSource>('direct');
   const [experience, setExperience] = useState('');
+  const [portfolioUrl, setPortfolioUrl] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const TRADE_OPTIONS = ['electrical', 'plumbing', 'hvac', 'roofing', 'painting', 'carpentry', 'flooring', 'landscaping', 'general', 'solar', 'restoration', 'drywall', 'concrete', 'excavation', 'welding', 'fire_protection', 'insulation', 'glass_glazing'] as const;
+  const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
+  const [certInput, setCertInput] = useState('');
+  const [certs, setCerts] = useState<string[]>([]);
+
+  const toggleTrade = (t: string) => {
+    setSelectedTrades((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]);
+  };
+
+  const addCert = () => {
+    const val = certInput.trim();
+    if (val && !certs.includes(val)) {
+      setCerts((prev) => [...prev, val]);
+      setCertInput('');
+    }
+  };
 
   const postingOptions = postings.map((p) => ({ value: p.id, label: p.title }));
   const sourceOptions: { value: string; label: string }[] = Object.entries(sourceLabels).map(([value, label]) => ({ value, label }));
+
+  const inputCls = "w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]";
 
   const handleSubmit = async () => {
     if (!firstName.trim() || !jobPostingId) return;
@@ -1280,6 +1303,8 @@ function NewApplicantModal({
         phone: phone.trim() || undefined,
         source,
         yearsExperience: experience ? parseInt(experience) : undefined,
+        tradeSpecialties: selectedTrades.length > 0 ? selectedTrades : undefined,
+        certifications: certs.length > 0 ? certs : undefined,
       });
       onClose();
     } catch (e) {
@@ -1291,7 +1316,7 @@ function NewApplicantModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <CardTitle>Add Applicant</CardTitle>
         </CardHeader>
@@ -1309,35 +1334,17 @@ function NewApplicantModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">First Name *</label>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="John"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
-              />
+              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John" className={inputCls} />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Last Name</label>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Smith"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
-              />
+              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Smith" className={inputCls} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="john@email.com"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
-              />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@email.com" className={inputCls} />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Phone</label>
@@ -1350,29 +1357,64 @@ function NewApplicantModal({
                   setPhone(formatted);
                 }}
                 placeholder="(555) 123-4567"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+                className={inputCls}
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Select
-              label="Source"
-              options={sourceOptions}
-              value={source}
-              onChange={(e) => setSource(e.target.value as ApplicantSource)}
-            />
+            <Select label="Source" options={sourceOptions} value={source} onChange={(e) => setSource(e.target.value as ApplicantSource)} />
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Years Experience</label>
-              <input
-                type="number"
-                value={experience}
-                onChange={(e) => setExperience(e.target.value)}
-                placeholder="5"
-                min="0"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
-              />
+              <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} placeholder="5" min="0" className={inputCls} />
             </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Portfolio / Website</label>
+            <input type="url" value={portfolioUrl} onChange={(e) => setPortfolioUrl(e.target.value)} placeholder="https://portfolio.example.com" className={inputCls} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Trade Specialties</label>
+            <div className="flex flex-wrap gap-1.5">
+              {TRADE_OPTIONS.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => toggleTrade(t)}
+                  className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${selectedTrades.includes(t) ? 'bg-accent/20 border-accent text-accent' : 'bg-main border-main text-muted hover:border-accent/50'}`}
+                >
+                  {t.replace(/_/g, ' ')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Certifications</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={certInput}
+                onChange={(e) => setCertInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCert(); } }}
+                placeholder="e.g. EPA 608, OSHA 30"
+                className={`flex-1 ${inputCls}`}
+              />
+              <Button variant="secondary" onClick={addCert} disabled={!certInput.trim()}>Add</Button>
+            </div>
+            {certs.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {certs.map((c) => (
+                  <span key={c} className="px-2.5 py-1 text-xs rounded-full bg-accent/20 border border-accent text-accent flex items-center gap-1">
+                    {c}
+                    <button type="button" onClick={() => setCerts((prev) => prev.filter((x) => x !== c))} className="hover:text-red-400">&times;</button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
               Cancel
