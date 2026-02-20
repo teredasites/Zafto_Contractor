@@ -12,7 +12,7 @@
     "test:a11y": "vitest run --testPathPattern=a11y"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.5.0",
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.45.0",
     "lucide-react": "^0.469.0",
     "next": "^15.0.0",
