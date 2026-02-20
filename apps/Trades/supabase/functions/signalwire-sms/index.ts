@@ -34,6 +34,22 @@ serve(async (req) => {
     // INBOUND SMS WEBHOOK
     // ========================================================================
     if (isInbound) {
+      // SEC-AUDIT-4: Verify inbound webhook secret — fail-closed
+      const SW_INBOUND_SECRET = Deno.env.get('SIGNALWIRE_INBOUND_SECRET') ?? ''
+      if (!SW_INBOUND_SECRET) {
+        console.error('SIGNALWIRE_INBOUND_SECRET not configured — rejecting inbound SMS')
+        return new Response('<Response></Response>', {
+          status: 500, headers: { 'Content-Type': 'text/xml' },
+        })
+      }
+      const providedSecret = req.headers.get('x-signalwire-inbound-secret') || url.searchParams.get('inbound_secret')
+      if (providedSecret !== SW_INBOUND_SECRET) {
+        console.error('Invalid SignalWire inbound webhook secret')
+        return new Response('<Response></Response>', {
+          status: 401, headers: { 'Content-Type': 'text/xml' },
+        })
+      }
+
       const formData = await req.formData()
       const messageSid = formData.get('MessageSid') as string
       const from = formData.get('From') as string

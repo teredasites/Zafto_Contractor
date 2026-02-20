@@ -49,11 +49,54 @@ serve(async (req: Request) => {
     }
 
     const userRole = user.app_metadata?.role
-    if (userRole !== 'super_admin') {
+    if (userRole !== 'super_admin' && userRole !== 'super_admin_impersonating') {
       return new Response(JSON.stringify({ error: 'Only super_admin can impersonate' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
+    }
+
+    // SEC-AUDIT-4: TTL enforcement — auto-expire impersonation sessions >30 minutes
+    const impersonationStartedAt = user.app_metadata?.impersonation_started_at
+    if (impersonationStartedAt && userRole === 'super_admin_impersonating') {
+      const startedMs = new Date(impersonationStartedAt).getTime()
+      const elapsedMs = Date.now() - startedMs
+      const TTL_MS = 30 * 60 * 1000 // 30 minutes
+
+      if (elapsedMs > TTL_MS) {
+        // Auto-restore original metadata
+        const originalCompanyId = user.app_metadata?.original_company_id
+        const originalRole = user.app_metadata?.original_role || 'super_admin'
+
+        await supabaseAdmin.auth.admin.updateUserById(user.id, {
+          app_metadata: {
+            ...user.app_metadata,
+            company_id: originalCompanyId,
+            role: originalRole,
+            original_company_id: null,
+            original_role: null,
+            impersonation_session_id: null,
+            impersonation_started_at: null,
+          },
+        })
+
+        await supabaseAdmin.from('admin_audit_log').insert({
+          admin_user_id: user.id,
+          admin_email: user.email || 'unknown',
+          action: 'impersonate_auto_expired',
+          session_id: user.app_metadata?.impersonation_session_id,
+          ip_address: req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || null,
+          details: { expired_at: new Date().toISOString(), elapsed_minutes: Math.round(elapsedMs / 60000) },
+        })
+
+        return new Response(JSON.stringify({
+          error: 'Impersonation session expired (30 minute limit). You have been restored to your original role.',
+          expired: true,
+        }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
     }
 
     const body = await req.json()
