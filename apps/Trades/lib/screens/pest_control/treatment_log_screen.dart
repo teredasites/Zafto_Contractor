@@ -37,7 +37,7 @@ class _TreatmentLogScreenState extends ConsumerState<TreatmentLogScreen> {
       var query = supabase
           .from('treatment_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       if (widget.jobId != null) {
@@ -45,14 +45,14 @@ class _TreatmentLogScreenState extends ConsumerState<TreatmentLogScreen> {
             .from('treatment_logs')
             .select()
             .eq('job_id', widget.jobId!)
-            .is_('deleted_at', null)
+            .isFilter('deleted_at', null)
             .order('created_at', ascending: false);
       } else if (widget.propertyId != null) {
         query = supabase
             .from('treatment_logs')
             .select()
             .eq('property_id', widget.propertyId!)
-            .is_('deleted_at', null)
+            .isFilter('deleted_at', null)
             .order('created_at', ascending: false);
       }
 

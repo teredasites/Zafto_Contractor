@@ -35,7 +35,7 @@ class _RecurringServiceScreenState extends ConsumerState<RecurringServiceScreen>
       final data = await supabase
           .from('treatment_logs')
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .not('next_service_date', 'is', null)
           .order('next_service_date');
 

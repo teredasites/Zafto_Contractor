@@ -43,7 +43,7 @@ class BaitStationRepository {
           .from(_table)
           .select()
           .eq('property_id', propertyId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('station_number');
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
@@ -57,7 +57,7 @@ class BaitStationRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('station_number');
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {

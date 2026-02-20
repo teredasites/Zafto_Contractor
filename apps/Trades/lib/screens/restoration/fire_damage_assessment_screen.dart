@@ -133,7 +133,7 @@ class _FireDamageAssessmentScreenState
       if (companyId == null) throw Exception('No company');
 
       final zones = _zones
-          .map((z) => {
+          .map((z) {
                 return {
                   'room': z.room,
                   'zone_type': z.zoneType.dbValue,

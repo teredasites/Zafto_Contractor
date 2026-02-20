@@ -48,7 +48,7 @@ class _ContentPackoutScreenState extends ConsumerState<ContentPackoutScreen> {
           .from('content_packout_items')
           .select()
           .eq('fire_assessment_id', widget.fireAssessmentId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       _items = (data as List)

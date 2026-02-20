@@ -179,7 +179,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
           .from('company_phone_numbers')
           .select()
           .eq('company_id', companyId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: false);
 
       setState(() {
@@ -401,9 +401,9 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
     final colors = ref.watch(zaftoColorsProvider);
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: colors.bgBase,
       appBar: AppBar(
-        backgroundColor: colors.surface,
+        backgroundColor: colors.bgElevated,
         title: Text('Phone Settings',
             style: TextStyle(color: colors.textPrimary)),
         iconTheme: IconThemeData(color: colors.textPrimary),
@@ -462,7 +462,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: colors.bgElevated,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colors.border),
       ),
@@ -471,7 +471,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
         children: [
           Row(
             children: [
-              Icon(LucideIcons.phone, size: 22, color: colors.accent),
+              Icon(LucideIcons.phone, size: 22, color: colors.accentPrimary),
               const SizedBox(width: 10),
               Text(
                 'Bring Your Own Number',
@@ -521,7 +521,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
     };
 
     return Card(
-      color: colors.surface,
+      color: colors.bgElevated,
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -561,7 +561,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: colors.accent.withValues(alpha: 0.1),
+                      color: colors.accentPrimary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -569,7 +569,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: colors.accent,
+                        color: colors.accentPrimary,
                       ),
                     ),
                   ),
@@ -667,7 +667,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: colors.background,
+                  color: colors.bgBase,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -754,7 +754,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
                       width: 20,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: isDone ? Colors.blue : colors.background,
+                        color: isDone ? Colors.blue : colors.bgBase,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isDone ? Colors.blue : colors.border,
@@ -798,7 +798,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: colors.bgElevated,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colors.border),
       ),
@@ -886,7 +886,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: colors.background,
+              color: colors.bgBase,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -930,7 +930,7 @@ class _PhoneSettingsScreenState extends ConsumerState<PhoneSettingsScreen> {
                 : const Icon(LucideIcons.plus, size: 18),
             label: Text(_adding ? 'Adding...' : 'Add Number'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: colors.accent,
+              backgroundColor: colors.accentPrimary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
