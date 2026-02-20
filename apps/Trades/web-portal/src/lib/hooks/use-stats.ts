@@ -36,15 +36,15 @@ export function useStats() {
 
       // Parallel queries for all stats
       const [jobsRes, bidsRes, invoicesRes, paidRecentRes, paidLastMonthRes, completedThisMonthRes] = await Promise.all([
-        supabase.from('jobs').select('status'),
-        supabase.from('bids').select('status, total'),
-        supabase.from('invoices').select('status, total, amount_due, paid_at'),
+        supabase.from('jobs').select('status').is('deleted_at', null),
+        supabase.from('bids').select('status, total').is('deleted_at', null),
+        supabase.from('invoices').select('status, total, amount_due, paid_at').is('deleted_at', null),
         // Paid invoices from start of last month to now (covers today, week, this month)
-        supabase.from('invoices').select('total, paid_at').eq('status', 'paid').gte('paid_at', lastMonthStart),
+        supabase.from('invoices').select('total, paid_at').eq('status', 'paid').is('deleted_at', null).gte('paid_at', lastMonthStart),
         // Paid invoices last month only (for MoM comparison)
-        supabase.from('invoices').select('total, paid_at').eq('status', 'paid').gte('paid_at', lastMonthStart).lte('paid_at', lastMonthEnd),
+        supabase.from('invoices').select('total, paid_at').eq('status', 'paid').is('deleted_at', null).gte('paid_at', lastMonthStart).lte('paid_at', lastMonthEnd),
         // Jobs completed this month
-        supabase.from('jobs').select('id').eq('status', 'completed').gte('completed_at', thisMonthStart),
+        supabase.from('jobs').select('id').eq('status', 'completed').is('deleted_at', null).gte('completed_at', thisMonthStart),
       ]);
 
       const jobs: { status: string }[] = jobsRes.data || [];

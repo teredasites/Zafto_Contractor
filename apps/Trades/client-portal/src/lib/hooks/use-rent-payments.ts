@@ -25,6 +25,7 @@ export function useRentCharges() {
       .from('rent_charges')
       .select('*')
       .eq('tenant_id', tenant.id)
+      .is('deleted_at', null)
       .order('due_date', { ascending: false });
 
     setCharges((data || []).map(mapRentCharge));
@@ -65,8 +66,8 @@ export function useRentPayments(chargeId: string) {
       const supabase = getSupabase();
 
       const [chargeRes, paymentsRes] = await Promise.all([
-        supabase.from('rent_charges').select('*').eq('id', chargeId).single(),
-        supabase.from('rent_payments').select('*').eq('rent_charge_id', chargeId).order('created_at', { ascending: false }),
+        supabase.from('rent_charges').select('*').eq('id', chargeId).is('deleted_at', null).single(),
+        supabase.from('rent_payments').select('*').eq('rent_charge_id', chargeId).is('deleted_at', null).order('created_at', { ascending: false }),
       ]);
 
       if (chargeRes.data) setCharge(mapRentCharge(chargeRes.data));
@@ -111,6 +112,7 @@ export function useRentPayments(chargeId: string) {
       .from('rent_payments')
       .select('*')
       .eq('rent_charge_id', chargeId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
     if (refreshed) setPayments(refreshed.map(mapRentPayment));
 

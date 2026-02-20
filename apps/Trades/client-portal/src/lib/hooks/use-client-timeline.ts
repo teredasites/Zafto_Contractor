@@ -40,6 +40,7 @@ export function useClientTimeline(projectId: string | undefined) {
         .from('schedule_projects')
         .select('id, name, status, planned_start, planned_finish')
         .eq('id', projectId)
+        .is('deleted_at', null)
         .single();
 
       if (projErr) throw projErr;
@@ -84,6 +85,7 @@ export function useClientTimeline(projectId: string | undefined) {
           .select('planned_finish')
           .eq('project_id', projectId)
           .eq('is_active', true)
+          .is('deleted_at', null)
           .limit(1)
           .maybeSingle();
 

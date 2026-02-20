@@ -12521,13 +12521,13 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ### DEPTH5 — CRM & Portal Depth Audit + Corrections + Form Depth Verification (~20h)
 **Goal:** Audit and correct depth for: Web CRM pages, client portal experience, ops portal dashboards. The CRM is the office manager's daily tool — it must be comprehensive.
-- [ ] Audit CRM dashboard — KPIs, charts, actionable insights, customization
-- [ ] Audit CRM job management — pipeline view, status board, bulk actions, job costing
-- [ ] Audit CRM customer management — contact details, communication history, job history, notes, documents
-- [ ] Audit CRM reporting — P&L, revenue by trade/tech/month, job profitability, aging reports
-- [ ] Audit client portal — project visibility, payment, document access, communication, scheduling
-- [ ] Audit ops portal — company metrics, subscription management, support tools, analytics
-- [ ] Audit homeowner tools — what does the homeowner see? Is it clear, professional, trustworthy?
+- [x] Audit CRM dashboard — KPIs, charts, actionable insights, customization — S143: 7.5/10. use-stats.ts missing deleted_at on ALL 6 queries (FIXED). Today/week revenue computed but not shown in UI (documented for DEPTH UI pass).
+- [x] Audit CRM job management — pipeline view, status board, bulk actions, job costing — S143: 7/10. Time Tab = MOCK DATA. Notes Tab broken. Photos empty. 4 buttons no handlers. No drag-drop Kanban. Documented for future DEPTH sprint.
+- [x] Audit CRM customer management — contact details, communication history, job history, notes, documents — S143: 7/10. updateCustomer missing 7 fields (FIXED: alternatePhone, accessInstructions, customerType, preferredContactMethod, emailOptIn, smsOptIn, companyName). useCustomer(id) missing deleted_at (FIXED).
+- [x] Audit CRM reporting — P&L, revenue by trade/tech/month, job profitability, aging reports — S143: 8/10. use-reports.ts missing deleted_at on invoices/jobs/job_materials (FIXED). AR Aging groups by name not ID (documented).
+- [x] Audit client portal — project visibility, payment, document access, communication, scheduling — S143: 6.3/10. CRITICAL: /request page decorative (submit does nothing). /referrals 100% mock. use-home.ts missing deleted_at on ALL 5 queries (FIXED). use-meetings.ts data access bug — no participant_id filter (FIXED + deleted_at). 21+ deleted_at filters added across 10 hooks (change-orders, maintenance, inspections-tenant, permits, rent-payments, walkthroughs, documents, home-documents, client-timeline).
+- [x] Audit ops portal — company metrics, subscription management, support tools, analytics — S143: 7.5/10. knowledge-base HARD DELETE → soft delete (FIXED). 3 placeholder pages documented.
+- [x] Audit homeowner tools — what does the homeowner see? Is it clear, professional, trustworthy? — S143: covered in client portal audit. Home dashboard hooks all fixed with deleted_at.
 
 **Cross-Entity Form Depth Verification (S138 — covers contractors, realtors, adjusters, inspectors, homeowners):**
 - [ ] Audit EVERY create/edit form in the system against its DB model. Count: fields in model vs fields in UI. Target: >= 90% for enterprise complexity, >= 60% for solo complexity. Document gaps per entity per complexity tier.

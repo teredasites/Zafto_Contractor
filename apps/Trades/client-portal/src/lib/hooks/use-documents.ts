@@ -57,6 +57,7 @@ export function useClientDocuments() {
         .eq('customer_id', profile.customerId)
         .eq('status', 'active')
         .eq('is_latest', true)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (directErr) throw directErr;
@@ -70,6 +71,7 @@ export function useClientDocuments() {
           .in('job_id', jobIds)
           .eq('status', 'active')
           .eq('is_latest', true)
+          .is('deleted_at', null)
           .order('created_at', { ascending: false });
 
         if (jErr) throw jErr;

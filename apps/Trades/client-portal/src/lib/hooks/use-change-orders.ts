@@ -19,7 +19,8 @@ export function useChangeOrders() {
     const { data: jobs, error: jobsError } = await supabase
       .from('jobs')
       .select('id')
-      .eq('customer_id', profile.customerId);
+      .eq('customer_id', profile.customerId)
+      .is('deleted_at', null);
 
     if (jobsError) {
       setError(jobsError.message);
@@ -38,6 +39,7 @@ export function useChangeOrders() {
       .from('change_orders')
       .select('*, jobs(title)')
       .in('job_id', jobIds)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (fetchError) {
@@ -62,6 +64,7 @@ export function useChangeOrders() {
       .from('change_orders')
       .select('id, job_id, jobs(customer_id)')
       .eq('id', orderId)
+      .is('deleted_at', null)
       .single();
 
     if (fetchError || !data) return false;

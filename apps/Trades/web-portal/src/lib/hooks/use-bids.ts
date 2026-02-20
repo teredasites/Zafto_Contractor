@@ -89,7 +89,7 @@ export function useBids() {
         total: data.total || 0,
         valid_until: data.validUntil ? new Date(data.validUntil).toISOString() : null,
         status: 'draft',
-        notes: null,
+        notes: data.internalNotes || null,
       })
       .select('id')
       .single();

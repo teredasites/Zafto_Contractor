@@ -26,6 +26,7 @@ export function useMaintenanceRequests() {
       .from('maintenance_requests')
       .select('*')
       .eq('tenant_id', tenant.id)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     setRequests((data || []).map(mapMaintenanceRequest));
@@ -100,6 +101,7 @@ export function useMaintenanceRequest(id: string) {
         .from('maintenance_requests')
         .select('*')
         .eq('id', id)
+        .is('deleted_at', null)
         .single();
 
       if (reqData) {
@@ -111,6 +113,7 @@ export function useMaintenanceRequest(id: string) {
             .from('work_order_actions')
             .select('*')
             .eq('maintenance_request_id', id)
+            .is('deleted_at', null)
             .order('created_at', { ascending: true });
 
           setActions((actionsData || []).map(mapWorkOrderAction));

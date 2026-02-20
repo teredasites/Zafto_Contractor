@@ -220,11 +220,11 @@ export function useHome() {
     const supabase = getSupabase();
 
     const [propRes, equipRes, svcRes, maintRes, docRes] = await Promise.all([
-      supabase.from('homeowner_properties').select('*').eq('owner_user_id', user.id).order('is_primary', { ascending: false }),
-      supabase.from('homeowner_equipment').select('*').eq('owner_user_id', user.id).order('category'),
-      supabase.from('service_history').select('*').eq('owner_user_id', user.id).order('service_date', { ascending: false }).limit(50),
-      supabase.from('maintenance_schedules').select('*').eq('owner_user_id', user.id).eq('status', 'active').order('next_due_date'),
-      supabase.from('homeowner_documents').select('*').eq('owner_user_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('homeowner_properties').select('*').eq('owner_user_id', user.id).is('deleted_at', null).order('is_primary', { ascending: false }),
+      supabase.from('homeowner_equipment').select('*').eq('owner_user_id', user.id).is('deleted_at', null).order('category'),
+      supabase.from('service_history').select('*').eq('owner_user_id', user.id).is('deleted_at', null).order('service_date', { ascending: false }).limit(50),
+      supabase.from('maintenance_schedules').select('*').eq('owner_user_id', user.id).is('deleted_at', null).eq('status', 'active').order('next_due_date'),
+      supabase.from('homeowner_documents').select('*').eq('owner_user_id', user.id).is('deleted_at', null).order('created_at', { ascending: false }),
     ]);
 
     setProperties((propRes.data || []).map(mapProperty));

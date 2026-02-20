@@ -78,9 +78,11 @@ export function useHomeDocuments() {
     const [docRes, equipRes] = await Promise.all([
       supabase.from('homeowner_documents').select('*')
         .eq('owner_user_id', user.id)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false }),
       supabase.from('homeowner_equipment').select('id, name, category')
         .eq('owner_user_id', user.id)
+        .is('deleted_at', null)
         .order('name'),
     ]);
 
