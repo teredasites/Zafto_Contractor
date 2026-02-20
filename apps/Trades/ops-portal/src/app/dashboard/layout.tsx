@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
 import { Sidebar } from '@/components/sidebar';
 import { getSupabase } from '@/lib/supabase';
+import { AxeDevTools } from '@/components/axe-dev-tools';
 
 function ImpersonationBanner() {
   const [impersonation, setImpersonation] = useState<{
@@ -76,6 +77,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen">
+      <AxeDevTools />
       <ImpersonationBanner />
       <Sidebar />
       <main className="lg:ml-[260px] min-h-screen">
