@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Plus,
   FileDiff,
@@ -14,7 +14,10 @@ import {
   User,
   Briefcase,
   Send,
+  Loader2,
+  Trash2,
 } from 'lucide-react';
+import { getSupabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SearchInput, Select } from '@/components/ui/input';
@@ -38,7 +41,7 @@ export default function ChangeOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedCO, setSelectedCO] = useState<ChangeOrderData | null>(null);
-  const { changeOrders, loading } = useChangeOrders();
+  const { changeOrders, loading, createChangeOrder } = useChangeOrders();
 
   if (loading) {
     return (
@@ -153,7 +156,7 @@ export default function ChangeOrdersPage() {
       </div>
 
       {selectedCO && <CODetailModal co={selectedCO} onClose={() => setSelectedCO(null)} />}
-      {showNewModal && <NewCOModal onClose={() => setShowNewModal(false)} />}
+      {showNewModal && <NewCOModal onClose={() => setShowNewModal(false)} onCreate={createChangeOrder} />}
     </div>
   );
 }
@@ -236,53 +239,158 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
   );
 }
 
-function NewCOModal({ onClose }: { onClose: () => void }) {
+interface COLineItem {
+  description: string;
+  quantity: string;
+  unitPrice: string;
+}
+
+function NewCOModal({ onClose, onCreate }: {
+  onClose: () => void;
+  onCreate: (input: { jobId: string; title: string; description: string; reason?: string; items?: { description: string; quantity: number; unitPrice: number; total: number }[]; amount: number; notes?: string }) => Promise<string>;
+}) {
+  const [jobs, setJobs] = useState<{ id: string; title: string; customerName: string }[]>([]);
+  const [jobId, setJobId] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [reason, setReason] = useState('customer_request');
+  const [notes, setNotes] = useState('');
+  const [scheduleImpact, setScheduleImpact] = useState('');
+  const [lineItems, setLineItems] = useState<COLineItem[]>([{ description: '', quantity: '1', unitPrice: '' }]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('jobs')
+        .select('id, title, customer_name')
+        .is('deleted_at', null)
+        .in('status', ['draft', 'scheduled', 'in_progress', 'on_hold'])
+        .order('created_at', { ascending: false })
+        .limit(100);
+      if (data) setJobs(data.map((j: Record<string, unknown>) => ({ id: j.id as string, title: (j.title as string) || '', customerName: (j.customer_name as string) || '' })));
+    };
+    fetchJobs();
+  }, []);
+
+  const addLineItem = () => setLineItems((prev) => [...prev, { description: '', quantity: '1', unitPrice: '' }]);
+  const removeLineItem = (idx: number) => setLineItems((prev) => prev.filter((_, i) => i !== idx));
+  const updateLineItem = (idx: number, field: keyof COLineItem, val: string) => {
+    setLineItems((prev) => prev.map((item, i) => i === idx ? { ...item, [field]: val } : item));
+  };
+
+  const computedTotal = lineItems.reduce((sum, item) => {
+    const qty = parseFloat(item.quantity) || 0;
+    const price = parseFloat(item.unitPrice) || 0;
+    return sum + qty * price;
+  }, 0);
+
+  const handleSubmit = async () => {
+    if (!jobId || !title.trim() || !description.trim()) return;
+    setSaving(true);
+    try {
+      const items = lineItems
+        .filter((li) => li.description.trim() && li.unitPrice)
+        .map((li) => ({
+          description: li.description.trim(),
+          quantity: parseFloat(li.quantity) || 1,
+          unitPrice: parseFloat(li.unitPrice) || 0,
+          total: (parseFloat(li.quantity) || 1) * (parseFloat(li.unitPrice) || 0),
+        }));
+
+      await onCreate({
+        jobId,
+        title: title.trim(),
+        description: description.trim(),
+        reason,
+        items: items.length > 0 ? items : undefined,
+        amount: items.length > 0 ? computedTotal : 0,
+        notes: notes.trim() ? `${notes.trim()}${scheduleImpact ? `\nSchedule Impact: ${scheduleImpact} day(s)` : ''}` : scheduleImpact ? `Schedule Impact: ${scheduleImpact} day(s)` : undefined,
+      });
+      onClose();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to create change order');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const inputCls = "w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent";
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader><CardTitle>New Change Order</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="">Select job</option><option value="j1">Full Home Rewire - 123 Oak Ave</option><option value="j2">HVAC Install - 456 Elm St</option><option value="j3">Water Heater Replacement</option>
+            <select value={jobId} onChange={(e) => setJobId(e.target.value)} className={inputCls}>
+              <option value="">Select job</option>
+              {jobs.map((j) => (
+                <option key={j.id} value={j.id}>{j.title || 'Untitled'} — {j.customerName}</option>
+              ))}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Title *</label>
-            <input type="text" placeholder="Add EV charger circuit" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add EV charger circuit" className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Description</label>
-            <textarea rows={3} placeholder="Detailed description of the scope change..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Reason</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="customer_request">Customer Request</option>
-              <option value="discovered_during_work">Discovered During Work</option>
-              <option value="code_requirement">Code Requirement</option>
-              <option value="design_change">Design Change</option>
-              <option value="contractor_recommendation">Contractor Recommendation</option>
-            </select>
+            <label className="block text-sm font-medium text-main mb-1.5">Description *</label>
+            <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Detailed description of the scope change..." className={`${inputCls} resize-none`} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Change Amount</label>
-              <input type="number" placeholder="832.50" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <label className="block text-sm font-medium text-main mb-1.5">Reason</label>
+              <select value={reason} onChange={(e) => setReason(e.target.value)} className={inputCls}>
+                <option value="customer_request">Customer Request</option>
+                <option value="discovered_during_work">Discovered During Work</option>
+                <option value="code_requirement">Code Requirement</option>
+                <option value="design_change">Design Change</option>
+                <option value="contractor_recommendation">Contractor Recommendation</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Schedule Impact (days)</label>
-              <input type="number" placeholder="1" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <input type="number" value={scheduleImpact} onChange={(e) => setScheduleImpact(e.target.value)} placeholder="0" className={inputCls} />
             </div>
           </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-main">Line Items</label>
+              <button type="button" onClick={addLineItem} className="text-xs text-accent hover:underline flex items-center gap-1">
+                <Plus size={12} /> Add Item
+              </button>
+            </div>
+            <div className="space-y-2">
+              {lineItems.map((item, idx) => (
+                <div key={idx} className="grid grid-cols-12 gap-2 items-start">
+                  <input type="text" value={item.description} onChange={(e) => updateLineItem(idx, 'description', e.target.value)} placeholder="Description" className={`col-span-6 ${inputCls}`} />
+                  <input type="number" value={item.quantity} onChange={(e) => updateLineItem(idx, 'quantity', e.target.value)} placeholder="Qty" min="0" step="0.01" className={`col-span-2 ${inputCls}`} />
+                  <input type="number" value={item.unitPrice} onChange={(e) => updateLineItem(idx, 'unitPrice', e.target.value)} placeholder="Price" min="0" step="0.01" className={`col-span-3 ${inputCls}`} />
+                  <button type="button" onClick={() => removeLineItem(idx)} disabled={lineItems.length <= 1} className="col-span-1 flex items-center justify-center h-[42px] text-muted hover:text-red-500 disabled:opacity-30">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end mt-2">
+              <span className="text-sm font-semibold text-main">Total: ${computedTotal.toFixed(2)}</span>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
-            <textarea rows={2} placeholder="Internal notes..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
+            <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Internal notes..." className={`${inputCls} resize-none`} />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
-            <Button className="flex-1"><Plus size={16} />Create Change Order</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>Cancel</Button>
+            <Button className="flex-1" onClick={handleSubmit} disabled={saving || !jobId || !title.trim() || !description.trim()}>
+              {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+              {saving ? 'Creating...' : 'Create Change Order'}
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -55,6 +55,10 @@ export function useLeads() {
     value?: number;
     notes?: string;
     address?: { street: string; city: string; state: string; zip: string };
+    trade?: string;
+    urgency?: string;
+    tags?: string[];
+    nextFollowUp?: string;
   }): Promise<string> => {
     const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
@@ -80,12 +84,15 @@ export function useLeads() {
         city: input.address?.city || null,
         state: input.address?.state || null,
         zip_code: input.address?.zip || null,
+        trade: input.trade || null,
+        urgency: input.urgency || 'normal',
+        tags: input.tags || [],
+        next_follow_up: input.nextFollowUp ? new Date(input.nextFollowUp).toISOString() : null,
       })
       .select('id')
       .single();
 
     if (err) throw err;
-    // Explicitly refetch as backup for real-time
     fetchLeads();
     return result.id;
   };
