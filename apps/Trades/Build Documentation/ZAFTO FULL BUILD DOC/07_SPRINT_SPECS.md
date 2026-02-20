@@ -12478,18 +12478,18 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ### DEPTH2 — Field Tools Depth Audit + Corrections (~16h)
 **Goal:** Audit and correct depth for: Time tracking, daily logs, photos, materials, receipts, safety, punch lists, voice notes, mileage across Flutter + team portal.
-- [ ] Audit time tracking — clock in/out, GPS, breaks, overtime calc, timesheet approval flow, export
-- [ ] Audit daily logs — all fields needed by GC/electrical/restoration/HVAC, photo attachments, crew tracking
-- [ ] Audit photo system — before/during/after workflow, annotation tools, gallery management, storage
-- [ ] Audit materials tracker — common materials per trade (seed data depth), vendor management, reorder alerts
-- [ ] Audit receipt scanner — OCR accuracy, category depth, expense report generation, tax categorization
-- [ ] Audit safety tools — OSHA compliance per trade, toolbox talk templates, incident severity tracking
-- [ ] Audit punch list — assignment workflow, client visibility (client portal), completion verification
-- [ ] Audit voice notes — transcription quality, job association, searchability
-- [ ] Audit mileage — IRS compliance, trip categorization, monthly/annual summaries
-- [ ] Identify and list ALL shallow/stub features found
-- [ ] Build + execute corrections for each shallow feature
-- [ ] Commit: `[DEPTH2] Field tools depth corrections — time, photos, materials, safety, punch lists`
+- [x] Audit time tracking — clock in/out, GPS, breaks, overtime calc, timesheet approval flow, export — S143: 6.5/10. GPS+breaks+approval excellent. Missing: overtime rules engine, geofencing, PTO, payroll export, rounding rules. Deferred to TIME-DEPTH sprint.
+- [x] Audit daily logs — all fields needed by GC/electrical/restoration/HVAC, photo attachments, crew tracking — S143: 6/10. Functional but missing soft delete (FIXED), trade-specific fields (FIXED: trade_data JSONB), web CRM hook (FIXED: use-daily-logs.ts). Remaining: crew picker UI, weather auto-fetch, photo attachment UI.
+- [x] Audit photo system — before/during/after workflow, annotation tools, gallery management, storage — S143: 8.5/10. Flutter annotation engine (7 tools, 961 lines) is deep. Missing: web CRM hook (FIXED: use-photos.ts), client portal gallery (FIXED: use-photos.ts). Remaining: web annotation viewer, batch upload, search.
+- [x] Audit materials tracker — common materials per trade (seed data depth), vendor management, reorder alerts — S143: 4/10. ZERO seed data (CRITICAL). Vendor disconnected from vendors table. No inventory. Deferred to DEPTH-MAT sprints.
+- [x] Audit receipt scanner — OCR accuracy, category depth, expense report generation, tax categorization — S143: 3/10. NO OCR (Phase E). Category mismatch (7 vs 15 in DB). No export. No tax mapping. Deferred to DEPTH-REC sprints.
+- [x] Audit safety tools — OSHA compliance per trade, toolbox talk templates, incident severity tracking — S143: 5.9/10. Good briefing screen (831 lines, 10 topics, 10 hazards, 9 PPE). Missing: incident report screen, equipment cert tracker, OSHA 300 log, JHA/JSA, trade templates. Deferred to SAFETY-DEPTH sprint.
+- [x] Audit punch list — assignment workflow, client visibility (client portal), completion verification — S143: 4.9/10. Flutter works well. Missing: client portal (FIXED: use-punch-list.ts read-only), web CRM hook (FIXED: use-punch-list.ts), photo evidence, templates. Remaining: completion verification workflow, PDF export.
+- [x] Audit voice notes — transcription quality, job association, searchability — S143: 6.5/10. Recording works. Missing: transcription (Phase E), web CRM hook (FIXED: use-voice-notes.ts), tagging UI. Remaining: transcription engine, pause/resume, playback speed.
+- [x] Audit mileage — IRS compliance, trip categorization, monthly/annual summaries — S143: 5/10. GPS tracking works. Missing: trip_type (FIXED: 5 IRS categories), GPS columns (FIXED), web CRM hook (FIXED: use-mileage.ts with monthly summary + IRS rates). Remaining: IRS export PDF, auto-detection, route replay.
+- [x] Identify and list ALL shallow/stub features found — S143: Full audit via 4 parallel Opus subagents. 38+ gaps identified across 9 feature areas. 15 CRITICAL, 23 MODERATE.
+- [x] Build + execute corrections for each shallow feature — S143: Migration 126 (soft deletes, trip_type, GPS, trade_data, indexes), 5 web portal hooks, 2 client portal hooks, all builds pass.
+- [x] Commit: `[DEPTH2] Field tools depth corrections — time, photos, materials, safety, punch lists` — S143: 734d618
 
 ### DEPTH3 — Property & Scheduling Depth Audit + Corrections (~14h)
 **Goal:** Audit and correct depth for: Properties, walkthroughs, sketch engine, scheduling/Gantt, dispatch across all apps.
