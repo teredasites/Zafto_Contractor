@@ -218,10 +218,17 @@ class ZaftoCalculatorWrapper extends ConsumerWidget {
     return Stack(
       children: [
         child,
-        // Floating save button
+        // Legal disclaimer pinned at bottom of screen
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: CalculatorDisclaimerFooter(colors: colors),
+        ),
+        // Floating save button above disclaimer
         Positioned(
           right: 16,
-          bottom: 24,
+          bottom: 60,
           child: FloatingActionButton.small(
             backgroundColor: colors.accentPrimary,
             onPressed: () => _saveToJob(context, ref, colors),

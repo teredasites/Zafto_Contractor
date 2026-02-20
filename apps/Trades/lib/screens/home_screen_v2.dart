@@ -14,6 +14,7 @@ import '../widgets/shared/matrix_rain_painter.dart';
 import '../widgets/shared/ai_brain_card.dart';
 import '../widgets/shared/clean_brand_header.dart';
 import '../navigation/screen_registry.dart';
+import '../widgets/zafto/zafto_calculator_scaffold.dart';
 
 // Screen imports
 import 'tools/tools_hub_screen.dart';
@@ -989,7 +990,15 @@ class _UniversalSearchSheetState extends State<_UniversalSearchSheet> {
           type: _SearchResultType.tool,
           onTap: () {
             Navigator.pop(context);
-            Navigator.push(context, MaterialPageRoute(builder: (_) => screen.builder()));
+            Widget screenWidget = screen.builder();
+            if (screen.category == ScreenCategory.calculators) {
+              screenWidget = ZaftoCalculatorWrapper(
+                calculatorId: screen.id,
+                calculatorName: screen.name,
+                child: screenWidget,
+              );
+            }
+            Navigator.push(context, MaterialPageRoute(builder: (_) => screenWidget));
           },
         ));
       }
