@@ -557,8 +557,12 @@ Tech opens app -> Taps "Field Tools"
 **REST2: Mold Remediation (4 -- migration 000109):** mold_assessments, mold_samples, mold_state_regulations, mold_labs
 **NICHE1: Pest Control (3 -- migration 000111):** treatment_logs, bait_stations, wdi_reports
 **NICHE2: Service Trades (3 -- migration 000112):** locksmith_service_logs, garage_door_service_logs, appliance_service_logs
+**DEPTH1: Seed Data (1 -- migration 000113):** depth1 seed expansion
+**SEC-AUDIT 1-6 (5 -- migrations 000114-000118):** security hardening — soft deletes, RLS, audit triggers, credit race conditions, webhook auth
+**LEGAL 1-4 (4 -- migrations 000119-000122):** legal_disclaimers, system_settings, legal_reference_registry, legal_reference_check_log, system_alerts
+**INFRA 4-5 (3 -- migrations 000123-000125):** performance indexes (30 B-tree + 8 BRIN + 7 partial + 5 GIN), full-text search (TSVECTOR on 6 tables), materialized views (mv_company_revenue_summary, mv_job_pipeline), webhook_events, company_feature_flags
 
-**Total: ~215 tables. 113 migration files. RLS on all. Audit triggers on all mutable tables.**
+**Total: ~222 tables. 125 migration files. RLS on all. Audit triggers on all mutable tables.**
 
 ### D1 Job Type Columns (Already Deployed)
 - `jobs.job_type` TEXT with CHECK constraint: 'standard', 'insurance_claim', 'warranty_dispatch'
@@ -1029,6 +1033,14 @@ Tech opens app -> Taps "Field Tools"
 | signalwire-ai-receptionist | AI phone receptionist | F1 |
 | signalwire-webhook | SignalWire event handler | F1 |
 | warranty-outreach-scheduler | Warranty follow-up cron | FIELD |
+
+**INFRA: Infrastructure Utilities (2):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| global-search | Full-text search across 6 entity types (TSVECTOR) | INFRA-4 |
+| health-check | No-auth uptime/DB connectivity endpoint | INFRA-5 |
+
+**Shared utilities (_shared/):** logger.ts (structured JSON logging), idempotency.ts (webhook dedup via webhook_events), feature-flags.ts (5-min cached, fail-closed), optimistic-lock.ts (ConflictError + checkUpdatedAt), cors.ts (origin allowlist).
 
 **NOTE:** send-notification does NOT have a directory. It needs to be created.
 

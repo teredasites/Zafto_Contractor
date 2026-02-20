@@ -464,6 +464,38 @@ Update this section as sprints are completed. Mark each connection as it's verif
 |-----------|--------|--------|
 | DEPTH → Core Business | DEPTH1 | WIRED (S131) — customer ID fix, CRM mapper, team portal contact card, client CO buttons, Tasks→schedule_tasks, Materials→job_materials, invoice fields, customer edit/delete/create |
 
+### Phase SEC-AUDIT — Security Hardening (S141-S142)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| SEC-AUDIT → RLS/Auth/Soft-Delete | SEC-AUDIT-1→6 | WIRED (S141-S142) — 20 CRITICAL + 31 HIGH findings fixed, 60+ RLS policies, 30 audit triggers, credit race conditions, webhook auth, soft deletes |
+
+### Phase A11Y — Accessibility (S142-S143)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| A11Y → All 4 Portals | A11Y-1→3 | WIRED (S142-S143) — skip links, ARIA landmarks, focus management, color contrast AA, reduced motion, screen reader, keyboard nav, PDF accessibility, WCAG 2.1 AA compliance |
+
+### Phase LEGAL — Legal Defense (S143)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| LEGAL → Disclaimers | LEGAL-1 | WIRED (S143) — legal_disclaimers table, system_settings, disclaimer acceptance tracking |
+| LEGAL → TOS/Privacy | LEGAL-3 | WIRED (S143) — TOS/privacy policy scaffold pages in all 4 portals |
+| LEGAL → Reference Registry | LEGAL-4 | WIRED (S143) — legal_reference_registry (46 entries), compliance health dashboard, system_alerts, freshness cron |
+| LEGAL → Contextual Defense | LEGAL-2 | PARTIAL — disclaimers table exists, per-calculator wiring deferred to DEPTH sprints |
+
+### Phase INFRA — Infrastructure (S143)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| INFRA → Performance | INFRA-4 | WIRED (S143) — 30 B-tree + 8 BRIN + 7 partial + 5 GIN indexes, 2 materialized views, STABLE auth funcs |
+| INFRA → Full-Text Search | INFRA-4 | WIRED (S143) — TSVECTOR + GIN on 6 tables, global-search EF |
+| INFRA → Utilities | INFRA-5 | WIRED (S143) — webhook_events, idempotency, feature-flags (5-min cache), optimistic-lock, health-check EF, structured logger |
+| INFRA → All 4 Portals (utils) | INFRA-5 | WIRED (S143) — feature-flags.ts + optimistic-lock.ts copied to all 4 portals |
+| INFRA → Environments | INFRA-1→3 | PENDING — Supabase production setup, branching, Vercel Pro multi-app (NEEDS OWNER) |
+
+### Phase TEST-INFRA — Testing (S143)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| TI → Vitest | TI-3 | WIRED (S143) — vitest.config.ts, setup.ts, supabase-mock.ts in all 4 portals, 9 tests passing |
+
 ### Phase INTEG — Ecosystem Integration (S132: INTEG2-8 ADDED)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
