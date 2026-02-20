@@ -35,6 +35,20 @@ export async function exportPdf(
   const margin = 10;
   const contentW = pageW - margin * 2;
 
+  // Accessibility: set document properties for screen readers and PDF viewers
+  doc.setProperties({
+    title: options?.projectTitle
+      ? `Floor Plan — ${options.projectTitle}`
+      : 'Floor Plan',
+    subject: options?.projectAddress
+      ? `Floor plan for ${options.projectAddress}`
+      : 'Floor plan export',
+    author: options?.companyName || 'Zafto',
+    creator: 'Zafto Floor Plan Export',
+    keywords: 'floor plan, sketch, construction',
+  });
+  doc.setLanguage('en-US');
+
   // --- Title Block (top) ---
   const titleBlockH = 18;
   doc.setDrawColor(100);

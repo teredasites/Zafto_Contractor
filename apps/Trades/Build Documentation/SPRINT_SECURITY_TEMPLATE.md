@@ -59,6 +59,11 @@ Copy this checklist into every new sprint. NO sprint is complete without every i
 - [ ] Color contrast: all text meets 4.5:1 (normal) or 3:1 (large)
 - [ ] axe-core: zero violations on new pages
 - [ ] Flutter: Semantics widgets on all new custom widgets
+- [ ] Toast notifications: use ToastProvider (useToast hook) — NOT alert(). Errors use role="alert", success/info use role="status"
+- [ ] Loading states: aria-busy="true" on loading containers, aria-label="Loading" on spinners
+- [ ] Real-time updates: announced via aria-live="polite" region — don't move focus
+- [ ] PDF outputs: document properties set (title, subject, author), alt text on images/logos
+- [ ] Text scaling: no overflow at 1.5x font scale (Flutter) or 200% browser zoom (Next.js)
 
 ### Legal Defense Verification (MANDATORY for sprints with user-facing outputs)
 - [ ] All calculators/estimators: result area includes source attribution + disclaimer footer
