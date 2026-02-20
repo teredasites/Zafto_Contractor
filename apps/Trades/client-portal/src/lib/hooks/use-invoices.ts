@@ -48,7 +48,7 @@ export function useInvoices() {
   }, [fetchInvoices, profile?.customerId]);
 
   const outstanding = invoices.filter((i: InvoiceData) => i.status === 'due' || i.status === 'overdue' || i.status === 'partial');
-  const totalOwed = outstanding.reduce((sum: number, i: InvoiceData) => sum + i.amount, 0);
+  const totalOwed = outstanding.reduce((sum: number, i: InvoiceData) => sum + i.amountDue, 0);
 
   return { invoices, loading, error, outstanding, totalOwed };
 }
@@ -72,6 +72,7 @@ export function useInvoice(id: string) {
         .select('*, jobs(title)')
         .eq('id', id)
         .eq('customer_id', profile.customerId)
+        .is('deleted_at', null)
         .single();
 
       if (fetchError) {

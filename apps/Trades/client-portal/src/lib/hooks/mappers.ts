@@ -39,6 +39,7 @@ export interface InvoiceData {
   project: string;
   projectId: string | null;
   amount: number;
+  amountDue: number;
   status: 'due' | 'overdue' | 'paid' | 'partial';
   dueDate: string | null;
   paidDate: string | null;
@@ -148,6 +149,7 @@ export function mapInvoice(row: Record<string, unknown>): InvoiceData {
     project: (row as Record<string, Record<string, unknown>>).jobs?.title as string || '',
     projectId: row.job_id as string || null,
     amount: (row.total as number) || 0,
+    amountDue: (row.amount_due as number) || 0,
     status: finalStatus,
     dueDate,
     paidDate: row.paid_at as string || null,
