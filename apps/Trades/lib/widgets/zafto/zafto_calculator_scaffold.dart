@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
+import '../../services/favorite_calculators_service.dart';
 import 'zafto_save_to_job.dart';
 
 /// Standard disclaimer shown at the bottom of all calculator screens.
@@ -214,6 +215,8 @@ class ZaftoCalculatorWrapper extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = ref.watch(zaftoColorsProvider);
+    final favorites = ref.watch(favoriteCalculatorsProvider);
+    final isFav = favorites.contains(calculatorId);
 
     return Stack(
       children: [
@@ -225,19 +228,46 @@ class ZaftoCalculatorWrapper extends ConsumerWidget {
           bottom: 0,
           child: CalculatorDisclaimerFooter(colors: colors),
         ),
-        // Floating save button above disclaimer
+        // Floating action buttons above disclaimer
         Positioned(
           right: 16,
           bottom: 60,
-          child: FloatingActionButton.small(
-            backgroundColor: colors.accentPrimary,
-            onPressed: () => _saveToJob(context, ref, colors),
-            tooltip: 'Save to Job',
-            child: Icon(
-              LucideIcons.bookmark,
-              color: colors.isDark ? Colors.black : Colors.white,
-              size: 20,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Favorite toggle
+              FloatingActionButton.small(
+                heroTag: 'fav_$calculatorId',
+                backgroundColor: isFav
+                    ? colors.accentWarning
+                    : colors.bgElevated,
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  ref.read(favoriteCalculatorsProvider.notifier).toggle(calculatorId);
+                },
+                tooltip: isFav ? 'Remove from Favorites' : 'Add to Favorites',
+                child: Icon(
+                  isFav ? LucideIcons.star : LucideIcons.star,
+                  color: isFav
+                      ? (colors.isDark ? Colors.black : Colors.white)
+                      : colors.textTertiary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Save to Job
+              FloatingActionButton.small(
+                heroTag: 'save_$calculatorId',
+                backgroundColor: colors.accentPrimary,
+                onPressed: () => _saveToJob(context, ref, colors),
+                tooltip: 'Save to Job',
+                child: Icon(
+                  LucideIcons.bookmark,
+                  color: colors.isDark ? Colors.black : Colors.white,
+                  size: 20,
+                ),
+              ),
+            ],
           ),
         ),
       ],
