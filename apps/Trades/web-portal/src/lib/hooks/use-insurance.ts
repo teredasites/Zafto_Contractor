@@ -303,6 +303,6 @@ export async function updateSupplementStatus(supplementId: string, status: Suppl
 }
 
 export async function deleteSupplement(supplementId: string): Promise<void> {
-  const { error } = await supabase.from('claim_supplements').delete().eq('id', supplementId);
+  const { error } = await supabase.from('claim_supplements').update({ deleted_at: new Date().toISOString() }).eq('id', supplementId);
   if (error) throw error;
 }

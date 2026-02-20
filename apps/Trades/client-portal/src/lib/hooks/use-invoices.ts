@@ -9,20 +9,31 @@ export function useInvoices() {
   const { profile } = useAuth();
   const [invoices, setInvoices] = useState<InvoiceData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchInvoices = useCallback(async () => {
     if (!profile?.customerId) { setLoading(false); return; }
     const supabase = getSupabase();
 
-    const { data } = await supabase
-      .from('invoices')
-      .select('*, jobs(title)')
-      .eq('customer_id', profile.customerId)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('invoices')
+        .select('*, jobs(title)')
+        .eq('customer_id', profile.customerId)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
 
-    setInvoices((data || []).map(mapInvoice));
-    setLoading(false);
+      if (fetchError) {
+        setError(fetchError.message);
+      } else {
+        setInvoices((data || []).map(mapInvoice));
+        setError(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load invoices');
+    } finally {
+      setLoading(false);
+    }
   }, [profile?.customerId]);
 
   useEffect(() => {
@@ -39,7 +50,7 @@ export function useInvoices() {
   const outstanding = invoices.filter((i: InvoiceData) => i.status === 'due' || i.status === 'overdue' || i.status === 'partial');
   const totalOwed = outstanding.reduce((sum: number, i: InvoiceData) => sum + i.amount, 0);
 
-  return { invoices, loading, outstanding, totalOwed };
+  return { invoices, loading, error, outstanding, totalOwed };
 }
 
 export function useInvoice(id: string) {

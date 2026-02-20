@@ -268,7 +268,7 @@ export function useTaskResources(taskId: string | undefined) {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('schedule_task_resources')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', assignmentId);
     if (err) throw err;
   };

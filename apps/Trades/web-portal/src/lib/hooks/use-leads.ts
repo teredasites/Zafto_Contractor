@@ -120,7 +120,7 @@ export function useLeads() {
 
   const deleteLead = async (id: string) => {
     const supabase = getSupabase();
-    const { error: err } = await supabase.from('leads').delete().eq('id', id);
+    const { error: err } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
     fetchLeads();
   };

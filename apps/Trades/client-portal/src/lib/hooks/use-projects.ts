@@ -9,20 +9,31 @@ export function useProjects() {
   const { profile } = useAuth();
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchProjects = useCallback(async () => {
     if (!profile?.customerId) { setLoading(false); return; }
     const supabase = getSupabase();
 
-    const { data } = await supabase
-      .from('jobs')
-      .select('*')
-      .eq('customer_id', profile.customerId)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('customer_id', profile.customerId)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
 
-    setProjects((data || []).map(mapProject));
-    setLoading(false);
+      if (fetchError) {
+        setError(fetchError.message);
+      } else {
+        setProjects((data || []).map(mapProject));
+        setError(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load projects');
+    } finally {
+      setLoading(false);
+    }
   }, [profile?.customerId]);
 
   useEffect(() => {
@@ -36,7 +47,7 @@ export function useProjects() {
     return () => { supabase.removeChannel(channel); };
   }, [fetchProjects, profile?.customerId]);
 
-  return { projects, loading };
+  return { projects, loading, error };
 }
 
 export function useProject(id: string) {

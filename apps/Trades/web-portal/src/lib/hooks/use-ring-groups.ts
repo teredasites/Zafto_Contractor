@@ -101,7 +101,7 @@ export function useRingGroups() {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('phone_ring_groups')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
     await fetchGroups();

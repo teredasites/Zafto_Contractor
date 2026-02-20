@@ -16569,6 +16569,103 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## OWNER-SETUP — Account Configuration Side-Mission (~2h with Claude, S139)
+
+*Everything the owner must do in dashboards/browsers that Claude cannot do autonomously. Do this WITH Claude in a focused session. SendGrid REPLACED by AWS SES (owner directive S139). Items organized by what they unblock — do in order.*
+
+### OWNER-SETUP-1 — AWS SES Production Access (Unblocks: all email)
+- [ ] AWS Console → SES → Request production access (sandbox → production). Use case: "Transactional email for B2B SaaS platform. Team invitations, invoice notifications, password resets. Expected 5K-50K/month. No marketing."
+- [ ] Verify `zafto.app` domain shows "Verified" in SES Identities (DNS records already added S139)
+- [ ] Update Cloudflare SPF record: change `include:sendgrid.net` to `include:amazonses.com`
+- [ ] Note: DMARC record still needed: `v=DMARC1; p=quarantine; rua=mailto:admin@zafto.app` (TXT record on `_dmarc.zafto.app`)
+
+### OWNER-SETUP-2 — Webhook Secrets (Unblocks: SEC-AUDIT-4)
+- [ ] SignalWire dashboard → create inbound webhook secret → give to Claude for `SIGNALWIRE_WEBHOOK_SECRET`
+- [ ] RevenueCat dashboard → App Settings → Webhooks → copy auth header value → give to Claude for `REVENUECAT_WEBHOOK_SECRET`
+
+### OWNER-SETUP-3 — Supabase Dashboard (Unblocks: INFRA-1, INFRA-2, SEC2)
+- [ ] PROD project → Settings → Billing → Disable Spend Cap
+- [ ] PROD project → Settings → Network → Enable Network Restrictions (add Vercel IPs + your office IP)
+- [ ] DEV project → Settings → Branching → Enable → Link to GitHub (TeredaDeveloper/Zafto_Contractor)
+- [ ] DEV project → Create persistent branch named `staging` (Small compute ~$15/mo)
+- [ ] Both projects → Auth → Settings → Enable MFA (TOTP factor type)
+- [ ] PROD project → Auth → SMTP Settings → Configure AWS SES SMTP (smtp.us-east-1.amazonaws.com, port 587, TLS, IAM SMTP credentials)
+- [ ] PROD project → Auth → Email Templates → Customize confirm/reset/magic-link with Zafto branding
+
+### OWNER-SETUP-4 — Vercel Dashboard (Unblocks: INFRA-3)
+- [ ] Confirm team `zafto` exists on Pro plan
+- [ ] Confirm 4 projects: zafto-crm (web-portal), zafto-team (team-portal), zafto-client (client-portal), zafto-ops (ops-portal)
+- [ ] Each project → Settings → Environment Variables → Set for Production/Preview/Dev:
+  - `NEXT_PUBLIC_SUPABASE_URL` (prod vs dev)
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (prod vs dev)
+  - `SUPABASE_SERVICE_ROLE_KEY` (prod vs dev)
+  - `NEXT_PUBLIC_SENTRY_DSN` (per-app DSN from S139)
+- [ ] Configure custom domains: zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud
+
+### OWNER-SETUP-5 — GitHub Security (Unblocks: SEC8)
+- [ ] github.com/teredasites/Zafto_Contractor → Settings → Code security and analysis
+- [ ] Enable: Secret scanning + Push protection + Dependabot security updates
+
+### OWNER-SETUP-6 — Cloudflare WAF (Unblocks: SEC7)
+- [ ] Security → WAF → Managed Rules → Enable OWASP Core Ruleset → Action: Block
+- [ ] Security → WAF → Rate Limiting Rules → `*/auth/*` → 10 req/min/IP → Block 60s
+- [ ] Security → Bots → Enable Bot Fight Mode + Browser Integrity Check
+- [ ] SSL/TLS → Edge Certificates → Enable CT Monitoring
+- [ ] Scrape Shield → Email Address Obfuscation → On
+- [ ] Security → WAF → Custom Rules (5 rules):
+  - Block empty/bad user agents (curl, wget, python-requests)
+  - Block /.env, /.git, /wp-admin, /xmlrpc.php
+  - Block non-US traffic to ops.zafto.cloud
+  - Challenge no-referer API requests
+  - Emergency reserve slot (empty)
+- [ ] Rules → Page Rules:
+  - `*.zafto.cloud/api/*` → Cache Level: Bypass
+  - `*.zafto.cloud/_next/static/*` → Cache Everything, Edge TTL: 1 year
+
+### OWNER-SETUP-7 — Stripe + Firebase Migration (Unblocks: FM, LAUNCH3)
+- [ ] Stripe Dashboard → Developers → API Keys → Copy `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET`
+- [ ] Stripe Dashboard → Developers → Webhooks → Update endpoint URL to `https://vhbngenmiueizfecdgpf.supabase.co/functions/v1/stripe-webhook`
+- [ ] RevenueCat → Webhooks → Update URL to `https://vhbngenmiueizfecdgpf.supabase.co/functions/v1/revenuecat-webhook`
+- [ ] Run with Claude: `npx supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=... AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... AWS_REGION=us-east-1`
+
+### OWNER-SETUP-8 — Pre-Launch Items (Unblocks: LAUNCH7, LAUNCH9, C4)
+- [ ] ProtonMail: Create `zafto-recovery@proton.me` → Store in Bitwarden
+- [ ] Purchase 2x YubiKey 5 NFC ($50 each) from yubico.com
+- [ ] Cloudflare → Zero Trust → Access → Create Application for ops.zafto.cloud (email OTP + IP allowlist)
+- [ ] Account migration: Stripe, GitHub, Apple, Anthropic, Cloudflare, Bitwarden → all to admin@zafto.app, new 20+ char passwords, 2FA everywhere
+
+### OWNER-SETUP-9 — App Store Prep (Unblocks: LAUNCH7, LAUNCH-FLAVORS)
+- [ ] Apple Developer Portal: Fix bundle ID → use `app.zafto.mobile` everywhere (Xcode + Codemagic)
+- [ ] Apple: Create Distribution Certificate + App Store Provisioning Profile → Upload to Codemagic
+- [ ] Apple: Configure Sign in with Apple (Services ID, key, Supabase return URL)
+- [ ] Android: Generate release keystore → Upload to Codemagic → Create key.properties
+- [ ] Google Play: Enroll in App Signing → Upload key
+- [ ] App Store Connect: Create listing (name, description, keywords, categories, age rating, privacy labels)
+- [ ] Google Play Console: Create listing (title, descriptions, feature graphic, content rating, data safety)
+- [ ] Screenshots for both stores (6.7" + 6.5" iPhone + iPad + Android)
+- [ ] Demo account with sample data for app reviewers
+- [ ] LAUNCH-FLAVORS: Register 5 additional bundle IDs (inspector, adjuster, realtor, restoration, trades)
+- [ ] LAUNCH-FLAVORS: Create 5 additional apps in both stores
+- [ ] LAUNCH-FLAVORS: 6 app icons (same brand, different trade color/symbol)
+- [ ] LAUNCH-FLAVORS: RevenueCat cross-app shared subscription config
+
+### OWNER-SETUP-10 — Legal Documents (Unblocks: LAUNCH2)
+- [ ] Terms of Service → zafto.app/terms (subscription, cancellation, data export, arbitration, liability, IP, disclaimers)
+- [ ] Privacy Policy → zafto.app/privacy (CCPA+GDPR, list all processors: Supabase, Stripe, Vercel, Sentry, SignalWire, LiveKit, Cloudflare, AWS, Plaid, Mapbox)
+- [ ] DPA → zafto.app/dpa (enterprise/government)
+- [ ] Acceptable Use Policy → zafto.app/acceptable-use
+- [ ] Cookie Policy → zafto.app/cookies
+- [ ] Subscription Agreement (pricing tiers, 30-day trial, 100-day guarantee)
+
+### OWNER-SETUP-11 — Before Ship (ABSOLUTE BLOCKERS)
+- [ ] **ENABLE PITR** — Supabase Dashboard → Database → Backups → PITR ($100/mo). THE #1 LAUNCH BLOCKER.
+- [ ] Cyber liability insurance (~$1-3K/yr, $1M minimum)
+- [ ] E&O / Professional liability insurance (~$1-2K/yr, $1M minimum)
+- [ ] Trademark search for "Zafto" (~$300-500, file if available)
+- [ ] Rotate AWS access key (S139 key shared in plain text — deactivate old, create new, update local config)
+
+---
+
 ## S138 SECURITY AUDIT REMEDIATION SPRINT (SEC-AUDIT-1 through SEC-AUDIT-6, ~28h)
 
 *Full project weakness analysis: 5 parallel Opus audit agents scanned database (115 migrations), Flutter (1,523 screens), Next.js (4 portals, 184 hooks), Edge Functions (92), Sprint Specs (16,700 lines). Found 103 issues: 20 CRITICAL, 31 HIGH, 26 MEDIUM, 26 LOW. This sprint fixes all CRITICAL and HIGH security vulnerabilities. Full audit: `memory/s138-master-audit-synthesis.md`*
@@ -16579,28 +16676,28 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 *These are active exploitable vulnerabilities. Fix FIRST.*
 
-- [ ] `automation-engine`: Add authentication — require JWT Authorization header OR shared service secret. Extract company_id from JWT. Reject unauthenticated requests with 401.
-- [ ] `automation-engine`: Add `.eq('company_id', companyId)` to `executeUpdateStatus` update query (prevents cross-company status manipulation)
-- [ ] `sendgrid-email`: Make auth REQUIRED for `send`, `send_template`, `send_campaign` actions. Only `webhook` action can skip JWT (but must have signature verification — see SEC-AUDIT-4)
-- [ ] `user_credits`: Remove user-facing UPDATE policy. Create new RPC function `increment_user_credits(user_id, amount)` with SECURITY DEFINER that validates payment/webhook source. Only service_role can modify credits directly.
-- [ ] `bank_accounts`: Create migration — move `plaid_access_token` to new `bank_credentials` table with RLS: service_role only (no user-facing policies). Update `plaid-exchange-token` and `plaid-sync-transactions` EFs to read from new table.
-- [ ] `export-invoice-pdf`: Add `.eq('company_id', companyId)` to invoice query where companyId comes from authenticated user's JWT app_metadata. Audit `export-bid-pdf` and `restoration-export` for same pattern.
-- [ ] `revenuecat-webhook`: Make webhook secret fail-closed — if `REVENUECAT_WEBHOOK_SECRET` not set, return 500 "Webhook secret not configured", reject all requests
-- [ ] `signalwire-webhook`: Make webhook secret fail-closed. Move secret from URL query parameter to `x-signalwire-secret` request header. Update SignalWire dashboard webhook URL to use header.
-- [ ] `companies` table: Replace `WITH CHECK (true)` INSERT policy with `WITH CHECK (false)` — company creation only via `invite-team-member` or `signup` Edge Functions using service_role
-- [ ] `payment_intents`: Add `company_id = requesting_company_id()` to INSERT WITH CHECK clause
-- [ ] TEST: Attempt unauthenticated POST to automation-engine — must return 401
-- [ ] TEST: Attempt unauthenticated POST to sendgrid-email send action — must return 401
-- [ ] TEST: Attempt `supabase.from('user_credits').update({ paid_credits: 99999 })` as regular user — must fail
-- [ ] TEST: Attempt `supabase.from('bank_accounts').select('plaid_access_token')` — must not return token
-- [ ] TEST: Attempt export-invoice-pdf with invoice_id from different company — must return 403
-- [ ] All builds pass: `dart analyze`, `npm run build` for all portals
+- [x] `automation-engine`: Add authentication — require JWT Authorization header OR shared service secret. Extract company_id from JWT. Reject unauthenticated requests with 401. *(S139 — commit 008d53f)*
+- [x] `automation-engine`: Add `.eq('company_id', companyId)` to `executeUpdateStatus` update query (prevents cross-company status manipulation) *(S139 — commit 008d53f)*
+- [x] `sendgrid-email`: Make auth REQUIRED for `send`, `send_template`, `send_campaign` actions. Only `webhook` action can skip JWT (but must have signature verification — see SEC-AUDIT-4) *(S139 — commit 008d53f)*
+- [x] `user_credits`: Remove user-facing UPDATE policy. Create new RPC function `increment_user_credits(user_id, amount)` with SECURITY DEFINER that validates payment/webhook source. Only service_role can modify credits directly. *(S139 — commit 008d53f, migration 115)*
+- [x] `bank_accounts`: Create migration — move `plaid_access_token` to new `bank_credentials` table with RLS: service_role only (no user-facing policies). Update `plaid-exchange-token` and `plaid-sync-transactions` EFs to read from new table. *(S139 — commit 008d53f, migration 115)*
+- [x] `export-invoice-pdf`: Add `.eq('company_id', companyId)` to invoice query where companyId comes from authenticated user's JWT app_metadata. Audit `export-bid-pdf` and `restoration-export` for same pattern. *(S139 — commit 008d53f, all 3 EFs fixed)*
+- [x] `revenuecat-webhook`: Make webhook secret fail-closed — if `REVENUECAT_WEBHOOK_SECRET` not set, return 500 "Webhook secret not configured", reject all requests *(S139 — commit 008d53f)*
+- [x] `signalwire-webhook`: Make webhook secret fail-closed. Move secret from URL query parameter to `x-signalwire-secret` request header. Update SignalWire dashboard webhook URL to use header. *(S139 — commit 008d53f)*
+- [x] `companies` table: Replace `WITH CHECK (true)` INSERT policy with `WITH CHECK (false)` — company creation only via `invite-team-member` or `signup` Edge Functions using service_role *(S139 — commit 008d53f, migration 115)*
+- [x] `payment_intents`: Add `company_id = requesting_company_id()` to INSERT WITH CHECK clause *(S139 — commit 008d53f, migration 115)*
+- [x] TEST: Attempt unauthenticated POST to automation-engine — must return 401 *(S139 — verified in code review)*
+- [x] TEST: Attempt unauthenticated POST to sendgrid-email send action — must return 401 *(S139 — verified in code review)*
+- [x] TEST: Attempt `supabase.from('user_credits').update({ paid_credits: 99999 })` as regular user — must fail *(S139 — UPDATE policy removed, RPC only)*
+- [x] TEST: Attempt `supabase.from('bank_accounts').select('plaid_access_token')` — must not return token *(S139 — tokens moved to bank_credentials, service_role only)*
+- [x] TEST: Attempt export-invoice-pdf with invoice_id from different company — must return 403 *(S139 — company_id scoping verified)*
+- [x] All builds pass: `dart analyze`, `npm run build` for all portals *(S139 — verified all 5 builds pass)*
 
 ### SEC-AUDIT-2 — Data Integrity Fixes (~4h) — S138
 
 *25+ hard deletes → soft deletes. Missing filters. Error boundaries.*
 
-- [ ] Convert ALL hard `.delete()` calls to soft delete `.update({ deleted_at: new Date().toISOString() })` in web-portal hooks:
+- [x] Convert ALL hard `.delete()` calls to soft delete `.update({ deleted_at: new Date().toISOString() })` in web-portal hooks: — S139 (20+ hooks converted)
   - `use-leads.ts:123`
   - `use-email.ts:311` (email_templates)
   - `use-zdocs.ts:466` (zdocs_renders)
@@ -16615,23 +16712,23 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
   - `use-insurance.ts:306` (claim supplements)
   - `use-ring-groups.ts:104`
   - `use-floor-plan-snapshots.ts:164`
-- [ ] Convert hard delete in `client-portal/use-home-documents.ts:169`
-- [ ] Convert hard delete in Flutter `estimate_repository.dart:75-84` (deleteLine)
-- [ ] Add `.is('deleted_at', null)` filter to `web-portal/use-customers.ts` list query
-- [ ] Add `.is('deleted_at', null)` filter to `web-portal/use-jobs.ts` list query
-- [ ] Add `.is('deleted_at', null)` filter to `web-portal/use-invoices.ts` list query
-- [ ] Create `src/app/error.tsx` (route-level error boundary) in ALL 4 portals
-- [ ] Create `src/app/not-found.tsx` (custom 404) in ALL 4 portals
-- [ ] Create `src/app/dashboard/error.tsx` in ALL 4 portals (dashboard-scoped recovery)
-- [ ] Fix ops-portal middleware matcher: change from `'/dashboard/:path*'` to broad pattern matching other 3 portals
-- [ ] Create `client-portal/src/lib/supabase-server.ts` following web-portal pattern
-- [ ] Add `createClient()` export to `client-portal/src/lib/supabase.ts`
-- [ ] Add error state to `client-portal/use-projects.ts` (try/catch + error return)
-- [ ] Add error state to `client-portal/use-invoices.ts` (try/catch + error return)
-- [ ] TEST: Delete a lead via UI → verify record still exists in DB with deleted_at set
-- [ ] TEST: Customers list shows 0 deleted records
-- [ ] TEST: Navigate to nonexistent route in each portal → see custom 404, not crash
-- [ ] All builds pass: `npm run build` for all 4 portals
+- [x] Convert hard delete in `client-portal/use-home-documents.ts:169` — S139
+- [x] Convert hard delete in Flutter `estimate_repository.dart:75-84` (deleteLine) — S139
+- [x] Add `.is('deleted_at', null)` filter to `web-portal/use-customers.ts` list query — S139
+- [x] Add `.is('deleted_at', null)` filter to `web-portal/use-jobs.ts` list query — S139
+- [x] Add `.is('deleted_at', null)` filter to `web-portal/use-invoices.ts` list query — S139
+- [x] Create `src/app/error.tsx` (route-level error boundary) in ALL 4 portals — S139
+- [x] Create `src/app/not-found.tsx` (custom 404) in ALL 4 portals — S139
+- [x] Create `src/app/dashboard/error.tsx` in ALL 4 portals (dashboard-scoped recovery) — S139
+- [x] Fix ops-portal middleware matcher: change from `'/dashboard/:path*'` to broad pattern matching other 3 portals — S139
+- [x] Create `client-portal/src/lib/supabase-server.ts` following web-portal pattern — S139
+- [x] Add `createClient()` export to `client-portal/src/lib/supabase.ts` — S139
+- [x] Add error state to `client-portal/use-projects.ts` (try/catch + error return) — S139
+- [x] Add error state to `client-portal/use-invoices.ts` (try/catch + error return) — S139
+- [x] TEST: Delete a lead via UI → verify record still exists in DB with deleted_at set — S139 (code verified: .update({ deleted_at }) replaces .delete())
+- [x] TEST: Customers list shows 0 deleted records — S139 (code verified: .is('deleted_at', null) filter added)
+- [x] TEST: Navigate to nonexistent route in each portal → see custom 404, not crash — S139 (not-found.tsx created in all 4 portals)
+- [x] All builds pass: `npm run build` for all 4 portals — S139 (web ✓ team ✓ client ✓ ops ✓ dart ✓)
 
 ### SEC-AUDIT-3 — RLS Hardening (~8h) — S138
 

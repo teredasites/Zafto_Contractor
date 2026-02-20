@@ -166,7 +166,7 @@ export function useHomeDocuments() {
     if (doc?.storagePath) {
       await supabase.storage.from('homeowner-documents').remove([doc.storagePath]);
     }
-    const { error } = await supabase.from('homeowner_documents').delete().eq('id', id);
+    const { error } = await supabase.from('homeowner_documents').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
   };
 

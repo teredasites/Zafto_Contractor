@@ -74,7 +74,7 @@ class EstimateRepository {
 
   Future<void> deleteLine(String id) async {
     try {
-      await supabase.from(_linesTable).delete().eq('id', id);
+      await supabase.from(_linesTable).update({'deleted_at': DateTime.now().toUtc().toIso8601String()}).eq('id', id);
     } catch (e) {
       throw DatabaseError(
         'Failed to delete estimate line',
@@ -86,7 +86,7 @@ class EstimateRepository {
 
   Future<void> deleteAllLines(String claimId) async {
     try {
-      await supabase.from(_linesTable).delete().eq('claim_id', claimId);
+      await supabase.from(_linesTable).update({'deleted_at': DateTime.now().toUtc().toIso8601String()}).eq('claim_id', claimId);
     } catch (e) {
       throw DatabaseError(
         'Failed to delete all estimate lines',

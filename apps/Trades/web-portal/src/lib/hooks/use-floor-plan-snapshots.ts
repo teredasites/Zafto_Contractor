@@ -161,7 +161,7 @@ export function useFloorPlanSnapshots(floorPlanId: string | null) {
         const supabase = getSupabase();
         const { error: deleteError } = await supabase
           .from('floor_plan_snapshots')
-          .delete()
+          .update({ deleted_at: new Date().toISOString() })
           .eq('id', snapshotId);
 
         if (deleteError) throw deleteError;

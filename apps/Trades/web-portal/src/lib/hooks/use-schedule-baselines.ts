@@ -91,10 +91,10 @@ export function useScheduleBaselines(projectId: string | undefined) {
   const deleteBaseline = async (id: string) => {
     const supabase = getSupabase();
 
-    // Delete baseline tasks first
-    await supabase.from('schedule_baseline_tasks').delete().eq('baseline_id', id);
-    // Then delete the baseline
-    const { error: err } = await supabase.from('schedule_baselines').delete().eq('id', id);
+    // Soft-delete baseline tasks first
+    await supabase.from('schedule_baseline_tasks').update({ deleted_at: new Date().toISOString() }).eq('baseline_id', id);
+    // Then soft-delete the baseline
+    const { error: err } = await supabase.from('schedule_baselines').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
     await fetchBaselines();
   };
