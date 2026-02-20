@@ -12,7 +12,7 @@
     "test:a11y": "vitest run --testPathPattern=a11y"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.38.0",
+    "@sentry/nextjs": "^10.39.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
     "clsx": "^2.1.0",
