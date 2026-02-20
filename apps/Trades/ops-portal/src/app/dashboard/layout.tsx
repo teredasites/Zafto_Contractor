@@ -77,10 +77,17 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen">
+      {/* Skip navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--accent)] focus:text-white focus:rounded-lg focus:text-sm focus:font-medium focus:outline-none"
+      >
+        Skip to main content
+      </a>
       <AxeDevTools />
       <ImpersonationBanner />
       <Sidebar />
-      <main className="lg:ml-[260px] min-h-screen">
+      <main id="main-content" className="lg:ml-[260px] min-h-screen" aria-label="Page content">
         <div className="p-6 lg:p-8 max-w-[1400px]">{children}</div>
       </main>
     </div>

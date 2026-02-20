@@ -75,74 +75,81 @@ class ZaftoToolCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = ref.watch(zaftoColorsProvider);
 
-    return GestureDetector(
-      onTap: () {
-        if (onTap != null) {
-          HapticFeedback.lightImpact();
-          onTap!();
-        }
-      },
-      child: Container(
-        // Spec: 16px padding
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          // Spec: bgElevated background
-          color: colors.bgElevated,
-          // Spec: borderSubtle border
-          border: Border.all(color: colors.borderSubtle),
-          // Spec: 14px border radius
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Icon container
-            Container(
-              // Spec: 40x40px, rounded 10px
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                // Spec: rgba(255,255,255,0.05)
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                // Spec: 20px icon, textSecondary
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: iconColor ?? colors.textSecondary,
+    return Semantics(
+      label: subtitle != null ? '$title — $subtitle' : title,
+      button: onTap != null,
+      enabled: onTap != null,
+      child: GestureDetector(
+        onTap: () {
+          if (onTap != null) {
+            HapticFeedback.lightImpact();
+            onTap!();
+          }
+        },
+        child: Container(
+          // Spec: 16px padding
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            // Spec: bgElevated background
+            color: colors.bgElevated,
+            // Spec: borderSubtle border
+            border: Border.all(color: colors.borderSubtle),
+            // Spec: 14px border radius
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: ExcludeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Icon container
+                Container(
+                  // Spec: 40x40px, rounded 10px
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    // Spec: rgba(255,255,255,0.05)
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    // Spec: 20px icon, textSecondary
+                    child: Icon(
+                      icon,
+                      size: 20,
+                      color: iconColor ?? colors.textSecondary,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            // Spec: 12px gap
-            const SizedBox(height: 12),
-            // Title - Spec: 14px, w500, textPrimary
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: colors.textPrimary,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (subtitle != null) ...[
-              // Spec: 4px gap
-              const SizedBox(height: 4),
-              // Subtitle - Spec: 11px, textTertiary
-              Text(
-                subtitle!,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: colors.textTertiary,
+                // Spec: 12px gap
+                const SizedBox(height: 12),
+                // Title - Spec: 14px, w500, textPrimary
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: colors.textPrimary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ],
+                if (subtitle != null) ...[
+                  // Spec: 4px gap
+                  const SizedBox(height: 4),
+                  // Subtitle - Spec: 11px, textTertiary
+                  Text(
+                    subtitle!,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: colors.textTertiary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

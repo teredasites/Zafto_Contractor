@@ -81,58 +81,66 @@ class ZaftoActiveJobCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = ref.watch(zaftoColorsProvider);
 
-    return GestureDetector(
-      onTap: onTap != null
-          ? () {
-              HapticFeedback.lightImpact();
-              onTap!();
-            }
-          : null,
-      child: Container(
-        // Spec: margin 20px horizontal
-        margin: addMargin ? const EdgeInsets.symmetric(horizontal: 20) : null,
-        // Spec: padding 16px
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          // Spec: bgElevated background
-          color: colors.bgElevated,
-          // Spec: borderSubtle border
-          border: Border.all(color: colors.borderSubtle),
-          // Spec: 16px border radius
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header row
-            _buildHeader(colors),
-            // Spec: 12px gap
-            const SizedBox(height: 12),
-            // Title - Spec: 17px, w600, textPrimary
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: colors.textPrimary,
-              ),
+    final amountText = amount != null ? ', ${_formatAmount(amount!)}' : '';
+
+    return Semantics(
+      label: 'Active job: $title, $customerName${address != null ? ', $address' : ''}$amountText, $time',
+      button: onTap != null,
+      child: GestureDetector(
+        onTap: onTap != null
+            ? () {
+                HapticFeedback.lightImpact();
+                onTap!();
+              }
+            : null,
+        child: Container(
+          // Spec: margin 20px horizontal
+          margin: addMargin ? const EdgeInsets.symmetric(horizontal: 20) : null,
+          // Spec: padding 16px
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            // Spec: bgElevated background
+            color: colors.bgElevated,
+            // Spec: borderSubtle border
+            border: Border.all(color: colors.borderSubtle),
+            // Spec: 16px border radius
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ExcludeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header row
+                _buildHeader(colors),
+                // Spec: 12px gap
+                const SizedBox(height: 12),
+                // Title - Spec: 17px, w600, textPrimary
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                // Spec: 4px gap
+                const SizedBox(height: 4),
+                // Customer - Spec: 13px, textSecondary
+                Text(
+                  _buildCustomerText(),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colors.textSecondary,
+                  ),
+                ),
+                // Spec: 12px gap
+                const SizedBox(height: 12),
+                // Footer row
+                _buildFooter(colors),
+              ],
             ),
-            // Spec: 4px gap
-            const SizedBox(height: 4),
-            // Customer - Spec: 13px, textSecondary
-            Text(
-              _buildCustomerText(),
-              style: TextStyle(
-                fontSize: 13,
-                color: colors.textSecondary,
-              ),
-            ),
-            // Spec: 12px gap
-            const SizedBox(height: 12),
-            // Footer row
-            _buildFooter(colors),
-          ],
+          ),
         ),
       ),
     );
@@ -211,12 +219,15 @@ class ZaftoActiveJobCard extends ConsumerWidget {
   }
 
   Widget _buildContinueButton(ZaftoColors colors) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.mediumImpact();
-        onContinue?.call();
-      },
-      child: Container(
+    return Semantics(
+      label: '$continueText job',
+      button: true,
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          onContinue?.call();
+        },
+        child: Container(
         // Spec: 20px horizontal, 10px vertical padding
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
@@ -246,6 +257,7 @@ class ZaftoActiveJobCard extends ConsumerWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
