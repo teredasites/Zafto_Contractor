@@ -102,6 +102,7 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
       // Legacy callback mode
       final data = CompanySetupData(
         companyName: _companyNameController.text.trim(),
+        trade: _selectedTrade,
         phone: _phoneController.text.trim().isNotEmpty
             ? _phoneController.text.trim()
             : null,
@@ -582,6 +583,7 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
 /// Data class for company setup
 class CompanySetupData {
   final String companyName;
+  final String trade;
   final String? businessName;
   final String? phone;
   final String? email;
@@ -593,6 +595,7 @@ class CompanySetupData {
 
   CompanySetupData({
     required this.companyName,
+    this.trade = 'general',
     this.businessName,
     this.phone,
     this.email,

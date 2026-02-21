@@ -44,6 +44,7 @@ class CompanyService {
   Future<String> createCompany({
     required String name,
     required CompanyTier tier,
+    String trade = 'general',
     String? businessName,
     String? phone,
     String? email,
@@ -70,7 +71,9 @@ class CompanyService {
       'city': city,
       'state': state,
       'zip_code': zipCode,
-      'enabled_trades': ['electrical'],
+      'trade': trade,
+      'trades': [trade],
+      'enabled_trades': [trade],
       'default_tax_rate': 0,
       'invoice_prefix': 'INV',
       'next_invoice_number': 1,
