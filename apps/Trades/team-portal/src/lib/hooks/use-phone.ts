@@ -135,6 +135,15 @@ export function usePhone() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setLoading(false); return; }
 
+      // Look up user's assigned phone line for voicemail query
+      const { data: userLine } = await supabase
+        .from('phone_lines')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .limit(1)
+        .maybeSingle();
+
       // Fetch calls where current user is sender or recipient
       const [callsRes, voicemailsRes, messagesRes] = await Promise.all([
         supabase
@@ -143,16 +152,18 @@ export function usePhone() {
           .or(`from_user_id.eq.${user.id},to_user_id.eq.${user.id}`)
           .order('started_at', { ascending: false })
           .limit(50),
-        supabase
-          .from('phone_voicemails')
-          .select('*, customers(name)')
-          .eq('line_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(30),
+        userLine
+          ? supabase
+              .from('phone_voicemails')
+              .select('*, customers(name)')
+              .eq('line_id', userLine.id)
+              .order('created_at', { ascending: false })
+              .limit(30)
+          : Promise.resolve({ data: [], error: null }),
         supabase
           .from('phone_messages')
           .select('*, customers(name)')
-          .eq('from_user_id', user.id)
+          .or(`from_user_id.eq.${user.id},to_user_id.eq.${user.id}`)
           .order('created_at', { ascending: false })
           .limit(50),
       ]);

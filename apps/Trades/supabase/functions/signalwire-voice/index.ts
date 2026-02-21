@@ -107,6 +107,20 @@ serve(async (req) => {
         return buildAutoAttendantLaml(config)
       }
 
+      // Main line without auto attendant — check for ring groups
+      if (line.line_type === 'main') {
+        const { data: ringGroup } = await supabase
+          .from('phone_ring_groups')
+          .select('*')
+          .eq('company_id', line.company_id)
+          .limit(1)
+          .single()
+
+        if (ringGroup) {
+          return await buildRingGroupLaml(supabase, ringGroup, to, from, callSid, line)
+        }
+      }
+
       // Direct line — ring the user
       if (line.user_id && !line.dnd_enabled) {
         // Ring the user's line, fallback to voicemail after 30s
@@ -312,6 +326,110 @@ async function handleHangup(
   return new Response(JSON.stringify({ success: true }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
+}
+
+// ============================================================================
+// RING GROUP LaML
+// ============================================================================
+async function buildRingGroupLaml(
+  supabase: ReturnType<typeof createClient>,
+  ringGroup: Record<string, unknown>,
+  callerIdNumber: string,
+  from: string,
+  callSid: string,
+  line: Record<string, unknown>,
+) {
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
+  const webhookBase = `${SUPABASE_URL}/functions/v1/signalwire-webhook`
+  const memberIds = (ringGroup.member_user_ids as string[]) || []
+  const strategy = (ringGroup.strategy as string) || 'simultaneous'
+  const ringDuration = (ringGroup.ring_duration_seconds as number) || 30
+  const companyId = ringGroup.company_id as string
+  const lineId = line.id as string
+
+  if (memberIds.length === 0) {
+    // No members — go straight to voicemail
+    return new Response(
+      `<Response>
+        <Say voice="alice">Please leave a message after the tone.</Say>
+        <Record maxLength="120" action="${webhookBase}?type=voicemail&line_id=${lineId}&company_id=${companyId}&from=${from}&call_sid=${callSid}" />
+      </Response>`,
+      { headers: { 'Content-Type': 'text/xml' } }
+    )
+  }
+
+  // Look up phone lines for ring group members (only active, non-DND)
+  const { data: memberLines } = await supabase
+    .from('phone_lines')
+    .select('phone_number, user_id')
+    .in('user_id', memberIds)
+    .eq('company_id', companyId)
+    .eq('is_active', true)
+    .eq('dnd_enabled', false)
+
+  const lines = memberLines || []
+  if (lines.length === 0) {
+    return new Response(
+      `<Response>
+        <Say voice="alice">All team members are currently unavailable. Please leave a message after the tone.</Say>
+        <Record maxLength="120" action="${webhookBase}?type=voicemail&line_id=${lineId}&company_id=${companyId}&from=${from}&call_sid=${callSid}" />
+      </Response>`,
+      { headers: { 'Content-Type': 'text/xml' } }
+    )
+  }
+
+  if (strategy === 'simultaneous') {
+    // Ring all members at once
+    const numberElements = lines.map(l => `<Number>${l.phone_number}</Number>`).join('\n              ')
+    return new Response(
+      `<Response>
+        <Dial timeout="${ringDuration}" callerId="${callerIdNumber}" action="${webhookBase}?type=dial_status&company_id=${companyId}&call_sid=${callSid}">
+          ${numberElements}
+        </Dial>
+        <Say voice="alice">Please leave a message after the tone.</Say>
+        <Record maxLength="120" action="${webhookBase}?type=voicemail&line_id=${lineId}&company_id=${companyId}&from=${from}&call_sid=${callSid}" />
+      </Response>`,
+      { headers: { 'Content-Type': 'text/xml' } }
+    )
+  }
+
+  if (strategy === 'round_robin') {
+    // Pick next member in rotation
+    const rrIndex = ((ringGroup.last_round_robin_index as number) || 0) % lines.length
+    const target = lines[rrIndex]
+
+    // Update rotation index for next call
+    await supabase
+      .from('phone_ring_groups')
+      .update({ last_round_robin_index: (rrIndex + 1) % lines.length })
+      .eq('id', ringGroup.id as string)
+
+    return new Response(
+      `<Response>
+        <Dial timeout="${ringDuration}" callerId="${callerIdNumber}" action="${webhookBase}?type=dial_status&company_id=${companyId}&call_sid=${callSid}">
+          <Number>${target.phone_number}</Number>
+        </Dial>
+        <Say voice="alice">Please leave a message after the tone.</Say>
+        <Record maxLength="120" action="${webhookBase}?type=voicemail&line_id=${lineId}&company_id=${companyId}&from=${from}&call_sid=${callSid}" />
+      </Response>`,
+      { headers: { 'Content-Type': 'text/xml' } }
+    )
+  }
+
+  // Sequential — ring each member in order, each with a timeout
+  // LaML supports one Dial per Response, so we use the first member here
+  // and the dial_status webhook will handle progression to next members
+  const firstLine = lines[0]
+  return new Response(
+    `<Response>
+      <Dial timeout="${ringDuration}" callerId="${callerIdNumber}" action="${webhookBase}?type=ring_group_next&company_id=${companyId}&call_sid=${callSid}&ring_group_id=${ringGroup.id}&member_index=1&line_id=${lineId}&from=${from}">
+        <Number>${firstLine.phone_number}</Number>
+      </Dial>
+      <Say voice="alice">Please leave a message after the tone.</Say>
+      <Record maxLength="120" action="${webhookBase}?type=voicemail&line_id=${lineId}&company_id=${companyId}&from=${from}&call_sid=${callSid}" />
+    </Response>`,
+    { headers: { 'Content-Type': 'text/xml' } }
+  )
 }
 
 // ============================================================================

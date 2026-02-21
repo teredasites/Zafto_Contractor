@@ -355,13 +355,19 @@ export function useSmsThreads() {
       const threadList: SmsThread[] = Array.from(threadMap.entries()).map(([num, msgs]) => {
         const sorted = msgs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         const latest = sorted[0];
+        // Unread = inbound messages after our last outbound reply in this thread
+        const lastOutbound = sorted.find(m => m.direction === 'outbound');
+        const lastOutboundTime = lastOutbound ? new Date(lastOutbound.createdAt).getTime() : 0;
+        const unread = sorted.filter(
+          m => m.direction === 'inbound' && new Date(m.createdAt).getTime() > lastOutboundTime
+        ).length;
         return {
           contactNumber: num,
           contactName: latest.customerName || null,
           customerId: latest.customerId,
           lastMessage: latest.body,
           lastMessageAt: latest.createdAt,
-          unreadCount: 0,
+          unreadCount: unread,
           messages: sorted.reverse(),
         };
       });
