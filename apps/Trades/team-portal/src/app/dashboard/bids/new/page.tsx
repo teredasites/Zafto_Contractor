@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 import Link from 'next/link';
 import { ArrowLeft, FileSignature, Save } from 'lucide-react';
 import { useBids } from '@/lib/hooks/use-bids';
@@ -19,6 +20,30 @@ export default function NewBidPage() {
   const [totalAmount, setTotalAmount] = useState('');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Draft recovery — auto-save bid form
+  const draftRecovery = useDraftRecovery({
+    feature: 'bid',
+    key: 'new-team-bid',
+    screenRoute: '/dashboard/bids/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, string> | null;
+      if (restored) {
+        if (restored.customerName) setCustomerName(restored.customerName);
+        if (restored.title) setTitle(restored.title);
+        if (restored.totalAmount) setTotalAmount(restored.totalAmount);
+        if (restored.description) setDescription(restored.description);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]);
+
+  useEffect(() => {
+    draftRecovery.saveDraft({ customerName, title, totalAmount, description });
+  }, [customerName, title, totalAmount, description]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 import {
   Search, Star, Clock, DollarSign, CheckCircle2, Loader2, ChevronDown,
   Send, ArrowLeft, AlertTriangle, Users, FileText, XCircle,
@@ -169,6 +170,34 @@ export default function GetQuotesPage() {
   const [urgency, setUrgency] = useState<UrgencyLevel>('normal');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
+
+  // Draft recovery — auto-save quote request form
+  const draftRecovery = useDraftRecovery({
+    feature: 'form',
+    key: 'new-quote-request',
+    screenRoute: '/get-quotes',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, string> | null;
+      if (restored) {
+        if (restored.trade) setTrade(restored.trade as TradeCategory);
+        if (restored.serviceType) setServiceType(restored.serviceType as ServiceType);
+        if (restored.urgency) setUrgency(restored.urgency as UrgencyLevel);
+        if (restored.description) setDescription(restored.description);
+        if (restored.address) setAddress(restored.address);
+        setShowForm(true);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]);
+
+  useEffect(() => {
+    if (showForm) {
+      draftRecovery.saveDraft({ trade, serviceType, urgency, description, address });
+    }
+  }, [trade, serviceType, urgency, description, address, showForm]);
 
   const resetForm = () => {
     setTrade('');

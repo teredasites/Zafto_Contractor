@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 import {
   ArrowLeft,
   Building2,
@@ -49,6 +50,25 @@ export default function NewPropertyPage() {
     propertyTaxAnnual: '',
     notes: '',
   });
+
+  // Draft recovery — auto-save property form
+  const draftRecovery = useDraftRecovery({
+    feature: 'form',
+    key: 'new-property',
+    screenRoute: '/dashboard/properties/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, unknown> | null;
+      if (restored?.form) setForm(restored.form as typeof form);
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]);
+
+  useEffect(() => {
+    draftRecovery.saveDraft({ form });
+  }, [form]);
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));

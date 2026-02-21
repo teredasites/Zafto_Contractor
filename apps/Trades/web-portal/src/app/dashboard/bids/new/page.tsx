@@ -46,6 +46,7 @@ import { isValidEmail } from '@/lib/validation';
 import { useBidTemplates } from '@/lib/hooks/use-bid-templates';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 
 // Generate unique IDs
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -397,6 +398,62 @@ export default function NewBidPage() {
 
   // Drag and drop state
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
+
+  // DEPTH27: Draft recovery — auto-save bid form state
+  const draftRecovery = useDraftRecovery({
+    feature: 'bid',
+    key: 'new',
+    screenRoute: '/dashboard/bids/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const r = draftRecovery.restoreDraft() as Record<string, unknown> | null;
+      if (r) {
+        if (r.title) setTitle(r.title as string);
+        if (r.scopeOfWork) setScopeOfWork(r.scopeOfWork as string);
+        if (r.trade) setTrade(r.trade as string);
+        if (r.validUntil) setValidUntil(r.validUntil as string);
+        if (r.customerName) setCustomerName(r.customerName as string);
+        if (r.customerEmail) setCustomerEmail(r.customerEmail as string);
+        if (r.customerPhone) setCustomerPhone(r.customerPhone as string);
+        if (r.customerStreet) setCustomerStreet(r.customerStreet as string);
+        if (r.customerCity) setCustomerCity(r.customerCity as string);
+        if (r.customerState) setCustomerState(r.customerState as string);
+        if (r.customerZip) setCustomerZip(r.customerZip as string);
+        if (r.jobSiteSame !== undefined) setJobSiteSame(r.jobSiteSame as boolean);
+        if (r.jobSiteStreet) setJobSiteStreet(r.jobSiteStreet as string);
+        if (r.jobSiteCity) setJobSiteCity(r.jobSiteCity as string);
+        if (r.jobSiteState) setJobSiteState(r.jobSiteState as string);
+        if (r.jobSiteZip) setJobSiteZip(r.jobSiteZip as string);
+        if (r.options) setOptions(r.options as BidOption[]);
+        if (r.addOns) setAddOns(r.addOns as BidAddOn[]);
+        if (r.taxRate !== undefined) setTaxRate(r.taxRate as number);
+        if (r.depositPercent !== undefined) setDepositPercent(r.depositPercent as number);
+        if (r.discountType) setDiscountType(r.discountType as 'none' | 'percent' | 'flat');
+        if (r.discountValue !== undefined) setDiscountValue(r.discountValue as number);
+        if (r.internalNotes) setInternalNotes(r.internalNotes as string);
+        if (r.termsAndConditions) setTermsAndConditions(r.termsAndConditions as string);
+        if (r.useMultipleOptions !== undefined) setUseMultipleOptions(r.useMultipleOptions as boolean);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-save form state on significant changes
+  useEffect(() => {
+    draftRecovery.saveDraft({
+      title, scopeOfWork, trade, validUntil,
+      customerName, customerEmail, customerPhone,
+      customerStreet, customerCity, customerState, customerZip,
+      jobSiteSame, jobSiteStreet, jobSiteCity, jobSiteState, jobSiteZip,
+      selectedCustomerId: selectedCustomer?.id ?? null,
+      options, addOns, taxRate, depositPercent,
+      discountType, discountValue, internalNotes, termsAndConditions,
+      useMultipleOptions,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, scopeOfWork, trade, options, addOns, taxRate, depositPercent, discountType, discountValue, internalNotes, termsAndConditions]);
 
   // Filter customers based on search
   const filteredCustomers = customers.filter((c) =>

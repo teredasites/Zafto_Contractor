@@ -60,6 +60,7 @@ import type {
 } from '@/lib/sketch-engine/types';
 import { UndoRedoManager } from '@/lib/sketch-engine/commands';
 import { formatDate } from '@/lib/utils';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 
 // Dynamic import for Konva (SSR incompatible)
 const SketchCanvas = dynamic(
@@ -437,6 +438,37 @@ function EditorView({
   const undoManagerRef = useRef(new UndoRedoManager());
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null) as RefObject<Konva.Stage | null>;
+
+  // DEPTH27: Draft recovery — auto-save sketch state every 3s locally, 60s to cloud
+  const draftRecovery = useDraftRecovery({
+    feature: 'sketch',
+    key: planId,
+    screenRoute: `/dashboard/sketch-engine?plan=${planId}`,
+  });
+
+  // Restore draft on mount (only if no server data loaded yet)
+  const draftRestoredRef = useRef(false);
+  useEffect(() => {
+    if (draftRestoredRef.current) return;
+    if (draftRecovery.hasDraft && !draftRecovery.checking && !loading && !plan?.planData) {
+      const r = draftRecovery.restoreDraft() as Record<string, unknown> | null;
+      if (r?.planData) {
+        setPlanData(r.planData as typeof planData);
+        if (r.sitePlanData) setSitePlanData(r.sitePlanData as typeof sitePlanData);
+        if (r.planMode) setPlanMode(r.planMode as typeof planMode);
+      }
+      draftRecovery.markRecovered();
+      draftRestoredRef.current = true;
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking, loading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-save on planData or sitePlanData changes
+  useEffect(() => {
+    if (!loading && planData) {
+      draftRecovery.saveDraft({ planData, sitePlanData, editorState, planMode });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planData, sitePlanData, planMode]);
 
   // Load plan data when fetched (with validation for corrupt data)
   useEffect(() => {
