@@ -199,7 +199,7 @@ export function useReconEstimatePipeline(trade?: string) {
         .order('sort_order');
 
       if (err) throw err;
-      setMappings((data ?? []).map(row => snakeToCamel(row) as unknown as ReconEstimateMapping));
+      setMappings((data ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as ReconEstimateMapping));
     } catch (e) {
       console.error('Failed to load mappings:', e);
       setError('Could not load estimate mapping rules.');
@@ -219,7 +219,7 @@ export function useReconEstimatePipeline(trade?: string) {
         .order('sort_order');
 
       if (err) throw err;
-      setRecommendations((data ?? []).map(row => snakeToCamel(row) as unknown as ReconMaterialRecommendation));
+      setRecommendations((data ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as ReconMaterialRecommendation));
     } catch (e) {
       console.error('Failed to load recommendations:', e);
     }
@@ -236,7 +236,7 @@ export function useReconEstimatePipeline(trade?: string) {
         .order('created_at', { ascending: false });
 
       if (err) throw err;
-      setBundles((data ?? []).map(row => snakeToCamel(row) as unknown as EstimateBundle));
+      setBundles((data ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as EstimateBundle));
     } catch (e) {
       console.error('Failed to load bundles:', e);
     }
@@ -252,7 +252,7 @@ export function useReconEstimatePipeline(trade?: string) {
         .order('sort_order');
 
       if (err) throw err;
-      setDependencies((data ?? []).map(row => snakeToCamel(row) as unknown as CrossTradeDependency));
+      setDependencies((data ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as CrossTradeDependency));
     } catch (e) {
       console.error('Failed to load dependencies:', e);
     }
