@@ -65,7 +65,7 @@ export default function LoginPage() {
             </svg>
             <span className="text-lg font-semibold tracking-tight" style={{ color: 'var(--text)' }}>Zafto</span>
           </div>
-          <h1 className="text-[22px] font-semibold tracking-tight" style={{ color: 'var(--text)' }}>Client Portal</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight" style={{ color: 'var(--text)' }}>Property Portal</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>View your projects, invoices & property</p>
         </div>
 

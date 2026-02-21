@@ -94,7 +94,7 @@ export default function SettingsPage() {
         <LogOut size={16} /> Sign Out
       </button>
 
-      <p className="text-center text-[10px] text-gray-400">ZAFTO Client Portal v1.0</p>
+      <p className="text-center text-[10px] text-gray-400">ZAFTO Property Portal v1.0</p>
     </div>
   );
 }
