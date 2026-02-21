@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/sync_status.dart';
-import 'firestore_service.dart';
 import 'auth_service.dart';
 
-/// Sync service provider
+/// Sync service provider (S151: Firebase removed, uses Supabase)
 final syncServiceProvider = Provider<SyncService>((ref) {
-  final firestoreService = ref.watch(firestoreServiceProvider);
   final authState = ref.watch(authStateProvider);
-  return SyncService(firestoreService, authState);
+  return SyncService(authState);
 });
 
 /// Sync status provider
@@ -30,12 +30,9 @@ class SyncStatusNotifier extends StateNotifier<SyncStatus> {
   }
 
   void _init() {
-    // Listen to connectivity changes
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen(_handleConnectivityChange);
-
-    // Check initial connectivity
     _checkConnectivity();
   }
 
@@ -45,14 +42,12 @@ class SyncStatusNotifier extends StateNotifier<SyncStatus> {
   }
 
   void _handleConnectivityChange(List<ConnectivityResult> results) {
-    // Check if any connectivity is available
     final hasConnection = results.isNotEmpty &&
         !results.every((r) => r == ConnectivityResult.none);
 
     if (!hasConnection) {
       state = state.copyWith(state: SyncState.offline);
     } else if (state.isOffline) {
-      // Coming back online - trigger sync
       state = state.copyWith(state: SyncState.idle);
       syncNow();
     }
@@ -100,17 +95,17 @@ class SyncStatusNotifier extends StateNotifier<SyncStatus> {
   }
 }
 
-/// Core sync service - offline-first with background sync
+/// Core sync service - offline-first with background sync via Supabase
 class SyncService {
-  final FirestoreService _firestoreService;
   final AuthState _authState;
 
   static const String _pendingOpsBoxName = 'pending_sync_ops';
   static const String _localDataBoxName = 'local_sync_data';
   static const int _maxRetries = 3;
 
-  SyncService(this._firestoreService, this._authState);
+  SyncService(this._authState);
 
+  SupabaseClient get _supabase => Supabase.instance.client;
   String? get _userId => _authState.user?.uid;
 
   // ==================== SYNC OPERATIONS ====================
@@ -119,21 +114,13 @@ class SyncService {
   Future<void> syncAll({Function(double)? onProgress}) async {
     if (_userId == null) return;
 
-    // Step 1: Process pending operations (30%)
+    // Step 1: Process pending operations (50%)
     onProgress?.call(0.1);
     await _processPendingOperations();
-    onProgress?.call(0.3);
+    onProgress?.call(0.5);
 
-    // Step 2: Fetch server data (60%)
-    final serverData = await _firestoreService.getUserData(_userId!);
-    onProgress?.call(0.6);
-
-    // Step 3: Merge with local data (80%)
-    await _mergeData(serverData);
-    onProgress?.call(0.8);
-
-    // Step 4: Push merged data to server (100%)
-    await _pushLocalData();
+    // Step 2: Supabase handles real-time sync natively
+    // No need to pull/merge/push like Firestore required
     onProgress?.call(1.0);
   }
 
@@ -175,7 +162,6 @@ class SyncService {
         await _executeOperation(op);
         await box.delete(key);
       } catch (e) {
-        // Increment retry count or remove if max retries exceeded
         final op = PendingSyncOperation.fromJson(
           jsonDecode(json) as Map<String, dynamic>,
         );
@@ -190,77 +176,81 @@ class SyncService {
     }
   }
 
-  /// Execute a single sync operation
+  /// Execute a single sync operation via Supabase
   Future<void> _executeOperation(PendingSyncOperation op) async {
     if (_userId == null) return;
 
     switch (op.dataType) {
       case SyncDataType.examProgress:
-        await _firestoreService.saveExamProgress(
-          _userId!,
-          op.data['topicId'] as String,
-          op.data,
-        );
+        await _supabase.from('exam_progress').upsert({
+          'user_id': _userId,
+          'topic_id': op.data['topicId'],
+          ...op.data,
+          'updated_at': DateTime.now().toIso8601String(),
+        });
         break;
 
       case SyncDataType.favorites:
         if (op.operation == 'create') {
-          await _firestoreService.addFavorite(
-            _userId!,
-            op.data['screenId'] as String,
-          );
+          await _supabase.from('favorites').insert({
+            'user_id': _userId,
+            'screen_id': op.data['screenId'],
+            'created_at': DateTime.now().toIso8601String(),
+          });
         } else if (op.operation == 'delete') {
-          await _firestoreService.removeFavorite(
-            _userId!,
-            op.data['screenId'] as String,
-          );
+          await _supabase.from('favorites')
+              .delete()
+              .eq('user_id', _userId!)
+              .eq('screen_id', op.data['screenId']);
         }
         break;
 
       case SyncDataType.calculationHistory:
         if (op.operation == 'create') {
-          await _firestoreService.saveCalculation(_userId!, op.data);
+          await _supabase.from('calculation_history').insert({
+            'user_id': _userId,
+            ...op.data,
+            'created_at': DateTime.now().toIso8601String(),
+          });
         } else if (op.operation == 'delete') {
-          await _firestoreService.deleteCalculation(
-            _userId!,
-            op.data['id'] as String,
-          );
+          await _supabase.from('calculation_history')
+              .delete()
+              .eq('id', op.data['id']);
         }
         break;
 
       case SyncDataType.settings:
-        await _firestoreService.saveSettings(_userId!, op.data);
+        await _supabase.from('user_settings').upsert({
+          'user_id': _userId,
+          'settings': op.data,
+          'updated_at': DateTime.now().toIso8601String(),
+        });
         break;
 
       case SyncDataType.aiCredits:
-        await _firestoreService.updateAiCredits(
-          _userId!,
-          op.data['credits'] as int,
-        );
+        await _supabase.from('users').update({
+          'ai_credits': op.data['credits'],
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('id', _userId!);
         break;
 
       case SyncDataType.jobDocuments:
-        // Job documents are stored in Supabase storage + documents table.
-        // This sync path is unused — documents sync directly via Supabase real-time.
-        print('[SyncService] jobDocuments sync skipped — handled by Supabase directly');
+        debugPrint('[SyncService] jobDocuments sync handled by Supabase directly');
         break;
     }
   }
 
   // ==================== LOCAL DATA ====================
 
-  /// Get local data box
   Future<Box<String>> _getLocalDataBox() async {
     return Hive.openBox<String>(_localDataBoxName);
   }
 
-  /// Save data locally
   Future<void> saveLocal(String key, Map<String, dynamic> data) async {
     final box = await _getLocalDataBox();
     await box.put(key, jsonEncode(data));
   }
 
-  /// Get local data
   Future<Map<String, dynamic>?> getLocal(String key) async {
     final box = await _getLocalDataBox();
     final json = box.get(key);
@@ -268,69 +258,15 @@ class SyncService {
     return jsonDecode(json) as Map<String, dynamic>;
   }
 
-  /// Delete local data
   Future<void> deleteLocal(String key) async {
     final box = await _getLocalDataBox();
     await box.delete(key);
   }
 
-  // ==================== MERGE LOGIC ====================
-
-  /// Merge server data with local data (last-write-wins)
-  Future<void> _mergeData(UserSyncData? serverData) async {
-    final localDataBox = await _getLocalDataBox();
-    final localJson = localDataBox.get('userData');
-
-    if (serverData == null && localJson == null) return;
-
-    UserSyncData local;
-    if (localJson != null) {
-      local = UserSyncData.fromJson(
-        jsonDecode(localJson) as Map<String, dynamic>,
-      );
-    } else {
-      local = UserSyncData(
-        oderId: _userId!,
-        lastModified: DateTime.now(),
-      );
-    }
-
-    // If no server data, keep local
-    if (serverData == null) return;
-
-    // Last-write-wins merge
-    final merged = serverData.lastModified.isAfter(local.lastModified)
-        ? serverData
-        : local;
-
-    // Save merged data locally
-    await localDataBox.put('userData', jsonEncode(merged.toJson()));
-  }
-
-  /// Push local data to server
-  Future<void> _pushLocalData() async {
-    if (_userId == null) return;
-
-    final localDataBox = await _getLocalDataBox();
-    final localJson = localDataBox.get('userData');
-
-    if (localJson == null) return;
-
-    final local = UserSyncData.fromJson(
-      jsonDecode(localJson) as Map<String, dynamic>,
-    );
-
-    await _firestoreService.syncAllData(_userId!, local);
-  }
-
   // ==================== CONVENIENCE METHODS ====================
 
-  /// Save exam progress (local + queue sync)
   Future<void> saveExamProgress(String topicId, Map<String, dynamic> progress) async {
-    // Save locally first
     await saveLocal('examProgress_$topicId', progress);
-
-    // Queue for server sync
     await queueOperation(
       SyncDataType.examProgress,
       'update',
@@ -338,7 +274,6 @@ class SyncService {
     );
   }
 
-  /// Add favorite (local + queue sync)
   Future<void> addFavorite(String screenId) async {
     final box = await _getLocalDataBox();
     final favoritesJson = box.get('favorites');
@@ -351,14 +286,9 @@ class SyncService {
       await box.put('favorites', jsonEncode(favorites));
     }
 
-    await queueOperation(
-      SyncDataType.favorites,
-      'create',
-      {'screenId': screenId},
-    );
+    await queueOperation(SyncDataType.favorites, 'create', {'screenId': screenId});
   }
 
-  /// Remove favorite (local + queue sync)
   Future<void> removeFavorite(String screenId) async {
     final box = await _getLocalDataBox();
     final favoritesJson = box.get('favorites');
@@ -369,14 +299,9 @@ class SyncService {
       await box.put('favorites', jsonEncode(favorites));
     }
 
-    await queueOperation(
-      SyncDataType.favorites,
-      'delete',
-      {'screenId': screenId},
-    );
+    await queueOperation(SyncDataType.favorites, 'delete', {'screenId': screenId});
   }
 
-  /// Get favorites (local)
   Future<List<String>> getFavorites() async {
     final box = await _getLocalDataBox();
     final favoritesJson = box.get('favorites');
@@ -384,28 +309,23 @@ class SyncService {
     return List<String>.from(jsonDecode(favoritesJson) as List);
   }
 
-  /// Save settings (local + queue sync)
   Future<void> saveSettings(Map<String, dynamic> settings) async {
     await saveLocal('settings', settings);
     await queueOperation(SyncDataType.settings, 'update', settings);
   }
 
-  /// Get settings (local)
   Future<Map<String, dynamic>> getSettings() async {
     return await getLocal('settings') ?? {};
   }
 
-  /// Get pending operations count
   Future<int> getPendingCount() async {
     final box = await Hive.openBox<String>(_pendingOpsBoxName);
     return box.length;
   }
 
-  /// Clear all local data (for logout)
   Future<void> clearLocalData() async {
     final localBox = await _getLocalDataBox();
     final pendingBox = await Hive.openBox<String>(_pendingOpsBoxName);
-
     await localBox.clear();
     await pendingBox.clear();
   }

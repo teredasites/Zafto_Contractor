@@ -15,8 +15,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:battery_plus/battery_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/time_entry.dart';
 import 'time_clock_service.dart';
@@ -68,7 +68,7 @@ class LocationTrackingService {
   String get _userId => _authState.user!.uid;
   String get _companyId => _authState.companyId!;
 
-  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  SupabaseClient get _supabase => Supabase.instance.client;
 
   // ==================== LIFECYCLE ====================
 
@@ -336,17 +336,21 @@ class LocationTrackingService {
       final connectivity = await Connectivity().checkConnectivity();
       if (connectivity.contains(ConnectivityResult.none)) return;
 
-      // Add to the time entry's locationPings array in Firestore
-      final docRef = _firestore
-          .collection('companies')
-          .doc(_companyId)
-          .collection('timeEntries')
-          .doc(timeEntryId);
-
-      await docRef.update({
-        'locationPings': FieldValue.arrayUnion([ping.toMap()]),
-        'lastPingAt': ping.timestamp.toIso8601String(),
-        'updatedAt': DateTime.now().toIso8601String(),
+      // Insert ping into Supabase location_pings table
+      await _supabase.from('location_pings').insert({
+        'time_entry_id': timeEntryId,
+        'company_id': _companyId,
+        'user_id': _userId,
+        'latitude': ping.latitude,
+        'longitude': ping.longitude,
+        'accuracy': ping.accuracy,
+        'speed': ping.speed,
+        'heading': ping.heading,
+        'altitude': ping.altitude,
+        'activity': ping.activity,
+        'battery_level': ping.batteryLevel,
+        'is_charging': ping.isCharging,
+        'captured_at': ping.timestamp.toIso8601String(),
       });
 
       // Clear sync marker
@@ -395,19 +399,23 @@ class LocationTrackingService {
     // Batch update each entry
     for (final entry in pingsByEntry.entries) {
       try {
-        final docRef = _firestore
-            .collection('companies')
-            .doc(_companyId)
-            .collection('timeEntries')
-            .doc(entry.key);
-
-        await docRef.update({
-          'locationPings': FieldValue.arrayUnion(
-            entry.value.map((p) => p.toMap()).toList(),
-          ),
-          'lastPingAt': entry.value.last.timestamp.toIso8601String(),
-          'updatedAt': DateTime.now().toIso8601String(),
-        });
+        // Batch insert pings into Supabase
+        final rows = entry.value.map((p) => {
+          'time_entry_id': entry.key,
+          'company_id': _companyId,
+          'user_id': _userId,
+          'latitude': p.latitude,
+          'longitude': p.longitude,
+          'accuracy': p.accuracy,
+          'speed': p.speed,
+          'heading': p.heading,
+          'altitude': p.altitude,
+          'activity': p.activity,
+          'battery_level': p.batteryLevel,
+          'is_charging': p.isCharging,
+          'captured_at': p.timestamp.toIso8601String(),
+        }).toList();
+        await _supabase.from('location_pings').insert(rows);
 
         // Clear sync markers for these pings
         for (final ping in entry.value) {

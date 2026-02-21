@@ -67,7 +67,7 @@ Zafto/
 - **Framework:** Flutter (iOS, Android, Web, Desktop)
 - **State:** Riverpod
 - **Local Storage:** Hive
-- **Cloud:** Firebase (Auth, Firestore, Functions, Storage)
+- **Cloud:** Supabase (Auth, PostgreSQL + RLS, Edge Functions, Storage, Realtime)
 - **AI:** Claude API (equipment scanning)
 - **Monorepo:** Melos
 
@@ -99,12 +99,12 @@ melos test
 | HVAC | com.teredasoftware.zafto.hvac |
 | Spellbook | com.teredasoftware.spellbook |
 
-## Firebase
+## Backend (Supabase)
 
-Single Firebase project with multiple app registrations:
+Single Supabase project with multi-tenant architecture:
 - Users create ONE account, access all purchased trades
-- Data syncs across apps for multi-trade users
-- Same Firestore collections for jobs/invoices/customers
+- Data syncs across apps via Supabase Realtime
+- PostgreSQL + RLS for all business data, 92 Edge Functions
 
 ---
 

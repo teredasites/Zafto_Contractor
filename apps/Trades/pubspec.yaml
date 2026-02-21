@@ -25,10 +25,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   
-  # Firebase (legacy — 14 files still import cloud_firestore. Remove during Phase G cleanup)
-  firebase_core: ^4.0.0
-  cloud_firestore: ^6.0.0
-  cloud_functions: ^6.0.0
+  # Firebase removed — S151. All services migrated to Supabase.
   
   # AI Scanner
   image_picker: ^1.0.7
