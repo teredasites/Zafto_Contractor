@@ -79,6 +79,7 @@ import SitePlanToolbar from '@/components/sketch-editor/SitePlanToolbar';
 import SitePlanLayerPanel from '@/components/sketch-editor/SitePlanLayerPanel';
 import SitePropertyInspector from '@/components/sketch-editor/SitePropertyInspector';
 import SiteBackgroundImport from '@/components/sketch-editor/SiteBackgroundImport';
+import PropertyLookupPanel from '@/components/sketch-editor/PropertyLookupPanel';
 import TemplatePicker from '@/components/sketch-editor/TemplatePicker';
 import {
   applyFloorPlanTemplate,
@@ -430,6 +431,7 @@ function EditorView({
   const [siteSelectedType, setSiteSelectedType] = useState<string | null>(null);
   const [showSiteLayers, setShowSiteLayers] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [reconScanId, setReconScanId] = useState<string | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const undoManagerRef = useRef(new UndoRedoManager());
@@ -739,6 +741,16 @@ function EditorView({
       }));
     },
     [],
+  );
+
+  // DEPTH26: Property lookup → auto-generate site plan
+  const handlePropertyLookupGenerated = useCallback(
+    (generatedSitePlan: SitePlanData, scanId: string) => {
+      handleSitePlanChange(generatedSitePlan);
+      setReconScanId(scanId);
+      setPlanMode('site');
+    },
+    [handleSitePlanChange],
   );
 
   if (loading) {
@@ -1117,6 +1129,13 @@ function EditorView({
                         showGrid: !siteEditorState.showGrid,
                       })
                     }
+                  />
+                </div>
+
+                {/* DEPTH26: Property lookup panel (bottom-left, above background import) */}
+                <div className="absolute bottom-32 left-3 z-10 w-64">
+                  <PropertyLookupPanel
+                    onSitePlanGenerated={handlePropertyLookupGenerated}
                   />
                 </div>
 

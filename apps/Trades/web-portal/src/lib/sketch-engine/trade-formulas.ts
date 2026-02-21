@@ -467,17 +467,18 @@ export function calcAdaCompliance(
   };
 }
 
-// ── Commercial Estimate Material Costs (seed data) ──
+// ── Commercial Roof Material Specs (physical properties only — NO pricing) ──
+// Pricing comes from estimate_pricing table (Rule #24: ZERO hardcoded pricing).
 
-export const COMMERCIAL_ROOF_MATERIAL_COSTS: Record<string, { costPerSqFt: number; rValue: number; warrantyRange: string; weightPerSqFt: number }> = {
-  tpoWhite60: { costPerSqFt: 5.50, rValue: 0, warrantyRange: '15-30 years', weightPerSqFt: 0.29 },
-  tpoWhite80: { costPerSqFt: 6.25, rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.38 },
-  epdmBlack60: { costPerSqFt: 4.75, rValue: 0, warrantyRange: '15-25 years', weightPerSqFt: 0.33 },
-  epdmBlack90: { costPerSqFt: 5.75, rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.50 },
-  modBitSBS3Ply: { costPerSqFt: 7.00, rValue: 0, warrantyRange: '15-20 years', weightPerSqFt: 1.50 },
-  bur4Ply: { costPerSqFt: 8.00, rValue: 0, warrantyRange: '15-25 years', weightPerSqFt: 3.00 },
-  pvcMembrane: { costPerSqFt: 6.50, rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.35 },
-  spf: { costPerSqFt: 5.00, rValue: 6.5, warrantyRange: '15-25 years', weightPerSqFt: 0.30 },
-  metalStandingSeamCommercial: { costPerSqFt: 10.00, rValue: 0, warrantyRange: '30-50 years', weightPerSqFt: 1.50 },
-  greenRoofExtensive: { costPerSqFt: 15.00, rValue: 2.0, warrantyRange: '30-50 years', weightPerSqFt: 15.00 },
+export const COMMERCIAL_ROOF_MATERIAL_SPECS: Record<string, { rValue: number; warrantyRange: string; weightPerSqFt: number }> = {
+  tpoWhite60: { rValue: 0, warrantyRange: '15-30 years', weightPerSqFt: 0.29 },
+  tpoWhite80: { rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.38 },
+  epdmBlack60: { rValue: 0, warrantyRange: '15-25 years', weightPerSqFt: 0.33 },
+  epdmBlack90: { rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.50 },
+  modBitSBS3Ply: { rValue: 0, warrantyRange: '15-20 years', weightPerSqFt: 1.50 },
+  bur4Ply: { rValue: 0, warrantyRange: '15-25 years', weightPerSqFt: 3.00 },
+  pvcMembrane: { rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.35 },
+  spf: { rValue: 6.5, warrantyRange: '15-25 years', weightPerSqFt: 0.30 },
+  metalStandingSeamCommercial: { rValue: 0, warrantyRange: '30-50 years', weightPerSqFt: 1.50 },
+  greenRoofExtensive: { rValue: 2.0, warrantyRange: '30-50 years', weightPerSqFt: 15.00 },
 };
