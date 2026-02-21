@@ -75,7 +75,7 @@ export function useMessages() {
   }, [fetchMessages, profile?.customerId]);
 
   const sendMessage = async (message: string) => {
-    if (!profile?.customerId || !message.trim()) return;
+    if (!profile?.customerId || !profile?.companyId || !message.trim()) return;
     setSending(true);
     setError(null);
 
@@ -84,9 +84,23 @@ export function useMessages() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
+      // Resolve the company's primary phone line to get the toNumber
+      const { data: line } = await supabase
+        .from('phone_lines')
+        .select('phone_number')
+        .eq('company_id', profile.companyId)
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+
+      if (!line?.phone_number) {
+        throw new Error('This company does not have a phone number configured for messaging.');
+      }
+
       const response = await supabase.functions.invoke('signalwire-sms', {
         body: {
           action: 'send',
+          toNumber: line.phone_number,
           message: message.trim(),
           customerId: profile.customerId,
         },

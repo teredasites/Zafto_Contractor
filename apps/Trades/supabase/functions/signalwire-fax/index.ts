@@ -35,6 +35,18 @@ serve(async (req) => {
     // INBOUND FAX WEBHOOK
     // ========================================================================
     if (webhookType === 'inbound') {
+      // SEC-AUDIT-4: Verify inbound webhook secret — fail-closed
+      const SW_INBOUND_SECRET = Deno.env.get('SIGNALWIRE_INBOUND_SECRET') ?? ''
+      if (!SW_INBOUND_SECRET) {
+        console.error('SIGNALWIRE_INBOUND_SECRET not configured — rejecting inbound fax')
+        return new Response('Internal error', { status: 500 })
+      }
+      const providedSecret = req.headers.get('x-signalwire-inbound-secret') || url.searchParams.get('inbound_secret')
+      if (providedSecret !== SW_INBOUND_SECRET) {
+        console.error('Invalid SignalWire inbound webhook secret')
+        return new Response('Unauthorized', { status: 401 })
+      }
+
       const formData = await req.formData()
       const faxSid = formData.get('FaxSid') as string
       const from = formData.get('From') as string
