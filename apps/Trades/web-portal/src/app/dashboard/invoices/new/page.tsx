@@ -24,6 +24,7 @@ import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 
 type PaymentSource = 'standard' | 'carrier' | 'deductible' | 'upgrade';
 
@@ -66,6 +67,29 @@ export default function NewInvoicePage() {
   const { createInvoice } = useInvoices();
   const { config } = useCompanyConfig();
   const [saving, setSaving] = useState(false);
+
+  // DEPTH27: Draft recovery — auto-save invoice form state
+  const draftRecovery = useDraftRecovery({
+    feature: 'invoice',
+    key: 'new',
+    screenRoute: '/dashboard/invoices/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, unknown> | null;
+      if (restored) {
+        if (restored.formData) setFormData(restored.formData as typeof formData);
+        if (restored.lineItems) setLineItems(restored.lineItems as LineItem[]);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    draftRecovery.saveDraft({ formData, lineItems });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, lineItems]);
 
   // Wire default tax rate from company config
   useEffect(() => {

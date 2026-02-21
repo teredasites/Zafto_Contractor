@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SourceProtection } from '@/components/source-protection';
+import { DraftRecoveryBanner } from '@/components/draft-recovery-banner';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <SourceProtection />
+          <DraftRecoveryBanner />
           {children}
         </ThemeProvider>
       </body>

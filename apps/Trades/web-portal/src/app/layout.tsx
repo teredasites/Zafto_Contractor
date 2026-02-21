@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SourceProtection } from '@/components/source-protection'
+import { DraftRecoveryBanner } from '@/components/draft-recovery-banner'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <SourceProtection />
+            <DraftRecoveryBanner />
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>

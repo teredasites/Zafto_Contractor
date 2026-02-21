@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -26,6 +27,32 @@ export default function NewAreaScanPage() {
   const [polygonInput, setPolygonInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Draft recovery — auto-save area scan form
+  const draftRecovery = useDraftRecovery({
+    feature: 'form',
+    key: 'new-area-scan',
+    screenRoute: '/dashboard/recon/area-scans/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, string> | null;
+      if (restored) {
+        if (restored.name) setName(restored.name);
+        if (restored.scanType) setScanType(restored.scanType as ScanType);
+        if (restored.stormType) setStormType(restored.stormType);
+        if (restored.stormDate) setStormDate(restored.stormDate);
+        if (restored.stormEventId) setStormEventId(restored.stormEventId);
+        if (restored.polygonInput) setPolygonInput(restored.polygonInput);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]);
+
+  useEffect(() => {
+    draftRecovery.saveDraft({ name, scanType, stormType, stormDate, stormEventId, polygonInput });
+  }, [name, scanType, stormType, stormDate, stormEventId, polygonInput]);
 
   const handleSubmit = useCallback(async () => {
     setError(null);

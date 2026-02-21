@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -28,6 +28,7 @@ import { cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
 import type { JobType } from '@/types';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 
 export default function NewJobPage() {
   const router = useRouter();
@@ -81,6 +82,29 @@ export default function NewJobPage() {
   const { customers } = useCustomers();
   const { team } = useTeam();
   const { createJob } = useJobs();
+
+  // DEPTH27: Draft recovery — auto-save job form
+  const draftRecovery = useDraftRecovery({
+    feature: 'form',
+    key: 'new-job',
+    screenRoute: '/dashboard/jobs/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, unknown> | null;
+      if (restored) {
+        if (restored.formData) setFormData(restored.formData as typeof formData);
+        if (restored.assignedMembers) setAssignedMembers(restored.assignedMembers as string[]);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    draftRecovery.saveDraft({ formData, assignedMembers });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, assignedMembers]);
 
   const selectedCustomer = customers.find((c) => c.id === formData.customerId);
 

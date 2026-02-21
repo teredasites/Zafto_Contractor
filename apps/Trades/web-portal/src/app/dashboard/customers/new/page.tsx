@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
+import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
 
 export default function NewCustomerPage() {
   const router = useRouter();
@@ -52,6 +53,29 @@ export default function NewCustomerPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // DEPTH27: Draft recovery — auto-save customer form
+  const draftRecovery = useDraftRecovery({
+    feature: 'form',
+    key: 'new-customer',
+    screenRoute: '/dashboard/customers/new',
+  });
+
+  useEffect(() => {
+    if (draftRecovery.hasDraft && !draftRecovery.checking) {
+      const restored = draftRecovery.restoreDraft() as Record<string, unknown> | null;
+      if (restored) {
+        if (restored.formData) setFormData(restored.formData as typeof formData);
+        if (restored.tags) setTags(restored.tags as string[]);
+      }
+      draftRecovery.markRecovered();
+    }
+  }, [draftRecovery.hasDraft, draftRecovery.checking]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    draftRecovery.saveDraft({ formData, tags });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, tags]);
 
   const defaultSources = ['referral', 'google', 'website', 'yelp', 'facebook', 'instagram', 'nextdoor', 'other'];
   const sources = config?.customLeadSources || defaultSources;
