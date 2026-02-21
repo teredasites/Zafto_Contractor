@@ -22,6 +22,8 @@ const cspDirectives = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
   images: {
     unoptimized: true,
   },
@@ -38,6 +40,9 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-XSS-Protection', value: '0' },
           { key: 'Permissions-Policy', value: 'camera=(self), microphone=(self), geolocation=(self), payment=(self)' },
+          { key: 'X-Powered-By', value: '' },
+          { key: 'SourceMap', value: '' },
+          { key: 'X-SourceMap', value: '' },
         ],
       },
       {

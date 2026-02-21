@@ -23,6 +23,8 @@ const cspDirectives = [
 ].join('; ');
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
   async headers() {
     return [
       {
@@ -35,6 +37,9 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-XSS-Protection', value: '0' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(self)' },
+          { key: 'X-Powered-By', value: '' },
+          { key: 'SourceMap', value: '' },
+          { key: 'X-SourceMap', value: '' },
         ],
       },
       {
