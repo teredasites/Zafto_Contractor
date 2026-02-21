@@ -84,7 +84,7 @@ export function useReconEstimatePipeline(trade?: string) {
         .order('sort_order');
 
       setDependencies(
-        (depsData ?? []).map(row => snakeToCamel(row) as unknown as CrossTradeDependency)
+        (depsData ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as CrossTradeDependency)
       );
 
       // Load trade-specific data
@@ -107,10 +107,10 @@ export function useReconEstimatePipeline(trade?: string) {
         ]);
 
         setMappings(
-          (mappingsResult.data ?? []).map(row => snakeToCamel(row) as unknown as ReconEstimateMapping)
+          (mappingsResult.data ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as ReconEstimateMapping)
         );
         setRecommendations(
-          (recsResult.data ?? []).map(row => snakeToCamel(row) as unknown as ReconMaterialRecommendation)
+          (recsResult.data ?? []).map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as ReconMaterialRecommendation)
         );
       }
     } catch (e) {
