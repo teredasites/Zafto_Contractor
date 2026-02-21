@@ -17,7 +17,7 @@ class PriceBookRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .eq('is_active', true)
           .order('category')
           .order('name');
@@ -40,7 +40,7 @@ class PriceBookRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .eq('is_active', true)
           .eq('trade', trade)
           .order('category')
@@ -64,7 +64,7 @@ class PriceBookRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .eq('is_active', true)
           .or('name.ilike.%$query%,sku.ilike.%$query%,description.ilike.%$query%,category.ilike.%$query%')
           .order('name')

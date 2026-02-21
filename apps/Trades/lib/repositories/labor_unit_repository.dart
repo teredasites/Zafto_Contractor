@@ -17,7 +17,7 @@ class LaborUnitRepository {
       var query = supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('trade')
           .order('category')
           .order('task_name');
@@ -26,7 +26,7 @@ class LaborUnitRepository {
         query = supabase
             .from(_table)
             .select()
-            .is_('deleted_at', null)
+            .isFilter('deleted_at', null)
             .eq('trade', trade)
             .order('trade')
             .order('category')

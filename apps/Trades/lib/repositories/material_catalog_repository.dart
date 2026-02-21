@@ -16,7 +16,7 @@ class MaterialCatalogRepository {
       var query = supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .eq('is_disabled', false)
           .order('trade')
           .order('category')
@@ -27,7 +27,7 @@ class MaterialCatalogRepository {
         query = supabase
             .from(_table)
             .select()
-            .is_('deleted_at', null)
+            .isFilter('deleted_at', null)
             .eq('is_disabled', false)
             .eq('trade', trade)
             .order('trade')
@@ -75,7 +75,7 @@ class MaterialCatalogRepository {
       var query = supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .eq('is_disabled', false)
           .eq('tier', materialTierToString(tier))
           .order('trade')
@@ -86,7 +86,7 @@ class MaterialCatalogRepository {
         query = supabase
             .from(_table)
             .select()
-            .is_('deleted_at', null)
+            .isFilter('deleted_at', null)
             .eq('is_disabled', false)
             .eq('tier', materialTierToString(tier))
             .eq('trade', trade)
@@ -115,7 +115,7 @@ class MaterialCatalogRepository {
       final response = await supabase
           .from(_table)
           .select()
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .eq('is_disabled', false)
           .eq('trade', material.trade)
           .eq('category', material.category)
