@@ -21,12 +21,11 @@ export function SourceProtection() {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') return;
 
-    // --- 1. Block right-click context menu ---
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    };
+    // --- 1. Right-click: allowed (native browser menu) ---
+    // We do NOT block right-click — it annoys users and adds no real protection.
+    // If someone selects "Inspect" from the context menu, the devtools detection
+    // (layer 3) catches it and blanks the page. "View Source" only shows
+    // server-rendered HTML, not actual source code. Source maps are disabled.
 
     // --- 2. Block devtools keyboard shortcuts ---
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -164,7 +163,6 @@ export function SourceProtection() {
     };
 
     // Attach all listeners
-    document.addEventListener('contextmenu', handleContextMenu, true);
     document.addEventListener('keydown', handleKeyDown, true);
     document.addEventListener('dragstart', handleDragStart, true);
     document.addEventListener('selectstart', handleSelectStart, true);
@@ -179,7 +177,6 @@ export function SourceProtection() {
     document.head.appendChild(style);
 
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu, true);
       document.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('dragstart', handleDragStart, true);
       document.removeEventListener('selectstart', handleSelectStart, true);
