@@ -9,7 +9,7 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 - **Team Portal**: Next.js 15 — `team-portal/` (44 routes) — field employee PWA at team.zafto.cloud
 - **Client Portal**: Next.js 15 — `client-portal/` (45 routes) — homeowner portal at client.zafto.cloud
 - **Ops Portal**: Next.js 15 — `ops-portal/` (31 routes) — founder dashboard at ops.zafto.cloud
-- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime + Edge Functions). Flutter app has 6 legacy Firebase services pending migration.
+- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime + Edge Functions). Firebase fully removed S151.
 - **Hosting**: Vercel Pro (all 4 Next.js apps), Cloudflare DNS
 - **CI/CD**: Codemagic (Flutter), GitHub Actions
 - **Icons**: Lucide only. No emojis anywhere.
@@ -56,7 +56,7 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 - **~155 sprints spec'd**, ~2,860h in execution order (~7,700h+ total including orphaned sprints)
 - **Build order**: SEC-AUDIT→P-FIX1→A11Y→LEGAL→INFRA→TEST-INFRA→COLLAB-ARCH→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→APP-DEPTH→SHIP
 - **Pricing**: Solo $69.99, Team $149.99, Business $249.99. Adjuster FREE. 30-day free trial (no CC). 100-day money-back guarantee.
-- **Known debt**: 6 Flutter services still on Firebase. 69+ models missing Equatable. S138 audit: 103 findings (20 CRITICAL, 31 HIGH). SEC-AUDIT sprint addresses all critical/high security issues.
+- **Known debt**: Firebase fully removed (S151). 69+ models missing Equatable. S138 audit: 103 findings (20 CRITICAL, 31 HIGH). SEC-AUDIT sprint addresses all critical/high security issues.
 - **Enterprise methodology (S138)**: 21 Critical Rules in CLAUDE.md. Mandatory security checklist per sprint. Webhook idempotency. Feature flags. Observability. Fail-closed auth. CI enforcement of soft delete + migration safety. Depth verification gate. i18n flawlessness. App parity.
 
 ## Critical Rules — NEVER VIOLATE

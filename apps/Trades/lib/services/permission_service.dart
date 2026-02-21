@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/company.dart';
 import '../models/user.dart';
 import '../models/role.dart';
@@ -207,34 +207,34 @@ class PermissionService {
 // PROVIDER
 // ============================================================
 
-/// Current user's company provider (uses models/company.dart Company)
+/// Current user's company provider (uses Supabase)
 final permissionCompanyProvider = StreamProvider<Company?>((ref) {
   final authState = ref.watch(authStateProvider);
   if (!authState.isAuthenticated || authState.companyId == null) {
     return Stream.value(null);
   }
 
-  return FirebaseFirestore.instance
-      .collection('companies')
-      .doc(authState.companyId)
-      .snapshots()
-      .map((doc) => doc.exists ? Company.fromFirestore(doc) : null);
+  final supabase = Supabase.instance.client;
+  return supabase
+      .from('companies')
+      .stream(primaryKey: ['id'])
+      .eq('id', authState.companyId!)
+      .map((rows) => rows.isNotEmpty ? Company.fromMap({...rows.first, 'id': rows.first['id']}) : null);
 });
 
-/// Current user's role provider
+/// Current user's role provider (uses Supabase)
 final currentUserRoleProvider = StreamProvider<Role?>((ref) {
   final authState = ref.watch(authStateProvider);
   if (!authState.isAuthenticated || authState.companyId == null || authState.roleId == null) {
     return Stream.value(null);
   }
 
-  return FirebaseFirestore.instance
-      .collection('companies')
-      .doc(authState.companyId)
-      .collection('roles')
-      .doc(authState.roleId)
-      .snapshots()
-      .map((doc) => doc.exists ? Role.fromFirestore(doc) : null);
+  final supabase = Supabase.instance.client;
+  return supabase
+      .from('roles')
+      .stream(primaryKey: ['id'])
+      .eq('id', authState.roleId!)
+      .map((rows) => rows.isNotEmpty ? Role.fromMap({...rows.first, 'id': rows.first['id']}) : null);
 });
 
 /// Provider for permission service - properly wired with auth data

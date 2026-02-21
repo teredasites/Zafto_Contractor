@@ -1,12 +1,13 @@
 /// ZAFTO UI Mode Service
 /// Session 23 - Simple vs Pro Mode Management
+/// S151 - Firebase removed, migrated to Supabase
 ///
 /// Controls UI complexity:
 /// - Simple Mode: Core flow (Bid -> Job -> Invoice)
 /// - Pro Mode: Full CRM (Leads, Tasks, Automations, etc.)
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/company.dart';
 import 'auth_service.dart';
 
@@ -14,18 +15,19 @@ import 'auth_service.dart';
 // PROVIDERS
 // ============================================================
 
-/// Company provider for UI mode (uses models/company.dart)
+/// Company provider for UI mode (uses Supabase)
 final _uiModeCompanyProvider = StreamProvider<Company?>((ref) {
   final authState = ref.watch(authStateProvider);
   if (!authState.isAuthenticated || authState.companyId == null) {
     return Stream.value(null);
   }
 
-  return FirebaseFirestore.instance
-      .collection('companies')
-      .doc(authState.companyId)
-      .snapshots()
-      .map((doc) => doc.exists ? Company.fromFirestore(doc) : null);
+  final supabase = Supabase.instance.client;
+  return supabase
+      .from('companies')
+      .stream(primaryKey: ['id'])
+      .eq('id', authState.companyId!)
+      .map((rows) => rows.isNotEmpty ? Company.fromMap({...rows.first, 'id': rows.first['id']}) : null);
 });
 
 /// Current UI mode for the company
@@ -63,7 +65,6 @@ final uiModeNotifierProvider = StateNotifierProvider<UiModeNotifier, UiMode>((re
 class UiModeNotifier extends StateNotifier<UiMode> {
   final Company? _company;
   final String? _companyId;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   UiModeNotifier(this._company, this._companyId)
       : super(_company?.uiMode ?? UiMode.simple);
@@ -72,27 +73,30 @@ class UiModeNotifier extends StateNotifier<UiMode> {
   Future<void> toggleMode() async {
     final newMode = state == UiMode.simple ? UiMode.pro : UiMode.simple;
     state = newMode;
-    await _updateFirestore({'uiMode': newMode.name});
+    await _updateSupabase({'ui_mode': newMode.name});
   }
 
   /// Set mode explicitly
   Future<void> setMode(UiMode mode) async {
     if (state == mode) return;
     state = mode;
-    await _updateFirestore({'uiMode': mode.name});
+    await _updateSupabase({'ui_mode': mode.name});
   }
 
   /// Enable/disable specific pro features
   Future<void> setProFeatures(List<String> features) async {
-    await _updateFirestore({'enabledProFeatures': features});
+    await _updateSupabase({'enabled_pro_features': features});
   }
 
-  Future<void> _updateFirestore(Map<String, dynamic> data) async {
+  Future<void> _updateSupabase(Map<String, dynamic> data) async {
     if (_companyId == null) return;
-    await _firestore.collection('companies').doc(_companyId).update({
-      ...data,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+    await Supabase.instance.client
+        .from('companies')
+        .update({
+          ...data,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', _companyId!);
   }
 }
 

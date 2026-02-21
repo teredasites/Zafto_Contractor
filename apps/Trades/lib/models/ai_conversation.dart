@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Message role in the conversation
 enum MessageRole {
@@ -225,14 +224,8 @@ class Message extends Equatable {
     parentMessageId: map['parentMessageId'] as String?,
   );
 
-  factory Message.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return Message.fromMap({...data, 'id': doc.id});
-  }
-
   static DateTime _parseDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.parse(value);
     return DateTime.now();
   }
@@ -441,14 +434,8 @@ class Conversation extends Equatable {
         : null,
   );
 
-  factory Conversation.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return Conversation.fromMap({...data, 'id': doc.id});
-  }
-
   static DateTime _parseDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.parse(value);
     return DateTime.now();
   }

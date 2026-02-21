@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Photo type classification
 enum PhotoType {
@@ -239,14 +238,8 @@ class JobPhoto extends Equatable {
     );
   }
 
-  factory JobPhoto.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return JobPhoto.fromMap({...data, 'id': doc.id});
-  }
-
   static DateTime _parseDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.parse(value);
     return DateTime.now();
   }
