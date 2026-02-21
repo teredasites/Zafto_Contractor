@@ -44,7 +44,7 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
 
       return res != null ? PropertyProfile.fromJson(res) : null;
     } catch (e) {
-      throw AppError('Failed to load property profile: $e');
+      throw DatabaseError('Failed to load property profile: $e');
     }
   }
 
@@ -59,7 +59,7 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
 
       return res != null ? WeatherIntelligence.fromJson(res) : null;
     } catch (e) {
-      throw AppError('Failed to load weather intelligence: $e');
+      throw DatabaseError('Failed to load weather intelligence: $e');
     }
   }
 
@@ -74,7 +74,7 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
 
       return (res as List).map((row) => PermitRecord.fromJson(row)).toList();
     } catch (e) {
-      throw AppError('Failed to load permit history: $e');
+      throw DatabaseError('Failed to load permit history: $e');
     }
   }
 
@@ -89,7 +89,7 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
 
       return (res as List).map((row) => TradeAutoScope.fromJson(row)).toList();
     } catch (e) {
-      throw AppError('Failed to load auto-scopes: $e');
+      throw DatabaseError('Failed to load auto-scopes: $e');
     }
   }
 
@@ -97,7 +97,9 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
   Future<void> triggerIntelligence(String scanId) async {
     try {
       final session = _client.auth.currentSession;
-      if (session == null) throw AppError('Not authenticated');
+      if (session == null) {
+        throw const AuthError('Not authenticated', code: AuthErrorCode.sessionExpired);
+      }
 
       final url = '${_client.rest.url.replaceAll('/rest/v1', '')}/functions/v1/recon-property-intelligence';
       final response = await http.post(
@@ -111,11 +113,12 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
 
       if (response.statusCode != 200) {
         final data = jsonDecode(response.body);
-        throw AppError(data['error'] ?? 'Intelligence gathering failed');
+        throw NetworkError(data['error'] ?? 'Intelligence gathering failed');
       }
+    } on AppError {
+      rethrow;
     } catch (e) {
-      if (e is AppError) rethrow;
-      throw AppError('Intelligence gathering failed: $e');
+      throw NetworkError('Intelligence gathering failed: $e');
     }
   }
 
@@ -123,7 +126,9 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
   Future<void> triggerAutoScope(String scanId, List<String> trades) async {
     try {
       final session = _client.auth.currentSession;
-      if (session == null) throw AppError('Not authenticated');
+      if (session == null) {
+        throw const AuthError('Not authenticated', code: AuthErrorCode.sessionExpired);
+      }
 
       final url = '${_client.rest.url.replaceAll('/rest/v1', '')}/functions/v1/recon-auto-scope';
       final response = await http.post(
@@ -137,11 +142,12 @@ class PropertyIntelligenceRepository implements PropertyIntelligenceRepositoryIn
 
       if (response.statusCode != 200) {
         final data = jsonDecode(response.body);
-        throw AppError(data['error'] ?? 'Auto-scope generation failed');
+        throw NetworkError(data['error'] ?? 'Auto-scope generation failed');
       }
+    } on AppError {
+      rethrow;
     } catch (e) {
-      if (e is AppError) rethrow;
-      throw AppError('Auto-scope generation failed: $e');
+      throw NetworkError('Auto-scope generation failed: $e');
     }
   }
 }
