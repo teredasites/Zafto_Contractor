@@ -620,7 +620,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _buildAppInfo(ZaftoColors colors) {
     return Column(
       children: [
-        Text('ZAFTO Electrical', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+        Text('ZAFTO', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary)),
         const SizedBox(height: 4),
         Text('Version 1.0.0 · Build 1', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
         const SizedBox(height: 4),
