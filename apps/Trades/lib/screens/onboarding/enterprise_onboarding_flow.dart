@@ -68,6 +68,7 @@ class _EnterpriseOnboardingFlowState
       await companyService.createCompany(
         name: data.companyName,
         tier: data.tier,
+        trade: data.trade,
         businessName: data.businessName,
         phone: data.phone,
         email: data.email,

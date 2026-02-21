@@ -21,12 +21,30 @@ enum JobPriority { low, normal, high, urgent }
 enum JobType {
   standard,
   insuranceClaim,
-  warrantyDispatch;
+  warrantyDispatch,
+  serviceCall,
+  installation,
+  repair,
+  maintenance,
+  inspection,
+  emergency,
+  project,
+  consultation,
+  warrantyCallback;
 
   String get dbValue => switch (this) {
         JobType.standard => 'standard',
         JobType.insuranceClaim => 'insurance_claim',
         JobType.warrantyDispatch => 'warranty_dispatch',
+        JobType.serviceCall => 'service_call',
+        JobType.installation => 'installation',
+        JobType.repair => 'repair',
+        JobType.maintenance => 'maintenance',
+        JobType.inspection => 'inspection',
+        JobType.emergency => 'emergency',
+        JobType.project => 'project',
+        JobType.consultation => 'consultation',
+        JobType.warrantyCallback => 'warranty_callback',
       };
 }
 
@@ -347,10 +365,15 @@ class Job {
   static JobType _parseJobType(String? value) {
     if (value == null) return JobType.standard;
     // Handle both camelCase enum name and snake_case DB value
-    if (value == 'insurance_claim') return JobType.insuranceClaim;
-    if (value == 'warranty_dispatch') return JobType.warrantyDispatch;
+    const dbMap = {
+      'insurance_claim': JobType.insuranceClaim,
+      'warranty_dispatch': JobType.warrantyDispatch,
+      'service_call': JobType.serviceCall,
+      'warranty_callback': JobType.warrantyCallback,
+    };
+    if (dbMap.containsKey(value)) return dbMap[value]!;
     return JobType.values.firstWhere(
-      (t) => t.name == value,
+      (t) => t.name == value || t.dbValue == value,
       orElse: () => JobType.standard,
     );
   }
@@ -396,6 +419,15 @@ class Job {
         JobType.standard => 'Standard',
         JobType.insuranceClaim => 'Insurance Claim',
         JobType.warrantyDispatch => 'Warranty Dispatch',
+        JobType.serviceCall => 'Service Call',
+        JobType.installation => 'Installation',
+        JobType.repair => 'Repair',
+        JobType.maintenance => 'Maintenance',
+        JobType.inspection => 'Inspection',
+        JobType.emergency => 'Emergency',
+        JobType.project => 'Project',
+        JobType.consultation => 'Consultation',
+        JobType.warrantyCallback => 'Warranty Callback',
       };
 
   bool get isInsuranceClaim => jobType == JobType.insuranceClaim;
