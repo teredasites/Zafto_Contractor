@@ -96,7 +96,13 @@ export interface MaterialItem {
   total_with_waste: number;
 }
 
-export type TradeType = 'roofing' | 'siding' | 'gutters' | 'solar' | 'painting' | 'landscaping' | 'fencing' | 'concrete' | 'hvac' | 'electrical';
+export type TradeType =
+  | 'roofing' | 'siding' | 'gutters' | 'solar' | 'painting' | 'landscaping'
+  | 'fencing' | 'concrete' | 'hvac' | 'electrical' | 'plumbing' | 'insulation'
+  | 'windows_doors' | 'flooring' | 'drywall' | 'framing' | 'masonry'
+  | 'waterproofing' | 'demolition' | 'tree_service' | 'pool' | 'garage_door'
+  | 'fire_protection' | 'elevator' | 'fire_alarm' | 'low_voltage'
+  | 'irrigation' | 'paving' | 'metal_fabrication' | 'glass_glazing';
 
 export interface TradeBidData {
   id: string;
@@ -390,6 +396,64 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
     }
   }, [fetchData]);
 
+  // Trigger property intelligence gathering after scan
+  const triggerIntelligence = useCallback(async (scanId: string) => {
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recon-property-intelligence`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ scan_id: scanId }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Intelligence gathering failed');
+      return data;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Intelligence gathering failed');
+      return null;
+    }
+  }, []);
+
+  // Trigger auto-scope generation for selected trades
+  const triggerAutoScope = useCallback(async (scanId: string, trades: string[]) => {
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recon-auto-scope`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ scan_id: scanId, trades }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Auto-scope generation failed');
+
+      await fetchData();
+      return data;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Auto-scope generation failed');
+      return null;
+    }
+  }, [fetchData]);
+
   return {
     scan,
     roof,
@@ -401,6 +465,8 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
     refetch: fetchData,
     triggerScan,
     triggerTradeEstimate,
+    triggerIntelligence,
+    triggerAutoScope,
   };
 }
 
