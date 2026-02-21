@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from "@/components/theme-provider";
+import { SourceProtection } from "@/components/source-protection";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
@@ -22,6 +23,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body className={`${inter.className} bg-main text-main antialiased`}>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
+            <SourceProtection />
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>
