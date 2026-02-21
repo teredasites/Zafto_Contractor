@@ -62,7 +62,7 @@ class EstimateVersionRepository {
           .from(_changeOrdersTable)
           .select()
           .eq('estimate_id', estimateId)
-          .is_('deleted_at', null)
+          .isFilter('deleted_at', null)
           .order('change_order_number');
 
       return (response as List)

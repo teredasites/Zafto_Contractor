@@ -38,7 +38,7 @@ class PriceBookItem extends Equatable {
   });
 
   /// Formatted price string
-  String get formattedPrice => '\$${unitPrice.toStringAsFixed(2)}/${unitOfMeasure}';
+  String get formattedPrice => '\$${unitPrice.toStringAsFixed(2)}/$unitOfMeasure';
 
   /// Total cost for a given quantity
   double totalFor(double quantity) => unitPrice * quantity;
