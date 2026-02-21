@@ -36377,48 +36377,2560 @@ CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
 - [ ] Listing agent side — receive/approve showing requests, set showing instructions per listing, view buyer agent feedback (with permission), showing traffic analytics per listing (~1h)
 - [ ] Commit: `[SHOW1] Showing management — showings + showing_feedback tables, request-confirm workflow, route optimization, Flutter day view, client feedback, CRM calendar, listing agent analytics`
 
-### ADJUSTER OPERATIONS (2 sprints, ~24h)
+### ADJUSTER PORTAL (12 sprints, ~281h) — S146
 
-### ADJ-CONT — Contents Inventory Module for Property Claims (~16h) — S135
-*Fire, water, or theft damages personal property → adjuster inventories every item (often 200-2,000+ per claim). Each item: description, age, purchase price, replacement cost, depreciation, condition, photo. Most tedious part of adjusting. Xactimate Contents costs extra. No free alternative exists. This is a daily workflow for every property adjuster.*
+# ADJ1-ADJ4 — Adjuster Sprint Specs Batch 1 (Foundation)
 
-- [ ] Create `contents_claims` table (id, company_id, job_id, property_id, claim_number, total_items, total_rcv, total_acv, total_depreciation, status, room_count, inventory_method, created_by, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
-- [ ] Create `contents_items` table (id, contents_claim_id, room, item_number, category, item_description, brand, model, age_years, condition_at_loss, purchase_price, replacement_source, replacement_cost_rcv, useful_life_years, depreciation_pct, depreciation_amount, actual_cash_value, quantity, photo_urls text[], is_antique boolean, is_matching_set boolean, set_name, notes, status, salvageable boolean, created_at) with RLS (~2h)
-- [ ] Seed contents depreciation schedules — 500+ common household items with useful life + depreciation rate (~3h):
-  - [ ] Electronics (TV, computer, phone, gaming) — 5-10yr useful life
-  - [ ] Furniture (sofa, bed, table, chair, desk) — 10-15yr
-  - [ ] Appliances (washer, dryer, fridge, dishwasher, microwave, oven) — 8-15yr
-  - [ ] Clothing (casual, formal, outerwear, shoes, accessories) — 3-5yr
-  - [ ] Kitchen (cookware, dishes, utensils, small appliances, cutlery) — 5-10yr
-  - [ ] Bathroom (towels, fixtures, accessories, medicine cabinet contents) — 3-7yr
-  - [ ] Outdoor (grill, patio furniture, tools, lawn equipment, garden) — 5-15yr
-  - [ ] Sporting goods, musical instruments, art/collectibles, children's items, books/media
-- [ ] Room-by-room inventory flow — select room → add items → photo each → auto-calculate depreciation from age + useful life → running totals per room and grand total. Quick-add with barcode scan for electronics/appliances (~3h)
-- [ ] Replacement cost research — manual entry with source URL for "like kind and quality" documentation. Price comparison helper (~1h)
-- [ ] Flutter: Contents Inventory screens — room list, item list per room, add/edit item form with photo capture, running RCV/ACV totals, search/filter/sort by value or room (~3h)
-- [ ] Web Portal: `/dashboard/contents-inventory` — spreadsheet-like view for office data entry, CSV/Excel import for bulk items, bulk depreciation recalculation, category summary charts (~2h)
-- [ ] Contents inventory PDF report — room-by-room listing with photos, RCV/ACV columns, depreciation calculations, grand totals, formatted for carrier submission (~2h)
+## Phase Summary
+**12 sprints total (ADJ1-ADJ12), ~281h, ~21 new tables, ~11 EFs, ~20 Flutter screens, ~16 web hooks, ~18 web pages**
+*Replaces: ADJ-CONT (~16h) and ADJ-AUTH (~8h) stubs from S135*
+*UI Style: Dark CRM (same base as contractor) + adjuster-optimized split-pane evidence review layout. Claims-centric navigation. Side-by-side supplement diff. Photo timeline with quick-flag. Evidence completeness indicator. Floating quick-action toolbar.*
 
-**Adjuster Legal Forms (S138 gap fill — missing from entire ecosystem):**
-- [ ] **Proof of Loss form template** — ZDocs template: policyholder info, date of loss, cause of loss, description of damage, claimed amount, sworn statement, notarization block. Required by most carriers before claim payment. Seed as system template. (~1h)
-- [ ] **Assignment of Benefits (AOB) form template** — ZDocs template: policyholder assigns insurance benefits to contractor for direct billing. Includes: scope limitation, right to revoke, fee disclosure. State-specific variants needed (FL has strict AOB reform laws). Seed for top 10 states. (~1h)
-- [ ] **Scope of Loss form template** — ZDocs template: structured damage documentation form. Room-by-room damage description, measurements, photos, cause/origin analysis, affected systems (structural, electrical, plumbing, HVAC). Formatted for carrier submission. (~1h)
-- [ ] **Supplemental claim form template** — ZDocs template: additional scope beyond original estimate. Original approved amount, additional items discovered, justification per item, supporting photos, revised total. Carrier submission format. (~0.5h)
-- [ ] **ACORD 25 Certificate of Insurance equivalent** — generate COI-style document from company insurance records. NOT an actual ACORD form (ACORD forms are copyrighted), but a professional equivalent showing: carrier name, policy number, coverage types, limits, effective dates, certificate holder. Disclaimer: "This document is not an ACORD form. Verify coverage with your insurance carrier." (~1h)
+---
 
-- [ ] Commit: `[ADJ-CONT] Contents inventory + adjuster legal forms — contents_claims, depreciation, proof of loss, AOB, scope of loss, supplemental claim, COI equivalent`
+### ADJ1 — Claims Pipeline Foundation + Adjuster Dashboard (~36h) — S146
+*Every adjuster manages a pipeline of claims. Staff adjusters carry 80-200 open, IAs handle 25-30/week, CAT adjusters surge to 50+/week. Current state: spreadsheets, email, sticky notes, ClaimWizard ($99/mo). Xactimate handles estimation, not pipeline management. Zafto replaces the entire pipeline management stack for FREE. 18 adjuster types with unique pipeline stages and custom fields per claim type. The dashboard is claims-centric (kanban by status) with split-pane evidence review — optimized for REVIEWING incoming evidence, not creating projects.*
 
-### ADJ-AUTH — Authority Limit & Approval Chain Workflow (~8h) — S135
-*Every carrier sets dollar limits per adjuster level. Field adjuster: approve up to $25K. Senior: $100K. Manager: $500K. Exceeding authority = discipline or termination. This is a daily compliance requirement. No existing tool handles this cleanly — adjusters track limits on sticky notes.*
+*Source: adjuster-workflow-deep-dive-s134.md, adjuster-deep-research-s133.md*
+*Depends on: D2 (insurance_claims infrastructure), CUST1 (settings cascade)*
+*CUST9 Modules: CLAIMS_PIPELINE, CLAIMS_DASHBOARD, ADJUSTER_TYPES, CLAIM_CUSTOM_FIELDS*
 
-- [ ] Create `authority_levels` table (id, company_id, role_name, max_claim_amount, max_reserve_amount, max_payment_amount, requires_supervisor boolean, supervisor_role, auto_escalate_at, special_permissions jsonb, created_at, updated_at) with RLS + audit trigger (~1h)
-- [ ] Create `approval_requests` table (id, company_id, claim_id, requested_by, requested_amount, authority_exceeded_by, request_type, justification, supporting_docs uuid[], status, reviewed_by, reviewed_at, reviewer_notes, created_at) with RLS (~1h)
-- [ ] Seed default authority levels — trainee ($10K), field adjuster ($25K), senior adjuster ($100K), examiner ($250K), manager ($500K), director (unlimited). Configurable per company via CUST1 settings cascade (~1h)
-- [ ] Authority validation triggers — PostgreSQL trigger on estimate/payment INSERT/UPDATE checks user's authority level against amount. If exceeded, blocks action and auto-creates approval_request with notification to supervisor (~2h)
-- [ ] Approval workflow — supervisor sees queue of pending approvals with full claim context (photos, estimate, notes). Approve/deny/modify amount/request more info. Full audit trail (~2h)
-- [ ] Web Portal: `/dashboard/authority-levels` (admin) — configure levels per role. `/dashboard/approvals` (supervisor) — approval queue with claim preview, approval history, avg response time metrics (~2h)
-- [ ] Flutter: authority limit indicator on claim screen — shows current user's remaining authority, escalation button for voluntary escalation, approval status badges, push notification on approval/denial (~1h)
-- [ ] Commit: `[ADJ-AUTH] Authority limit workflow — authority_levels + approval_requests tables, PostgreSQL validation triggers, auto-escalation, supervisor approval queue, audit trail, configurable per company`
+**System Connectivity:**
+- Reads from: `companies`, `users`, `properties`, `jobs`, `insurance_claims`, `tpa_assignments`, `company_feature_flags`
+- Writes to: 3 new tables (`adjuster_claims`, `adjuster_profiles`, `claim_review_activities`)
+- Wires to: D2 insurance infrastructure, Phase T TPA module, ADJ2 evidence, ADJ3 supplements, ADJ5 authority, ADJ9 portal, ADJ11 cross-entity
+
+**Migration:**
+
+- [ ] Create `adjuster_profiles` table (~1h):
+  ```sql
+  CREATE TABLE adjuster_profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    user_id UUID NOT NULL REFERENCES users(id),
+    adjuster_type TEXT NOT NULL CHECK (adjuster_type IN (
+      'staff','ia','pa','cat','desk','field','large_loss','marine',
+      'auto','property','casualty','workers_comp','specialty','siu',
+      'supplement_reviewer','examiner','tpa','restoration'
+    )),
+    license_numbers JSONB DEFAULT '[]',
+    certifications TEXT[] DEFAULT '{}',
+    specialties TEXT[] DEFAULT '{}',
+    authority_level_id UUID,
+    years_experience INTEGER,
+    carrier_affiliations JSONB DEFAULT '[]',
+    tpa_affiliations JSONB DEFAULT '[]',
+    preferred_claim_types TEXT[] DEFAULT '{}',
+    territory_states TEXT[] DEFAULT '{}',
+    territory_zip_codes TEXT[] DEFAULT '{}',
+    daily_capacity INTEGER DEFAULT 5,
+    bio TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE adjuster_profiles ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "adj_profiles_select" ON adjuster_profiles FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "adj_profiles_insert" ON adjuster_profiles FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "adj_profiles_update" ON adjuster_profiles FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "adj_profiles_delete" ON adjuster_profiles FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_adj_profiles_company ON adjuster_profiles(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_profiles_user ON adjuster_profiles(user_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_profiles_type ON adjuster_profiles(adjuster_type) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_adj_profiles_updated_at BEFORE UPDATE ON adjuster_profiles
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER adj_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON adjuster_profiles
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  CREATE UNIQUE INDEX idx_adj_profiles_unique_user ON adjuster_profiles(company_id, user_id) WHERE deleted_at IS NULL;
+  ```
+
+- [ ] Create `adjuster_claims` table (~3h):
+  ```sql
+  CREATE TABLE adjuster_claims (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    claim_number TEXT NOT NULL,
+    policy_number TEXT,
+    carrier_name TEXT,
+    carrier_claim_number TEXT,
+    date_of_loss TIMESTAMPTZ,
+    date_reported TIMESTAMPTZ,
+    loss_type TEXT NOT NULL CHECK (loss_type IN (
+      'water','fire','wind_hail','flood','contents','auto',
+      'liability','workers_comp','marine','general'
+    )),
+    loss_description TEXT,
+    property_id UUID REFERENCES properties(id),
+    loss_address_line1 TEXT,
+    loss_address_line2 TEXT,
+    loss_city TEXT,
+    loss_state TEXT,
+    loss_zip TEXT,
+    loss_lat NUMERIC(10,7),
+    loss_lon NUMERIC(10,7),
+    policyholder_name TEXT,
+    policyholder_phone TEXT,
+    policyholder_email TEXT,
+    contractor_company_id UUID REFERENCES companies(id),
+    insurance_claim_id UUID REFERENCES insurance_claims(id),
+    assigned_to UUID REFERENCES users(id),
+    adjuster_type TEXT CHECK (adjuster_type IN (
+      'staff','ia','pa','cat','desk','field','large_loss','marine',
+      'auto','property','casualty','workers_comp','specialty','siu',
+      'supplement_reviewer','examiner','tpa','restoration'
+    )),
+    pipeline_stage TEXT NOT NULL DEFAULT 'assigned',
+    pipeline_stage_entered_at TIMESTAMPTZ DEFAULT now(),
+    reserve_amount NUMERIC(12,2),
+    estimate_amount NUMERIC(12,2),
+    paid_amount NUMERIC(12,2),
+    deductible NUMERIC(10,2),
+    coverage_type TEXT,
+    custom_fields JSONB DEFAULT '{}',
+    is_cat_event BOOLEAN DEFAULT false,
+    is_supplement BOOLEAN DEFAULT false,
+    is_litigation BOOLEAN DEFAULT false,
+    is_siu_referred BOOLEAN DEFAULT false,
+    priority TEXT DEFAULT 'normal' CHECK (priority IN ('low','normal','high','urgent')),
+    sla_deadline TIMESTAMPTZ,
+    sla_status TEXT DEFAULT 'on_track' CHECK (sla_status IN ('on_track','at_risk','overdue')),
+    source TEXT DEFAULT 'manual' CHECK (source IN ('manual','tpa_import','contractor_sent','portal_invite')),
+    notes TEXT,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+    -- UNIQUE(company_id, claim_number) partial index created separately below (not valid inline in CREATE TABLE)
+  );
+  ALTER TABLE adjuster_claims ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "adj_claims_select" ON adjuster_claims FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "adj_claims_insert" ON adjuster_claims FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "adj_claims_update" ON adjuster_claims FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "adj_claims_delete" ON adjuster_claims FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_adj_claims_company ON adjuster_claims(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_assigned ON adjuster_claims(assigned_to) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_stage ON adjuster_claims(pipeline_stage) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_loss_type ON adjuster_claims(loss_type) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_carrier ON adjuster_claims(carrier_name) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_contractor ON adjuster_claims(contractor_company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_insurance ON adjuster_claims(insurance_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_priority ON adjuster_claims(priority) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_claims_sla ON adjuster_claims(sla_deadline) WHERE deleted_at IS NULL AND sla_status != 'on_track';
+  CREATE INDEX idx_adj_claims_dol ON adjuster_claims(date_of_loss) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_adj_claims_updated_at BEFORE UPDATE ON adjuster_claims
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER adj_claims_audit AFTER INSERT OR UPDATE OR DELETE ON adjuster_claims
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  CREATE UNIQUE INDEX idx_adj_claims_unique_number ON adjuster_claims(company_id, claim_number) WHERE deleted_at IS NULL;
+  ```
+
+- [ ] Create `claim_review_activities` table (~1h):
+  ```sql
+  CREATE TABLE claim_review_activities (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    activity_type TEXT NOT NULL CHECK (activity_type IN (
+      'status_change','note','photo_added','document_added',
+      'supplement_received','supplement_reviewed','approval_requested',
+      'approval_granted','approval_denied','assignment_change',
+      'reserve_change','payment','communication','sla_alert',
+      'evidence_received','sketch_viewed','recon_viewed'
+    )),
+    description TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    metadata JSONB DEFAULT '{}',
+    performed_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE claim_review_activities ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "claim_activities_select" ON claim_review_activities FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "claim_activities_insert" ON claim_review_activities FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "claim_activities_update" ON claim_review_activities FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "claim_activities_delete" ON claim_review_activities FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_claim_activities_company ON claim_review_activities(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_claim_activities_claim ON claim_review_activities(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_claim_activities_type ON claim_review_activities(activity_type) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_claim_activities_created ON claim_review_activities(created_at DESC) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_claim_activities_updated_at BEFORE UPDATE ON claim_review_activities
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER claim_activities_audit AFTER INSERT OR UPDATE OR DELETE ON claim_review_activities
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+- [ ] Seed default pipeline stages per adjuster type (~2h):
+  - Staff (Property): FNOL → Assigned → Contacted → Inspected → Estimated → Review → Approved → Paid ACV → Repairs → Supplement → Paid RCV → Closed
+  - IA (Property): Assigned → Accepted → Scheduled → Inspected → Reported → Carrier Review → Supplement → Re-inspect → Closed
+  - Public Adjuster: Lead → Signed → Inspected → Policy Review → Counter-Estimate → Submitted → Negotiation → Supplement → Appraisal → Settled
+  - CAT: Deployed → Assigned → Contacted → Inspected → Estimated → Uploaded → QC Review → Closed
+  - Desk: Assigned → Contacted → Photos Requested → Photos Received → Estimated → Sent → Supplement → Closed
+  - Supplement Reviewer: Received → Under Review → Re-Inspect Ordered → Inspected → Decision → Communicated → Closed
+  - Store as JSONB seed in migration: `INSERT INTO company_settings_defaults ...`
+  - Each stage: `{name, order, color, auto_sla_hours, required_fields[], allowed_transitions[]}`
+
+- [ ] Seed default custom field schemas per claim type (~2h):
+  - **Water**: water_category (1/2/3 per IICRC S500), water_source, affected_rooms, moisture_readings JSONB[], equipment_deployed JSONB[], drying_days_count, mold_presence, containment_required
+  - **Fire**: origin_room, cause_of_fire, fire_department_response, fd_report_number, structural_damage, smoke_damage_extent, contents_damage, ale_required, ale_duration_estimate, salvageable_items, hazmat_present
+  - **Wind/Hail**: wind_direction, hail_size_inches, storm_date_time, noaa_storm_event_id, shingle_type, shingle_age_years, test_square_results, facing_direction, slopes_affected, soft_metal_damage
+  - **Flood**: flood_zone, high_water_mark, flooding_duration, fema_disaster_number, contents_above_waterline, contents_below_waterline, electrical_affected, hvac_affected
+  - **Contents**: total_rooms_inventoried, inventory_method, total_items, schedule_of_loss_attached
+  - **Auto**: vin, make, model, year, damage_areas JSONB[], total_loss_determination, acv_valuation, oem_vs_aftermarket, labor_type, drp_shop
+  - **Workers Comp**: injury_type, body_part, ttd_rate, ppd_rate, employer, job_title, date_of_injury, return_to_work_status
+  - **Marine**: vessel_name, hull_id, vessel_type, registry, damage_type, survey_date, salvage_required
+  - Store as JSONB schema definitions for dynamic form rendering
+
+**Dart Models:**
+
+- [ ] `AdjusterProfile` model in `lib/models/adjuster_profile.dart` — Equatable, fromJson/toJson (snake_case), copyWith. Fields: id, companyId, userId, adjusterType, licenseNumbers, certifications, specialties, authorityLevelId, yearsExperience, carrierAffiliations, tpaAffiliations, preferredClaimTypes, territoryStates, territoryZipCodes, dailyCapacity, bio. Computed: `isFieldAdjuster` (staff/ia/cat/field/large_loss), `isDeskAdjuster` (desk/supplement_reviewer/examiner), `isPublicAdjuster` (pa) (~1h)
+- [ ] `AdjusterClaim` model in `lib/models/adjuster_claim.dart` — Equatable, fromJson/toJson, copyWith. All columns from table. Computed: `isOverdue` (sla_deadline < now), `daysSinceLoss`, `isHighValue` (estimate > authority limit), `hasContractorLink` (contractorCompanyId != null), `displayAddress` (formatted) (~1h)
+- [ ] `ClaimReviewActivity` model in `lib/models/claim_review_activity.dart` — Equatable, fromJson/toJson, copyWith. All columns. Computed: `timeAgo`, `activityIcon` (by type) (~0.5h)
+
+**Repositories:**
+
+- [ ] `AdjusterProfileRepository` — abstract + concrete. Methods: getByUserId(), upsert(), updateLicenses(), updateCertifications() (~0.5h)
+- [ ] `AdjusterClaimRepository` — abstract + concrete. Methods: getAll(filters), getById(id), create(), update(), updateStage(id, newStage), assignTo(id, userId), search(query), getByPipelineStage(stage), getOverdueClaims(), getStatistics() (~1h)
+- [ ] `ClaimReviewActivityRepository` — abstract + concrete. Methods: getByClaimId(claimId), create(), getRecent(limit) (~0.5h)
+
+**Providers:**
+
+- [ ] `adjusterProfileProvider` — AsyncNotifierProvider for current user's adjuster profile (~0.5h)
+- [ ] `adjusterClaimsProvider` — StreamProvider.family for filtered claim lists with real-time updates (~0.5h)
+- [ ] `adjusterClaimDetailProvider` — FutureProvider.family(claimId) for single claim with activities (~0.5h)
+- [ ] `claimStatisticsProvider` — FutureProvider for dashboard metrics (open/closed/overdue counts, avg cycle time) (~0.5h)
+
+**Flutter Screens (4-state: loading/error/empty/data on ALL):**
+
+- [ ] `AdjusterDashboardScreen` — claims summary cards (open, overdue, supplement pending, settled this month), recent activity feed, SLA alerts, quick-action buttons. ConsumerWidget with ref.watch(claimStatisticsProvider) (~2h)
+- [ ] `ClaimsListScreen` — list/kanban toggle. Filter by: pipeline_stage, loss_type, priority, assigned_to, carrier, date range. Sort by: date_of_loss, sla_deadline, estimate_amount, updated_at. Search by: claim_number, policyholder, address. Kanban columns = pipeline stages (configurable per adjuster type). Pull-to-refresh + infinite scroll (~3h)
+- [ ] `ClaimDetailScreen` — tabbed layout: Overview (key fields, timeline), Evidence (ADJ2), Supplement (ADJ3), Sketch (ADJ2), Photos, Documents, Activity. Status badge, priority badge, SLA countdown. Edit mode for claim fields. Stage transition buttons with confirmation (~3h)
+- [ ] `AdjusterProfileScreen` — profile setup: adjuster type selector, license entry per state, certifications, specialties, territory config. First-run onboarding flow for new adjuster users (~1h)
+- [ ] `ClaimCreateScreen` — multi-step form: loss details → policyholder → property → financial → custom fields (rendered dynamically from claim type schema). Address autocomplete. Camera shortcut for quick photo capture (~2h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-adjuster-claims.ts` hook — CRUD + real-time subscription on `adjuster_claims` where `deleted_at IS NULL`. Filters, pagination, search. Returns `{ claims, loading, error, totalCount, createClaim, updateClaim, updateStage, assignClaim }`. Optimistic locking on updates (`updated_at` in WHERE) (~2h)
+- [ ] `use-claim-activities.ts` hook — real-time subscription on `claim_review_activities` by claim_id, ordered by created_at DESC. Returns `{ activities, loading, error, addActivity }` (~1h)
+- [ ] `use-adjuster-profile.ts` hook — CRUD for current user's adjuster_profiles record. Returns `{ profile, loading, error, updateProfile }` (~1h)
+- [ ] `/dashboard/claims` page — DataTable with filters + kanban board toggle. Columns: claim#, policyholder, loss type, stage, priority, assigned, SLA, amount. Bulk actions (assign, change stage). Feature flag: `CLAIMS_PIPELINE` (~2h)
+- [ ] `/dashboard/claims/[id]` page — split-pane layout: claim info + timeline (left 40%), evidence/supplement/sketch tabs (right 60%). Activity feed at bottom. Stage transition dropdown. Quick notes. Feature flag: `CLAIMS_DASHBOARD` (~3h)
+- [ ] `/settings/adjuster-profile` page — profile configuration for current user (~1h)
+- [ ] `/settings/pipeline-stages` page — (admin) configure pipeline stages per adjuster type. Drag-to-reorder, color picker, SLA hours, required fields per stage, allowed transitions (~1h)
+
+**Client Portal:**
+- [ ] NO direct adjuster claim access for homeowners in ADJ1 (wired in ADJ11)
+
+**Team Portal:**
+- [ ] Field adjusters see their assigned claims only. Same claim list/detail but filtered by `assigned_to = auth.uid()`. Read-only for non-assigned claims (~1h)
+
+#### Security Verification
+- [ ] RLS enabled on all 3 new tables (adjuster_profiles, adjuster_claims, claim_review_activities)
+- [ ] Separate SELECT/INSERT/UPDATE/DELETE policies (NOT `FOR ALL`) on all 3 tables
+- [ ] DELETE restricted to owner/admin roles on all 3 tables
+- [ ] `company_id UUID NOT NULL REFERENCES companies(id)` on all 3 tables
+- [ ] `company_id` B-tree index on all 3 tables with `WHERE deleted_at IS NULL`
+- [ ] `audit_trigger_fn` on all 3 tables
+- [ ] `deleted_at TIMESTAMPTZ` on all 3 tables
+- [ ] `update_updated_at()` trigger on all 3 tables
+- [ ] All RLS policies use `requesting_company_id()` (NOT subquery)
+- [ ] All RLS SELECT/UPDATE policies include `deleted_at IS NULL`
+- [ ] All web hooks include `.is('deleted_at', null)` filter
+- [ ] All web hooks return `{ data, loading, error, mutations }` shape
+- [ ] All web hooks include real-time subscription cleanup
+- [ ] All Flutter screens handle 4 states (loading, error, empty, data)
+- [ ] No direct Supabase imports in Flutter screens (3-layer architecture)
+- [ ] Optimistic locking on `adjuster_claims` UPDATE (check `updated_at` in WHERE)
+- [ ] Feature flag gating: `CLAIMS_PIPELINE`, `CLAIMS_DASHBOARD` on web pages
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **D2** (Insurance Infrastructure) — `adjuster_claims.insurance_claim_id` FK links to contractor's `insurance_claims`. When contractor sends estimate via ADJ9, both records link. Claim status sync: contractor updates → adjuster sees via real-time subscription
+- [ ] **Phase T** (TPA Module) — `tpa_assignments` read by adjuster dashboard for TPA-sourced claims. SLA deadlines from TPA programs flow to `adjuster_claims.sla_deadline`
+- [ ] **ADJ2** (Evidence) — claim detail page has Evidence tab wired to `evidence_packages` by `adjuster_claim_id`
+- [ ] **ADJ3** (Supplements) — claim detail page has Supplement tab wired to `supplement_reviews` by `adjuster_claim_id`
+- [ ] **ADJ5** (Authority) — claim financial fields checked against `authority_levels`. Indicator on claim detail shows remaining authority
+- [ ] **ADJ9** (Portal) — `adjuster_claims.source = 'portal_invite'` when claim created from Trojan horse invite. Contractor evidence auto-linked
+- [ ] **ADJ11** (Cross-Entity) — homeowner sees simplified claim status in client portal. Contractor sees adjuster review status
+- [ ] **CUST9** — CLAIMS_PIPELINE, CLAIMS_DASHBOARD, ADJUSTER_TYPES, CLAIM_CUSTOM_FIELDS modules gated per company plan
+- [ ] **CUST1** — pipeline stage configs stored in company settings cascade. Custom field schemas per claim type configurable per company
+
+#### i18n Requirements
+- [ ] All claim status labels, pipeline stage names, loss type labels, priority labels, SLA status labels — translated in all 10 locales
+- [ ] Adjuster type names translated (staff→personal de plantilla, ia→ajustador independiente, pa→ajustador público, etc.)
+- [ ] Date/time formatting locale-correct (date_of_loss, sla_deadline)
+- [ ] Currency formatting locale-correct (reserve, estimate, paid amounts)
+- [ ] Custom field labels translated where applicable
+- [ ] All 10 locales: EN, ES, PT-BR, PL, ZH, HT, RU, KO, VI, TL
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+
+- [ ] Commit: `[ADJ1] Claims pipeline foundation — adjuster_claims, adjuster_profiles, claim_review_activities tables, 18 adjuster types, 10 claim types with custom fields, configurable pipeline stages, split-pane dashboard, kanban board`
+
+---
+
+### ADJ2 — Evidence Package Viewer + Sketch/Recon Integration (~28h) — S146
+*Adjusters receive evidence from contractors: photos, floor plans, 3D scans, recon data, moisture readings, weather verification. Current state: unorganized email attachments, random photo dumps. The #1 complaint from adjusters about contractors is poor evidence packaging. Zafto generates ~1,000+ data points per job vs ~200 from Xactimate. This sprint builds the viewer that makes all that evidence accessible in one organized interface. Includes 2D sketch viewer (Konva.js web / SketchPainter Flutter), 3D sketch viewer (three.js web), recon report viewer (property intelligence), and photo gallery with GPS/timestamp organization.*
+
+*Source: adjuster-deep-research-s133.md (evidence weapon), adjuster-complaints-raw-research-s133.md (evidence packaging gap)*
+*Depends on: ADJ1 (claims foundation), SK1-SK10 (sketch engine), Phase P (recon)*
+*CUST9 Modules: EVIDENCE_VIEWER, SKETCH_VIEWER, RECON_VIEWER, PHOTO_GALLERY*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `property_floor_plans`, `floor_plan_layers`, `floor_plan_rooms`, `property_scans`, `roof_measurements`, `wall_measurements`, `property_features`, `trade_bid_data`, `shared_floor_plans`, `shared_property_scans`, `property_data_sharing`
+- Writes to: 2 new tables (`evidence_packages`, `evidence_package_items`)
+- Wires to: SK (sketch engine), Phase P (recon), ADJ1 (claims), ADJ3 (supplement evidence), ADJ9 (public viewer)
+
+**Migration:**
+
+- [ ] Create `evidence_packages` table (~1.5h):
+  ```sql
+  CREATE TABLE evidence_packages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    contractor_company_id UUID REFERENCES companies(id),
+    insurance_claim_id UUID REFERENCES insurance_claims(id),
+    package_type TEXT NOT NULL DEFAULT 'initial' CHECK (package_type IN ('initial','supplement','update','final')),
+    title TEXT,
+    description TEXT,
+    floor_plan_ids UUID[] DEFAULT '{}',
+    property_scan_id UUID REFERENCES property_scans(id),
+    photo_count INTEGER DEFAULT 0,
+    total_data_points INTEGER DEFAULT 0,
+    weather_verification JSONB,
+    completeness_score NUMERIC(5,2),
+    completeness_details JSONB DEFAULT '{}',
+    status TEXT DEFAULT 'received' CHECK (status IN ('received','reviewing','reviewed','flagged')),
+    reviewed_by UUID REFERENCES users(id),
+    reviewed_at TIMESTAMPTZ,
+    reviewer_notes TEXT,
+    share_token TEXT,
+    share_token_expires_at TIMESTAMPTZ,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE evidence_packages ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "evidence_pkg_select" ON evidence_packages FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "evidence_pkg_insert" ON evidence_packages FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "evidence_pkg_update" ON evidence_packages FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "evidence_pkg_delete" ON evidence_packages FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  -- PUBLIC ACCESS: Handled via 'get-public-evidence' EF (validates share_token from request header).
+  -- No RLS-based public SELECT policy. All public access goes through the EF which validates:
+  -- 1. Token matches exactly (not just "token exists")
+  -- 2. Token not expired
+  -- 3. Returns scoped data (not full row)
+  CREATE INDEX idx_evidence_pkg_company ON evidence_packages(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_evidence_pkg_claim ON evidence_packages(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_evidence_pkg_contractor ON evidence_packages(contractor_company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_evidence_pkg_token ON evidence_packages(share_token) WHERE share_token IS NOT NULL AND deleted_at IS NULL;
+  CREATE INDEX idx_evidence_pkg_status ON evidence_packages(status) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_evidence_pkg_updated_at BEFORE UPDATE ON evidence_packages
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER evidence_pkg_audit AFTER INSERT OR UPDATE OR DELETE ON evidence_packages
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  CREATE UNIQUE INDEX idx_evidence_pkg_share_token ON evidence_packages(share_token) WHERE share_token IS NOT NULL AND deleted_at IS NULL;
+  ```
+
+- [ ] Create `evidence_package_items` table (~1h):
+  ```sql
+  CREATE TABLE evidence_package_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    evidence_package_id UUID NOT NULL REFERENCES evidence_packages(id),
+    item_type TEXT NOT NULL CHECK (item_type IN (
+      'photo','floor_plan','3d_scan','recon_report','moisture_reading',
+      'weather_data','estimate','supplement','document','drying_log',
+      'code_reference','certification','measurement','video'
+    )),
+    title TEXT,
+    description TEXT,
+    room_name TEXT,
+    file_path TEXT,
+    file_url TEXT,
+    thumbnail_url TEXT,
+    metadata JSONB DEFAULT '{}',
+    gps_lat NUMERIC(10,7),
+    gps_lon NUMERIC(10,7),
+    captured_at TIMESTAMPTZ,
+    sort_order INTEGER DEFAULT 0,
+    is_flagged BOOLEAN DEFAULT false,
+    flag_reason TEXT,
+    flagged_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE evidence_package_items ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "evidence_items_select" ON evidence_package_items FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "evidence_items_insert" ON evidence_package_items FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "evidence_items_update" ON evidence_package_items FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "evidence_items_delete" ON evidence_package_items FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  -- PUBLIC ACCESS: Handled via 'get-public-evidence' EF (validates share_token from request header).
+  -- No RLS-based public SELECT policy. All public access goes through the EF which validates:
+  -- 1. Token matches exactly (not just "token exists")
+  -- 2. Token not expired
+  -- 3. Returns scoped data (not full row)
+  CREATE INDEX idx_evidence_items_company ON evidence_package_items(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_evidence_items_package ON evidence_package_items(evidence_package_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_evidence_items_type ON evidence_package_items(item_type) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_evidence_items_room ON evidence_package_items(room_name) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_evidence_items_updated_at BEFORE UPDATE ON evidence_package_items
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER evidence_items_audit AFTER INSERT OR UPDATE OR DELETE ON evidence_package_items
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+**Dart Models:**
+
+- [ ] `EvidencePackage` model — Equatable, fromJson/toJson, copyWith. All table columns. Computed: `isComplete` (completeness_score >= 80), `missingEvidence` (list of missing item types), `photoCountByRoom` (grouped from items), `hasSketch`, `hasRecon`, `hasWeather` (~1h)
+- [ ] `EvidencePackageItem` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isPhoto`, `isFloorPlan`, `isMeasurement`, `displayTimestamp` (~0.5h)
+
+**Repositories:**
+
+- [ ] `EvidencePackageRepository` — getByClaimId(), getById(), create(), updateStatus(), flagItem(). Includes join query for items (~1h)
+- [ ] `EvidencePackageItemRepository` — getByPackageId(), create(), bulkCreate(), updateFlag() (~0.5h)
+
+**Providers:**
+
+- [ ] `evidencePackageProvider` — FutureProvider.family(claimId) for evidence packages with items (~0.5h)
+- [ ] `evidenceItemsByRoomProvider` — computed provider grouping items by room_name (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `EvidencePackageScreen` — organized evidence view: completeness indicator at top (photos ✓, sketch ✓, recon ✓, moisture ?, weather ✓), room-by-room navigation, item cards with thumbnails. Filter by item_type. Quick-flag buttons on each item (~3h)
+- [ ] `SketchViewerScreen` — read-only 2D sketch view using `sketch_core` package SketchPainter. Renders `FloorPlanDataV2` from shared_floor_plans. Damage zones overlay (IICRC color-coded: Cat 1 blue, Cat 2 yellow, Cat 3 red). Room tap → room detail with measurements (floor SF, wall SF, perimeter LF). Pinch-to-zoom, pan. Floor switcher for multi-floor. Annotation overlay from `floor_plan_annotations`. Toggle damage layer visibility (~3h)
+- [ ] `ReconReportScreen` — read-only property intelligence from `property_scans`. Sections: property overview (type, year, sqft, stories), roof assessment (material, age, condition, pitch, facets), wall measurements, building features (HVAC, electrical, plumbing age/condition), scan comparison (adjuster scope vs recon: "Adjuster: 32 squares. Recon: 35.2 squares"), satellite view, property lead score. Data from `property_scans`, `roof_measurements`, `roof_facets`, `wall_measurements`, `property_features` (~2h)
+- [ ] `PhotoGalleryScreen` — photos organized by: room (tabs), chronological timeline, and map view (GPS pins). Each photo: timestamp, GPS location, capture device. Zoom, swipe between photos. Flag/unflag per photo. Before/during/after categorization. Photo count per room shown in tabs (~2h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-evidence-packages.ts` hook — CRUD + real-time on evidence_packages by claim_id. Includes items join. Completeness score calculation. Returns `{ packages, loading, error, createPackage, updateStatus, flagItem }` (~2h)
+- [ ] `/dashboard/claims/[id]/evidence` page — Evidence tab in claim detail split-pane. Completeness progress bar (green/yellow/red). Room navigator (sidebar). Item cards with thumbnails + metadata. Flag/review buttons. Filter by type. Sort by room/date/type (~2h)
+- [ ] **2D Sketch Viewer component** — Konva.js Stage (read-only mode) rendering `FloorPlanDataV2`. Uses existing `src/lib/sketch-engine/` renderers (wall-renderer, door-renderer, window-renderer, damage-renderer). Damage zones with IICRC color coding. Room labels with area calculations. Layer toggle (base/damage). Zoom/pan controls. Room click → detail panel with measurements. MiniMap for navigation (~3h)
+- [ ] **3D Sketch Viewer component** — three.js via `@react-three/fiber` (read-only). Uses existing `three-converter.ts` to convert FloorPlanDataV2 → 3D scene. Wall extrusion, door/window openings, floor plane. Damage zone overlay (semi-transparent colored volumes). OrbitControls. 2D↔3D toggle via existing `ViewToggle.tsx` pattern. Camera position mapped between views (~2h)
+- [ ] **Recon Report Viewer component** — read-only property intelligence panel. Property overview card, roof assessment card with facet diagram, measurement comparison table (adjuster scope vs recon data), building features list, condition badges. Data from shared_property_scans cross-company read (~2h)
+- [ ] **Photo Gallery component** — grid/timeline/map views. Room tabs. GPS map overlay (Leaflet or similar). Photo lightbox with zoom/pan. Flag/review actions. Before/during/after timeline. Download selected photos (~2h)
+
+**Edge Functions:**
+
+- [ ] `generate-evidence-package` EF — assembles all evidence for a claim into a single PDF. Auth via JWT. Rate limit: 5/min. CORS via _shared/cors.ts. Sections: cover page (claim#, date, property), photo sheets (organized by room, 4 per page), floor plan rendering (2D), measurement table, moisture reading map, weather verification, code references, contractor certifications. Uses @react-pdf/renderer pattern. Returns PDF URL in storage bucket. Input validation: claim_id required, must belong to requesting company. Sentry error logging on all catch blocks (~4h)
+
+#### Security Verification
+- [ ] RLS enabled on evidence_packages, evidence_package_items
+- [ ] Separate SELECT/INSERT/UPDATE/DELETE policies on both tables
+- [ ] Public access handled via 'get-public-evidence' EF (validates share_token from request header, NOT via RLS public SELECT policy)
+- [ ] No RLS-based public SELECT policy on evidence_packages or evidence_package_items (prevents data leak)
+- [ ] DELETE restricted to owner/admin
+- [ ] company_id + indexes + audit triggers + deleted_at on both tables
+- [ ] update_updated_at() triggers on both tables
+- [ ] All RLS SELECT/UPDATE include deleted_at IS NULL
+- [ ] EF: auth via JWT, company_id from app_metadata, CORS, rate limit, input validation
+- [ ] Shared sketch data accessed via shared_floor_plans RLS (read-only, company_id scope)
+- [ ] Shared recon data accessed via property_data_sharing RLS
+- [ ] Photo URLs accessed via Supabase storage RLS (private bucket, signed URLs)
+- [ ] share_token generation uses crypto.randomUUID() — no predictable tokens
+- [ ] share_token_expires_at default 30 days, configurable per company
+- [ ] Sketch viewer read-only — no edit actions exposed
+- [ ] Recon viewer read-only — no edit actions exposed
+- [ ] Feature flags: EVIDENCE_VIEWER, SKETCH_VIEWER, RECON_VIEWER, PHOTO_GALLERY
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **SK** (Sketch Engine) — 2D viewer uses sketch_core package renderers (SketchPainter Flutter, Konva renderers web). 3D viewer uses three-converter.ts. Floor plan data from `shared_floor_plans` cross-company read. SketchConfig.adjuster() for adjuster's own damage mapping (8 tools, damage layer, LiDAR, FML export)
+- [ ] **Phase P** (Recon) — property intelligence data from `property_scans`, `roof_measurements`, `roof_facets`, `wall_measurements`, `property_features` via `shared_property_scans` or `property_data_sharing` cross-company read. Measurement comparison: adjuster scope vs recon data with discrepancy flagging
+- [ ] **ADJ1** (Claims) — Evidence tab wired to claim detail page. evidence_packages.adjuster_claim_id FK
+- [ ] **ADJ3** (Supplements) — supplement evidence items reference evidence_package_items for "before" vs "supplement" comparison
+- [ ] **ADJ9** (Portal) — public evidence viewer uses share_token for no-login access. Same components rendered in public route
+- [ ] **ADJ11** (Cross-Entity) — contractor sees "Evidence Package Sent" status. Homeowner sees "Evidence Under Review" in client portal
+- [ ] **CUST9** — EVIDENCE_VIEWER, SKETCH_VIEWER, RECON_VIEWER, PHOTO_GALLERY modules gated per company plan
+
+#### i18n Requirements
+- [ ] Evidence type labels, completeness indicators, room names, measurement labels, status badges — all 10 locales
+- [ ] Photo metadata labels (captured_at, GPS coordinates, device)
+- [ ] Sketch viewer labels (room names, dimensions with locale-correct units)
+- [ ] Recon report labels (property type, roof material, condition ratings)
+- [ ] IICRC category names (Cat 1 Clean Water, Cat 2 Gray Water, Cat 3 Black Water)
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] CRITICAL: Add Cross-Module Dependencies note for `shared_floor_plans`/`shared_property_scans` (created in P-DT sprints)
+- [ ] CRITICAL: ADJ2 migration must use `IF NOT EXISTS` or create stub views for cross-module tables
+
+- [ ] Commit: `[ADJ2] Evidence package viewer — evidence_packages + evidence_package_items tables, 2D sketch viewer (Konva + SketchPainter), 3D sketch viewer (three.js), recon report viewer, photo gallery, evidence PDF generator, share tokens, completeness scoring`
+
+---
+
+### ADJ3 — Supplement Workflow Engine (~36h) — S146
+*THE KILLER FEATURE. Supplement hell is the #1 pain point: 3-10 rounds of email/fax negotiation per complex claim, 30+ day delays, 85% denied initially, documents "lost," no audit trail, no centralized thread. Average supplement adds 15-40% to original estimate. Currently submitted via XactAnalysis upload, email, carrier portal, or fax. Zafto replaces this with: contractor marks items `isSupplement: true`, auto-diff generated (green=added, red=removed, yellow=modified), adjuster reviews per-item with inline comments, every action timestamped with full audit trail, done in hours instead of weeks. This single feature justifies the entire adjuster portal.*
+
+*Source: adjuster-workflow-deep-dive-s134.md (supplement success criteria), adjuster-complaints-raw-research-s133.md (supplement hell), adjuster-deep-research-s133.md (Zafto supplement advantage)*
+*Depends on: ADJ1 (claims), ADJ2 (evidence), D8 (estimates — isSupplement flag on EstimateLineItem)*
+*CUST9 Modules: SUPPLEMENT_REVIEW, SUPPLEMENT_DIFF, SUPPLEMENT_NEGOTIATION*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `evidence_packages`, `insurance_claims`, `claim_supplements` (D2), `estimate_items`, `estimate_areas`
+- Writes to: 2 new tables (`supplement_reviews`, `supplement_review_items`)
+- Wires to: D8 estimates (isSupplement), D2 insurance (claim_supplements), ADJ1 claims, ADJ2 evidence, ADJ5 authority (amount check), ADJ9 portal (public supplement view)
+
+**Migration:**
+
+- [ ] Create `supplement_reviews` table (~1.5h):
+  ```sql
+  CREATE TABLE supplement_reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    contractor_company_id UUID REFERENCES companies(id),
+    insurance_claim_id UUID REFERENCES insurance_claims(id),
+    supplement_number INTEGER NOT NULL DEFAULT 1,
+    original_estimate_amount NUMERIC(12,2),
+    supplement_amount NUMERIC(12,2),
+    net_change_amount NUMERIC(12,2),
+    total_line_items INTEGER DEFAULT 0,
+    approved_line_items INTEGER DEFAULT 0,
+    denied_line_items INTEGER DEFAULT 0,
+    flagged_line_items INTEGER DEFAULT 0,
+    pending_line_items INTEGER DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'received' CHECK (status IN (
+      'received','under_review','partially_approved','approved',
+      'denied','negotiation','re_inspection_ordered','closed'
+    )),
+    review_started_at TIMESTAMPTZ,
+    review_completed_at TIMESTAMPTZ,
+    reviewed_by UUID REFERENCES users(id),
+    reviewer_notes TEXT,
+    denial_reason TEXT,
+    evidence_package_id UUID REFERENCES evidence_packages(id),
+    has_moisture_data BOOLEAN DEFAULT false,
+    has_weather_data BOOLEAN DEFAULT false,
+    has_photo_evidence BOOLEAN DEFAULT false,
+    has_sketch_data BOOLEAN DEFAULT false,
+    has_code_references BOOLEAN DEFAULT false,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE supplement_reviews ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "supplement_reviews_select" ON supplement_reviews FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "supplement_reviews_insert" ON supplement_reviews FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "supplement_reviews_update" ON supplement_reviews FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "supplement_reviews_delete" ON supplement_reviews FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_supplement_reviews_company ON supplement_reviews(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_reviews_claim ON supplement_reviews(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_reviews_status ON supplement_reviews(status) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_reviews_contractor ON supplement_reviews(contractor_company_id) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_supplement_reviews_updated_at BEFORE UPDATE ON supplement_reviews
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER supplement_reviews_audit AFTER INSERT OR UPDATE OR DELETE ON supplement_reviews
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  CREATE UNIQUE INDEX idx_supplement_reviews_unique_number ON supplement_reviews(company_id, adjuster_claim_id, supplement_number) WHERE deleted_at IS NULL;
+  ```
+
+- [ ] Create `supplement_review_items` table (~1.5h):
+  ```sql
+  CREATE TABLE supplement_review_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    supplement_review_id UUID NOT NULL REFERENCES supplement_reviews(id),
+    original_line_item_id UUID, -- FK to estimate_items(id) deferred to INTEG sprint (D8 may not exist at migration time)
+    supplement_line_item_id UUID, -- FK to estimate_items(id) deferred to INTEG sprint (D8 may not exist at migration time)
+    diff_type TEXT NOT NULL CHECK (diff_type IN ('added','removed','modified','unchanged')),
+    category_code TEXT,
+    item_description TEXT NOT NULL,
+    room_name TEXT,
+    original_quantity NUMERIC(10,2),
+    supplement_quantity NUMERIC(10,2),
+    original_unit_price NUMERIC(10,2),
+    supplement_unit_price NUMERIC(10,2),
+    original_total NUMERIC(12,2),
+    supplement_total NUMERIC(12,2),
+    change_amount NUMERIC(12,2),
+    unit_of_measure TEXT,
+    justification TEXT,
+    code_reference TEXT,
+    iicrc_reference TEXT,
+    photo_evidence_ids UUID[] DEFAULT '{}',
+    moisture_data JSONB,
+    review_status TEXT NOT NULL DEFAULT 'pending' CHECK (review_status IN (
+      'pending','approved','denied','flagged','modified'
+    )),
+    reviewer_comment TEXT,
+    reviewer_modified_amount NUMERIC(12,2),
+    reviewed_by UUID REFERENCES users(id),
+    reviewed_at TIMESTAMPTZ,
+    is_overhead BOOLEAN DEFAULT false,
+    is_profit BOOLEAN DEFAULT false,
+    is_tax BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE supplement_review_items ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "supplement_items_select" ON supplement_review_items FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "supplement_items_insert" ON supplement_review_items FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "supplement_items_update" ON supplement_review_items FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "supplement_items_delete" ON supplement_review_items FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_supplement_items_company ON supplement_review_items(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_items_review ON supplement_review_items(supplement_review_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_items_status ON supplement_review_items(review_status) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_items_diff ON supplement_review_items(diff_type) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_supplement_items_room ON supplement_review_items(room_name) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_supplement_items_updated_at BEFORE UPDATE ON supplement_review_items
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER supplement_items_audit AFTER INSERT OR UPDATE OR DELETE ON supplement_review_items
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+**Dart Models:**
+
+- [ ] `SupplementReview` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `approvalRate` (approved/total*100), `isFullyReviewed` (pending == 0), `daysInReview` (review_started_at to now), `evidenceCompleteness` (count of has_* booleans / 5 * 100) (~1h)
+- [ ] `SupplementReviewItem` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isNew` (diff_type == 'added'), `isChanged` (diff_type == 'modified'), `changePercent` (change_amount / original_total * 100), `hasPhotoEvidence` (photo_evidence_ids not empty), `hasMoistureData` (moisture_data != null), `diffColor` (green/red/yellow by diff_type) (~1h)
+
+**Repositories:**
+
+- [ ] `SupplementReviewRepository` — getByClaimId(), getById(), create(), updateStatus(), getStatistics(). Includes items join (~1h)
+- [ ] `SupplementReviewItemRepository` — getByReviewId(), updateReviewStatus(id, status, comment, modifiedAmount), bulkApprove(), bulkDeny() (~1h)
+
+**Providers:**
+
+- [ ] `supplementReviewsProvider` — FutureProvider.family(claimId) with items join (~0.5h)
+- [ ] `supplementDiffProvider` — computed provider that organizes items by room and diff_type for the diff viewer (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `SupplementReviewScreen` — split view: original estimate summary (left) vs supplement changes (right). Diff items color-coded: green (added), red (removed), yellow (modified). Per-item cards with: description, quantities (old→new), pricing (old→new), change amount, justification text, photo evidence thumbnails, moisture data badge, code reference badge. Quick-action buttons per item: Approve ✓ / Deny ✗ / Flag ⚑ / Comment 💬. Batch actions: "Approve All", "Deny All Unflagged". Progress bar: X of Y items reviewed. Running total of approved amount vs requested amount (~5h)
+- [ ] `SupplementNegotiationScreen` — per-item comment thread between adjuster and contractor (via claim_review_activities). Inline photo attachment. Quote code/standard references. Resolution status per thread. Timestamps on every message (~3h)
+- [ ] `SupplementSummaryScreen` — overview: original amount, supplement amount, net change, approved/denied/flagged counts, approval rate. Room-by-room breakdown chart. O&P calculation section with "three trade rule" reference and court precedent notes. Export to PDF button (~2h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-supplement-reviews.ts` hook — CRUD + real-time on supplement_reviews by claim_id. Items join. Returns `{ reviews, loading, error, updateStatus, approveItem, denyItem, flagItem, bulkApprove }`. Optimistic locking on item updates (~2h)
+- [ ] `use-supplement-review-items.ts` hook — CRUD + real-time on supplement_review_items by review_id. Returns `{ items, loading, error, reviewItem, addComment }` (~1h)
+- [ ] `/dashboard/claims/[id]/supplement` page — THE flagship page. Side-by-side diff layout:
+  - Left panel (40%): Original estimate line items grouped by room. Each item: description, qty, unit price, total. Fixed header with original total
+  - Right panel (60%): Supplement changes. Each item: diff badge (green ADDED / red REMOVED / yellow MODIFIED), description, qty change (old→new), price change (old→new), total change, justification narrative, evidence thumbnails (click to expand), moisture reading badge, weather verification badge, code reference link
+  - Per-item action row: Approve / Deny / Flag / Modify Amount / Add Comment
+  - Floating bottom bar: progress (X/Y reviewed), running approved total, "Submit Review" button
+  - O&P section at bottom: O&P calculation, "three trade rule" explainer with toggle to show/hide court precedents (case citations), approve/deny O&P separately (~5h)
+- [ ] `/dashboard/supplements` page — all supplement reviews across all claims. Filter by status. Sort by received date, amount, approval rate. Priority queue for overdue reviews (~2h)
+
+**Edge Functions:**
+
+- [ ] `generate-supplement-diff` EF — Auth via JWT. Rate limit: 10/min. CORS. Takes: adjuster_claim_id + supplement estimate data. Compares original estimate line items vs supplement items. For each item: matched by category_code + room + description similarity (fuzzy match with threshold 0.85). Unmatched supplement items = 'added'. Unmatched original items = 'removed'. Matched with different qty/price = 'modified'. Creates supplement_review + supplement_review_items records. Auto-attaches weather verification (if date_of_loss + GPS available, query NOAA SPC). Auto-links photo evidence (GPS proximity matching to floor plan rooms). Returns review_id. Sentry error logging on all catch blocks (~4h)
+
+#### Security Verification
+- [ ] RLS enabled on supplement_reviews, supplement_review_items
+- [ ] Separate SELECT/INSERT/UPDATE/DELETE on both tables
+- [ ] DELETE restricted to owner/admin
+- [ ] company_id + indexes + audit + deleted_at on both tables
+- [ ] update_updated_at() on both tables
+- [ ] All RLS SELECT/UPDATE include deleted_at IS NULL
+- [ ] Optimistic locking on supplement_review_items UPDATE (check updated_at)
+- [ ] EF: auth, company_id from JWT, CORS, rate limit, input validation
+- [ ] Fuzzy match threshold configurable, default 0.85 (prevents false matches)
+- [ ] reviewer_modified_amount cannot exceed supplement_total * 1.5 (prevent abuse)
+- [ ] Bulk approve/deny requires owner/admin role
+- [ ] Feature flags: SUPPLEMENT_REVIEW, SUPPLEMENT_DIFF, SUPPLEMENT_NEGOTIATION
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **D8** (Estimates) — `estimate_items.is_supplement` flag on contractor side triggers supplement_review creation in adjuster portal. Original estimate data read from `estimate_items` + `estimate_areas` for diff comparison
+- [ ] **D2** (Insurance Claims) — `claim_supplements` table (contractor-side) syncs with `supplement_reviews` (adjuster-side) via insurance_claim_id link. Supplement status updates flow both directions
+- [ ] **ADJ1** (Claims) — supplement review linked via adjuster_claim_id. Claim status auto-updates: "Supplement Received" → "Supplement Under Review" → "Supplement Approved/Denied"
+- [ ] **ADJ2** (Evidence) — supplement evidence items linked to evidence_package. Photo evidence per line item via photo_evidence_ids array
+- [ ] **ADJ5** (Authority) — supplement_amount checked against reviewer's authority limit. If exceeds, auto-creates approval_request before review can be submitted
+- [ ] **ADJ9** (Portal) — supplement diff viewable via public share_token for contractor without login
+- [ ] **ADJ11** (Cross-Entity) — contractor sees supplement review status in real-time ("Under Review", "2 of 15 items reviewed"). Homeowner sees simplified supplement status in client portal
+- [ ] **CUST9** — SUPPLEMENT_REVIEW, SUPPLEMENT_DIFF, SUPPLEMENT_NEGOTIATION modules
+
+#### i18n Requirements
+- [ ] Diff type labels (Added/Removed/Modified/Unchanged), review status labels, action button labels — all 10 locales
+- [ ] O&P terminology translated professionally per locale
+- [ ] "Three trade rule" explanation translated (this is a legal concept — needs native tradesperson dialect, not literal translation)
+- [ ] Currency formatting locale-correct throughout
+- [ ] Court precedent citations remain in English (legal documents)
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] S143: Calculator outputs save to job_id, include is_favorite, legal disclaimer
+
+- [ ] Commit: `[ADJ3] Supplement workflow engine — supplement_reviews + supplement_review_items tables, side-by-side diff viewer, per-item approve/deny/flag, auto-weather verification, evidence linking, O&P calculator, negotiation threads, audit trail`
+
+---
+
+### ADJ4 — Contents Inventory + Depreciation Module (~31h) — S146
+*Fire, water, or theft damages personal property → adjuster inventories every item (often 200-2,000+ per claim). Each item: description, age, purchase price, replacement cost, depreciation, condition, photo. Most tedious part of adjusting. Xactimate Contents costs extra ($99/mo addon). No free alternative exists. This is a daily workflow for every property adjuster. Includes barcode scanning via UPCitemdb (FREE, 100 requests/day, 683M+ products) for instant product identification and pricing.*
+
+*Source: adjuster-workflow-deep-dive-s134.md (contents workflow), s135-adjuster-homeowner-api-gaps.md (UPCitemdb API)*
+*Depends on: ADJ1 (claims foundation)*
+*CUST9 Modules: CONTENTS_INVENTORY, DEPRECIATION_CALCULATOR, BARCODE_SCANNER*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `evidence_package_items` (photos)
+- Writes to: 3 new tables (`contents_claims`, `contents_items`, `depreciation_schedules`)
+- Wires to: ADJ1 claims, ADJ2 evidence (photos link), ADJ10 ZForge (contents PDF report)
+
+**Migration:**
+
+- [ ] Create `contents_claims` table (~1h):
+  ```sql
+  CREATE TABLE contents_claims (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    job_id UUID REFERENCES jobs(id),
+    property_id UUID REFERENCES properties(id),
+    claim_number TEXT,
+    total_items INTEGER DEFAULT 0,
+    total_rcv NUMERIC(12,2) DEFAULT 0,
+    total_acv NUMERIC(12,2) DEFAULT 0,
+    total_depreciation NUMERIC(12,2) DEFAULT 0,
+    status TEXT DEFAULT 'in_progress' CHECK (status IN ('in_progress','submitted','under_review','approved','denied','closed')),
+    room_count INTEGER DEFAULT 0,
+    inventory_method TEXT DEFAULT 'manual' CHECK (inventory_method IN ('manual','barcode','photo_ai','import')),
+    submitted_at TIMESTAMPTZ,
+    reviewed_by UUID REFERENCES users(id),
+    reviewed_at TIMESTAMPTZ,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE contents_claims ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "contents_claims_select" ON contents_claims FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "contents_claims_insert" ON contents_claims FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "contents_claims_update" ON contents_claims FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "contents_claims_delete" ON contents_claims FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_contents_claims_company ON contents_claims(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_contents_claims_adj_claim ON contents_claims(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_contents_claims_status ON contents_claims(status) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_contents_claims_updated_at BEFORE UPDATE ON contents_claims
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER contents_claims_audit AFTER INSERT OR UPDATE OR DELETE ON contents_claims
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+- [ ] Create `contents_items` table (~1.5h):
+  ```sql
+  CREATE TABLE contents_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    contents_claim_id UUID NOT NULL REFERENCES contents_claims(id),
+    room TEXT NOT NULL,
+    item_number INTEGER,
+    category TEXT NOT NULL,
+    item_description TEXT NOT NULL,
+    brand TEXT,
+    model TEXT,
+    upc_barcode TEXT,
+    age_years NUMERIC(4,1),
+    condition_at_loss TEXT CHECK (condition_at_loss IN ('new','excellent','good','fair','poor','non_functional')),
+    purchase_price NUMERIC(10,2),
+    purchase_date DATE,
+    replacement_source TEXT,
+    replacement_source_url TEXT,
+    replacement_cost_rcv NUMERIC(10,2),
+    useful_life_years NUMERIC(4,1),
+    depreciation_pct NUMERIC(5,2),
+    depreciation_amount NUMERIC(10,2),
+    actual_cash_value NUMERIC(10,2),
+    quantity INTEGER DEFAULT 1,
+    photo_urls TEXT[] DEFAULT '{}',
+    is_antique BOOLEAN DEFAULT false,
+    is_matching_set BOOLEAN DEFAULT false,
+    set_name TEXT,
+    is_high_value BOOLEAN DEFAULT false,
+    salvageable BOOLEAN,
+    notes TEXT,
+    status TEXT DEFAULT 'documented' CHECK (status IN ('documented','priced','verified','disputed','settled')),
+    review_status TEXT DEFAULT 'pending' CHECK (review_status IN ('pending','approved','denied','modified')),
+    reviewer_modified_rcv NUMERIC(10,2),
+    reviewer_modified_acv NUMERIC(10,2),
+    reviewer_comment TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE contents_items ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "contents_items_select" ON contents_items FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "contents_items_insert" ON contents_items FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "contents_items_update" ON contents_items FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "contents_items_delete" ON contents_items FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_contents_items_company ON contents_items(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_contents_items_claim ON contents_items(contents_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_contents_items_room ON contents_items(room) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_contents_items_category ON contents_items(category) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_contents_items_barcode ON contents_items(upc_barcode) WHERE upc_barcode IS NOT NULL AND deleted_at IS NULL;
+  CREATE INDEX idx_contents_items_status ON contents_items(review_status) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_contents_items_updated_at BEFORE UPDATE ON contents_items
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER contents_items_audit AFTER INSERT OR UPDATE OR DELETE ON contents_items
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  CREATE UNIQUE INDEX idx_contents_items_unique_number ON contents_items(contents_claim_id, item_number) WHERE item_number IS NOT NULL AND deleted_at IS NULL;
+  ```
+
+- [ ] Create `depreciation_schedules` table + seed 500+ items (~3h):
+  ```sql
+  CREATE TABLE depreciation_schedules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category TEXT NOT NULL,
+    subcategory TEXT,
+    item_name TEXT NOT NULL,
+    useful_life_years NUMERIC(4,1) NOT NULL,
+    annual_depreciation_pct NUMERIC(5,2) NOT NULL,
+    max_depreciation_pct NUMERIC(5,2) DEFAULT 90.00,
+    notes TEXT,
+    source TEXT DEFAULT 'ClaimsPages',
+    last_verified DATE DEFAULT CURRENT_DATE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  -- NO company_id — shared seed data
+  -- NO deleted_at — reference data, not soft-deleted
+  ALTER TABLE depreciation_schedules ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "depreciation_select" ON depreciation_schedules FOR SELECT USING (true);
+  -- No INSERT/UPDATE/DELETE policies = read-only when RLS is enabled. Admin-only writes via service_role.
+  CREATE INDEX idx_depreciation_category ON depreciation_schedules(category);
+  CREATE INDEX idx_depreciation_item ON depreciation_schedules(item_name);
+  CREATE TRIGGER update_depreciation_schedules_updated_at BEFORE UPDATE ON depreciation_schedules
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER audit_depreciation_schedules AFTER INSERT OR UPDATE OR DELETE ON depreciation_schedules
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+  - Seed categories (~500+ items):
+    - **Electronics** (TV 5-7yr, computer 4-6yr, phone 3-4yr, gaming console 5-6yr, tablet 4-5yr, smart home 5yr, speakers 7-10yr, headphones 3-5yr, camera 5-7yr, printer 3-5yr) — ~40 items
+    - **Furniture** (sofa 7-12yr, bed frame 10-15yr, mattress 8-10yr, dining table 10-15yr, chairs 7-10yr, desk 10-15yr, bookshelf 10-15yr, dresser 10-15yr, nightstand 10yr, outdoor furniture 5-8yr) — ~50 items
+    - **Appliances** (refrigerator 12-15yr, washer 10-12yr, dryer 10-12yr, dishwasher 8-12yr, microwave 7-10yr, oven/range 12-15yr, garbage disposal 8-10yr, water heater 8-12yr, HVAC 12-20yr, dehumidifier 5-8yr) — ~40 items
+    - **Clothing** (casual 3-5yr, formal 5-7yr, outerwear 5-8yr, shoes 2-3yr, accessories 3-5yr, specialty/designer 7-10yr) — ~30 items
+    - **Kitchen** (cookware 10-15yr, dishes 8-10yr, utensils 5-7yr, small appliances 5-8yr, cutlery 10yr, bakeware 8-10yr, storage 5yr) — ~35 items
+    - **Bathroom** (towels 3-5yr, bath fixtures 10-15yr, accessories 3-5yr, medicine cabinet contents 2-5yr) — ~20 items
+    - **Outdoor/Yard** (grill 5-10yr, patio furniture 5-8yr, power tools 7-10yr, hand tools 10-15yr, lawn mower 8-10yr, garden equipment 5-8yr, fencing 10-15yr) — ~40 items
+    - **Sporting goods** (bikes 8-10yr, exercise equipment 7-10yr, golf clubs 10yr, camping gear 5-8yr, winter sports 7-10yr) — ~30 items
+    - **Musical instruments** (piano 30-50yr, guitar 15-20yr, drums 15yr, brass/woodwind 20yr, electronic 5-8yr) — ~20 items
+    - **Children's items** (toys 3-5yr, baby gear 5-7yr, children's furniture 8-10yr, car seats 6yr) — ~20 items
+    - **Home office** (desk accessories 5-7yr, filing cabinet 15yr, office chair 7-10yr, monitor 5-7yr, peripherals 3-5yr) — ~20 items
+    - **Art/Collectibles** (framed art 20+yr, sculptures 30+yr, collectibles varies, antiques N/A) — ~15 items
+    - **Building materials** (carpet 5-10yr, hardwood floor 20-25yr, tile 15-20yr, vinyl 8-12yr, paint 5-7yr, roof 20-30yr, siding 20-30yr, windows 15-20yr, doors 20-25yr, countertops 15-20yr, cabinets 15-20yr, plumbing fixtures 10-15yr, light fixtures 10-15yr) — ~50 items
+    - **Books/Media** (books 10yr, DVDs/Blu-ray 5yr, vinyl records 15yr, board games 5-8yr) — ~15 items
+    - **Linens/Bedding** (sheets 3-5yr, comforters 5-7yr, pillows 2-3yr, blankets 5-8yr, curtains 5-7yr, rugs 5-10yr) — ~20 items
+    - **Jewelry** (costume 3-5yr, fine varies by appraisal, watches 10-20yr) — ~10 items
+    - **Pet equipment** (crates 7-10yr, beds 3-5yr, toys 1-2yr, aquariums 10-15yr) — ~10 items
+    - **Seasonal/Holiday** (decorations 5-10yr, artificial trees 8-10yr, lighting 5yr) — ~10 items
+    - Rule: items still functional should NOT depreciate beyond `max_depreciation_pct` (default 90%)
+
+**Dart Models:**
+
+- [ ] `ContentsClaim` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `holdbackAmount` (totalRcv - totalAcv), `averageDepreciation`, `isComplete` (status == 'submitted' or later) (~0.5h)
+- [ ] `ContentsItem` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `calculatedDepreciation` (rcv * depreciationPct / 100), `calculatedAcv` (rcv - calculatedDepreciation), `totalValue` (rcv * quantity), `totalAcv` (acv * quantity) (~0.5h)
+- [ ] `DepreciationSchedule` model — Equatable, fromJson/toJson. Fields: id, category, subcategory, itemName, usefulLifeYears, annualDepreciationPct, maxDepreciationPct (~0.5h)
+
+**Repositories:**
+
+- [ ] `ContentsClaimRepository` — getByClaimId(), create(), update(), updateStatus(), getStatistics() (~0.5h)
+- [ ] `ContentsItemRepository` — getByClaimId(), create(), bulkCreate(), update(), delete(), getByRoom(), search() (~0.5h)
+- [ ] `DepreciationScheduleRepository` — getAll(), getByCategory(), search(query). No write methods (seed data) (~0.5h)
+
+**Providers:**
+
+- [ ] `contentsClaimProvider` — FutureProvider.family(adjusterClaimId) (~0.5h)
+- [ ] `contentsItemsProvider` — StreamProvider.family(contentsClaimId) with real-time (~0.5h)
+- [ ] `depreciationSchedulesProvider` — FutureProvider (cached, rarely changes) (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `ContentsInventoryScreen` — room list with item counts and running totals per room. "Add Room" button. Grand total footer: total RCV, total ACV, total depreciation, holdback. Status badge. Submit button (changes status to 'submitted') (~2h)
+- [ ] `ContentsRoomScreen` — items list for selected room. Add item button. Each item card: photo thumbnail, description, brand/model, age, RCV, depreciation%, ACV. Inline edit. Sort by value, category, item#. Running room total footer (~2h)
+- [ ] `ContentsItemFormScreen` — add/edit item form. Barcode scan button (opens camera, scans UPC, auto-fills brand/model/description from UPCitemdb). Photo capture. Depreciation auto-lookup: type category → search depreciation_schedules → auto-fill useful_life and depreciation_pct → age * annual_rate = total depreciation (capped at max). Manual override for all fields. Replacement cost research: manual URL entry for "like kind and quality" documentation (~2h)
+- [ ] `BarcodeScanScreen` — camera viewfinder with barcode detection (mobile_scanner package). On scan: call UPCitemdb API → show product card (name, brand, images, price range). "Use This Product" button auto-fills item form. "Scan Another" button. Manual UPC entry fallback. Offline queue for scans when no signal (~1h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-contents-claims.ts` hook — CRUD + real-time on contents_claims. Returns `{ claim, loading, error, createClaim, updateClaim }` (~1h)
+- [ ] `use-contents-items.ts` hook — CRUD + real-time on contents_items by claim_id. Bulk operations. Returns `{ items, loading, error, addItem, updateItem, removeItem, bulkImport }` (~1h)
+- [ ] `use-depreciation-schedules.ts` hook — read-only from depreciation_schedules. Search by category/name. Returns `{ schedules, loading, search }` (~0.5h)
+- [ ] `/dashboard/claims/[id]/contents` page — spreadsheet-like table view: columns for room, item#, description, brand, age, condition, RCV, depreciation%, ACV, status. Inline edit cells. CSV/Excel import button. Bulk depreciation recalculation. Category summary pie chart. Room summary bar chart. Export to PDF button. Depreciation schedule lookup sidebar (~3h)
+
+**Edge Functions:**
+
+- [ ] `lookup-barcode` EF — proxy to UPCitemdb API (https://api.upcitemdb.com/prod/trial/lookup?upc={code}). Auth via JWT. Rate limit: 10/min per company (aggregate daily limit: 100 per UPCitemdb free tier, track in KV/table). CORS. Input validation: UPC must be 8-14 digits. Returns: product name, brand, category, images[], lowest_price, highest_price, msrp. Error handling: 404 → "Product not found", 429 → "Daily limit reached, try manual entry", 500 → graceful fallback. Cache responses for 30 days to conserve API quota. Sentry error logging on all catch blocks (~2h)
+- [ ] `calculate-depreciation` EF — takes: category, item_name, age_years, rcv. Looks up depreciation_schedules. Calculates: depreciation_amount = rcv * (age_years * annual_pct / 100), capped at max_depreciation_pct. Returns: useful_life, annual_rate, total_depreciation, acv. Auth via JWT. No external API calls. Rate limit: 30/min. Sentry error logging on all catch blocks (~1h)
+
+**Adjuster Legal Forms (via ZForge, wired in ADJ10):**
+- [ ] **Proof of Loss** form template reference — ZDocs template with dynamic fields: insured name, policy#, date of loss, description, amount claimed, sworn statement
+- [ ] **Assignment of Benefits (AOB)** form template reference — state-specific variants. FL AOB reform (FL Statute 627.7152, effective July 2025: 60-day notice, itemized estimate, contractor must be licensed, no litigation before claim denial). Top 10 states seeded
+- [ ] **Scope of Loss** form template reference — detailed loss description with room-by-room breakdown
+- [ ] **Supplemental Claim** form template reference — addendum to original claim with new items
+- [ ] **ACORD-equivalent Certificate of Insurance** — professional equivalent with disclaimer "NOT an official ACORD form"
+
+#### Security Verification
+- [ ] RLS on contents_claims, contents_items, depreciation_schedules (public seed — RLS enabled with SELECT USING (true), no write policies = read-only via RLS, admin writes via service_role)
+- [ ] Separate SELECT/INSERT/UPDATE/DELETE on both business tables
+- [ ] DELETE restricted to owner/admin
+- [ ] company_id + indexes + audit + deleted_at on both business tables
+- [ ] Barcode EF rate limiting: 10/min per company, 100/day aggregate (UPCitemdb free tier)
+- [ ] Barcode EF: input validation (UPC format check), no raw error propagation
+- [ ] Depreciation EF: no external API calls (uses local DB only), minimal attack surface
+- [ ] Photo URLs via signed Supabase storage URLs (expiry)
+- [ ] CSV import: validation before insert, max 2000 items per import, sanitize all text fields
+- [ ] Feature flags: CONTENTS_INVENTORY, DEPRECIATION_CALCULATOR, BARCODE_SCANNER
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1** (Claims) — contents_claims.adjuster_claim_id FK. Contents tab in claim detail
+- [ ] **ADJ2** (Evidence) — contents item photos linked to evidence_package_items
+- [ ] **ADJ10** (ZForge) — contents PDF report generated via ZForge template (room-by-room listing with photos, RCV/ACV columns, depreciation calculations, grand totals, formatted for carrier submission)
+- [ ] **S143 Owner Directive** — contents_claims has job_id FK (calculator results save to job). Depreciation calculator has legal disclaimer: "Depreciation estimates are for reference only. Actual depreciation may vary based on item condition, maintenance, and insurer guidelines. Not professional appraisal advice."
+- [ ] **CUST9** — CONTENTS_INVENTORY, DEPRECIATION_CALCULATOR, BARCODE_SCANNER modules
+
+#### i18n Requirements
+- [ ] Room names, condition labels, status labels, category names — all 10 locales
+- [ ] Depreciation schedule item names — English only (insurance industry standard), but UI labels translated
+- [ ] Currency formatting locale-correct (RCV, ACV, depreciation amounts)
+- [ ] Legal form text — English only per insurance industry standard, but form labels translated
+- [ ] Barcode scan instructions translated
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+
+- [ ] Commit: `[ADJ4] Contents inventory + depreciation — contents_claims, contents_items, depreciation_schedules (500+ items), barcode scanning (UPCitemdb), RCV/ACV calculator, room-by-room inventory, CSV import, legal forms reference`
+# ADJ5-ADJ8 — Adjuster Sprint Specs Batch 2 (Specialty)
+
+---
+
+### ADJ5 — Authority Limits + Approval Chain Workflow (~10h) — S146
+*Every carrier sets dollar limits per adjuster level. Field adjuster: approve up to $25K. Senior: $100K. Manager: $500K. Exceeding authority = discipline or termination. This is a daily compliance requirement. No existing tool handles this cleanly — adjusters track limits on sticky notes or spreadsheets. Zafto builds this as a PostgreSQL trigger + approval queue with full audit trail.*
+
+*Source: adjuster-workflow-deep-dive-s134.md (authority matrix)*
+*Depends on: ADJ1 (claims foundation), CUST1 (settings cascade)*
+*CUST9 Modules: AUTHORITY_LIMITS, APPROVAL_WORKFLOW*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `adjuster_profiles`, `users`
+- Writes to: 2 new tables (`authority_levels`, `approval_requests`)
+- Wires to: ADJ1 claims, ADJ3 supplements (amount check), ADJ4 contents (RCV check)
+
+**Migration:**
+
+- [ ] Create `authority_levels` table (~1h):
+  ```sql
+  CREATE TABLE authority_levels (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    role_name TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
+    max_claim_amount NUMERIC(12,2),
+    max_reserve_amount NUMERIC(12,2),
+    max_single_payment NUMERIC(12,2),
+    max_supplement_approval NUMERIC(12,2),
+    requires_supervisor BOOLEAN DEFAULT false,
+    supervisor_role TEXT,
+    auto_escalate_at_pct NUMERIC(5,2) DEFAULT 80.00,
+    special_permissions JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE authority_levels ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "authority_levels_select" ON authority_levels FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "authority_levels_insert" ON authority_levels FOR INSERT
+    WITH CHECK (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE POLICY "authority_levels_update" ON authority_levels FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE POLICY "authority_levels_delete" ON authority_levels FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE UNIQUE INDEX idx_authority_levels_unique_role ON authority_levels(company_id, role_name) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_authority_levels_company ON authority_levels(company_id) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_authority_levels_updated_at BEFORE UPDATE ON authority_levels
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER authority_levels_audit AFTER INSERT OR UPDATE OR DELETE ON authority_levels
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+  -- Deferred FK: adjuster_profiles.authority_level_id → authority_levels.id
+  -- Applied AFTER ADJ1 migration creates adjuster_profiles:
+  ALTER TABLE adjuster_profiles ADD CONSTRAINT fk_adj_profiles_authority
+    FOREIGN KEY (authority_level_id) REFERENCES authority_levels(id);
+  ```
+
+- [ ] Create `approval_requests` table (~1h):
+  ```sql
+  CREATE TABLE approval_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    requested_by UUID NOT NULL REFERENCES users(id),
+    request_type TEXT NOT NULL CHECK (request_type IN (
+      'reserve_increase','payment_approval','supplement_approval',
+      'authority_override','settlement_approval','total_loss_declaration'
+    )),
+    requested_amount NUMERIC(12,2) NOT NULL,
+    current_authority_limit NUMERIC(12,2),
+    authority_exceeded_by NUMERIC(12,2),
+    justification TEXT NOT NULL,
+    supporting_docs UUID[] DEFAULT '{}',
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
+      'pending','approved','denied','escalated','withdrawn'
+    )),
+    reviewed_by UUID REFERENCES users(id),
+    reviewed_at TIMESTAMPTZ,
+    reviewer_notes TEXT,
+    escalated_to UUID REFERENCES users(id),
+    escalated_at TIMESTAMPTZ,
+    auto_escalate_deadline TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE approval_requests ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "approval_requests_select" ON approval_requests FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "approval_requests_insert" ON approval_requests FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "approval_requests_update" ON approval_requests FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL AND
+      (requested_by = auth.uid() OR requesting_user_role() IN ('owner','admin','office_manager')))
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "approval_requests_delete" ON approval_requests FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_approval_requests_company ON approval_requests(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_approval_requests_claim ON approval_requests(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_approval_requests_status ON approval_requests(status) WHERE deleted_at IS NULL AND status = 'pending';
+  CREATE INDEX idx_approval_requests_reviewer ON approval_requests(reviewed_by) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_approval_requests_deadline ON approval_requests(auto_escalate_deadline) WHERE deleted_at IS NULL AND status = 'pending';
+  CREATE TRIGGER update_approval_requests_updated_at BEFORE UPDATE ON approval_requests
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER approval_requests_audit AFTER INSERT OR UPDATE OR DELETE ON approval_requests
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+- [ ] Seed default authority levels (~1h):
+  - Trainee / Junior Adjuster: max_claim $10,000, max_reserve $5,000, max_payment $5,000, max_supplement $5,000, requires_supervisor TRUE
+  - Field Adjuster: max_claim $25,000, max_reserve $15,000, max_payment $10,000, max_supplement $10,000, requires_supervisor FALSE for routine
+  - Senior Adjuster: max_claim $100,000, max_reserve $50,000, max_payment $25,000, max_supplement $25,000
+  - Claims Examiner: max_claim $250,000, max_reserve $100,000, max_payment $50,000, max_supplement $50,000
+  - Claims Manager: max_claim $500,000, max_reserve $250,000, max_payment $100,000, max_supplement $100,000
+  - Director / VP: unlimited (NULL values = no limit)
+  - All configurable per company via CUST1 settings cascade
+
+- [ ] Authority validation PostgreSQL function (~2h):
+  ```sql
+  CREATE OR REPLACE FUNCTION check_authority_limit()
+  RETURNS TRIGGER AS $$
+  -- NOTE: SECURITY DEFINER intentionally bypasses RLS. This allows cross-table reads (adjuster_profiles, authority_levels)
+  -- and auto-creates approval_requests when authority is exceeded. The estimate amount is NOT blocked — it saves
+  -- successfully and the approval request is created as a post-save flag. This is by design.
+  -- S147 FIX: SET search_path = public prevents CVE-2018-1058 search_path hijacking.
+  -- S147 FIX: auth.uid() returns NULL in trigger/SECURITY DEFINER context — use NEW.updated_by instead.
+  DECLARE
+    user_authority authority_levels%ROWTYPE;
+    user_profile adjuster_profiles%ROWTYPE;
+    acting_user_id UUID;
+  BEGIN
+    -- S147 FIX: Resolve acting user from NEW.updated_by (set by update_updated_at trigger or app layer)
+    -- auth.uid() is NULL inside SECURITY DEFINER triggers — never use it here.
+    acting_user_id := COALESCE(NEW.updated_by, OLD.updated_by);
+    IF acting_user_id IS NULL THEN RETURN NEW; END IF;
+    -- Get user's adjuster profile
+    SELECT * INTO user_profile FROM adjuster_profiles
+      WHERE user_id = acting_user_id AND company_id = NEW.company_id AND deleted_at IS NULL;
+    IF NOT FOUND THEN RETURN NEW; END IF;
+    -- Get authority level
+    SELECT * INTO user_authority FROM authority_levels
+      WHERE id = user_profile.authority_level_id AND deleted_at IS NULL;
+    IF NOT FOUND THEN RETURN NEW; END IF;
+    -- Check claim amount vs authority
+    IF user_authority.max_claim_amount IS NOT NULL AND
+       NEW.estimate_amount > user_authority.max_claim_amount THEN
+      -- Auto-create approval request (don't block the update, flag it)
+      INSERT INTO approval_requests (company_id, adjuster_claim_id, requested_by, request_type,
+        requested_amount, current_authority_limit, authority_exceeded_by, justification, status)
+      VALUES (NEW.company_id, NEW.id, acting_user_id, 'authority_override',
+        NEW.estimate_amount, user_authority.max_claim_amount,
+        NEW.estimate_amount - user_authority.max_claim_amount,
+        'Auto-generated: estimate exceeds authority limit', 'pending');
+    END IF;
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+  CREATE TRIGGER check_authority_on_claim_update
+    AFTER UPDATE OF estimate_amount ON adjuster_claims
+    FOR EACH ROW WHEN (NEW.estimate_amount IS DISTINCT FROM OLD.estimate_amount)
+    EXECUTE FUNCTION check_authority_limit();
+  ```
+
+**Dart Models:**
+
+- [ ] `AuthorityLevel` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isUnlimited` (maxClaimAmount == null), `displayLimit` (formatted currency or "Unlimited") (~0.5h)
+- [ ] `ApprovalRequest` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isOverdue` (auto_escalate_deadline < now), `daysPending`, `exceedancePercent` (exceeded_by / authority_limit * 100) (~0.5h)
+
+**Repositories + Providers:**
+
+- [ ] `AuthorityLevelRepository` — getByCompany(), create(), update() (~0.5h)
+- [ ] `ApprovalRequestRepository` — getPending(), getByClaimId(), approve(), deny(), escalate() (~0.5h)
+- [ ] `authorityLevelsProvider`, `pendingApprovalsProvider`, `approvalsByClaimProvider` (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `AuthorityDashboardScreen` — current user's authority level display (green bar showing used vs limit), pending approvals count badge, quick-approve list for supervisor role (~1h)
+- [ ] `ApprovalQueueScreen` — list of pending approval requests (supervisor view). Each card: requester name, claim#, amount, justification, days pending, "View Claim" link. Approve/Deny/Escalate buttons. Sort by amount, urgency, age (~1.5h)
+- [ ] Authority limit indicator widget on `ClaimDetailScreen` — shows remaining authority (green/yellow/red), "Request Approval" button when approaching limit (~0.5h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-authority-levels.ts` hook — CRUD for company authority levels. Admin-only write operations. Returns `{ levels, loading, error, createLevel, updateLevel }` (~1h)
+- [ ] `use-approval-requests.ts` hook — real-time on pending approvals. Returns `{ requests, loading, error, approve, deny, escalate }` (~1h)
+- [ ] `/settings/authority-levels` page — admin config: table of roles with editable limits, drag-to-reorder. Assign users to authority levels (~1h)
+- [ ] `/dashboard/approvals` page — supervisor approval queue. Full claim context preview. Batch approve. Auto-escalation countdown timers. Response time metrics (~1.5h)
+
+#### Security Verification
+- [ ] RLS on authority_levels (admin-only write), approval_requests (requestor + reviewer access)
+- [ ] Authority validation trigger runs as SECURITY DEFINER (can read cross-table)
+- [ ] approval_requests UPDATE restricted to requestor + supervisors
+- [ ] Auto-escalation deadline enforced (CRON job or scheduled EF)
+- [ ] Feature flags: AUTHORITY_LIMITS, APPROVAL_WORKFLOW
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1** (Claims) — authority check on estimate_amount update. Indicator on claim detail
+- [ ] **ADJ3** (Supplements) — supplement approval amount checked against max_supplement_approval
+- [ ] **ADJ4** (Contents) — contents total RCV checked against authority before submission
+- [ ] **CUST1** — authority levels configurable per company via settings cascade
+- [ ] **CUST9** — AUTHORITY_LIMITS, APPROVAL_WORKFLOW modules
+
+#### i18n Requirements
+- [ ] Role names, request type labels, status labels, approval action labels — all 10 locales
+- [ ] Currency formatting locale-correct for all amounts
+- [ ] Escalation notifications translated
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] CRITICAL: All `SECURITY DEFINER` functions must include `SET search_path = public`
+- [ ] CRITICAL: Replace `auth.uid()` with parameter-passed user_id in trigger/service_role contexts
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+
+- [ ] Commit: `[ADJ5] Authority limits + approval chain — authority_levels, approval_requests tables, PostgreSQL validation trigger, auto-escalation, supervisor queue, audit trail`
+
+---
+
+### ADJ6 — Storm/CAT Verification + Weather Intelligence (~24h) — S146
+*CAT (catastrophe) adjusters deploy to disaster zones handling 50+ claims/week. Every property damage claim requires storm verification: did a verifiable weather event occur at this location on this date? Currently adjusters manually search weather databases. Zafto auto-verifies by cross-referencing date-of-loss + GPS coordinates against NOAA SPC Storm Events (2M+ events since 1950), IBTrACS hurricane tracks (1842-present), NIFC wildfire perimeters, and NWS real-time alerts. This eliminates hours of manual weather research per claim.*
+
+*Source: s135-adjuster-homeowner-api-gaps.md (storm APIs), adjuster-workflow-deep-dive-s134.md (CAT workflow)*
+*Depends on: ADJ1 (claims foundation), GC-WX (weather infrastructure)*
+*CUST9 Modules: STORM_VERIFICATION, WEATHER_INTELLIGENCE, CAT_TOOLS*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `weather_alerts` (GC-WX if exists), NOAA SPC external, IBTrACS external, NIFC external, NWS external
+- Writes to: 1 new table (`storm_verifications`), 3 seed reference tables (`spc_storm_events_cache`, `hurricane_tracks_cache`, `wildfire_perimeters_cache`)
+- Wires to: ADJ1 claims, ADJ2 evidence (weather in package), ADJ3 supplements (weather auto-attach), GC-WX weather
+
+**Migration:**
+
+- [ ] Create `storm_verifications` table (~1.5h):
+  ```sql
+  CREATE TABLE storm_verifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    verification_date TIMESTAMPTZ NOT NULL DEFAULT now(),
+    loss_date TIMESTAMPTZ NOT NULL,
+    loss_lat NUMERIC(10,7) NOT NULL,
+    loss_lon NUMERIC(10,7) NOT NULL,
+    search_radius_miles NUMERIC(5,1) DEFAULT 25.0,
+    verification_status TEXT NOT NULL DEFAULT 'pending' CHECK (verification_status IN (
+      'pending','verified','unverified','inconclusive','manual_override'
+    )),
+    matched_events JSONB DEFAULT '[]',
+    nearest_event_distance_miles NUMERIC(8,2),
+    nearest_event_type TEXT,
+    nearest_event_magnitude TEXT,
+    weather_data JSONB DEFAULT '{}',
+    nws_alerts JSONB DEFAULT '[]',
+    fema_disaster_number TEXT,
+    fema_disaster_type TEXT,
+    verification_summary TEXT,
+    verified_by UUID REFERENCES users(id),
+    manual_override_reason TEXT,
+    data_sources TEXT[] DEFAULT '{}',
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE storm_verifications ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "storm_ver_select" ON storm_verifications FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "storm_ver_insert" ON storm_verifications FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "storm_ver_update" ON storm_verifications FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "storm_ver_delete" ON storm_verifications FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_storm_ver_company ON storm_verifications(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_storm_ver_claim ON storm_verifications(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_storm_ver_status ON storm_verifications(verification_status) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_storm_ver_date ON storm_verifications(loss_date) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_storm_ver_updated_at BEFORE UPDATE ON storm_verifications
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER storm_ver_audit AFTER INSERT OR UPDATE OR DELETE ON storm_verifications
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+- [ ] Create storm event cache tables for offline/fast lookup (~2h):
+  ```sql
+  -- Cache/reference tables: NO company_id, NO RLS, NO audit trigger, NO deleted_at.
+  -- These are public weather data caches refreshed by CRON service_role EF.
+  -- Explicitly exempt from standard business table template.
+  CREATE TABLE spc_storm_events_cache (
+    id BIGSERIAL PRIMARY KEY,
+    event_id TEXT NOT NULL UNIQUE,
+    event_date DATE NOT NULL,
+    event_type TEXT NOT NULL,
+    state TEXT,
+    county TEXT,
+    lat NUMERIC(9,6),
+    lon NUMERIC(9,6),
+    magnitude NUMERIC(8,2),
+    magnitude_type TEXT,
+    injuries INTEGER DEFAULT 0,
+    deaths INTEGER DEFAULT 0,
+    property_damage NUMERIC(14,2),
+    narrative TEXT,
+    source TEXT,
+    fetched_at TIMESTAMPTZ DEFAULT now()
+  );
+  CREATE INDEX idx_spc_storm_date ON spc_storm_events_cache(event_date);
+  CREATE INDEX idx_spc_storm_location ON spc_storm_events_cache(lat, lon);
+  CREATE INDEX idx_spc_storm_type_date ON spc_storm_events_cache(event_type, event_date);
+
+  CREATE TABLE hurricane_tracks_cache (
+    id BIGSERIAL PRIMARY KEY,
+    storm_id TEXT NOT NULL,
+    storm_name TEXT,
+    season INTEGER NOT NULL,
+    track_date TIMESTAMPTZ NOT NULL,
+    lat NUMERIC(9,6) NOT NULL,
+    lon NUMERIC(9,6) NOT NULL,
+    max_wind_kt INTEGER,
+    min_pressure_mb INTEGER,
+    category TEXT,
+    basin TEXT DEFAULT 'NA',
+    fetched_at TIMESTAMPTZ DEFAULT now()
+  );
+  CREATE INDEX idx_hurricane_season ON hurricane_tracks_cache(season);
+  CREATE INDEX idx_hurricane_location ON hurricane_tracks_cache(lat, lon);
+  CREATE UNIQUE INDEX idx_hurricane_unique_track ON hurricane_tracks_cache(storm_id, track_date);
+
+  CREATE TABLE wildfire_perimeters_cache (
+    id BIGSERIAL PRIMARY KEY,
+    fire_id TEXT NOT NULL,
+    fire_name TEXT,
+    state TEXT,
+    discovery_date DATE,
+    contained_date DATE,
+    acres_burned NUMERIC(12,2),
+    percent_contained NUMERIC(5,2),
+    lat NUMERIC(9,6),
+    lon NUMERIC(9,6),
+    cause TEXT,
+    source TEXT DEFAULT 'NIFC',
+    fetched_at TIMESTAMPTZ DEFAULT now()
+  );
+  CREATE INDEX idx_wildfire_date ON wildfire_perimeters_cache(discovery_date);
+  CREATE INDEX idx_wildfire_location ON wildfire_perimeters_cache(lat, lon);
+  CREATE INDEX idx_wildfire_state ON wildfire_perimeters_cache(state);
+  ```
+  - All caches: NO company_id, NO RLS (public reference data). Indexed on date + location for spatial proximity queries
+  - **PostGIS requirement:** Requires PostGIS extension (`CREATE EXTENSION IF NOT EXISTS postgis`). Storm cache tables use `geometry(Point, 4326)` for lat/lng. Spatial queries use `ST_DWithin()` for radius search instead of naive lat/lon arithmetic. Add geometry columns: `ALTER TABLE spc_storm_events_cache ADD COLUMN geom geometry(Point, 4326); CREATE INDEX idx_spc_storm_geom ON spc_storm_events_cache USING GIST(geom);` — same for hurricane_tracks_cache and wildfire_perimeters_cache.
+  - **Bulk import strategy:** Use `pg_copy` with `COPY` command for initial seed. Incremental updates via UPSERT (`ON CONFLICT`). Partition `spc_storm_events_cache` by year if >1M rows. BRIN index on `event_date` for time-range queries: `CREATE INDEX idx_spc_storm_date_brin ON spc_storm_events_cache USING BRIN(event_date);`
+
+- [ ] Seed initial storm data (~3h): Download and import last 5 years of SPC storm events CSV (~500K rows), active hurricane seasons, current year wildfire perimeters
+
+**Dart Models:**
+
+- [ ] `StormVerification` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isVerified`, `closestEventSummary`, `dataSourceCount`, `hasFemaDisaster` (~0.5h)
+
+**Repositories + Providers:**
+
+- [ ] `StormVerificationRepository` — getByClaimId(), create(), updateStatus(), manualOverride() (~0.5h)
+- [ ] `stormVerificationProvider` — FutureProvider.family(claimId) (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `StormVerificationScreen` — verification result card: status badge (Verified ✓ green / Unverified ✗ red / Inconclusive ? yellow), nearest event details (type, magnitude, distance), map view showing loss location + nearby events (pins), FEMA disaster info if applicable. "Run Verification" button for initial/re-run. "Manual Override" for supervisor with reason field. Data source list (which APIs responded). Timeline of weather events around loss date (~3h)
+- [ ] `WeatherMapScreen` — map view (Mapbox/Google Maps) showing: loss property pin (red), storm event pins (color by type: tornado=red, hail=blue, wind=green, flood=purple), hurricane tracks (line), wildfire perimeters (polygon). Date range selector. Layer toggles. Tap event for details popup (~2h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-storm-verifications.ts` hook — CRUD + real-time. Returns `{ verification, loading, error, runVerification, manualOverride }` (~1h)
+- [ ] `/dashboard/claims/[id]/weather` page — weather verification panel in claim detail. Verification card + map embed + event details + FEMA disaster lookup. "Attach to Evidence Package" button (~2h)
+- [ ] `/dashboard/storm-verification` page — standalone storm lookup tool. Enter date + address → search events. Not tied to a specific claim. Useful for prospecting/planning (~1h)
+
+**Edge Functions:**
+
+- [ ] `verify-storm-event` EF — Auth via JWT. Rate limit: 10/min. CORS. Sentry error logging on all catch blocks. Input: loss_date, loss_lat, loss_lon, search_radius_miles (default 25). Logic: (1) Query spc_storm_events_cache for events within radius of loss location ±7 days of loss date. (2) Query hurricane_tracks_cache for tracks within radius ±3 days. (3) Query wildfire_perimeters_cache for perimeters containing loss point. (4) Query NWS alerts API (api.weather.gov/alerts?point={lat},{lon}) for alerts on loss date. (5) Query OpenFEMA disaster declarations API for FEMA disaster in same county/state/date. (6) Score: verified (event within 10mi + same day), inconclusive (event within 25mi + ±3 days), unverified (no events found). Returns: verification_status, matched_events[], nearest_event, weather_data, nws_alerts[], fema_disaster. Creates storm_verifications record (~4h)
+- [ ] `refresh-storm-cache` EF — scheduled CRON (weekly). Sentry error logging on all catch blocks. Downloads latest SPC CSV, IBTrACS updates, NIFC perimeters. Upserts into cache tables. No auth (service_role key). Logs refresh stats (~2h)
+
+#### Security Verification
+- [ ] RLS on storm_verifications. Cache tables NO RLS (public reference data — intentional)
+- [ ] verify-storm-event EF: auth, company_id, CORS, rate limit, input validation (lat/lon range, date not future)
+- [ ] refresh-storm-cache EF: service_role only, no user auth (CRON)
+- [ ] Manual override requires supervisor role
+- [ ] NWS API: no auth required, respect rate limits (reasonable use)
+- [ ] OpenFEMA API: no auth required, respect rate limits
+- [ ] Feature flags: STORM_VERIFICATION, WEATHER_INTELLIGENCE, CAT_TOOLS
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1** (Claims) — storm verification linked via adjuster_claim_id. Auto-run on claim create for wind_hail/flood loss types
+- [ ] **ADJ2** (Evidence) — weather verification data included in evidence package. "Weather Verified ✓" badge on evidence completeness indicator
+- [ ] **ADJ3** (Supplements) — weather data auto-attached to supplement items tagged with storm-related categories
+- [ ] **GC-WX** (Weather) — shares weather alert infrastructure. storm_verifications can reference weather_alerts table if populated
+- [ ] **RE30** (Storm Alerts) — storm_verifications uses same NOAA data sources. NOTE: RE30 has `storm_events` table — ADJ6 uses `spc_storm_events_cache` (different table, avoids collision per S146 audit finding)
+- [ ] **CUST9** — STORM_VERIFICATION, WEATHER_INTELLIGENCE, CAT_TOOLS modules
+
+#### i18n Requirements
+- [ ] Verification status labels, event type labels, magnitude descriptions — all 10 locales
+- [ ] Distance in miles (US) or kilometers (other locales) based on locale preference
+- [ ] FEMA disaster type labels translated
+- [ ] Map labels translated
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+
+- [ ] Commit: `[ADJ6] Storm/CAT verification — storm_verifications table, SPC/IBTrACS/NIFC cache tables, auto-verify EF, weather map, FEMA disaster lookup, cache refresh CRON`
+
+---
+
+### ADJ7 — Auto/Vehicle Claims + VIN Intelligence (~18h) — S146
+*Auto adjusters inspect vehicle damage daily — determining if a vehicle is repairable or a total loss. Every assessment starts with VIN decode (make, model, year, safety features). NHTSA vPIC API provides FREE unlimited VIN decoding (25+ endpoints, no auth required). Total loss determination varies by state: ~25 states use percentage thresholds (60-100% of ACV), ~25 use Total Loss Formula (repair + salvage > ACV). This sprint builds VIN lookup, total loss calculator, vehicle damage assessment, and recall checking — replacing $100+/mo tools like CCC ONE and Mitchell.*
+
+*Source: s135-adjuster-homeowner-api-gaps.md (NHTSA APIs, total loss thresholds), adjuster-workflow-deep-dive-s134.md (auto adjuster workflow)*
+*Depends on: ADJ1 (claims foundation)*
+*CUST9 Modules: VEHICLE_CLAIMS, VIN_DECODER, TOTAL_LOSS_CALCULATOR*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, NHTSA vPIC external, NHTSA Recalls external
+- Writes to: 2 new tables (`vehicle_claim_details`, `total_loss_thresholds`)
+- Wires to: ADJ1 claims, ADJ2 evidence (vehicle photos), ADJ5 authority (total loss declaration)
+
+**Migration:**
+
+- [ ] Create `vehicle_claim_details` table (~1.5h):
+  ```sql
+  CREATE TABLE vehicle_claim_details (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    vin TEXT,
+    vin_decoded JSONB DEFAULT '{}',
+    make TEXT,
+    model TEXT,
+    year INTEGER,
+    trim_level TEXT,
+    body_class TEXT,
+    engine TEXT,
+    transmission TEXT,
+    drive_type TEXT,
+    fuel_type TEXT,
+    gvwr TEXT,
+    plant_info TEXT,
+    safety_features JSONB DEFAULT '{}',
+    damage_areas JSONB DEFAULT '[]',
+    damage_severity TEXT CHECK (damage_severity IN ('minor','moderate','major','severe','total_loss')),
+    pre_loss_condition TEXT CHECK (pre_loss_condition IN ('excellent','good','fair','poor')),
+    mileage INTEGER,
+    estimated_repair_cost NUMERIC(12,2),
+    salvage_value NUMERIC(12,2),
+    acv_amount NUMERIC(12,2),
+    total_loss_determination TEXT CHECK (total_loss_determination IN ('repairable','total_loss','borderline','pending')),
+    total_loss_method TEXT,
+    total_loss_threshold_pct NUMERIC(5,2),
+    parts_type TEXT DEFAULT 'oem' CHECK (parts_type IN ('oem','aftermarket','used','reconditioned')),
+    labor_rate_body NUMERIC(8,2),
+    labor_rate_paint NUMERIC(8,2),
+    labor_rate_mechanical NUMERIC(8,2),
+    drp_shop BOOLEAN DEFAULT false,
+    drp_shop_name TEXT,
+    active_recalls JSONB DEFAULT '[]',
+    recall_count INTEGER DEFAULT 0,
+    photos JSONB DEFAULT '[]',
+    notes TEXT,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE vehicle_claim_details ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "vehicle_claims_select" ON vehicle_claim_details FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "vehicle_claims_insert" ON vehicle_claim_details FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "vehicle_claims_update" ON vehicle_claim_details FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "vehicle_claims_delete" ON vehicle_claim_details FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_vehicle_claims_company ON vehicle_claim_details(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_vehicle_claims_adj_claim ON vehicle_claim_details(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_vehicle_claims_vin ON vehicle_claim_details(vin) WHERE vin IS NOT NULL AND deleted_at IS NULL;
+  CREATE INDEX idx_vehicle_claims_determination ON vehicle_claim_details(total_loss_determination) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_vehicle_claims_updated_at BEFORE UPDATE ON vehicle_claim_details
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER vehicle_claims_audit AFTER INSERT OR UPDATE OR DELETE ON vehicle_claim_details
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+- [ ] Create `total_loss_thresholds` seed table + seed 50 states (~1h):
+  ```sql
+  CREATE TABLE total_loss_thresholds (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    state_code TEXT NOT NULL,
+    state_name TEXT NOT NULL,
+    method TEXT NOT NULL CHECK (method IN ('TLT','TLF')),
+    threshold_pct NUMERIC(5,2),
+    formula_description TEXT,
+    notes TEXT,
+    source_url TEXT,
+    last_verified DATE DEFAULT CURRENT_DATE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  -- NO RLS — public reference data
+  CREATE UNIQUE INDEX idx_tlt_unique_state ON total_loss_thresholds(state_code) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_total_loss_state ON total_loss_thresholds(state_code);
+  CREATE TRIGGER update_tlt_updated_at BEFORE UPDATE ON total_loss_thresholds
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER audit_tlt AFTER INSERT OR UPDATE OR DELETE ON total_loss_thresholds
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+  - Seed 50 states: 75% threshold states (AL, IA, KS, KY, ME, MA, MT, NH, NY, NC, SC, TN, VA, WV, WY), 100% states (TX, CO), 70% states (many), TLF formula states (~25). Each with method, threshold_pct, formula_description, notes
+
+**Dart Models:**
+
+- [ ] `VehicleClaimDetail` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isTotalLoss`, `repairToValueRatio` (repair/acv*100), `hasActiveRecalls`, `vehicleDescription` ("2024 Toyota Camry SE") (~1h)
+- [ ] `TotalLossThreshold` model — fromJson only (read-only seed). Fields: stateCode, stateName, method, thresholdPct, formulaDescription (~0.5h)
+
+**Repositories + Providers:**
+
+- [ ] `VehicleClaimDetailRepository` — getByClaimId(), create(), update() (~0.5h)
+- [ ] `TotalLossThresholdRepository` — getByState(), getAll() (~0.5h)
+- [ ] `vehicleClaimProvider`, `totalLossThresholdsProvider` (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `VehicleClaimScreen` — VIN scan/entry at top. On decode: vehicle info card (make, model, year, engine, safety features). Damage area selector (visual body diagram with tap-to-mark areas: front, rear, left, right, roof, undercarriage, glass, interior). Repair estimate entry. Total loss calculator (auto-fetches state threshold). Recalls list with details. Photo grid. Parts type selector (OEM/aftermarket/used). Labor rates entry (~3h)
+- [ ] `VinScanScreen` — camera viewfinder for VIN barcode/plate scan. Manual 17-char VIN entry with validation (check digit). On decode: full vehicle specification card from NHTSA. "Use This Vehicle" button populates claim. Recall check auto-runs (~1.5h)
+- [ ] `TotalLossCalculatorScreen` — inputs: state, ACV, repair estimate, salvage value. Auto-fetches threshold. Visual gauge showing repair cost vs threshold. Determination: "REPAIRABLE" (green) or "TOTAL LOSS" (red) or "BORDERLINE" (yellow, within 5%). Legal disclaimer: "For estimation purposes only. Actual total loss determination made by carrier per policy terms." S143 directive: save result to job, set as favorite (~1.5h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-vehicle-claims.ts` hook — CRUD + real-time. VIN decode integration. Returns `{ vehicle, loading, error, decodeVin, updateVehicle, checkRecalls }` (~1.5h)
+- [ ] `/dashboard/claims/[id]/vehicle` page — vehicle claim detail panel. VIN decoder, damage diagram, repair estimate, total loss calculator, recalls, photos (~2h)
+
+**Edge Functions:**
+
+- [ ] `decode-vin` EF — Auth via JWT. Rate limit: 20/min. CORS. Sentry error logging on all catch blocks. Proxy to NHTSA vPIC: `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/{vin}?format=json`. Parse response: extract make, model, year, body_class, engine, transmission, drive_type, fuel_type, gvwr, plant, safety features (ABS, airbags, ESC, etc.). Cache decoded VIN in vehicle_claim_details.vin_decoded JSONB for 365 days (VIN data doesn't change). Input validation: VIN must be exactly 17 alphanumeric chars (no I, O, Q), check digit validation. **VIN check digit algorithm:** Position weights `[8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2]`. Transliteration map: `A=1,B=2,C=3,D=4,E=5,F=6,G=7,H=8,J=1,K=2,L=3,M=4,N=5,P=7,R=9,S=2,T=3,U=4,V=5,W=6,X=7,Y=8,Z=9`. `Sum(weight * value) mod 11 = position 9 value`. If result is 10, use `'X'`. Also calls NHTSA Recalls: `https://api.nhtsa.gov/recalls/recallsByVehicle?make={make}&model={model}&modelYear={year}`. Returns: decoded vehicle info + active recalls (~3h)
+
+#### Security Verification
+- [ ] RLS on vehicle_claim_details. total_loss_thresholds NO RLS (public seed)
+- [ ] decode-vin EF: auth, company_id, CORS, rate limit, VIN format validation
+- [ ] VIN cached to avoid redundant API calls (365-day cache)
+- [ ] NHTSA API: no auth required, no documented rate limit (be reasonable — max 20/min)
+- [ ] Damage areas JSONB schema validated (only allowed area names)
+- [ ] Legal disclaimer on total loss calculator (S143 directive)
+- [ ] Feature flags: VEHICLE_CLAIMS, VIN_DECODER, TOTAL_LOSS_CALCULATOR
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1** (Claims) — vehicle_claim_details.adjuster_claim_id FK. Auto loss_type = 'auto' triggers vehicle tab visibility
+- [ ] **ADJ2** (Evidence) — vehicle photos in evidence package
+- [ ] **ADJ5** (Authority) — total loss declaration requires authority check (total_loss_declaration request type)
+- [ ] **S143** — total loss calculator saves to job, has set-as-favorite, includes legal disclaimer
+- [ ] **CUST9** — VEHICLE_CLAIMS, VIN_DECODER, TOTAL_LOSS_CALCULATOR modules
+
+#### i18n Requirements
+- [ ] Vehicle specification labels, damage area names, severity labels, total loss determination labels — all 10 locales
+- [ ] VIN is universal (same format worldwide)
+- [ ] NHTSA data in English only (US government source) but UI labels translated
+- [ ] Total loss threshold state names — English (US states)
+- [ ] Legal disclaimer translated per locale
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+
+- [ ] Commit: `[ADJ7] Auto/vehicle claims — vehicle_claim_details, total_loss_thresholds (50 states), NHTSA VIN decoder, recalls lookup, total loss calculator, damage body diagram`
+
+---
+
+### ADJ8 — Public Adjuster Toolkit (~26h) — S146
+*Public adjusters (PAs) represent policyholders against carriers — they're the plaintiff's attorney of insurance claims. ~20-30K PAs in the US, highest tool spend ($1,500-$3,000/mo), strongest Xactimate hatred, zero IT restrictions. They are Zafto's BEACHHEAD — Wave 1 of the Trojan horse adoption strategy. PAs need: fee cap compliance (varies by state, 2.5%-33%), contingency agreement generation, counter-estimate workflow, O&P calculator with legal precedent references, and appraisal clause tools. No existing platform bundles all of these.*
+
+*Source: adjuster-deep-research-s133.md (PA beachhead strategy), s135-adjuster-homeowner-api-gaps.md (PA fee caps), adjuster-workflow-deep-dive-s134.md (PA pipeline stages)*
+*Depends on: ADJ1 (claims), ADJ3 (supplements). ADJ10 depends on ADJ8 (not reverse). `document_id` is nullable, populated after ADJ10 generates the document.*
+*CUST9 Modules: PA_TOOLS, FEE_CALCULATOR, COUNTER_ESTIMATE, OP_CALCULATOR, APPRAISAL_TOOLS*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `supplement_reviews`, `estimate_items` (contractor's estimate)
+- Writes to: 2 new tables (`pa_fee_regulations`, `pa_contingency_agreements`)
+- Wires to: ADJ1 claims (PA pipeline), ADJ3 supplements (counter-estimate), ADJ10 ZForge (agreement templates), ADJ11 (homeowner AOB signing)
+
+**Migration:**
+
+- [ ] Create `pa_fee_regulations` seed table + seed 50 states (~1.5h):
+  ```sql
+  CREATE TABLE pa_fee_regulations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    state_code TEXT NOT NULL UNIQUE,
+    state_name TEXT NOT NULL,
+    max_fee_pct NUMERIC(5,2),
+    emergency_fee_pct NUMERIC(5,2),
+    has_emergency_provision BOOLEAN DEFAULT false,
+    fee_basis TEXT DEFAULT 'settlement' CHECK (fee_basis IN ('settlement','recovery','gross','net','net_recovery')),
+    special_provisions TEXT,
+    licensing_required BOOLEAN DEFAULT true,
+    license_type TEXT,
+    continuing_education_hours INTEGER,
+    bond_required BOOLEAN DEFAULT false,
+    bond_amount NUMERIC(10,2),
+    prohibited_practices TEXT[],
+    source_statute TEXT,
+    source_url TEXT,
+    last_verified DATE DEFAULT CURRENT_DATE,
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  -- NO RLS — public reference data
+  CREATE INDEX idx_pa_fee_state ON pa_fee_regulations(state_code);
+  CREATE TRIGGER update_pa_fee_regs_updated_at BEFORE UPDATE ON pa_fee_regulations
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER audit_pa_fee_regs AFTER INSERT OR UPDATE OR DELETE ON pa_fee_regulations
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+  - Seed 50 states with known caps: FL 20%/10% emergency (FL 626.854), TX 10% (TX Insurance Code 4102), GA 33.3%, HI 8%, IL 10%, DE 2.5% (<$25K), LA hourly only, CO 10% CAT, RI 10% CAT, CA 15% declared disaster (AB 597), MA 10%, MI 10%, MS 10%, and remaining states
+
+- [ ] Create `pa_contingency_agreements` table (~1h):
+  ```sql
+  CREATE TABLE pa_contingency_agreements (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id),
+    adjuster_claim_id UUID NOT NULL REFERENCES adjuster_claims(id),
+    policyholder_name TEXT NOT NULL,
+    policyholder_email TEXT,
+    property_address TEXT,
+    state_code TEXT NOT NULL,
+    agreed_fee_pct NUMERIC(5,2) NOT NULL,
+    max_allowed_fee_pct NUMERIC(5,2),
+    is_emergency BOOLEAN DEFAULT false,
+    fee_basis TEXT DEFAULT 'net_recovery' CHECK (fee_basis IN ('settlement','recovery','gross','net','net_recovery')),
+    exclusions TEXT,
+    scope_of_services TEXT,
+    effective_date DATE NOT NULL,
+    expiration_date DATE,
+    cancellation_terms TEXT,
+    aob_included BOOLEAN DEFAULT false,
+    aob_state_compliant BOOLEAN,
+    document_id UUID,
+    signed_at TIMESTAMPTZ,
+    signed_by_policyholder BOOLEAN DEFAULT false,
+    signed_by_adjuster BOOLEAN DEFAULT false,
+    status TEXT DEFAULT 'draft' CHECK (status IN ('draft','sent','signed','active','completed','cancelled','expired')),
+    settlement_amount NUMERIC(12,2),
+    fee_amount NUMERIC(12,2),
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE pa_contingency_agreements ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "pa_agreements_select" ON pa_contingency_agreements FOR SELECT
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "pa_agreements_insert" ON pa_contingency_agreements FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "pa_agreements_update" ON pa_contingency_agreements FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "pa_agreements_delete" ON pa_contingency_agreements FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_pa_agreements_company ON pa_contingency_agreements(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_pa_agreements_claim ON pa_contingency_agreements(adjuster_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_pa_agreements_status ON pa_contingency_agreements(status) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_pa_agreements_state ON pa_contingency_agreements(state_code) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_pa_agreements_updated_at BEFORE UPDATE ON pa_contingency_agreements
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER pa_agreements_audit AFTER INSERT OR UPDATE OR DELETE ON pa_contingency_agreements
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+**Dart Models:**
+
+- [ ] `PaFeeRegulation` model — fromJson only (seed). Fields: stateCode, stateName, maxFeePct, emergencyFeePct, hasEmergencyProvision, feeBasis, specialProvisions, licensingRequired, sourceStatute (~0.5h)
+- [ ] `PaContingencyAgreement` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isOverMaxFee` (agreedFeePct > maxAllowedFeePct), `isExpired`, `isFullySigned`, `calculatedFee` (settlementAmount * agreedFeePct / 100) (~0.5h)
+
+**Repositories + Providers:**
+
+- [ ] `PaFeeRegulationRepository` — getByState(), getAll() (~0.5h)
+- [ ] `PaContingencyAgreementRepository` — getByClaimId(), create(), update(), updateStatus() (~0.5h)
+- [ ] `paFeeRegulationsProvider`, `paAgreementsProvider` (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `PaFeeCalculatorScreen` — select state → show max fee, emergency fee, special provisions, statute reference. Enter settlement amount → calculate fee. Warning if entered fee > state max (red banner: "Exceeds state maximum of X%"). Emergency toggle (shows emergency rate if state has provision). Legal disclaimer. S143: save to job, set as favorite (~2h)
+- [ ] `CounterEstimateScreen` — side-by-side: carrier's estimate (left) vs PA's counter-estimate (right). Line-by-line comparison. Add/remove items. Justification per item. Total difference highlighted. BLS/Davis-Bacon pricing reference alongside Xactimate pricing. "Items carrier missed" suggestion list (common missed items: drip edge, detach/reset, code upgrades, permits, access labor, protection, O&P). Export to PDF (~3h)
+- [ ] `OpCalculatorScreen` — Overhead & Profit calculator. Inputs: total estimate, number of trades involved. "Three Trade Rule" explainer (expandable): "Carriers often deny O&P citing a 'three trade rule' that requires 3+ trades before O&P is owed. NO state law supports this rule." Court precedents (expandable): Belotti v. State Farm, Scroggins v. Allstate, etc. Calculate: 10% overhead + 10% profit on labor+materials subtotal. Legal disclaimer. S143: save to job, set as favorite (~2h)
+- [ ] `AppraisalToolScreen` — appraisal clause invoker: select state → show appraisal clause requirements per state statute. Draft appraisal demand letter. Select appraiser. Track appraisal status (demanded → appraiser selected → hearing scheduled → award issued). Umpire selection. Award entry (~2h)
+- [ ] `PaAgreementScreen` — agreement generator: auto-fill from claim + state fee regs. Fee percentage input with compliance check. Scope of services checklist. AOB inclusion toggle (with state-specific warnings: FL AOB reform requirements). Send for e-signature (via ZForge). Status tracker (~1.5h)
+
+**Web CRM (hooks + pages):**
+
+- [ ] `use-pa-fee-regulations.ts` hook — read-only from seed. Returns `{ regulations, loading, getByState }` (~0.5h)
+- [ ] `use-pa-agreements.ts` hook — CRUD + real-time. Returns `{ agreements, loading, error, createAgreement, updateAgreement }` (~1h)
+- [ ] `/dashboard/pa-tools` page — PA toolkit hub: fee calculator, counter-estimate builder, O&P calculator, appraisal tools, agreement manager. Tabbed layout (~2h)
+- [ ] `/dashboard/claims/[id]/counter-estimate` page — full side-by-side counter-estimate builder with inline editing (~2h)
+
+**Edge Functions:**
+
+- [ ] `calculate-pa-fee` EF — Auth via JWT. Rate limit: 20/min. CORS. Sentry error logging on all catch blocks. Input: state_code, settlement_amount, is_emergency. Looks up pa_fee_regulations. Returns: max_fee_pct, calculated_fee, emergency_fee_pct (if applicable), compliance_warnings[], statute_reference. Input validation: state_code must be valid, amount must be positive (~1.5h)
+- [ ] `generate-counter-estimate-pdf` EF — Auth via JWT. Rate limit: 5/min. CORS. Sentry error logging on all catch blocks. Takes: adjuster_claim_id + counter_estimate data (line items array with original vs counter values). Generates professional PDF with: company branding (logo, address, license#), claim header (claim#, policyholder, property address, date of loss), line-item comparison table (columns: item description, room, original qty, counter qty, original price, counter price, original total, counter total, change amount), supporting documentation references per line item, total summary (original total, counter total, net difference), O&P section if applicable, legal disclaimer, signature block (adjuster signature + date). Uses `@react-pdf/renderer`. Returns Storage URL. Input validation: adjuster_claim_id required, must belong to requesting company, at least 1 line item required (~3h)
+
+#### Security Verification
+- [ ] RLS on pa_contingency_agreements. pa_fee_regulations NO RLS (public seed)
+- [ ] PA fee check prevents creating agreements above state max (warning, not hard block — some states have exceptions)
+- [ ] AOB state compliance check (FL reform requirements enforced)
+- [ ] Agreement e-signature via ZForge (ADJ10) — not raw file upload
+- [ ] Legal disclaimers on O&P calculator and fee calculator (S143)
+- [ ] Feature flags: PA_TOOLS, FEE_CALCULATOR, COUNTER_ESTIMATE, OP_CALCULATOR, APPRAISAL_TOOLS
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1** (Claims) — PA pipeline stages (Lead → Signed → Inspected → Policy Review → Counter-Estimate → Submitted → Negotiation → Supplement → Appraisal → Settled) wired to adjuster_claims pipeline
+- [ ] **ADJ3** (Supplements) — counter-estimate workflow shares supplement_reviews infrastructure for line-item comparison
+- [ ] **ADJ10** (ZForge) — contingency agreement template, appraisal demand letter template, AOB template (state-specific)
+- [ ] **ADJ11** (Cross-Entity) — homeowner signs AOB via client portal. PA sees signed status
+- [ ] **S143** — fee calculator, O&P calculator, total loss calculator all save to job + set as favorite + legal disclaimers
+- [ ] **CUST9** — PA_TOOLS, FEE_CALCULATOR, COUNTER_ESTIMATE, OP_CALCULATOR, APPRAISAL_TOOLS modules
+
+#### i18n Requirements
+- [ ] State names, fee basis labels, agreement status labels, tool labels — all 10 locales
+- [ ] Legal citations remain in English (US law)
+- [ ] Currency formatting locale-correct
+- [ ] O&P explanation translated professionally per locale
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] CRITICAL: Tables without company_id (system templates/seed) must NOT use audit_trigger_fn — use system_audit_trigger or skip
+- [ ] Seed data INSERTs include all required NOT NULL columns
+
+- [ ] Commit: `[ADJ8] Public adjuster toolkit — pa_fee_regulations (50 states), pa_contingency_agreements, fee calculator, counter-estimate workflow, O&P calculator with court precedents, appraisal tools, AOB compliance`
+# ADJ9-ADJ12 — Adjuster Sprint Specs Batch 3 (Portal + App)
+
+---
+
+### ADJ9 — Trojan Horse Portal + Adjuster Invite System (~32h) — S146
+*THE TROJAN HORSE. This is how Zafto gets a foothold in the $35B insurance claims monopoly for $0 marketing spend. Flow: contractor sends estimate → professional email to adjuster with public URL → adjuster views full evidence package (photos, sketch 2D/3D, recon, measurements, weather) WITHOUT login → to interact (reply, approve items, track claims), adjuster creates FREE account → dashboard auto-fills with all Zafto contractor claims → network effect compounds. 1,000 contractors × 5 unique adjusters/mo = 5,000 invitations → 10% convert = 500 new adjusters/mo. This is also what makes the "Send to Adjuster" feature work for contractors even if zero adjusters adopt — it auto-assembles evidence into a professional package.*
+
+*Source: adjuster-deep-research-s133.md (Trojan horse mechanism, adoption waves, growth math)*
+*Depends on: ADJ1 (claims), ADJ2 (evidence viewer), ADJ3 (supplement viewer)*
+*CUST9 Modules: PORTAL_INVITE, SEND_TO_ADJUSTER, PUBLIC_VIEWER*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `evidence_packages`, `evidence_package_items`, `supplement_reviews`, `property_floor_plans`, `property_scans`
+- Writes to: 2 new tables (`adjuster_portal_invites`, `public_evidence_views`)
+- Wires to: ADJ1-ADJ3 (core features), ADJ11 (contractor-side "Send to Adjuster" flow), companies + users (adjuster onboarding)
+
+**Migration:**
+
+- [ ] Create `adjuster_portal_invites` table (~1.5h):
+  ```sql
+  CREATE TABLE adjuster_portal_invites (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    -- company_id = adjuster's company (NULL if not yet created account)
+    -- sender_company_id = contractor's company (always set, FK enforced)
+    -- Standard RLS scopes by sender_company_id (contractor) and created_adjuster_company_id (adjuster)
+    company_id UUID REFERENCES companies(id),
+    adjuster_claim_id UUID REFERENCES adjuster_claims(id),
+    insurance_claim_id UUID REFERENCES insurance_claims(id),
+    evidence_package_id UUID REFERENCES evidence_packages(id),
+    invite_token TEXT NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(32), 'hex'),
+    adjuster_email TEXT NOT NULL,
+    adjuster_name TEXT,
+    adjuster_company_name TEXT,
+    carrier_name TEXT,
+    claim_number TEXT,
+    property_address TEXT,
+    sender_company_id UUID NOT NULL REFERENCES companies(id),
+    sender_user_id UUID REFERENCES users(id),
+    sender_company_name TEXT,
+    message TEXT,
+    status TEXT NOT NULL DEFAULT 'sent' CHECK (status IN (
+      'draft','sent','delivered','viewed','account_created','active','expired','bounced'
+    )),
+    sent_at TIMESTAMPTZ,
+    first_viewed_at TIMESTAMPTZ,
+    account_created_at TIMESTAMPTZ,
+    created_adjuster_user_id UUID REFERENCES users(id),
+    created_adjuster_company_id UUID REFERENCES companies(id),
+    view_count INTEGER DEFAULT 0,
+    last_viewed_at TIMESTAMPTZ,
+    expires_at TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '90 days'),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE adjuster_portal_invites ENABLE ROW LEVEL SECURITY;
+  -- Sender company can see their invites
+  CREATE POLICY "invites_sender_select" ON adjuster_portal_invites FOR SELECT
+    USING (sender_company_id = requesting_company_id() AND deleted_at IS NULL);
+  -- Adjuster company can see invites sent to them (after account creation)
+  CREATE POLICY "invites_recipient_select" ON adjuster_portal_invites FOR SELECT
+    USING (created_adjuster_company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "invites_insert" ON adjuster_portal_invites FOR INSERT
+    WITH CHECK (sender_company_id = requesting_company_id());
+  CREATE POLICY "invites_update" ON adjuster_portal_invites FOR UPDATE
+    USING ((sender_company_id = requesting_company_id() OR created_adjuster_company_id = requesting_company_id()) AND deleted_at IS NULL);
+  CREATE POLICY "invites_delete" ON adjuster_portal_invites FOR DELETE
+    USING (sender_company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  -- NO public SELECT policy. Public access to invite data is via the 'send-adjuster-invite' EF
+  -- which validates invite_token from request and returns ONLY that specific invite's data.
+  -- RLS protects against any unauthorized browse.
+  CREATE INDEX idx_invites_sender ON adjuster_portal_invites(sender_company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_invites_recipient ON adjuster_portal_invites(created_adjuster_company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_invites_token ON adjuster_portal_invites(invite_token) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_invites_email ON adjuster_portal_invites(adjuster_email) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_invites_status ON adjuster_portal_invites(status) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_invites_updated_at BEFORE UPDATE ON adjuster_portal_invites
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  CREATE TRIGGER invites_audit AFTER INSERT OR UPDATE OR DELETE ON adjuster_portal_invites
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  ```
+
+- [ ] Create `public_evidence_views` table (~1h):
+  ```sql
+  CREATE TABLE public_evidence_views (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    evidence_package_id UUID REFERENCES evidence_packages(id),
+    invite_id UUID REFERENCES adjuster_portal_invites(id),
+    share_token TEXT,
+    viewer_ip_hash TEXT,
+    viewer_user_agent TEXT,
+    viewed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    pages_viewed TEXT[] DEFAULT '{}',
+    time_spent_seconds INTEGER DEFAULT 0,
+    photos_viewed INTEGER DEFAULT 0,
+    sketch_viewed BOOLEAN DEFAULT false,
+    recon_viewed BOOLEAN DEFAULT false,
+    supplement_viewed BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  ALTER TABLE public_evidence_views ENABLE ROW LEVEL SECURITY;
+  -- Public analytics table. INSERT allowed via service_role (from track-evidence-view EF).
+  -- SELECT allowed for company members viewing their own invite analytics.
+  CREATE POLICY "pev_select" ON public_evidence_views FOR SELECT
+    USING (invite_id IN (SELECT id FROM adjuster_portal_invites WHERE sender_company_id = requesting_company_id() AND deleted_at IS NULL));
+  -- No direct INSERT policy for authenticated users. track-evidence-view EF uses service_role key.
+  -- NO deleted_at — analytics data, not soft-deleted
+  CREATE INDEX idx_pub_views_package ON public_evidence_views(evidence_package_id);
+  CREATE INDEX idx_pub_views_invite ON public_evidence_views(invite_id);
+  CREATE INDEX idx_pub_views_date ON public_evidence_views(viewed_at DESC);
+  ```
+
+**Dart Models:**
+
+- [ ] `AdjusterPortalInvite` model — Equatable, fromJson/toJson, copyWith. All columns. Computed: `isExpired`, `isViewed`, `hasCreatedAccount`, `daysSinceSent`, `conversionStatus` (sent→viewed→created→active) (~1h)
+- [ ] `PublicEvidenceView` model — fromJson only. Fields: viewedAt, pagesViewed, timeSpent, photosViewed, sketchViewed (~0.5h)
+
+**Repositories + Providers:**
+
+- [ ] `AdjusterPortalInviteRepository` — create(), getBySender(), getByRecipient(), updateStatus(), getConversionMetrics() (~1h)
+- [ ] `portalInvitesProvider`, `inviteMetricsProvider` (~0.5h)
+
+**Flutter Screens (4-state on ALL):**
+
+- [ ] `SendToAdjusterScreen` — contractor-side flow: enter adjuster email + name + company (autocomplete from previous sends). Optional message. Preview evidence package (summary card: X photos, sketch ✓, recon ✓, weather ✓). "Send" button generates invite + sends email. Confirmation with tracking link. History of previous sends to this adjuster (~3h)
+- [ ] `InviteTrackingScreen` — contractor sees all sent invites: status badges (Sent → Viewed → Account Created → Active), view count, last viewed date. "Resend" button for expired. "Send Reminder" for viewed-but-not-converted. Conversion funnel metrics (sent → opened → viewed → signed up) (~2h)
+- [ ] `AdjusterOnboardingScreen` — new adjuster account setup after accepting invite: adjuster type, license, specialties, company info. Streamlined 3-step flow. Auto-links received evidence packages to new account (~2h)
+
+**Web CRM — Contractor Side:**
+
+- [ ] `use-portal-invites.ts` hook — CRUD for invites sent by contractor. Returns `{ invites, loading, error, sendInvite, resend, getMetrics }` (~1.5h)
+- [ ] `/dashboard/jobs/[id]/send-to-adjuster` modal/page — compose invite, preview evidence, send. Same as Flutter but web UX (~2h)
+- [ ] `/dashboard/adjuster-invites` page — all sent invites with conversion tracking. Funnel visualization. Export contacts (~1.5h)
+
+**Web CRM — Adjuster Side:**
+
+- [ ] Adjuster dashboard auto-populates with received evidence packages from all Zafto contractors. Each card: contractor name, claim#, property address, date, evidence completeness score. Click → full evidence viewer (ADJ2). Auto-sorted by newest (~2h)
+
+**Public Pages (NO AUTH REQUIRED):**
+
+- [ ] `/evidence/[token]` public page — full evidence package viewer. NO login wall. Sections: property overview, photo gallery (grid view, click to expand), floor plan viewer (2D, interactive Konva read-only), 3D viewer (three.js, interactive), recon summary (if shared), measurement table, weather verification badge, contractor info. Professional layout — this IS the sales pitch. Subtle "Create Free Account to Track Claims" CTA. "Reply to Contractor" CTA (requires account). Accessibility: WCAG 2.2 AA compliant (~5h)
+- [ ] `/invite/[token]` page — adjuster signup from invite. Pre-filled: email, name, company from invite data. Choose password. Adjuster type selector. Quick 2-step signup. On completion: auto-links all evidence packages sent to this email. Redirect to dashboard (~2h)
+
+**Edge Functions:**
+
+- [ ] `send-adjuster-invite` EF — Auth via JWT (contractor). Rate limit: 20/min. CORS. Creates adjuster_portal_invites record. Generates invite_token (32 bytes hex, cryptographically secure). Generates share_token on evidence_packages (if not already set). Sends professional HTML email via Supabase Auth/custom SMTP: subject "Evidence Package Ready for Review — {claim_number}", body includes: contractor logo, property address, claim details, evidence summary (photo count, has sketch, has recon, has weather), "View Evidence Package" button (public URL), "No account required to view" note, Zafto branding. Input validation: email format, claim belongs to sender. Idempotency: if invite to same email for same claim exists and not expired, update instead of duplicate (~4h)
+- [ ] `track-evidence-view` EF — NO auth (public endpoint). Rate limit: 60/min. Records view in public_evidence_views. Updates invite status to 'viewed' on first view. Updates view_count + last_viewed_at. IP hashed for privacy (SHA-256, not stored raw). Minimal data collection — GDPR/CCPA compliant (~2h)
+
+#### Security Verification
+- [ ] RLS on adjuster_portal_invites: sender can read their invites, recipient can read theirs, public can read via token
+- [ ] public_evidence_views: NO RLS (analytics only, no PII beyond hashed IP)
+- [ ] invite_token: 32 bytes crypto random (encode(gen_random_bytes(32), 'hex')), unique constraint
+- [ ] share_token: separate from invite_token, also crypto random, with expiration
+- [ ] Public pages: NO sensitive data exposed. Photos via signed URLs with short expiry (1 hour). Floor plan data rendered client-side (not downloadable as raw JSON). Recon data summary only (not full scan export). No policyholder PII visible without account
+- [ ] Email sending: rate limited per company (20 invites/day free tier), no email content injection (sanitize message field)
+- [ ] IP hashing: SHA-256, no salt reversal, GDPR Article 6(1)(f) legitimate interest basis
+- [ ] Account creation: standard Supabase Auth flow, email verification required
+- [ ] Evidence package access: token-based, time-limited (90 days default), revocable by contractor
+- [ ] Feature flags: PORTAL_INVITE, SEND_TO_ADJUSTER, PUBLIC_VIEWER
+- [ ] IMPORTANT: public evidence pages must NOT expose: policyholder SSN/DOB, policy limits, contractor pricing (show categories only), internal notes
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1** (Claims) — invite creates adjuster_claims record when adjuster creates account. Source = 'portal_invite'
+- [ ] **ADJ2** (Evidence) — public viewer uses same evidence components (Konva sketch, three.js 3D, photo gallery, recon summary) but rendered in public layout without auth
+- [ ] **ADJ3** (Supplements) — supplement view available in public viewer if contractor includes supplement in evidence package
+- [ ] **ADJ11** (Cross-Entity) — "Send to Adjuster" wired to contractor job detail screen. Homeowner sees "Sent to Adjuster on [date]" status in client portal
+- [ ] **D2** (Insurance) — invite links to insurance_claims. On adjuster account creation, adjuster_claims auto-created and linked to insurance_claims
+- [ ] **CUST9** — PORTAL_INVITE, SEND_TO_ADJUSTER, PUBLIC_VIEWER modules
+
+#### i18n Requirements
+- [ ] Invite email template translated per recipient locale preference (default: EN)
+- [ ] Public page UI labels translated (photo gallery, sketch viewer, recon summary)
+- [ ] Account creation flow translated
+- [ ] CTA buttons translated
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] CRITICAL: public_evidence_views needs system audit trigger (not company-scoped)
+- [ ] CRITICAL: Resolve orphan company_id on public_evidence_views (nullable or remove)
+- [ ] CRITICAL: Rate limit public evidence viewer: 60 req/min per IP, 10 req/min per token
+- [ ] Public endpoints: IP-based rate limiting (not company_id-based)
+- [ ] Token access: Expiration and time-limited tokens enforced
+
+- [ ] Commit: `[ADJ9] Trojan horse portal — adjuster_portal_invites, public_evidence_views, Send to Adjuster flow, public evidence viewer (2D/3D/recon/photos, no-login), invite email, adjuster onboarding, conversion tracking`
+
+---
+
+### ADJ10 — Adjuster ZForge Templates + Legal Forms (~12h) — S146
+*34 adjuster-specific document types for the ZForge document generation engine. Insurance adjusting is one of the most document-heavy professions — every claim generates 10-30 documents. Current state: Word templates, manual filling, inconsistent formatting, version drift. Zafto builds type-safe, state-aware templates with dynamic field injection, e-signature via DocuSeal, and document chain linking (claim → supplement → proof of loss → settlement).*
+
+*Source: zforge-expansion-deep-research-s144.md (354 document types including 34 adjuster), zforge-deep-research-s139.md (template architecture)*
+*Depends on: ZFORGE1-3 (ZForge foundation — pdfme WYSIWYG, template engine, e-signature)*
+*CUST9 Modules: ADJUSTER_DOCUMENTS, LEGAL_FORMS, DOCUMENT_CHAINS*
+
+**System Connectivity:**
+- Reads from: `adjuster_claims`, `adjuster_profiles`, `contents_claims`, `supplement_reviews`, `pa_contingency_agreements`, `evidence_packages`, `companies`, `users`
+- Writes to: 1 new table (`adjuster_document_templates`)
+- Wires to: ZFORGE (document engine), ADJ1-ADJ8 (all claim types generate documents), ADJ11 (cross-entity document sharing)
+
+**Migration:**
+
+- [ ] Create `adjuster_document_templates` table (~1h):
+  ```sql
+  CREATE TABLE adjuster_document_templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID REFERENCES companies(id), -- NULL = system template, NOT NULL = company override
+    template_code TEXT NOT NULL,
+    template_name TEXT NOT NULL,
+    template_category TEXT NOT NULL CHECK (template_category IN (
+      'assessment','report','legal','financial','communication',
+      'compliance','contents','vehicle','pa','supplement'
+    )),
+    template_data JSONB NOT NULL DEFAULT '{}',
+    -- S147 FIX: JSONB schema for template_data:
+    -- {
+    --   "sections": [{"id": "string", "title": "string", "fields": [{"id": "string", "label": "string", "type": "text|number|date|select|checkbox|signature|photo", "required": boolean, "default_value": "string|null", "options": ["string"]|null}]}],
+    --   "layout": {"page_size": "letter|legal|a4", "orientation": "portrait|landscape", "margins": {"top": number, "right": number, "bottom": number, "left": number}},
+    --   "header": {"logo_position": "left|center|right", "show_company_info": boolean, "show_claim_number": boolean},
+    --   "footer": {"show_page_numbers": boolean, "show_disclaimer": boolean, "custom_text": "string|null"},
+    --   "variables": [{"key": "string", "source_table": "string", "source_column": "string", "transform": "string|null"}]
+    -- }
+    is_system_template BOOLEAN DEFAULT false,
+    CHECK ((is_system_template = true AND company_id IS NULL) OR (is_system_template = false AND company_id IS NOT NULL)),
+    is_state_specific BOOLEAN DEFAULT false,
+    applicable_states TEXT[] DEFAULT '{}',
+    applicable_loss_types TEXT[] DEFAULT '{}',
+    applicable_adjuster_types TEXT[] DEFAULT '{}',
+    version INTEGER DEFAULT 1,
+    status TEXT DEFAULT 'active' CHECK (status IN ('active','draft','archived','deprecated')),
+    requires_signature BOOLEAN DEFAULT false,
+    signature_roles TEXT[] DEFAULT '{}',
+    legal_disclaimer TEXT,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE adjuster_document_templates ENABLE ROW LEVEL SECURITY;
+  -- Combined SELECT policy: system templates (NULL company_id) readable by all auth users,
+  -- company templates readable by company members only
+  CREATE POLICY "adj_templates_select" ON adjuster_document_templates FOR SELECT
+    -- S147 FIX: deleted_at IS NULL now applies to BOTH system and company templates (was missing for system templates)
+    USING (((company_id IS NULL AND is_system_template = true) OR company_id = requesting_company_id()) AND deleted_at IS NULL);
+  CREATE POLICY "adj_templates_insert" ON adjuster_document_templates FOR INSERT
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "adj_templates_update" ON adjuster_document_templates FOR UPDATE
+    USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+    WITH CHECK (company_id = requesting_company_id());
+  CREATE POLICY "adj_templates_delete" ON adjuster_document_templates FOR DELETE
+    USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_adj_templates_company ON adjuster_document_templates(company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_templates_code ON adjuster_document_templates(template_code) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_templates_category ON adjuster_document_templates(template_category) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_adj_templates_system ON adjuster_document_templates(is_system_template) WHERE is_system_template = true AND deleted_at IS NULL;
+  CREATE TRIGGER update_adj_templates_updated_at BEFORE UPDATE ON adjuster_document_templates
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  -- S147 FIX: System templates have NULL company_id. Standard audit_trigger_fn() assumes company_id NOT NULL.
+  -- Use system_audit_trigger_fn() variant which handles NULL company_id by using 'SYSTEM' sentinel,
+  -- or wrap: EXECUTE FUNCTION CASE WHEN NEW.company_id IS NULL THEN system_audit_trigger_fn() ELSE audit_trigger_fn() END
+  -- Implementation: create system_audit_trigger_fn() that skips company_id validation when NULL
+  CREATE TRIGGER adj_templates_audit AFTER INSERT OR UPDATE OR DELETE ON adjuster_document_templates
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  -- NOTE: audit_trigger_fn must handle NULL company_id for this table (is_system_template=true rows).
+  -- If audit_trigger_fn crashes on NULL company_id, create a conditional wrapper or
+  -- add COALESCE(NEW.company_id, '00000000-0000-0000-0000-000000000000') in the trigger function.
+  ```
+
+- [ ] Seed 34 system adjuster document templates (~6h):
+  **Assessment (6):**
+  - `ADJ-ASSESS-INITIAL`: Initial Damage Assessment Report — property overview, loss description, damage scope, preliminary estimate, photo index, recommendations
+  - `ADJ-ASSESS-REINSPECT`: Re-Inspection Report — reason for re-inspection, findings, comparison to original, updated scope
+  - `ADJ-ASSESS-STRUCTURAL`: Structural Assessment — foundation, framing, load-bearing walls, roof structure, engineer referral criteria
+  - `ADJ-ASSESS-CONTENTS`: Contents Assessment — room-by-room inventory summary, total RCV/ACV, depreciation methodology
+  - `ADJ-ASSESS-VEHICLE`: Vehicle Assessment — VIN decode, damage areas, repair estimate, total loss determination
+  - `ADJ-ASSESS-MARINE`: Marine Assessment — hull/superstructure/mechanical/electrical damage, survey conditions, salvage recommendation
+
+  **Reports (6):**
+  - `ADJ-RPT-PRELIMINARY`: Preliminary Report to Carrier — initial findings, coverage analysis, reserve recommendation
+  - `ADJ-RPT-FINAL`: Final Report — complete findings, estimate summary, settlement recommendation
+  - `ADJ-RPT-SUPPLEMENT`: Supplement Report — original vs supplement comparison, justification, recommendation
+  - `ADJ-RPT-PHOTO`: Photo Documentation Report — organized photo sheets with GPS, timestamps, descriptions
+  - `ADJ-RPT-MOISTURE`: Moisture Monitoring Report — readings by location/date, equipment log, drying progress, IICRC references
+  - `ADJ-RPT-WEATHER`: Weather Verification Report — NOAA/NWS data, storm event details, FEMA disaster info
+
+  **Legal (6):**
+  - `ADJ-LEGAL-POL`: Proof of Loss — sworn statement, itemized damages, policyholder signature
+  - `ADJ-LEGAL-AOB`: Assignment of Benefits — state-specific (FL reform compliant: 60-day notice, itemized estimate, licensed contractor). Top 10 states seeded
+  - `ADJ-LEGAL-SOL`: Scope of Loss — detailed loss description, room-by-room breakdown
+  - `ADJ-LEGAL-SUPP`: Supplemental Claim Form — addendum to original, new items discovered
+  - `ADJ-LEGAL-RES`: Reservation of Rights Letter — carrier reserves right to deny/limit coverage
+  - `ADJ-LEGAL-DEN`: Denial Explanation Letter — specific policy provisions, appeal rights
+
+  **Financial (4):**
+  - `ADJ-FIN-ESTIMATE`: Estimate Summary — line items, subtotals, O&P, tax, grand total
+  - `ADJ-FIN-PAYMENT`: Payment Authorization — amount, payee, deductible applied, holdback if applicable
+  - `ADJ-FIN-SETTLEMENT`: Settlement Statement — final accounting, all payments, holdback release
+  - `ADJ-FIN-SUBROGATION`: Subrogation Referral — responsible party details, evidence summary, recovery potential
+
+  **Communication (4):**
+  - `ADJ-COMM-CONTACT`: Initial Contact Letter — claim acknowledgment, adjuster info, next steps
+  - `ADJ-COMM-STATUS`: Status Update Letter — current status, pending items, timeline
+  - `ADJ-COMM-CLOSE`: Closing Letter — final settlement summary, appeal rights, file retention
+  - `ADJ-COMM-CONTRACTOR`: Contractor Scope Authorization — authorized scope, approved amount, timeline requirements
+
+  **PA-Specific (4):**
+  - `ADJ-PA-AGREEMENT`: Contingency Fee Agreement — fee %, scope, terms, state compliance
+  - `ADJ-PA-DEMAND`: Appraisal Demand Letter — statutory basis, umpire selection terms
+  - `ADJ-PA-COUNTER`: Counter-Estimate Cover Letter — summary of differences, justification narrative
+  - `ADJ-PA-CLOSING`: PA Closing Statement — fee calculation, net recovery, expense breakdown
+
+  **Compliance (2):**
+  - `ADJ-COMP-COI`: Certificate of Insurance Equivalent — disclaimer: "NOT an official ACORD form"
+  - `ADJ-COMP-LICENSE`: Adjuster License Verification — license numbers by state, expiration, CE status
+
+  **Specialty (2):**
+  - `ADJ-SPEC-CAT`: CAT Event Summary — event name/type, geographic scope, claim volume, deployment details
+  - `ADJ-SPEC-SIU`: SIU Referral Form — indicators of fraud, evidence summary, recommendation
+
+- [ ] Document chain definitions (~1h):
+  - `initial_assessment → supplement → proof_of_loss → settlement` (standard claim chain)
+  - `pa_agreement → counter_estimate → appraisal_demand → settlement` (PA chain)
+  - `contents_assessment → contents_inventory → settlement` (contents chain)
+  - `vehicle_assessment → total_loss_or_repair → settlement` (auto chain)
+  - Chain enforces: can't generate settlement without prior assessment. Can't generate supplement without initial assessment.
+
+**Dart Models + Repos + Providers:**
+
+- [ ] `AdjusterDocumentTemplate` model — Equatable, fromJson/toJson, copyWith. All columns (~0.5h)
+- [ ] `AdjusterDocumentTemplateRepository` — getSystem(), getByCompany(), getByCategory(), search() (~0.5h)
+- [ ] `adjusterTemplatesProvider` — FutureProvider (system templates, cached) (~0.5h)
+
+**Flutter Screens:**
+
+- [ ] `AdjusterDocumentsScreen` — document hub: recent documents, template browser (by category), document chain visualization (linked documents for current claim). "Generate Document" button → template selector → auto-fill from claim data → preview → generate PDF + optional e-sign (~2h)
+
+**Web CRM:**
+
+- [ ] `use-adjuster-templates.ts` hook — read system templates + company overrides. Returns `{ templates, loading, getByCategory }` (~0.5h)
+- [ ] `/dashboard/claims/[id]/documents` page — document tab on claim detail. Generated documents list, template selector, preview/generate/sign flow (~2h)
+
+#### Security Verification
+- [ ] RLS: system templates readable by all auth users, company templates by company only
+- [ ] Template data JSONB validated against schema
+- [ ] E-signature via ZForge DocuSeal integration (not raw file upload)
+- [ ] Legal forms include appropriate disclaimers
+- [ ] AOB template enforces FL reform requirements (state_code check)
+- [ ] Feature flags: ADJUSTER_DOCUMENTS, LEGAL_FORMS, DOCUMENT_CHAINS
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ZFORGE** — templates use ZForge rendering engine (pdfme WYSIWYG for web editing, @react-pdf/renderer for web PDF, pdf/printing for Flutter PDF)
+- [ ] **ADJ1-ADJ8** — each sprint generates documents. Assessment after inspection, supplement report after review, contents report after inventory, etc.
+- [ ] **ADJ11** (Cross-Entity) — generated documents shared with contractor (via evidence_packages), homeowner (via client portal)
+- [ ] **ZFORGE-FRESH** — template versioning ensures documents use latest legal language. Staleness alerts if state law changes
+- [ ] **CUST9** — ADJUSTER_DOCUMENTS, LEGAL_FORMS, DOCUMENT_CHAINS modules
+
+#### i18n Requirements
+- [ ] Template names and category labels — all 10 locales
+- [ ] Document content: English for US insurance industry standard. Bilingual option for policyholder-facing docs (contact letter, status update, closing letter)
+- [ ] UI labels for document management translated
+
+- [ ] Commit: `[ADJ10] Adjuster ZForge templates — 34 document types (assessment, report, legal, financial, communication, PA, compliance, specialty), document chain linking, e-signature, state-specific AOB`
+
+#### Edge Function Dependencies (S147 Audit)
+- [ ] **NOTE:** ADJ10 document generation depends on ZForge EFs (ZFORGE1-3). If ZForge sprints are not yet built, ADJ10 needs placeholder EF specs:
+  - `generate-adjuster-document` EF — accepts template_code + claim_id, renders PDF via pdfme/react-pdf, returns signed URL. CORS + rate limit + auth + Sentry.
+  - `adjuster-template-preview` EF — accepts template_data JSONB, returns preview PDF without saving. CORS + rate limit + auth + Sentry.
+  - `adjuster-document-esign` EF — triggers DocuSeal e-signature flow for generated document. CORS + rate limit + auth + Sentry.
+  - OR: explicitly note these are covered by ZFORGE1-3 EFs with adjuster-specific wiring in ADJ10 Flutter/web code only.
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] CRITICAL: System template SELECT policies must include `deleted_at IS NULL`
+- [ ] CRITICAL: System template tables (nullable company_id) need system_audit_trigger variant
+- [ ] CRITICAL: Document JSONB schemas for template_data, form_schema columns
+- [ ] CRITICAL: Add EF specs for document/report generation (or note ZForge dependency)
+
+---
+
+### ADJ11 — Cross-Entity Wiring (Contractor + Homeowner + Realtor) (~12h) — S146
+*The adjuster portal doesn't exist in isolation — it connects to contractors (who send evidence), homeowners (who own the property and file claims), and realtors (who need disclosure data for listings). This sprint wires all cross-entity data flows, RLS policies, and UI touchpoints. Contractor-adjuster is the primary connection. Homeowner-adjuster is secondary (claim status visibility, AOB signing). Realtor-adjuster is tertiary (disclosure requirements for prior claims on properties).*
+
+*Source: ecosystem-connection-map-s144.md (14 cross-entity connections), adjuster-deep-research-s133.md (cross-entity flows)*
+*Depends on: ADJ1-ADJ10 (all adjuster sprints), D2 (insurance), CLIENT (client portal)*
+*CUST9 Modules: CROSS_ENTITY_SHARING, CLAIM_STATUS_SHARING, DISCLOSURE_DATA*
+
+**System Connectivity:**
+- Reads from: ALL adjuster tables, `insurance_claims`, `customers`, `properties`, `referral_connections`, `property_data_sharing`
+- Writes to: 1 new table (`claim_status_sharing`), modifications to existing `referral_connections` RLS
+- Wires to: ADJ1-ADJ10, D2 insurance, client portal, RE10 listings (disclosure)
+
+**Migration:**
+
+- [ ] Create `claim_status_sharing` table (~1.5h):
+  ```sql
+  -- This table intentionally spans two companies. No canonical company_id.
+  -- Scoping is via adjuster_company_id + contractor_company_id.
+  -- Both sides can read records where their company_id matches EITHER column.
+  CREATE TABLE claim_status_sharing (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    insurance_claim_id UUID NOT NULL REFERENCES insurance_claims(id),
+    adjuster_claim_id UUID REFERENCES adjuster_claims(id),
+    contractor_company_id UUID REFERENCES companies(id),
+    adjuster_company_id UUID REFERENCES companies(id),
+    homeowner_user_id UUID REFERENCES users(id),
+    share_level TEXT NOT NULL DEFAULT 'basic' CHECK (share_level IN ('none','basic','detailed','full')),
+    -- S147 FIX: JSONB schemas documented for all visibility columns
+    -- contractor_can_see schema: {"status": boolean, "stage": boolean, "reviewer_name": boolean, "estimate_amount": boolean, "notes": boolean}
+    contractor_can_see JSONB DEFAULT '{"status":true,"stage":true,"reviewer_name":false,"estimate_amount":false,"notes":false}',
+    -- homeowner_can_see schema: {"status": boolean, "stage_simplified": boolean, "supplement_pending": boolean, "payment_status": boolean}
+    homeowner_can_see JSONB DEFAULT '{"status":true,"stage_simplified":true,"supplement_pending":true,"payment_status":true}',
+    -- realtor_can_see schema: {"claim_exists": boolean, "claim_type": boolean, "claim_status": boolean, "amounts": boolean}
+    realtor_can_see JSONB DEFAULT '{"claim_exists":true,"claim_type":true,"claim_status":false,"amounts":false}',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    deleted_at TIMESTAMPTZ
+  );
+  ALTER TABLE claim_status_sharing ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "claim_sharing_adjuster_select" ON claim_status_sharing FOR SELECT
+    USING (adjuster_company_id = requesting_company_id() AND deleted_at IS NULL);
+  CREATE POLICY "claim_sharing_contractor_select" ON claim_status_sharing FOR SELECT
+    USING (contractor_company_id = requesting_company_id() AND deleted_at IS NULL);
+  -- Homeowner access: uses auth.uid() instead of requesting_company_id() because
+  -- homeowners are individual users, not company members. Their JWT has no company_id.
+  -- This is an intentional deviation from the standard company-scoped pattern.
+  CREATE POLICY "claim_sharing_homeowner_select" ON claim_status_sharing FOR SELECT
+    USING (homeowner_user_id = auth.uid() AND deleted_at IS NULL);
+  CREATE POLICY "claim_sharing_insert" ON claim_status_sharing FOR INSERT
+    WITH CHECK (
+      (adjuster_company_id = requesting_company_id() AND contractor_company_id != requesting_company_id())
+      OR (contractor_company_id = requesting_company_id() AND adjuster_company_id != requesting_company_id())
+    );
+  CREATE POLICY "claim_sharing_update" ON claim_status_sharing FOR UPDATE
+    USING ((adjuster_company_id = requesting_company_id() OR contractor_company_id = requesting_company_id()) AND deleted_at IS NULL);
+  CREATE POLICY "claim_sharing_delete" ON claim_status_sharing FOR DELETE
+    USING ((adjuster_company_id = requesting_company_id() OR contractor_company_id = requesting_company_id())
+      AND requesting_user_role() IN ('owner','admin'));
+  CREATE INDEX idx_claim_sharing_insurance ON claim_status_sharing(insurance_claim_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_claim_sharing_adjuster ON claim_status_sharing(adjuster_company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_claim_sharing_contractor ON claim_status_sharing(contractor_company_id) WHERE deleted_at IS NULL;
+  CREATE INDEX idx_claim_sharing_homeowner ON claim_status_sharing(homeowner_user_id) WHERE deleted_at IS NULL;
+  CREATE TRIGGER update_claim_sharing_updated_at BEFORE UPDATE ON claim_status_sharing
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  -- S147 FIX: claim_status_sharing has NO single company_id column (cross-company table).
+  -- Standard audit_trigger_fn() expects company_id. Use cross_company_audit_trigger_fn()
+  -- that logs BOTH adjuster_company_id AND contractor_company_id in the audit record,
+  -- or modify audit_trigger_fn to handle tables where company_id is NULL by checking for
+  -- adjuster_company_id/contractor_company_id columns as fallback.
+  CREATE TRIGGER claim_sharing_audit AFTER INSERT OR UPDATE OR DELETE ON claim_status_sharing
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  -- NOTE: Implementation must ensure audit_trigger_fn handles this cross-company table.
+  -- Option A: Add a computed/generated company_id column: company_id = COALESCE(adjuster_company_id, contractor_company_id)
+  -- Option B: Create cross_company_audit_trigger_fn() variant
+  ```
+
+**Wiring — Contractor → Adjuster (~3h):**
+
+- [ ] Job detail screen: "Send to Adjuster" button (wired to ADJ9 send flow). Visible when job has insurance_claim. Shows invite status badge
+- [ ] Job detail screen: "Adjuster Review Status" card when claim sent to adjuster. Shows: pipeline_stage, supplement review status (X of Y items reviewed), last activity date. Data from claim_status_sharing
+- [ ] Contractor estimate screen: "Mark as Supplement" toggle per line item. When toggled, line item flagged `is_supplement: true` and tagged with supplement phase number
+- [ ] Contractor dashboard: "Claims Sent to Adjusters" widget showing recent invites and their conversion status
+- [ ] `use-claim-status.ts` hook in web-portal — reads claim_status_sharing for contractor view. Real-time subscription for status updates
+
+**Wiring — Homeowner → Adjuster (~3h):**
+
+- [ ] Client portal: insurance claim status card on project detail (already exists in D2h — enhance with adjuster review data). Shows: simplified timeline (Claim Filed → Under Review → Supplement Submitted → Approved → Payment Processing → Settled), supplement status ("Your contractor submitted additional work scope — awaiting adjuster review"), next expected action, estimated timeline
+- [ ] Client portal: "Documents" section shows homeowner-facing documents from ADJ10 (contact letter, status updates, closing letter, settlement statement — NOT internal adjuster reports)
+- [ ] Client portal: AOB signing flow. Homeowner receives AOB document via email/portal notification. Reviews terms. E-signs via ZForge/DocuSeal. Signed status flows back to PA (pa_contingency_agreements.signed_by_policyholder = true)
+- [ ] Client portal: "Contact Adjuster" — does NOT reveal adjuster personal info. Routes message through claim_review_activities as communication type
+- [ ] `use-homeowner-claim-status.ts` hook in client-portal — reads claim_status_sharing where homeowner_user_id = auth.uid(). Simplified status labels
+
+**Wiring — Realtor → Adjuster (~2h):**
+
+- [ ] Realtor CRM: on property profile, if property has had insurance claims (via property_data_sharing), show "Prior Claims" badge with: claim type, date, status (resolved/open). NO financial details. This is for **disclosure compliance** — sellers must disclose prior insurance claims in most states
+- [ ] Realtor CRM: listing prep checklist includes "Insurance claim disclosure" item. Auto-populated if property has claim history. Checklist item links to disclosure requirements per state (JUR4 jurisdiction data)
+- [ ] Realtor CRM: storm alert → property in portfolio has storm damage → "Check if claim needed" notification. Links to contractor referral (referral_connections where referral_type = 'storm_alert')
+- [ ] `use-property-claim-history.ts` hook in web-portal — reads insurance_claims history for properties shared via property_data_sharing. Returns simplified claim history (type, date, resolved) with NO financial data
+
+**Wiring — Referral Connections (~2h):**
+
+- [ ] Wire adjuster as valid entity type in referral_connections:
+  ```sql
+  -- Add 'adjuster' to referral_connections entity_type CHECK constraint:
+  ALTER TABLE referral_connections DROP CONSTRAINT IF EXISTS referral_connections_entity_type_check;
+  ALTER TABLE referral_connections ADD CONSTRAINT referral_connections_entity_type_check
+    CHECK (entity_type IN ('contractor','realtor','inspector','adjuster','homeowner','preservation'));
+  -- Add RLS policy for adjuster company access:
+  -- S147 FIX: Operator precedence — AND deleted_at IS NULL must apply to ALL branches, not just the second OR
+  CREATE POLICY "referral_adjuster_select" ON referral_connections FOR SELECT
+    USING (((entity_type = 'adjuster' AND company_id = requesting_company_id()) OR
+           referred_company_id = requesting_company_id()) AND deleted_at IS NULL);
+  ```
+  - Contractor → Adjuster: referral_type = 'insurance_claim'. Created when contractor sends estimate to adjuster
+  - Homeowner → Adjuster: referral_type = 'direct'. Created when homeowner selects adjuster from Zafto marketplace (future)
+  - Adjuster → Contractor: referral_type = 'claim_assignment'. Created when adjuster recommends contractor for repair work
+- [ ] Referral tracking: when adjuster_portal_invite converts (account created), record as successful referral in referral_connections
+- [ ] Commission/referral credit: configurable per company. Default: no monetary referral fees between adjusters and contractors (anti-steering compliance)
+
+**Dart Models + Hooks:**
+
+- [ ] `ClaimStatusSharing` model — Equatable, fromJson/toJson, copyWith. Fields: insuranceClaimId, shareLevel, contractorCanSee, homeownerCanSee, realtorCanSee (~0.5h)
+- [ ] Flutter: `ClaimStatusWidget` reusable widget showing adjuster review progress on contractor's job detail screen (~1h)
+- [ ] Flutter: `HomeownerClaimTimelineWidget` for client portal simplified claim timeline (~1h)
+
+#### Security Verification
+- [ ] claim_status_sharing RLS: adjuster company, contractor company, AND homeowner user can each only see their own sharing records
+- [ ] homeowner_can_see defaults exclude financial amounts and internal notes
+- [ ] realtor_can_see defaults exclude financial amounts, adjuster identity, and detailed status
+- [ ] Anti-steering compliance: NO monetary referral tracking between adjusters and contractors by default
+- [ ] Homeowner AOB signing: requires explicit consent, e-sign audit trail, FL reform compliance
+- [ ] Client portal: NO adjuster personal contact info exposed (only company name)
+- [ ] Property claim history for realtors: disclosure-level data only (type, date, resolved — NO amounts, NO adjuster details)
+- [ ] Feature flags: CROSS_ENTITY_SHARING, CLAIM_STATUS_SHARING, DISCLOSURE_DATA
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+#### Ecosystem Connections
+- [ ] **ADJ1-ADJ10** — all adjuster sprints generate data visible through cross-entity sharing
+- [ ] **D2** (Insurance Claims) — insurance_claims is the bridge between contractor and adjuster records
+- [ ] **Client Portal** — homeowner claim status view enhanced with adjuster review data
+- [ ] **RE10** (Listing Management) — prior claim history badge on listings for disclosure
+- [ ] **RE7** (Seller Finder) — property claim history enriches seller lead scoring
+- [ ] **JUR4** (Realtor Jurisdiction) — disclosure requirements per state
+- [ ] **Phase T** (TPA) — TPA assignments flow through to adjuster claims
+- [ ] **referral_connections** — adjuster as valid entity type in flywheel
+- [ ] **CUST9** — CROSS_ENTITY_SHARING, CLAIM_STATUS_SHARING, DISCLOSURE_DATA modules
+
+#### i18n Requirements
+- [ ] Claim status labels (simplified for homeowner) — all 10 locales
+- [ ] Disclosure badge text translated
+- [ ] AOB signing flow fully translated (policyholder-facing)
+- [ ] Cross-entity notification messages translated
+
+- [ ] Commit: `[ADJ11] Cross-entity wiring — claim_status_sharing table, contractor→adjuster evidence flow, homeowner claim status + AOB signing, realtor disclosure data, referral_connections adjuster entity type`
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] CRITICAL: claim_status_sharing has no single company_id — audit_trigger_fn needs cross-company variant (see inline SQL fix)
+- [ ] CRITICAL: Fix RLS operator precedence — wrap OR conditions in parentheses, AND deleted_at IS NULL outside (see referral_adjuster_select inline fix)
+- [ ] CRITICAL: Fix ALTER TABLE column name references to match CREATE TABLE (verify referral_connections.entity_type exists before ALTER)
+- [ ] CRITICAL: Complete CHECK constraint enum value lists (share_level: 'none','basic','detailed','full' — verify these match business requirements)
+- [ ] CRITICAL: All tables that reference deleted_at in RLS must have deleted_at column in CREATE TABLE (verified: claim_status_sharing has deleted_at)
+- [ ] CRITICAL: INSERT policies must enforce company_id = auth company_id — claim_sharing_insert does check requesting_company_id() but note: inserter can set the OTHER company's ID freely (design decision for cross-company sharing — document this)
+
+---
+
+### ADJ12 — Flutter App Flavor + Mobile Field UX (~24h) — S146
+*Adjusters don't just get a web portal — they get a full native app. The Flutter app uses the existing flavor system (`flavors/adjuster/`) with Zafto Orange branding, adjuster-specific navigation, and field-optimized UX. Field adjusters (IA, CAT, PA) need: offline claim review, camera with GPS/timestamp, LiDAR scanning, damage sketching, moisture reading entry, and voice-to-text notes. Desk adjusters need: claim pipeline management, supplement review, evidence review, document generation. The app supports BOTH workflows with role-based navigation.*
+
+*Source: adjuster-deep-research-s133.md (adoption waves, mobile requirements), adjuster-workflow-deep-dive-s134.md (field vs desk workflows)*
+*Depends on: ADJ1-ADJ11 (all adjuster features), SHARED-PKG1 (sketch_core), SHARED-PKG3 (field_toolkit)*
+*CUST9 Modules: ADJUSTER_APP, FIELD_MODE, DESK_MODE*
+
+**System Connectivity:**
+- Reads from: ALL adjuster tables, sketch_core package, recon_core package, field_toolkit package
+- Writes to: no new tables (uses existing ADJ1-ADJ11 tables)
+- Wires to: ALL ADJ sprints, SHARED-PKG packages, LAUNCH-FLAVORS
+
+**App Flavor Configuration (~2h):**
+
+- [ ] `flavors/adjuster/` directory structure:
+  ```
+  flavors/adjuster/
+    android/
+      app/src/adjuster/res/values/strings.xml  (app_name: "Zafto Adjuster")
+      app/src/adjuster/res/mipmap-*/ic_launcher.png  (Zafto Orange icon)
+    ios/
+      Runner/adjuster/Info.plist  (bundle: app.zafto.adjuster, name: "Zafto Adjuster")
+      Runner/adjuster/Assets.xcassets/AppIcon.appiconset/  (Zafto Orange icon)
+    lib/
+      flavor_config.dart  (flavor: 'adjuster', primaryColor: ZaftoOrange, features: [...])
+  ```
+  - Bundle ID: `app.zafto.adjuster`
+  - App name: "Zafto Adjuster"
+  - Tagline: "Claims Management"
+  - Primary color: Zafto Orange (#FF6B35)
+  - App Store listing: "Zafto Adjuster — Claims Management. Free claims pipeline, evidence review, supplement workflow, damage sketching, VIN decoder, storm verification. Replace your entire tool stack."
+  - Splash screen: Zafto Adjuster logo + "Claims Management" subtitle
+
+- [ ] Navigation structure — gated by `company_type == 'adjuster'` from JWT app_metadata (~2h):
+  **Field Adjuster Nav (staff, ia, cat, pa, field, large_loss):**
+  - Dashboard (claims summary + SLA alerts)
+  - Claims (pipeline kanban/list)
+  - Field (camera, sketch, LiDAR, moisture, voice notes — quick-access tools)
+  - Documents (generate/view)
+  - Profile (settings, licenses, authority)
+
+  **Desk Adjuster Nav (desk, supplement_reviewer, examiner, siu):**
+  - Dashboard (claims summary + approval queue)
+  - Claims (pipeline kanban/list)
+  - Supplements (review queue)
+  - Documents (generate/view)
+  - Profile (settings, authority)
+
+  Nav gated by `adjuster_profiles.adjuster_type` — field types get Field tab, desk types get Supplements tab
+
+- [ ] Field Mode features (~12h):
+  - **Quick Camera** (~3h): optimized photo capture with GPS auto-tag, timestamp overlay, room assignment dropdown, auto-categorization (exterior/interior/damage/measurement/before/after). Bulk capture mode (rapid-fire photos). Photo quality check (blur detection, too dark warning). GPS stamp on every photo (EXIF + visible overlay option)
+  - **Voice-to-Text Notes** (~2h): record voice → transcribe (device STT or sherpa_onnx offline per S135 inspector research). Auto-timestamp. Attach to claim as activity note. Works offline. Punctuation heuristics for offline mode
+  - **Offline Claim Creation** (~3h): create new claims while offline with full form validation. Queue for sync. Assign temporary local IDs (UUID v4). On reconnect: POST to server, replace local IDs with server IDs, update all FK references. Conflict detection: if claim_number already exists on server, prompt user
+  - **GPS Stamp on Photos** (~2h): every captured photo gets GPS coordinates embedded in EXIF metadata + optional visible watermark overlay (lat/lon, address, timestamp, compass bearing). Configurable per company (some carriers require visible GPS, others just EXIF). Uses device location services with fallback to last-known
+  - **Quick Damage Marking** (~2h): tap-to-mark damage areas on photos with colored pins/circles. Annotation types: crack, stain, hole, missing, broken, wet. Each annotation: color-coded by type, auto-numbered, linked to room. Export annotated photo as new image (original preserved). Uses canvas overlay on photo viewer
+  - **Damage Sketch**: uses SketchConfig.adjuster() — 8 tools, damage layer, LiDAR support, annotation. "Damage Sketch" toolbar title. Export to PDF/PNG/FML (time included in sketch_core integration, not counted here)
+  - **Moisture Entry**: quick moisture reading input — location (room + specific spot), reading value, instrument used, reading date/time. Auto-maps to floor plan if sketch exists. Color-coded: green (<15%), yellow (15-20%), red (>20%). Drying log mode: daily readings at same locations showing progress (time included in offline support, not counted here)
+  - **LiDAR Scan**: Apple RoomPlan integration (iOS 16+). Scan room → auto-generate floor plan with measurements → save to property_floor_plans with source='lidar'. Damage overlay after scan (time included in sketch_core integration, not counted here)
+
+- [ ] Desk Mode features (~2h):
+  - **Supplement Queue**: list of pending supplement reviews across all claims. Priority sort (oldest first, highest amount first, closest to SLA). Batch review mode
+  - **Evidence Review**: split-screen optimized for tablet — claim left, evidence right. Swipe between photos. Pinch-to-zoom on sketch. Flag/approve actions
+  - **Approval Queue**: pending authority approvals. Quick approve/deny with notes
+
+- [ ] Offline Support (~3h):
+  - **S147 FIX: All offline Hive storage MUST use EncryptedBox (not regular Box).** Claim data contains PII (policyholder names, addresses, claim amounts, photos of homes). Use `HiveAesCipher` with encryption key stored in `flutter_secure_storage`. Key generation: on first app launch, generate 256-bit AES key, store in secure storage. All boxes below are `Hive.openEncryptedBox('box_name', encryptionCipher: HiveAesCipher(key))`.
+  - Claim detail cached locally (Hive EncryptedBox: `adjuster_claims_cache`)
+  - Photos taken offline stored locally with upload queue
+  - Moisture readings stored locally with sync queue
+  - Sketch data cached via existing sketch_core offline pipeline
+  - Voice notes stored locally as audio files with transcription queue
+  - Offline indicator banner: "Offline — X items pending sync"
+  - On reconnect: batch sync with conflict detection (server wins for claim status, client wins for new photos/readings)
+  - Minimum offline data: current assigned claims (up to 50), associated evidence packages, customer contact info
+  - **Offline storage: Hive adapters** for `AdjusterClaim`, `AdjusterProfile`, `ClaimReviewActivity`, `ContentItem`. TypeAdapter registration in `main.dart` (each adapter gets unique typeId: AdjusterClaim=50, AdjusterProfile=51, ClaimReviewActivity=52, ContentItem=53 — starting at 50 to avoid collision with existing adapters). **S147 FIX: ALL boxes MUST be EncryptedBox** — `adjuster_claims_cache`, `hive_sync_queue`, `conflict_log`, dead letter box. Use `Hive.openEncryptedBox(name, encryptionCipher: HiveAesCipher(encryptionKey))` where `encryptionKey` is a 256-bit AES key stored in `flutter_secure_storage`. Generate key on first launch via `Hive.generateSecureKey()`. Sync queue table (`hive_sync_queue` EncryptedBox): each entry has `{id, tableName, operation (create/update/delete), payload, createdAt, retryCount}`. Max retries: 3, then move to dead letter EncryptedBox for manual resolution. **Conflict resolution:** server wins on claim `pipeline_stage` and `status` fields (authoritative state), client wins on draft notes and locally-created photos/moisture readings (user data). Merge strategy: if both sides changed different fields, merge non-conflicting changes. If same field changed, server wins with client change saved to `conflict_log` EncryptedBox for user review.
+
+- [ ] Push notifications (~1h):
+  - New claim assigned (FNOL)
+  - Supplement received
+  - Authority approval needed
+  - SLA deadline approaching (4h, 24h, 48h warnings)
+  - Claim status changed
+  - Evidence package received
+  - Invite converted (adjuster portal)
+  - Channel: FCM (Android) + APNs (iOS)
+  - **Multi-device support:** FCM token **array** per user (not single token). Store in `user_push_tokens` JSONB column on users table: `[{token, device_name, platform, registered_at, last_used_at, expires_at}]`. On login: register device token (append to array if not present). On logout: remove that device's token from array. On push send: iterate all tokens, remove any that return `messaging/registration-token-not-registered` error.
+  - **S147 FIX — Token expiration tracking:** Each token entry includes `expires_at` (default: registered_at + 90 days) and `last_used_at` (updated on each successful push delivery). CRON job (`cleanup-expired-push-tokens`, runs daily): removes tokens where `expires_at < now()` OR `last_used_at < now() - interval '90 days'`. This prevents unbounded token array growth from abandoned devices. If `user_push_tokens` is an ALTER TABLE on existing `users` table (not a new table), the migration must be `ALTER TABLE users ADD COLUMN IF NOT EXISTS user_push_tokens JSONB DEFAULT '[]'`. If it's a separate `user_push_tokens` table, use CREATE TABLE with proper RLS.
+  - **Notification channels:** `claim_updates`, `supplement_responses`, `authority_approvals`, `storm_alerts`. Per-channel opt-out in settings (stored in `adjuster_profiles.notification_preferences` JSONB — S147 FIX documented schema: `{"claim_updates": boolean, "supplement_responses": boolean, "authority_approvals": boolean, "storm_alerts": boolean, "evidence_received": boolean, "sla_warnings": boolean}`). Channel-specific sound/vibration configurable per device. **S147 FIX:** If `notification_preferences` column already exists on `adjuster_profiles` from an earlier sprint, this is a no-op. If it doesn't exist, add it via `ALTER TABLE adjuster_profiles ADD COLUMN IF NOT EXISTS notification_preferences JSONB DEFAULT '{"claim_updates":true,"supplement_responses":true,"authority_approvals":true,"storm_alerts":true,"evidence_received":true,"sla_warnings":true}'`
+
+**Web CRM — Adjuster Dashboard (~2h):**
+
+- [ ] Adjuster-specific dashboard layout (not contractor dashboard):
+  - KPI cards: Open Claims, Overdue Claims, Supplements Pending, Avg Cycle Time, Authority Utilization
+  - Claims pipeline mini-kanban (top 5 per stage)
+  - Recent activity feed
+  - SLA alert list (sorted by urgency)
+  - Weather alerts for territory (if CAT type)
+  - Upcoming inspections calendar
+  - Quick actions: New Claim, Run Storm Verification, VIN Lookup
+
+#### Security Verification
+- [ ] App flavor: bundle ID unique (`app.zafto.adjuster`), signing keys separate from contractor app
+- [ ] Offline cache: ALL Hive boxes MUST use EncryptedBox (`Hive.openEncryptedBox`) with AES-256 key from `flutter_secure_storage`. NEVER use regular `Hive.openBox` for claim data (contains PII)
+- [ ] Push notification tokens: stored securely, refreshed on app update
+- [ ] Offline sync: conflict resolution favors server for status changes (prevents stale data overwrite)
+- [ ] Camera: GPS permission requested with clear explanation. Photos include EXIF GPS only if permission granted
+- [ ] Voice recording: microphone permission with clear explanation. Audio deleted after successful transcription sync
+- [ ] Feature flags: ADJUSTER_APP, FIELD_MODE, DESK_MODE
+- [ ] OWASP Top 10 reviewed: injection, XSS, CSRF, SSRF checked
+
+**Data Access Verification (all ADJ1-ADJ11 tables accessible from adjuster app):**
+- [ ] adjuster_claims: SELECT/INSERT/UPDATE via company_id RLS
+- [ ] adjuster_profiles: SELECT/UPDATE via company_id + user_id RLS
+- [ ] claim_review_activities: SELECT/INSERT via company_id RLS
+- [ ] evidence_packages: SELECT/INSERT/UPDATE via company_id RLS
+- [ ] evidence_package_items: SELECT/INSERT/UPDATE via evidence_package_id→company_id RLS
+- [ ] supplement_reviews: SELECT/INSERT/UPDATE via company_id RLS
+- [ ] supplement_review_items: SELECT/INSERT/UPDATE via supplement_review_id→company_id RLS
+- [ ] contents_claims: SELECT/INSERT/UPDATE via company_id RLS
+- [ ] contents_items: SELECT/INSERT/UPDATE via contents_claim_id→company_id RLS
+- [ ] authority_levels: SELECT via company_id RLS
+- [ ] approval_requests: SELECT/INSERT/UPDATE via company_id RLS
+- [ ] storm_verifications: SELECT/INSERT via company_id RLS
+- [ ] vehicle_claim_details: SELECT/INSERT/UPDATE via adjuster_claim_id→company_id RLS
+- [ ] pa_contingency_agreements: SELECT/INSERT/UPDATE via company_id RLS
+- [ ] adjuster_portal_invites: SELECT via sender_company_id OR created_adjuster_company_id RLS
+- [ ] adjuster_document_templates: SELECT via company_id OR is_system RLS
+- [ ] claim_status_sharing: SELECT via adjuster_company_id OR contractor_company_id RLS
+
+#### Ecosystem Connections
+- [ ] **ADJ1-ADJ10** — all adjuster features accessible from app
+- [ ] **SHARED-PKG1** (sketch_core) — SketchConfig.adjuster() for damage sketching
+- [ ] **SHARED-PKG3** (field_toolkit) — GPS, camera, LiDAR detect, offline queue, battery management
+- [ ] **LAUNCH-FLAVORS** — adjuster flavor built alongside contractor, realtor, inspector flavors
+- [ ] **CUST9** — ADJUSTER_APP, FIELD_MODE, DESK_MODE modules. Navigation gated by adjuster_type
+
+#### i18n Requirements
+- [ ] App Store listing translated for all 10 locales
+- [ ] All navigation labels, field mode labels, push notification text — all 10 locales
+- [ ] Splash screen subtitle "Claims Management" translated
+- [ ] Offline banner text translated
+
+- [ ] Commit: `[ADJ12] Flutter adjuster app — flavors/adjuster/ config, field mode (camera + sketch + moisture + voice), desk mode (supplement queue + evidence review), offline sync, push notifications, adjuster-specific dashboard`
+
+#### Security & Quality Fixes (S147 Audit)
+- [ ] RLS: All SELECT/UPDATE policies include `AND deleted_at IS NULL`
+- [ ] Timestamps: All `created_at`/`updated_at` are `NOT NULL DEFAULT now()`
+- [ ] Edge Functions: CORS preflight handler on all EFs
+- [ ] Edge Functions: Rate limiting (X requests per minute per company_id)
+- [ ] Edge Functions: Input validation with Zod or manual checks
+- [ ] Edge Functions: Sentry error logging in all catch blocks
+- [ ] Screens: All Flutter screens handle 4 states (loading/error/empty/data)
+- [ ] Hooks: All web portal features have `use-*.ts` hooks listed
+- [ ] Indexes: Compound indexes on (company_id, deleted_at) and frequent query patterns
+- [ ] JSONB: All JSONB columns have documented schema (expected keys/types)
+- [ ] Optimistic Locking: All shared entity UPDATEs check `updated_at` in WHERE clause
+- [ ] Feature Flags: Major features gated behind `company_feature_flags`
+- [ ] CRITICAL: Verify ALTER TABLE vs CREATE TABLE for user_push_tokens — if adding JSONB column to existing `users` table, use `ALTER TABLE users ADD COLUMN IF NOT EXISTS user_push_tokens JSONB DEFAULT '[]'`. If separate table, CREATE TABLE with RLS + company_id + indexes
+- [ ] CRITICAL: All offline Hive storage must use EncryptedBox (not regular Box) — HiveAesCipher with key from flutter_secure_storage. Applies to: adjuster_claims_cache, hive_sync_queue, conflict_log, and all TypeAdapter boxes
+- [ ] CRITICAL: Push token tables need expiration tracking (`expires_at`, `last_used_at`) and daily cleanup CRON (`cleanup-expired-push-tokens`) — removes tokens older than 90 days or with expired `expires_at`
+
+---
+
+## Phase Audit Summary Addition
+
+**Adjuster Portal Phase — ADJ1-ADJ12 (~281h)**
+| Sprint | Hours | Tables | EFs | Flutter Screens | Web Hooks | Web Pages |
+|--------|-------|--------|-----|-----------------|-----------|-----------|
+| ADJ1 Claims Pipeline | 36h | 3 | 0 | 5 | 3 | 4 |
+| ADJ2 Evidence + Sketch | 28h | 2 | 1 | 4 | 1 | 5 |
+| ADJ3 Supplement Engine | 36h | 2 | 1 | 3 | 2 | 3 |
+| ADJ4 Contents Inventory | 31h | 3 | 2 | 4 | 3 | 2 |
+| ADJ5 Authority Limits | 10h | 2 | 0 | 3 | 2 | 3 |
+| ADJ6 Storm/CAT | 24h | 1+3c | 2 | 2 | 1 | 3 |
+| ADJ7 Auto/Vehicle | 18h | 1+1s | 1 | 3 | 1 | 2 |
+| ADJ8 PA Toolkit | 26h | 1+1s | 2 | 5 | 2 | 3 |
+| ADJ9 Trojan Horse | 32h | 2 | 2 | 3 | 1 | 5 |
+| ADJ10 ZForge Templates | 12h | 1 | 0 | 1 | 1 | 2 |
+| ADJ11 Cross-Entity | 12h | 1 | 0 | 2w | 3 | 0 |
+| ADJ12 Flutter App | 24h | 0 | 0 | 8 | 0 | 1 |
+| **TOTALS** | **281h** | **~21+** | **11** | **~43** | **~20** | **~33** |
+
+*c = cache tables (no RLS, public reference data)*
+*s = seed tables (no RLS, public reference data)*
+*w = widgets (reusable, not full screens)*
 
 ### INSPECTOR OPERATIONS (6 sprints, ~68h)
 
