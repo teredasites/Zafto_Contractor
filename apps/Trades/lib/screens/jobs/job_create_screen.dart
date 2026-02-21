@@ -9,6 +9,7 @@ import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/job.dart';
 import '../../services/job_service.dart';
+import '../../core/draft_recovery_mixin.dart';
 
 class JobCreateScreen extends ConsumerStatefulWidget {
   final Job? editJob; // If provided, screen is in edit mode
@@ -19,7 +20,69 @@ class JobCreateScreen extends ConsumerStatefulWidget {
   ConsumerState<JobCreateScreen> createState() => _JobCreateScreenState();
 }
 
-class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
+class _JobCreateScreenState extends ConsumerState<JobCreateScreen>
+    with DraftRecoveryMixin {
+  @override
+  String get draftFeature => 'job';
+  @override
+  String get draftKey => widget.editJob?.id ?? 'new';
+  @override
+  String get draftScreenRoute => '/jobs/${widget.editJob?.id ?? "new"}';
+
+  @override
+  Map<String, dynamic> serializeDraftState() => {
+        'title': _titleController.text,
+        'customer': _customerController.text,
+        'address': _addressController.text,
+        'amount': _amountController.text,
+        'notes': _notesController.text,
+        'internalNotes': _internalNotesController.text,
+        'poNumber': _poNumberController.text,
+        'scope': _scopeController.text,
+        'specialRequirements': _specialRequirementsController.text,
+        'estimatedHours': _estimatedHoursController.text,
+        'scheduledDate': _scheduledDate?.toIso8601String(),
+        'jobType': _jobType.name,
+        'source': _source,
+        'priority': _priority.name,
+        'tradeType': _tradeType,
+      };
+
+  @override
+  void restoreDraftState(Map<String, dynamic> state) {
+    setState(() {
+      _titleController.text = state['title'] as String? ?? '';
+      _customerController.text = state['customer'] as String? ?? '';
+      _addressController.text = state['address'] as String? ?? '';
+      _amountController.text = state['amount'] as String? ?? '';
+      _notesController.text = state['notes'] as String? ?? '';
+      _internalNotesController.text =
+          state['internalNotes'] as String? ?? '';
+      _poNumberController.text = state['poNumber'] as String? ?? '';
+      _scopeController.text = state['scope'] as String? ?? '';
+      _specialRequirementsController.text =
+          state['specialRequirements'] as String? ?? '';
+      _estimatedHoursController.text =
+          state['estimatedHours'] as String? ?? '';
+      final dateStr = state['scheduledDate'] as String?;
+      if (dateStr != null) _scheduledDate = DateTime.tryParse(dateStr);
+      final jt = state['jobType'] as String?;
+      if (jt != null) {
+        _jobType = JobType.values.firstWhere(
+            (e) => e.name == jt,
+            orElse: () => JobType.standard);
+      }
+      _source = state['source'] as String? ?? 'direct';
+      final pr = state['priority'] as String?;
+      if (pr != null) {
+        _priority = JobPriority.values.firstWhere(
+            (e) => e.name == pr,
+            orElse: () => JobPriority.normal);
+      }
+      _tradeType = state['tradeType'] as String? ?? 'electrical';
+    });
+  }
+
   final _titleController = TextEditingController();
   final _customerController = TextEditingController();
   final _addressController = TextEditingController();
@@ -60,6 +123,14 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
     super.initState();
     if (_isEditMode) {
       _populateFields(widget.editJob!);
+    }
+    for (final c in [
+      _titleController, _customerController, _addressController,
+      _amountController, _notesController, _internalNotesController,
+      _poNumberController, _scopeController,
+      _specialRequirementsController, _estimatedHoursController,
+    ]) {
+      c.addListener(markDraftDirty);
     }
   }
 
@@ -760,7 +831,8 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
       );
       
       await ref.read(jobsProvider.notifier).updateJob(updated);
-      
+      await discardDraft();
+
       if (mounted) {
         Navigator.pop(context, updated); // Return updated job
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Job "${updated.displayTitle}" updated'), backgroundColor: ref.read(zaftoColorsProvider).accentSuccess));
@@ -791,6 +863,7 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
       );
 
       await ref.read(jobsProvider.notifier).addJob(job);
+      await discardDraft();
 
       if (mounted) {
         Navigator.pop(context);

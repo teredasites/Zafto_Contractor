@@ -11,6 +11,7 @@ import '../../theme/theme_provider.dart';
 import '../../models/walkthrough_template.dart';
 import '../../services/walkthrough_service.dart';
 import '../../widgets/error_widgets.dart';
+import '../../core/draft_recovery_mixin.dart';
 import 'walkthrough_capture_screen.dart';
 
 class WalkthroughStartScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,41 @@ class WalkthroughStartScreen extends ConsumerStatefulWidget {
 }
 
 class _WalkthroughStartScreenState
-    extends ConsumerState<WalkthroughStartScreen> {
+    extends ConsumerState<WalkthroughStartScreen>
+    with DraftRecoveryMixin {
+  @override
+  String get draftFeature => 'walkthrough';
+  @override
+  String get draftKey => 'new';
+  @override
+  String get draftScreenRoute => '/walkthrough/new';
+
+  @override
+  Map<String, dynamic> serializeDraftState() => {
+        'name': _nameController.text,
+        'address': _addressController.text,
+        'city': _cityController.text,
+        'state': _stateController.text,
+        'zip': _zipController.text,
+        'walkthroughType': _walkthroughType,
+        'propertyType': _propertyType,
+        'selectedTemplateId': _selectedTemplateId,
+      };
+
+  @override
+  void restoreDraftState(Map<String, dynamic> state) {
+    setState(() {
+      _nameController.text = state['name'] as String? ?? '';
+      _addressController.text = state['address'] as String? ?? '';
+      _cityController.text = state['city'] as String? ?? '';
+      _stateController.text = state['state'] as String? ?? '';
+      _zipController.text = state['zip'] as String? ?? '';
+      _walkthroughType = state['walkthroughType'] as String? ?? 'bid';
+      _propertyType = state['propertyType'] as String? ?? 'residential';
+      _selectedTemplateId = state['selectedTemplateId'] as String?;
+    });
+  }
+
   final _nameController = TextEditingController();
   final _addressController = TextEditingController();
   final _cityController = TextEditingController();
@@ -63,6 +98,17 @@ class _WalkthroughStartScreenState
     ('multi_family', 'Multi-Family'),
     ('other', 'Other'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _nameController, _addressController, _cityController,
+      _stateController, _zipController,
+    ]) {
+      c.addListener(markDraftDirty);
+    }
+  }
 
   @override
   void dispose() {
@@ -669,6 +715,7 @@ class _WalkthroughStartScreenState
       );
 
       ref.invalidate(walkthroughsProvider);
+      await discardDraft();
 
       if (mounted) {
         // Navigate to capture screen, replacing this screen

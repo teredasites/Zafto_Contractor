@@ -10,6 +10,7 @@ import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/bid.dart';
 import '../../services/bid_service.dart';
+import '../../core/draft_recovery_mixin.dart';
 import 'bid_builder_screen.dart';
 
 class BidCreateScreen extends ConsumerStatefulWidget {
@@ -28,7 +29,72 @@ class BidCreateScreen extends ConsumerStatefulWidget {
   ConsumerState<BidCreateScreen> createState() => _BidCreateScreenState();
 }
 
-class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
+class _BidCreateScreenState extends ConsumerState<BidCreateScreen>
+    with DraftRecoveryMixin {
+  @override
+  String get draftFeature => 'bid';
+  @override
+  String get draftKey => widget.editBid?.id ?? 'new';
+  @override
+  String get draftScreenRoute => '/bids/${widget.editBid?.id ?? "new"}';
+
+  @override
+  Map<String, dynamic> serializeDraftState() => {
+        'project': _projectController.text,
+        'customer': _customerController.text,
+        'address': _addressController.text,
+        'city': _cityController.text,
+        'state': _stateController.text,
+        'zip': _zipController.text,
+        'email': _emailController.text,
+        'phone': _phoneController.text,
+        'scope': _scopeController.text,
+        'warrantyPeriod': _warrantyPeriodController.text,
+        'warrantyCoverage': _warrantyCoverageController.text,
+        'completionDays': _completionDaysController.text,
+        'exclusions': _exclusionsController.text,
+        'competitor': _competitorController.text,
+        'changeOrderAllowance': _changeOrderAllowanceController.text,
+        'selectedTrade': _selectedTrade,
+        'taxRate': _taxRate,
+        'depositPercent': _depositPercent,
+        'validityDays': _validityDays,
+        'warrantyUnit': _warrantyUnit,
+        'paymentSchedule': _paymentSchedule,
+      };
+
+  @override
+  void restoreDraftState(Map<String, dynamic> state) {
+    setState(() {
+      _projectController.text = state['project'] as String? ?? '';
+      _customerController.text = state['customer'] as String? ?? '';
+      _addressController.text = state['address'] as String? ?? '';
+      _cityController.text = state['city'] as String? ?? '';
+      _stateController.text = state['state'] as String? ?? '';
+      _zipController.text = state['zip'] as String? ?? '';
+      _emailController.text = state['email'] as String? ?? '';
+      _phoneController.text = state['phone'] as String? ?? '';
+      _scopeController.text = state['scope'] as String? ?? '';
+      _warrantyPeriodController.text =
+          state['warrantyPeriod'] as String? ?? '1';
+      _warrantyCoverageController.text =
+          state['warrantyCoverage'] as String? ?? '';
+      _completionDaysController.text =
+          state['completionDays'] as String? ?? '';
+      _exclusionsController.text = state['exclusions'] as String? ?? '';
+      _competitorController.text = state['competitor'] as String? ?? '';
+      _changeOrderAllowanceController.text =
+          state['changeOrderAllowance'] as String? ?? '';
+      _selectedTrade = state['selectedTrade'] as String? ?? 'electrical';
+      _taxRate = (state['taxRate'] as num?)?.toDouble() ?? 0.0;
+      _depositPercent = (state['depositPercent'] as num?)?.toDouble() ?? 50.0;
+      _validityDays = state['validityDays'] as int? ?? 30;
+      _warrantyUnit = state['warrantyUnit'] as String? ?? 'year';
+      _paymentSchedule =
+          state['paymentSchedule'] as String? ?? 'deposit_completion';
+    });
+  }
+
   final _projectController = TextEditingController();
   final _customerController = TextEditingController();
   final _addressController = TextEditingController();
@@ -75,6 +141,17 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
       _populateFields(widget.editBid!);
     } else if (widget.preselectedCustomerName != null) {
       _customerController.text = widget.preselectedCustomerName!;
+    }
+    // Listen to text changes for auto-save
+    for (final c in [
+      _projectController, _customerController, _addressController,
+      _cityController, _stateController, _zipController,
+      _emailController, _phoneController, _scopeController,
+      _warrantyPeriodController, _warrantyCoverageController,
+      _completionDaysController, _exclusionsController,
+      _competitorController, _changeOrderAllowanceController,
+    ]) {
+      c.addListener(markDraftDirty);
     }
   }
 
@@ -510,9 +587,11 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
       );
     }
 
-    // Save the draft
+    // Save the bid
     await service.saveBid(bid);
     await ref.read(bidsProvider.notifier).loadBids();
+    // Discard draft on successful save
+    await discardDraft();
 
     if (mounted) {
       // Navigate to bid builder
