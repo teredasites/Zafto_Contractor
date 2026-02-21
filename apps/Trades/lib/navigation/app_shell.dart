@@ -7,6 +7,8 @@ import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/screens/role_switcher_screen.dart';
 import 'package:zafto/screens/ai/z_chat_sheet.dart';
 import 'package:zafto/services/quick_actions_service.dart';
+import 'package:zafto/providers/draft_recovery_provider.dart';
+import 'package:zafto/widgets/draft_recovery_banner.dart';
 
 // Messages screen (shared across roles)
 import 'package:zafto/screens/messages/conversations_list_screen.dart';
@@ -67,16 +69,50 @@ class AppShell extends ConsumerStatefulWidget {
   ConsumerState<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends ConsumerState<AppShell> {
+class _AppShellState extends ConsumerState<AppShell>
+    with WidgetsBindingObserver {
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Deferred to first frame so context is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ZaftoQuickActions.initialize(context, widget.role);
+      _initDraftRecovery();
     });
+  }
+
+  void _initDraftRecovery() {
+    final svc = ref.read(draftRecoveryServiceProvider);
+    svc.replayWAL();
+    svc.startCloudSync();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    final svc = ref.read(draftRecoveryServiceProvider);
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        svc.forceSyncToCloud();
+        svc.stopCloudSync();
+        break;
+      case AppLifecycleState.resumed:
+        svc.startCloudSync();
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    ref.read(draftRecoveryServiceProvider).stopCloudSync();
+    super.dispose();
   }
 
   @override
@@ -96,9 +132,22 @@ class _AppShellState extends ConsumerState<AppShell> {
     final screens = _buildTabScreens(widget.role);
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: _currentIndex,
+            children: screens,
+          ),
+          // DEPTH27: Draft recovery banner — global overlay
+          DraftRecoveryBanner(
+            onResume: (draft) {
+              // Navigate to the draft's screen route
+              if (draft.screenRoute.isNotEmpty) {
+                Navigator.of(context).pushNamed(draft.screenRoute);
+              }
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: _buildBottomNav(colors, tabs),
       floatingActionButton: _buildZButton(colors),

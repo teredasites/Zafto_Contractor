@@ -102,6 +102,9 @@ void main() async {
       await Hive.openBox<String>('checklist_sync_meta');
       // DEPTH6 Calculator favorites
       await Hive.openBox('favorite_calculators');
+      // DEPTH27 Draft recovery — crash-proof auto-save
+      await Hive.openBox<String>('draft_recovery');
+      await Hive.openBox<String>('draft_recovery_wal');
 
       // Initialize exam progress tracker (CRITICAL - must be after Hive init)
       await ProgressTracker().initialize();

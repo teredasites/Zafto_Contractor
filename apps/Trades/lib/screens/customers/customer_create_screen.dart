@@ -13,6 +13,7 @@ import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/customer.dart';
 import '../../services/customer_service.dart';
+import '../../core/draft_recovery_mixin.dart';
 
 const _customerTypeLabels = {
   CustomerType.residential: 'Residential',
@@ -63,7 +64,71 @@ class CustomerCreateScreen extends ConsumerStatefulWidget {
   ConsumerState<CustomerCreateScreen> createState() => _CustomerCreateScreenState();
 }
 
-class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
+class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen>
+    with DraftRecoveryMixin {
+  @override
+  String get draftFeature => 'customer';
+  @override
+  String get draftKey => widget.editCustomer?.id ?? 'new';
+  @override
+  String get draftScreenRoute =>
+      '/customers/${widget.editCustomer?.id ?? "new"}';
+
+  @override
+  Map<String, dynamic> serializeDraftState() => {
+        'name': _nameController.text,
+        'company': _companyController.text,
+        'email': _emailController.text,
+        'phone': _phoneController.text,
+        'address': _addressController.text,
+        'city': _cityController.text,
+        'state': _stateController.text,
+        'zip': _zipController.text,
+        'notes': _notesController.text,
+        'accessInstructions': _accessInstructionsController.text,
+        'alternatePhone': _alternatePhoneController.text,
+        'customerType': _customerType.name,
+        'selectedTags': _selectedTags.toList(),
+        'preferredContactMethod': _preferredContactMethod,
+        'emailOptIn': _emailOptIn,
+        'smsOptIn': _smsOptIn,
+        'referredBy': _referredBy,
+      };
+
+  @override
+  void restoreDraftState(Map<String, dynamic> state) {
+    setState(() {
+      _nameController.text = state['name'] as String? ?? '';
+      _companyController.text = state['company'] as String? ?? '';
+      _emailController.text = state['email'] as String? ?? '';
+      _phoneController.text = state['phone'] as String? ?? '';
+      _addressController.text = state['address'] as String? ?? '';
+      _cityController.text = state['city'] as String? ?? '';
+      _stateController.text = state['state'] as String? ?? '';
+      _zipController.text = state['zip'] as String? ?? '';
+      _notesController.text = state['notes'] as String? ?? '';
+      _accessInstructionsController.text =
+          state['accessInstructions'] as String? ?? '';
+      _alternatePhoneController.text =
+          state['alternatePhone'] as String? ?? '';
+      final typeStr = state['customerType'] as String?;
+      _customerType = typeStr == 'commercial'
+          ? CustomerType.commercial
+          : CustomerType.residential;
+      final tags = state['selectedTags'] as List<dynamic>?;
+      if (tags != null) {
+        _selectedTags
+          ..clear()
+          ..addAll(tags.cast<String>());
+      }
+      _preferredContactMethod =
+          state['preferredContactMethod'] as String? ?? 'phone';
+      _emailOptIn = state['emailOptIn'] as bool? ?? true;
+      _smsOptIn = state['smsOptIn'] as bool? ?? false;
+      _referredBy = state['referredBy'] as String?;
+    });
+  }
+
   // Existing controllers
   final _nameController = TextEditingController();
   final _companyController = TextEditingController();
@@ -95,6 +160,15 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
     super.initState();
     if (_isEditMode) {
       _populateFields(widget.editCustomer!);
+    }
+    // Listen to text changes for auto-save
+    for (final c in [
+      _nameController, _companyController, _emailController,
+      _phoneController, _addressController, _cityController,
+      _stateController, _zipController, _notesController,
+      _accessInstructionsController, _alternatePhoneController,
+    ]) {
+      c.addListener(markDraftDirty);
     }
   }
 
@@ -581,6 +655,7 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
       );
 
       await ref.read(customersProvider.notifier).updateCustomer(updated);
+      await discardDraft();
 
       if (mounted) {
         Navigator.pop(context, updated);
@@ -611,6 +686,7 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
       );
 
       await ref.read(customersProvider.notifier).addCustomer(customer);
+      await discardDraft();
 
       if (mounted) {
         Navigator.pop(context);

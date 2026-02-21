@@ -24,6 +24,7 @@ dependencies:
   # Local Storage
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  crypto: ^3.0.3
   
   # Firebase removed — S151. All services migrated to Supabase.
   

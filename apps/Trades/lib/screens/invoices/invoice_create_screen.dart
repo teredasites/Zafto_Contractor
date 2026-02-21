@@ -10,6 +10,7 @@ import '../../theme/theme_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/invoice.dart';
 import '../../services/invoice_service.dart';
+import '../../core/draft_recovery_mixin.dart';
 
 class InvoiceCreateScreen extends ConsumerStatefulWidget {
   final String? jobId;
@@ -22,7 +23,71 @@ class InvoiceCreateScreen extends ConsumerStatefulWidget {
   ConsumerState<InvoiceCreateScreen> createState() => _InvoiceCreateScreenState();
 }
 
-class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
+class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen>
+    with DraftRecoveryMixin {
+  @override
+  String get draftFeature => 'invoice';
+  @override
+  String get draftKey => widget.editInvoice?.id ?? 'new';
+  @override
+  String get draftScreenRoute =>
+      '/invoices/${widget.editInvoice?.id ?? "new"}';
+
+  @override
+  Map<String, dynamic> serializeDraftState() => {
+        'customer': _customerController.text,
+        'email': _emailController.text,
+        'notes': _notesController.text,
+        'tax': _taxController.text,
+        'poNumber': _poNumberController.text,
+        'lateFee': _lateFeeController.text,
+        'retainage': _retainageController.text,
+        'discount': _discountController.text,
+        'taxRate': _taxRate,
+        'invoiceDate': _invoiceDate.toIso8601String(),
+        'dueDate': _dueDate.toIso8601String(),
+        'paymentTerms': _paymentTerms,
+        'lineItems': _lineItems
+            .map((li) => {
+                  'description': li.description,
+                  'quantity': li.quantity,
+                  'unitPrice': li.unitPrice,
+                })
+            .toList(),
+      };
+
+  @override
+  void restoreDraftState(Map<String, dynamic> state) {
+    setState(() {
+      _customerController.text = state['customer'] as String? ?? '';
+      _emailController.text = state['email'] as String? ?? '';
+      _notesController.text = state['notes'] as String? ?? '';
+      _taxController.text = state['tax'] as String? ?? '';
+      _poNumberController.text = state['poNumber'] as String? ?? '';
+      _lateFeeController.text = state['lateFee'] as String? ?? '';
+      _retainageController.text = state['retainage'] as String? ?? '';
+      _discountController.text = state['discount'] as String? ?? '';
+      _taxRate = (state['taxRate'] as num?)?.toDouble() ?? 0;
+      _invoiceDate = DateTime.tryParse(state['invoiceDate'] as String? ?? '') ??
+          DateTime.now();
+      _dueDate = DateTime.tryParse(state['dueDate'] as String? ?? '') ??
+          DateTime.now().add(const Duration(days: 30));
+      _paymentTerms = state['paymentTerms'] as String? ?? 'net_30';
+      final items = state['lineItems'] as List<dynamic>?;
+      if (items != null && items.isNotEmpty) {
+        _lineItems.clear();
+        for (final item in items) {
+          final m = item as Map<String, dynamic>;
+          _lineItems.add(_LineItemData(
+            description: m['description'] as String? ?? '',
+            quantity: (m['quantity'] as num?)?.toDouble() ?? 1,
+            unitPrice: (m['unitPrice'] as num?)?.toDouble() ?? 0,
+          ));
+        }
+      }
+    });
+  }
+
   final _customerController = TextEditingController();
   final _emailController = TextEditingController();
   final _notesController = TextEditingController();
@@ -55,6 +120,14 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
       }
     }
     _checkInsuranceJob();
+    // Listen to text changes for auto-save
+    for (final c in [
+      _customerController, _emailController, _notesController,
+      _taxController, _poNumberController, _lateFeeController,
+      _retainageController, _discountController,
+    ]) {
+      c.addListener(markDraftDirty);
+    }
   }
 
   Future<void> _checkInsuranceJob() async {
@@ -589,7 +662,8 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
       );
       
       await ref.read(invoicesProvider.notifier).updateInvoice(updated);
-      
+      await discardDraft();
+
       if (mounted) {
         Navigator.pop(context, updated);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invoice ${updated.invoiceNumber} updated'), backgroundColor: ref.read(zaftoColorsProvider).accentSuccess));
@@ -618,6 +692,7 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
       );
 
       await ref.read(invoicesProvider.notifier).addInvoice(invoice);
+      await discardDraft();
 
       if (mounted) {
         Navigator.pop(context);
