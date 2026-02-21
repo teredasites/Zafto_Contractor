@@ -15,6 +15,7 @@ import {
   Droplet,
   Wind,
   AlertTriangle,
+  Flame,
   ChevronDown,
   ChevronRight,
   type LucideIcon,
@@ -37,6 +38,7 @@ const LAYER_ICONS: Record<TradeLayerType, LucideIcon> = {
   plumbing: Droplet,
   hvac: Wind,
   damage: AlertTriangle,
+  fire: Flame,
 };
 
 const LAYER_COLORS: Record<TradeLayerType, string> = {
@@ -44,6 +46,7 @@ const LAYER_COLORS: Record<TradeLayerType, string> = {
   plumbing: '#3B82F6',
   hvac: '#10B981',
   damage: '#EF4444',
+  fire: '#DC2626',
 };
 
 export default function LayerPanel({

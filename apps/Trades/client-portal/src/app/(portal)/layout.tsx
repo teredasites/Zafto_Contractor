@@ -72,7 +72,7 @@ function PortalShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-6">
             <Link href="/home" className="flex items-center gap-2.5">
               <Logo size={28} className="text-main" />
-              <span className="text-sm font-semibold text-main hidden sm:block">Client Portal</span>
+              <span className="text-sm font-semibold text-main hidden sm:block">Property Portal</span>
             </Link>
 
             {/* Desktop nav tabs */}

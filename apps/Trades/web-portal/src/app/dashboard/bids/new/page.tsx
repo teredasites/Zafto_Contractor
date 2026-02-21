@@ -1975,7 +1975,7 @@ Example:
         </div>
       )}
 
-      {/* Client Portal Preview Modal */}
+      {/* Property Portal Preview Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
@@ -1983,7 +1983,7 @@ Example:
             <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Eye size={14} />
-                <span>Client Portal Preview</span>
+                <span>Property Portal Preview</span>
               </div>
               <button
                 onClick={() => setShowPreview(false)}

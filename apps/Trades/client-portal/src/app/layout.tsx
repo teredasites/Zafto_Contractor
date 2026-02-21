@@ -9,7 +9,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: "ZAFTO | Client Portal",
+  title: "ZAFTO | Property Portal",
   description: "View your projects, invoices & property",
   icons: { icon: "/logo.svg" },
 };

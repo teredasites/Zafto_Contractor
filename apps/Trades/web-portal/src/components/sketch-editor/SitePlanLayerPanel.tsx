@@ -17,6 +17,10 @@ import {
   TreePine,
   Zap,
   Mountain,
+  ParkingSquare,
+  Flame,
+  Accessibility,
+  SignpostBig,
   type LucideIcon,
 } from 'lucide-react';
 import type { SitePlanLayer, SitePlanLayerType } from '@/lib/sketch-engine/types';
@@ -30,6 +34,11 @@ const LAYER_ICONS: Record<SitePlanLayerType, LucideIcon> = {
   landscape: TreePine,
   utilities: Zap,
   grading: Mountain,
+  // Commercial
+  parking: ParkingSquare,
+  fireProtection: Flame,
+  ada: Accessibility,
+  signage: SignpostBig,
 };
 
 const LAYER_COLORS: Record<SitePlanLayerType, string> = {
@@ -41,6 +50,11 @@ const LAYER_COLORS: Record<SitePlanLayerType, string> = {
   landscape: '#22C55E',
   utilities: '#0EA5E9',
   grading: '#059669',
+  // Commercial
+  parking: '#6366F1',
+  fireProtection: '#DC2626',
+  ada: '#2563EB',
+  signage: '#D97706',
 };
 
 interface SitePlanLayerPanelProps {

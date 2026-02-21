@@ -3,7 +3,12 @@
 // Generates estimate_areas and suggests line items.
 
 import { getSupabase } from '@/lib/supabase';
-import type { FloorPlanData, TradeLayer } from './types';
+import type {
+  FloorPlanData,
+  TradeLayer,
+  SitePlanData,
+  SprinklerZone,
+} from './types';
 import type { RoomMeasurements } from './measurement-calculator';
 
 // =============================================================================
@@ -46,6 +51,7 @@ export async function generateEstimate(input: {
   floorPlanId: string;
   measurements: RoomMeasurements[];
   planData: FloorPlanData;
+  sitePlanData?: SitePlanData;
   selectedTrade?: string;
   title?: string;
   jobId?: string;
@@ -122,7 +128,7 @@ export async function generateEstimate(input: {
     });
 
     // Generate line items
-    const lineItems = suggestLineItems(m, input.planData, input.selectedTrade);
+    const lineItems = suggestLineItems(m, input.planData, input.selectedTrade, input.sitePlanData);
 
     // Save line items
     if (lineItems.length > 0) {
@@ -168,6 +174,7 @@ function suggestLineItems(
   m: RoomMeasurements,
   planData: FloorPlanData,
   selectedTrade?: string,
+  sitePlanData?: SitePlanData,
 ): SuggestedLineItem[] {
   const items: SuggestedLineItem[] = [];
 
@@ -230,6 +237,49 @@ function suggestLineItems(
         }
       }
     }
+
+    // Fire protection layer
+    for (const layer of planData.tradeLayers) {
+      if (layer.type !== 'fire' || !layer.fireData) continue;
+
+      const fd = layer.fireData;
+      if (fd.sprinklerZones.length > 0) {
+        const totalHeads = fd.sprinklerZones.reduce(
+          (sum: number, z: SprinklerZone) => sum + (z.headsPerZone ?? 0),
+          0,
+        );
+        if (totalHeads > 0) {
+          items.push(makeItem('Sprinkler head install', totalHeads, 'EA', 'fire', 'FIRE-HEAD', 35, 65));
+        }
+        items.push(makeItem('Sprinkler zone piping', fd.sprinklerZones.length, 'EA', 'fire', 'FIRE-ZONE', 800, 1200));
+      }
+      if (fd.standpipeLocations.length > 0) {
+        items.push(makeItem('Standpipe riser', fd.standpipeLocations.length, 'EA', 'fire', 'FIRE-STPIPE', 2500, 3500, 500));
+      }
+      if (fd.fireDeptConnections.length > 0) {
+        items.push(makeItem('Fire dept connection (FDC)', fd.fireDeptConnections.length, 'EA', 'fire', 'FIRE-FDC', 1200, 1800));
+      }
+      if (fd.pullStations.length > 0) {
+        items.push(makeItem('Pull station install', fd.pullStations.length, 'EA', 'fire', 'FIRE-PULL', 85, 120));
+      }
+      if (fd.detectors.length > 0) {
+        items.push(makeItem('Fire/smoke detector', fd.detectors.length, 'EA', 'fire', 'FIRE-DET', 45, 75));
+      }
+      if (fd.notificationDevices.length > 0) {
+        items.push(makeItem('Horn/strobe device', fd.notificationDevices.length, 'EA', 'fire', 'FIRE-NOTIFY', 95, 85));
+      }
+      if (fd.extinguishers.length > 0) {
+        items.push(makeItem('Fire extinguisher mount', fd.extinguishers.length, 'EA', 'fire', 'FIRE-EXT', 60, 25));
+      }
+      if (fd.fireRatedAssemblies.length > 0) {
+        items.push(makeItem('Fire-rated assembly', fd.fireRatedAssemblies.length, 'EA', 'fire', 'FIRE-RATED', 0, 150));
+      }
+    }
+  }
+
+  // Commercial building-specific items (site-level)
+  if (sitePlanData) {
+    addCommercialSiteItems(items, sitePlanData);
   }
 
   return items;
@@ -291,3 +341,114 @@ function humanize(s: string): string {
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+function polygonArea(points: { x: number; y: number }[]): number {
+  if (points.length < 3) return 0;
+  let area = 0;
+  for (let i = 0; i < points.length; i++) {
+    const j = (i + 1) % points.length;
+    area += points[i].x * points[j].y;
+    area -= points[j].x * points[i].y;
+  }
+  return Math.abs(area) / 2;
+}
+
+// =============================================================================
+// COMMERCIAL SITE-LEVEL ITEMS
+// =============================================================================
+
+function addCommercialSiteItems(
+  items: SuggestedLineItem[],
+  sitePlan: SitePlanData,
+): void {
+  // Parking lot line items
+  if (sitePlan.parkingLayouts && sitePlan.parkingLayouts.length > 0) {
+    for (const lot of sitePlan.parkingLayouts) {
+      items.push(makeItem('Parking stall striping', lot.stallCount * 18, 'LF', 'paving', 'PARK-STRIPE', 0.45, 0.55));
+      if (lot.handicapStalls > 0) {
+        items.push(makeItem('ADA parking signage & marking', lot.handicapStalls, 'EA', 'paving', 'PARK-ADA', 250, 150));
+      }
+    }
+  }
+
+  // Compliance markers
+  if (sitePlan.complianceMarkers && sitePlan.complianceMarkers.length > 0) {
+    const markerCounts = new Map<string, number>();
+    for (const marker of sitePlan.complianceMarkers) {
+      markerCounts.set(marker.type, (markerCounts.get(marker.type) || 0) + 1);
+    }
+
+    for (const [markerType, count] of markerCounts) {
+      const label = humanize(markerType);
+      if (markerType.startsWith('ada')) {
+        items.push(makeItem(`${label} compliance`, count, 'EA', 'general', null, 0, 85));
+      } else if (markerType.startsWith('fire')) {
+        items.push(makeItem(`${label} rating`, count, 'EA', 'fire', null, 0, 120));
+      } else if (markerType === 'exitSign' || markerType === 'emergencyLight') {
+        items.push(makeItem(label, count, 'EA', 'electrical', null, 45, 65));
+      } else {
+        items.push(makeItem(`${label} marker`, count, 'EA', 'general', null, 0, 50));
+      }
+    }
+  }
+
+  // Roof drains (commercial flat roof)
+  if (sitePlan.roofDrains && sitePlan.roofDrains.length > 0) {
+    const internal = sitePlan.roofDrains.filter((d) => d.drainType === 'internal').length;
+    const scuppers = sitePlan.roofDrains.filter((d) => d.drainType === 'scupper').length;
+    const overflow = sitePlan.roofDrains.filter((d) => d.drainType === 'overflow').length;
+
+    if (internal > 0) {
+      items.push(makeItem('Internal roof drain', internal, 'EA', 'plumbing', 'ROOF-DRAIN-INT', 350, 450));
+    }
+    if (scuppers > 0) {
+      items.push(makeItem('Scupper drain', scuppers, 'EA', 'plumbing', 'ROOF-DRAIN-SCUP', 200, 300));
+    }
+    if (overflow > 0) {
+      items.push(makeItem('Overflow drain', overflow, 'EA', 'plumbing', 'ROOF-DRAIN-OVER', 275, 350));
+    }
+  }
+
+  // Commercial roof planes (flat roof materials)
+  if (sitePlan.roofPlanes) {
+    for (const plane of sitePlan.roofPlanes) {
+      if (plane.membraneMaterial) {
+        const matLabel = humanize(plane.membraneMaterial);
+        const costPerSf = COMMERCIAL_ROOF_COSTS[plane.membraneMaterial] ?? 8.5;
+        const areaSf = polygonArea(plane.points);
+        if (areaSf > 0) {
+          items.push(makeItem(`${matLabel} membrane`, areaSf, 'SF', 'roofing', 'CROOF-MEM', costPerSf * 0.55, costPerSf * 0.45));
+        }
+        if (plane.insulationRValue && plane.insulationRValue > 0 && areaSf > 0) {
+          items.push(makeItem(`Roof insulation R-${plane.insulationRValue}`, areaSf, 'SF', 'roofing', 'CROOF-INS', 1.80, 1.20));
+        }
+      }
+    }
+  }
+}
+
+// Commercial roof material cost lookup (total installed $/SF)
+const COMMERCIAL_ROOF_COSTS: Record<string, number> = {
+  tpoWhite45: 7.50,
+  tpoWhite60: 8.50,
+  tpoWhite80: 10.00,
+  epdm45: 6.50,
+  epdm60: 7.50,
+  epdm90: 9.00,
+  modBitBase: 7.00,
+  modBitCap: 8.00,
+  bur3Ply: 8.50,
+  bur4Ply: 10.00,
+  pvcMembrane: 9.50,
+  sprayFoam: 7.00,
+  standingSeam: 14.00,
+  metalRPanel: 8.50,
+  greenRoofExtensive: 25.00,
+  greenRoofIntensive: 45.00,
+  hotMopAsphalt: 6.50,
+  coldAppliedAdhesive: 7.00,
+  liquidAppliedCoating: 5.50,
+  torchDown: 7.50,
+  tpoFleeceback: 9.50,
+  singlePlyBallast: 6.00,
+};

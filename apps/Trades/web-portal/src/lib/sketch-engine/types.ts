@@ -22,7 +22,16 @@ export type DoorType =
   | 'pocket'
   | 'bifold'
   | 'barn'
-  | 'french';
+  | 'french'
+  // Commercial
+  | 'rollUp'
+  | 'overhead'
+  | 'storefrontGlass'
+  | 'curtainWall'
+  | 'revolvingDoor'
+  | 'rollDownSecurity'
+  | 'driveThruWindow'
+  | 'bulletResistantWindow';
 
 export type WindowType = 'standard' | 'bay' | 'skylight';
 
@@ -51,7 +60,41 @@ export type FixtureType =
   | 'shelvingUnit'
   | 'island'
   | 'builtInBookshelf'
-  | 'laundryTub';
+  | 'laundryTub'
+  // Commercial structural
+  | 'demisingWall'
+  | 'mezzanine'
+  | 'elevatorShaft'
+  | 'elevatorMachineRoom'
+  | 'stairwellFireRated'
+  | 'dockLeveler'
+  | 'canopyCommercial'
+  | 'columnGrid'
+  | 'vestibule'
+  | 'roofHatch'
+  | 'expansionJoint'
+  | 'marqueeSignMount'
+  // Commercial kitchen/restaurant
+  | 'commercialOven'
+  | 'commercialFryer'
+  | 'commercialHood'
+  | 'walkInCooler'
+  | 'walkInFreezer'
+  | 'prepTable'
+  | 'threeCompSink'
+  | 'handwashStation'
+  // Commercial restroom
+  | 'toiletAda'
+  | 'urinal'
+  | 'sinkCommercial'
+  | 'handDryer'
+  | 'babyChangeStation'
+  // Commercial office/bank
+  | 'tellerWindow'
+  | 'vaultDoor'
+  | 'serverRack'
+  | 'raisedFloorTile'
+  | 'cubiclePartition';
 
 export type MeasurementUnit = 'imperial' | 'metric';
 
@@ -145,28 +188,61 @@ export interface DetectedRoom {
 // TRADE LAYER TYPES
 // =============================================================================
 
-export type TradeLayerType = 'electrical' | 'plumbing' | 'hvac' | 'damage';
+export type TradeLayerType = 'electrical' | 'plumbing' | 'hvac' | 'damage' | 'fire';
 
 export type TradeSymbolType =
-  // Electrical
+  // Electrical — Residential
   | 'outlet' | 'outletGFCI' | 'outletDedicated' | 'outletFloor'
   | 'switchSingle' | 'switchThreeWay' | 'switchDimmer'
   | 'lightCeiling' | 'lightRecessed' | 'lightWall' | 'lightFluorescent' | 'lightEmergency'
   | 'panelMain' | 'panelSub' | 'junction' | 'meter' | 'disconnect' | 'transformer'
   | 'smokeDetector' | 'coDetector' | 'thermostat' | 'doorbell' | 'cameraLocation'
   | 'fan' | 'fanExhaust' | 'generator'
-  // Plumbing
+  // Electrical — Commercial
+  | 'threePhaseService' | 'mainSwitchgear' | 'distPanel208' | 'distPanel480'
+  | 'stepDownTransformer' | 'emergencyGeneratorDiesel' | 'emergencyGeneratorGas'
+  | 'upsSystem' | 'motorControlCenter' | 'busDuct' | 'cableTray'
+  | 'junctionBoxCommercial' | 'disconnectSwitch' | 'lightingPanel'
+  | 'exitSign' | 'emergencyBatteryUnit' | 'emergencyRemoteHead'
+  | 'fireAlarmPanel' | 'securityPanel' | 'dataTelecomRoom' | 'electricalRoom'
+  | 'meterBank' | 'photocell' | 'timeClock' | 'surgeProtector' | 'groundingElectrode'
+  // Plumbing — Residential
   | 'valve' | 'valveShutoff' | 'valveCheck' | 'cleanout' | 'backflow'
   | 'floorDrain' | 'vent' | 'hosebibb' | 'waterMeter' | 'pressureReducer'
   | 'expansion' | 'trap' | 'tee'
-  // HVAC
+  // Plumbing — Commercial
+  | 'greaseTrap' | 'greaseInterceptor' | 'floorDrainCommercial' | 'trapPrimer'
+  | 'roofDrainInternal' | 'roofDrainOverflow' | 'scupperDrain'
+  | 'backflowRPZ' | 'backflowDCVA'
+  | 'waterHeaterCommercialTank' | 'waterHeaterTankless' | 'boiler'
+  | 'boosterPump' | 'recircPump' | 'sanitaryCleanout' | 'stormSewerConnection'
+  | 'gasRegulator' | 'gasMeterCommercial' | 'gasShutoff' | 'mixingValveTMV'
+  // HVAC — Residential
   | 'supplyRegister' | 'returnRegister' | 'diffuser' | 'damper' | 'thermostatHvac'
   | 'condenser' | 'airHandler' | 'heatPump' | 'exhaust' | 'minisplit'
-  | 'ductSplit' | 'ductElbow';
+  | 'ductSplit' | 'ductElbow'
+  // HVAC — Commercial
+  | 'rtuRooftop' | 'makeupAirUnit' | 'ahuCommercial' | 'chillerAirCooled'
+  | 'chillerWaterCooled' | 'coolingTower' | 'vrfOutdoorUnit' | 'condensingUnit'
+  | 'exhaustFanRoof' | 'exhaustFanWall' | 'kitchenHoodExhaust'
+  | 'economizer' | 'ervUnit' | 'unitHeaterGas' | 'unitHeaterElectric'
+  | 'radiantTubeHeater' | 'vavBox' | 'diffuserCommercial'
+  | 'basController' | 'refrigerantLineSet' | 'condensateDrain'
+  // Fire Protection
+  | 'sprinklerRiserRoom' | 'sprinklerHead' | 'sprinklerHeadPendant' | 'sprinklerHeadSidewall'
+  | 'fireDeptConnection' | 'standpipeClassI' | 'standpipeClassII' | 'standpipeClassIII'
+  | 'firePump' | 'pullStation' | 'smokeDetectorCommercial' | 'heatDetector'
+  | 'ductSmokeDetector' | 'hornStrobe' | 'fireExtinguisherCabinet'
+  | 'cleanAgentSystem' | 'fireDamper' | 'smokeDamper' | 'knoxBox';
 
 export type TradePathType =
   | 'wire' | 'pipe_hot' | 'pipe_cold' | 'drain' | 'gas'
-  | 'duct_supply' | 'duct_return';
+  | 'duct_supply' | 'duct_return'
+  // Commercial
+  | 'duct_exhaust' | 'conduit_rigid' | 'conduit_emt' | 'conduit_pvc'
+  | 'grease_waste' | 'acid_waste' | 'compressed_air'
+  | 'sprinkler_main' | 'sprinkler_branch' | 'standpipe'
+  | 'cable_tray' | 'bus_duct' | 'refrigerant_line';
 
 export interface TradeElement {
   id: string;
@@ -231,6 +307,7 @@ export interface TradeLayer {
   opacity: number;
   tradeData?: TradeLayerData;
   damageData?: DamageLayerData;
+  fireData?: FireProtectionLayerData;
 }
 
 // =============================================================================
@@ -256,27 +333,151 @@ export type SitePlanTool =
   | 'measure'
   | 'label'
   | 'pan'
-  | 'erase';
+  | 'erase'
+  // Commercial
+  | 'parkingLot'
+  | 'loadingDock'
+  | 'fireLane'
+  | 'adaPath'
+  | 'walkPad'
+  | 'roofDrain'
+  | 'parapet';
 
-export type RoofPlaneType = 'hip' | 'gable' | 'valley' | 'flat' | 'shed' | 'gambrel' | 'mansard';
+export type RoofPlaneType = 'hip' | 'gable' | 'valley' | 'flat' | 'shed' | 'gambrel' | 'mansard'
+  // Commercial
+  | 'lowSlope' | 'tpo' | 'epdm' | 'modifiedBitumen' | 'bur' | 'pvc' | 'spf' | 'metalStandingSeam' | 'metalRPanel' | 'greenRoof' | 'ballasted';
 
 export type LinearFeatureType =
   | 'fence' | 'retainingWall' | 'gutter' | 'dripEdge'
-  | 'solarRow' | 'edging' | 'downspout';
+  | 'solarRow' | 'edging' | 'downspout'
+  // Commercial
+  | 'parapetWall' | 'fireLane' | 'curbWithGutter' | 'parkingStriping'
+  | 'adaPathOfTravel' | 'walkPadPath' | 'expansionJointRoof'
+  | 'roofCricket' | 'copingCap';
 
 export type AreaFeatureType =
   | 'concrete' | 'lawn' | 'paver' | 'landscape'
-  | 'gravel' | 'pool' | 'deck' | 'driveway';
+  | 'gravel' | 'pool' | 'deck' | 'driveway'
+  // Commercial
+  | 'parkingArea' | 'loadingArea' | 'outdoorDining'
+  | 'playArea' | 'sportsField' | 'retentionPond'
+  | 'dumpsterPad' | 'fuelIsland' | 'carWashBay'
+  | 'flatRoofSection' | 'taperedInsulationZone'
+  | 'sprinklerCoverageZone' | 'egressZone';
 
 export type SiteSymbolType =
   | 'treeDeciduous' | 'treeEvergreen' | 'treePalm'
   | 'shrub' | 'utilityBox' | 'acUnit' | 'mailbox'
   | 'lightPole' | 'irrigationHead' | 'downspoutSymbol'
-  | 'cleanoutSite' | 'hoseBib' | 'gasMeter' | 'electricMeter' | 'waterShutoff';
+  | 'cleanoutSite' | 'hoseBib' | 'gasMeter' | 'electricMeter' | 'waterShutoff'
+  // Commercial site/exterior
+  | 'handicapParking' | 'handicapParkingVan' | 'adaCurbRamp'
+  | 'loadingDockSymbol' | 'dumpsterEnclosure' | 'bollard'
+  | 'guardBooth' | 'securityGateArm' | 'parkingLotLight'
+  | 'speedBump' | 'bikeRack' | 'busStopShelter'
+  | 'directionalSign' | 'monumentSign' | 'pylonSign'
+  | 'shoppingCartCorral' | 'outdoorSeatingSymbol'
+  | 'fuelDispenser' | 'fuelCanopy' | 'carWashBaySymbol'
+  | 'storageUnitRow' | 'playgroundEquipment' | 'sportsCourt'
+  | 'swimmingPoolSymbol' | 'transformerPad' | 'generatorPad'
+  | 'roofDrainSymbol' | 'roofHatchSymbol' | 'rtuSymbol';
+
+// =============================================================================
+// COMMERCIAL BUILDING TYPES & MATERIALS
+// =============================================================================
+
+export type CommercialBuildingType =
+  | 'office' | 'stripMall' | 'warehouse' | 'restaurant'
+  | 'medicalOffice' | 'school' | 'church' | 'apartment'
+  | 'hotel' | 'gasStation' | 'autoRepair' | 'selfStorage'
+  | 'gym' | 'bank' | 'dataCenter' | 'industrial';
+
+export type CommercialRoofMaterial =
+  | 'tpoWhite45' | 'tpoWhite60' | 'tpoWhite80'
+  | 'tpoTan60' | 'tpoGray60'
+  | 'epdmBlack45' | 'epdmBlack60' | 'epdmBlack90'
+  | 'epdmWhite60'
+  | 'modBitSBS2Ply' | 'modBitSBS3Ply' | 'modBitAPP2Ply' | 'modBitAPP3Ply'
+  | 'bur3Ply' | 'bur4Ply'
+  | 'pvcMembrane'
+  | 'spf'
+  | 'metalStandingSeamCommercial'
+  | 'metalRPanel'
+  | 'greenRoofExtensive' | 'greenRoofIntensive'
+  | 'singlePlyBallast';
+
+export interface CommercialRoofMaterialData {
+  type: CommercialRoofMaterial;
+  label: string;
+  costPerSqFt: number;
+  rValue: number;
+  warrantyRange: string; // e.g. '15-30 years'
+  weightPerSqFt: number;
+  milThickness?: number;
+}
+
+export interface RoofDrain {
+  id: string;
+  position: Point;
+  drainType: 'internal' | 'scupper' | 'overflow';
+  pipeSize: number; // inches
+}
+
+export interface ComplianceMarker {
+  id: string;
+  position: Point;
+  type: ComplianceMarkerType;
+  label?: string;
+  rating?: string; // '1hr', '2hr', '3hr' for fire ratings
+  travelDistance?: number; // feet for egress calcs
+}
+
+export type ComplianceMarkerType =
+  | 'adaPathStart' | 'adaPathEnd' | 'adaClearanceCircle'
+  | 'adaGrabBar' | 'adaSignage'
+  | 'fireRatedWall1hr' | 'fireRatedWall2hr' | 'fireRatedWall3hr'
+  | 'fireRatedFloor' | 'fireRatedCeiling'
+  | 'egressPath' | 'egressDistance' | 'exitSignLocation'
+  | 'emergencyLightLocation' | 'fireExtinguisherLocation'
+  | 'knoxBoxLocation' | 'sprinklerCoverage'
+  | 'occupancyLoadSign' | 'maxOccupancy';
+
+export interface ParkingLayout {
+  id: string;
+  points: Point[];
+  stallCount: number;
+  handicapStalls: number;
+  vanAccessibleStalls: number;
+  striping: 'standard' | 'angled45' | 'angled60' | 'parallel';
+  stallWidth: number; // feet (standard: 9)
+  stallDepth: number; // feet (standard: 18)
+  driveAisleWidth: number; // feet (standard: 24 two-way, 12 one-way)
+}
+
+export interface FireProtectionLayerData {
+  sprinklerZones: SprinklerZone[];
+  standpipeLocations: TradeElement[];
+  fireDeptConnections: TradeElement[];
+  pullStations: TradeElement[];
+  detectors: TradeElement[];
+  notificationDevices: TradeElement[];
+  extinguishers: TradeElement[];
+  fireRatedAssemblies: ComplianceMarker[];
+}
+
+export interface SprinklerZone {
+  id: string;
+  points: Point[];
+  zoneType: 'wet' | 'dry' | 'preAction' | 'deluge';
+  label: string;
+  headsPerZone?: number;
+}
 
 export type SitePlanLayerType =
   | 'boundary' | 'structures' | 'roof' | 'fencing'
-  | 'hardscape' | 'landscape' | 'utilities' | 'grading';
+  | 'hardscape' | 'landscape' | 'utilities' | 'grading'
+  // Commercial
+  | 'parking' | 'fireProtection' | 'ada' | 'signage';
 
 export interface PropertyBoundary {
   id: string;
@@ -290,15 +491,27 @@ export interface StructureOutline {
   label: string; // 'Main House', 'Garage', 'Shed', etc.
   roofPitch?: number; // e.g. 6 for 6/12
   floorPlanId?: string; // links to interior floor plan (SK12 item 11)
+  // Commercial
+  buildingType?: CommercialBuildingType;
+  stories?: number;
+  occupancyType?: string; // IBC occupancy classification (A-1, B, F-1, etc.)
+  constructionType?: string; // IBC construction type (I-A, II-B, V-A, etc.)
 }
 
 export interface RoofPlane {
   id: string;
   structureId: string;
   points: Point[];
-  pitch: number; // rise per 12 inches run
+  pitch: number; // rise per 12 inches run (0 for flat commercial)
   type: RoofPlaneType;
   wasteFactor: number; // 0-1 (default 0.10)
+  // Commercial flat roof
+  drainageSlope?: number; // inches per foot (typical: 0.25 for flat roofs)
+  membraneMaterial?: CommercialRoofMaterial;
+  insulationRValue?: number;
+  milThickness?: number; // membrane thickness (45, 60, 80, 90 mil)
+  warrantyYears?: number;
+  weightPerSqft?: number; // lbs/sqft for structural calcs
 }
 
 export interface LinearFeature {
@@ -357,6 +570,10 @@ export interface SitePlanData {
   backgroundOpacity: number;
   scale: number;
   units: MeasurementUnit;
+  // Commercial
+  roofDrains?: RoofDrain[];
+  parkingLayouts?: ParkingLayout[];
+  complianceMarkers?: ComplianceMarker[];
 }
 
 export function createEmptySitePlan(): SitePlanData {

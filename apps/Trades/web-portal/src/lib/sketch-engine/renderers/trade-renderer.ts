@@ -19,6 +19,20 @@ const PATH_COLORS: Record<TradePathType, string> = {
   gas: '#EAB308',
   duct_supply: '#60A5FA',
   duct_return: '#F87171',
+  // Commercial
+  duct_exhaust: '#9CA3AF',
+  conduit_rigid: '#D97706',
+  conduit_emt: '#F59E0B',
+  conduit_pvc: '#A3A3A3',
+  grease_waste: '#92400E',
+  acid_waste: '#7C3AED',
+  compressed_air: '#06B6D4',
+  sprinkler_main: '#DC2626',
+  sprinkler_branch: '#EF4444',
+  standpipe: '#B91C1C',
+  cable_tray: '#CA8A04',
+  bus_duct: '#EA580C',
+  refrigerant_line: '#2DD4BF',
 };
 
 // Layer accent colors
@@ -27,6 +41,7 @@ const LAYER_COLORS: Record<TradeLayerType, string> = {
   plumbing: '#3B82F6',
   hvac: '#10B981',
   damage: '#EF4444',
+  fire: '#DC2626',
 };
 
 const SYMBOL_SIZE = 16;
@@ -197,7 +212,10 @@ export function createTradePathShape(
     strokeWidth: path.strokeWidth,
     lineCap: 'round',
     lineJoin: 'round',
-    dash: path.type === 'gas' ? [8, 4] : undefined,
+    dash: (path.type === 'gas' || path.type === 'compressed_air') ? [8, 4]
+      : (path.type === 'sprinkler_main' || path.type === 'sprinkler_branch' || path.type === 'standpipe') ? [12, 4]
+      : (path.type === 'acid_waste') ? [6, 3, 2, 3]
+      : undefined,
     hitStrokeWidth: Math.max(path.strokeWidth, 8),
   });
 }

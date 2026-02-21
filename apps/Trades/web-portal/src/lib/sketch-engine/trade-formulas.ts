@@ -306,3 +306,178 @@ export function calcDrywallSheets(areaSqFt: number, sheetSqFt: number = 32, wast
 export function calcTapeMudBoxes(sheetCount: number, sheetsPerBox: number = 7): number {
   return Math.ceil(sheetCount / sheetsPerBox);
 }
+
+// =============================================================================
+// COMMERCIAL FORMULAS (DEPTH25)
+// =============================================================================
+
+// ── Commercial Roofing (Flat / Low-Slope) ──
+
+export interface CommercialRoofingCalc {
+  membraneSqFt: number; // total membrane area + waste
+  insulationSqFt: number;
+  insulationBoardCount: number; // 4x8 sheets
+  parapetFlashingLf: number;
+  roofDrainCount: number;
+  overflowDrainCount: number;
+  walkPadSqFt: number;
+  copingCapLf: number;
+  roofCricketCount: number;
+  screwsPerSqFt: number; // mechanical attachment
+  adhesiveBuckets: number; // for fully adhered
+}
+
+export function calcCommercialRoofing(
+  roofAreaSqFt: number,
+  parapetPerimeterLf: number,
+  drainSpacingFt: number = 80,
+  walkPadPathLf: number = 0,
+  roofCricketCount: number = 0,
+  wastePct: number = 0.08,
+  isFullyAdhered: boolean = true,
+): CommercialRoofingCalc {
+  const membraneSqFt = roofAreaSqFt * (1 + wastePct);
+  const insulationSqFt = roofAreaSqFt * (1 + 0.05);
+  const drainCount = Math.max(2, Math.ceil(roofAreaSqFt / (drainSpacingFt * drainSpacingFt)));
+  return {
+    membraneSqFt,
+    insulationSqFt,
+    insulationBoardCount: Math.ceil(insulationSqFt / 32), // 4x8 = 32 sqft
+    parapetFlashingLf: parapetPerimeterLf,
+    roofDrainCount: drainCount,
+    overflowDrainCount: drainCount, // 1:1 ratio per code
+    walkPadSqFt: walkPadPathLf * 2.5, // 30" wide walk pads
+    copingCapLf: parapetPerimeterLf,
+    roofCricketCount,
+    screwsPerSqFt: isFullyAdhered ? 0 : 1.2,
+    adhesiveBuckets: isFullyAdhered ? Math.ceil(membraneSqFt / 200) : 0, // ~200 sqft per 5-gal bucket
+  };
+}
+
+// ── Fire Sprinkler System ──
+
+export interface SprinklerCalc {
+  sprinklerHeadCount: number;
+  sprinklerMainLf: number;
+  branchLineLf: number;
+  riserCount: number;
+  fireDeptConnectionCount: number;
+  fireAlarmPanelCount: number;
+  pullStationCount: number; // per exit
+  smokeDetectorCount: number;
+  hornStrobeCount: number;
+  fireExtinguisherCount: number;
+}
+
+export function calcSprinklerSystem(
+  floorAreaSqFt: number,
+  exitCount: number,
+  floorCount: number = 1,
+  coveragePerHead: number = 130, // light hazard: 130 sqft, ordinary: 130, extra: 100
+  maxTravelDistanceFt: number = 75, // extinguisher travel
+): SprinklerCalc {
+  const headsPerFloor = Math.ceil(floorAreaSqFt / coveragePerHead);
+  const totalHeads = headsPerFloor * floorCount;
+  const branchesPerFloor = Math.ceil(Math.sqrt(headsPerFloor));
+  return {
+    sprinklerHeadCount: totalHeads,
+    sprinklerMainLf: Math.ceil(Math.sqrt(floorAreaSqFt)) * floorCount,
+    branchLineLf: branchesPerFloor * Math.ceil(Math.sqrt(floorAreaSqFt)) * floorCount,
+    riserCount: Math.max(1, floorCount),
+    fireDeptConnectionCount: 1,
+    fireAlarmPanelCount: 1,
+    pullStationCount: exitCount * floorCount,
+    smokeDetectorCount: Math.ceil(floorAreaSqFt / 900) * floorCount, // ~30ft spacing = 900sqft
+    hornStrobeCount: Math.ceil(floorAreaSqFt / 2500) * floorCount, // per NFPA 72
+    fireExtinguisherCount: Math.ceil(floorAreaSqFt / (Math.PI * maxTravelDistanceFt * maxTravelDistanceFt)) * floorCount,
+  };
+}
+
+// ── Parking Lot ──
+
+export interface ParkingLotCalc {
+  stallCount: number;
+  handicapStallCount: number;
+  vanAccessibleCount: number;
+  stripingLf: number; // total striping
+  sealcoatSqFt: number;
+  asphaltTons: number;
+  bumpStops: number;
+  lightPoleCount: number;
+}
+
+export function calcParkingLot(
+  lotAreaSqFt: number,
+  stallWidth: number = 9, // feet
+  stallDepth: number = 18, // feet
+  aisleWidth: number = 24, // feet (two-way)
+  totalSpacePct: number = 0.60, // 60% usable after aisles/landscaping
+  asphaltDepthIn: number = 3,
+): ParkingLotCalc {
+  const usableArea = lotAreaSqFt * totalSpacePct;
+  const stallArea = stallWidth * stallDepth;
+  const stallCount = Math.floor(usableArea / stallArea);
+  // ADA: up to 25 spaces = 1 accessible, 26-50 = 2, etc.
+  const handicapCount = stallCount <= 25 ? 1 :
+    stallCount <= 50 ? 2 :
+    stallCount <= 75 ? 3 :
+    stallCount <= 100 ? 4 :
+    Math.ceil(stallCount * 0.04); // 4% above 100
+  const vanAccessible = Math.max(1, Math.ceil(handicapCount / 6)); // 1 per 6 accessible
+  return {
+    stallCount,
+    handicapStallCount: handicapCount,
+    vanAccessibleCount: vanAccessible,
+    stripingLf: stallCount * (stallWidth + stallDepth) * 2,
+    sealcoatSqFt: lotAreaSqFt,
+    asphaltTons: (lotAreaSqFt * (asphaltDepthIn / 12) * 145) / 2000, // 145 lbs/cuft density
+    bumpStops: stallCount,
+    lightPoleCount: Math.max(2, Math.ceil(lotAreaSqFt / 10000)), // ~1 per 10,000 sqft
+  };
+}
+
+// ── ADA Compliance Calcs ──
+
+export interface AdaComplianceCalc {
+  accessibleRouteWidthMin: number; // 36" min, 44" preferred
+  restroomClearanceCircle: number; // 60" turning radius
+  doorClearanceWidth: number; // 32" min clear
+  rampLengthFt: number; // for given rise
+  rampLandings: number;
+  grabBarSets: number;
+  adaSignageCount: number;
+}
+
+export function calcAdaCompliance(
+  riseInches: number = 0,
+  restroomCount: number = 1,
+  doorCount: number = 1,
+): AdaComplianceCalc {
+  // Ramp: max 1:12 slope (1" rise per 12" run), landing every 30" of rise
+  const rampLengthFt = (riseInches * 12) / 12; // 1:12 ratio in feet
+  const rampLandings = Math.ceil(riseInches / 30) + 1; // top + bottom + intermediate
+  return {
+    accessibleRouteWidthMin: 44, // inches
+    restroomClearanceCircle: 60, // inches
+    doorClearanceWidth: 32, // inches min
+    rampLengthFt,
+    rampLandings,
+    grabBarSets: restroomCount * 2, // side wall + rear
+    adaSignageCount: restroomCount + doorCount,
+  };
+}
+
+// ── Commercial Estimate Material Costs (seed data) ──
+
+export const COMMERCIAL_ROOF_MATERIAL_COSTS: Record<string, { costPerSqFt: number; rValue: number; warrantyRange: string; weightPerSqFt: number }> = {
+  tpoWhite60: { costPerSqFt: 5.50, rValue: 0, warrantyRange: '15-30 years', weightPerSqFt: 0.29 },
+  tpoWhite80: { costPerSqFt: 6.25, rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.38 },
+  epdmBlack60: { costPerSqFt: 4.75, rValue: 0, warrantyRange: '15-25 years', weightPerSqFt: 0.33 },
+  epdmBlack90: { costPerSqFt: 5.75, rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.50 },
+  modBitSBS3Ply: { costPerSqFt: 7.00, rValue: 0, warrantyRange: '15-20 years', weightPerSqFt: 1.50 },
+  bur4Ply: { costPerSqFt: 8.00, rValue: 0, warrantyRange: '15-25 years', weightPerSqFt: 3.00 },
+  pvcMembrane: { costPerSqFt: 6.50, rValue: 0, warrantyRange: '20-30 years', weightPerSqFt: 0.35 },
+  spf: { costPerSqFt: 5.00, rValue: 6.5, warrantyRange: '15-25 years', weightPerSqFt: 0.30 },
+  metalStandingSeamCommercial: { costPerSqFt: 10.00, rValue: 0, warrantyRange: '30-50 years', weightPerSqFt: 1.50 },
+  greenRoofExtensive: { costPerSqFt: 15.00, rValue: 2.0, warrantyRange: '30-50 years', weightPerSqFt: 15.00 },
+};

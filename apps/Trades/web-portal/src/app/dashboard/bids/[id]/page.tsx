@@ -285,7 +285,7 @@ export default function BidDetailPage() {
                 </button>
                 <button onClick={() => { setMenuOpen(false); navigator.clipboard.writeText(`${window.location.origin}/portal/bids/${bid.id}`); alert('Link copied to clipboard'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                   <ExternalLink size={16} />
-                  Client Portal Link
+                  Property Portal Link
                 </button>
                 <hr className="my-1 border-main" />
                 <button onClick={async () => { setMenuOpen(false); if (confirm('Delete this bid?')) { await deleteBid(bid.id); router.push('/dashboard/bids'); } }} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
