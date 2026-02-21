@@ -34,7 +34,7 @@ class MaterialFinderRepository {
         .from(_products)
         .select()
         .isFilter('deleted_at', null)
-        .textSearch('name', query, type: TextSearchType.websearch);
+        .textSearch('name', query);
 
     if (trade != null) q = q.eq('trade', trade);
     if (materialCategory != null) {
