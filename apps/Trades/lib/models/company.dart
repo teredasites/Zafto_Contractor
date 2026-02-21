@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 
 /// Company tier determines feature access and pricing
 enum CompanyTier {
-  solo,       // $19.99 one-time - single user
-  team,       // $29.99/mo - up to 10 users
-  business,   // $79.99/mo - up to 50 users
+  solo,       // $69.99/mo - single user, 30-day free trial
+  team,       // $149.99/mo - up to 10 users, 30-day free trial
+  business,   // $249.99/mo - up to 50 users, 30-day free trial
   enterprise  // Custom - unlimited users
 }
 

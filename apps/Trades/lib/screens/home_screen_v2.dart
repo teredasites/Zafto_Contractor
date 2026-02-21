@@ -359,8 +359,96 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
   }
 
   Widget _buildEmptyRightNow(ZaftoColors colors) {
-    // Nothing to show - carousel is always visible now, so just return empty
-    return const SizedBox.shrink();
+    final getStartedItems = [
+      _GetStartedItem(
+        icon: LucideIcons.userPlus,
+        title: 'Add your first customer',
+        subtitle: 'Start building your client list',
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomersHubScreen())),
+      ),
+      _GetStartedItem(
+        icon: LucideIcons.fileText,
+        title: 'Create your first bid',
+        subtitle: 'Send a professional estimate',
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BidsHubScreen())),
+      ),
+      _GetStartedItem(
+        icon: LucideIcons.hardHat,
+        title: 'Schedule a job',
+        subtitle: 'Get your first job on the calendar',
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const JobsHubScreen())),
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: colors.accentPrimary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.accentPrimary.withValues(alpha: 0.5),
+                      blurRadius: 6,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text('GET STARTED', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: colors.textTertiary, letterSpacing: 1)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...getStartedItems.map((item) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: GestureDetector(
+              onTap: () { HapticFeedback.lightImpact(); item.onTap(); },
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: colors.bgElevated,
+                  border: Border.all(color: colors.borderSubtle),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: colors.accentPrimary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(item.icon, size: 22, color: colors.accentPrimary),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+                          const SizedBox(height: 2),
+                          Text(item.subtitle, style: TextStyle(fontSize: 13, color: colors.textTertiary)),
+                        ],
+                      ),
+                    ),
+                    Icon(LucideIcons.arrowRight, size: 18, color: colors.textTertiary),
+                  ],
+                ),
+              ),
+            ),
+          )),
+        ],
+      ),
+    );
   }
 
   Widget _buildRightNowCard(ZaftoColors colors, _RightNowItem item) {
@@ -1470,6 +1558,20 @@ class _RightNowItem {
     this.value,
     required this.icon,
     required this.color,
+    required this.onTap,
+  });
+}
+
+class _GetStartedItem {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _GetStartedItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
     required this.onTap,
   });
 }

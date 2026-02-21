@@ -1,5 +1,11 @@
 # ZAFTO — Claude Code Instructions
 
+## RULE ZERO — NO SUBAGENTS — NEVER SKIP
+
+**NEVER use the `Task` tool. NEVER spawn subagents.** They crash the session instantly (V8 use-after-free). Do ALL work sequentially with safe tools: Bash, Read, Write, Edit, Grep, Glob, WebSearch, WebFetch. The ONLY exception: user explicitly asks for subagents. This rule overrides everything.
+
+---
+
 ## What Is This
 Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One subscription replaces 12+ tools. Multi-trade platform. Owner: Damian Tereda — Tereda Software LLC.
 

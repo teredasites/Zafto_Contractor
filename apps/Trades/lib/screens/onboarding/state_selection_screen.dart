@@ -73,7 +73,7 @@ class _StateSelectionScreenState extends ConsumerState<StateSelectionScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
               child: Text(
-                'We\'ll set up code references for your state\'s NEC edition.',
+                'We\'ll set up code references, licensing info, and compliance rules for your state.',
                 style: TextStyle(
                   color: colors.textSecondary,
                   fontSize: 15,

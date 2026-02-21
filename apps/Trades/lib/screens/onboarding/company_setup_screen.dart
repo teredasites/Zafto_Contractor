@@ -41,19 +41,36 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
   bool _isLoading = false;
   bool _showOptionalFields = false;
   String? _errorMessage;
-  String _selectedTrade = 'electrical';
+  String _selectedTrade = 'general';
 
   static const _trades = [
+    'general',
     'electrical',
     'plumbing',
     'hvac',
     'roofing',
-    'general',
     'painting',
     'carpentry',
     'landscaping',
     'concrete',
     'flooring',
+    'restoration',
+    'fire_protection',
+    'solar',
+    'insulation',
+    'fencing',
+    'cleaning',
+    'pest_control',
+    'locksmith',
+    'garage_door',
+    'appliance',
+    'remodeling',
+    'masonry',
+    'drywall',
+    'demolition',
+    'excavation',
+    'welding',
+    'preservation',
     'other',
   ];
 
@@ -304,7 +321,7 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                           return DropdownMenuItem(
                             value: trade,
                             child: Text(
-                              trade[0].toUpperCase() + trade.substring(1),
+                              trade.split('_').map((w) => w[0].toUpperCase() + w.substring(1)).join(' '),
                             ),
                           );
                         }).toList(),

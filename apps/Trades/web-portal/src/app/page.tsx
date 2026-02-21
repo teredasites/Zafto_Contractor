@@ -6,7 +6,7 @@ import {
   ArrowRight, AlertCircle, Eye, EyeOff, Lock, Shield,
   Fingerprint, Mail, Sun, Moon, CheckCircle2, ExternalLink,
 } from 'lucide-react';
-import { signIn, onAuthChange } from '@/lib/auth';
+import { signIn, signUp, onAuthChange } from '@/lib/auth';
 import { useTheme } from '@/components/theme-provider';
 import Image from 'next/image';
 
@@ -33,6 +33,9 @@ export default function LoginPage() {
   const [resetMode, setResetMode] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   // Check for redirect error param
   useEffect(() => {
@@ -162,6 +165,26 @@ export default function LoginPage() {
       setError(message);
     } finally {
       setMagicLinkLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+    setIsLoading(true);
+    setError('');
+
+    const { user, error: signUpError } = await signUp(email, password, fullName.trim());
+
+    if (signUpError) {
+      setError(signUpError);
+      setIsLoading(false);
+    } else if (user) {
+      setSignUpSuccess(true);
+      setIsLoading(false);
     }
   };
 
@@ -353,6 +376,28 @@ export default function LoginPage() {
                 <button
                   onClick={() => setResetMode(false)}
                   className="w-full text-center text-[13px] text-accent font-medium hover:underline"
+                >
+                  Back to sign in
+                </button>
+              </div>
+            ) : signUpSuccess ? (
+              /* Signup Confirmation */
+              <div className="text-center py-6">
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'var(--accent-light)' }}
+                >
+                  <CheckCircle2 size={26} className="text-accent" />
+                </div>
+                <h3 className="text-base font-semibold text-main">Account created</h3>
+                <p className="text-[13px] text-muted mt-2 max-w-[280px] mx-auto">
+                  Check your email at{' '}
+                  <strong className="text-main">{email}</strong>
+                  {' '}to verify your account. Then sign in to set up your company.
+                </p>
+                <button
+                  onClick={() => { setSignUpSuccess(false); setIsSignUp(false); }}
+                  className="mt-5 text-[13px] text-accent font-medium hover:underline"
                 >
                   Back to sign in
                 </button>
