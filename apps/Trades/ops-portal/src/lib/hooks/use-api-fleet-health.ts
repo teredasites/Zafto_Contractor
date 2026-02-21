@@ -4,7 +4,7 @@
 // Monitors API registry status, health events, usage, and monthly reports.
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -122,7 +122,7 @@ export function useApiFleetHealth() {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       const [apiRes, eventRes, reportRes] = await Promise.all([
         supabase
@@ -157,7 +157,7 @@ export function useApiFleetHealth() {
   // Trigger health check
   const triggerHealthCheck = useCallback(async () => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
