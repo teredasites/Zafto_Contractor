@@ -1,7 +1,7 @@
 # 52: SYSTEM INTEGRATION MAP
 
 > **Created:** Session 103 (February 2026)
-> **Last Updated:** Session 133 (February 18, 2026) — S132-S133 pure research. No new wiring. Pricing finalized. 9 Opus research agents completed. ECO3+ECO4+ECO7+ECO8 spec'd (~48h). BLS/Davis-Bacon/FRED APIs confirmed $0/month. CSI MasterFormat copyrighted — Zafto builds own codes.
+> **Last Updated:** Session 152+ (February 21, 2026) — DEPTH1-25 all complete. SEC source protection + SEC-AUDIT-1→6 done. P-FIX1+A11Y+LEGAL+INFRA+TI-3 done. Rule #24: ZERO HARDCODED PRICING — estimate-generator.ts rewritten with DB-backed pricing cascade (company→MSA→national). trade-formulas.ts costPerSqFt removed. 129 migrations, 98 EFs, 154 CRM routes, 45 team, 46 client, 33 ops.
 > **Purpose:** Master wiring document ensuring every system connects properly. Every sprint MUST check this map before marking complete.
 
 ---
@@ -459,10 +459,19 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | NICHE → Garage Door | NICHE2 | WIRED (S131) — garage_door_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
 | NICHE → Appliance Repair | NICHE2 | WIRED (S131) — appliance_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
 
-### Phase DEPTH (Depth Audit) — DEPTH1 COMPLETE (S131)
+### Phase DEPTH (Depth Audit) — DEPTH1-25 COMPLETE (S131-S152+)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
 | DEPTH → Core Business | DEPTH1 | WIRED (S131) — customer ID fix, CRM mapper, team portal contact card, client CO buttons, Tasks→schedule_tasks, Materials→job_materials, invoice fields, customer edit/delete/create |
+| DEPTH → Field Tools + Forms | DEPTH2-6 | WIRED (S143) — 38+ gaps fixed, 3 critical forms (Leads/Applicants/Change Orders), 1,073 calcs audited, migration 126-127 |
+| DEPTH → Communication | DEPTH7 | WIRED (S152) — 8 corrections: fax webhook, sendMessage, voicemail FK, notification prefs, ring groups, email templates |
+| DEPTH → Onboarding | DEPTH8 | WIRED (S152+) — 6 fixes for first-use experience |
+| DEPTH → Trade Customization | DEPTH9 | WIRED (S152+) — 4 trade customization fixes |
+| DEPTH → Settings/Offline/Sec | DEPTH12-14 | WIRED (S152+) — 1 code fix + gaps documented for CUST/OFFLINE/SEC |
+| DEPTH → Inventory→F-Phase | DEPTH15-22 | VERIFIED (S152+) — 0 corrections needed, all modules functional |
+| DEPTH → Codebase/Contractor | DEPTH23-24 | VERIFIED (S152+) — 0 gaps, leveraged S99-S134 research |
+| DEPTH → Commercial Building | DEPTH25 | WIRED (S152+) — 120+ commercial symbols, 16 building templates, flat roof, fire protection, ADA |
+| DEPTH → Pricing Rewrite | S152+ | WIRED — estimate-generator.ts rewritten with DB-backed pricing cascade (Rule #24). trade-formulas.ts costPerSqFt removed |
 
 ### Phase SEC-AUDIT — Security Hardening (S141-S142)
 | Connection | Sprint | Status |

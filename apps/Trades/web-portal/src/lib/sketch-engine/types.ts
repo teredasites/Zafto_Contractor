@@ -350,6 +350,8 @@ export type RoofPlaneType = 'hip' | 'gable' | 'valley' | 'flat' | 'shed' | 'gamb
 export type LinearFeatureType =
   | 'fence' | 'retainingWall' | 'gutter' | 'dripEdge'
   | 'solarRow' | 'edging' | 'downspout'
+  // Utilities (DEPTH26)
+  | 'waterLine' | 'gasLine' | 'sewerLine' | 'stormDrain' | 'electricalConduit'
   // Commercial
   | 'parapetWall' | 'fireLane' | 'curbWithGutter' | 'parkingStriping'
   | 'adaPathOfTravel' | 'walkPadPath' | 'expansionJointRoof'
@@ -358,6 +360,8 @@ export type LinearFeatureType =
 export type AreaFeatureType =
   | 'concrete' | 'lawn' | 'paver' | 'landscape'
   | 'gravel' | 'pool' | 'deck' | 'driveway'
+  // Overlays (DEPTH26)
+  | 'floodZone'
   // Commercial
   | 'parkingArea' | 'loadingArea' | 'outdoorDining'
   | 'playArea' | 'sportsField' | 'retentionPond'

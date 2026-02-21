@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 18, 2026 (Session 133 — No new tables/EFs. S132-S133 pure research. Pricing: Solo $69.99, Team $149.99, Business $249.99, Adjuster FREE, Homeowner $49.99 premium. Master build plan updated S97→S133. ECO3+ECO4+ECO7+ECO8 spec'd (~48h). 9 Opus research agents, 9 memory files. Previous: S129: Phase RE section added.)
+### Last Updated: February 21, 2026 (Session 152+ — DEPTH8-25 audits all complete. SEC source protection + right-click fix. DEPTH25 commercial building support (120+ symbols, 16 templates). Rule #24: ZERO HARDCODED PRICING added. estimate-generator.ts rewritten with DB-backed pricing. Counts updated: 129 migrations, 98 EF dirs, 154 CRM routes, 45 team routes, 46 client routes, 33 ops routes, 132 CRM hooks, ~222 tables. Previous: S133: research only.)
 
 ---
 
@@ -23,7 +23,7 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 +-------------------------------------------------------------------+
 |                SUPABASE (PostgreSQL + Auth + Storage + Realtime)    |
 |                                                                    |
-|  Tables (~173)                 Storage Buckets (7 PRIVATE)         |
+|  Tables (~222)                 Storage Buckets (7 PRIVATE)         |
 |  +------------------+         +------------------+                 |
 |  | PRE-F (102)      |         | photos           |                 |
 |  |  CORE (5)        |         | signatures       |                 |
@@ -34,28 +34,28 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 |  |  D2 INSURANCE (7)|         | company-logos     |                 |
 |  |  D6 ENTERPRISE(5)|         +------------------+                 |
 |  |  D7 CERTS (2)    |                                              |
-|  |  D4 ZBOOKS (15)  |         Edge Functions (53 directories)      |
-|  |  D5 PM (18)      |                                              |
+|  |  D4 ZBOOKS (15)  |         Edge Functions (98 directories)      |
+|  |  D5 PM (18)      |          (97 functions + _shared)             |
 |  |  D8 ESTIMATE(11) |          Pre-F: 32                           |
-|  |  E1 AI (2)       |           Plaid: 4, recurring: 1, PM: 3     |
-|  |  E5 XACTIMATE(5) |           z-intelligence: 1, Xact: 2       |
-|  |  E6 WALKTHROUGH(5)|          Walkthrough: 4, AI Troubleshoot: 4|
-|  |  + leads, notifs |           D8: 5, estimate/scope: 2         |
-|  |    client_portal  |           pricing-ingest: 1                |
-|  |    warranty_cos   |           E4 (5, uncommitted)              |
-|  |                   |                                             |
-|  | F-PHASE (+71)    |          F-phase + FM: 21                   |
-|  |  FM PAYMENTS (6) |           SignalWire: 5, LiveKit: 4         |
-|  |  F1 PHONE (9)    |           walkie/chat/osha/lead: 4          |
-|  |  F3 MEETINGS (5) |           sendgrid/payroll/equip/zdocs: 4   |
-|  |  F4 TOOLKIT (10) |           stripe-pay/webhook: 2             |
-|  |  F5 BIZ OS (25+) |           revenuecat/sub-credits: 2        |
+|  |  E1 AI (2)       |           F-phase+FM: 21, T-phase: 3        |
+|  |  E5 XACTIMATE(5) |           P-phase: 7, GC-phase: 8           |
+|  |  E6 WALKTHROUGH(5)|          U-phase: 3, SEC: rate-limiter      |
+|  |  + leads, notifs |           inspection/export/legal/health     |
+|  |    client_portal  |           _shared: cors, rate-limiter,      |
+|  |    warranty_cos   |            lead-scoring, api-cost-logger,   |
+|  |                   |            api-rate-guard                    |
+|  | F-PHASE (+71)    |                                              |
+|  |  FM PAYMENTS (6) |         PowerSync (NOT SET UP)               |
+|  |  F1 PHONE (9)    |                                              |
+|  |  F3 MEETINGS (5) |                                              |
+|  |  F4 TOOLKIT (10) |                                              |
+|  |  F5 BIZ OS (25+) |                                              |
 |  |  F6 MARKET (5)   |                                              |
-|  |  F7 HOME (5)     |         PowerSync (NOT SET UP)               |
+|  |  F7 HOME (5)     |                                              |
 |  |  F9 HIRING (3)   |                                              |
 |  |  F10 ZDOCS (3)   |                                              |
 |  +------------------+                                              |
-|  48 migration files    3 test auth users + 1 company seeded       |
+|  129 migration files   3 test auth users + 1 company seeded       |
 |                                                                    |
 |  API Keys (Supabase Secrets):                                      |
 |   UNWRANGLE_API_KEY (supplier pricing)                             |
@@ -71,9 +71,9 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 | MOBILE | | WEB    | | TEAM    | | CLIENT | | OPS    |
 | APP    | | CRM    | | PORTAL  | | PORTAL | | PORTAL |
 | Flutter| | Next15 | | Next15  | | Next15 | | Next15 |
-| 33 role| | 107    | | 36      | | 38     | | 26     |
+| 33 role| | 154    | | 45      | | 46     | | 33     |
 | screens| | pages  | | pages   | | pages  | | pages  |
-| R1+E3  | | 68     | | 22      | | 21     | | 2      |
+| R1+E3  | | 132    | | 29      | | 26     | | 2      |
 | +E5+E6 | | hooks  | | hooks   | | hooks  | | hooks  |
 +--------+ +--------+ +---------+ +--------+ +--------+
  zafto.app  zafto.     team.zafto  client.    ops.zafto
@@ -206,7 +206,7 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1B. WEB CRM -- NEXT.JS (107 pages at zafto.cloud)
+### 1B. WEB CRM -- NEXT.JS (154 pages at zafto.cloud)
 
 **107 page.tsx files. 68 hook files + 22 Dashboard files. mock-data.ts DELETED. Firebase fully removed. `npm run build` passes (104 routes, 0 errors).**
 
@@ -261,7 +261,7 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1C. CLIENT PORTAL -- NEXT.JS (44 pages at client.zafto.cloud)
+### 1C. CLIENT PORTAL -- NEXT.JS (46 pages at client.zafto.cloud)
 
 **Magic link auth. 44 page.tsx files. 28 hook files (mappers + tenant-mappers + 26 use-*.ts). `npm run build` passes (0 errors).**
 
@@ -301,7 +301,7 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1D. EMPLOYEE FIELD PORTAL -- NEXT.JS (42 pages at team.zafto.app)
+### 1D. EMPLOYEE FIELD PORTAL -- NEXT.JS (45 pages at team.zafto.cloud)
 
 **DONE (B5 S55, D7a S67-68, D5h S76, F-expansion S90, REST/NICHE S131). 30 hook files. PWA-ready. Field-optimized UI (big touch targets). `npm run build` passes (0 errors).**
 
@@ -346,7 +346,7 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1E. OPS PORTAL -- NEXT.JS (30 pages at ops.zafto.cloud)
+### 1E. OPS PORTAL -- NEXT.JS (33 pages at ops.zafto.cloud)
 
 **DONE (C3 S59, D8h-i S88, F-expansion S90, SEC S131). super_admin role gate. Deep navy/teal theme. `npm run build` passes (0 errors). 2 hooks (use-phone-analytics, use-meeting-analytics).**
 
@@ -509,7 +509,7 @@ Tech opens app -> Taps "Field Tools"
 
 ## SECTION 3: DATABASE SCHEMA
 
-### Deployed Tables (~212 total -- dev Supabase, 112 migration files)
+### Deployed Tables (~222 total -- dev Supabase, 129 migration files)
 
 **--- PRE-F TABLES (102) ---**
 **Core (5 -- migration 000001):** companies, users, audit_log, user_sessions, login_attempts
@@ -834,11 +834,13 @@ Tech opens app -> Taps "Field Tools"
 - [ ] F2: Website Builder V2 -- NOT BUILT -- After AI. Cloudflare Registrar, templates, AI content.
 - [ ] F8: Ops Portal Phases 2-4 -- NOT BUILT -- After AI. Marketing, treasury, legal, dev terminal.
 
-### Phase SEC: Security Hardening -- COMPLETE (SEC1+SEC6-8 DONE, S131)
+### Phase SEC: Security Hardening -- SEC1+SEC6-8 DONE (S131), SEC-AUDIT-1→6 DONE (S139-S142), Source Protection (S152+)
 - [x] SEC1: Critical security fixes — auth function hardening, RLS policy audit, rate limiting tables, failed auth tracking, security event logging
 - [x] SEC6: Input validation + sanitization across all portals
 - [x] SEC7: CORS + CSP headers, cookie security
 - [x] SEC8: Audit trail completeness — security_events table, auth monitoring
+- [x] SEC-AUDIT-1→6: Full project security audit (103 findings, 20 CRITICAL, 31 HIGH). All critical/high fixed (S139-S142).
+- [x] Source Protection: 7-layer anti-snooping defense on all 4 portals (S152+). Right-click restored, devtools detection active.
 
 ### Phase FIELD: Field Operations -- COMPLETE (FIELD1-5 DONE, S131)
 - [x] FIELD1: BYOC Phone — use-byoc-phone.ts hook, phone line management, ring groups
@@ -854,6 +856,23 @@ Tech opens app -> Taps "Field Tools"
 ### Phase NICHE: Niche Trade Modules -- ALL COMPLETE (NICHE1+NICHE2 DONE, S131)
 - [x] NICHE1: Pest Control — 3 tables (treatment_logs, bait_stations, wdi_reports). 1 EF (export-wdi-report-pdf). Flutter: 2 models, 3 repos, 4 screens (treatment log, WDI report, bait station map, recurring services). CRM: 1 page + 1 hook (3 sub-hooks). Team: 1 page. Client: 1 page. 14 service types, 10 treatment methods, NPMA-33, 18 pest control line items seed data.
 - [x] NICHE2: Service Trades — 3 tables (locksmith_service_logs, garage_door_service_logs, appliance_service_logs). Flutter: 3 models, 3 repos, 3 screens (locksmith, garage door, appliance). CRM: 3 pages (locksmith/, garage-door/, appliance-repair/) + 3 hooks (use-locksmith.ts, use-garage-door.ts, use-appliance-repair.ts). Team: service-trades/ combined page. Client: service-history/ combined page. Locksmith: 13 service types, 13 lock types, 10 key types, VIN/automotive. Garage door: 8 door types, 6 opener types, 5 spring types, safety tests, spring specs. Appliance: 14 types, error codes, repair vs replace (50% rule), warranty. 36 seed line items.
+
+### Phase DEPTH: Feature Depth Audits -- DEPTH1-25 COMPLETE (S131-S152+)
+- [x] DEPTH1: Foundation (S131)
+- [x] DEPTH2: Field tools (S143) — 38+ gaps found, 15 CRITICAL, migration 126
+- [x] DEPTH3: Walkthrough (S143) — 5 data bugs, migration 127, 8 files fixed
+- [x] DEPTH4: Cross-entity (S143)
+- [x] DEPTH5: Form depth (S143) — 3 critical forms fixed (Leads 35%→76%, Applicants 28%→60%, Change Orders 58%→83%)
+- [x] DEPTH6: Calculator/template (S143) — 1,073 calcs audited (avg 8.4/10)
+- [x] DEPTH7: Communication/notification (S152) — 8 corrections, grade B-
+- [x] DEPTH8: Onboarding/first-use (S152+) — 6 fixes
+- [x] DEPTH9: Trade customization (S152+) — 4 fixes
+- [x] DEPTH10-11: (rolled into 12-14)
+- [x] DEPTH12-14: Settings + offline + security (S152+) — 1 code fix, gaps documented
+- [x] DEPTH15-22: Inventory, subcontractor, client portal, automation, TPA, recon, warranty, F-phase (S152+) — 0 corrections needed
+- [x] DEPTH23-24: Codebase sweep + contractor needs validation (S152+) — 0 gaps
+- [x] DEPTH25: Commercial building support (S152+) — 120+ commercial symbols, 16 building templates, flat roof, fire protection, ADA compliance
+- [ ] DEPTH26-39: Remaining depth audits
 
 ### Phase G: QA & Hardening -- AFTER T + P + SK + U (harden everything at once)
 - [x] G1a: Consolidated Build Verification -- All 5 apps build clean (S90).
@@ -882,7 +901,7 @@ Tech opens app -> Taps "Field Tools"
 | getPaymentStatus | Check payment status | **REPLACED** by stripe-payments EF |
 **Manual steps remaining:** Retrieve Firebase secrets → set in Supabase → deploy EFs → update webhook URLs → test → delete Firebase code.
 
-### Supabase Edge Functions (94 directories total -- VERIFIED from codebase S131)
+### Supabase Edge Functions (98 directories total -- VERIFIED from codebase S152+)
 
 **Banking/Accounting (5):**
 | Function | Purpose | Phase |

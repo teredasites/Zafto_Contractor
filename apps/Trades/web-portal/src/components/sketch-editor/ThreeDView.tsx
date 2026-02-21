@@ -6,7 +6,7 @@
 
 import React, { useMemo, useRef, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import type { FloorPlanData } from '@/lib/sketch-engine/types';
 import {
@@ -49,8 +49,8 @@ function SceneContent({ planData }: { planData: FloorPlanData }) {
       />
       <directionalLight position={[-100, 200, -100]} intensity={0.3} />
 
-      {/* Environment for reflections */}
-      <Environment preset="apartment" background={false} />
+      {/* Hemisphere light for ambient reflections (no external HDR fetch needed) */}
+      <hemisphereLight args={[0xffffff, 0xbbbbbb, 0.6]} />
 
       {/* Orbit controls */}
       <OrbitControls

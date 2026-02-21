@@ -1,6 +1,6 @@
 # ZAFTO MASTER BUILD PLAN — NO DRIFT
 ## Single Source of Truth — Every Feature, Every Phase, Every Decision
-### Last Updated: February 19, 2026 (Session 138 — Full project audit (103 findings), SEC-AUDIT + P-FIX1 + A11Y + LEGAL + LAUNCH-FLAVORS + APP-DEPTH spec'd. 21 CLAUDE.md rules. Drift synchronized. ~155 sprints, ~2,860h.)
+### Last Updated: February 21, 2026 (Session 152+ — DEPTH1-25 all complete. SEC source protection + SEC-AUDIT-1→6 done. Rule #24 ZERO HARDCODED PRICING. estimate-generator.ts DB-backed pricing cascade. 129 migrations, 98 EFs, 154 CRM routes. ~281 sprints, ~5,486h.)
 
 ---
 
@@ -138,7 +138,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | FIELD: Field Infrastructure | COMPLETE | YES | FIELD1-5 ALL DONE (S131). Messaging, equipment, laser meter, BYOC phone |
 | REST: Restoration Depth | COMPLETE | YES | REST1+REST2 DONE (S131). Fire + mold |
 | NICHE: Niche Trades | COMPLETE | YES | NICHE1+NICHE2 DONE (S131). Pest control + service trades |
-| DEPTH: Feature Depth Audit | IN PROGRESS | PARTIAL | DEPTH1 DONE (S131). DEPTH2-44 PENDING (~38 sprints) |
+| DEPTH: Feature Depth Audit | IN PROGRESS | PARTIAL | DEPTH1-25 DONE (S131-S152+). DEPTH26-44 PENDING (~19 sprints remain) |
 | LAUNCH: Launch Prep | PARTIAL | PARTIAL | LAUNCH1+LAUNCH9 DONE. LAUNCH2-8 PENDING |
 | **Phase E AI (PREMATURE)** | **Code exists** | **PAUSED** | **NOT TESTED — AI goes LAST** |
 | **Phase JUR: Jurisdiction** | PLANNED | NO | JUR1-JUR4 (~54-64h). Pre-AI |
@@ -394,10 +394,14 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
 | DEPTH1 | Core Business Depth | ~16 | **DONE (S131).** Invoice fields, voice notes, receipt fixes. |
-| DEPTH2-13 | Field Tools Depth | ~180 | Photo system, voice notes, mileage, LOTO, incident, safety, level/plumb, confined space, signatures, receipt scanner, materials tracker, daily log. |
-| DEPTH14 | Punch List / Task Engine | ~28 | Dependencies, due dates, templates, approval workflows, photos per item. |
-| DEPTH15-24 | Business Feature Depth | ~200 | Customers, jobs, calendar, time clock, bids, invoices, accounting, price book, change orders, documents. |
-| DEPTH25 | Commercial Building Module | ~36 | 1,400+ commercial elements, 16 building types, multi-floor. |
+| DEPTH2-6 | Field Tools + Forms + Calcs | ~80 | **DONE (S143).** 38+ gaps fixed, 3 critical forms fixed, 1,073 calcs audited. |
+| DEPTH7 | Communication/Notification | ~16 | **DONE (S152).** 8 corrections, grade B-. |
+| DEPTH8 | Onboarding/First-Use | ~12 | **DONE (S152+).** 6 fixes. |
+| DEPTH9 | Trade Customization | ~12 | **DONE (S152+).** 4 fixes. |
+| DEPTH10-14 | Settings/Offline/Security | ~40 | **DONE (S152+).** 1 code fix + gap documentation. |
+| DEPTH15-22 | Inventory→F-Phase | ~80 | **DONE (S152+).** All audited clean, 0 corrections needed. |
+| DEPTH23-24 | Codebase Sweep + Contractor | ~16 | **DONE (S152+).** 0 gaps found. |
+| DEPTH25 | Commercial Building Module | ~36 | **DONE (S152+).** 120+ commercial symbols, 16 building templates, flat roof, fire protection, ADA. |
 | DEPTH26 | Blueprint/CAD Enhancement | ~20 | Enhanced blueprint reading, layer management. |
 | DEPTH27 | Walkthrough Depth | ~14 | Photo annotation, checklists, templates per trade. |
 | DEPTH28 | Recon Mega Enhancement | ~36 | Roof data display fix, accuracy improvements, new data sources. |

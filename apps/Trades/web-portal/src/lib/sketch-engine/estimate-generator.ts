@@ -1,11 +1,11 @@
 // ZAFTO Estimate Generator — SK8 (TypeScript Port)
 // Creates estimates from room measurements + trade layer data.
-// Generates estimate_areas and suggests line items.
+// ALL pricing sourced from estimate_pricing table (BLS-backed) + regional adjustments + company overrides.
+// ZERO hardcoded prices — database or user price book only. (Rule #24)
 
 import { getSupabase } from '@/lib/supabase';
 import type {
   FloorPlanData,
-  TradeLayer,
   SitePlanData,
   SprinklerZone,
 } from './types';
@@ -27,6 +27,8 @@ export interface SuggestedLineItem {
   equipmentCost: number;
   unitPrice: number;
   lineTotal: number;
+  /** Where the pricing came from: 'database' (BLS/regional), 'company' (user price book), 'unpriced' (no DB entry — user must set) */
+  pricingSource: 'database' | 'company' | 'unpriced';
 }
 
 export interface GeneratedArea {
@@ -41,6 +43,139 @@ export interface GenerateEstimateResult {
   estimateId: string;
   areas: GeneratedArea[];
   totalAmount: number;
+  regionCode: string;
+  unpricedCount: number;
+}
+
+// =============================================================================
+// PRICING INFRASTRUCTURE
+// =============================================================================
+
+interface PricingEntry {
+  laborRate: number;
+  materialCost: number;
+  equipmentCost: number;
+  isCompanyOverride: boolean;
+}
+
+type PricingMap = Map<string, PricingEntry>;
+
+/**
+ * Maps sketch engine line item descriptions to real Z-codes in estimate_items.
+ * This is the bridge between the sketch engine's conceptual items and the
+ * BLS-backed pricing database.
+ */
+const SKETCH_ITEM_CODES: Record<string, string> = {
+  // Painting
+  'Paint walls': 'Z-PNT-001',
+  'Paint ceiling': 'Z-PNT-002',
+  // Trim (install, not paint)
+  'Baseboard': 'Z-TMB-001',
+  // Flooring — defaults to LVP, user overrides via price book
+  'Flooring': 'Z-FCV-001',
+  // Demolition / Restoration
+  'Demo drywall': 'Z-DMO-001',
+  'Structural drying': 'Z-WTR-002',
+  'Replace drywall': 'Z-DRY-001',
+  // Roof drains
+  'Internal roof drain': 'Z-PLM-014',
+  'Scupper drain': 'Z-PLM-014',
+  'Overflow drain': 'Z-PLM-014',
+};
+
+/**
+ * Loads ALL pricing from the database for the given property region.
+ * Cascade: company override > regional (MSA) > national average.
+ */
+async function loadPricingMap(
+  companyId: string,
+  propertyZip?: string,
+): Promise<{ map: PricingMap; regionCode: string }> {
+  const supabase = getSupabase();
+
+  // 1. Resolve region from property ZIP
+  let regionCode = 'NATIONAL';
+  if (propertyZip && propertyZip.length >= 3) {
+    const { data: msaResult } = await supabase.rpc('fn_zip_to_msa', { zip: propertyZip });
+    if (msaResult && msaResult.length > 0) {
+      regionCode = String(msaResult[0].cbsa_code);
+    }
+  }
+
+  // 2. Load all estimate items (zafto_code → item_id mapping)
+  const { data: items } = await supabase
+    .from('estimate_items')
+    .select('id, zafto_code')
+    .eq('source', 'zafto');
+
+  if (!items?.length) return { map: new Map(), regionCode };
+
+  const idToCode = new Map<string, string>();
+  for (const item of items) {
+    idToCode.set(item.id as string, item.zafto_code as string);
+  }
+
+  // 3. Load public pricing (national + regional) — company_id IS NULL
+  const regionCodes = regionCode !== 'NATIONAL' ? [regionCode, 'NATIONAL'] : ['NATIONAL'];
+  const { data: publicPricing } = await supabase
+    .from('estimate_pricing')
+    .select('item_id, labor_rate, material_cost, equipment_cost, region_code')
+    .in('region_code', regionCodes)
+    .is('company_id', null);
+
+  // 4. Load company-specific pricing overrides
+  const { data: companyPricing } = await supabase
+    .from('estimate_pricing')
+    .select('item_id, labor_rate, material_cost, equipment_cost')
+    .eq('company_id', companyId);
+
+  // 5. Build map: national → regional → company override (each overrides previous)
+  const map: PricingMap = new Map();
+
+  // Fill national first
+  for (const p of publicPricing || []) {
+    if ((p.region_code as string) !== 'NATIONAL') continue;
+    const code = idToCode.get(p.item_id as string);
+    if (code) {
+      map.set(code, {
+        laborRate: Number(p.labor_rate || 0),
+        materialCost: Number(p.material_cost || 0),
+        equipmentCost: Number(p.equipment_cost || 0),
+        isCompanyOverride: false,
+      });
+    }
+  }
+
+  // Override with regional (more specific)
+  if (regionCode !== 'NATIONAL') {
+    for (const p of publicPricing || []) {
+      if ((p.region_code as string) === 'NATIONAL') continue;
+      const code = idToCode.get(p.item_id as string);
+      if (code) {
+        map.set(code, {
+          laborRate: Number(p.labor_rate || 0),
+          materialCost: Number(p.material_cost || 0),
+          equipmentCost: Number(p.equipment_cost || 0),
+          isCompanyOverride: false,
+        });
+      }
+    }
+  }
+
+  // Override with company-specific pricing (highest priority)
+  for (const p of companyPricing || []) {
+    const code = idToCode.get(p.item_id as string);
+    if (code) {
+      map.set(code, {
+        laborRate: Number(p.labor_rate || 0),
+        materialCost: Number(p.material_cost || 0),
+        equipmentCost: Number(p.equipment_cost || 0),
+        isCompanyOverride: true,
+      });
+    }
+  }
+
+  return { map, regionCode };
 }
 
 // =============================================================================
@@ -57,6 +192,7 @@ export async function generateEstimate(input: {
   jobId?: string;
   customerId?: string;
   propertyAddress?: string;
+  propertyZip?: string;
 }): Promise<GenerateEstimateResult | null> {
   const supabase = getSupabase();
 
@@ -66,6 +202,9 @@ export async function generateEstimate(input: {
   if (!companyId || !user) return null;
 
   if (input.measurements.length === 0) return null;
+
+  // Load pricing from database (regional + company overrides)
+  const { map: pricingMap, regionCode } = await loadPricingMap(companyId, input.propertyZip);
 
   // 1. Create estimate
   const { data: estimateData, error: estimateError } = await supabase
@@ -90,6 +229,7 @@ export async function generateEstimate(input: {
   // 2. Generate areas and line items
   const areas: GeneratedArea[] = [];
   let totalAmount = 0;
+  let unpricedCount = 0;
 
   for (let i = 0; i < input.measurements.length; i++) {
     const m = input.measurements[i];
@@ -127,8 +267,8 @@ export async function generateEstimate(input: {
       company_id: companyId,
     });
 
-    // Generate line items
-    const lineItems = suggestLineItems(m, input.planData, input.selectedTrade, input.sitePlanData);
+    // Generate line items using DB-backed pricing
+    const lineItems = suggestLineItems(m, input.planData, pricingMap, input.selectedTrade, input.sitePlanData);
 
     // Save line items
     if (lineItems.length > 0) {
@@ -153,6 +293,7 @@ export async function generateEstimate(input: {
 
     const areaTotal = lineItems.reduce((sum, li) => sum + li.lineTotal, 0);
     totalAmount += areaTotal;
+    unpricedCount += lineItems.filter((li) => li.pricingSource === 'unpriced').length;
 
     areas.push({
       areaId,
@@ -163,33 +304,34 @@ export async function generateEstimate(input: {
     });
   }
 
-  return { estimateId, areas, totalAmount };
+  return { estimateId, areas, totalAmount, regionCode, unpricedCount };
 }
 
 // =============================================================================
-// LINE ITEM SUGGESTION
+// LINE ITEM SUGGESTION (all pricing from database)
 // =============================================================================
 
 function suggestLineItems(
   m: RoomMeasurements,
   planData: FloorPlanData,
+  pricing: PricingMap,
   selectedTrade?: string,
   sitePlanData?: SitePlanData,
 ): SuggestedLineItem[] {
   const items: SuggestedLineItem[] = [];
 
-  // Universal items
+  // Universal room items
   if (m.wallSf > 0) {
-    items.push(makeItem('Paint walls', m.paintSfWallsOnly, 'SF', 'painting', 'PAINT-WALL', 0.35, 0.85));
+    items.push(makePricedItem('Paint walls', m.paintSfWallsOnly, 'SF', 'painting', pricing));
   }
   if (m.ceilingSf > 0) {
-    items.push(makeItem('Paint ceiling', m.paintSfCeilingOnly, 'SF', 'painting', 'PAINT-CEIL', 0.30, 0.90));
+    items.push(makePricedItem('Paint ceiling', m.paintSfCeilingOnly, 'SF', 'painting', pricing));
   }
   if (m.baseboardLf > 0) {
-    items.push(makeItem('Baseboard', m.baseboardLf, 'LF', 'carpentry', 'TRIM-BASE', 2.50, 3.00));
+    items.push(makePricedItem('Baseboard', m.baseboardLf, 'LF', 'carpentry', pricing));
   }
   if (m.floorSf > 0) {
-    items.push(makeItem('Flooring', m.floorSf, 'SF', 'flooring', 'FLOOR-STD', 3.00, 2.50));
+    items.push(makePricedItem('Flooring', m.floorSf, 'SF', 'flooring', pricing));
   }
 
   // Trade layer elements
@@ -209,17 +351,8 @@ function suggestLineItems(
       }
 
       for (const [symbolType, count] of counts) {
-        items.push(
-          makeItem(
-            `${humanize(symbolType)} rough-in`,
-            count,
-            'EA',
-            layer.type,
-            null,
-            15,
-            45,
-          ),
-        );
+        const desc = `${humanize(symbolType)} rough-in`;
+        items.push(makePricedItem(desc, count, 'EA', layer.type, pricing));
       }
     }
 
@@ -229,11 +362,11 @@ function suggestLineItems(
 
       for (const zone of layer.damageData.zones) {
         const dc = zone.damageClass || '1';
-        items.push(makeItem(`Demo drywall (Class ${dc})`, m.wallSf, 'SF', 'restoration', null, 0, 1.25));
-        items.push(makeItem(`Structural drying (Class ${dc})`, m.floorSf, 'SF', 'restoration', null, 0, 1.50, 2.50));
+        items.push(makePricedItem('Demo drywall', m.wallSf, 'SF', 'restoration', pricing, `Demo drywall (Class ${dc})`));
+        items.push(makePricedItem('Structural drying', m.floorSf, 'SF', 'restoration', pricing, `Structural drying (Class ${dc})`));
 
         if (dc === '2' || dc === '3') {
-          items.push(makeItem(`Replace drywall (Class ${dc})`, m.wallSf, 'SF', 'restoration', null, 2.00, 3.50));
+          items.push(makePricedItem('Replace drywall', m.wallSf, 'SF', 'restoration', pricing, `Replace drywall (Class ${dc})`));
         }
       }
     }
@@ -249,37 +382,37 @@ function suggestLineItems(
           0,
         );
         if (totalHeads > 0) {
-          items.push(makeItem('Sprinkler head install', totalHeads, 'EA', 'fire', 'FIRE-HEAD', 35, 65));
+          items.push(makePricedItem('Sprinkler head install', totalHeads, 'EA', 'fire', pricing));
         }
-        items.push(makeItem('Sprinkler zone piping', fd.sprinklerZones.length, 'EA', 'fire', 'FIRE-ZONE', 800, 1200));
+        items.push(makePricedItem('Sprinkler zone piping', fd.sprinklerZones.length, 'EA', 'fire', pricing));
       }
       if (fd.standpipeLocations.length > 0) {
-        items.push(makeItem('Standpipe riser', fd.standpipeLocations.length, 'EA', 'fire', 'FIRE-STPIPE', 2500, 3500, 500));
+        items.push(makePricedItem('Standpipe riser', fd.standpipeLocations.length, 'EA', 'fire', pricing));
       }
       if (fd.fireDeptConnections.length > 0) {
-        items.push(makeItem('Fire dept connection (FDC)', fd.fireDeptConnections.length, 'EA', 'fire', 'FIRE-FDC', 1200, 1800));
+        items.push(makePricedItem('Fire dept connection (FDC)', fd.fireDeptConnections.length, 'EA', 'fire', pricing));
       }
       if (fd.pullStations.length > 0) {
-        items.push(makeItem('Pull station install', fd.pullStations.length, 'EA', 'fire', 'FIRE-PULL', 85, 120));
+        items.push(makePricedItem('Pull station install', fd.pullStations.length, 'EA', 'fire', pricing));
       }
       if (fd.detectors.length > 0) {
-        items.push(makeItem('Fire/smoke detector', fd.detectors.length, 'EA', 'fire', 'FIRE-DET', 45, 75));
+        items.push(makePricedItem('Fire/smoke detector', fd.detectors.length, 'EA', 'fire', pricing));
       }
       if (fd.notificationDevices.length > 0) {
-        items.push(makeItem('Horn/strobe device', fd.notificationDevices.length, 'EA', 'fire', 'FIRE-NOTIFY', 95, 85));
+        items.push(makePricedItem('Horn/strobe device', fd.notificationDevices.length, 'EA', 'fire', pricing));
       }
       if (fd.extinguishers.length > 0) {
-        items.push(makeItem('Fire extinguisher mount', fd.extinguishers.length, 'EA', 'fire', 'FIRE-EXT', 60, 25));
+        items.push(makePricedItem('Fire extinguisher mount', fd.extinguishers.length, 'EA', 'fire', pricing));
       }
       if (fd.fireRatedAssemblies.length > 0) {
-        items.push(makeItem('Fire-rated assembly', fd.fireRatedAssemblies.length, 'EA', 'fire', 'FIRE-RATED', 0, 150));
+        items.push(makePricedItem('Fire-rated assembly', fd.fireRatedAssemblies.length, 'EA', 'fire', pricing));
       }
     }
   }
 
   // Commercial building-specific items (site-level)
   if (sitePlanData) {
-    addCommercialSiteItems(items, sitePlanData);
+    addCommercialSiteItems(items, sitePlanData, pricing);
   }
 
   return items;
@@ -289,19 +422,35 @@ function suggestLineItems(
 // HELPERS
 // =============================================================================
 
-function makeItem(
-  description: string,
+/**
+ * Creates a line item with pricing from the database.
+ * Looks up the description in SKETCH_ITEM_CODES to find the Z-code,
+ * then pulls pricing from the pre-loaded map.
+ * Items not in the database are marked as 'unpriced' ($0).
+ */
+function makePricedItem(
+  lookupKey: string,
   quantity: number,
   unitCode: string,
   trade: string,
-  zaftoCode: string | null,
-  materialCost: number,
-  laborCost: number,
-  equipmentCost = 0,
+  pricing: PricingMap,
+  displayDescription?: string,
 ): SuggestedLineItem {
+  const zaftoCode = SKETCH_ITEM_CODES[lookupKey] ?? null;
+  const entry = zaftoCode ? pricing.get(zaftoCode) : undefined;
+
+  const materialCost = entry?.materialCost ?? 0;
+  const laborCost = entry?.laborRate ?? 0;
+  const equipmentCost = entry?.equipmentCost ?? 0;
   const unitPrice = materialCost + laborCost + equipmentCost;
+
+  let pricingSource: SuggestedLineItem['pricingSource'] = 'unpriced';
+  if (entry) {
+    pricingSource = entry.isCompanyOverride ? 'company' : 'database';
+  }
+
   return {
-    description,
+    description: displayDescription ?? lookupKey,
     actionType: 'add',
     quantity: Math.round(quantity * 100) / 100,
     unitCode,
@@ -312,6 +461,7 @@ function makeItem(
     equipmentCost,
     unitPrice,
     lineTotal: Math.round(quantity * unitPrice * 100) / 100,
+    pricingSource,
   };
 }
 
@@ -354,19 +504,20 @@ function polygonArea(points: { x: number; y: number }[]): number {
 }
 
 // =============================================================================
-// COMMERCIAL SITE-LEVEL ITEMS
+// COMMERCIAL SITE-LEVEL ITEMS (all pricing from database)
 // =============================================================================
 
 function addCommercialSiteItems(
   items: SuggestedLineItem[],
   sitePlan: SitePlanData,
+  pricing: PricingMap,
 ): void {
   // Parking lot line items
   if (sitePlan.parkingLayouts && sitePlan.parkingLayouts.length > 0) {
     for (const lot of sitePlan.parkingLayouts) {
-      items.push(makeItem('Parking stall striping', lot.stallCount * 18, 'LF', 'paving', 'PARK-STRIPE', 0.45, 0.55));
+      items.push(makePricedItem('Parking stall striping', lot.stallCount * 18, 'LF', 'paving', pricing));
       if (lot.handicapStalls > 0) {
-        items.push(makeItem('ADA parking signage & marking', lot.handicapStalls, 'EA', 'paving', 'PARK-ADA', 250, 150));
+        items.push(makePricedItem('ADA parking signage & marking', lot.handicapStalls, 'EA', 'paving', pricing));
       }
     }
   }
@@ -381,13 +532,13 @@ function addCommercialSiteItems(
     for (const [markerType, count] of markerCounts) {
       const label = humanize(markerType);
       if (markerType.startsWith('ada')) {
-        items.push(makeItem(`${label} compliance`, count, 'EA', 'general', null, 0, 85));
+        items.push(makePricedItem(`${label} compliance`, count, 'EA', 'general', pricing));
       } else if (markerType.startsWith('fire')) {
-        items.push(makeItem(`${label} rating`, count, 'EA', 'fire', null, 0, 120));
+        items.push(makePricedItem(`${label} rating`, count, 'EA', 'fire', pricing));
       } else if (markerType === 'exitSign' || markerType === 'emergencyLight') {
-        items.push(makeItem(label, count, 'EA', 'electrical', null, 45, 65));
+        items.push(makePricedItem(label, count, 'EA', 'electrical', pricing));
       } else {
-        items.push(makeItem(`${label} marker`, count, 'EA', 'general', null, 0, 50));
+        items.push(makePricedItem(`${label} marker`, count, 'EA', 'general', pricing));
       }
     }
   }
@@ -399,13 +550,13 @@ function addCommercialSiteItems(
     const overflow = sitePlan.roofDrains.filter((d) => d.drainType === 'overflow').length;
 
     if (internal > 0) {
-      items.push(makeItem('Internal roof drain', internal, 'EA', 'plumbing', 'ROOF-DRAIN-INT', 350, 450));
+      items.push(makePricedItem('Internal roof drain', internal, 'EA', 'plumbing', pricing));
     }
     if (scuppers > 0) {
-      items.push(makeItem('Scupper drain', scuppers, 'EA', 'plumbing', 'ROOF-DRAIN-SCUP', 200, 300));
+      items.push(makePricedItem('Scupper drain', scuppers, 'EA', 'plumbing', pricing));
     }
     if (overflow > 0) {
-      items.push(makeItem('Overflow drain', overflow, 'EA', 'plumbing', 'ROOF-DRAIN-OVER', 275, 350));
+      items.push(makePricedItem('Overflow drain', overflow, 'EA', 'plumbing', pricing));
     }
   }
 
@@ -414,41 +565,14 @@ function addCommercialSiteItems(
     for (const plane of sitePlan.roofPlanes) {
       if (plane.membraneMaterial) {
         const matLabel = humanize(plane.membraneMaterial);
-        const costPerSf = COMMERCIAL_ROOF_COSTS[plane.membraneMaterial] ?? 8.5;
         const areaSf = polygonArea(plane.points);
         if (areaSf > 0) {
-          items.push(makeItem(`${matLabel} membrane`, areaSf, 'SF', 'roofing', 'CROOF-MEM', costPerSf * 0.55, costPerSf * 0.45));
+          items.push(makePricedItem(`${matLabel} membrane`, areaSf, 'SF', 'roofing', pricing));
         }
         if (plane.insulationRValue && plane.insulationRValue > 0 && areaSf > 0) {
-          items.push(makeItem(`Roof insulation R-${plane.insulationRValue}`, areaSf, 'SF', 'roofing', 'CROOF-INS', 1.80, 1.20));
+          items.push(makePricedItem(`Roof insulation R-${plane.insulationRValue}`, areaSf, 'SF', 'roofing', pricing));
         }
       }
     }
   }
 }
-
-// Commercial roof material cost lookup (total installed $/SF)
-const COMMERCIAL_ROOF_COSTS: Record<string, number> = {
-  tpoWhite45: 7.50,
-  tpoWhite60: 8.50,
-  tpoWhite80: 10.00,
-  epdm45: 6.50,
-  epdm60: 7.50,
-  epdm90: 9.00,
-  modBitBase: 7.00,
-  modBitCap: 8.00,
-  bur3Ply: 8.50,
-  bur4Ply: 10.00,
-  pvcMembrane: 9.50,
-  sprayFoam: 7.00,
-  standingSeam: 14.00,
-  metalRPanel: 8.50,
-  greenRoofExtensive: 25.00,
-  greenRoofIntensive: 45.00,
-  hotMopAsphalt: 6.50,
-  coldAppliedAdhesive: 7.00,
-  liquidAppliedCoating: 5.50,
-  torchDown: 7.50,
-  tpoFleeceback: 9.50,
-  singlePlyBallast: 6.00,
-};
