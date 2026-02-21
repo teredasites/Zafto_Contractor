@@ -1,419 +1,984 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+// DEPTH35: Mold Remediation CRM Hook (Web Portal)
+// Assessments, moisture readings, remediation plans, equipment deployments,
+// lab samples, clearance tests, state licensing reference.
 
-// ── Types ──
+import { useState, useEffect, useCallback } from 'react';
+import { getSupabase } from '@/lib/supabase';
 
-export type IicrcLevel = 1 | 2 | 3;
-export type ContainmentType = 'none' | 'limited' | 'full';
-export type MoldClearanceStatus = 'pending' | 'sampling' | 'awaiting_results' | 'passed' | 'failed' | 'not_required';
-export type MoldAssessmentStatus = 'in_progress' | 'pending_review' | 'remediation_active' | 'awaiting_clearance' | 'cleared' | 'failed_clearance';
-export type SampleType = 'air' | 'surface' | 'bulk' | 'tape_lift';
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export type MoldSuspectedCause =
+  | 'water_intrusion'
+  | 'hvac_issue'
+  | 'plumbing_leak'
+  | 'flooding'
+  | 'condensation'
+  | 'unknown'
+  | 'roof_leak'
+  | 'foundation_crack';
+
+export type MoistureSourceStatus = 'active_leak' | 'resolved' | 'unknown';
+
+export type OccupancyStatus = 'occupied' | 'vacant' | 'evacuated';
+
+export type MoistureReadingType =
+  | 'surface_pin'
+  | 'relative_humidity'
+  | 'dew_point'
+  | 'wood_moisture_content';
+
+export type MoistureSeverity = 'normal' | 'concern' | 'saturation';
+
+export type RemediationPlanStatus =
+  | 'planned'
+  | 'in_progress'
+  | 'completed'
+  | 'on_hold';
+
+export type ContainmentType = 'minimal' | 'limited' | 'full';
+
+export type MoldEquipmentType =
+  | 'dehumidifier'
+  | 'air_scrubber'
+  | 'negative_air_machine'
+  | 'air_mover'
+  | 'moisture_meter'
+  | 'thermo_hygrometer'
+  | 'hepa_vacuum'
+  | 'sprayer'
+  | 'other';
+
+export type LabSampleType =
+  | 'air_cassette'
+  | 'tape_lift'
+  | 'bulk_swab'
+  | 'surface_wipe';
+
+export type LabSampleStatus = 'pending' | 'sent' | 'received' | 'results_in';
+
+export type ClearanceResult = 'pass' | 'fail' | 'conditional';
+
+export interface MoldStateLicensing {
+  id: string;
+  stateCode: string;
+  stateName: string;
+  licenseRequired: boolean;
+  licenseTypes: unknown[];
+  issuingAgency: string | null;
+  agencyUrl: string | null;
+  costRange: string | null;
+  renewalPeriod: string | null;
+  ceRequirements: string | null;
+  reciprocityStates: unknown[];
+  notes: string | null;
+}
 
 export interface MoldAssessment {
   id: string;
-  company_id: string;
-  job_id: string;
-  insurance_claim_id: string | null;
-  created_by_user_id: string | null;
-  iicrc_level: IicrcLevel;
-  affected_area_sqft: number | null;
-  mold_type: string | null;
-  moisture_source: string | null;
-  containment_type: ContainmentType;
-  negative_pressure: boolean;
-  containment_notes: string | null;
-  containment_checks: Record<string, unknown>[];
-  air_sampling_required: boolean;
-  pre_samples: Record<string, unknown>[];
-  post_samples: Record<string, unknown>[];
-  outdoor_baseline: Record<string, unknown> | null;
-  clearance_status: MoldClearanceStatus;
-  clearance_date: string | null;
-  clearance_inspector: string | null;
-  clearance_company: string | null;
-  lab_name: string | null;
-  lab_sample_id: string | null;
-  spore_count_before: number | null;
-  spore_count_after: number | null;
-  protocol_level: string | null;
-  protocol_steps: Record<string, unknown>[];
-  material_removal: Record<string, unknown>[];
-  equipment_deployed: Record<string, unknown>[];
-  ppe_level: string | null;
-  antimicrobial_treatments: Record<string, unknown>[];
-  photos: Record<string, unknown>[];
-  assessment_status: MoldAssessmentStatus;
-  notes: string | null;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
+  companyId: string;
+  propertyId: string | null;
+  jobId: string | null;
+  assessedBy: string | null;
+  assessmentDate: string;
+  suspectedCause: MoldSuspectedCause;
+  affectedAreaSqft: number | null;
+  affectedMaterials: unknown[];
+  visibleMoldType: unknown[];
+  moistureSourceStatus: MoistureSourceStatus;
+  occupancyStatus: OccupancyStatus;
+  remediationLevel: number | null;
+  overallNotes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface ChainOfCustodySample {
+export interface MoldMoistureReading {
   id: string;
-  company_id: string;
-  mold_assessment_id: string;
-  sample_type: SampleType;
-  sample_location: string | null;
-  collected_by: string | null;
-  collected_at: string | null;
-  shipped_to_lab_at: string | null;
-  lab_received_at: string | null;
-  results_available_at: string | null;
-  lab_name: string | null;
-  lab_sample_number: string | null;
-  spore_count: number | null;
-  spore_types_found: string | null;
-  pass_fail: string | null;
+  companyId: string;
+  assessmentId: string;
+  roomName: string;
+  locationDetail: string | null;
+  readingType: MoistureReadingType;
+  readingValue: number;
+  readingUnit: string;
+  severity: MoistureSeverity | null;
+  meterModel: string | null;
   notes: string | null;
-  created_at: string;
+  createdAt: string;
 }
 
-export interface MoldStateRegulation {
+export interface MoldRemediationPlan {
   id: string;
-  state_code: string;
-  state_name: string;
-  license_required: boolean;
-  license_type: string | null;
-  license_url: string | null;
-  assessment_required_before_remediation: boolean;
-  third_party_clearance_required: boolean;
-  disclosure_required: boolean;
-  max_sqft_without_license: number | null;
+  companyId: string;
+  assessmentId: string;
+  jobId: string | null;
+  remediationLevel: number;
+  containmentType: ContainmentType | null;
+  scopeDescription: string | null;
+  materialsToRemove: unknown[];
+  checklistProgress: Record<string, unknown>;
+  status: RemediationPlanStatus;
+  startedAt: string | null;
+  completedAt: string | null;
   notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface MoldLab {
+export interface MoldEquipmentDeployment {
   id: string;
-  name: string;
-  city: string | null;
-  state_code: string | null;
-  phone: string | null;
-  email: string | null;
-  website: string | null;
-  aiha_accredited: boolean;
-  turnaround_days: number | null;
+  companyId: string;
+  remediationId: string | null;
+  equipmentType: MoldEquipmentType;
+  modelName: string | null;
+  serialNumber: string | null;
+  capacity: string | null;
+  placementLocation: string | null;
+  deployedAt: string;
+  retrievedAt: string | null;
+  runtimeHours: number | null;
   notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// ── IICRC Level Info ──
-
-export const IICRC_LEVEL_INFO: Record<IicrcLevel, {
-  label: string;
-  sqft: string;
-  containment: string;
-  ppe: string;
-  airSampling: string;
-}> = {
-  1: {
-    label: 'Level 1 — Small (<10 sqft)',
-    sqft: '<10 sqft',
-    containment: 'None or limited. Work area isolation.',
-    ppe: 'N95 respirator, goggles, gloves',
-    airSampling: 'Not typically required',
-  },
-  2: {
-    label: 'Level 2 — Medium (10-30 sqft)',
-    sqft: '10-30 sqft',
-    containment: 'Limited or full. Poly sheeting, negative air recommended.',
-    ppe: 'Half-face P100, goggles, Tyvek, gloves',
-    airSampling: 'Recommended. Pre and post remediation.',
-  },
-  3: {
-    label: 'Level 3 — Large (>30 sqft)',
-    sqft: '>30 sqft',
-    containment: 'Full containment REQUIRED. Negative air, decon chamber, HEPA.',
-    ppe: 'Full-face P100, goggles, full Tyvek, boot covers, gloves',
-    airSampling: 'REQUIRED. Pre-remediation, post-remediation, outdoor baseline. Clearance testing mandatory.',
-  },
-};
-
-// ── Mappers ──
-
-function mapAssessment(row: Record<string, unknown>): MoldAssessment {
-  return {
-    id: row.id as string,
-    company_id: row.company_id as string,
-    job_id: row.job_id as string,
-    insurance_claim_id: (row.insurance_claim_id as string) ?? null,
-    created_by_user_id: (row.created_by_user_id as string) ?? null,
-    iicrc_level: (row.iicrc_level as IicrcLevel) ?? 2,
-    affected_area_sqft: (row.affected_area_sqft as number) ?? null,
-    mold_type: (row.mold_type as string) ?? null,
-    moisture_source: (row.moisture_source as string) ?? null,
-    containment_type: (row.containment_type as ContainmentType) ?? 'none',
-    negative_pressure: (row.negative_pressure as boolean) ?? false,
-    containment_notes: (row.containment_notes as string) ?? null,
-    containment_checks: (row.containment_checks as Record<string, unknown>[]) ?? [],
-    air_sampling_required: (row.air_sampling_required as boolean) ?? false,
-    pre_samples: (row.pre_samples as Record<string, unknown>[]) ?? [],
-    post_samples: (row.post_samples as Record<string, unknown>[]) ?? [],
-    outdoor_baseline: (row.outdoor_baseline as Record<string, unknown>) ?? null,
-    clearance_status: (row.clearance_status as MoldClearanceStatus) ?? 'pending',
-    clearance_date: (row.clearance_date as string) ?? null,
-    clearance_inspector: (row.clearance_inspector as string) ?? null,
-    clearance_company: (row.clearance_company as string) ?? null,
-    lab_name: (row.lab_name as string) ?? null,
-    lab_sample_id: (row.lab_sample_id as string) ?? null,
-    spore_count_before: (row.spore_count_before as number) ?? null,
-    spore_count_after: (row.spore_count_after as number) ?? null,
-    protocol_level: (row.protocol_level as string) ?? null,
-    protocol_steps: (row.protocol_steps as Record<string, unknown>[]) ?? [],
-    material_removal: (row.material_removal as Record<string, unknown>[]) ?? [],
-    equipment_deployed: (row.equipment_deployed as Record<string, unknown>[]) ?? [],
-    ppe_level: (row.ppe_level as string) ?? null,
-    antimicrobial_treatments: (row.antimicrobial_treatments as Record<string, unknown>[]) ?? [],
-    photos: (row.photos as Record<string, unknown>[]) ?? [],
-    assessment_status: (row.assessment_status as MoldAssessmentStatus) ?? 'in_progress',
-    notes: (row.notes as string) ?? null,
-    created_at: row.created_at as string,
-    updated_at: row.updated_at as string,
-    deleted_at: (row.deleted_at as string) ?? null,
-  };
+export interface MoldLabSample {
+  id: string;
+  companyId: string;
+  assessmentId: string | null;
+  sampleType: LabSampleType;
+  sampleLocation: string;
+  roomName: string | null;
+  dateCollected: string;
+  collectedBy: string | null;
+  labName: string | null;
+  labReference: string | null;
+  status: LabSampleStatus;
+  speciesFound: unknown[];
+  sporeCount: number | null;
+  sporeCountUnit: string;
+  outdoorBaseline: number | null;
+  passFail: string | null;
+  resultsNotes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-function mapSample(row: Record<string, unknown>): ChainOfCustodySample {
-  return {
-    id: row.id as string,
-    company_id: row.company_id as string,
-    mold_assessment_id: row.mold_assessment_id as string,
-    sample_type: (row.sample_type as SampleType) ?? 'air',
-    sample_location: (row.sample_location as string) ?? null,
-    collected_by: (row.collected_by as string) ?? null,
-    collected_at: (row.collected_at as string) ?? null,
-    shipped_to_lab_at: (row.shipped_to_lab_at as string) ?? null,
-    lab_received_at: (row.lab_received_at as string) ?? null,
-    results_available_at: (row.results_available_at as string) ?? null,
-    lab_name: (row.lab_name as string) ?? null,
-    lab_sample_number: (row.lab_sample_number as string) ?? null,
-    spore_count: (row.spore_count as number) ?? null,
-    spore_types_found: (row.spore_types_found as string) ?? null,
-    pass_fail: (row.pass_fail as string) ?? null,
-    notes: (row.notes as string) ?? null,
-    created_at: row.created_at as string,
-  };
+export interface MoldClearanceTest {
+  id: string;
+  companyId: string;
+  remediationId: string | null;
+  assessmentId: string | null;
+  clearanceDate: string;
+  assessorName: string | null;
+  assessorCompany: string | null;
+  assessorLicense: string | null;
+  visualPass: boolean | null;
+  moisturePass: boolean | null;
+  airQualityPass: boolean | null;
+  odorPass: boolean | null;
+  overallResult: ClearanceResult | null;
+  postMoistureReadings: unknown[];
+  labResultsRef: string | null;
+  certificateNumber: string | null;
+  certificateUrl: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// ── Hooks ──
+// ============================================================================
+// HELPERS
+// ============================================================================
 
-export function useMoldRemediation() {
-  const supabase = createClient();
+function snakeToCamel(row: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(row)) {
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    result[camelKey] = value;
+  }
+  return result;
+}
+
+function mapRows<T>(rows: Record<string, unknown>[]): T[] {
+  return rows.map((row: Record<string, unknown>) => snakeToCamel(row) as unknown as T);
+}
+
+// ============================================================================
+// HOOK: useMoldStateLicensing — system reference data
+// ============================================================================
+
+export function useMoldStateLicensing() {
+  const [states, setStates] = useState<MoldStateLicensing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      const { data, error: err } = await supabase
+        .from('mold_state_licensing')
+        .select()
+        .order('state_name');
+      if (err) throw err;
+      setStates(mapRows<MoldStateLicensing>(data ?? []));
+    } catch (e) {
+      console.error('Failed to load mold state licensing:', e);
+      setError('Could not load state licensing data.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  return { states, loading, error, reload: loadData };
+}
+
+// ============================================================================
+// HOOK: useMoldAssessments — CRUD for assessments
+// ============================================================================
+
+export function useMoldAssessments(companyId: string, propertyId?: string, jobId?: string) {
   const [assessments, setAssessments] = useState<MoldAssessment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAssessments = useCallback(async () => {
+  const loadData = useCallback(async () => {
+    if (!companyId) return;
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      const { data, error: err } = await supabase
+      const supabase = getSupabase();
+      let query = supabase
         .from('mold_assessments')
-        .select('*')
+        .select()
+        .eq('company_id', companyId)
         .is('deleted_at', null)
-        .order('created_at', { ascending: false });
+        .order('assessment_date', { ascending: false });
 
+      if (propertyId) query = query.eq('property_id', propertyId);
+      if (jobId) query = query.eq('job_id', jobId);
+
+      const { data, error: err } = await query;
       if (err) throw err;
-      setAssessments((data ?? []).map(mapAssessment));
+      setAssessments(mapRows<MoldAssessment>(data ?? []));
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      console.error('Failed to load mold assessments:', e);
+      setError('Could not load assessments.');
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, [companyId, propertyId, jobId]);
 
   useEffect(() => {
-    fetchAssessments();
+    loadData();
+  }, [loadData]);
 
-    const channel = supabase
-      .channel('mold_assessments_realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'mold_assessments' },
-        () => { fetchAssessments(); }
-      )
-      .subscribe();
+  const createAssessment = useCallback(
+    async (assessment: Omit<MoldAssessment, 'id' | 'createdAt' | 'updatedAt'>) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_assessments')
+        .insert({
+          company_id: assessment.companyId,
+          property_id: assessment.propertyId,
+          job_id: assessment.jobId,
+          assessed_by: assessment.assessedBy,
+          assessment_date: assessment.assessmentDate,
+          suspected_cause: assessment.suspectedCause,
+          affected_area_sqft: assessment.affectedAreaSqft,
+          affected_materials: assessment.affectedMaterials,
+          visible_mold_type: assessment.visibleMoldType,
+          moisture_source_status: assessment.moistureSourceStatus,
+          occupancy_status: assessment.occupancyStatus,
+          remediation_level: assessment.remediationLevel,
+          overall_notes: assessment.overallNotes,
+        });
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
-    return () => { supabase.removeChannel(channel); };
-  }, [supabase, fetchAssessments]);
+  const updateAssessment = useCallback(
+    async (
+      id: string,
+      updatedAt: string,
+      patch: Partial<MoldAssessment>
+    ) => {
+      const supabase = getSupabase();
+      const row: Record<string, unknown> = {};
+      if (patch.suspectedCause !== undefined) row.suspected_cause = patch.suspectedCause;
+      if (patch.affectedAreaSqft !== undefined) row.affected_area_sqft = patch.affectedAreaSqft;
+      if (patch.affectedMaterials !== undefined) row.affected_materials = patch.affectedMaterials;
+      if (patch.visibleMoldType !== undefined) row.visible_mold_type = patch.visibleMoldType;
+      if (patch.moistureSourceStatus !== undefined) row.moisture_source_status = patch.moistureSourceStatus;
+      if (patch.occupancyStatus !== undefined) row.occupancy_status = patch.occupancyStatus;
+      if (patch.remediationLevel !== undefined) row.remediation_level = patch.remediationLevel;
+      if (patch.overallNotes !== undefined) row.overall_notes = patch.overallNotes;
 
-  const createAssessment = useCallback(async (payload: Partial<MoldAssessment>) => {
-    const { data, error: err } = await supabase
-      .from('mold_assessments')
-      .insert(payload)
-      .select()
-      .single();
+      const { error: err } = await supabase
+        .from('mold_assessments')
+        .update(row)
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
-    if (err) throw err;
-    return mapAssessment(data);
-  }, [supabase]);
-
-  const updateAssessment = useCallback(async (id: string, updates: Partial<MoldAssessment>) => {
-    const { data, error: err } = await supabase
-      .from('mold_assessments')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (err) throw err;
-    return mapAssessment(data);
-  }, [supabase]);
-
-  const deleteAssessment = useCallback(async (id: string) => {
-    const { error: err } = await supabase
-      .from('mold_assessments')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', id);
-
-    if (err) throw err;
-  }, [supabase]);
+  const deleteAssessment = useCallback(
+    async (id: string, updatedAt: string) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_assessments')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
   return {
     assessments,
     loading,
     error,
-    refetch: fetchAssessments,
+    reload: loadData,
     createAssessment,
     updateAssessment,
     deleteAssessment,
   };
 }
 
-export function useChainOfCustody(assessmentId: string | null) {
-  const supabase = createClient();
-  const [samples, setSamples] = useState<ChainOfCustodySample[]>([]);
+// ============================================================================
+// HOOK: useMoldMoistureReadings — insert-only sensor data
+// ============================================================================
+
+export function useMoldMoistureReadings(assessmentId: string) {
+  const [readings, setReadings] = useState<MoldMoistureReading[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSamples = useCallback(async () => {
-    if (!assessmentId) {
-      setSamples([]);
-      setLoading(false);
-      return;
-    }
+  const loadData = useCallback(async () => {
+    if (!assessmentId) return;
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
-        .from('mold_chain_of_custody')
-        .select('*')
-        .eq('mold_assessment_id', assessmentId)
+        .from('mold_moisture_readings')
+        .select()
+        .eq('assessment_id', assessmentId)
         .order('created_at', { ascending: false });
-
       if (err) throw err;
-      setSamples((data ?? []).map(mapSample));
+      setReadings(mapRows<MoldMoistureReading>(data ?? []));
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      console.error('Failed to load moisture readings:', e);
+      setError('Could not load moisture readings.');
     } finally {
       setLoading(false);
     }
-  }, [supabase, assessmentId]);
+  }, [assessmentId]);
 
   useEffect(() => {
-    fetchSamples();
+    loadData();
+  }, [loadData]);
 
-    if (!assessmentId) return;
+  const createReading = useCallback(
+    async (reading: {
+      companyId: string;
+      assessmentId: string;
+      roomName: string;
+      locationDetail?: string;
+      readingType: MoistureReadingType;
+      readingValue: number;
+      readingUnit?: string;
+      severity?: MoistureSeverity;
+      meterModel?: string;
+      notes?: string;
+    }) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_moisture_readings')
+        .insert({
+          company_id: reading.companyId,
+          assessment_id: reading.assessmentId,
+          room_name: reading.roomName,
+          location_detail: reading.locationDetail ?? null,
+          reading_type: reading.readingType,
+          reading_value: reading.readingValue,
+          reading_unit: reading.readingUnit ?? '%',
+          severity: reading.severity ?? null,
+          meter_model: reading.meterModel ?? null,
+          notes: reading.notes ?? null,
+        });
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
-    const channel = supabase
-      .channel(`coc_${assessmentId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'mold_chain_of_custody',
-          filter: `mold_assessment_id=eq.${assessmentId}`,
-        },
-        () => { fetchSamples(); }
-      )
-      .subscribe();
+  return { readings, loading, error, reload: loadData, createReading };
+}
 
-    return () => { supabase.removeChannel(channel); };
-  }, [supabase, assessmentId, fetchSamples]);
+// ============================================================================
+// HOOK: useMoldRemediationPlans — CRUD for remediation plans
+// ============================================================================
 
-  const addSample = useCallback(async (payload: Partial<ChainOfCustodySample>) => {
-    const { data, error: err } = await supabase
-      .from('mold_chain_of_custody')
-      .insert(payload)
-      .select()
-      .single();
+export function useMoldRemediationPlans(assessmentId?: string, companyId?: string) {
+  const [plans, setPlans] = useState<MoldRemediationPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    if (err) throw err;
-    return mapSample(data);
-  }, [supabase]);
+  const loadData = useCallback(async () => {
+    if (!assessmentId && !companyId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      let query = supabase
+        .from('mold_remediation_plans')
+        .select()
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
 
-  const updateSample = useCallback(async (id: string, updates: Partial<ChainOfCustodySample>) => {
-    const { error: err } = await supabase
-      .from('mold_chain_of_custody')
-      .update(updates)
-      .eq('id', id);
+      if (assessmentId) {
+        query = query.eq('assessment_id', assessmentId);
+      } else if (companyId) {
+        query = query.eq('company_id', companyId);
+      }
 
-    if (err) throw err;
-  }, [supabase]);
+      const { data, error: err } = await query;
+      if (err) throw err;
+      setPlans(mapRows<MoldRemediationPlan>(data ?? []));
+    } catch (e) {
+      console.error('Failed to load remediation plans:', e);
+      setError('Could not load remediation plans.');
+    } finally {
+      setLoading(false);
+    }
+  }, [assessmentId, companyId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const createPlan = useCallback(
+    async (plan: {
+      companyId: string;
+      assessmentId: string;
+      jobId?: string;
+      remediationLevel: number;
+      containmentType?: ContainmentType;
+      scopeDescription?: string;
+      materialsToRemove?: unknown[];
+      notes?: string;
+    }) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_remediation_plans')
+        .insert({
+          company_id: plan.companyId,
+          assessment_id: plan.assessmentId,
+          job_id: plan.jobId ?? null,
+          remediation_level: plan.remediationLevel,
+          containment_type: plan.containmentType ?? null,
+          scope_description: plan.scopeDescription ?? null,
+          materials_to_remove: plan.materialsToRemove ?? [],
+          checklist_progress: {},
+          status: 'planned',
+          notes: plan.notes ?? null,
+        });
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const updatePlan = useCallback(
+    async (id: string, updatedAt: string, patch: Partial<MoldRemediationPlan>) => {
+      const supabase = getSupabase();
+      const row: Record<string, unknown> = {};
+      if (patch.remediationLevel !== undefined) row.remediation_level = patch.remediationLevel;
+      if (patch.containmentType !== undefined) row.containment_type = patch.containmentType;
+      if (patch.scopeDescription !== undefined) row.scope_description = patch.scopeDescription;
+      if (patch.materialsToRemove !== undefined) row.materials_to_remove = patch.materialsToRemove;
+      if (patch.checklistProgress !== undefined) row.checklist_progress = patch.checklistProgress;
+      if (patch.notes !== undefined) row.notes = patch.notes;
+
+      const { error: err } = await supabase
+        .from('mold_remediation_plans')
+        .update(row)
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const updatePlanStatus = useCallback(
+    async (id: string, updatedAt: string, status: RemediationPlanStatus) => {
+      const supabase = getSupabase();
+      const patch: Record<string, unknown> = { status };
+      const now = new Date().toISOString();
+      if (status === 'in_progress') patch.started_at = now;
+      else if (status === 'completed') patch.completed_at = now;
+
+      const { error: err } = await supabase
+        .from('mold_remediation_plans')
+        .update(patch)
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const deletePlan = useCallback(
+    async (id: string, updatedAt: string) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_remediation_plans')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  return {
+    plans,
+    loading,
+    error,
+    reload: loadData,
+    createPlan,
+    updatePlan,
+    updatePlanStatus,
+    deletePlan,
+  };
+}
+
+// ============================================================================
+// HOOK: useMoldEquipment — deploy/retrieve equipment
+// ============================================================================
+
+export function useMoldEquipment(remediationId?: string, companyId?: string) {
+  const [deployments, setDeployments] = useState<MoldEquipmentDeployment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = useCallback(async () => {
+    if (!remediationId && !companyId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      let query = supabase
+        .from('mold_equipment_deployments')
+        .select()
+        .order('deployed_at', { ascending: false });
+
+      if (remediationId) {
+        query = query.eq('remediation_id', remediationId);
+      } else if (companyId) {
+        query = query.eq('company_id', companyId).is('retrieved_at', null);
+      }
+
+      const { data, error: err } = await query;
+      if (err) throw err;
+      setDeployments(mapRows<MoldEquipmentDeployment>(data ?? []));
+    } catch (e) {
+      console.error('Failed to load equipment deployments:', e);
+      setError('Could not load equipment deployments.');
+    } finally {
+      setLoading(false);
+    }
+  }, [remediationId, companyId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const deployEquipment = useCallback(
+    async (deployment: {
+      companyId: string;
+      remediationId?: string;
+      equipmentType: MoldEquipmentType;
+      modelName?: string;
+      serialNumber?: string;
+      capacity?: string;
+      placementLocation?: string;
+      notes?: string;
+    }) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_equipment_deployments')
+        .insert({
+          company_id: deployment.companyId,
+          remediation_id: deployment.remediationId ?? null,
+          equipment_type: deployment.equipmentType,
+          model_name: deployment.modelName ?? null,
+          serial_number: deployment.serialNumber ?? null,
+          capacity: deployment.capacity ?? null,
+          placement_location: deployment.placementLocation ?? null,
+          deployed_at: new Date().toISOString(),
+          notes: deployment.notes ?? null,
+        });
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const retrieveEquipment = useCallback(
+    async (id: string, updatedAt: string, runtimeHours?: number) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_equipment_deployments')
+        .update({
+          retrieved_at: new Date().toISOString(),
+          runtime_hours: runtimeHours ?? null,
+        })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const updateDeployment = useCallback(
+    async (id: string, updatedAt: string, patch: Partial<MoldEquipmentDeployment>) => {
+      const supabase = getSupabase();
+      const row: Record<string, unknown> = {};
+      if (patch.placementLocation !== undefined) row.placement_location = patch.placementLocation;
+      if (patch.notes !== undefined) row.notes = patch.notes;
+      if (patch.capacity !== undefined) row.capacity = patch.capacity;
+
+      const { error: err } = await supabase
+        .from('mold_equipment_deployments')
+        .update(row)
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  return {
+    deployments,
+    loading,
+    error,
+    reload: loadData,
+    deployEquipment,
+    retrieveEquipment,
+    updateDeployment,
+  };
+}
+
+// ============================================================================
+// HOOK: useMoldLabSamples — CRUD for lab samples
+// ============================================================================
+
+export function useMoldLabSamples(assessmentId?: string, companyId?: string) {
+  const [samples, setSamples] = useState<MoldLabSample[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = useCallback(async () => {
+    if (!assessmentId && !companyId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      let query = supabase
+        .from('mold_lab_samples')
+        .select()
+        .is('deleted_at', null)
+        .order('date_collected', { ascending: false });
+
+      if (assessmentId) {
+        query = query.eq('assessment_id', assessmentId);
+      } else if (companyId) {
+        query = query.eq('company_id', companyId);
+      }
+
+      const { data, error: err } = await query;
+      if (err) throw err;
+      setSamples(mapRows<MoldLabSample>(data ?? []));
+    } catch (e) {
+      console.error('Failed to load lab samples:', e);
+      setError('Could not load lab samples.');
+    } finally {
+      setLoading(false);
+    }
+  }, [assessmentId, companyId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const createSample = useCallback(
+    async (sample: {
+      companyId: string;
+      assessmentId?: string;
+      sampleType: LabSampleType;
+      sampleLocation: string;
+      roomName?: string;
+      dateCollected: string;
+      collectedBy?: string;
+      labName?: string;
+      labReference?: string;
+      notes?: string;
+    }) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_lab_samples')
+        .insert({
+          company_id: sample.companyId,
+          assessment_id: sample.assessmentId ?? null,
+          sample_type: sample.sampleType,
+          sample_location: sample.sampleLocation,
+          room_name: sample.roomName ?? null,
+          date_collected: sample.dateCollected,
+          collected_by: sample.collectedBy ?? null,
+          lab_name: sample.labName ?? null,
+          lab_reference: sample.labReference ?? null,
+          status: 'pending',
+          notes: sample.notes ?? null,
+        });
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const updateSampleStatus = useCallback(
+    async (id: string, updatedAt: string, status: LabSampleStatus) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_lab_samples')
+        .update({ status })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const recordResults = useCallback(
+    async (
+      id: string,
+      updatedAt: string,
+      results: {
+        speciesFound?: unknown[];
+        sporeCount?: number;
+        outdoorBaseline?: number;
+        passFail?: string;
+        resultsNotes?: string;
+      }
+    ) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_lab_samples')
+        .update({
+          status: 'results_in',
+          species_found: results.speciesFound ?? [],
+          spore_count: results.sporeCount ?? null,
+          outdoor_baseline: results.outdoorBaseline ?? null,
+          pass_fail: results.passFail ?? null,
+          results_notes: results.resultsNotes ?? null,
+        })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
+
+  const deleteSample = useCallback(
+    async (id: string, updatedAt: string) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_lab_samples')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
   return {
     samples,
     loading,
     error,
-    refetch: fetchSamples,
-    addSample,
-    updateSample,
+    reload: loadData,
+    createSample,
+    updateSampleStatus,
+    recordResults,
+    deleteSample,
   };
 }
 
-export function useStateRegulations() {
-  const supabase = createClient();
-  const [regulations, setRegulations] = useState<MoldStateRegulation[]>([]);
+// ============================================================================
+// HOOK: useMoldClearanceTests — CRUD for clearance tests
+// ============================================================================
+
+export function useMoldClearanceTests(remediationId?: string, assessmentId?: string) {
+  const [tests, setTests] = useState<MoldClearanceTest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = useCallback(async () => {
+    if (!remediationId && !assessmentId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      let query = supabase
+        .from('mold_clearance_tests')
+        .select()
+        .is('deleted_at', null)
+        .order('clearance_date', { ascending: false });
+
+      if (remediationId) {
+        query = query.eq('remediation_id', remediationId);
+      } else if (assessmentId) {
+        query = query.eq('assessment_id', assessmentId);
+      }
+
+      const { data, error: err } = await query;
+      if (err) throw err;
+      setTests(mapRows<MoldClearanceTest>(data ?? []));
+    } catch (e) {
+      console.error('Failed to load clearance tests:', e);
+      setError('Could not load clearance tests.');
+    } finally {
+      setLoading(false);
+    }
+  }, [remediationId, assessmentId]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const { data, error: err } = await supabase
-          .from('mold_state_regulations')
-          .select('*')
-          .order('state_code');
+    loadData();
+  }, [loadData]);
 
-        if (err) throw err;
-        setRegulations((data ?? []) as unknown as MoldStateRegulation[]);
-      } catch {
-        // Non-critical — degrade silently
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [supabase]);
+  const createClearanceTest = useCallback(
+    async (test: {
+      companyId: string;
+      remediationId?: string;
+      assessmentId?: string;
+      clearanceDate: string;
+      assessorName?: string;
+      assessorCompany?: string;
+      assessorLicense?: string;
+      visualPass?: boolean;
+      moisturePass?: boolean;
+      airQualityPass?: boolean;
+      odorPass?: boolean;
+      overallResult?: ClearanceResult;
+      postMoistureReadings?: unknown[];
+      labResultsRef?: string;
+      certificateNumber?: string;
+      notes?: string;
+    }) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_clearance_tests')
+        .insert({
+          company_id: test.companyId,
+          remediation_id: test.remediationId ?? null,
+          assessment_id: test.assessmentId ?? null,
+          clearance_date: test.clearanceDate,
+          assessor_name: test.assessorName ?? null,
+          assessor_company: test.assessorCompany ?? null,
+          assessor_license: test.assessorLicense ?? null,
+          visual_pass: test.visualPass ?? null,
+          moisture_pass: test.moisturePass ?? null,
+          air_quality_pass: test.airQualityPass ?? null,
+          odor_pass: test.odorPass ?? null,
+          overall_result: test.overallResult ?? null,
+          post_moisture_readings: test.postMoistureReadings ?? [],
+          lab_results_ref: test.labResultsRef ?? null,
+          certificate_number: test.certificateNumber ?? null,
+          notes: test.notes ?? null,
+        });
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
-  return { regulations, loading };
-}
+  const updateClearanceTest = useCallback(
+    async (id: string, updatedAt: string, patch: Partial<MoldClearanceTest>) => {
+      const supabase = getSupabase();
+      const row: Record<string, unknown> = {};
+      if (patch.assessorName !== undefined) row.assessor_name = patch.assessorName;
+      if (patch.assessorCompany !== undefined) row.assessor_company = patch.assessorCompany;
+      if (patch.assessorLicense !== undefined) row.assessor_license = patch.assessorLicense;
+      if (patch.visualPass !== undefined) row.visual_pass = patch.visualPass;
+      if (patch.moisturePass !== undefined) row.moisture_pass = patch.moisturePass;
+      if (patch.airQualityPass !== undefined) row.air_quality_pass = patch.airQualityPass;
+      if (patch.odorPass !== undefined) row.odor_pass = patch.odorPass;
+      if (patch.overallResult !== undefined) row.overall_result = patch.overallResult;
+      if (patch.postMoistureReadings !== undefined) row.post_moisture_readings = patch.postMoistureReadings;
+      if (patch.labResultsRef !== undefined) row.lab_results_ref = patch.labResultsRef;
+      if (patch.certificateNumber !== undefined) row.certificate_number = patch.certificateNumber;
+      if (patch.certificateUrl !== undefined) row.certificate_url = patch.certificateUrl;
+      if (patch.notes !== undefined) row.notes = patch.notes;
 
-export function useMoldLabs(stateCode?: string) {
-  const supabase = createClient();
-  const [labs, setLabs] = useState<MoldLab[]>([]);
-  const [loading, setLoading] = useState(true);
+      const { error: err } = await supabase
+        .from('mold_clearance_tests')
+        .update(row)
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        let query = supabase.from('mold_labs').select('*');
-        if (stateCode) {
-          query = query.eq('state_code', stateCode);
-        }
-        const { data, error: err } = await query.order('name');
+  const deleteClearanceTest = useCallback(
+    async (id: string, updatedAt: string) => {
+      const supabase = getSupabase();
+      const { error: err } = await supabase
+        .from('mold_clearance_tests')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('updated_at', updatedAt);
+      if (err) throw err;
+      await loadData();
+    },
+    [loadData]
+  );
 
-        if (err) throw err;
-        setLabs((data ?? []) as unknown as MoldLab[]);
-      } catch {
-        // Non-critical — degrade silently
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [supabase, stateCode]);
-
-  return { labs, loading };
+  return {
+    tests,
+    loading,
+    error,
+    reload: loadData,
+    createClearanceTest,
+    updateClearanceTest,
+    deleteClearanceTest,
+  };
 }

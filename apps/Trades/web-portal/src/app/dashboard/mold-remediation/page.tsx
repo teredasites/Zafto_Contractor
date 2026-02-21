@@ -2,43 +2,56 @@
 
 import { useState } from 'react';
 import {
-  useMoldRemediation,
-  useChainOfCustody,
-  useStateRegulations,
-  IICRC_LEVEL_INFO,
+  useMoldAssessments,
+  useMoldLabSamples,
+  useMoldStateLicensing,
+  useMoldRemediationPlans,
+  useMoldEquipment,
+  useMoldMoistureReadings,
   type MoldAssessment,
-  type IicrcLevel,
-  type MoldClearanceStatus,
+  type MoldLabSample,
+  type MoldStateLicensing,
+  type MoldEquipmentDeployment,
+  type MoldMoistureReading,
 } from '@/lib/hooks/use-mold-remediation';
 import { SearchInput } from '@/components/ui/input';
+
+// ── IICRC S520 Level Reference ──
+
+type IicrcLevel = 1 | 2 | 3;
+
+const IICRC_LEVEL_INFO: Record<IicrcLevel, { label: string; ppe: string; description: string }> = {
+  1: {
+    label: 'Level 1 — Small Isolated Area',
+    ppe: 'N95, gloves, goggles',
+    description: 'Up to 10 sq ft. Maintenance worker with training.',
+  },
+  2: {
+    label: 'Level 2 — Mid-Size Isolated Area',
+    ppe: 'N95/half-face, gloves, goggles, disposable coveralls',
+    description: '10-30 sq ft. Trained remediation personnel required.',
+  },
+  3: {
+    label: 'Level 3 — Large Area',
+    ppe: 'Full-face respirator, Tyvek suit, gloves, boot covers',
+    description: '30+ sq ft. Full containment, HEPA filtration, professional remediator.',
+  },
+};
 
 // ── Status Helpers ──
 
 const STATUS_COLORS: Record<string, string> = {
+  planned: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',
   in_progress: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
-  pending_review: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
-  remediation_active: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-  awaiting_clearance: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
-  cleared: 'bg-green-500/15 text-green-400 border-green-500/30',
-  failed_clearance: 'bg-red-500/15 text-red-400 border-red-500/30',
+  completed: 'bg-green-500/15 text-green-400 border-green-500/30',
+  on_hold: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
+  planned: 'Planned',
   in_progress: 'In Progress',
-  pending_review: 'Pending Review',
-  remediation_active: 'Remediation Active',
-  awaiting_clearance: 'Awaiting Clearance',
-  cleared: 'Cleared',
-  failed_clearance: 'Failed Clearance',
-};
-
-const CLEARANCE_COLORS: Record<MoldClearanceStatus, string> = {
-  pending: 'text-yellow-400',
-  sampling: 'text-blue-400',
-  awaiting_results: 'text-orange-400',
-  passed: 'text-green-400',
-  failed: 'text-red-400',
-  not_required: 'text-zinc-500',
+  completed: 'Completed',
+  on_hold: 'On Hold',
 };
 
 const LEVEL_COLORS: Record<IicrcLevel, string> = {
@@ -47,7 +60,18 @@ const LEVEL_COLORS: Record<IicrcLevel, string> = {
   3: 'bg-red-500/15 text-red-400 border-red-500/30',
 };
 
-function formatDate(iso: string | null): string {
+const CAUSE_LABELS: Record<string, string> = {
+  water_intrusion: 'Water Intrusion',
+  hvac_issue: 'HVAC Issue',
+  plumbing_leak: 'Plumbing Leak',
+  flooding: 'Flooding',
+  condensation: 'Condensation',
+  unknown: 'Unknown',
+  roof_leak: 'Roof Leak',
+  foundation_crack: 'Foundation Crack',
+};
+
+function formatDate(iso: string | null | undefined): string {
   if (!iso) return '—';
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -56,21 +80,21 @@ function formatDate(iso: string | null): string {
 // ── Main Page ──
 
 export default function MoldRemediationPage() {
-  const { assessments, loading, error } = useMoldRemediation();
-  const { regulations } = useStateRegulations();
+  const { assessments, loading, error } = useMoldAssessments('');
+  const { states: licensing } = useMoldStateLicensing();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterLevel, setFilterLevel] = useState<IicrcLevel | 'all'>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filtered = assessments.filter((a) => {
-    if (filterLevel !== 'all' && a.iicrc_level !== filterLevel) return false;
+    if (filterLevel !== 'all' && a.remediationLevel !== filterLevel) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       return (
-        (a.mold_type ?? '').toLowerCase().includes(q) ||
-        (a.moisture_source ?? '').toLowerCase().includes(q) ||
-        (a.notes ?? '').toLowerCase().includes(q) ||
-        a.job_id.toLowerCase().includes(q)
+        (a.suspectedCause ?? '').toLowerCase().includes(q) ||
+        (a.overallNotes ?? '').toLowerCase().includes(q) ||
+        (a.moistureSourceStatus ?? '').toLowerCase().includes(q) ||
+        (a.jobId ?? '').toLowerCase().includes(q)
       );
     }
     return true;
@@ -80,9 +104,9 @@ export default function MoldRemediationPage() {
 
   // Stats
   const totalAssessments = assessments.length;
-  const activeRemediation = assessments.filter((a) => a.assessment_status === 'remediation_active').length;
-  const awaitingClearance = assessments.filter((a) => a.clearance_status === 'awaiting_results' || a.clearance_status === 'sampling').length;
-  const cleared = assessments.filter((a) => a.clearance_status === 'passed').length;
+  const level1 = assessments.filter((a) => a.remediationLevel === 1).length;
+  const level2 = assessments.filter((a) => a.remediationLevel === 2).length;
+  const level3 = assessments.filter((a) => a.remediationLevel === 3).length;
 
   if (loading) {
     return (
@@ -111,16 +135,16 @@ export default function MoldRemediationPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         <StatCard label="Total Assessments" value={totalAssessments} />
-        <StatCard label="Active Remediation" value={activeRemediation} color="text-orange-400" />
-        <StatCard label="Awaiting Clearance" value={awaitingClearance} color="text-purple-400" />
-        <StatCard label="Cleared" value={cleared} color="text-green-400" />
+        <StatCard label="Level 1 (Small)" value={level1} color="text-green-400" />
+        <StatCard label="Level 2 (Mid)" value={level2} color="text-yellow-400" />
+        <StatCard label="Level 3 (Large)" value={level3} color="text-red-400" />
       </div>
 
       {/* Filters */}
       <div className="flex items-center gap-3">
         <div className="flex-1 max-w-sm">
           <SearchInput
-            placeholder="Search by mold type, moisture source..."
+            placeholder="Search by cause, notes, job..."
             value={searchQuery}
             onChange={(v) => setSearchQuery(v)}
           />
@@ -162,29 +186,28 @@ export default function MoldRemediationPage() {
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${LEVEL_COLORS[a.iicrc_level]}`}>
-                    Level {a.iicrc_level}
-                  </span>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded border ${STATUS_COLORS[a.assessment_status] ?? ''}`}>
-                    {STATUS_LABELS[a.assessment_status] ?? a.assessment_status}
+                  {a.remediationLevel && (
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${LEVEL_COLORS[a.remediationLevel as IicrcLevel] ?? ''}`}>
+                      Level {a.remediationLevel}
+                    </span>
+                  )}
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded border ${
+                    a.moistureSourceStatus === 'active_leak'
+                      ? 'bg-red-500/15 text-red-400 border-red-500/30'
+                      : a.moistureSourceStatus === 'resolved'
+                      ? 'bg-green-500/15 text-green-400 border-green-500/30'
+                      : 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30'
+                  }`}>
+                    {a.moistureSourceStatus === 'active_leak' ? 'Active Leak' : a.moistureSourceStatus === 'resolved' ? 'Resolved' : 'Unknown Source'}
                   </span>
                 </div>
                 <div className="text-sm text-white font-medium">
-                  {a.mold_type ?? 'Unidentified mold'} — {a.moisture_source ?? 'Unknown source'}
+                  {CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown Cause'} — {a.occupancyStatus ?? 'Unknown'}
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
-                  <span>{a.affected_area_sqft ? `${a.affected_area_sqft} sqft` : 'Area TBD'}</span>
-                  <span>•</span>
-                  <span>{a.containment_type !== 'none' ? `${a.containment_type} containment` : 'No containment'}</span>
-                  <span>•</span>
-                  <span>{formatDate(a.created_at)}</span>
+                  <span>{a.affectedAreaSqft ? `${a.affectedAreaSqft} sqft` : 'Area TBD'}</span>
+                  <span>{formatDate(a.assessmentDate)}</span>
                 </div>
-                {a.air_sampling_required && (
-                  <div className="flex items-center gap-1 mt-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                    <span className="text-xs text-blue-400">Air sampling required</span>
-                  </div>
-                )}
               </button>
             ))
           )}
@@ -193,7 +216,7 @@ export default function MoldRemediationPage() {
         {/* Detail Panel */}
         <div className="col-span-7">
           {selected ? (
-            <AssessmentDetail assessment={selected} regulations={regulations} />
+            <AssessmentDetail assessment={selected} licensing={licensing} />
           ) : (
             <div className="flex items-center justify-center h-96 rounded-xl bg-zinc-900 border border-zinc-800">
               <p className="text-sm text-zinc-500">Select an assessment to view details</p>
@@ -218,16 +241,19 @@ function StatCard({ label, value, color = 'text-white' }: { label: string; value
 
 function AssessmentDetail({
   assessment: a,
-  regulations,
+  licensing,
 }: {
   assessment: MoldAssessment;
-  regulations: { state_code: string; license_required: boolean; state_name: string }[];
+  licensing: MoldStateLicensing[];
 }) {
-  const { samples } = useChainOfCustody(a.id);
-  const levelInfo = IICRC_LEVEL_INFO[a.iicrc_level];
-  const sporeReduction = a.spore_count_before && a.spore_count_after && a.spore_count_before > 0
-    ? ((a.spore_count_before - a.spore_count_after) / a.spore_count_before * 100)
-    : null;
+  const { samples: labSamples } = useMoldLabSamples(a.id);
+  const { plans: remediationPlans } = useMoldRemediationPlans(a.id);
+  const { readings: moistureReadings } = useMoldMoistureReadings(a.id);
+  const activePlan = remediationPlans.find((p) => p.status !== 'completed') ?? remediationPlans[0];
+  const { deployments: equipment } = useMoldEquipment(activePlan?.id);
+
+  const level = (a.remediationLevel ?? 1) as IicrcLevel;
+  const levelInfo = IICRC_LEVEL_INFO[level];
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
@@ -235,162 +261,102 @@ function AssessmentDetail({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-white">
-            {a.mold_type ?? 'Unidentified'} — Level {a.iicrc_level}
+            {CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown'} — Level {level}
           </h2>
           <p className="text-xs text-zinc-500 mt-1">{levelInfo.label}</p>
         </div>
-        <div className="flex gap-2">
-          <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${LEVEL_COLORS[a.iicrc_level]}`}>
-            Level {a.iicrc_level}
-          </span>
-          <span className={`text-xs font-medium px-2 py-0.5 rounded border ${STATUS_COLORS[a.assessment_status] ?? ''}`}>
-            {STATUS_LABELS[a.assessment_status] ?? a.assessment_status}
-          </span>
-        </div>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${LEVEL_COLORS[level]}`}>
+          Level {level}
+        </span>
       </div>
 
       {/* Overview Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <InfoRow label="Affected Area" value={a.affected_area_sqft ? `${a.affected_area_sqft} sqft` : 'TBD'} />
-        <InfoRow label="Moisture Source" value={a.moisture_source ?? 'Unknown'} />
-        <InfoRow label="Containment" value={`${a.containment_type}${a.negative_pressure ? ' + negative pressure' : ''}`} />
-        <InfoRow label="Air Sampling" value={a.air_sampling_required ? 'Required' : 'Not required'} />
-        <InfoRow label="PPE" value={levelInfo.ppe} />
-        <InfoRow label="Created" value={formatDate(a.created_at)} />
+        <InfoRow label="Affected Area" value={a.affectedAreaSqft ? `${a.affectedAreaSqft} sqft` : 'TBD'} />
+        <InfoRow label="Suspected Cause" value={CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown'} />
+        <InfoRow label="Moisture Source" value={a.moistureSourceStatus === 'active_leak' ? 'Active Leak' : a.moistureSourceStatus === 'resolved' ? 'Resolved' : 'Unknown'} />
+        <InfoRow label="Occupancy" value={a.occupancyStatus ? a.occupancyStatus.charAt(0).toUpperCase() + a.occupancyStatus.slice(1) : 'Unknown'} />
+        <InfoRow label="PPE Required" value={levelInfo.ppe} />
+        <InfoRow label="Assessment Date" value={formatDate(a.assessmentDate)} />
       </div>
 
-      {/* Clearance Status */}
-      <div>
-        <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Clearance</h3>
-        <div className="bg-zinc-800/50 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className={`text-sm font-semibold ${CLEARANCE_COLORS[a.clearance_status]}`}>
-                {a.clearance_status === 'awaiting_results' ? 'Awaiting Results' :
-                 a.clearance_status === 'not_required' ? 'Not Required' :
-                 a.clearance_status.charAt(0).toUpperCase() + a.clearance_status.slice(1)}
-              </span>
-            </div>
-            {a.clearance_date && (
-              <span className="text-xs text-zinc-500">{formatDate(a.clearance_date)}</span>
-            )}
+      {/* Visible Mold Types */}
+      {Array.isArray(a.visibleMoldType) && a.visibleMoldType.length > 0 && (
+        <div>
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Visible Mold Types</h3>
+          <div className="flex flex-wrap gap-2">
+            {a.visibleMoldType.map((mt, i) => (
+              <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded">{String(mt)}</span>
+            ))}
           </div>
-          {a.clearance_inspector && (
-            <p className="text-xs text-zinc-400 mt-1">
-              Inspector: {a.clearance_inspector}{a.clearance_company ? ` (${a.clearance_company})` : ''}
-            </p>
-          )}
-
-          {/* Spore Counts */}
-          {(a.spore_count_before || a.spore_count_after) && (
-            <div className="grid grid-cols-3 gap-3 mt-3">
-              <div>
-                <p className="text-[10px] text-zinc-500 uppercase">Pre-Remediation</p>
-                <p className="text-sm font-semibold text-white">
-                  {a.spore_count_before ? `${a.spore_count_before.toLocaleString()} sp/m³` : '—'}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] text-zinc-500 uppercase">Post-Remediation</p>
-                <p className="text-sm font-semibold text-white">
-                  {a.spore_count_after ? `${a.spore_count_after.toLocaleString()} sp/m³` : '—'}
-                </p>
-              </div>
-              {sporeReduction !== null && (
-                <div>
-                  <p className="text-[10px] text-zinc-500 uppercase">Reduction</p>
-                  <p className={`text-sm font-bold ${sporeReduction >= 80 ? 'text-green-400' : 'text-red-400'}`}>
-                    {sporeReduction.toFixed(1)}%
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
-      </div>
+      )}
 
-      {/* Chain of Custody Samples */}
-      <div>
-        <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
-          Chain of Custody ({samples.length} samples)
-        </h3>
-        {samples.length === 0 ? (
-          <p className="text-sm text-zinc-600">No samples collected yet</p>
-        ) : (
+      {/* Moisture Readings */}
+      {moistureReadings.length > 0 && (
+        <div>
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
+            Moisture Readings ({moistureReadings.length})
+          </h3>
           <div className="space-y-2">
-            {samples.map((s) => (
-              <div key={s.id} className="bg-zinc-800/50 rounded-lg p-3 flex items-center justify-between">
+            {moistureReadings.slice(0, 8).map((r: MoldMoistureReading) => (
+              <div key={r.id} className="bg-zinc-800/50 rounded-lg p-3 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white font-medium">
-                    {s.sample_type === 'tape_lift' ? 'Tape Lift' : s.sample_type.charAt(0).toUpperCase() + s.sample_type.slice(1)} Sample
-                  </p>
-                  <p className="text-xs text-zinc-500">{s.sample_location ?? 'No location'} • {s.lab_name ?? 'No lab'}</p>
+                  <p className="text-sm text-white font-medium">{r.roomName}</p>
+                  <p className="text-xs text-zinc-500">{r.locationDetail ?? r.readingType}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {s.pass_fail ? (
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                      s.pass_fail === 'pass' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'
+                  <span className="text-sm font-semibold text-white">{r.readingValue}{r.readingUnit}</span>
+                  {r.severity && (
+                    <span className={`text-xs px-2 py-0.5 rounded ${
+                      r.severity === 'normal' ? 'bg-green-500/15 text-green-400' :
+                      r.severity === 'concern' ? 'bg-yellow-500/15 text-yellow-400' :
+                      'bg-red-500/15 text-red-400'
                     }`}>
-                      {s.pass_fail.toUpperCase()}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-zinc-500">
-                      {s.results_available_at ? 'Results in' :
-                       s.lab_received_at ? 'At lab' :
-                       s.shipped_to_lab_at ? 'Shipped' : 'Collected'}
+                      {r.severity}
                     </span>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Protocol Progress */}
-      {a.protocol_steps.length > 0 && (
+      {/* Remediation Plan */}
+      {activePlan && (
         <div>
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
-            Protocol Progress
-          </h3>
-          <div className="bg-zinc-800/50 rounded-lg p-3">
-            {(() => {
-              const completed = a.protocol_steps.filter((s) => s.completed === true).length;
-              const total = a.protocol_steps.length;
-              const pct = total > 0 ? (completed / total) * 100 : 0;
-              return (
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-zinc-400">{completed} of {total} steps</span>
-                    <span className="text-zinc-500">{pct.toFixed(0)}%</span>
-                  </div>
-                  <div className="w-full bg-zinc-700 rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full transition-all"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })()}
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Remediation Plan</h3>
+          <div className="bg-zinc-800/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className={`text-xs font-medium px-2 py-0.5 rounded border ${STATUS_COLORS[activePlan.status] ?? ''}`}>
+                {STATUS_LABELS[activePlan.status] ?? activePlan.status}
+              </span>
+              {activePlan.containmentType && (
+                <span className="text-xs text-zinc-400">{activePlan.containmentType} containment</span>
+              )}
+            </div>
+            {activePlan.scopeDescription && (
+              <p className="text-sm text-zinc-400 mt-1">{activePlan.scopeDescription}</p>
+            )}
           </div>
         </div>
       )}
 
-      {/* Material Removal + Equipment */}
+      {/* Equipment & Lab Samples */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-            Materials Removed ({a.material_removal.length})
+            Equipment ({equipment.length})
           </h3>
-          {a.material_removal.length === 0 ? (
-            <p className="text-xs text-zinc-600">None logged</p>
+          {equipment.length === 0 ? (
+            <p className="text-xs text-zinc-600">None deployed</p>
           ) : (
             <div className="space-y-1">
-              {a.material_removal.map((m, i) => (
-                <div key={i} className="text-xs text-zinc-400 flex items-center gap-1">
-                  <span className="w-1 h-1 rounded-full bg-orange-400" />
-                  {String(m.material ?? '')}
+              {equipment.map((eq: MoldEquipmentDeployment) => (
+                <div key={eq.id} className="text-xs text-zinc-400 flex items-center gap-1">
+                  <span className="w-1 h-1 rounded-full bg-blue-400" />
+                  {eq.equipmentType.replace(/_/g, ' ')} {eq.modelName ? `(${eq.modelName})` : ''}
                 </div>
               ))}
             </div>
@@ -398,16 +364,25 @@ function AssessmentDetail({
         </div>
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-            Equipment Deployed ({a.equipment_deployed.length})
+            Lab Samples ({labSamples.length})
           </h3>
-          {a.equipment_deployed.length === 0 ? (
-            <p className="text-xs text-zinc-600">None logged</p>
+          {labSamples.length === 0 ? (
+            <p className="text-xs text-zinc-600">No samples collected</p>
           ) : (
             <div className="space-y-1">
-              {a.equipment_deployed.map((eq, i) => (
-                <div key={i} className="text-xs text-zinc-400 flex items-center gap-1">
-                  <span className="w-1 h-1 rounded-full bg-blue-400" />
-                  {String(eq.equipment ?? '')}
+              {labSamples.map((s: MoldLabSample) => (
+                <div key={s.id} className="text-xs text-zinc-400 flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-purple-400" />
+                    {s.sampleType.replace(/_/g, ' ')} — {s.sampleLocation}
+                  </div>
+                  {s.passFail ? (
+                    <span className={`font-bold ${s.passFail === 'pass' ? 'text-green-400' : 'text-red-400'}`}>
+                      {s.passFail.toUpperCase()}
+                    </span>
+                  ) : (
+                    <span className="text-zinc-500">{s.status}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -416,10 +391,10 @@ function AssessmentDetail({
       </div>
 
       {/* Notes */}
-      {a.notes && (
+      {a.overallNotes && (
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Notes</h3>
-          <p className="text-sm text-zinc-400">{a.notes}</p>
+          <p className="text-sm text-zinc-400">{a.overallNotes}</p>
         </div>
       )}
     </div>
