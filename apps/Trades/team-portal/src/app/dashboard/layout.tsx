@@ -17,8 +17,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           Skip to main content
         </a>
         <Sidebar />
-        <main id="main-content" className="lg:pl-12" aria-label="Page content">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-14 lg:pt-6">
+        <main id="main-content" className="md:pl-12" aria-label="Page content">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 pt-14 md:pt-6">
             {children}
           </div>
         </main>

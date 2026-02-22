@@ -307,13 +307,19 @@ function saveMobileGroupState(state: Record<string, boolean>) {
 type SidebarMode = 'expanded' | 'collapsed' | 'hover';
 const SIDEBAR_MODE_KEY = 'zafto_sidebar_mode';
 
+function isTouchDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
 function loadSidebarMode(): SidebarMode {
   if (typeof window === 'undefined') return 'hover';
   try {
     const stored = localStorage.getItem(SIDEBAR_MODE_KEY) as SidebarMode | null;
     if (stored && ['expanded', 'collapsed', 'hover'].includes(stored)) return stored;
   } catch { /* */ }
-  return 'hover';
+  // Touch devices default to collapsed (no hover interactions)
+  return isTouchDevice() ? 'collapsed' : 'hover';
 }
 
 function saveSidebarMode(mode: SidebarMode) {
@@ -523,7 +529,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
 
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/20 dark:bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/20 dark:bg-black/50 z-40 md:hidden"
           onClick={onMobileClose}
         />
       )}
@@ -531,7 +537,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
       <aside
         className={cn(
           'fixed top-0 left-0 z-50 h-full w-[280px] bg-surface border-r border-main flex flex-col',
-          'transform transition-transform duration-200 ease-out lg:hidden',
+          'transform transition-transform duration-200 ease-out md:hidden',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
         aria-label="Main navigation"
@@ -657,7 +663,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         onMouseEnter={sidebarMode === 'hover' ? handleRailMouseEnter : undefined}
         onMouseLeave={sidebarMode === 'hover' ? handleRailMouseLeave : undefined}
         className={cn(
-          'fixed top-0 left-0 z-40 h-full bg-surface border-r border-main/50 flex-col hidden lg:flex transition-[width] duration-200 ease-out overflow-hidden',
+          'fixed top-0 left-0 z-40 h-full bg-surface border-r border-main/50 flex-col hidden md:flex transition-[width] duration-200 ease-out overflow-hidden',
         )}
         style={{ width: sidebarWidth }}
         aria-label="Main navigation"
@@ -936,7 +942,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
       {!isWide && activeGroup && currentDetailGroup && (
         <div
           ref={detailRef}
-          className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden lg:flex flex-col sidebar-detail-enter"
+          className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden md:flex flex-col sidebar-detail-enter"
         >
           {/* Panel header */}
           <div className="h-12 flex items-center justify-between px-4 border-b border-main flex-shrink-0">

@@ -135,11 +135,11 @@ function DashboardShell({
       >
         {/* Top bar */}
         <header className="sticky top-0 z-30 h-14 bg-main/80 backdrop-blur-sm border-b border-main" aria-label="Top bar">
-          <div className="flex items-center justify-between h-full px-4 lg:px-6">
+          <div className="flex items-center justify-between h-full px-4 md:px-6">
             {/* Left side: hamburger (mobile) + company name */}
             <div className="flex items-center gap-3">
               <button
-                className="lg:hidden text-muted hover:text-main p-1.5 rounded-md hover:bg-surface-hover transition-colors"
+                className="md:hidden text-muted hover:text-main p-1.5 rounded-md hover:bg-surface-hover transition-colors"
                 onClick={() => onSidebarOpenChange(true)}
                 aria-label="Open navigation menu"
               >
@@ -215,7 +215,7 @@ function DashboardShell({
         </header>
 
         {/* Page content */}
-        <main id="main-content" className="p-4 lg:p-8" aria-label="Page content">
+        <main id="main-content" className="p-4 md:p-8" aria-label="Page content">
           <CommandPalette />
           {children}
         </main>

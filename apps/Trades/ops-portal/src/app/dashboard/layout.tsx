@@ -87,8 +87,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       <AxeDevTools />
       <ImpersonationBanner />
       <Sidebar />
-      <main id="main-content" className="lg:ml-[260px] min-h-screen" aria-label="Page content">
-        <div className="p-6 lg:p-8 max-w-[1400px]">{children}</div>
+      <main id="main-content" className="md:ml-[260px] min-h-screen" aria-label="Page content">
+        <div className="p-6 md:p-8 max-w-[1400px]">{children}</div>
       </main>
     </div>
   );
