@@ -19,6 +19,7 @@ import { useBids } from '@/lib/hooks/use-bids';
 import { useMaterialCatalog, type MaterialTier, type MaterialCatalogItem } from '@/lib/hooks/use-material-catalog';
 import { useLaborUnits } from '@/lib/hooks/use-labor-units';
 import { useEstimateVersions } from '@/lib/hooks/use-estimate-versions';
+import { useLaborRates, type LaborRateResult } from '@/lib/hooks/use-labor-rates';
 
 const ACTION_TYPES = [
   { value: 'remove', label: 'Remove' },
@@ -71,7 +72,22 @@ export default function EstimateEditorPage() {
   const {
     versions, changeOrders, createVersion, createChangeOrder, totalChangeOrderAmount,
   } = useEstimateVersions(estimateId);
+  const { rates: laborRates, loading: laborRatesLoading, lookupRates, getRate } = useLaborRates();
   const [convertingToBid, setConvertingToBid] = useState(false);
+
+  // Auto-lookup labor rates when estimate ZIP is available
+  useEffect(() => {
+    if (estimate?.propertyZip && estimate.propertyZip.length >= 5) {
+      // Extract unique trades from line items
+      const trades = [...new Set(lineItems.map(li => {
+        const mat = catalogMaterials.find(m => m.name.toLowerCase() === li.description.toLowerCase());
+        return mat?.trade || 'general';
+      }))];
+      if (trades.length > 0) {
+        lookupRates(estimate.propertyZip, trades);
+      }
+    }
+  }, [estimate?.propertyZip, lineItems.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // UI State
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -712,6 +728,11 @@ export default function EstimateEditorPage() {
                   currentTier={getAreaTier(null)}
                   catalogMaterials={catalogMaterials}
                 />
+              )}
+
+              {/* ── Geographic Labor Rates ── */}
+              {laborRates.length > 0 && (
+                <LaborRatesPanel rates={laborRates} loading={laborRatesLoading} />
               )}
 
               {/* ── Totals Panel ── */}
@@ -1987,6 +2008,64 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// Geographic Labor Rates Panel — BLS-backed rates by trade
+// ════════════════════════════════════════════════════════════════
+
+function LaborRatesPanel({ rates, loading: ratesLoading }: { rates: LaborRateResult[]; loading: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (rates.length === 0 && !ratesLoading) return null;
+
+  const regionInfo = rates[0]?.regionName || 'National Average';
+  const sourceLabel = rates[0]?.source === 'msa' ? 'MSA Regional' : rates[0]?.source === 'company' ? 'Company Rate' : 'National Avg';
+
+  return (
+    <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
+          <DollarSign className="w-4 h-4 text-emerald-400" />
+          Geographic Labor Rates
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            {sourceLabel}
+          </span>
+        </h3>
+        <button onClick={() => setExpanded(!expanded)} className="text-xs text-zinc-500 hover:text-zinc-300">
+          {expanded ? 'Collapse' : 'Show Details'}
+        </button>
+      </div>
+
+      {ratesLoading ? (
+        <div className="flex items-center gap-2 py-2 text-xs text-zinc-500">
+          <Loader2 className="w-3 h-3 animate-spin" />
+          Looking up BLS rates for this ZIP...
+        </div>
+      ) : (
+        <>
+          <p className="text-[10px] text-zinc-500 mb-2">Region: {regionInfo}</p>
+          <div className="grid grid-cols-2 gap-2">
+            {rates.slice(0, expanded ? undefined : 4).map((rate) => (
+              <div key={rate.trade} className="flex items-center justify-between px-3 py-1.5 bg-zinc-800/50 rounded border border-zinc-700/30">
+                <span className="text-[11px] text-zinc-300 capitalize">{rate.trade}</span>
+                <div className="text-right">
+                  <span className="text-xs text-zinc-200 font-medium">${rate.burdenedRate.toFixed(2)}/hr</span>
+                  <span className="text-[10px] text-zinc-600 ml-1">(base ${rate.baseHourlyRate.toFixed(2)})</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {expanded && rates.length > 0 && (
+            <div className="mt-3 text-[10px] text-zinc-600 space-y-0.5">
+              <p>Burden multiplier includes: FICA (7.65%), FUTA (0.6%), SUTA (~2.5%), workers comp (trade-specific), GL insurance, health benefits</p>
+              <p>Rates sourced from BLS OEWS via estimate_pricing table. Company overrides take priority.</p>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
