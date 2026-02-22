@@ -69,6 +69,7 @@ const SketchCanvas = dynamic(
 );
 import Toolbar from '@/components/sketch-editor/Toolbar';
 import LayerPanel from '@/components/sketch-editor/LayerPanel';
+import TradeSymbolPalette from '@/components/sketch-editor/TradeSymbolPalette';
 import PropertyInspector from '@/components/sketch-editor/PropertyInspector';
 import MiniMap from '@/components/sketch-editor/MiniMap';
 import HistoryPanel from '@/components/sketch-editor/HistoryPanel';
@@ -1012,7 +1013,7 @@ function EditorView({
                 </div>
 
                 {showLayers && (
-                  <div className="absolute top-3 right-3 z-10">
+                  <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
                     <LayerPanel
                       layers={planData.tradeLayers}
                       activeLayerId={editorState.activeLayerId}
@@ -1024,6 +1025,17 @@ function EditorView({
                       onOpacityChange={handleOpacityChange}
                       onAddLayer={handleAddLayer}
                       onRemoveLayer={handleRemoveLayer}
+                    />
+                    <TradeSymbolPalette
+                      activeLayerType={
+                        editorState.activeLayerId
+                          ? planData.tradeLayers.find(l => l.id === editorState.activeLayerId)?.type ?? null
+                          : null
+                      }
+                      onPlaceSymbol={(symbolType) => {
+                        // Set tool to fixture and store symbol type for placement
+                        handleEditorStateChange({ activeTool: 'fixture' as SketchTool });
+                      }}
                     />
                   </div>
                 )}

@@ -42,6 +42,19 @@ const LAYER_COLORS: Record<TradeLayerType, string> = {
   hvac: '#10B981',
   damage: '#EF4444',
   fire: '#DC2626',
+  roofing: '#8B5CF6',
+  siding: '#06B6D4',
+  insulation: '#EC4899',
+  framing: '#D97706',
+  drywall: '#6B7280',
+  flooring: '#14B8A6',
+  painting: '#F472B6',
+  concrete: '#78716C',
+  demolition: '#F97316',
+  solar: '#FBBF24',
+  low_voltage: '#818CF8',
+  gas: '#EAB308',
+  irrigation: '#22C55E',
 };
 
 const SYMBOL_SIZE = 16;

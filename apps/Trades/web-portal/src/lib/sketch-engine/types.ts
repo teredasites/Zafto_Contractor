@@ -188,7 +188,11 @@ export interface DetectedRoom {
 // TRADE LAYER TYPES
 // =============================================================================
 
-export type TradeLayerType = 'electrical' | 'plumbing' | 'hvac' | 'damage' | 'fire';
+export type TradeLayerType =
+  | 'electrical' | 'plumbing' | 'hvac' | 'damage' | 'fire'
+  | 'roofing' | 'siding' | 'insulation' | 'framing' | 'drywall'
+  | 'flooring' | 'painting' | 'concrete' | 'demolition' | 'solar'
+  | 'low_voltage' | 'gas' | 'irrigation';
 
 export type TradeSymbolType =
   // Electrical — Residential

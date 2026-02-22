@@ -263,7 +263,11 @@ serve(async (req) => {
       .select()
       .single()
 
-    if (scanErr) throw scanErr
+    if (scanErr) {
+      console.error('[property-lookup] Failed to create scan record:', scanErr.message, scanErr.details)
+      throw scanErr
+    }
+    console.log('[property-lookup] Scan record created:', scan.id)
 
     const scanId = scan.id
     const sources: string[] = []
@@ -280,12 +284,17 @@ serve(async (req) => {
 
     if (!lat || !lng) {
       const googleKey = Deno.env.get('GOOGLE_CLOUD_API_KEY')
+      console.log('[property-lookup] Geocoding address:', address, 'hasKey:', !!googleKey)
       if (googleKey) {
         try {
           const geoRes = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${googleKey}`
           )
           const geoData = await geoRes.json()
+          console.log('[property-lookup] Geocode status:', geoData.status, 'results:', geoData.results?.length || 0)
+          if (geoData.status !== 'OK') {
+            console.error('[property-lookup] Geocode API error:', geoData.status, geoData.error_message)
+          }
           if (geoData.results?.[0]?.geometry?.location) {
             lat = geoData.results[0].geometry.location.lat
             lng = geoData.results[0].geometry.location.lng
@@ -305,8 +314,8 @@ serve(async (req) => {
               })
               .eq('id', scanId)
           }
-        } catch {
-          /* geocode failed, continue */
+        } catch (geoErr) {
+          console.error('[property-lookup] Geocode fetch failed:', geoErr)
         }
       }
     }
@@ -324,6 +333,7 @@ serve(async (req) => {
     // STEP 2: GOOGLE SOLAR API
     // ========================================================================
     const solarKey = Deno.env.get('GOOGLE_SOLAR_API_KEY') || Deno.env.get('GOOGLE_CLOUD_API_KEY')
+    console.log('[property-lookup] Solar API step — hasSolarKey:', !!solarKey, 'lat:', lat, 'lng:', lng)
     let solarData: SolarResponse | null = null
     let imageryDate: Date | null = null
     let roofMeasurementId: string | null = null
@@ -331,126 +341,132 @@ serve(async (req) => {
     const apiTimings: Array<{ api: string; ms: number; status: number; cost: number }> = []
 
     if (solarKey) {
-      try {
-        // Rate guard — skip Solar if at limit
-        const solarRate = await checkApiRateLimit(supabase, companyId, 'google_solar')
-        if (!solarRate.allowed) {
-          console.warn('[property-lookup] Google Solar rate limited, skipping')
-        } else {
+      // Rate guard — skip Solar if at limit
+      const solarRate = await checkApiRateLimit(supabase, companyId, 'google_solar')
+      if (!solarRate.allowed) {
+        console.warn('[property-lookup] Google Solar rate limited, skipping')
+      } else {
         const t0 = performance.now()
-        const solarRes = await fetch(
-          `https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=${lat}&location.longitude=${lng}&requiredQuality=HIGH&key=${solarKey}`
-        )
+        try {
+          const solarRes = await fetch(
+            `https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=${lat}&location.longitude=${lng}&requiredQuality=HIGH&key=${solarKey}`
+          )
 
-        if (solarRes.ok) {
-          solarData = await solarRes.json()
-          sources.push('google_solar')
+          console.log('[property-lookup] Solar API response status:', solarRes.status)
+          if (solarRes.ok) {
+            solarData = await solarRes.json()
+            sources.push('google_solar')
+            console.log('[property-lookup] Solar data received — segments:', solarData?.solarPotential?.roofSegmentStats?.length || 0)
 
-          if (solarData?.imageryDate) {
-            const { year, month, day } = solarData.imageryDate
-            imageryDate = new Date(year, month - 1, day)
-          }
+            if (solarData?.imageryDate) {
+              const { year, month, day } = solarData.imageryDate
+              imageryDate = new Date(year, month - 1, day)
+            }
 
-          await supabase
-            .from('property_scans')
-            .update({
-              raw_google_solar: solarData,
-              imagery_date: imageryDate?.toISOString().split('T')[0] || null,
-              imagery_source: 'google_solar',
-              imagery_age_months: imageryDate
-                ? Math.round((Date.now() - imageryDate.getTime()) / (1000 * 60 * 60 * 24 * 30))
-                : null,
-            })
-            .eq('id', scanId)
-
-          // Parse roof segments into facets
-          if (solarData?.solarPotential?.roofSegmentStats) {
-            const segments = solarData.solarPotential.roofSegmentStats
-
-            const facets: Array<{
-              facet_number: number
-              area_sqft: number
-              pitch_degrees: number
-              azimuth_degrees: number
-              annual_sun_hours: number
-              shade_factor: number
-            }> = []
-
-            for (let i = 0; i < segments.length; i++) {
-              const seg = segments[i]
-              const areaSqft = (seg.stats?.areaMeters2 || 0) * SQM_TO_SQFT
-              totalRoofAreaSqft += areaSqft
-
-              const maxSun = solarData.solarPotential?.maxSunshineHoursPerYear || 1800
-              const segSun = seg.stats?.sunshineQuantiles?.[5] || 0
-              const shadeFactor = maxSun > 0 ? Math.min(1, segSun / maxSun) : 1
-
-              facets.push({
-                facet_number: i + 1,
-                area_sqft: Math.round(areaSqft * 100) / 100,
-                pitch_degrees: seg.pitchDegrees || 0,
-                azimuth_degrees: seg.azimuthDegrees || 0,
-                annual_sun_hours: segSun,
-                shade_factor: Math.round(shadeFactor * 100) / 100,
+            await supabase
+              .from('property_scans')
+              .update({
+                raw_google_solar: solarData,
+                imagery_date: imageryDate?.toISOString().split('T')[0] || null,
+                imagery_source: 'google_solar',
+                imagery_age_months: imageryDate
+                  ? Math.round((Date.now() - imageryDate.getTime()) / (1000 * 60 * 60 * 24 * 30))
+                  : null,
               })
-            }
+              .eq('id', scanId)
 
-            // Determine primary pitch
-            const pitchCounts: Record<string, number> = {}
-            for (const f of facets) {
-              const rise = Math.round(Math.tan((f.pitch_degrees * Math.PI) / 180) * 12)
-              const key = `${rise}/12`
-              pitchCounts[key] = (pitchCounts[key] || 0) + 1
-            }
-            const primaryPitch =
-              Object.entries(pitchCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '4/12'
+            // Parse roof segments into facets
+            if (solarData?.solarPotential?.roofSegmentStats) {
+              const segments = solarData.solarPotential.roofSegmentStats
 
-            // Determine shape
-            let shape: string = 'mixed'
-            if (facets.length === 2) shape = 'gable'
-            else if (facets.length === 4) shape = 'hip'
-            else if (facets.length === 1) shape = 'flat'
+              const facets: Array<{
+                facet_number: number
+                area_sqft: number
+                pitch_degrees: number
+                azimuth_degrees: number
+                annual_sun_hours: number
+                shade_factor: number
+              }> = []
 
-            const { data: rm, error: rmErr } = await supabase
-              .from('roof_measurements')
-              .insert({
-                scan_id: scanId,
-                total_area_sqft: Math.round(totalRoofAreaSqft * 100) / 100,
-                total_area_squares: Math.round((totalRoofAreaSqft / 100) * 100) / 100,
-                pitch_primary: primaryPitch,
-                pitch_degrees: facets[0]?.pitch_degrees || 0,
-                facet_count: facets.length,
-                predominant_shape: shape,
-                complexity_score: Math.min(10, facets.length * 0.8),
-                data_source: 'google_solar',
-                raw_response: solarData.solarPotential,
-              })
-              .select('id')
-              .single()
+              for (let i = 0; i < segments.length; i++) {
+                const seg = segments[i]
+                const areaSqft = (seg.stats?.areaMeters2 || 0) * SQM_TO_SQFT
+                totalRoofAreaSqft += areaSqft
 
-            if (rmErr) {
-              console.error('roof_measurements insert failed:', rmErr.message, rmErr.details)
-            }
+                const maxSun = solarData.solarPotential?.maxSunshineHoursPerYear || 1800
+                const segSun = seg.stats?.sunshineQuantiles?.[5] || 0
+                const shadeFactor = maxSun > 0 ? Math.min(1, segSun / maxSun) : 1
 
-            if (rm) {
-              roofMeasurementId = rm.id
-              const { error: facetErr } = await supabase.from('roof_facets').insert(
-                facets.map((f) => ({
-                  roof_measurement_id: rm.id,
-                  ...f,
-                }))
-              )
-              if (facetErr) {
-                console.error('roof_facets insert failed:', facetErr.message, facetErr.details)
+                facets.push({
+                  facet_number: i + 1,
+                  area_sqft: Math.round(areaSqft * 100) / 100,
+                  pitch_degrees: seg.pitchDegrees || 0,
+                  azimuth_degrees: seg.azimuthDegrees || 0,
+                  annual_sun_hours: segSun,
+                  shade_factor: Math.round(shadeFactor * 100) / 100,
+                })
+              }
+
+              // Determine primary pitch
+              const pitchCounts: Record<string, number> = {}
+              for (const f of facets) {
+                const rise = Math.round(Math.tan((f.pitch_degrees * Math.PI) / 180) * 12)
+                const key = `${rise}/12`
+                pitchCounts[key] = (pitchCounts[key] || 0) + 1
+              }
+              const primaryPitch =
+                Object.entries(pitchCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '4/12'
+
+              // Determine shape
+              let shape: string = 'mixed'
+              if (facets.length === 2) shape = 'gable'
+              else if (facets.length === 4) shape = 'hip'
+              else if (facets.length === 1) shape = 'flat'
+
+              const { data: rm, error: rmErr } = await supabase
+                .from('roof_measurements')
+                .insert({
+                  scan_id: scanId,
+                  total_area_sqft: Math.round(totalRoofAreaSqft * 100) / 100,
+                  total_area_squares: Math.round((totalRoofAreaSqft / 100) * 100) / 100,
+                  pitch_primary: primaryPitch,
+                  pitch_degrees: facets[0]?.pitch_degrees || 0,
+                  facet_count: facets.length,
+                  predominant_shape: shape,
+                  complexity_score: Math.min(10, facets.length * 0.8),
+                  data_source: 'google_solar',
+                  raw_response: solarData.solarPotential,
+                })
+                .select('id')
+                .single()
+
+              if (rmErr) {
+                console.error('roof_measurements insert failed:', rmErr.message, rmErr.details)
+              }
+
+              if (rm) {
+                roofMeasurementId = rm.id
+                const { error: facetErr } = await supabase.from('roof_facets').insert(
+                  facets.map((f) => ({
+                    roof_measurement_id: rm.id,
+                    ...f,
+                  }))
+                )
+                if (facetErr) {
+                  console.error('roof_facets insert failed:', facetErr.message, facetErr.details)
+                }
               }
             }
+          } else {
+            const errBody = await solarRes.text()
+            console.error('[property-lookup] Solar API error:', solarRes.status, errBody)
           }
+          apiTimings.push({ api: 'google_solar', ms: Math.round(performance.now() - t0), status: solarRes.status, cost: 0 })
+        } catch (solarErr) {
+          console.error('[property-lookup] Solar API failed:', solarErr)
+          apiTimings.push({ api: 'google_solar', ms: Math.round(performance.now() - t0), status: 0, cost: 0 })
         }
-        apiTimings.push({ api: 'google_solar', ms: Math.round(performance.now() - t0), status: solarRes.ok ? 200 : solarRes.status, cost: 0 })
-      } catch {
-        /* solar failed, continue with other sources */
       }
-      } // close rate guard block
     }
 
     // ========================================================================
@@ -487,13 +503,13 @@ serve(async (req) => {
       estimated_wall_area_sqft: number
     }> = []
 
+    const t2 = performance.now()
     try {
       // Microsoft Building Footprints are available via open dataset
       // Query Overpass API for OpenStreetMap buildings as a free alternative
       // that also includes Microsoft-imported footprints
       const bbox = `${lat - 0.001},${lng - 0.001},${lat + 0.001},${lng + 0.001}`
       const overpassQuery = `[out:json][timeout:10];way["building"](${bbox});out geom;`
-      const t2 = performance.now()
       const overpassRes = await fetch(
         `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`
       )
@@ -572,9 +588,10 @@ serve(async (req) => {
           }
         }
       }
-    } catch {
-      /* Footprints failed, non-critical */
+    } catch (overpassErr) {
+      console.warn('[property-lookup] Overpass footprints failed:', overpassErr)
     }
+    apiTimings.push({ api: 'overpass', ms: Math.round(performance.now() - t2), status: structures.length > 0 ? 200 : 0, cost: 0 })
 
     // If no footprints found but we have solar data, create primary structure from solar
     if (structures.length === 0 && solarData?.solarPotential?.buildingStats) {
@@ -602,8 +619,6 @@ serve(async (req) => {
       await supabase.from('property_structures').insert(structureRows)
     }
 
-    apiTimings.push({ api: 'overpass', ms: Math.round(performance.now() - t2), status: 200, cost: 0 })
-
     // ========================================================================
     // STEP 5: ATTOM API (GATED — only if ATTOM_API_KEY exists)
     // ========================================================================
@@ -615,27 +630,27 @@ serve(async (req) => {
       if (!attomRate.allowed) {
         console.warn('[property-lookup] ATTOM rate limited, skipping')
       } else {
-      try {
-        const t3 = performance.now()
-        const attomRes = await fetch(
-          `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/expandedprofile?address1=${encodeURIComponent(address)}&address2=`,
-          {
-            headers: { apikey: attomKey, Accept: 'application/json' },
-          }
-        )
-        apiTimings.push({ api: 'attom', ms: Math.round(performance.now() - t3), status: attomRes.status, cost: 5 })
+        try {
+          const t3 = performance.now()
+          const attomRes = await fetch(
+            `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/expandedprofile?address1=${encodeURIComponent(address)}&address2=`,
+            {
+              headers: { apikey: attomKey, Accept: 'application/json' },
+            }
+          )
+          apiTimings.push({ api: 'attom', ms: Math.round(performance.now() - t3), status: attomRes.status, cost: 5 })
 
-        if (attomRes.ok) {
-          const attomJson = await attomRes.json()
-          const property = attomJson?.property?.[0]
-          if (property) {
-            attomData = property
-            sources.push('attom')
+          if (attomRes.ok) {
+            const attomJson = await attomRes.json()
+            const property = attomJson?.property?.[0]
+            if (property) {
+              attomData = property
+              sources.push('attom')
+            }
           }
+        } catch {
+          /* ATTOM failed, non-critical */
         }
-      } catch {
-        /* ATTOM failed, non-critical */
-      }
       }
     }
 
@@ -650,42 +665,42 @@ serve(async (req) => {
       if (!regridRate.allowed) {
         console.warn('[property-lookup] Regrid rate limited, skipping')
       } else {
-      try {
-        const t4 = performance.now()
-        const regridRes = await fetch(
-          `https://app.regrid.com/api/v1/search.json?query=${encodeURIComponent(address)}&token=${regridKey}`
-        )
-        apiTimings.push({ api: 'regrid', ms: Math.round(performance.now() - t4), status: regridRes.status, cost: 2 })
+        try {
+          const t4 = performance.now()
+          const regridRes = await fetch(
+            `https://app.regrid.com/api/v1/search.json?query=${encodeURIComponent(address)}&token=${regridKey}`
+          )
+          apiTimings.push({ api: 'regrid', ms: Math.round(performance.now() - t4), status: regridRes.status, cost: 2 })
 
-        if (regridRes.ok) {
-          const regridJson = await regridRes.json()
-          const parcel = regridJson?.results?.[0]
-          if (parcel) {
-            regridData = parcel
-            sources.push('regrid')
+          if (regridRes.ok) {
+            const regridJson = await regridRes.json()
+            const parcel = regridJson?.results?.[0]
+            if (parcel) {
+              regridData = parcel
+              sources.push('regrid')
 
-            // Insert parcel boundary
-            await supabase.from('parcel_boundaries').insert({
-              scan_id: scanId,
-              apn: (parcel.fields?.parcelnumb as string) || null,
-              boundary_geojson: parcel.geometry || null,
-              lot_area_sqft: parcel.fields?.ll_gisacre
-                ? parseFloat(String(parcel.fields.ll_gisacre)) * 43560
-                : null,
-              lot_width_ft: null,
-              lot_depth_ft: null,
-              zoning: (parcel.fields?.zoning as string) || null,
-              zoning_description: (parcel.fields?.zoning_description as string) || null,
-              owner_name: (parcel.fields?.owner as string) || null,
-              owner_type: null,
-              data_source: 'regrid',
-              raw_regrid: regridData,
-            })
+              // Insert parcel boundary
+              await supabase.from('parcel_boundaries').insert({
+                scan_id: scanId,
+                apn: (parcel.fields?.parcelnumb as string) || null,
+                boundary_geojson: parcel.geometry || null,
+                lot_area_sqft: parcel.fields?.ll_gisacre
+                  ? parseFloat(String(parcel.fields.ll_gisacre)) * 43560
+                  : null,
+                lot_width_ft: null,
+                lot_depth_ft: null,
+                zoning: (parcel.fields?.zoning as string) || null,
+                zoning_description: (parcel.fields?.zoning_description as string) || null,
+                owner_name: (parcel.fields?.owner as string) || null,
+                owner_type: null,
+                data_source: 'regrid',
+                raw_regrid: regridData,
+              })
+            }
           }
+        } catch {
+          /* Regrid failed, non-critical */
         }
-      } catch {
-        /* Regrid failed, non-critical */
-      }
       }
     }
 
