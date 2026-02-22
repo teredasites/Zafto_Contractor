@@ -23,6 +23,8 @@ import {
   TrendingUp,
   AlertTriangle,
   Map,
+  Trash2,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/badge';
@@ -170,6 +172,31 @@ export default function ReconPage() {
     }
   };
 
+  const handleDeleteScan = async (scanId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const supabase = getSupabase();
+    await supabase
+      .from('property_scans')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', scanId);
+    refetch();
+  };
+
+  const handleClearAll = async () => {
+    if (!confirm('Delete all scan history? This cannot be undone.')) return;
+    const supabase = getSupabase();
+    const ids = scans.map(s => s.id);
+    if (ids.length === 0) return;
+    for (const id of ids) {
+      await supabase
+        .from('property_scans')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id);
+    }
+    refetch();
+  };
+
   const filtered = scans.filter(s =>
     s.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (s.city || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -304,6 +331,14 @@ export default function ReconPage() {
             className="flex items-center gap-1.5 px-3 py-1.5 border border-main rounded-lg text-xs font-medium text-muted hover:text-main hover:bg-surface-hover transition-colors">
             <Target size={13} /> Area Scans
           </Link>
+          {scans.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-red-800/50 rounded-lg text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors"
+            >
+              <Trash2 size={13} /> Clear All
+            </button>
+          )}
         </div>
       </div>
 
@@ -370,12 +405,19 @@ export default function ReconPage() {
                   </div>
 
                   {/* Confidence pill */}
-                  <div className="absolute top-2 right-2">
+                  <div className="absolute top-2 right-2 flex items-center gap-1">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 backdrop-blur-sm"
                       style={{ color: confColor }}>
                       <Shield size={9} />
                       {scan.confidenceScore}%
                     </span>
+                    <button
+                      onClick={(e) => handleDeleteScan(scan.id, e)}
+                      className="w-5 h-5 rounded-md bg-black/60 backdrop-blur-sm flex items-center justify-center text-neutral-400 hover:text-red-400 hover:bg-red-900/60 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete scan"
+                    >
+                      <X size={10} />
+                    </button>
                   </div>
                 </div>
 

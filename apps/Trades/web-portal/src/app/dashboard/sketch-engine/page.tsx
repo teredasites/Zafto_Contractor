@@ -556,10 +556,10 @@ function PlanCard({
   return (
     <div
       onClick={onOpen}
-      className="group rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] hover:border-emerald-500/30 transition-all cursor-pointer overflow-hidden"
+      className="group rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] hover:border-emerald-500/30 transition-all cursor-pointer"
     >
       {/* Plan preview area */}
-      <div className="relative h-32 bg-gradient-to-br from-zinc-900 to-zinc-800/50 border-b border-[var(--border)] flex items-center justify-center overflow-hidden">
+      <div className="relative h-32 bg-gradient-to-br from-zinc-900 to-zinc-800/50 border-b border-[var(--border)] flex items-center justify-center overflow-hidden rounded-t-xl">
         {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.05]"

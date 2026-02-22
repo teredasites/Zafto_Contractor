@@ -192,15 +192,16 @@ serve(async (req) => {
     // ========================================================================
     const { data: cached } = await supabase
       .from('property_scans')
-      .select('id, cached_until, raw_google_solar')
+      .select('id, status, cached_until, raw_google_solar')
       .eq('company_id', companyId)
       .eq('address', address)
+      .is('deleted_at', null)
       .gt('cached_until', new Date().toISOString())
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
 
-    if (cached) {
+    if (cached && cached.status !== 'failed') {
       // Invalidate cache if previous scan was incomplete (no solar/roof data)
       const solarJson = cached.raw_google_solar as Record<string, unknown> | null
       const hasSolar = solarJson &&
@@ -208,13 +209,15 @@ serve(async (req) => {
         Object.keys(solarJson).length > 0
 
       if (hasSolar) {
-        // Update scan_cache hit count
-        const addrHash = await hashAddress(address)
-        // Fire-and-forget — Supabase returns { data, error }, never throws
-      await supabase.rpc('increment_scan_cache_hits', { p_company_id: companyId, p_hash: addrHash })
         return jsonResponse({ scan_id: cached.id, cached: true }, 200, origin)
       }
       // Cache miss — previous scan was incomplete, expire stale record and re-scan
+      await supabase
+        .from('property_scans')
+        .update({ cached_until: new Date(0).toISOString() })
+        .eq('id', cached.id)
+    } else if (cached && cached.status === 'failed') {
+      // Expire failed scans so they get re-scanned
       await supabase
         .from('property_scans')
         .update({ cached_until: new Date(0).toISOString() })
@@ -234,12 +237,22 @@ serve(async (req) => {
       .maybeSingle()
 
     if (scanCacheHit?.scan_data?.scan_id) {
-      // Increment hit counter
+      // Verify the cached scan still exists and isn't failed/deleted
+      const { data: cachedScan } = await supabase
+        .from('property_scans')
+        .select('id, status')
+        .eq('id', scanCacheHit.scan_data.scan_id)
+        .is('deleted_at', null)
+        .maybeSingle()
+
+      if (cachedScan && cachedScan.status !== 'failed') {
+        return jsonResponse({ scan_id: cachedScan.id, cached: true }, 200, origin)
+      }
+      // Invalidate stale scan_cache entry
       await supabase
         .from('scan_cache')
-        .update({ hit_count: (scanCacheHit.scan_data.hit_count || 0) + 1 })
+        .delete()
         .eq('id', scanCacheHit.id)
-      return jsonResponse({ scan_id: scanCacheHit.scan_data.scan_id, cached: true }, 200, origin)
     }
 
     // ========================================================================
