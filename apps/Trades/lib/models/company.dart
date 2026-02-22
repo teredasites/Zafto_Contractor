@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../core/company_type.dart';
 
 /// Company tier determines feature access and pricing
 enum CompanyTier {
@@ -19,6 +20,7 @@ class Company extends Equatable {
   final String id;
   final String name;
   final CompanyTier tier;
+  final CompanyType companyType;
 
   // Owner
   final String ownerUserId;
@@ -63,6 +65,7 @@ class Company extends Equatable {
     required this.id,
     required this.name,
     required this.tier,
+    this.companyType = CompanyType.contractor,
     required this.ownerUserId,
     this.businessName,
     this.ein,
@@ -89,7 +92,7 @@ class Company extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, name, tier, ownerUserId, updatedAt];
+  List<Object?> get props => [id, name, tier, companyType, ownerUserId, updatedAt];
 
   // ============================================================
   // TIER LIMITS - Enforced throughout the app
@@ -183,6 +186,7 @@ class Company extends Equatable {
       'id': id,
       'name': name,
       'tier': tier.name,
+      'company_type': companyType.toDbString(),
       'ownerUserId': ownerUserId,
       'businessName': businessName,
       'ein': ein,
@@ -216,6 +220,9 @@ class Company extends Equatable {
       tier: CompanyTier.values.firstWhere(
         (t) => t.name == map['tier'],
         orElse: () => CompanyTier.solo,
+      ),
+      companyType: CompanyType.fromString(
+        map['company_type'] as String? ?? map['companyType'] as String? ?? 'contractor',
       ),
       ownerUserId: map['ownerUserId'] as String,
       businessName: map['businessName'] as String?,
@@ -262,6 +269,7 @@ class Company extends Equatable {
     String? id,
     String? name,
     CompanyTier? tier,
+    CompanyType? companyType,
     String? ownerUserId,
     String? businessName,
     String? ein,
@@ -290,6 +298,7 @@ class Company extends Equatable {
       id: id ?? this.id,
       name: name ?? this.name,
       tier: tier ?? this.tier,
+      companyType: companyType ?? this.companyType,
       ownerUserId: ownerUserId ?? this.ownerUserId,
       businessName: businessName ?? this.businessName,
       ein: ein ?? this.ein,
