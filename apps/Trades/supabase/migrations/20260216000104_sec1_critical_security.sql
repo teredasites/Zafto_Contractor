@@ -426,17 +426,17 @@ $$;
 -- Note: pg_cron is enabled by default on Supabase Pro plans.
 -- If pg_cron is not available, Edge Functions will still work — old entries just accumulate
 -- until manual cleanup. The check_rate_limit function handles expired windows regardless.
-DO $$
+DO $outer$
 BEGIN
   -- Only schedule if pg_cron extension is available
   IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
     PERFORM cron.schedule(
       'cleanup-rate-limits',
       '*/5 * * * *',
-      $$DELETE FROM rate_limit_entries WHERE window_start < now() - interval '5 minutes'$$
+      $cron$DELETE FROM rate_limit_entries WHERE window_start < now() - interval '5 minutes'$cron$
     );
   END IF;
-END $$;
+END $outer$;
 
 
 -- ============================================================

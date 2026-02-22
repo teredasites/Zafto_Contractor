@@ -7,10 +7,10 @@
 -- ============================================================
 -- CONVERSATIONS
 -- ============================================================
-CREATE TABLE conversations (
+CREATE TABLE IF NOT EXISTS conversations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
-  type TEXT NOT NULL DEFAULT 'direct' CHECK (type IN ('direct', 'group', 'job')),
+  type TEXT NOT NULL DEFAULT 'direct',
   title TEXT,  -- null for direct (auto-derive from participants), required for group/job
   participant_ids UUID[] NOT NULL DEFAULT '{}',  -- array of user IDs
   job_id UUID REFERENCES jobs(id) ON DELETE SET NULL,  -- link to job for job-type conversations
@@ -20,17 +20,26 @@ CREATE TABLE conversations (
   created_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
-  CONSTRAINT conversations_type_check CHECK (
-    (type = 'direct' AND array_length(participant_ids, 1) = 2)
-    OR (type IN ('group', 'job'))
-  )
+  deleted_at TIMESTAMPTZ
 );
+
+-- Add check constraints separately (idempotent)
+DO $$ BEGIN
+  ALTER TABLE conversations ADD CONSTRAINT conversations_type_valid
+    CHECK (type IN ('direct', 'group', 'job'));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER TABLE conversations ADD CONSTRAINT conversations_type_check
+    CHECK ((type = 'direct' AND array_length(participant_ids, 1) = 2) OR (type IN ('group', 'job')));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- MESSAGES
 -- ============================================================
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
@@ -55,7 +64,7 @@ CREATE TABLE messages (
 -- ============================================================
 -- UNREAD COUNTS (materialized for performance)
 -- ============================================================
-CREATE TABLE conversation_members (
+CREATE TABLE IF NOT EXISTS conversation_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES auth.users(id),
@@ -76,119 +85,155 @@ ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversation_members ENABLE ROW LEVEL SECURITY;
 
 -- Conversations: company-scoped, participant-only
-CREATE POLICY "conversations_select" ON conversations FOR SELECT
-  TO authenticated
-  USING (
-    company_id = requesting_company_id()
-    AND deleted_at IS NULL
-    AND auth.uid() = ANY(participant_ids)
-  );
+DO $$ BEGIN
+  CREATE POLICY "conversations_select" ON conversations FOR SELECT
+    TO authenticated
+    USING (
+      company_id = requesting_company_id()
+      AND deleted_at IS NULL
+      AND auth.uid() = ANY(participant_ids)
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "conversations_insert" ON conversations FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    company_id = requesting_company_id()
-    AND auth.uid() = ANY(participant_ids)
-  );
+DO $$ BEGIN
+  CREATE POLICY "conversations_insert" ON conversations FOR INSERT
+    TO authenticated
+    WITH CHECK (
+      company_id = requesting_company_id()
+      AND auth.uid() = ANY(participant_ids)
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "conversations_update" ON conversations FOR UPDATE
-  TO authenticated
-  USING (
-    company_id = requesting_company_id()
-    AND auth.uid() = ANY(participant_ids)
-  );
+DO $$ BEGIN
+  CREATE POLICY "conversations_update" ON conversations FOR UPDATE
+    TO authenticated
+    USING (
+      company_id = requesting_company_id()
+      AND auth.uid() = ANY(participant_ids)
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Messages: company-scoped, only if user is conversation participant
-CREATE POLICY "messages_select" ON messages FOR SELECT
-  TO authenticated
-  USING (
-    company_id = requesting_company_id()
-    AND deleted_at IS NULL
-    AND EXISTS (
-      SELECT 1 FROM conversations c
-      WHERE c.id = messages.conversation_id
-      AND auth.uid() = ANY(c.participant_ids)
-      AND c.deleted_at IS NULL
-    )
-  );
+DO $$ BEGIN
+  CREATE POLICY "messages_select" ON messages FOR SELECT
+    TO authenticated
+    USING (
+      company_id = requesting_company_id()
+      AND deleted_at IS NULL
+      AND EXISTS (
+        SELECT 1 FROM conversations c
+        WHERE c.id = messages.conversation_id
+        AND auth.uid() = ANY(c.participant_ids)
+        AND c.deleted_at IS NULL
+      )
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "messages_insert" ON messages FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    company_id = requesting_company_id()
-    AND sender_id = auth.uid()
-    AND EXISTS (
-      SELECT 1 FROM conversations c
-      WHERE c.id = conversation_id
-      AND auth.uid() = ANY(c.participant_ids)
-    )
-  );
+DO $$ BEGIN
+  CREATE POLICY "messages_insert" ON messages FOR INSERT
+    TO authenticated
+    WITH CHECK (
+      company_id = requesting_company_id()
+      AND sender_id = auth.uid()
+      AND EXISTS (
+        SELECT 1 FROM conversations c
+        WHERE c.id = conversation_id
+        AND auth.uid() = ANY(c.participant_ids)
+      )
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "messages_update" ON messages FOR UPDATE
-  TO authenticated
-  USING (
-    company_id = requesting_company_id()
-    AND sender_id = auth.uid()  -- only edit own messages
-  );
+DO $$ BEGIN
+  CREATE POLICY "messages_update" ON messages FOR UPDATE
+    TO authenticated
+    USING (
+      company_id = requesting_company_id()
+      AND sender_id = auth.uid()  -- only edit own messages
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Conversation members: own records only
-CREATE POLICY "conv_members_select" ON conversation_members FOR SELECT
-  TO authenticated
-  USING (
-    company_id = requesting_company_id()
-    AND user_id = auth.uid()
-  );
+DO $$ BEGIN
+  CREATE POLICY "conv_members_select" ON conversation_members FOR SELECT
+    TO authenticated
+    USING (
+      company_id = requesting_company_id()
+      AND user_id = auth.uid()
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "conv_members_update" ON conversation_members FOR UPDATE
-  TO authenticated
-  USING (
-    company_id = requesting_company_id()
-    AND user_id = auth.uid()
-  );
+DO $$ BEGIN
+  CREATE POLICY "conv_members_update" ON conversation_members FOR UPDATE
+    TO authenticated
+    USING (
+      company_id = requesting_company_id()
+      AND user_id = auth.uid()
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "conv_members_insert" ON conversation_members FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    company_id = requesting_company_id()
-  );
+DO $$ BEGIN
+  CREATE POLICY "conv_members_insert" ON conversation_members FOR INSERT
+    TO authenticated
+    WITH CHECK (
+      company_id = requesting_company_id()
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- INDEXES
 -- ============================================================
 -- Conversation list: ordered by last_message_at, filtered by company
-CREATE INDEX idx_conversations_company_last_msg ON conversations(company_id, last_message_at DESC)
+CREATE INDEX IF NOT EXISTS idx_conversations_company_last_msg ON conversations(company_id, last_message_at DESC)
   WHERE deleted_at IS NULL;
 
 -- Participant lookup: find conversations a user is in
-CREATE INDEX idx_conversations_participants ON conversations USING GIN(participant_ids)
+CREATE INDEX IF NOT EXISTS idx_conversations_participants ON conversations USING GIN(participant_ids)
   WHERE deleted_at IS NULL;
 
 -- Job conversations: find conversation linked to a specific job
-CREATE INDEX idx_conversations_job ON conversations(job_id)
+CREATE INDEX IF NOT EXISTS idx_conversations_job ON conversations(job_id)
   WHERE job_id IS NOT NULL AND deleted_at IS NULL;
 
 -- Message history: ordered by created_at within a conversation
-CREATE INDEX idx_messages_conversation ON messages(conversation_id, created_at DESC)
+CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id, created_at DESC)
   WHERE deleted_at IS NULL;
 
 -- Unread tracking: messages not yet read by a specific user
-CREATE INDEX idx_messages_read_by ON messages USING GIN(read_by);
+CREATE INDEX IF NOT EXISTS idx_messages_read_by ON messages USING GIN(read_by);
 
 -- Conversation members: fast lookup
-CREATE INDEX idx_conv_members_user ON conversation_members(user_id, company_id);
-CREATE INDEX idx_conv_members_conversation ON conversation_members(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_conv_members_user ON conversation_members(user_id, company_id);
+CREATE INDEX IF NOT EXISTS idx_conv_members_conversation ON conversation_members(conversation_id);
 
 -- ============================================================
 -- TRIGGERS
 -- ============================================================
-CREATE TRIGGER conversations_updated BEFORE UPDATE ON conversations
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DO $$ BEGIN
+  CREATE TRIGGER conversations_updated BEFORE UPDATE ON conversations
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TRIGGER conversations_audit AFTER INSERT OR UPDATE OR DELETE ON conversations
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+DO $$ BEGIN
+  CREATE TRIGGER conversations_audit AFTER INSERT OR UPDATE OR DELETE ON conversations
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TRIGGER messages_audit AFTER INSERT OR UPDATE OR DELETE ON messages
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+DO $$ BEGIN
+  CREATE TRIGGER messages_audit AFTER INSERT OR UPDATE OR DELETE ON messages
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Auto-update conversation's last_message_at when a new message is inserted
 CREATE OR REPLACE FUNCTION update_conversation_last_message()
@@ -210,17 +255,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER messages_update_conversation
-  AFTER INSERT ON messages
-  FOR EACH ROW
-  EXECUTE FUNCTION update_conversation_last_message();
+DO $$ BEGIN
+  CREATE TRIGGER messages_update_conversation
+    AFTER INSERT ON messages
+    FOR EACH ROW
+    EXECUTE FUNCTION update_conversation_last_message();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- REALTIME
 -- ============================================================
 -- Enable Supabase Realtime on messages table for live chat
-ALTER PUBLICATION supabase_realtime ADD TABLE messages;
-ALTER PUBLICATION supabase_realtime ADD TABLE conversation_members;
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE conversation_members;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- RPC: Bulk mark messages as read

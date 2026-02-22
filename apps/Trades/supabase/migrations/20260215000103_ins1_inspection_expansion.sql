@@ -84,30 +84,48 @@ CREATE INDEX IF NOT EXISTS idx_deficiencies_assigned
   ON inspection_deficiencies(assigned_to)
   WHERE assigned_to IS NOT NULL AND deleted_at IS NULL;
 
--- Updated_at trigger
-CREATE TRIGGER update_inspection_deficiencies_updated_at
-  BEFORE UPDATE ON inspection_deficiencies
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+-- Updated_at trigger (skip if already exists)
+DO $$ BEGIN
+  CREATE TRIGGER update_inspection_deficiencies_updated_at
+    BEFORE UPDATE ON inspection_deficiencies
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
--- Audit trigger
-CREATE TRIGGER inspection_deficiencies_audit
-  AFTER INSERT OR UPDATE OR DELETE ON inspection_deficiencies
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+-- Audit trigger (skip if already exists)
+DO $$ BEGIN
+  CREATE TRIGGER inspection_deficiencies_audit
+    AFTER INSERT OR UPDATE OR DELETE ON inspection_deficiencies
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- RLS
 ALTER TABLE inspection_deficiencies ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "deficiencies_select" ON inspection_deficiencies
-  FOR SELECT USING (company_id = auth.company_id());
+DO $$ BEGIN
+  CREATE POLICY "deficiencies_select" ON inspection_deficiencies
+    FOR SELECT USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "deficiencies_insert" ON inspection_deficiencies
-  FOR INSERT WITH CHECK (company_id = auth.company_id());
+DO $$ BEGIN
+  CREATE POLICY "deficiencies_insert" ON inspection_deficiencies
+    FOR INSERT WITH CHECK (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "deficiencies_update" ON inspection_deficiencies
-  FOR UPDATE USING (company_id = auth.company_id());
+DO $$ BEGIN
+  CREATE POLICY "deficiencies_update" ON inspection_deficiencies
+    FOR UPDATE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "deficiencies_delete" ON inspection_deficiencies
-  FOR DELETE USING (company_id = auth.company_id());
+DO $$ BEGIN
+  CREATE POLICY "deficiencies_delete" ON inspection_deficiencies
+    FOR DELETE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- inspection_templates table
@@ -127,6 +145,13 @@ CREATE TABLE IF NOT EXISTS inspection_templates (
   deleted_at timestamptz
 );
 
+-- Ensure columns exist (table may have been created by earlier migration without all columns)
+ALTER TABLE inspection_templates ADD COLUMN IF NOT EXISTS trade text;
+ALTER TABLE inspection_templates ADD COLUMN IF NOT EXISTS inspection_type text NOT NULL DEFAULT 'routine';
+ALTER TABLE inspection_templates ADD COLUMN IF NOT EXISTS is_system boolean NOT NULL DEFAULT false;
+ALTER TABLE inspection_templates ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1;
+ALTER TABLE inspection_templates ADD COLUMN IF NOT EXISTS deleted_at timestamptz;
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_templates_company
   ON inspection_templates(company_id);
@@ -139,39 +164,60 @@ CREATE INDEX IF NOT EXISTS idx_templates_system
   ON inspection_templates(is_system)
   WHERE is_system = true;
 
--- Updated_at trigger
-CREATE TRIGGER update_inspection_templates_updated_at
-  BEFORE UPDATE ON inspection_templates
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+-- Updated_at trigger (skip if already exists)
+DO $$ BEGIN
+  CREATE TRIGGER update_inspection_templates_updated_at
+    BEFORE UPDATE ON inspection_templates
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
--- Audit trigger
-CREATE TRIGGER inspection_templates_audit
-  AFTER INSERT OR UPDATE OR DELETE ON inspection_templates
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+-- Audit trigger (skip if already exists)
+DO $$ BEGIN
+  CREATE TRIGGER inspection_templates_audit
+    AFTER INSERT OR UPDATE OR DELETE ON inspection_templates
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- RLS — company members see own + system templates
 ALTER TABLE inspection_templates ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "templates_select" ON inspection_templates
-  FOR SELECT USING (company_id = auth.company_id() OR is_system = true);
+DO $$ BEGIN
+  CREATE POLICY "templates_select" ON inspection_templates
+    FOR SELECT USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid OR is_system = true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "templates_insert" ON inspection_templates
-  FOR INSERT WITH CHECK (company_id = auth.company_id());
+DO $$ BEGIN
+  CREATE POLICY "templates_insert" ON inspection_templates
+    FOR INSERT WITH CHECK (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "templates_update" ON inspection_templates
-  FOR UPDATE USING (company_id = auth.company_id() AND is_system = false);
+DO $$ BEGIN
+  CREATE POLICY "templates_update" ON inspection_templates
+    FOR UPDATE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid AND is_system = false);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "templates_delete" ON inspection_templates
-  FOR DELETE USING (company_id = auth.company_id() AND is_system = false);
+DO $$ BEGIN
+  CREATE POLICY "templates_delete" ON inspection_templates
+    FOR DELETE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid AND is_system = false);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- FK: pm_inspections.template_id → inspection_templates
 -- ============================================================
 
-ALTER TABLE pm_inspections
-  ADD CONSTRAINT fk_pm_inspections_template
-  FOREIGN KEY (template_id) REFERENCES inspection_templates(id)
-  ON DELETE SET NULL;
+DO $$ BEGIN
+  ALTER TABLE pm_inspections
+    ADD CONSTRAINT fk_pm_inspections_template
+    FOREIGN KEY (template_id) REFERENCES inspection_templates(id)
+    ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================
 -- Deficiency count trigger (auto-update pm_inspections.deficiency_count)

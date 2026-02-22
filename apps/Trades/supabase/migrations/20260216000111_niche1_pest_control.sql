@@ -171,22 +171,22 @@ ALTER TABLE bait_stations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE wdi_reports ENABLE ROW LEVEL SECURITY;
 
 -- treatment_logs
-CREATE POLICY treatment_logs_select ON treatment_logs FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY treatment_logs_insert ON treatment_logs FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY treatment_logs_update ON treatment_logs FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY treatment_logs_delete ON treatment_logs FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY treatment_logs_select ON treatment_logs FOR SELECT USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY treatment_logs_insert ON treatment_logs FOR INSERT WITH CHECK (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY treatment_logs_update ON treatment_logs FOR UPDATE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY treatment_logs_delete ON treatment_logs FOR DELETE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
 
 -- bait_stations
-CREATE POLICY bait_stations_select ON bait_stations FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY bait_stations_insert ON bait_stations FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY bait_stations_update ON bait_stations FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY bait_stations_delete ON bait_stations FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY bait_stations_select ON bait_stations FOR SELECT USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY bait_stations_insert ON bait_stations FOR INSERT WITH CHECK (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY bait_stations_update ON bait_stations FOR UPDATE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY bait_stations_delete ON bait_stations FOR DELETE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
 
 -- wdi_reports
-CREATE POLICY wdi_reports_select ON wdi_reports FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY wdi_reports_insert ON wdi_reports FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY wdi_reports_update ON wdi_reports FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY wdi_reports_delete ON wdi_reports FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY wdi_reports_select ON wdi_reports FOR SELECT USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY wdi_reports_insert ON wdi_reports FOR INSERT WITH CHECK (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY wdi_reports_update ON wdi_reports FOR UPDATE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
+CREATE POLICY wdi_reports_delete ON wdi_reports FOR DELETE USING (company_id = (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid);
 
 -- ============================================================
 -- INDEXES
