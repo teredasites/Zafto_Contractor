@@ -320,10 +320,84 @@ serve(async (req) => {
       }
     }
 
+    // FREE FALLBACK: Nominatim (OpenStreetMap) — no API key required
+    if (!lat || !lng) {
+      console.log('[property-lookup] Google geocode unavailable, trying Nominatim...')
+      try {
+        const nomRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=us&addressdetails=1`,
+          { headers: { 'User-Agent': 'Zafto-PropertyIntelligence/1.0 (recon)' } }
+        )
+        if (nomRes.ok) {
+          const nomData = await nomRes.json()
+          if (nomData?.[0]) {
+            lat = parseFloat(nomData[0].lat)
+            lng = parseFloat(nomData[0].lon)
+            const addr = nomData[0].address || {}
+            geocodeCity = addr.city || addr.town || addr.village || null
+            geocodeState = addr.state || null
+            geocodeZip = addr.postcode || null
+            sources.push('nominatim')
+            console.log('[property-lookup] Nominatim geocode success:', lat, lng)
+
+            await supabase
+              .from('property_scans')
+              .update({
+                latitude: lat,
+                longitude: lng,
+                city: geocodeCity,
+                state: geocodeState,
+                zip: geocodeZip,
+              })
+              .eq('id', scanId)
+          }
+        }
+      } catch (nomErr) {
+        console.error('[property-lookup] Nominatim geocode failed:', nomErr)
+      }
+    }
+
+    // LAST RESORT: US Census Geocoder (free, no key, US-only)
+    if (!lat || !lng) {
+      console.log('[property-lookup] Trying US Census Geocoder...')
+      try {
+        const censusRes = await fetch(
+          `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(address)}&benchmark=Public_AR_Current&format=json`
+        )
+        if (censusRes.ok) {
+          const censusData = await censusRes.json()
+          const match = censusData?.result?.addressMatches?.[0]
+          if (match?.coordinates) {
+            lat = match.coordinates.y
+            lng = match.coordinates.x
+            // Parse city/state from matched address
+            geocodeCity = match.addressComponents?.city || null
+            geocodeState = match.addressComponents?.state || null
+            geocodeZip = match.addressComponents?.zip || null
+            sources.push('census_geocoder')
+            console.log('[property-lookup] Census geocode success:', lat, lng)
+
+            await supabase
+              .from('property_scans')
+              .update({
+                latitude: lat,
+                longitude: lng,
+                city: geocodeCity,
+                state: geocodeState,
+                zip: geocodeZip,
+              })
+              .eq('id', scanId)
+          }
+        }
+      } catch (censusErr) {
+        console.error('[property-lookup] Census geocode failed:', censusErr)
+      }
+    }
+
     if (!lat || !lng) {
       await supabase
         .from('property_scans')
-        .update({ status: 'failed', error_message: 'Could not geocode address' })
+        .update({ status: 'failed', error_message: 'Could not geocode address — tried Google, Nominatim, and US Census' })
         .eq('id', scanId)
 
       return jsonResponse({ error: 'Could not geocode address', scan_id: scanId }, 422)
