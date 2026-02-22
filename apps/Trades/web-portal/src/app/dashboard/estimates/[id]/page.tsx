@@ -7,6 +7,7 @@ import {
   DollarSign, Package, Wrench, Zap, FileText, Home,
   Calculator, Layers, AlertCircle, Loader2, Shield, Send, Eye,
   Ruler, Pencil, Check, Download, Satellite, ShoppingCart,
+  Star, Copy, BarChart3, ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
@@ -15,6 +16,9 @@ import {
   type EstimateArea, type EstimateLineItem, type EstimateItem,
 } from '@/lib/hooks/use-estimates';
 import { useBids } from '@/lib/hooks/use-bids';
+import { useMaterialCatalog, type MaterialTier, type MaterialCatalogItem } from '@/lib/hooks/use-material-catalog';
+import { useLaborUnits } from '@/lib/hooks/use-labor-units';
+import { useEstimateVersions } from '@/lib/hooks/use-estimate-versions';
 
 const ACTION_TYPES = [
   { value: 'remove', label: 'Remove' },
@@ -34,6 +38,21 @@ const ROOM_PRESETS = [
   'Basement', 'Attic', 'Office', 'Exterior - Front', 'Exterior - Back', 'Exterior - Sides', 'Roof',
 ];
 
+const TIER_CONFIG: { value: MaterialTier; label: string; color: string; bgColor: string; borderColor: string }[] = [
+  { value: 'economy', label: 'Economy', color: 'text-zinc-400', bgColor: 'bg-zinc-500/10', borderColor: 'border-zinc-500/20' },
+  { value: 'standard', label: 'Standard', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/20' },
+  { value: 'premium', label: 'Premium', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20' },
+  { value: 'elite', label: 'Elite', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20' },
+  { value: 'luxury', label: 'Luxury', color: 'text-rose-400', bgColor: 'bg-rose-500/10', borderColor: 'border-rose-500/20' },
+];
+
+// G/B/B mapping: Good=economy/standard, Better=premium, Best=elite/luxury
+const GBB_TIERS: { key: 'good' | 'better' | 'best'; tiers: MaterialTier[]; label: string; color: string }[] = [
+  { key: 'good', tiers: ['economy', 'standard'], label: 'Good', color: 'text-blue-400' },
+  { key: 'better', tiers: ['premium'], label: 'Better', color: 'text-amber-400' },
+  { key: 'best', tiers: ['elite', 'luxury'], label: 'Best', color: 'text-purple-400' },
+];
+
 export default function EstimateEditorPage() {
   const params = useParams();
   const router = useRouter();
@@ -47,6 +66,11 @@ export default function EstimateEditorPage() {
 
   const { items: codeItems, loading: itemsLoading, searchItems } = useEstimateItems();
   const { convertEstimateToBid } = useBids();
+  const { materials: catalogMaterials, getMaterialsByTier, getTierEquivalents } = useMaterialCatalog();
+  const { units: laborUnits } = useLaborUnits();
+  const {
+    versions, changeOrders, createVersion, createChangeOrder, totalChangeOrderAmount,
+  } = useEstimateVersions(estimateId);
   const [convertingToBid, setConvertingToBid] = useState(false);
 
   // UI State
@@ -63,7 +87,149 @@ export default function EstimateEditorPage() {
   const [showReconImport, setShowReconImport] = useState(false);
   const [reconImporting, setReconImporting] = useState(false);
   const [showMaterialOrder, setShowMaterialOrder] = useState(false);
+  const [showTierComparison, setShowTierComparison] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<MaterialTier>('standard');
+  const [tierOverrides, setTierOverrides] = useState<Record<string, MaterialTier>>({});
+  const [tierSwitching, setTierSwitching] = useState(false);
   const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
+
+  // Get effective tier for an area (override or global)
+  const getAreaTier = useCallback((areaId: string | null) => {
+    if (areaId && tierOverrides[areaId]) return tierOverrides[areaId];
+    return selectedTier;
+  }, [selectedTier, tierOverrides]);
+
+  // One-click tier switching — regenerate all line items to match new tier
+  const handleTierSwitch = useCallback(async (newTier: MaterialTier) => {
+    setTierSwitching(true);
+    try {
+      // Snapshot current version before switching
+      await createVersion(`Before tier switch to ${newTier}`, {
+        tier: selectedTier,
+        lineItems: lineItems.map(li => ({ id: li.id, description: li.description, unitPrice: li.unitPrice, materialCost: li.materialCost })),
+      });
+
+      // For each line item, find the equivalent material in the new tier
+      for (const li of lineItems) {
+        const currentMat = catalogMaterials.find(
+          m => m.name.toLowerCase() === li.description.toLowerCase() || m.id === li.itemId
+        );
+        if (!currentMat) continue;
+
+        const equivalents = catalogMaterials.filter(
+          m => m.trade === currentMat.trade && m.category === currentMat.category && m.tier === newTier
+        );
+        if (equivalents.length === 0) continue;
+
+        // Use the first match (or closest by name)
+        const match = equivalents[0];
+        await updateLineItem(li.id, {
+          description: match.name,
+          material_cost: match.costPerUnit,
+          unit_price: match.costPerUnit + (li.laborCost || 0) + (li.equipmentCost || 0),
+          line_total: li.quantity * (match.costPerUnit + (li.laborCost || 0) + (li.equipmentCost || 0)),
+        });
+      }
+
+      setSelectedTier(newTier);
+      setTierOverrides({});
+      await recalculateTotals();
+    } finally {
+      setTierSwitching(false);
+    }
+  }, [selectedTier, lineItems, catalogMaterials, updateLineItem, recalculateTotals, createVersion]);
+
+  // Per-section tier override
+  const handleAreaTierOverride = useCallback(async (areaId: string, newTier: MaterialTier) => {
+    setTierOverrides(prev => ({ ...prev, [areaId]: newTier }));
+
+    const areaLines = lineItems.filter(li => li.areaId === areaId);
+    for (const li of areaLines) {
+      const currentMat = catalogMaterials.find(
+        m => m.name.toLowerCase() === li.description.toLowerCase() || m.id === li.itemId
+      );
+      if (!currentMat) continue;
+
+      const equivalents = catalogMaterials.filter(
+        m => m.trade === currentMat.trade && m.category === currentMat.category && m.tier === newTier
+      );
+      if (equivalents.length === 0) continue;
+
+      const match = equivalents[0];
+      await updateLineItem(li.id, {
+        description: match.name,
+        material_cost: match.costPerUnit,
+        unit_price: match.costPerUnit + (li.laborCost || 0) + (li.equipmentCost || 0),
+        line_total: li.quantity * (match.costPerUnit + (li.laborCost || 0) + (li.equipmentCost || 0)),
+      });
+    }
+    await recalculateTotals();
+  }, [lineItems, catalogMaterials, updateLineItem, recalculateTotals]);
+
+  // Build G/B/B comparison data
+  const gbbComparison = useMemo(() => {
+    if (!estimate || lineItems.length === 0) return null;
+
+    const buildTierEstimate = (tier: MaterialTier) => {
+      let total = 0;
+      let warrantyMin = Infinity;
+      let warrantyMax = 0;
+      const items: Array<{ description: string; unitPrice: number; materialName: string; photoUrl: string | null; warrantyYears: number | null }> = [];
+
+      for (const li of lineItems) {
+        const currentMat = catalogMaterials.find(
+          m => m.name.toLowerCase() === li.description.toLowerCase() || m.id === li.itemId
+        );
+        if (!currentMat) {
+          items.push({ description: li.description, unitPrice: li.unitPrice, materialName: li.description, photoUrl: null, warrantyYears: null });
+          total += li.lineTotal;
+          continue;
+        }
+
+        const equiv = catalogMaterials.filter(
+          m => m.trade === currentMat.trade && m.category === currentMat.category && m.tier === tier
+        );
+        const match = equiv.length > 0 ? equiv[0] : currentMat;
+        const price = match.costPerUnit + (li.laborCost || 0) + (li.equipmentCost || 0);
+        items.push({
+          description: li.description,
+          unitPrice: price,
+          materialName: match.name,
+          photoUrl: match.photoUrl,
+          warrantyYears: match.warrantyYears,
+        });
+        total += li.quantity * price;
+
+        if (match.warrantyYears != null) {
+          warrantyMin = Math.min(warrantyMin, match.warrantyYears);
+          warrantyMax = Math.max(warrantyMax, match.warrantyYears);
+        }
+      }
+
+      const overhead = total * (estimate.overheadPercent / 100);
+      const profit = total * (estimate.profitPercent / 100);
+      const taxable = total + overhead + profit;
+      const tax = taxable * (estimate.taxPercent / 100);
+
+      return {
+        tier,
+        items,
+        subtotal: total,
+        overhead,
+        profit,
+        tax,
+        grand: taxable + tax,
+        warrantyRange: warrantyMin === Infinity ? null : warrantyMin === warrantyMax ? `${warrantyMin} yr` : `${warrantyMin}-${warrantyMax} yr`,
+      };
+    };
+
+    return {
+      good: buildTierEstimate('standard'),
+      better: buildTierEstimate('premium'),
+      best: buildTierEstimate('elite'),
+    };
+  }, [estimate, lineItems, catalogMaterials]);
 
   // Group line items by area
   const areaLineItems = useMemo(() => {
@@ -323,6 +489,13 @@ export default function EstimateEditorPage() {
                 </button>
               )}
               <button
+                onClick={() => setShowTemplates(!showTemplates)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                Templates
+              </button>
+              <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg border transition-colors',
@@ -336,9 +509,70 @@ export default function EstimateEditorPage() {
               </button>
             </div>
           </div>
+
+          {/* ── Tier Selector Bar ── */}
+          <div className="flex items-center gap-3 px-6 py-2 border-t border-zinc-800/50">
+            <span className="text-[10px] uppercase tracking-wider text-zinc-500">Material Tier</span>
+            <div className="flex items-center gap-1">
+              {TIER_CONFIG.map((t) => (
+                <button
+                  key={t.value}
+                  onClick={() => handleTierSwitch(t.value)}
+                  disabled={tierSwitching}
+                  className={cn(
+                    'px-2.5 py-1 text-[11px] rounded-md border transition-colors',
+                    selectedTier === t.value
+                      ? `${t.color} ${t.bgColor} ${t.borderColor} font-medium`
+                      : 'text-zinc-500 border-transparent hover:text-zinc-300 hover:bg-zinc-800/50'
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            {tierSwitching && <Loader2 className="w-3.5 h-3.5 animate-spin text-zinc-500" />}
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                onClick={() => setShowTierComparison(!showTierComparison)}
+                className={cn(
+                  'flex items-center gap-1.5 px-2.5 py-1 text-[11px] rounded-md border transition-colors',
+                  showTierComparison
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                    : 'text-zinc-400 border-zinc-700/50 hover:text-zinc-200 hover:bg-zinc-800/50'
+                )}
+              >
+                <BarChart3 className="w-3.5 h-3.5" />
+                Good / Better / Best
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="p-6 space-y-6">
+          {/* ── G/B/B Comparison Panel ── */}
+          {showTierComparison && gbbComparison && (
+            <TierComparisonPanel
+              comparison={gbbComparison}
+              onSelectTier={(tier) => { handleTierSwitch(tier); setShowTierComparison(false); }}
+              onClose={() => setShowTierComparison(false)}
+            />
+          )}
+
+          {/* ── Template Panel ── */}
+          {showTemplates && (
+            <TemplatePanel
+              estimateId={estimateId}
+              currentAreas={areas}
+              currentLineItems={lineItems}
+              currentTier={selectedTier}
+              onClose={() => setShowTemplates(false)}
+              onApplyTemplate={async () => {
+                await recalculateTotals();
+                setShowTemplates(false);
+              }}
+            />
+          )}
+
           {/* ── Estimate Header Card ── */}
           <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl p-5">
             <div className="flex items-center justify-between mb-4">
@@ -457,6 +691,9 @@ export default function EstimateEditorPage() {
                   onDeleteArea={deleteArea}
                   onUpdateArea={updateArea}
                   onOpenBrowser={() => setSidebarOpen(true)}
+                  currentTier={getAreaTier(area.id)}
+                  onTierOverride={(tier) => handleAreaTierOverride(area.id, tier)}
+                  catalogMaterials={catalogMaterials}
                 />
               ))}
 
@@ -472,6 +709,8 @@ export default function EstimateEditorPage() {
                   onDeleteArea={() => {}}
                   onUpdateArea={() => {}}
                   onOpenBrowser={() => setSidebarOpen(true)}
+                  currentTier={getAreaTier(null)}
+                  catalogMaterials={catalogMaterials}
                 />
               )}
 
@@ -481,6 +720,10 @@ export default function EstimateEditorPage() {
                 totals={totals}
                 lineCount={lineItems.length}
                 onRateChange={handleRateChange}
+                currentTier={selectedTier}
+                catalogMaterials={catalogMaterials}
+                lineItems={lineItems}
+                changeOrderTotal={totalChangeOrderAmount}
               />
             </>
           )}
@@ -837,6 +1080,9 @@ function AreaSection({
   onDeleteArea,
   onUpdateArea,
   onOpenBrowser,
+  currentTier,
+  onTierOverride,
+  catalogMaterials,
 }: {
   area: EstimateArea | null;
   lines: EstimateLineItem[];
@@ -847,10 +1093,16 @@ function AreaSection({
   onDeleteArea: (id: string) => void;
   onUpdateArea: (id: string, updates: Record<string, unknown>) => void;
   onOpenBrowser: () => void;
+  currentTier?: MaterialTier;
+  onTierOverride?: (tier: MaterialTier) => void;
+  catalogMaterials?: MaterialCatalogItem[];
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [showDimensions, setShowDimensions] = useState(false);
+  const [showTierPicker, setShowTierPicker] = useState(false);
   const areaTotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+
+  const tierConfig = currentTier ? TIER_CONFIG.find(t => t.value === currentTier) : null;
 
   return (
     <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl overflow-hidden">
@@ -861,9 +1113,42 @@ function AreaSection({
           <Home className="w-4 h-4 text-zinc-400" />
           <span className="text-sm font-medium text-zinc-200">{area?.name || 'Unassigned'}</span>
           <span className="text-xs text-zinc-500">{lines.length} items</span>
+          {tierConfig && (
+            <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', tierConfig.bgColor, tierConfig.color)}>
+              {tierConfig.label}
+            </span>
+          )}
         </button>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-zinc-200">${fmtCurrency(areaTotal)}</span>
+          {area && onTierOverride && (
+            <div className="relative">
+              <button
+                onClick={() => setShowTierPicker(!showTierPicker)}
+                className="p-1 text-zinc-500 hover:text-zinc-300"
+                title="Override tier for this section"
+              >
+                <Star className="w-3.5 h-3.5" />
+              </button>
+              {showTierPicker && (
+                <div className="absolute right-0 top-7 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl p-1 z-20 min-w-[120px]">
+                  {TIER_CONFIG.map((t) => (
+                    <button
+                      key={t.value}
+                      onClick={() => { onTierOverride(t.value); setShowTierPicker(false); }}
+                      className={cn(
+                        'w-full text-left px-2.5 py-1.5 text-xs rounded hover:bg-zinc-700 flex items-center gap-2',
+                        currentTier === t.value ? t.color : 'text-zinc-300'
+                      )}
+                    >
+                      {currentTier === t.value && <Check className="w-3 h-3" />}
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {area && (
             <>
               <button onClick={() => setShowDimensions(!showDimensions)} className="p-1 text-zinc-500 hover:text-zinc-300" title="Dimensions">
@@ -933,6 +1218,7 @@ function AreaSection({
               onEdit={() => onEditLine(editingLine === line.id ? null : line.id)}
               onUpdate={onUpdateLine}
               onDelete={() => onDeleteLine(line.id)}
+              catalogMaterials={catalogMaterials}
             />
           ))}
 
@@ -952,14 +1238,23 @@ function AreaSection({
 // ── Line Item Row ──
 
 function LineItemRow({
-  line, isEditing, onEdit, onUpdate, onDelete,
+  line, isEditing, onEdit, onUpdate, onDelete, catalogMaterials,
 }: {
   line: EstimateLineItem;
   isEditing: boolean;
   onEdit: () => void;
   onUpdate: (id: string, field: string, value: string | number) => void;
   onDelete: () => void;
+  catalogMaterials?: MaterialCatalogItem[];
 }) {
+  // Find matching material for photo and warranty info
+  const matchedMaterial = useMemo(() => {
+    if (!catalogMaterials) return null;
+    return catalogMaterials.find(
+      m => m.name.toLowerCase() === line.description.toLowerCase() || m.id === line.itemId
+    ) || null;
+  }, [catalogMaterials, line.description, line.itemId]);
+
   return (
     <div className="group">
       <div
@@ -969,12 +1264,26 @@ function LineItemRow({
         )}
         onClick={onEdit}
       >
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            {line.zaftoCode && <span className="text-[10px] font-mono text-blue-400">{line.zaftoCode}</span>}
+        <div className="min-w-0 flex items-center gap-2">
+          {/* Material photo thumbnail */}
+          {matchedMaterial?.photoUrl && (
+            <div className="w-8 h-8 rounded border border-zinc-700 overflow-hidden flex-shrink-0 bg-zinc-800">
+              <img src={matchedMaterial.photoUrl} alt="" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              {line.zaftoCode && <span className="text-[10px] font-mono text-blue-400">{line.zaftoCode}</span>}
+              {matchedMaterial?.warrantyYears && (
+                <span className="text-[10px] px-1 py-0.5 rounded bg-green-500/10 text-green-400 flex items-center gap-0.5">
+                  <ShieldCheck className="w-2.5 h-2.5" />
+                  {matchedMaterial.warrantyYears}yr
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-zinc-300 truncate">{line.description}</p>
+            {line.notes && <p className="text-[10px] text-zinc-600 truncate mt-0.5">{line.notes}</p>}
           </div>
-          <p className="text-xs text-zinc-300 truncate">{line.description}</p>
-          {line.notes && <p className="text-[10px] text-zinc-600 truncate mt-0.5">{line.notes}</p>}
         </div>
 
         <div className="text-right">
@@ -1024,28 +1333,70 @@ function LineItemRow({
 
       {/* Expanded edit row */}
       {isEditing && (
-        <div className="px-4 py-2 bg-zinc-800/40 border-t border-zinc-800/50 grid grid-cols-3 gap-3">
-          <div className="flex items-center gap-2">
-            <Package className="w-3 h-3 text-zinc-500" />
-            <span className="text-[10px] text-zinc-500">MAT:</span>
-            <span className="text-xs text-zinc-300">${fmtCurrency(line.materialCost)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Wrench className="w-3 h-3 text-zinc-500" />
-            <span className="text-[10px] text-zinc-500">LAB:</span>
-            <span className="text-xs text-zinc-300">${fmtCurrency(line.laborCost)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Zap className="w-3 h-3 text-zinc-500" />
-            <span className="text-[10px] text-zinc-500">EQU:</span>
-            <span className="text-xs text-zinc-300">${fmtCurrency(line.equipmentCost)}</span>
-          </div>
-          <div className="col-span-3">
-            <input type="text" value={line.notes}
-              onChange={(e) => onUpdate(line.id, 'notes', e.target.value)}
-              placeholder="Notes..."
-              className="w-full px-2 py-1 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 placeholder:text-zinc-600"
-              onClick={(e) => e.stopPropagation()} />
+        <div className="px-4 py-2 bg-zinc-800/40 border-t border-zinc-800/50">
+          <div className="flex gap-3">
+            {/* Material photo (larger) */}
+            {matchedMaterial?.photoUrl && (
+              <div className="w-16 h-16 rounded-lg border border-zinc-700 overflow-hidden flex-shrink-0 bg-zinc-800">
+                <img src={matchedMaterial.photoUrl} alt={matchedMaterial.name} className="w-full h-full object-cover" />
+              </div>
+            )}
+            <div className="flex-1 space-y-2">
+              {/* Cost breakdown */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="flex items-center gap-2">
+                  <Package className="w-3 h-3 text-zinc-500" />
+                  <span className="text-[10px] text-zinc-500">MAT:</span>
+                  <span className="text-xs text-zinc-300">${fmtCurrency(line.materialCost)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Wrench className="w-3 h-3 text-zinc-500" />
+                  <span className="text-[10px] text-zinc-500">LAB:</span>
+                  <span className="text-xs text-zinc-300">${fmtCurrency(line.laborCost)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="w-3 h-3 text-zinc-500" />
+                  <span className="text-[10px] text-zinc-500">EQU:</span>
+                  <span className="text-xs text-zinc-300">${fmtCurrency(line.equipmentCost)}</span>
+                </div>
+              </div>
+              {/* Material details row */}
+              {matchedMaterial && (
+                <div className="flex items-center gap-3 text-[10px]">
+                  {matchedMaterial.brand && (
+                    <span className="text-zinc-400">Brand: <span className="text-zinc-300">{matchedMaterial.brand}</span></span>
+                  )}
+                  {matchedMaterial.tier && (
+                    <span className={cn('px-1.5 py-0.5 rounded', TIER_CONFIG.find(t => t.value === matchedMaterial.tier)?.bgColor, TIER_CONFIG.find(t => t.value === matchedMaterial.tier)?.color)}>
+                      {TIER_CONFIG.find(t => t.value === matchedMaterial.tier)?.label}
+                    </span>
+                  )}
+                  {matchedMaterial.warrantyYears != null && (
+                    <span className="text-green-400 flex items-center gap-0.5">
+                      <ShieldCheck className="w-2.5 h-2.5" />
+                      {matchedMaterial.warrantyYears} yr warranty
+                    </span>
+                  )}
+                  {matchedMaterial.supplierUrls?.length > 0 && (
+                    <div className="flex items-center gap-1 ml-auto">
+                      {matchedMaterial.supplierUrls.slice(0, 3).map((s, i) => (
+                        <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                          className="text-blue-400 hover:text-blue-300 underline"
+                          onClick={(e) => e.stopPropagation()}>
+                          {s.supplier}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Notes */}
+              <input type="text" value={line.notes}
+                onChange={(e) => onUpdate(line.id, 'notes', e.target.value)}
+                placeholder="Notes..."
+                className="w-full px-2 py-1 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 placeholder:text-zinc-600"
+                onClick={(e) => e.stopPropagation()} />
+            </div>
           </div>
         </div>
       )}
@@ -1123,18 +1474,47 @@ function ItemRow({
 // ── Totals Panel ──
 
 function TotalsPanel({
-  estimate, totals, lineCount, onRateChange,
+  estimate, totals, lineCount, onRateChange, currentTier, catalogMaterials, lineItems: panelLineItems, changeOrderTotal,
 }: {
   estimate: { overheadPercent: number; profitPercent: number; taxPercent: number; estimateType: string; deductible: number };
   totals: { subtotal: number; overhead: number; profit: number; tax: number; grand: number };
   lineCount: number;
   onRateChange: (field: string, value: number) => void;
+  currentTier?: MaterialTier;
+  catalogMaterials?: MaterialCatalogItem[];
+  lineItems?: EstimateLineItem[];
+  changeOrderTotal?: number;
 }) {
+  // Calculate warranty range from matched materials
+  const warrantyRange = useMemo(() => {
+    if (!catalogMaterials || !panelLineItems) return null;
+    let min = Infinity;
+    let max = 0;
+    for (const li of panelLineItems) {
+      const mat = catalogMaterials.find(
+        m => m.name.toLowerCase() === li.description.toLowerCase() || m.id === li.itemId
+      );
+      if (mat?.warrantyYears != null) {
+        min = Math.min(min, mat.warrantyYears);
+        max = Math.max(max, mat.warrantyYears);
+      }
+    }
+    if (min === Infinity) return null;
+    return min === max ? `${min} year` : `${min}-${max} years`;
+  }, [catalogMaterials, panelLineItems]);
+
+  const tierConfig = currentTier ? TIER_CONFIG.find(t => t.value === currentTier) : null;
+
   return (
     <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl p-5">
       <h3 className="text-sm font-medium text-zinc-200 mb-4 flex items-center gap-2">
         <Layers className="w-4 h-4 text-zinc-400" />
         Estimate Totals
+        {tierConfig && (
+          <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', tierConfig.bgColor, tierConfig.color)}>
+            {tierConfig.label} Tier
+          </span>
+        )}
         <span className="text-xs text-zinc-500 font-normal ml-auto">{lineCount} line items</span>
       </h3>
 
@@ -1191,6 +1571,27 @@ function TotalsPanel({
           <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-700/50">
             <span className="text-purple-400">Net Claim (after deductible)</span>
             <span className="text-purple-300 font-medium">${fmtCurrency(Math.max(0, totals.grand - estimate.deductible))}</span>
+          </div>
+        )}
+
+        {/* Change order total */}
+        {changeOrderTotal != null && changeOrderTotal !== 0 && (
+          <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-700/50">
+            <span className="text-amber-400">Approved Change Orders</span>
+            <span className={cn('font-medium', changeOrderTotal > 0 ? 'text-amber-300' : 'text-red-300')}>
+              {changeOrderTotal > 0 ? '+' : ''}{fmtCurrency(changeOrderTotal)}
+            </span>
+          </div>
+        )}
+
+        {/* Warranty coverage */}
+        {warrantyRange && (
+          <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-700/50">
+            <span className="text-green-400 flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3" />
+              Material Warranty Coverage
+            </span>
+            <span className="text-green-300 font-medium">{warrantyRange}</span>
           </div>
         )}
       </div>
@@ -1585,6 +1986,434 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
             </>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// G/B/B Tier Comparison Panel — side-by-side Good/Better/Best
+// ════════════════════════════════════════════════════════════════
+
+interface TierEstimate {
+  tier: MaterialTier;
+  items: Array<{ description: string; unitPrice: number; materialName: string; photoUrl: string | null; warrantyYears: number | null }>;
+  subtotal: number;
+  overhead: number;
+  profit: number;
+  tax: number;
+  grand: number;
+  warrantyRange: string | null;
+}
+
+function TierComparisonPanel({
+  comparison,
+  onSelectTier,
+  onClose,
+}: {
+  comparison: { good: TierEstimate; better: TierEstimate; best: TierEstimate };
+  onSelectTier: (tier: MaterialTier) => void;
+  onClose: () => void;
+}) {
+  const tiers = [
+    { key: 'good' as const, data: comparison.good, label: 'Good', sublabel: 'Standard', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/20', btnColor: 'bg-blue-600 hover:bg-blue-500' },
+    { key: 'better' as const, data: comparison.better, label: 'Better', sublabel: 'Premium', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20', btnColor: 'bg-amber-600 hover:bg-amber-500' },
+    { key: 'best' as const, data: comparison.best, label: 'Best', sublabel: 'Elite', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20', btnColor: 'bg-purple-600 hover:bg-purple-500' },
+  ];
+
+  return (
+    <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-700/30">
+        <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
+          <BarChart3 className="w-4 h-4 text-amber-400" />
+          Good / Better / Best Comparison
+        </h3>
+        <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 divide-x divide-zinc-700/30">
+        {tiers.map(({ key, data, label, sublabel, color, bgColor, borderColor, btnColor }) => (
+          <div key={key} className="p-4">
+            {/* Tier header */}
+            <div className="text-center mb-4">
+              <span className={cn('text-lg font-bold', color)}>{label}</span>
+              <p className="text-[10px] text-zinc-500">{sublabel} Materials</p>
+              <p className="text-2xl font-bold text-zinc-100 mt-2">${fmtCurrency(data.grand)}</p>
+            </div>
+
+            {/* Material summary — show first 5 items */}
+            <div className="space-y-2 mb-4">
+              {data.items.slice(0, 5).map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  {item.photoUrl ? (
+                    <div className="w-6 h-6 rounded border border-zinc-700 overflow-hidden flex-shrink-0 bg-zinc-800">
+                      <img src={item.photoUrl} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-6 h-6 rounded border border-zinc-700 bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                      <Package className="w-3 h-3 text-zinc-600" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] text-zinc-300 truncate">{item.materialName}</p>
+                  </div>
+                  <span className="text-[10px] text-zinc-400 flex-shrink-0">${fmtCurrency(item.unitPrice)}</span>
+                </div>
+              ))}
+              {data.items.length > 5 && (
+                <p className="text-[10px] text-zinc-600 text-center">+{data.items.length - 5} more items</p>
+              )}
+            </div>
+
+            {/* Cost breakdown */}
+            <div className="space-y-1.5 text-[11px] border-t border-zinc-700/30 pt-3 mb-3">
+              <div className="flex justify-between"><span className="text-zinc-500">Subtotal</span><span className="text-zinc-300">${fmtCurrency(data.subtotal)}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">O&P</span><span className="text-zinc-300">${fmtCurrency(data.overhead + data.profit)}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">Tax</span><span className="text-zinc-300">${fmtCurrency(data.tax)}</span></div>
+              <div className="flex justify-between font-medium border-t border-zinc-700/30 pt-1.5">
+                <span className="text-zinc-200">Total</span>
+                <span className={color}>${fmtCurrency(data.grand)}</span>
+              </div>
+            </div>
+
+            {/* Warranty row */}
+            {data.warrantyRange && (
+              <div className="flex items-center justify-center gap-1 text-[10px] text-green-400 mb-3">
+                <ShieldCheck className="w-3 h-3" />
+                {data.warrantyRange} warranty
+              </div>
+            )}
+
+            {/* Select tier button */}
+            <button
+              onClick={() => onSelectTier(data.tier)}
+              className={cn('w-full py-2 text-xs text-white rounded-lg font-medium transition-colors', btnColor)}
+            >
+              Select {label}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Savings comparison */}
+      {comparison.good.grand > 0 && comparison.best.grand > 0 && (
+        <div className="px-5 py-3 border-t border-zinc-700/30 text-center">
+          <p className="text-[10px] text-zinc-500">
+            Price range: <span className="text-zinc-300 font-medium">${fmtCurrency(comparison.good.grand)}</span>
+            {' '}&ndash;{' '}
+            <span className="text-zinc-300 font-medium">${fmtCurrency(comparison.best.grand)}</span>
+            {comparison.best.grand > comparison.good.grand && (
+              <span className="text-zinc-500"> ({((comparison.best.grand - comparison.good.grand) / comparison.good.grand * 100).toFixed(0)}% difference)</span>
+            )}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// Template Panel — save/load estimate templates
+// ════════════════════════════════════════════════════════════════
+
+interface EstimateTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  trade: string | null;
+  itemCount: number;
+  defaultTier: MaterialTier;
+  createdAt: string;
+}
+
+function TemplatePanel({
+  estimateId,
+  currentAreas,
+  currentLineItems,
+  currentTier,
+  onClose,
+  onApplyTemplate,
+}: {
+  estimateId: string;
+  currentAreas: EstimateArea[];
+  currentLineItems: EstimateLineItem[];
+  currentTier: MaterialTier;
+  onClose: () => void;
+  onApplyTemplate: () => Promise<void>;
+}) {
+  const [templates, setTemplates] = useState<EstimateTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [applying, setApplying] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [showSaveForm, setShowSaveForm] = useState(false);
+
+  // Load templates
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('estimate_templates')
+          .select('id, name, description, trade, template_data, default_tier, created_at')
+          .is('deleted_at', null)
+          .order('name');
+
+        setTemplates((data || []).map((t: Record<string, unknown>) => ({
+          id: t.id as string,
+          name: t.name as string,
+          description: t.description as string | null,
+          trade: t.trade as string | null,
+          itemCount: ((t.template_data as Record<string, unknown>)?.items as unknown[] || []).length,
+          defaultTier: (t.default_tier as MaterialTier) || 'standard',
+          createdAt: t.created_at as string,
+        })));
+      } catch {
+        // silently handle
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  // Save current estimate as template
+  const handleSave = async () => {
+    if (!newName.trim()) return;
+    setSaving(true);
+    try {
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const companyId = session.user.app_metadata?.company_id;
+
+      const templateData = {
+        areas: currentAreas.map(a => ({
+          name: a.name,
+          lengthFt: a.lengthFt,
+          widthFt: a.widthFt,
+          heightFt: a.heightFt,
+        })),
+        items: currentLineItems.map(li => ({
+          zaftoCode: li.zaftoCode,
+          description: li.description,
+          actionType: li.actionType,
+          quantity: li.quantity,
+          unitCode: li.unitCode,
+          unitPrice: li.unitPrice,
+          materialCost: li.materialCost,
+          laborCost: li.laborCost,
+          equipmentCost: li.equipmentCost,
+          areaName: currentAreas.find(a => a.id === li.areaId)?.name || null,
+        })),
+      };
+
+      const { data: inserted } = await supabase.from('estimate_templates').insert({
+        company_id: companyId,
+        name: newName.trim(),
+        description: newDescription.trim() || null,
+        template_data: templateData,
+        default_tier: currentTier,
+      }).select('id, name, description, trade, template_data, default_tier, created_at').single();
+
+      if (inserted) {
+        setTemplates(prev => [...prev, {
+          id: inserted.id as string,
+          name: inserted.name as string,
+          description: inserted.description as string | null,
+          trade: inserted.trade as string | null,
+          itemCount: currentLineItems.length,
+          defaultTier: currentTier,
+          createdAt: inserted.created_at as string,
+        }]);
+      }
+
+      setNewName('');
+      setNewDescription('');
+      setShowSaveForm(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Apply template to current estimate
+  const handleApply = async (templateId: string) => {
+    setApplying(true);
+    try {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('estimate_templates')
+        .select('template_data')
+        .eq('id', templateId)
+        .single();
+
+      if (!data?.template_data) return;
+      const tpl = data.template_data as { areas?: Array<{ name: string }>; items?: Array<Record<string, unknown>> };
+
+      // Create areas from template
+      if (tpl.areas) {
+        for (const area of tpl.areas) {
+          await supabase.from('estimate_areas').insert({
+            estimate_id: estimateId,
+            name: area.name,
+          });
+        }
+      }
+
+      // Reload to get new area IDs, then add items
+      const { data: newAreas } = await supabase
+        .from('estimate_areas')
+        .select('id, name')
+        .eq('estimate_id', estimateId)
+        .is('deleted_at', null);
+
+      const areaMap = new Map((newAreas || []).map((a: Record<string, unknown>) => [a.name as string, a.id as string]));
+
+      if (tpl.items) {
+        for (const item of tpl.items) {
+          const areaId = item.areaName ? areaMap.get(item.areaName as string) : null;
+          await supabase.from('estimate_line_items').insert({
+            estimate_id: estimateId,
+            area_id: areaId || null,
+            zafto_code: item.zaftoCode || null,
+            description: item.description,
+            action_type: item.actionType || 'replace',
+            quantity: item.quantity || 1,
+            unit_code: item.unitCode || 'EA',
+            unit_price: item.unitPrice || 0,
+            material_cost: item.materialCost || 0,
+            labor_cost: item.laborCost || 0,
+            equipment_cost: item.equipmentCost || 0,
+            line_total: ((item.quantity as number) || 1) * ((item.unitPrice as number) || 0),
+          });
+        }
+      }
+
+      await onApplyTemplate();
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  // Delete template (soft)
+  const handleDelete = async (templateId: string) => {
+    const supabase = getSupabase();
+    await supabase.from('estimate_templates').update({ deleted_at: new Date().toISOString() }).eq('id', templateId);
+    setTemplates(prev => prev.filter(t => t.id !== templateId));
+  };
+
+  return (
+    <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-700/30">
+        <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
+          <Copy className="w-4 h-4 text-zinc-400" />
+          Estimate Templates
+        </h3>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSaveForm(!showSaveForm)}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-md hover:bg-blue-500/20"
+          >
+            <Save className="w-3 h-3" />
+            Save Current
+          </button>
+          <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Save form */}
+      {showSaveForm && (
+        <div className="p-4 border-b border-zinc-700/30 space-y-2">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Template name..."
+            className="w-full px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs text-zinc-100 placeholder:text-zinc-500"
+            autoFocus
+          />
+          <input
+            type="text"
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+            placeholder="Description (optional)..."
+            className="w-full px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs text-zinc-100 placeholder:text-zinc-500"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSave}
+              disabled={saving || !newName.trim()}
+              className="flex items-center gap-1 px-3 py-1.5 text-xs text-white bg-blue-600 rounded-lg hover:bg-blue-500 disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+              Save Template
+            </button>
+            <button onClick={() => setShowSaveForm(false)} className="text-xs text-zinc-500 hover:text-zinc-300">
+              Cancel
+            </button>
+            <span className="text-[10px] text-zinc-600 ml-auto">
+              {currentLineItems.length} items, {currentAreas.length} areas
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Template list */}
+      <div className="max-h-[300px] overflow-y-auto">
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+          </div>
+        ) : templates.length === 0 ? (
+          <div className="text-center py-8 text-zinc-500 text-xs">
+            <Copy className="w-8 h-8 mx-auto mb-2 opacity-40" />
+            <p>No templates saved yet</p>
+            <p className="text-[10px] mt-1">Save your current estimate as a reusable template</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-800/50">
+            {templates.map(tpl => (
+              <div key={tpl.id} className="flex items-center justify-between px-4 py-3 hover:bg-zinc-800/30">
+                <div className="min-w-0">
+                  <p className="text-xs text-zinc-200 font-medium">{tpl.name}</p>
+                  {tpl.description && <p className="text-[10px] text-zinc-500 truncate mt-0.5">{tpl.description}</p>}
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] text-zinc-600">{tpl.itemCount} items</span>
+                    {tpl.trade && <span className="text-[10px] px-1 py-0.5 rounded bg-zinc-700/50 text-zinc-500">{tpl.trade}</span>}
+                    <span className={cn(
+                      'text-[10px] px-1 py-0.5 rounded',
+                      TIER_CONFIG.find(t => t.value === tpl.defaultTier)?.bgColor,
+                      TIER_CONFIG.find(t => t.value === tpl.defaultTier)?.color,
+                    )}>
+                      {TIER_CONFIG.find(t => t.value === tpl.defaultTier)?.label}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    onClick={() => handleApply(tpl.id)}
+                    disabled={applying}
+                    className="px-2.5 py-1 text-[10px] text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded hover:bg-blue-500/20"
+                  >
+                    {applying ? 'Applying...' : 'Apply'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(tpl.id)}
+                    className="p-1 text-zinc-600 hover:text-red-400"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
