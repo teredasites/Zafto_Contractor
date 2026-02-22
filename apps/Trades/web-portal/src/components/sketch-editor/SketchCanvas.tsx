@@ -19,6 +19,7 @@ import type {
   FloorLabel,
   DimensionLine,
   TradeLayer,
+  TradeElement,
   SelectionState,
   EditorState,
   Point,
@@ -45,6 +46,7 @@ import {
   AddDoorCommand,
   AddWindowCommand,
   AddFixtureCommand,
+  AddTradeElementCommand,
   AddLabelCommand,
   AddDimensionCommand,
   RemoveAnyElementCommand,
@@ -75,12 +77,26 @@ const WINDOW_COLOR = '#0EA5E9';
 const FIXTURE_COLOR = '#059669';
 const LABEL_COLOR = '#475569';
 
-// Trade layer accent colors
+// Trade layer accent colors (all 18 types)
 const TRADE_COLORS: Record<string, string> = {
   electrical: '#F59E0B',
   plumbing: '#3B82F6',
   hvac: '#10B981',
   damage: '#EF4444',
+  fire: '#DC2626',
+  roofing: '#8B5CF6',
+  siding: '#06B6D4',
+  insulation: '#EC4899',
+  framing: '#D97706',
+  drywall: '#6B7280',
+  flooring: '#14B8A6',
+  painting: '#F472B6',
+  concrete: '#78716C',
+  demolition: '#F97316',
+  solar: '#FBBF24',
+  low_voltage: '#818CF8',
+  gas: '#EAB308',
+  irrigation: '#22C55E',
 };
 
 // Trade path colors
@@ -322,6 +338,30 @@ export default function SketchCanvas({
       else if (tool === 'fixture' && editorState.pendingFixtureType) {
         const fixture: FixturePlacement = { id: generateId('fix'), position: snapToGrid(point, editorState.gridSize), type: editorState.pendingFixtureType, rotation: 0 };
         onPlanDataChange(undoManager.execute(new AddFixtureCommand(fixture), planData));
+      }
+      // --- TRADE SYMBOL TOOL ---
+      else if (tool === 'tradeSymbol' && editorState.pendingTradeSymbol && editorState.activeLayerId) {
+        const layer = planData.tradeLayers.find(l => l.id === editorState.activeLayerId);
+        if (layer && !layer.locked) {
+          const tradeEl: TradeElement = {
+            id: generateId('te'),
+            type: editorState.pendingTradeSymbol,
+            position: snapToGrid(point, editorState.gridSize),
+            rotation: 0,
+          };
+          // Ensure tradeData exists on the layer
+          const updatedPlan = layer.tradeData
+            ? planData
+            : {
+                ...planData,
+                tradeLayers: planData.tradeLayers.map(l =>
+                  l.id === layer.id ? { ...l, tradeData: { elements: [], paths: [] } } : l,
+                ),
+              };
+          onPlanDataChange(
+            undoManager.execute(new AddTradeElementCommand(layer.id, tradeEl), updatedPlan),
+          );
+        }
       }
       // --- LABEL TOOL ---
       else if (tool === 'label') {

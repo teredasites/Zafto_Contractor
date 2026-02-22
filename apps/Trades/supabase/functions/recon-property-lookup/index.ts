@@ -210,7 +210,8 @@ serve(async (req) => {
       if (hasSolar) {
         // Update scan_cache hit count
         const addrHash = await hashAddress(address)
-        await supabase.rpc('increment_scan_cache_hits', { p_company_id: companyId, p_hash: addrHash }).catch(() => {})
+        // Fire-and-forget — Supabase returns { data, error }, never throws
+      await supabase.rpc('increment_scan_cache_hits', { p_company_id: companyId, p_hash: addrHash })
         return jsonResponse({ scan_id: cached.id, cached: true }, 200, origin)
       }
       // Cache miss — previous scan was incomplete, expire stale record and re-scan
@@ -238,7 +239,6 @@ serve(async (req) => {
         .from('scan_cache')
         .update({ hit_count: (scanCacheHit.scan_data.hit_count || 0) + 1 })
         .eq('id', scanCacheHit.id)
-        .catch(() => {})
       return jsonResponse({ scan_id: scanCacheHit.scan_data.scan_id, cached: true }, 200, origin)
     }
 
@@ -875,7 +875,7 @@ serve(async (req) => {
       cached_at: new Date().toISOString(),
       expires_at: cachedUntil.toISOString(),
       hit_count: 0,
-    }, { onConflict: 'company_id,address_hash' }).catch(() => {})
+    }, { onConflict: 'company_id,address_hash' })
 
     return jsonResponse({
       scan_id: scanId,
