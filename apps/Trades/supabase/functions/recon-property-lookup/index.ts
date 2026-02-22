@@ -846,7 +846,8 @@ serve(async (req) => {
       foundation_type: (building.construction?.foundationtype as string) || null,
       exterior_material: (building.construction?.wallType as string) || null,
       roof_material: (building.construction?.roofcover as string) || null,
-      neighborhood_type: null, // populated by census data later
+      neighborhood_type: null, // updated after census data fetch
+      census_data: {},
     })
 
     // ========================================================================
@@ -929,6 +930,117 @@ serve(async (req) => {
     console.log('[property-lookup] External links generated:', Object.keys(externalLinks).length)
 
     // ========================================================================
+    // STEP 7d2: US CENSUS ACS (FREE — demographics for the area)
+    // ========================================================================
+    let censusData: Record<string, unknown> = {}
+    let neighborhoodType: string | null = null
+    if (lat && lng) {
+      try {
+        const t6 = performance.now()
+        // Get FIPS code from coordinates via FCC API (free)
+        const fccRes = await fetch(
+          `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lng}&format=json`
+        )
+        if (fccRes.ok) {
+          const fccData = await fccRes.json()
+          const stateFips = fccData?.State?.FIPS
+          const countyFips = fccData?.County?.FIPS
+          const tractCode = fccData?.Block?.FIPS?.substring(5, 11) // 6-digit tract
+          const countyName = fccData?.County?.name
+
+          if (stateFips && countyFips && tractCode) {
+            // Census ACS 5-year data — population, median income, housing
+            const censusVars = 'B01003_001E,B19013_001E,B25077_001E,B25035_001E,B25024_001E,B01002_001E,B25003_001E,B25003_002E'
+            // B01003_001E = total population
+            // B19013_001E = median household income
+            // B25077_001E = median home value
+            // B25035_001E = median year built
+            // B25024_001E = total housing units
+            // B01002_001E = median age
+            // B25003_001E = total tenure (occupied housing)
+            // B25003_002E = owner-occupied
+            const censusUrl = `https://api.census.gov/data/2022/acs/acs5?get=${censusVars}&for=tract:${tractCode}&in=state:${stateFips}+county:${countyFips.substring(2)}`
+            const censusRes = await fetch(censusUrl)
+            if (censusRes.ok) {
+              const censusArr = await censusRes.json()
+              if (censusArr?.length > 1) {
+                const vals = censusArr[1]
+                const population = parseInt(vals[0]) || null
+                const medianIncome = parseInt(vals[1]) || null
+                const medianHomeValue = parseInt(vals[2]) || null
+                const medianYearBuilt = parseInt(vals[3]) || null
+                const totalHousingUnits = parseInt(vals[4]) || null
+                const medianAge = parseFloat(vals[5]) || null
+                const totalOccupied = parseInt(vals[6]) || null
+                const ownerOccupied = parseInt(vals[7]) || null
+
+                censusData = {
+                  tract: tractCode,
+                  county: countyName,
+                  state_fips: stateFips,
+                  population,
+                  median_income: medianIncome,
+                  median_home_value: medianHomeValue,
+                  median_year_built: medianYearBuilt,
+                  total_housing_units: totalHousingUnits,
+                  median_age: medianAge,
+                  owner_occupied_pct: totalOccupied && ownerOccupied
+                    ? Math.round((ownerOccupied / totalOccupied) * 100)
+                    : null,
+                }
+                sources.push('us_census')
+
+                // Infer neighborhood type from population density + housing data
+                if (population && totalHousingUnits) {
+                  // Rough: census tracts are ~1-8 sq mi
+                  const density = population // per tract (rough proxy)
+                  if (density > 8000) neighborhoodType = 'urban'
+                  else if (density > 3000) neighborhoodType = 'suburban'
+                  else if (density > 500) neighborhoodType = 'exurban'
+                  else neighborhoodType = 'rural'
+                }
+
+                console.log('[property-lookup] Census data: pop', population, 'income', medianIncome, 'value', medianHomeValue)
+              }
+            }
+          }
+        }
+        apiTimings.push({ api: 'us_census', ms: Math.round(performance.now() - t6), status: 200, cost: 0 })
+      } catch (censusErr) {
+        console.warn('[property-lookup] Census data fetch failed:', censusErr)
+      }
+    }
+
+    // Update property_features with census/neighborhood data
+    if (Object.keys(censusData).length > 0 || neighborhoodType) {
+      await supabase
+        .from('property_features')
+        .update({
+          neighborhood_type: neighborhoodType,
+          census_data: censusData,
+        })
+        .eq('scan_id', scanId)
+    }
+
+    // ========================================================================
+    // STEP 7d3: INFER PROPERTY TYPE
+    // ========================================================================
+    let propertyType: string | null = null
+    if (structures.length > 0) {
+      const primary = structures[0]
+      const footprint = primary.footprint_sqft
+      const stories = primary.estimated_stories
+      const totalSqft = footprint * stories
+
+      // Simple heuristics based on building characteristics
+      if (footprint > 10000) propertyType = 'commercial'
+      else if (structures.length >= 3 && footprint > 2000) propertyType = 'multi_family'
+      else if (totalSqft < 800) propertyType = 'condo'
+      else if (footprint < 1200 && structures.length === 1) propertyType = 'townhouse'
+      else propertyType = 'single_family'
+    }
+
+    // ========================================================================
     // STEP 7e: AUTO-CREATE STORAGE FOLDER + SAVE IMAGES
     // ========================================================================
     const normalizedFolderName = address
@@ -991,6 +1103,9 @@ serve(async (req) => {
       elevation_ft: elevationFt,
       flood_zone: floodZone,
       flood_risk: floodRisk,
+      property_type: propertyType,
+      neighborhood_type: neighborhoodType,
+      census: censusData,
       external_links: externalLinks,
       street_view_url: streetViewUrl,
       sources,
@@ -1044,9 +1159,10 @@ serve(async (req) => {
     // Bonus for multiple data sources
     if (sources.length >= 3) verificationBonus += 5
 
-    // Bonus for flood + street view data
+    // Bonus for flood + street view + census data
     if (floodZone) verificationBonus += 3
     if (streetViewUrl) verificationBonus += 2
+    if (Object.keys(censusData).length > 0) verificationBonus += 3
 
     const confidence = Math.max(
       0,
@@ -1082,6 +1198,7 @@ serve(async (req) => {
         storage_folder: storageFolder,
         street_view_url: streetViewUrl,
         external_links: externalLinks,
+        property_type: propertyType,
         flood_zone: floodZone,
         flood_risk: floodRisk,
       })
@@ -1172,9 +1289,11 @@ serve(async (req) => {
       elevation_ft: elevationFt,
       flood_zone: floodZone,
       flood_risk: floodRisk,
+      property_type: propertyType,
       street_view_url: streetViewUrl,
       external_links: externalLinks,
       storage_folder: storageFolder,
+      census_data: censusData,
     }, 200, origin)
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Internal server error'
