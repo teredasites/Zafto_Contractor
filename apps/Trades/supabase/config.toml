@@ -3,8 +3,9 @@
 # Reset: npx supabase db reset
 # Studio: http://localhost:54323
 
-[project]
-id = "zafto-local"
+# project id for local dev
+# [project]
+# id = "zafto-local"
 
 [api]
 enabled = true
@@ -71,5 +72,5 @@ enabled = false
 enabled = true
 policy = "oneshot"
 
-[experimental]
-webhook_enabled = false
+# [experimental]
+# webhook_enabled = false

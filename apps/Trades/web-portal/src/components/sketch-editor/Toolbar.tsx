@@ -65,7 +65,7 @@ export default function Toolbar({
   onToggleLayers,
 }: ToolbarProps) {
   return (
-    <div className="flex flex-col gap-1 p-1.5 bg-white/95 backdrop-blur border border-gray-200 rounded-xl shadow-lg">
+    <div className="flex flex-col gap-1 p-1.5 bg-[#1a1a2e]/95 backdrop-blur border border-[#2a2a4a] rounded-xl shadow-2xl">
       {/* Drawing tools */}
       {TOOLS.map(({ tool, icon: Icon, label }) => (
         <button
@@ -74,8 +74,8 @@ export default function Toolbar({
           title={label}
           className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors ${
             editorState.activeTool === tool
-              ? 'bg-blue-50 text-blue-600'
-              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+              ? 'bg-blue-900/40 text-blue-400'
+              : 'text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200'
           }`}
         >
           <Icon size={16} />
@@ -83,14 +83,14 @@ export default function Toolbar({
       ))}
 
       {/* Divider */}
-      <div className="mx-2 my-1 h-px bg-gray-200" />
+      <div className="mx-2 my-1 h-px bg-[#2a2a4a]" />
 
       {/* Undo/Redo */}
       <button
         onClick={onUndo}
         disabled={!canUndo}
         title="Undo (Ctrl+Z)"
-        className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-9 h-9 flex items-center justify-center rounded-lg text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200 disabled:opacity-30 disabled:cursor-not-allowed"
       >
         <Undo2 size={16} />
       </button>
@@ -98,32 +98,32 @@ export default function Toolbar({
         onClick={onRedo}
         disabled={!canRedo}
         title="Redo (Ctrl+Y)"
-        className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-9 h-9 flex items-center justify-center rounded-lg text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200 disabled:opacity-30 disabled:cursor-not-allowed"
       >
         <Redo2 size={16} />
       </button>
 
       {/* Divider */}
-      <div className="mx-2 my-1 h-px bg-gray-200" />
+      <div className="mx-2 my-1 h-px bg-[#2a2a4a]" />
 
       {/* Zoom */}
       <button
         onClick={onZoomIn}
         title="Zoom In"
-        className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50"
+        className="w-9 h-9 flex items-center justify-center rounded-lg text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200"
       >
         <ZoomIn size={16} />
       </button>
       <button
         onClick={onZoomOut}
         title="Zoom Out"
-        className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50"
+        className="w-9 h-9 flex items-center justify-center rounded-lg text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200"
       >
         <ZoomOut size={16} />
       </button>
 
       {/* Divider */}
-      <div className="mx-2 my-1 h-px bg-gray-200" />
+      <div className="mx-2 my-1 h-px bg-[#2a2a4a]" />
 
       {/* Grid toggle */}
       <button
@@ -131,8 +131,8 @@ export default function Toolbar({
         title="Toggle Grid"
         className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors ${
           editorState.showGrid
-            ? 'bg-blue-50 text-blue-600'
-            : 'text-gray-500 hover:bg-gray-50'
+            ? 'bg-blue-900/40 text-blue-400'
+            : 'text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200'
         }`}
       >
         <Grid3x3 size={16} />
@@ -142,13 +142,13 @@ export default function Toolbar({
       <button
         onClick={onToggleLayers}
         title="Layers"
-        className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-50"
+        className="w-9 h-9 flex items-center justify-center rounded-lg text-neutral-400 hover:bg-[#2a2a4a] hover:text-neutral-200"
       >
         <Layers size={16} />
       </button>
 
       {/* Zoom level display */}
-      <div className="text-center text-[10px] text-gray-400 font-medium mt-1">
+      <div className="text-center text-[10px] text-neutral-500 font-medium mt-1">
         {Math.round(editorState.zoom * 100)}%
       </div>
     </div>

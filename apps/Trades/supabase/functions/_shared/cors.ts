@@ -4,7 +4,7 @@
  * Uses ALLOWED_ORIGINS env var or defaults to Zafto domains + localhost.
  */
 
-const DEFAULT_ORIGINS = 'https://zafto.cloud,https://team.zafto.cloud,https://client.zafto.cloud,https://ops.zafto.cloud,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003'
+const DEFAULT_ORIGINS = 'https://zafto.cloud,https://team.zafto.cloud,https://client.zafto.cloud,https://ops.zafto.cloud,https://realtor.zafto.cloud,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004'
 
 function getAllowedOrigins(): string[] {
   const envOrigins = Deno.env.get('ALLOWED_ORIGINS')
