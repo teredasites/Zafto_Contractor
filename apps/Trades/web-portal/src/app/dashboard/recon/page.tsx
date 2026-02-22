@@ -431,10 +431,20 @@ export default function ReconPage() {
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {scan.scanSources?.length > 0 && (
                         <span className="text-[10px] text-muted">
                           {scan.scanSources.length} source{scan.scanSources.length !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {scan.floodZone && (
+                        <span className="text-[10px] font-medium" style={{ color: scan.floodRisk === 'high' ? '#EF4444' : scan.floodRisk === 'moderate' ? '#F59E0B' : '#10B981' }}>
+                          Zone {scan.floodZone}
+                        </span>
+                      )}
+                      {Object.keys(scan.externalLinks || {}).length > 0 && (
+                        <span className="text-[10px] text-muted">
+                          {Object.keys(scan.externalLinks).length} links
                         </span>
                       )}
                       {scan.imageryDate && (
