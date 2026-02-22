@@ -342,7 +342,7 @@ export function Sidebar() {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)]"
+        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)]"
       >
         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
@@ -350,19 +350,32 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — hidden on mobile, shown on tablet+ */}
+      <aside
+        className={cn(
+          'fixed left-0 top-0 z-40 h-screen bg-[var(--bg-card)] border-r border-[var(--border)] transition-transform duration-200',
+          'hidden md:block md:w-[260px]',
+          'md:translate-x-0'
+        )}
+        aria-label="Operations navigation"
+        role="navigation"
+      >
+        {navContent}
+      </aside>
+
+      {/* Mobile drawer — only on phones */}
       <aside
         className={cn(
           'fixed left-0 top-0 z-40 h-screen w-[260px] bg-[var(--bg-card)] border-r border-[var(--border)] transition-transform duration-200',
-          'lg:translate-x-0',
+          'md:hidden',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
-        aria-label="Operations navigation"
+        aria-label="Operations navigation (mobile)"
         role="navigation"
       >
         {navContent}

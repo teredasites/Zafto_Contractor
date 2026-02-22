@@ -218,7 +218,7 @@ export function Sidebar() {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-surface border border-main shadow-sm"
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-surface border border-main shadow-sm"
         aria-label="Open navigation menu"
       >
         <Menu size={20} className="text-main" />
@@ -226,7 +226,7 @@ export function Sidebar() {
 
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50">
+        <div className="md:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
           <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-surface border-r border-main shadow-xl flex flex-col" aria-label="Team navigation" role="navigation">
             {/* Header */}
@@ -307,7 +307,7 @@ export function Sidebar() {
       {/* Icon Rail */}
       <aside
         ref={railRef}
-        className="fixed top-0 left-0 z-40 h-full w-12 bg-surface border-r border-main/50 flex-col hidden lg:flex"
+        className="fixed top-0 left-0 z-40 h-full w-12 bg-surface border-r border-main/50 flex-col hidden md:flex"
         aria-label="Team navigation"
         role="navigation"
       >
@@ -444,7 +444,7 @@ export function Sidebar() {
       {activeGroup && currentDetailGroup && (
         <div
           ref={detailRef}
-          className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden lg:flex flex-col sidebar-detail-enter"
+          className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden md:flex flex-col sidebar-detail-enter"
         >
           <div className="h-12 flex items-center justify-between px-4 border-b border-main flex-shrink-0">
             <span className="text-[13px] font-semibold tracking-[0.02em] text-main">
