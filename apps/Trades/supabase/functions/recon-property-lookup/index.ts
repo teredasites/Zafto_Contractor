@@ -8,12 +8,10 @@
 // 6. Regrid API (GATED) → parcel boundaries, zoning, APN
 // 7. Property features insert (ATTOM + Solar + USGS data combined)
 // 7b. Google Street View Static API → exterior property image
-// 7c. FEMA Flood Zone API (FREE) → flood zone + risk assessment
+// 7c. PARALLEL: FEMA Flood + Census ACS + NWS Alerts (8s timeout, Promise.allSettled)
 // 7d. External deep links (Zillow, Redfin, Realtor.com, Google Maps, FEMA, County Assessor)
-// 7d2. US Census ACS (FREE) → demographics, median income, home values, neighborhood type
 // 7d3. Property type inference from building footprint
-// 7d4. NWS Weather Alerts (FREE) → active weather alerts for the property location
-// 7e. Auto-create storage folder → save satellite, street view, recon report
+// 7e. FIRE-AND-FORGET: Storage uploads (satellite, street view, recon report)
 // 8. Confidence scoring → grade + factors
 // 9. Auto-trigger roof calculator + trade estimator
 // Inserts: property_scans, roof_measurements, roof_facets,
@@ -865,43 +863,147 @@ serve(async (req) => {
     }
 
     // ========================================================================
-    // STEP 7c: FEMA FLOOD ZONES (FREE — no API key)
+    // STEP 7c-7d4: PARALLEL API CALLS (FEMA + Census + NWS)
+    // All run concurrently with 8-second timeout to prevent EF timeout
     // ========================================================================
     let floodZone: string | null = null
     let floodRisk: string | null = null
+    let censusData: Record<string, unknown> = {}
+    let neighborhoodType: string | null = null
+    let activeAlerts: Array<{ event: string; severity: string; headline: string; expires: string }> = []
+
     if (lat && lng) {
-      try {
-        const t5 = performance.now()
-        const femaRes = await fetch(
-          `https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=FLD_ZONE,ZONE_SUBTY,SFHA_TF&returnGeometry=false&f=json`
-        )
-        if (femaRes.ok) {
-          const femaData = await femaRes.json()
-          const feature = femaData?.features?.[0]?.attributes
-          if (feature) {
-            floodZone = feature.FLD_ZONE || null
-            // Map FEMA zones to risk levels
-            if (floodZone) {
-              const highRiskZones = ['A', 'AE', 'AH', 'AO', 'AR', 'A99', 'V', 'VE']
-              const moderateRiskZones = ['B', 'X500', 'SHADED X']
-              const zoneParts = floodZone.toUpperCase().split(',')
-              if (zoneParts.some((z: string) => highRiskZones.includes(z.trim()))) {
-                floodRisk = 'high'
-              } else if (zoneParts.some((z: string) => moderateRiskZones.includes(z.trim()))) {
-                floodRisk = 'moderate'
-              } else if (floodZone.toUpperCase().includes('X') || floodZone.toUpperCase().includes('C')) {
-                floodRisk = 'minimal'
-              } else {
-                floodRisk = 'low'
+      const apiTimeout = 8000 // 8 seconds max per API group
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), apiTimeout)
+
+      // --- FEMA Flood Zone (parallel) ---
+      const femaPromise = (async () => {
+        try {
+          const t5 = performance.now()
+          const femaRes = await fetch(
+            `https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=FLD_ZONE,ZONE_SUBTY,SFHA_TF&returnGeometry=false&f=json`,
+            { signal: controller.signal }
+          )
+          apiTimings.push({ api: 'fema_flood', ms: Math.round(performance.now() - t5), status: femaRes.ok ? 200 : femaRes.status, cost: 0 })
+          if (femaRes.ok) {
+            const femaData = await femaRes.json()
+            const feature = femaData?.features?.[0]?.attributes
+            if (feature) {
+              const zone = feature.FLD_ZONE || null
+              if (zone) {
+                const highRiskZones = ['A', 'AE', 'AH', 'AO', 'AR', 'A99', 'V', 'VE']
+                const moderateRiskZones = ['B', 'X500', 'SHADED X']
+                const zoneParts = zone.toUpperCase().split(',')
+                let risk = 'low'
+                if (zoneParts.some((z: string) => highRiskZones.includes(z.trim()))) risk = 'high'
+                else if (zoneParts.some((z: string) => moderateRiskZones.includes(z.trim()))) risk = 'moderate'
+                else if (zone.toUpperCase().includes('X') || zone.toUpperCase().includes('C')) risk = 'minimal'
+                return { zone, risk }
               }
-              sources.push('fema_flood')
-              console.log('[property-lookup] FEMA flood zone:', floodZone, 'risk:', floodRisk)
             }
           }
-        }
-        apiTimings.push({ api: 'fema_flood', ms: Math.round(performance.now() - t5), status: femaRes.ok ? 200 : femaRes.status, cost: 0 })
-      } catch (femaErr) {
-        console.warn('[property-lookup] FEMA flood query failed:', femaErr)
+        } catch (e) { console.warn('[property-lookup] FEMA flood failed:', e) }
+        return null
+      })()
+
+      // --- Census ACS (FCC FIPS → Census API, parallel) ---
+      const censusPromise = (async () => {
+        try {
+          const t6 = performance.now()
+          const fccRes = await fetch(
+            `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lng}&format=json`,
+            { signal: controller.signal }
+          )
+          if (!fccRes.ok) return null
+          const fccData = await fccRes.json()
+          const stateFips = fccData?.State?.FIPS
+          const countyFips = fccData?.County?.FIPS
+          const tractCode = fccData?.Block?.FIPS?.substring(5, 11)
+          const countyName = fccData?.County?.name
+          if (!stateFips || !countyFips || !tractCode) return null
+
+          const censusVars = 'B01003_001E,B19013_001E,B25077_001E,B25035_001E,B25024_001E,B01002_001E,B25003_001E,B25003_002E'
+          const censusUrl = `https://api.census.gov/data/2022/acs/acs5?get=${censusVars}&for=tract:${tractCode}&in=state:${stateFips}+county:${countyFips.substring(2)}`
+          const censusRes = await fetch(censusUrl, { signal: controller.signal })
+          apiTimings.push({ api: 'us_census', ms: Math.round(performance.now() - t6), status: 200, cost: 0 })
+          if (!censusRes.ok) return null
+          const censusArr = await censusRes.json()
+          if (!censusArr?.length || censusArr.length < 2) return null
+          const vals = censusArr[1]
+          const population = parseInt(vals[0]) || null
+          const medianIncome = parseInt(vals[1]) || null
+          const medianHomeValue = parseInt(vals[2]) || null
+          const medianYearBuilt = parseInt(vals[3]) || null
+          const totalHousingUnits = parseInt(vals[4]) || null
+          const medianAge = parseFloat(vals[5]) || null
+          const totalOccupied = parseInt(vals[6]) || null
+          const ownerOccupied = parseInt(vals[7]) || null
+          let nbType: string | null = null
+          if (population && totalHousingUnits) {
+            if (population > 8000) nbType = 'urban'
+            else if (population > 3000) nbType = 'suburban'
+            else if (population > 500) nbType = 'exurban'
+            else nbType = 'rural'
+          }
+          return {
+            data: {
+              tract: tractCode, county: countyName, state_fips: stateFips,
+              population, median_income: medianIncome, median_home_value: medianHomeValue,
+              median_year_built: medianYearBuilt, total_housing_units: totalHousingUnits,
+              median_age: medianAge,
+              owner_occupied_pct: totalOccupied && ownerOccupied ? Math.round((ownerOccupied / totalOccupied) * 100) : null,
+            },
+            neighborhoodType: nbType,
+          }
+        } catch (e) { console.warn('[property-lookup] Census failed:', e) }
+        return null
+      })()
+
+      // --- NWS Weather Alerts (parallel) ---
+      const nwsPromise = (async () => {
+        try {
+          const nwsRes = await fetch(
+            `https://api.weather.gov/alerts/active?point=${lat},${lng}&status=actual`,
+            { headers: { 'User-Agent': 'Zafto-PropertyIntelligence/1.0 (recon)', Accept: 'application/geo+json' }, signal: controller.signal }
+          )
+          if (!nwsRes.ok) return []
+          const nwsData = await nwsRes.json()
+          const features = nwsData?.features || []
+          return features.slice(0, 5).map((f: Record<string, Record<string, string>>) => ({
+            event: f.properties?.event || 'Unknown',
+            severity: f.properties?.severity || 'Unknown',
+            headline: f.properties?.headline || '',
+            expires: f.properties?.expires || '',
+          }))
+        } catch { return [] }
+      })()
+
+      // Run all 3 in parallel
+      const [femaResult, censusResult, nwsResult] = await Promise.allSettled([femaPromise, censusPromise, nwsPromise])
+      clearTimeout(timeoutId)
+
+      // Extract FEMA results
+      if (femaResult.status === 'fulfilled' && femaResult.value) {
+        floodZone = femaResult.value.zone
+        floodRisk = femaResult.value.risk
+        sources.push('fema_flood')
+        console.log('[property-lookup] FEMA flood zone:', floodZone, 'risk:', floodRisk)
+      }
+
+      // Extract Census results
+      if (censusResult.status === 'fulfilled' && censusResult.value) {
+        censusData = censusResult.value.data
+        neighborhoodType = censusResult.value.neighborhoodType
+        sources.push('us_census')
+        console.log('[property-lookup] Census data loaded')
+      }
+
+      // Extract NWS results
+      if (nwsResult.status === 'fulfilled' && nwsResult.value && nwsResult.value.length > 0) {
+        activeAlerts = nwsResult.value
+        sources.push('nws_alerts')
+        console.log('[property-lookup] NWS alerts:', activeAlerts.length)
       }
     }
 
@@ -932,127 +1034,17 @@ serve(async (req) => {
     }
     console.log('[property-lookup] External links generated:', Object.keys(externalLinks).length)
 
-    // ========================================================================
-    // STEP 7d2: US CENSUS ACS (FREE — demographics for the area)
-    // ========================================================================
-    let censusData: Record<string, unknown> = {}
-    let neighborhoodType: string | null = null
-    if (lat && lng) {
-      try {
-        const t6 = performance.now()
-        // Get FIPS code from coordinates via FCC API (free)
-        const fccRes = await fetch(
-          `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lng}&format=json`
-        )
-        if (fccRes.ok) {
-          const fccData = await fccRes.json()
-          const stateFips = fccData?.State?.FIPS
-          const countyFips = fccData?.County?.FIPS
-          const tractCode = fccData?.Block?.FIPS?.substring(5, 11) // 6-digit tract
-          const countyName = fccData?.County?.name
-
-          if (stateFips && countyFips && tractCode) {
-            // Census ACS 5-year data — population, median income, housing
-            const censusVars = 'B01003_001E,B19013_001E,B25077_001E,B25035_001E,B25024_001E,B01002_001E,B25003_001E,B25003_002E'
-            // B01003_001E = total population
-            // B19013_001E = median household income
-            // B25077_001E = median home value
-            // B25035_001E = median year built
-            // B25024_001E = total housing units
-            // B01002_001E = median age
-            // B25003_001E = total tenure (occupied housing)
-            // B25003_002E = owner-occupied
-            const censusUrl = `https://api.census.gov/data/2022/acs/acs5?get=${censusVars}&for=tract:${tractCode}&in=state:${stateFips}+county:${countyFips.substring(2)}`
-            const censusRes = await fetch(censusUrl)
-            if (censusRes.ok) {
-              const censusArr = await censusRes.json()
-              if (censusArr?.length > 1) {
-                const vals = censusArr[1]
-                const population = parseInt(vals[0]) || null
-                const medianIncome = parseInt(vals[1]) || null
-                const medianHomeValue = parseInt(vals[2]) || null
-                const medianYearBuilt = parseInt(vals[3]) || null
-                const totalHousingUnits = parseInt(vals[4]) || null
-                const medianAge = parseFloat(vals[5]) || null
-                const totalOccupied = parseInt(vals[6]) || null
-                const ownerOccupied = parseInt(vals[7]) || null
-
-                censusData = {
-                  tract: tractCode,
-                  county: countyName,
-                  state_fips: stateFips,
-                  population,
-                  median_income: medianIncome,
-                  median_home_value: medianHomeValue,
-                  median_year_built: medianYearBuilt,
-                  total_housing_units: totalHousingUnits,
-                  median_age: medianAge,
-                  owner_occupied_pct: totalOccupied && ownerOccupied
-                    ? Math.round((ownerOccupied / totalOccupied) * 100)
-                    : null,
-                }
-                sources.push('us_census')
-
-                // Infer neighborhood type from population density + housing data
-                if (population && totalHousingUnits) {
-                  // Rough: census tracts are ~1-8 sq mi
-                  const density = population // per tract (rough proxy)
-                  if (density > 8000) neighborhoodType = 'urban'
-                  else if (density > 3000) neighborhoodType = 'suburban'
-                  else if (density > 500) neighborhoodType = 'exurban'
-                  else neighborhoodType = 'rural'
-                }
-
-                console.log('[property-lookup] Census data: pop', population, 'income', medianIncome, 'value', medianHomeValue)
-              }
-            }
-          }
-        }
-        apiTimings.push({ api: 'us_census', ms: Math.round(performance.now() - t6), status: 200, cost: 0 })
-      } catch (censusErr) {
-        console.warn('[property-lookup] Census data fetch failed:', censusErr)
-      }
-    }
-
-    // Update property_features with census/neighborhood data
+    // Update property_features with census/neighborhood data (non-blocking)
     if (Object.keys(censusData).length > 0 || neighborhoodType) {
-      await supabase
+      supabase
         .from('property_features')
         .update({
           neighborhood_type: neighborhoodType,
           census_data: censusData,
         })
         .eq('scan_id', scanId)
-    }
-
-    // ========================================================================
-    // STEP 7d4: NWS WEATHER ALERTS (FREE — current weather alerts for area)
-    // ========================================================================
-    let activeAlerts: Array<{ event: string; severity: string; headline: string; expires: string }> = []
-    if (lat && lng) {
-      try {
-        const nwsRes = await fetch(
-          `https://api.weather.gov/alerts/active?point=${lat},${lng}&status=actual`,
-          { headers: { 'User-Agent': 'Zafto-PropertyIntelligence/1.0 (recon)', Accept: 'application/geo+json' } }
-        )
-        if (nwsRes.ok) {
-          const nwsData = await nwsRes.json()
-          const features = nwsData?.features || []
-          activeAlerts = features.slice(0, 5).map((f: Record<string, Record<string, string>>) => ({
-            event: f.properties?.event || 'Unknown',
-            severity: f.properties?.severity || 'Unknown',
-            headline: f.properties?.headline || '',
-            expires: f.properties?.expires || '',
-          }))
-          if (activeAlerts.length > 0) {
-            sources.push('nws_alerts')
-            console.log('[property-lookup] NWS alerts:', activeAlerts.length)
-          }
-        }
-        apiTimings.push({ api: 'nws_alerts', ms: 0, status: 200, cost: 0 })
-      } catch {
-        /* NWS is nice-to-have, not critical */
-      }
+        .then(() => console.log('[property-lookup] Census features updated'))
+        .catch((e: Error) => console.warn('[property-lookup] Census features update failed:', e))
     }
 
     // ========================================================================
@@ -1084,90 +1076,75 @@ serve(async (req) => {
       .substring(0, 100)
     const storageFolder = `recon/${companyId}/${normalizedFolderName}`
 
-    // Save satellite image from Mapbox to storage
+    // FIRE-AND-FORGET: Storage uploads run in background, don't block scan response
     const mapboxToken = Deno.env.get('NEXT_PUBLIC_MAPBOX_TOKEN') || Deno.env.get('MAPBOX_TOKEN')
+    const storagePromises: Promise<void>[] = []
+
+    // Save satellite image (fire-and-forget)
     if (mapboxToken && lat && lng) {
-      try {
-        const satUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},18,0/800x600@2x?access_token=${mapboxToken}`
-        const satRes = await fetch(satUrl)
-        if (satRes.ok) {
-          const satBlob = await satRes.arrayBuffer()
-          await supabase.storage
-            .from('recon-photos')
-            .upload(`${storageFolder}/satellite.jpg`, satBlob, {
-              contentType: 'image/jpeg',
-              upsert: true,
-            })
-          console.log('[property-lookup] Satellite image saved to storage')
-        }
-      } catch (satErr) {
-        console.warn('[property-lookup] Satellite image save failed:', satErr)
-      }
+      storagePromises.push((async () => {
+        try {
+          const satUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},18,0/800x600@2x?access_token=${mapboxToken}`
+          const satRes = await fetch(satUrl)
+          if (satRes.ok) {
+            const satBlob = await satRes.arrayBuffer()
+            await supabase.storage
+              .from('recon-photos')
+              .upload(`${storageFolder}/satellite.jpg`, satBlob, { contentType: 'image/jpeg', upsert: true })
+            console.log('[property-lookup] Satellite image saved')
+          }
+        } catch (e) { console.warn('[property-lookup] Satellite save failed:', e) }
+      })())
     }
 
-    // Save Street View image to storage
+    // Save Street View image (fire-and-forget)
     if (streetViewUrl) {
-      try {
-        const svRes = await fetch(streetViewUrl)
-        if (svRes.ok) {
-          const svBlob = await svRes.arrayBuffer()
-          await supabase.storage
-            .from('recon-photos')
-            .upload(`${storageFolder}/street_view.jpg`, svBlob, {
-              contentType: 'image/jpeg',
-              upsert: true,
-            })
-          console.log('[property-lookup] Street View image saved to storage')
-        }
-      } catch (svErr) {
-        console.warn('[property-lookup] Street View image save failed:', svErr)
-      }
+      storagePromises.push((async () => {
+        try {
+          const svRes = await fetch(streetViewUrl)
+          if (svRes.ok) {
+            const svBlob = await svRes.arrayBuffer()
+            await supabase.storage
+              .from('recon-photos')
+              .upload(`${storageFolder}/street_view.jpg`, svBlob, { contentType: 'image/jpeg', upsert: true })
+            console.log('[property-lookup] Street View image saved')
+          }
+        } catch (e) { console.warn('[property-lookup] Street View save failed:', e) }
+      })())
     }
 
-    // Save recon report as JSON in storage
+    // Save recon report JSON (fire-and-forget)
     const reconReport = {
       generated_at: new Date().toISOString(),
-      scan_id: scanId,
-      address,
+      scan_id: scanId, address,
       coordinates: { lat, lng },
-      city: geocodeCity,
-      state: geocodeState,
-      zip: geocodeZip,
-      elevation_ft: elevationFt,
-      flood_zone: floodZone,
-      flood_risk: floodRisk,
-      property_type: propertyType,
-      neighborhood_type: neighborhoodType,
-      census: censusData,
-      external_links: externalLinks,
-      active_weather_alerts: activeAlerts,
-      street_view_url: streetViewUrl,
+      city: geocodeCity, state: geocodeState, zip: geocodeZip,
+      elevation_ft: elevationFt, flood_zone: floodZone, flood_risk: floodRisk,
+      property_type: propertyType, neighborhood_type: neighborhoodType,
+      census: censusData, external_links: externalLinks,
+      active_weather_alerts: activeAlerts, street_view_url: streetViewUrl,
       sources,
       structures: structures.map(s => ({
-        type: s.structure_type,
-        label: s.label,
-        footprint_sqft: s.footprint_sqft,
-        stories: s.estimated_stories,
-        roof_area_sqft: s.estimated_roof_area_sqft,
-        wall_area_sqft: s.estimated_wall_area_sqft,
+        type: s.structure_type, label: s.label,
+        footprint_sqft: s.footprint_sqft, stories: s.estimated_stories,
+        roof_area_sqft: s.estimated_roof_area_sqft, wall_area_sqft: s.estimated_wall_area_sqft,
       })),
       roof: roofMeasurementId ? {
         total_area_sqft: Math.round(totalRoofAreaSqft * 100) / 100,
         facet_count: solarData?.solarPotential?.roofSegmentStats?.length || 0,
       } : null,
     }
+    storagePromises.push((async () => {
+      try {
+        await supabase.storage
+          .from('recon-photos')
+          .upload(`${storageFolder}/recon_report.json`, JSON.stringify(reconReport, null, 2), { contentType: 'application/json', upsert: true })
+        console.log('[property-lookup] Recon report saved')
+      } catch (e) { console.warn('[property-lookup] Recon report save failed:', e) }
+    })())
 
-    try {
-      await supabase.storage
-        .from('recon-photos')
-        .upload(`${storageFolder}/recon_report.json`, JSON.stringify(reconReport, null, 2), {
-          contentType: 'application/json',
-          upsert: true,
-        })
-      console.log('[property-lookup] Recon report saved to storage')
-    } catch (reportErr) {
-      console.warn('[property-lookup] Recon report save failed:', reportErr)
-    }
+    // Don't await storage — let them complete in background
+    Promise.allSettled(storagePromises).then(() => console.log('[property-lookup] All storage uploads done'))
 
     // ========================================================================
     // STEP 8: CONFIDENCE SCORING
