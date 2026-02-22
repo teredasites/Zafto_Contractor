@@ -31,8 +31,12 @@ import {
   MoreHorizontal,
   FolderOpen,
   Sparkles,
-  Zap,
   Activity,
+  Trash2,
+  Copy,
+  Link,
+  Pencil,
+  MousePointer,
 } from 'lucide-react';
 import type Konva from 'konva';
 import {
@@ -62,9 +66,13 @@ import type {
   SitePlanTool,
   SiteSymbolType,
 } from '@/lib/sketch-engine/types';
-import { UndoRedoManager } from '@/lib/sketch-engine/commands';
+import {
+  UndoRedoManager,
+  RemoveAnyElementCommand,
+} from '@/lib/sketch-engine/commands';
 import { formatDate } from '@/lib/utils';
 import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
+import type { ContextMenuEvent } from '@/components/sketch-editor/SketchCanvas';
 
 // Dynamic import for Konva (SSR incompatible)
 const SketchCanvas = dynamic(
@@ -211,9 +219,11 @@ function ListView({
   onOpenEditor: (planId: string) => void;
 }) {
   const { plans, loading, error, refetch } = useFloorPlanList();
-  const { createPlan } = useFloorPlan(null);
+  const { createPlan, deletePlan, duplicatePlan } = useFloorPlan(null);
   const [creating, setCreating] = useState(false);
   const [showCapabilities, setShowCapabilities] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
   const handleCreate = async () => {
     setCreating(true);
@@ -224,6 +234,22 @@ function ListView({
       }
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const success = await deletePlan(id);
+    if (success) {
+      setDeleteConfirmId(null);
+      refetch();
+    }
+  };
+
+  const handleDuplicate = async (id: string) => {
+    setMenuOpenId(null);
+    const newId = await duplicatePlan(id);
+    if (newId) {
+      refetch();
     }
   };
 
@@ -403,6 +429,11 @@ function ListView({
                 key={plan.id}
                 plan={plan}
                 onOpen={() => onOpenEditor(plan.id)}
+                menuOpen={menuOpenId === plan.id}
+                onMenuToggle={() => setMenuOpenId(menuOpenId === plan.id ? null : plan.id)}
+                onMenuClose={() => setMenuOpenId(null)}
+                onDelete={() => setDeleteConfirmId(plan.id)}
+                onDuplicate={() => handleDuplicate(plan.id)}
               />
             ))}
 
@@ -464,6 +495,40 @@ function ListView({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#1a1a2e] border border-[#2a2a4a] rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                <Trash2 size={18} className="text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">Delete Floor Plan</h3>
+                <p className="text-xs text-zinc-400">This action cannot be undone.</p>
+              </div>
+            </div>
+            <p className="text-sm text-zinc-300 mb-6">
+              Are you sure you want to delete &ldquo;{plans.find(p => p.id === deleteConfirmId)?.name || 'this plan'}&rdquo;?
+            </p>
+            <div className="flex items-center gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmId)}
+                className="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-500 rounded-lg transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -471,9 +536,19 @@ function ListView({
 function PlanCard({
   plan,
   onOpen,
+  menuOpen,
+  onMenuToggle,
+  onMenuClose,
+  onDelete,
+  onDuplicate,
 }: {
   plan: FloorPlanListItem;
   onOpen: () => void;
+  menuOpen: boolean;
+  onMenuToggle: () => void;
+  onMenuClose: () => void;
+  onDelete: () => void;
+  onDuplicate: () => void;
 }) {
   const status = statusConfig[plan.status] || statusConfig.draft;
 
@@ -524,12 +599,43 @@ function PlanCard({
           <h3 className="text-sm font-semibold text-zinc-100 truncate group-hover:text-emerald-300 transition-colors">
             {plan.name}
           </h3>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="p-1 rounded-md text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
-          >
-            <MoreHorizontal size={14} />
-          </button>
+          <div className="relative flex-shrink-0">
+            <button
+              onClick={(e) => { e.stopPropagation(); onMenuToggle(); }}
+              className="p-1 rounded-md text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors opacity-0 group-hover:opacity-100"
+            >
+              <MoreHorizontal size={14} />
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); onMenuClose(); }} />
+                <div className="absolute right-0 top-full mt-1 z-50 w-40 bg-[#1a1a2e] border border-[#2a2a4a] rounded-lg shadow-2xl py-1 overflow-hidden">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onMenuClose(); onOpen(); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-white/[0.06] transition-colors"
+                  >
+                    <Pencil size={12} />
+                    Open Editor
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-white/[0.06] transition-colors"
+                  >
+                    <Copy size={12} />
+                    Duplicate
+                  </button>
+                  <div className="mx-2 my-1 h-px bg-[#2a2a4a]" />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onMenuClose(); onDelete(); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                  >
+                    <Trash2 size={12} />
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3 mt-2 text-[11px] text-zinc-500">
@@ -541,6 +647,12 @@ function PlanCard({
             <Grid3X3 size={10} />
             {plan.roomCount} rooms
           </span>
+          {plan.jobId && (
+            <span className="flex items-center gap-1 text-emerald-500/70">
+              <Link size={10} />
+              Linked
+            </span>
+          )}
           <span className="flex items-center gap-1 ml-auto">
             <Clock size={10} />
             {formatDate(plan.updatedAt)}
@@ -605,6 +717,7 @@ function EditorView({
   const [showSiteLayers, setShowSiteLayers] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [reconScanId, setReconScanId] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<ContextMenuEvent | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const undoManagerRef = useRef(new UndoRedoManager());
@@ -956,6 +1069,91 @@ function EditorView({
     },
     [handleSitePlanChange],
   );
+
+  // ── Context Menu Handlers ──
+  const handleContextMenu = useCallback((event: ContextMenuEvent) => {
+    setContextMenu(event);
+  }, []);
+
+  const handleContextMenuClose = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  const handleContextMenuDelete = useCallback(() => {
+    if (!contextMenu?.elementId || !contextMenu?.elementType) return;
+    const cmd = new RemoveAnyElementCommand(contextMenu.elementId);
+    const result = undoManagerRef.current.execute(cmd, planData);
+    handlePlanDataChange(result);
+    setSelection(createEmptySelection());
+    setContextMenu(null);
+  }, [contextMenu, planData, handlePlanDataChange]);
+
+  const handleContextMenuDuplicate = useCallback(() => {
+    if (!contextMenu?.elementId || !contextMenu?.elementType) return;
+    const id = contextMenu.elementId;
+    const offset = 20;
+    let updated = { ...planData };
+
+    if (contextMenu.elementType === 'wall') {
+      const wall = planData.walls.find(w => w.id === id);
+      if (wall) {
+        const newWall = { ...wall, id: `wall_${Date.now()}`, start: { x: wall.start.x + offset, y: wall.start.y + offset }, end: { x: wall.end.x + offset, y: wall.end.y + offset } };
+        updated = { ...updated, walls: [...updated.walls, newWall] };
+      }
+    } else if (contextMenu.elementType === 'door') {
+      const door = planData.doors.find(d => d.id === id);
+      if (door) {
+        // position is a 0-1 parametric number along the wall — offset slightly
+        const newDoor = { ...door, id: `door_${Date.now()}`, position: Math.min(door.position + 0.1, 0.95) };
+        updated = { ...updated, doors: [...updated.doors, newDoor] };
+      }
+    } else if (contextMenu.elementType === 'window') {
+      const win = planData.windows.find(w => w.id === id);
+      if (win) {
+        const newWin = { ...win, id: `window_${Date.now()}`, position: Math.min(win.position + 0.1, 0.95) };
+        updated = { ...updated, windows: [...updated.windows, newWin] };
+      }
+    } else if (contextMenu.elementType === 'fixture') {
+      const fix = planData.fixtures?.find(f => f.id === id);
+      if (fix) {
+        const newFix = { ...fix, id: `fixture_${Date.now()}`, position: { x: fix.position.x + offset, y: fix.position.y + offset } };
+        updated = { ...updated, fixtures: [...(updated.fixtures || []), newFix] };
+      }
+    } else if (contextMenu.elementType === 'label') {
+      const label = planData.labels?.find(l => l.id === id);
+      if (label) {
+        const newLabel = { ...label, id: `label_${Date.now()}`, position: { x: label.position.x + offset, y: label.position.y + offset } };
+        updated = { ...updated, labels: [...(updated.labels || []), newLabel] };
+      }
+    }
+
+    handlePlanDataChange(updated);
+    setContextMenu(null);
+  }, [contextMenu, planData, handlePlanDataChange]);
+
+  const handleContextMenuSelect = useCallback(() => {
+    if (!contextMenu?.elementId) return;
+    setSelection({
+      ...createEmptySelection(),
+      selectedId: contextMenu.elementId,
+      selectedType: contextMenu.elementType,
+    });
+    setEditorState(prev => ({ ...prev, activeTool: 'select' }));
+    setContextMenu(null);
+  }, [contextMenu]);
+
+  // Close context menu on any click outside
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handleClick = () => setContextMenu(null);
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') setContextMenu(null); };
+    window.addEventListener('click', handleClick);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('click', handleClick);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [contextMenu]);
 
   if (loading) {
     return (
@@ -1315,6 +1513,7 @@ function EditorView({
                     width={canvasSize.width}
                     height={canvasSize.height}
                     externalStageRef={stageRef}
+                    onContextMenu={handleContextMenu}
                   />
                   </>
                 )}
@@ -1444,6 +1643,101 @@ function EditorView({
           onSelect={handleApplyTemplate}
           onClose={() => setShowTemplatePicker(false)}
         />
+      )}
+
+      {/* Right-Click Context Menu */}
+      {contextMenu && (
+        <div
+          className="fixed z-[10001] min-w-[180px] bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl py-1 text-sm"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {contextMenu.elementId ? (
+            <>
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+                {contextMenu.elementType}
+              </div>
+              <button
+                onClick={handleContextMenuSelect}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <MousePointer className="h-3.5 w-3.5" />
+                Select
+              </button>
+              <button
+                onClick={handleContextMenuDuplicate}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                Duplicate
+              </button>
+              <div className="border-t border-zinc-700 my-1" />
+              <button
+                onClick={handleContextMenuDelete}
+                className="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-colors"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+                Canvas
+              </div>
+              <button
+                onClick={() => { handleToolChange('wall' as SketchTool); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <PenTool className="h-3.5 w-3.5" />
+                Draw Wall Here
+              </button>
+              <button
+                onClick={() => { handleToolChange('door' as SketchTool); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Maximize2 className="h-3.5 w-3.5" />
+                Place Door
+              </button>
+              <button
+                onClick={() => { handleToolChange('window' as SketchTool); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Grid3X3 className="h-3.5 w-3.5" />
+                Place Window
+              </button>
+              <button
+                onClick={() => { handleToolChange('fixture' as SketchTool); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Box className="h-3.5 w-3.5" />
+                Place Fixture
+              </button>
+              <button
+                onClick={() => { handleToolChange('label' as SketchTool); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Add Label
+              </button>
+              <div className="border-t border-zinc-700 my-1" />
+              <button
+                onClick={() => { setEditorState(prev => ({ ...prev, showGrid: !prev.showGrid })); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Grid3X3 className="h-3.5 w-3.5" />
+                {editorState.showGrid ? 'Hide Grid' : 'Show Grid'}
+              </button>
+              <button
+                onClick={() => { setShowLayers(prev => !prev); setContextMenu(null); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+              >
+                <Layers className="h-3.5 w-3.5" />
+                {showLayers ? 'Hide Layers' : 'Show Layers'}
+              </button>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

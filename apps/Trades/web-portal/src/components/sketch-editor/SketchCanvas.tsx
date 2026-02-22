@@ -53,6 +53,15 @@ import {
   RemoveMultipleCommand,
 } from '@/lib/sketch-engine/commands';
 
+export interface ContextMenuEvent {
+  x: number; // screen x
+  y: number; // screen y
+  canvasX: number; // canvas x
+  canvasY: number; // canvas y
+  elementType: string | null; // 'wall' | 'door' | 'window' | 'fixture' | 'label' | 'dimension' | 'tradeElement' | null
+  elementId: string | null;
+}
+
 interface SketchCanvasProps {
   planData: FloorPlanData;
   editorState: EditorState;
@@ -64,6 +73,7 @@ interface SketchCanvasProps {
   width: number;
   height: number;
   externalStageRef?: React.RefObject<Konva.Stage | null>;
+  onContextMenu?: (event: ContextMenuEvent) => void;
 }
 
 const CANVAS_SIZE = 4000;
@@ -137,6 +147,7 @@ export default function SketchCanvas({
   onPlanDataChange,
   onSelectionChange,
   onEditorStateChange,
+  onContextMenu,
   undoManager,
   width,
   height,
@@ -509,6 +520,69 @@ export default function SketchCanvas({
       onEditorStateChange({ zoom: clampedScale, panOffset: newPos });
     },
     [onEditorStateChange],
+  );
+
+  // =========================================================================
+  // RIGHT-CLICK CONTEXT MENU
+  // =========================================================================
+
+  const handleContextMenu = useCallback(
+    (e: Konva.KonvaEventObject<PointerEvent>) => {
+      e.evt.preventDefault();
+      if (!onContextMenu) return;
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pointer = stage.getPointerPosition();
+      if (!pointer) return;
+
+      // Get canvas coordinates
+      const scale = stage.scaleX();
+      const pos = stage.position();
+      const canvasX = (pointer.x - pos.x) / scale;
+      const canvasY = (pointer.y - pos.y) / scale;
+
+      // Detect what element was right-clicked by checking selection or hit-test
+      let elementType: string | null = null;
+      let elementId: string | null = null;
+
+      // Check if user right-clicked on a selected element
+      if (selection.selectedId) {
+        const selId = selection.selectedId;
+        if (planData.walls.find(w => w.id === selId)) { elementType = 'wall'; elementId = selId; }
+        else if (planData.arcWalls?.find(a => a.id === selId)) { elementType = 'arcWall'; elementId = selId; }
+        else if (planData.doors.find(d => d.id === selId)) { elementType = 'door'; elementId = selId; }
+        else if (planData.windows.find(w => w.id === selId)) { elementType = 'window'; elementId = selId; }
+        else if (planData.fixtures?.find(f => f.id === selId)) { elementType = 'fixture'; elementId = selId; }
+        else if (planData.labels?.find(l => l.id === selId)) { elementType = 'label'; elementId = selId; }
+        else if (planData.dimensions?.find(d => d.id === selId)) { elementType = 'dimension'; elementId = selId; }
+      }
+
+      // If no selection, try hit-testing nearby walls
+      if (!elementId) {
+        const hitWall = findNearestWall({ x: canvasX, y: canvasY }, planData.walls, 12);
+        if (hitWall) {
+          elementType = 'wall';
+          elementId = hitWall.id;
+          const sel: SelectionState = {
+            selectedId: hitWall.id,
+            selectedType: 'wall',
+            multiSelectedIds: new Set(),
+            multiSelectedTypes: new Map(),
+          };
+          onSelectionChange(sel);
+        }
+      }
+
+      onContextMenu({
+        x: e.evt.clientX,
+        y: e.evt.clientY,
+        canvasX,
+        canvasY,
+        elementType,
+        elementId,
+      });
+    },
+    [onContextMenu, planData, selection, onSelectionChange],
   );
 
   // =========================================================================
@@ -901,6 +975,7 @@ export default function SketchCanvas({
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onWheel={handleWheel}
+      onContextMenu={handleContextMenu}
       onDragMove={(e) => {
         const stage = e.target as unknown as Konva.Stage;
         if (stage.x !== undefined) {
