@@ -429,6 +429,11 @@ export default function EstimateEditorPage() {
         areaLineItems={areaLineItems}
         totals={totals}
         onBack={() => setShowPreview(false)}
+        currentTier={selectedTier}
+        gbbComparison={gbbComparison}
+        laborRates={laborRates}
+        catalogMaterials={catalogMaterials}
+        changeOrderTotal={changeOrders.reduce((s, co) => s + (co.status === 'approved' ? co.totalChange : 0), 0)}
       />
     );
   }
@@ -1624,6 +1629,7 @@ function TotalsPanel({
 
 function EstimatePreview({
   estimate, areas, lineItems, areaLineItems, totals, onBack,
+  currentTier, gbbComparison, laborRates, catalogMaterials, changeOrderTotal,
 }: {
   estimate: NonNullable<ReturnType<typeof useEstimate>['estimate']>;
   areas: EstimateArea[];
@@ -1631,8 +1637,13 @@ function EstimatePreview({
   areaLineItems: Map<string | null, EstimateLineItem[]>;
   totals: { subtotal: number; overhead: number; profit: number; tax: number; grand: number };
   onBack: () => void;
+  currentTier?: string;
+  gbbComparison?: { good: { grand: number; items: unknown[]; warrantyRange: string | null }; better: { grand: number; items: unknown[]; warrantyRange: string | null }; best: { grand: number; items: unknown[]; warrantyRange: string | null } } | null;
+  laborRates?: LaborRateResult[];
+  catalogMaterials?: Array<{ description: string | null; photoUrl: string | null; warrantyYears: number | null; brand: string | null; tier: string | null }>;
+  changeOrderTotal?: number;
 }) {
-  const handlePdf = async (template: 'standard' | 'detailed' | 'summary') => {
+  const handlePdf = async (template: 'standard' | 'detailed' | 'summary' | 'proposal') => {
     const supabase = getSupabase();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
@@ -1660,7 +1671,7 @@ function EstimatePreview({
         </button>
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider mr-1">Download PDF</span>
-          {(['standard', 'detailed', 'summary'] as const).map((t) => (
+          {(['standard', 'detailed', 'summary', 'proposal'] as const).map((t) => (
             <button key={t} onClick={() => handlePdf(t)}
               className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 capitalize">
               <Download className="w-3 h-3" />
@@ -1773,6 +1784,106 @@ function EstimatePreview({
         )}
       </div>
 
+      {/* Change Orders */}
+      {(changeOrderTotal ?? 0) > 0 && (
+        <div className="mt-6 border border-amber-500/20 bg-amber-500/5 rounded-lg p-4">
+          <h3 className="text-xs uppercase tracking-wider text-amber-400 mb-2">Approved Change Orders</h3>
+          <div className="flex justify-between text-sm">
+            <span className="text-zinc-400">Change order total</span>
+            <span className="text-amber-300 font-medium">${fmtCurrency(changeOrderTotal ?? 0)}</span>
+          </div>
+          <div className="flex justify-between text-sm font-bold mt-1 pt-1 border-t border-amber-500/20">
+            <span className="text-zinc-200">Adjusted Grand Total</span>
+            <span className="text-zinc-100">${fmtCurrency(totals.grand + (changeOrderTotal ?? 0))}</span>
+          </div>
+        </div>
+      )}
+
+      {/* G/B/B Tier Comparison */}
+      {gbbComparison && gbbComparison.good.items.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Material Tier Options</h3>
+          <div className="grid grid-cols-3 gap-3">
+            {([
+              { key: 'good' as const, label: 'Good', desc: 'Standard', color: 'blue' },
+              { key: 'better' as const, label: 'Better', desc: 'Premium', color: 'emerald' },
+              { key: 'best' as const, label: 'Best', desc: 'Elite', color: 'amber' },
+            ]).map(({ key, label, desc, color }) => {
+              const tier = gbbComparison[key];
+              const isActive = currentTier === (key === 'good' ? 'standard' : key === 'better' ? 'premium' : 'elite');
+              return (
+                <div key={key} className={`border rounded-lg p-3 ${isActive ? `border-${color}-500/50 bg-${color}-500/5` : 'border-zinc-700/50 bg-zinc-800/30'}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-xs font-bold text-${color}-400`}>{label}</span>
+                    <span className="text-[10px] text-zinc-500">{desc}</span>
+                    {isActive && <span className="text-[9px] bg-zinc-700 text-zinc-300 px-1.5 py-0.5 rounded">Current</span>}
+                  </div>
+                  <div className="text-lg font-bold text-zinc-100">${fmtCurrency(tier.grand)}</div>
+                  <div className="text-[10px] text-zinc-500 mt-1">{tier.items.length} items priced</div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-zinc-600 mt-2">
+            Price range: ${fmtCurrency(gbbComparison.good.grand)} &mdash; ${fmtCurrency(gbbComparison.best.grand)}
+          </p>
+        </div>
+      )}
+
+      {/* Labor Rate Summary */}
+      {laborRates && laborRates.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Labor Rate Summary</h3>
+          <div className="border border-zinc-700/50 rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-zinc-500 bg-zinc-800/50">
+                  <th className="text-left py-2 px-3 font-medium">Trade</th>
+                  <th className="text-right py-2 px-3 font-medium">Base Rate</th>
+                  <th className="text-right py-2 px-3 font-medium">Burden</th>
+                  <th className="text-right py-2 px-3 font-medium">Burdened Rate</th>
+                  <th className="text-left py-2 px-3 font-medium">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {laborRates.map((rate) => (
+                  <tr key={rate.trade} className="border-t border-zinc-800/50">
+                    <td className="py-1.5 px-3 text-zinc-200 capitalize">{rate.trade}</td>
+                    <td className="py-1.5 px-3 text-right text-zinc-300">${fmtCurrency(rate.baseHourlyRate)}/hr</td>
+                    <td className="py-1.5 px-3 text-right text-zinc-500">{(rate.burdenMultiplier * 100 - 100).toFixed(1)}%</td>
+                    <td className="py-1.5 px-3 text-right text-zinc-200 font-medium">${fmtCurrency(rate.burdenedRate)}/hr</td>
+                    <td className="py-1.5 px-3">
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${rate.source === 'company' ? 'bg-blue-500/10 text-blue-400' : rate.source === 'msa' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-zinc-700 text-zinc-400'}`}>
+                        {rate.source === 'msa' ? rate.regionName || 'Regional' : rate.source === 'company' ? 'Company' : 'National'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[10px] text-zinc-600 mt-1">Rates based on BLS Occupational Employment & Wage Statistics. Burden includes FICA, FUTA, SUTA, workers comp, GL insurance, health, and benefits.</p>
+        </div>
+      )}
+
+      {/* Warranty Summary */}
+      {catalogMaterials && catalogMaterials.some(m => m.warrantyYears) && (
+        <div className="mt-8">
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Warranty Coverage</h3>
+          <div className="space-y-1">
+            {catalogMaterials.filter(m => m.warrantyYears).slice(0, 10).map((mat, i) => (
+              <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-zinc-800/50">
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-300">{mat.description}</span>
+                  {mat.brand && <span className="text-[10px] text-zinc-500">({mat.brand})</span>}
+                </div>
+                <span className="text-emerald-400 font-medium">{mat.warrantyYears} yr</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Notes */}
       {estimate.notes && (
         <div className="mt-8">
@@ -1780,6 +1891,42 @@ function EstimatePreview({
           <p className="text-sm text-zinc-300 whitespace-pre-wrap">{estimate.notes}</p>
         </div>
       )}
+
+      {/* Terms & Conditions */}
+      <div className="mt-8 border-t border-zinc-700 pt-6">
+        <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Terms & Conditions</h3>
+        <div className="text-[11px] text-zinc-500 space-y-1.5 leading-relaxed">
+          <p>1. This estimate is valid for 30 days from the date of issue unless otherwise noted.</p>
+          <p>2. Payment terms: Due upon completion unless otherwise agreed in writing.</p>
+          <p>3. Any alterations or deviations from the above specifications involving extra costs will be executed only upon written change order.</p>
+          <p>4. All materials are guaranteed to be as specified. All work shall be completed in a workmanlike manner.</p>
+          <p>5. Owner agrees to carry fire and extended coverage insurance. Contractor liability is limited to the value of work performed.</p>
+          <p>6. Prices are based on current material costs and are subject to change if project start is delayed beyond the validity period.</p>
+        </div>
+      </div>
+
+      {/* Signature Lines */}
+      <div className="mt-10 grid grid-cols-2 gap-12">
+        <div>
+          <div className="border-t border-zinc-600 pt-2 mt-12">
+            <p className="text-xs text-zinc-500">Contractor Signature</p>
+            <p className="text-xs text-zinc-400 mt-1">Date: _______________</p>
+          </div>
+        </div>
+        <div>
+          <div className="border-t border-zinc-600 pt-2 mt-12">
+            <p className="text-xs text-zinc-500">Customer Acceptance</p>
+            <p className="text-xs text-zinc-400 mt-1">Date: _______________</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 pt-4 border-t border-zinc-800 text-center">
+        <p className="text-[10px] text-zinc-600">
+          Generated via ZAFTO &middot; {new Date().toLocaleDateString()} &middot; {estimate.estimateNumber} &middot; {lineItems.length} line items
+        </p>
+      </div>
     </div>
   );
 }

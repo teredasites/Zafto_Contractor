@@ -113,6 +113,21 @@ serve(async (req) => {
       }
     }
 
+    // Fetch material catalog + change orders (for proposal template)
+    let catalogItems: Array<Record<string, unknown>> = []
+    let changeOrders: Array<Record<string, unknown>> = []
+
+    if (template === 'proposal' || template === 'detailed') {
+      const [catalogRes, coRes] = await Promise.all([
+        supabase.from('estimate_material_catalog').select('*').eq('estimate_id', estimateId).is('deleted_at', null),
+        supabase.from('estimate_change_orders').select('*').eq('estimate_id', estimateId).eq('status', 'approved').is('deleted_at', null),
+      ])
+      catalogItems = catalogRes.data || []
+      changeOrders = coRes.data || []
+    }
+
+    const changeOrderTotal = changeOrders.reduce((s: number, co: Record<string, unknown>) => s + Number(co.amount || 0), 0)
+
     // Group line items by area
     const areaMap = new Map<string, Record<string, unknown>>()
     for (const area of areas) {
@@ -292,6 +307,94 @@ serve(async (req) => {
 </div>`
     }
 
+    // ── Build proposal-specific sections ──
+    let changeOrderHtml = ''
+    if (changeOrderTotal > 0) {
+      changeOrderHtml = `
+<div class="change-order-section">
+  <div class="summary-row"><span class="label">Approved Change Orders</span><span class="value">$${fmt(changeOrderTotal)}</span></div>
+  <div class="summary-divider"></div>
+  <div class="summary-row" style="font-weight:700;"><span>Adjusted Grand Total</span><span>$${fmt(grandTotal + changeOrderTotal)}</span></div>
+</div>`
+    }
+
+    // G/B/B tier comparison (proposal template only)
+    let gbbHtml = ''
+    if (template === 'proposal' && catalogItems.length > 0) {
+      // Build tier groupings from catalog
+      const tierGroups: Record<string, { count: number; total: number }> = { standard: { count: 0, total: 0 }, premium: { count: 0, total: 0 }, elite: { count: 0, total: 0 } }
+      for (const item of catalogItems) {
+        const t = String(item.tier || 'standard')
+        if (tierGroups[t]) {
+          tierGroups[t].count++
+          tierGroups[t].total += Number(item.unit_price || 0)
+        }
+      }
+      const hasTierData = Object.values(tierGroups).some(g => g.count > 0)
+      if (hasTierData) {
+        gbbHtml = `
+<div class="gbb-section">
+  <h3 class="section-title">Material Tier Options</h3>
+  <div class="gbb-grid">
+    <div class="gbb-col">
+      <div class="gbb-label" style="color:#3b82f6;">Good</div>
+      <div class="gbb-desc">Standard materials</div>
+      <div class="gbb-count">${tierGroups.standard.count} items</div>
+    </div>
+    <div class="gbb-col">
+      <div class="gbb-label" style="color:#10b981;">Better</div>
+      <div class="gbb-desc">Premium materials</div>
+      <div class="gbb-count">${tierGroups.premium.count} items</div>
+    </div>
+    <div class="gbb-col">
+      <div class="gbb-label" style="color:#f59e0b;">Best</div>
+      <div class="gbb-desc">Elite materials</div>
+      <div class="gbb-count">${tierGroups.elite.count} items</div>
+    </div>
+  </div>
+</div>`
+      }
+    }
+
+    // Warranty summary (proposal template)
+    let warrantyHtml = ''
+    if (template === 'proposal') {
+      const withWarranty = catalogItems.filter((m: Record<string, unknown>) => m.warranty_years && Number(m.warranty_years) > 0)
+      if (withWarranty.length > 0) {
+        const minW = Math.min(...withWarranty.map((m: Record<string, unknown>) => Number(m.warranty_years)))
+        const maxW = Math.max(...withWarranty.map((m: Record<string, unknown>) => Number(m.warranty_years)))
+        warrantyHtml = `
+<div class="warranty-section">
+  <h3 class="section-title">Warranty Coverage</h3>
+  <p class="warranty-range">${withWarranty.length} materials with manufacturer warranty: ${minW === maxW ? `${minW} years` : `${minW}–${maxW} years`}</p>
+  <div class="warranty-list">
+    ${withWarranty.slice(0, 8).map((m: Record<string, unknown>) => `
+    <div class="warranty-item">
+      <span>${escapeHtml(String(m.description || ''))}${m.brand ? ` (${escapeHtml(String(m.brand))})` : ''}</span>
+      <span class="warranty-years">${m.warranty_years} yr</span>
+    </div>`).join('')}
+  </div>
+</div>`
+      }
+    }
+
+    // Terms & conditions (proposal template)
+    let termsHtml = ''
+    if (template === 'proposal') {
+      termsHtml = `
+<div class="terms-section">
+  <h3 class="section-title">Terms &amp; Conditions</h3>
+  <ol class="terms-list">
+    <li>This estimate is valid for 30 days from the date of issue unless otherwise noted.</li>
+    <li>Payment terms: Due upon completion unless otherwise agreed in writing.</li>
+    <li>Any alterations or deviations from the above specifications involving extra costs will be executed only upon written change order.</li>
+    <li>All materials are guaranteed to be as specified. All work shall be completed in a workmanlike manner.</li>
+    <li>Owner agrees to carry fire and extended coverage insurance. Contractor liability is limited to the value of work performed.</li>
+    <li>Prices are based on current material costs and are subject to change if project start is delayed beyond the validity period.</li>
+  </ol>
+</div>`
+    }
+
     // ── Final HTML ──
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -362,6 +465,23 @@ serve(async (req) => {
   .sig-name { font-size: 9pt; font-weight: 500; color: #18181b; }
 
   .footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid #e4e4e7; font-size: 7.5pt; color: #a1a1aa; text-align: center; }
+
+  .change-order-section { margin-top: 12px; padding: 10px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 4px; }
+  .section-title { font-size: 9pt; font-weight: 600; color: #18181b; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e4e4e7; }
+  .gbb-section { margin-top: 20px; }
+  .gbb-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .gbb-col { border: 1px solid #e4e4e7; border-radius: 4px; padding: 10px; text-align: center; }
+  .gbb-label { font-size: 10pt; font-weight: 700; }
+  .gbb-desc { font-size: 7.5pt; color: #71717a; margin-top: 2px; }
+  .gbb-count { font-size: 8pt; color: #52525b; margin-top: 4px; }
+  .warranty-section { margin-top: 20px; }
+  .warranty-range { font-size: 8.5pt; color: #52525b; margin-bottom: 6px; }
+  .warranty-list { }
+  .warranty-item { display: flex; justify-content: space-between; font-size: 8pt; padding: 3px 0; border-bottom: 1px solid #f4f4f5; }
+  .warranty-years { color: #10b981; font-weight: 600; }
+  .terms-section { margin-top: 20px; page-break-inside: avoid; }
+  .terms-list { padding-left: 16px; font-size: 8pt; color: #52525b; line-height: 1.6; }
+  .terms-list li { margin-bottom: 3px; }
 
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -434,12 +554,24 @@ ${lineItemsHtml}
   </div>
 </div>
 
+<!-- Change Orders -->
+${changeOrderHtml}
+
+<!-- G/B/B Comparison -->
+${gbbHtml}
+
+<!-- Warranty -->
+${warrantyHtml}
+
 <!-- Notes -->
 ${estimate.notes ? `
 <div class="notes-section">
   <h4>Notes</h4>
   <p>${escapeHtml(estimate.notes)}</p>
 </div>` : ''}
+
+<!-- Terms -->
+${termsHtml}
 
 <!-- Signature Lines -->
 <div class="signature-section">
