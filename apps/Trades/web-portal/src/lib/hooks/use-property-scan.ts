@@ -30,6 +30,13 @@ export interface PropertyScanData {
   imagerySource: string | null;
   imageryAgeMonths: number | null;
   createdAt: string;
+  // Enhanced recon data
+  storageFolder: string | null;
+  streetViewUrl: string | null;
+  externalLinks: Record<string, string>;
+  propertyType: string | null;
+  floodZone: string | null;
+  floodRisk: string | null;
 }
 
 export interface RoofMeasurementData {
@@ -141,6 +148,13 @@ function mapScan(row: Record<string, unknown>): PropertyScanData {
     imagerySource: row.imagery_source as string | null,
     imageryAgeMonths: row.imagery_age_months != null ? Number(row.imagery_age_months) : null,
     createdAt: row.created_at as string,
+    // Enhanced recon data
+    storageFolder: row.storage_folder as string | null,
+    streetViewUrl: row.street_view_url as string | null,
+    externalLinks: (row.external_links as Record<string, string>) || {},
+    propertyType: row.property_type as string | null,
+    floodZone: row.flood_zone as string | null,
+    floodRisk: row.flood_risk as string | null,
   };
 }
 

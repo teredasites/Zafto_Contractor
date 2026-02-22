@@ -39,6 +39,8 @@ import {
   Map,
   PenTool,
   Building,
+  ExternalLink,
+  FolderOpen,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -109,14 +111,39 @@ const SOURCE_COLORS: Record<string, string> = {
   ms_footprints: '#3B82F6',
   attom: '#8B5CF6',
   regrid: '#EC4899',
+  nominatim: '#06B6D4',
+  census_geocoder: '#64748B',
+  google_streetview: '#DC2626',
+  fema_flood: '#0EA5E9',
 };
 
 const SOURCE_LABELS: Record<string, string> = {
   google_solar: 'Google Solar',
   usgs: 'USGS Elevation',
-  ms_footprints: 'MS Building Footprints',
+  ms_footprints: 'Building Footprints',
   attom: 'ATTOM Property',
   regrid: 'Regrid Parcels',
+  nominatim: 'OpenStreetMap',
+  census_geocoder: 'US Census',
+  google_streetview: 'Street View',
+  fema_flood: 'FEMA Flood',
+};
+
+const EXTERNAL_LINK_LABELS: Record<string, { label: string; color: string }> = {
+  zillow: { label: 'Zillow', color: '#006AFF' },
+  redfin: { label: 'Redfin', color: '#A02021' },
+  realtor: { label: 'Realtor.com', color: '#D92228' },
+  trulia: { label: 'Trulia', color: '#3BB87C' },
+  google_maps: { label: 'Google Maps', color: '#4285F4' },
+  fema_flood_map: { label: 'FEMA Flood Map', color: '#0EA5E9' },
+  county_assessor: { label: 'County Assessor', color: '#8B5CF6' },
+};
+
+const FLOOD_RISK_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  high: { label: 'High Risk', color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
+  moderate: { label: 'Moderate', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
+  low: { label: 'Low Risk', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
+  minimal: { label: 'Minimal', color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
 };
 
 // ============================================================================
@@ -252,7 +279,7 @@ export default function ReconDetailPage() {
   const [activeTab, setActiveTab] = useState<TabType>('roof');
   const [selectedTrade, setSelectedTrade] = useState<TradeType | null>(null);
   const [estimating, setEstimating] = useState(false);
-  const [imgView, setImgView] = useState<'satellite' | 'streets'>('satellite');
+  const [imgView, setImgView] = useState<'satellite' | 'streets' | 'streetview'>('satellite');
 
   const { scan, roof, facets, walls, tradeBids, loading, error, triggerTradeEstimate } = usePropertyScan(scanId, 'scan');
 
@@ -326,19 +353,27 @@ export default function ReconDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px]">
           {/* Satellite / Street imagery */}
           <div className="relative aspect-[2/1] lg:aspect-auto lg:min-h-[320px] bg-black/90 overflow-hidden">
-            {hasCoords && (imgView === 'satellite' ? satelliteStreetsUrl : streetMapUrl) ? (
-              <img
-                src={imgView === 'satellite' ? satelliteStreetsUrl! : streetMapUrl!}
-                alt={`${imgView === 'satellite' ? 'Satellite view' : 'Street map'} of ${scan.address}`}
-                className="absolute inset-0 w-full h-full object-cover"
-                loading="eager"
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/50">
-                <Map size={32} className="text-muted/30" />
-                <p className="text-xs text-muted">No coordinates available for imagery</p>
-              </div>
-            )}
+            {(() => {
+              const imgSrc = imgView === 'satellite' ? satelliteStreetsUrl
+                : imgView === 'streets' ? streetMapUrl
+                : scan.streetViewUrl;
+              const imgAlt = imgView === 'satellite' ? 'Satellite view'
+                : imgView === 'streets' ? 'Street map'
+                : 'Street view';
+              return hasCoords && imgSrc ? (
+                <img
+                  src={imgSrc}
+                  alt={`${imgAlt} of ${scan.address}`}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="eager"
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/50">
+                  <Map size={32} className="text-muted/30" />
+                  <p className="text-xs text-muted">{imgView === 'streetview' ? 'Street View not available' : 'No coordinates available for imagery'}</p>
+                </div>
+              );
+            })()}
 
             {/* View toggle */}
             {hasCoords && (
@@ -357,6 +392,15 @@ export default function ReconDetailPage() {
                   )}>
                   <Map size={10} className="inline mr-1" />Map
                 </button>
+                {scan.streetViewUrl && (
+                  <button
+                    onClick={() => setImgView('streetview')}
+                    className={cn('px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all',
+                      imgView === 'streetview' ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white/80'
+                    )}>
+                    <Home size={10} className="inline mr-1" />Street
+                  </button>
+                )}
               </div>
             )}
 
@@ -429,6 +473,23 @@ export default function ReconDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Flood zone badge */}
+            {scan.floodZone && (() => {
+              const fc = FLOOD_RISK_CONFIG[scan.floodRisk || 'low'] || FLOOD_RISK_CONFIG.low;
+              return (
+                <div className="mb-4">
+                  <p className="text-[9px] font-semibold text-muted uppercase tracking-wider mb-1.5">Flood Zone</p>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold"
+                      style={{ color: fc.color, backgroundColor: fc.bg }}>
+                      <Droplet size={10} />
+                      Zone {scan.floodZone} — {fc.label}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Divider */}
             <div className="border-t border-main my-2" />
@@ -506,6 +567,42 @@ export default function ReconDetailPage() {
           </div>
         ))}
       </div>
+
+      {/* ── EXTERNAL LINKS + STORAGE ───────────────────── */}
+      {Object.keys(scan.externalLinks).length > 0 && (
+        <div className="rounded-xl bg-card border border-main p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <ExternalLink size={13} className="text-accent" />
+              <h3 className="text-[13px] font-semibold text-main">Property Research Links</h3>
+            </div>
+            {scan.storageFolder && (
+              <span className="flex items-center gap-1.5 text-[10px] text-muted">
+                <FolderOpen size={10} />
+                {scan.storageFolder}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(scan.externalLinks).map(([key, url]) => {
+              const linkConfig = EXTERNAL_LINK_LABELS[key] || { label: key.replace(/_/g, ' '), color: '#6B7280' };
+              return (
+                <a
+                  key={key}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-main/50 text-[11px] font-medium text-muted hover:text-main hover:border-accent/30 transition-all group"
+                >
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: linkConfig.color }} />
+                  {linkConfig.label}
+                  <ExternalLink size={9} className="text-muted/50 group-hover:text-accent transition-colors" />
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── TAB BAR ────────────────────────────────────── */}
       <div className="flex gap-0.5 bg-card rounded-xl border border-main p-1">
