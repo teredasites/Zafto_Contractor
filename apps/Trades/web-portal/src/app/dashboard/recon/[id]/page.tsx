@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import {
   ArrowLeft,
   Satellite,
@@ -35,8 +36,13 @@ import {
   MapPin,
   Calendar,
   Database,
+  Map,
+  PenTool,
+  Building,
   type LucideIcon,
 } from 'lucide-react';
+
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 import { Button } from '@/components/ui/button';
 import { formatDate, cn } from '@/lib/utils';
 import {
@@ -51,6 +57,14 @@ import {
 import { useStormAssess } from '@/lib/hooks/use-storm-assess';
 
 type TabType = 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
+
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  complete: { label: 'Complete', color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
+  partial: { label: 'Partial', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
+  pending: { label: 'Pending', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
+  failed: { label: 'Failed', color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
+  cancelled: { label: 'Cancelled', color: '#6B7280', bg: 'rgba(107,114,128,0.1)' },
+};
 
 const TABS: { key: TabType; label: string; icon: LucideIcon; color: string }[] = [
   { key: 'roof', label: 'Roof', icon: Home, color: '#8B5CF6' },
@@ -213,6 +227,24 @@ function EmptyTab({ icon: Icon, title, description, action, onAction, loading }:
 // MAIN PAGE
 // ============================================================================
 
+// Generate Mapbox satellite image URL
+function getSatelliteUrl(lat: number, lng: number, zoom = 18, w = 800, h = 400) {
+  if (!MAPBOX_TOKEN) return null;
+  return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},${zoom},0/${w}x${h}@2x?access_token=${MAPBOX_TOKEN}`;
+}
+
+// Generate Mapbox satellite-streets overlay (with labels + roads)
+function getSatelliteStreetsUrl(lat: number, lng: number, zoom = 17, w = 800, h = 400) {
+  if (!MAPBOX_TOKEN) return null;
+  return `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-l+ff3b30(${lng},${lat})/${lng},${lat},${zoom},0/${w}x${h}@2x?access_token=${MAPBOX_TOKEN}`;
+}
+
+// Generate Mapbox streets map URL
+function getStreetMapUrl(lat: number, lng: number, zoom = 16, w = 400, h = 400) {
+  if (!MAPBOX_TOKEN) return null;
+  return `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+3b82f6(${lng},${lat})/${lng},${lat},${zoom},0/${w}x${h}@2x?access_token=${MAPBOX_TOKEN}`;
+}
+
 export default function ReconDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -220,6 +252,7 @@ export default function ReconDetailPage() {
   const [activeTab, setActiveTab] = useState<TabType>('roof');
   const [selectedTrade, setSelectedTrade] = useState<TradeType | null>(null);
   const [estimating, setEstimating] = useState(false);
+  const [imgView, setImgView] = useState<'satellite' | 'streets'>('satellite');
 
   const { scan, roof, facets, walls, tradeBids, loading, error, triggerTradeEstimate } = usePropertyScan(scanId, 'scan');
 
@@ -233,12 +266,13 @@ export default function ReconDetailPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-3">
-        <div className="relative w-14 h-14">
+        <div className="relative w-16 h-16">
           <div className="absolute inset-0 rounded-full border-2 border-accent/20" />
           <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent animate-spin" />
-          <Satellite size={20} className="absolute inset-0 m-auto text-accent" />
+          <Satellite size={22} className="absolute inset-0 m-auto text-accent" />
         </div>
-        <p className="text-sm text-muted">Loading property intelligence...</p>
+        <p className="text-sm text-muted font-medium">Analyzing property intelligence...</p>
+        <p className="text-[10px] text-muted/60">Satellite imagery, roof measurements, structural data</p>
       </div>
     );
   }
@@ -257,97 +291,220 @@ export default function ReconDetailPage() {
     );
   }
 
-  const confColor = scan.confidenceGrade === 'high' ? '#10B981' : scan.confidenceGrade === 'moderate' ? '#F59E0B' : '#EF4444';
+  const hasCoords = scan.latitude != null && scan.longitude != null;
+  const satelliteUrl = hasCoords ? getSatelliteUrl(scan.latitude!, scan.longitude!) : null;
+  const satelliteStreetsUrl = hasCoords ? getSatelliteStreetsUrl(scan.latitude!, scan.longitude!) : null;
+  const streetMapUrl = hasCoords ? getStreetMapUrl(scan.latitude!, scan.longitude!) : null;
   const imageryOld = scan.imageryAgeMonths != null && scan.imageryAgeMonths > 18;
+
+  const quickStats = [
+    { label: 'Roof Area', value: roof ? `${roof.totalAreaSqft.toLocaleString()} sqft` : '—', icon: Home, color: '#8B5CF6' },
+    { label: 'Squares', value: roof ? roof.totalAreaSquares.toFixed(1) : '—', icon: Layers, color: '#3B82F6' },
+    { label: 'Pitch', value: roof?.pitchPrimary || (roof ? `${roof.pitchDegrees.toFixed(1)}°` : '—'), icon: TrendingUp, color: '#10B981' },
+    { label: 'Facets', value: roof ? String(roof.facetCount) : '—', icon: Layers, color: '#06B6D4' },
+    { label: 'Shape', value: roof?.predominantShape ? (SHAPE_LABELS[roof.predominantShape] || roof.predominantShape) : '—', icon: Building, color: '#F59E0B' },
+    { label: 'Sources', value: String(scan.scanSources.length), icon: Database, color: '#EC4899' },
+  ];
 
   return (
     <div className="space-y-4">
-      {/* ── HEADER BAR ─────────────────────────────────── */}
+      {/* ── BACK NAV ───────────────────────────────── */}
+      <div className="flex items-center gap-3">
+        <button onClick={() => router.back()}
+          className="p-1.5 rounded-lg text-muted hover:text-main hover:bg-surface-hover transition-colors">
+          <ArrowLeft size={18} />
+        </button>
+        <div className="flex items-center gap-2 text-xs text-muted">
+          <Link href="/dashboard/recon" className="hover:text-main transition-colors">Recon</Link>
+          <ChevronRight size={10} />
+          <span className="text-main font-medium truncate max-w-xs">{scan.address}</span>
+        </div>
+      </div>
+
+      {/* ── HERO: SATELLITE IMAGERY + PROPERTY OVERVIEW ───── */}
       <div className="rounded-xl bg-card border border-main overflow-hidden">
-        {/* Top row: back + address + actions */}
-        <div className="px-5 py-4 flex items-center gap-4">
-          <button onClick={() => router.back()}
-            className="p-1.5 rounded-lg text-muted hover:text-main hover:bg-surface-hover transition-colors shrink-0">
-            <ArrowLeft size={18} />
-          </button>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px]">
+          {/* Satellite / Street imagery */}
+          <div className="relative aspect-[2/1] lg:aspect-auto lg:min-h-[320px] bg-black/90 overflow-hidden">
+            {hasCoords && (imgView === 'satellite' ? satelliteStreetsUrl : streetMapUrl) ? (
+              <img
+                src={imgView === 'satellite' ? satelliteStreetsUrl! : streetMapUrl!}
+                alt={`${imgView === 'satellite' ? 'Satellite view' : 'Street map'} of ${scan.address}`}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="eager"
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface/50">
+                <Map size={32} className="text-muted/30" />
+                <p className="text-xs text-muted">No coordinates available for imagery</p>
+              </div>
+            )}
 
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-main tracking-tight truncate">{scan.address}</h1>
-            <div className="flex items-center gap-4 mt-0.5">
-              <span className="flex items-center gap-1 text-xs text-muted">
-                <MapPin size={11} />
-                {[scan.city, scan.state, scan.zip].filter(Boolean).join(', ')}
-              </span>
-              {scan.imageryDate && (
+            {/* View toggle */}
+            {hasCoords && (
+              <div className="absolute top-3 left-3 flex gap-1 bg-black/60 backdrop-blur-sm rounded-lg p-0.5">
+                <button
+                  onClick={() => setImgView('satellite')}
+                  className={cn('px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all',
+                    imgView === 'satellite' ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white/80'
+                  )}>
+                  <Satellite size={10} className="inline mr-1" />Satellite
+                </button>
+                <button
+                  onClick={() => setImgView('streets')}
+                  className={cn('px-2.5 py-1 rounded-md text-[10px] font-semibold transition-all',
+                    imgView === 'streets' ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white/80'
+                  )}>
+                  <Map size={10} className="inline mr-1" />Map
+                </button>
+              </div>
+            )}
+
+            {/* Confidence overlay */}
+            <div className="absolute top-3 right-3">
+              <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2.5">
+                <ConfidenceBadge score={scan.confidenceScore} grade={scan.confidenceGrade} />
+              </div>
+            </div>
+
+            {/* Imagery age warning */}
+            {imageryOld && (
+              <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-amber-500/80 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-semibold text-black">
+                <AlertTriangle size={10} /> Imagery {scan.imageryAgeMonths}+ months old
+              </div>
+            )}
+
+            {/* Coordinates badge */}
+            {hasCoords && (
+              <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm rounded-md px-2.5 py-1 text-[10px] font-mono text-white/70">
+                {scan.latitude!.toFixed(5)}, {scan.longitude!.toFixed(5)}
+              </div>
+            )}
+          </div>
+
+          {/* Property info sidebar */}
+          <div className="border-t lg:border-t-0 lg:border-l border-main p-5 flex flex-col">
+            {/* Address */}
+            <div className="mb-4">
+              <h1 className="text-lg font-bold text-main tracking-tight leading-tight">{scan.address}</h1>
+              <div className="flex items-center gap-2 mt-1">
                 <span className="flex items-center gap-1 text-xs text-muted">
-                  <Calendar size={11} />
-                  {formatDate(scan.imageryDate)}
+                  <MapPin size={10} />
+                  {[scan.city, scan.state, scan.zip].filter(Boolean).join(', ')}
                 </span>
-              )}
-              {scan.latitude && scan.longitude && (
-                <span className="flex items-center gap-1 text-xs text-muted font-mono">
-                  {scan.latitude.toFixed(4)}, {scan.longitude.toFixed(4)}
+              </div>
+            </div>
+
+            {/* Status + date */}
+            <div className="flex items-center gap-2 mb-4">
+              {(() => {
+                const st = STATUS_CONFIG[scan.status] || STATUS_CONFIG.pending;
+                return (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold"
+                    style={{ color: st.color, backgroundColor: st.bg }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: st.color }} />
+                    {st.label}
+                  </span>
+                );
+              })()}
+              {scan.imageryDate && (
+                <span className="text-[10px] text-muted flex items-center gap-1">
+                  <Calendar size={9} /> {formatDate(scan.imageryDate)}
                 </span>
               )}
             </div>
-          </div>
 
-          <ConfidenceBadge score={scan.confidenceScore} grade={scan.confidenceGrade} />
-
-          <div className="h-8 w-px bg-main shrink-0" />
-
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={async () => {
-              const supabase = createClient();
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) return;
-              const companyId = user.app_metadata?.company_id;
-              if (!companyId) return;
-              const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-              const { data: est } = await supabase
-                .from('estimates')
-                .insert({
-                  company_id: companyId, created_by: user.id,
-                  title: `Estimate — ${scan.address}`,
-                  estimate_number: `EST-${dateStr}-001`,
-                  estimate_type: 'regular', status: 'draft',
-                  property_scan_id: scan.id, job_id: scan.jobId,
-                  property_address: scan.address,
-                  property_city: scan.city || '', property_state: scan.state || '',
-                  property_zip: scan.zip || '',
-                  overhead_percent: 10, profit_percent: 10, tax_percent: 0,
-                })
-                .select('id')
-                .single();
-              if (est) router.push(`/dashboard/estimates/${est.id}`);
-            }}
-            className="gap-2 shrink-0"
-          >
-            <FileText size={14} />
-            Create Estimate
-          </Button>
-        </div>
-
-        {/* Source strip */}
-        <div className="px-5 py-2 bg-secondary/40 border-t border-main flex items-center gap-3 overflow-x-auto">
-          <span className="text-[10px] font-semibold text-muted uppercase tracking-wider shrink-0">Sources</span>
-          <div className="flex gap-1.5">
-            {scan.scanSources.map(src => (
-              <span key={src} className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface border border-main/50 text-[10px] font-medium text-muted whitespace-nowrap">
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: SOURCE_COLORS[src] || '#6B7280' }} />
-                {SOURCE_LABELS[src] || src.replace(/_/g, ' ')}
-              </span>
-            ))}
-          </div>
-          {imageryOld && (
-            <div className="ml-auto flex items-center gap-1.5 text-amber-500 text-[10px] font-medium shrink-0">
-              <AlertTriangle size={11} />
-              Imagery {scan.imageryAgeMonths}mo old
+            {/* Source badges */}
+            <div className="mb-4">
+              <p className="text-[9px] font-semibold text-muted uppercase tracking-wider mb-1.5">Data Sources</p>
+              <div className="flex flex-wrap gap-1">
+                {scan.scanSources.map(src => (
+                  <span key={src} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface border border-main/50 text-[10px] font-medium text-muted">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: SOURCE_COLORS[src] || '#6B7280' }} />
+                    {SOURCE_LABELS[src] || src.replace(/_/g, ' ')}
+                  </span>
+                ))}
+                {scan.scanSources.length === 0 && (
+                  <span className="text-[10px] text-muted/50">No sources</span>
+                )}
+              </div>
             </div>
-          )}
+
+            {/* Divider */}
+            <div className="border-t border-main my-2" />
+
+            {/* Quick property stats */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 flex-1">
+              {quickStats.map((stat, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <stat.icon size={11} style={{ color: stat.color }} className="shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[9px] text-muted uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-xs font-semibold text-main truncate">{stat.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 mt-auto pt-3 border-t border-main">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={async () => {
+                  const supabase = createClient();
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) return;
+                  const companyId = user.app_metadata?.company_id;
+                  if (!companyId) return;
+                  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+                  const { data: est } = await supabase
+                    .from('estimates')
+                    .insert({
+                      company_id: companyId, created_by: user.id,
+                      title: `Estimate — ${scan.address}`,
+                      estimate_number: `EST-${dateStr}-001`,
+                      estimate_type: 'regular', status: 'draft',
+                      property_scan_id: scan.id, job_id: scan.jobId,
+                      property_address: scan.address,
+                      property_city: scan.city || '', property_state: scan.state || '',
+                      property_zip: scan.zip || '',
+                      overhead_percent: 10, profit_percent: 10, tax_percent: 0,
+                    })
+                    .select('id')
+                    .single();
+                  if (est) router.push(`/dashboard/estimates/${est.id}`);
+                }}
+                className="flex-1 gap-1.5"
+              >
+                <FileText size={13} /> Create Estimate
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => router.push('/dashboard/sketch-engine')}
+                className="gap-1.5"
+              >
+                <PenTool size={13} /> Sketch
+              </Button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* ── QUICK STATS STRIP ──────────────────────────── */}
+      <div className="grid gap-px bg-main/10 rounded-xl overflow-hidden" style={{ gridTemplateColumns: `repeat(${quickStats.length}, 1fr)` }}>
+        {quickStats.map((stat, i) => (
+          <div key={i} className="bg-card px-3 py-3 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${stat.color}15` }}>
+              <stat.icon size={14} style={{ color: stat.color }} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[9px] font-medium text-muted uppercase tracking-wider">{stat.label}</p>
+              <p className="text-sm font-bold text-main leading-tight truncate">{stat.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* ── TAB BAR ────────────────────────────────────── */}
@@ -357,7 +514,7 @@ export default function ReconDetailPage() {
           return (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium transition-all flex-1 justify-center',
+                'flex items-center gap-2 px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all flex-1 justify-center',
                 isActive ? 'bg-surface shadow-sm text-main' : 'text-muted hover:text-main hover:bg-surface/40'
               )}>
               <tab.icon size={14} style={{ color: isActive ? tab.color : undefined }} />
@@ -381,7 +538,8 @@ export default function ReconDetailPage() {
       <div className="flex items-start gap-2 px-4 py-2.5 rounded-lg bg-card border border-main">
         <Info size={12} className="text-muted mt-0.5 shrink-0" />
         <p className="text-[10px] text-muted leading-relaxed">
-          Measurements derived from satellite imagery and public records. Always verify on site before material orders. Roof analysis powered by Google Solar API.
+          Measurements derived from satellite imagery and public records. Roof footprint area shown — multiply by number of stories for estimated living area.
+          Always verify on site before material orders. Roof analysis powered by Google Solar API where available.
         </p>
       </div>
     </div>

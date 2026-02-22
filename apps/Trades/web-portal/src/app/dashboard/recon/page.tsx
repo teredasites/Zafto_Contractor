@@ -22,6 +22,7 @@ import {
   Calendar,
   TrendingUp,
   AlertTriangle,
+  Map,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/badge';
@@ -120,6 +121,8 @@ export default function ReconPage() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [autocomplete]);
 
+  const selectedCoordsRef = useRef<[number, number] | null>(null);
+
   const handleScan = async (addressOverride?: string) => {
     const address = (addressOverride || autocomplete.query).trim();
     if (!address || scanning) return;
@@ -131,6 +134,14 @@ export default function ReconPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
+      // Pass Mapbox-resolved coordinates if available (avoids needing Google geocoding)
+      const coords = selectedCoordsRef.current;
+      const payload: Record<string, unknown> = { address };
+      if (coords) {
+        payload.longitude = coords[0];
+        payload.latitude = coords[1];
+      }
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recon-property-lookup`,
         {
@@ -139,7 +150,7 @@ export default function ReconPage() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${session.access_token}`,
           },
-          body: JSON.stringify({ address }),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -147,6 +158,7 @@ export default function ReconPage() {
       if (!res.ok) throw new Error(data.error || 'Scan failed');
 
       autocomplete.setQuery('');
+      selectedCoordsRef.current = null;
       refetch();
       if (data.scan_id) {
         router.push(`/dashboard/recon/${data.scan_id}`);
@@ -200,6 +212,7 @@ export default function ReconPage() {
                   <button
                     key={s.id}
                     onClick={() => {
+                      selectedCoordsRef.current = s.center;
                       autocomplete.select(s);
                       handleScan(s.place_name);
                     }}
@@ -315,71 +328,85 @@ export default function ReconPage() {
         </div>
       )}
 
-      {/* ── SCAN TABLE ────────────────────────────────── */}
+      {/* ── SCAN CARDS ────────────────────────────────── */}
       {!loading && filtered.length > 0 && (
-        <div className="rounded-xl border border-main bg-card overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-main">
-                <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider">Property</th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider">Location</th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold text-muted uppercase tracking-wider">Imagery</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold text-muted uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold text-muted uppercase tracking-wider">Confidence</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold text-muted uppercase tracking-wider">Sources</th>
-                <th className="px-4 py-3 w-8"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((scan) => {
-                const status = STATUS_CONFIG[scan.status] || STATUS_CONFIG.pending;
-                const confColor = scan.confidenceGrade === 'high' ? '#10B981' : scan.confidenceGrade === 'moderate' ? '#F59E0B' : '#EF4444';
-                return (
-                  <tr
-                    key={scan.id}
-                    onClick={() => router.push(`/dashboard/recon/${scan.id}`)}
-                    className="border-b border-main/40 hover:bg-surface/50 cursor-pointer transition-colors group"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                          <Satellite size={14} className="text-accent" />
-                        </div>
-                        <span className="text-sm font-medium text-main truncate max-w-[300px]">{scan.address}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs text-muted">{[scan.city, scan.state, scan.zip].filter(Boolean).join(', ')}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs text-muted">
-                        {scan.imageryDate ? formatDate(scan.imageryDate) : '—'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-semibold"
-                        style={{ color: status.color, backgroundColor: status.bg }}>
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.color }} />
-                        {status.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1 text-xs font-bold" style={{ color: confColor }}>
-                        <Shield size={11} />
-                        {scan.confidenceScore}%
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="text-xs text-muted">{scan.scanSources?.length || 0}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <ChevronRight size={14} className="text-muted group-hover:text-accent transition-colors" />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {filtered.map((scan) => {
+            const status = STATUS_CONFIG[scan.status] || STATUS_CONFIG.pending;
+            const confColor = scan.confidenceGrade === 'high' ? '#10B981' : scan.confidenceGrade === 'moderate' ? '#F59E0B' : '#EF4444';
+            const hasCoords = scan.latitude != null && scan.longitude != null;
+            const thumbUrl = hasCoords && MAPBOX_TOKEN
+              ? `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${scan.longitude},${scan.latitude},17,0/400x200@2x?access_token=${MAPBOX_TOKEN}`
+              : null;
+
+            return (
+              <div
+                key={scan.id}
+                onClick={() => router.push(`/dashboard/recon/${scan.id}`)}
+                className="rounded-xl border border-main bg-card overflow-hidden cursor-pointer hover:border-accent/30 transition-all group"
+              >
+                {/* Satellite thumbnail */}
+                <div className="relative h-32 bg-surface overflow-hidden">
+                  {thumbUrl ? (
+                    <img
+                      src={thumbUrl}
+                      alt={`Satellite view of ${scan.address}`}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-surface">
+                      <Map size={20} className="text-muted/30" />
+                    </div>
+                  )}
+
+                  {/* Status pill */}
+                  <div className="absolute top-2 left-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold backdrop-blur-sm"
+                      style={{ color: status.color, backgroundColor: `${status.bg}CC` }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.color }} />
+                      {status.label}
+                    </span>
+                  </div>
+
+                  {/* Confidence pill */}
+                  <div className="absolute top-2 right-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 backdrop-blur-sm"
+                      style={{ color: confColor }}>
+                      <Shield size={9} />
+                      {scan.confidenceScore}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card body */}
+                <div className="p-3">
+                  <h3 className="text-sm font-semibold text-main truncate mb-0.5 group-hover:text-accent transition-colors">
+                    {scan.address}
+                  </h3>
+                  <p className="text-[11px] text-muted mb-2">
+                    {[scan.city, scan.state, scan.zip].filter(Boolean).join(', ')}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {scan.scanSources?.length > 0 && (
+                        <span className="text-[10px] text-muted">
+                          {scan.scanSources.length} source{scan.scanSources.length !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {scan.imageryDate && (
+                        <span className="text-[10px] text-muted flex items-center gap-0.5">
+                          <Calendar size={8} /> {formatDate(scan.imageryDate)}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronRight size={12} className="text-muted group-hover:text-accent transition-colors" />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
