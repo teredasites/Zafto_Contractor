@@ -1,14 +1,21 @@
 // Supabase Edge Function: recon-property-lookup
 // Full property intelligence pipeline:
-// 1. Geocode address → lat/lng
+// 1. Geocode address → lat/lng (Google → Nominatim → US Census fallback chain)
 // 2. Google Solar API → roof segments, measurements, facets
-// 3. Microsoft Building Footprints (FREE) → multi-structure detection
-// 4. USGS 3DEP Elevation (FREE) → elevation, terrain data
+// 3. USGS 3DEP Elevation (FREE) → elevation, terrain data
+// 4. Microsoft/OSM Building Footprints (FREE) → multi-structure detection
 // 5. ATTOM API (GATED) → property characteristics, sale history
 // 6. Regrid API (GATED) → parcel boundaries, zoning, APN
-// 7. Confidence scoring → grade + factors
+// 7. Property features insert (ATTOM + Solar + USGS data combined)
+// 7b. Google Street View Static API → exterior property image
+// 7c. FEMA Flood Zone API (FREE) → flood zone + risk assessment
+// 7d. External deep links (Zillow, Redfin, Realtor.com, Google Maps, FEMA, County Assessor)
+// 7e. Auto-create storage folder → save satellite, street view, recon report
+// 8. Confidence scoring → grade + factors
+// 9. Auto-trigger roof calculator + trade estimator
 // Inserts: property_scans, roof_measurements, roof_facets,
 //          property_structures, property_features, parcel_boundaries
+// Storage: recon-photos/{company_id}/{address}/satellite.jpg, street_view.jpg, recon_report.json
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -834,7 +841,184 @@ serve(async (req) => {
       data_sources: featureSources,
       raw_attom: attomData,
       raw_regrid: regridData,
+      // NEW: enhanced property details from ATTOM or inferred
+      basement_type: (building.interior?.bsmttype as string) || null,
+      foundation_type: (building.construction?.foundationtype as string) || null,
+      exterior_material: (building.construction?.wallType as string) || null,
+      roof_material: (building.construction?.roofcover as string) || null,
+      neighborhood_type: null, // populated by census data later
     })
+
+    // ========================================================================
+    // STEP 7b: GOOGLE STREET VIEW (FREE with API key)
+    // ========================================================================
+    let streetViewUrl: string | null = null
+    const googleKey2 = Deno.env.get('GOOGLE_CLOUD_API_KEY')
+    if (googleKey2 && lat && lng) {
+      streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=800x600&location=${lat},${lng}&fov=90&heading=0&pitch=10&key=${googleKey2}`
+      sources.push('google_streetview')
+      console.log('[property-lookup] Street View URL generated')
+    }
+
+    // ========================================================================
+    // STEP 7c: FEMA FLOOD ZONES (FREE — no API key)
+    // ========================================================================
+    let floodZone: string | null = null
+    let floodRisk: string | null = null
+    if (lat && lng) {
+      try {
+        const t5 = performance.now()
+        const femaRes = await fetch(
+          `https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=FLD_ZONE,ZONE_SUBTY,SFHA_TF&returnGeometry=false&f=json`
+        )
+        if (femaRes.ok) {
+          const femaData = await femaRes.json()
+          const feature = femaData?.features?.[0]?.attributes
+          if (feature) {
+            floodZone = feature.FLD_ZONE || null
+            // Map FEMA zones to risk levels
+            if (floodZone) {
+              const highRiskZones = ['A', 'AE', 'AH', 'AO', 'AR', 'A99', 'V', 'VE']
+              const moderateRiskZones = ['B', 'X500', 'SHADED X']
+              const zoneParts = floodZone.toUpperCase().split(',')
+              if (zoneParts.some((z: string) => highRiskZones.includes(z.trim()))) {
+                floodRisk = 'high'
+              } else if (zoneParts.some((z: string) => moderateRiskZones.includes(z.trim()))) {
+                floodRisk = 'moderate'
+              } else if (floodZone.toUpperCase().includes('X') || floodZone.toUpperCase().includes('C')) {
+                floodRisk = 'minimal'
+              } else {
+                floodRisk = 'low'
+              }
+              sources.push('fema_flood')
+              console.log('[property-lookup] FEMA flood zone:', floodZone, 'risk:', floodRisk)
+            }
+          }
+        }
+        apiTimings.push({ api: 'fema_flood', ms: Math.round(performance.now() - t5), status: femaRes.ok ? 200 : femaRes.status, cost: 0 })
+      } catch (femaErr) {
+        console.warn('[property-lookup] FEMA flood query failed:', femaErr)
+      }
+    }
+
+    // ========================================================================
+    // STEP 7d: EXTERNAL PROPERTY LINKS (deep links — all free)
+    // ========================================================================
+    const encodedAddr = encodeURIComponent(address)
+    const externalLinks: Record<string, string> = {}
+    // Google Maps
+    if (lat && lng) {
+      externalLinks.google_maps = `https://www.google.com/maps/place/${lat},${lng}/@${lat},${lng},18z`
+    }
+    // Zillow deep link (address search)
+    externalLinks.zillow = `https://www.zillow.com/homes/${encodedAddr.replace(/%20/g, '-')}_rb/`
+    // Redfin deep link
+    externalLinks.redfin = `https://www.redfin.com/search#query=${encodedAddr}`
+    // Realtor.com deep link
+    externalLinks.realtor = `https://www.realtor.com/realestateandhomes-search/${encodedAddr.replace(/%20/g, '_')}`
+    // County assessor (generic search — user can refine)
+    if (geocodeState && geocodeCity) {
+      externalLinks.county_assessor = `https://www.google.com/search?q=${encodeURIComponent(`${geocodeCity} ${geocodeState} county assessor property search ${address}`)}`
+    }
+    // Trulia
+    externalLinks.trulia = `https://www.trulia.com/home-search/${encodedAddr.replace(/%20/g, '-')}`
+    // FEMA flood map
+    if (lat && lng) {
+      externalLinks.fema_flood_map = `https://msc.fema.gov/portal/search?AddressQuery=${encodedAddr}`
+    }
+    console.log('[property-lookup] External links generated:', Object.keys(externalLinks).length)
+
+    // ========================================================================
+    // STEP 7e: AUTO-CREATE STORAGE FOLDER + SAVE IMAGES
+    // ========================================================================
+    const normalizedFolderName = address
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '')
+      .substring(0, 100)
+    const storageFolder = `recon/${companyId}/${normalizedFolderName}`
+
+    // Save satellite image from Mapbox to storage
+    const mapboxToken = Deno.env.get('NEXT_PUBLIC_MAPBOX_TOKEN') || Deno.env.get('MAPBOX_TOKEN')
+    if (mapboxToken && lat && lng) {
+      try {
+        const satUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},18,0/800x600@2x?access_token=${mapboxToken}`
+        const satRes = await fetch(satUrl)
+        if (satRes.ok) {
+          const satBlob = await satRes.arrayBuffer()
+          await supabase.storage
+            .from('recon-photos')
+            .upload(`${storageFolder}/satellite.jpg`, satBlob, {
+              contentType: 'image/jpeg',
+              upsert: true,
+            })
+          console.log('[property-lookup] Satellite image saved to storage')
+        }
+      } catch (satErr) {
+        console.warn('[property-lookup] Satellite image save failed:', satErr)
+      }
+    }
+
+    // Save Street View image to storage
+    if (streetViewUrl) {
+      try {
+        const svRes = await fetch(streetViewUrl)
+        if (svRes.ok) {
+          const svBlob = await svRes.arrayBuffer()
+          await supabase.storage
+            .from('recon-photos')
+            .upload(`${storageFolder}/street_view.jpg`, svBlob, {
+              contentType: 'image/jpeg',
+              upsert: true,
+            })
+          console.log('[property-lookup] Street View image saved to storage')
+        }
+      } catch (svErr) {
+        console.warn('[property-lookup] Street View image save failed:', svErr)
+      }
+    }
+
+    // Save recon report as JSON in storage
+    const reconReport = {
+      generated_at: new Date().toISOString(),
+      scan_id: scanId,
+      address,
+      coordinates: { lat, lng },
+      city: geocodeCity,
+      state: geocodeState,
+      zip: geocodeZip,
+      elevation_ft: elevationFt,
+      flood_zone: floodZone,
+      flood_risk: floodRisk,
+      external_links: externalLinks,
+      street_view_url: streetViewUrl,
+      sources,
+      structures: structures.map(s => ({
+        type: s.structure_type,
+        label: s.label,
+        footprint_sqft: s.footprint_sqft,
+        stories: s.estimated_stories,
+        roof_area_sqft: s.estimated_roof_area_sqft,
+        wall_area_sqft: s.estimated_wall_area_sqft,
+      })),
+      roof: roofMeasurementId ? {
+        total_area_sqft: Math.round(totalRoofAreaSqft * 100) / 100,
+        facet_count: solarData?.solarPotential?.roofSegmentStats?.length || 0,
+      } : null,
+    }
+
+    try {
+      await supabase.storage
+        .from('recon-photos')
+        .upload(`${storageFolder}/recon_report.json`, JSON.stringify(reconReport, null, 2), {
+          contentType: 'application/json',
+          upsert: true,
+        })
+      console.log('[property-lookup] Recon report saved to storage')
+    } catch (reportErr) {
+      console.warn('[property-lookup] Recon report save failed:', reportErr)
+    }
 
     // ========================================================================
     // STEP 8: CONFIDENCE SCORING
@@ -859,6 +1043,10 @@ serve(async (req) => {
 
     // Bonus for multiple data sources
     if (sources.length >= 3) verificationBonus += 5
+
+    // Bonus for flood + street view data
+    if (floodZone) verificationBonus += 3
+    if (streetViewUrl) verificationBonus += 2
 
     const confidence = Math.max(
       0,
@@ -890,6 +1078,12 @@ serve(async (req) => {
           sources_used: sources,
           structure_count: structures.length,
         },
+        // NEW: Enhanced recon data
+        storage_folder: storageFolder,
+        street_view_url: streetViewUrl,
+        external_links: externalLinks,
+        flood_zone: floodZone,
+        flood_risk: floodRisk,
       })
       .eq('id', scanId)
 
@@ -976,6 +1170,11 @@ serve(async (req) => {
       roof_measurement_id: roofMeasurementId,
       imagery_date: imageryDate?.toISOString().split('T')[0] || null,
       elevation_ft: elevationFt,
+      flood_zone: floodZone,
+      flood_risk: floodRisk,
+      street_view_url: streetViewUrl,
+      external_links: externalLinks,
+      storage_folder: storageFolder,
     }, 200, origin)
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Internal server error'
