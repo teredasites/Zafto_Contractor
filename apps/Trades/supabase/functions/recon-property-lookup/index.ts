@@ -302,6 +302,7 @@ serve(async (req) => {
     let geocodeCity: string | null = null
     let geocodeState: string | null = null
     let geocodeZip: string | null = null
+    let geocodeStreet: string | null = null
 
     if (!lat || !lng) {
       const googleKey = Deno.env.get('GOOGLE_CLOUD_API_KEY')
@@ -323,6 +324,9 @@ serve(async (req) => {
             geocodeCity = comps.find((c: { types: string[] }) => c.types.includes('locality'))?.long_name || null
             geocodeState = comps.find((c: { types: string[] }) => c.types.includes('administrative_area_level_1'))?.short_name || null
             geocodeZip = comps.find((c: { types: string[] }) => c.types.includes('postal_code'))?.long_name || null
+            const streetNum = comps.find((c: { types: string[] }) => c.types.includes('street_number'))?.long_name || ''
+            const streetRoute = comps.find((c: { types: string[] }) => c.types.includes('route'))?.long_name || ''
+            geocodeStreet = streetNum && streetRoute ? `${streetNum} ${streetRoute}` : null
 
             await supabase
               .from('property_scans')
@@ -358,6 +362,7 @@ serve(async (req) => {
             geocodeCity = addr.city || addr.town || addr.village || null
             geocodeState = addr.state || null
             geocodeZip = addr.postcode || null
+            if (addr.house_number && addr.road) geocodeStreet = `${addr.house_number} ${addr.road}`
             sources.push('nominatim')
             console.log('[property-lookup] Nominatim geocode success:', lat, lng)
 
@@ -395,6 +400,9 @@ serve(async (req) => {
             geocodeCity = match.addressComponents?.city || null
             geocodeState = match.addressComponents?.state || null
             geocodeZip = match.addressComponents?.zip || null
+            const cenStreet = match.addressComponents?.preDirection ? `${match.addressComponents.preDirection} ` : ''
+            geocodeStreet = `${cenStreet}${match.addressComponents?.streetName || ''} ${match.addressComponents?.suffixType || ''}`.trim() || null
+            if (geocodeStreet && match.addressComponents?.preQualifier) geocodeStreet = `${match.addressComponents.preQualifier} ${geocodeStreet}`
             sources.push('census_geocoder')
             console.log('[property-lookup] Census geocode success:', lat, lng)
 
@@ -727,8 +735,14 @@ serve(async (req) => {
       } else {
         try {
           const t3 = performance.now()
+          // ATTOM requires split address: address1=street, address2=city,state,zip
+          const attomAddr1 = geocodeStreet || address.split(',')[0]?.trim() || address
+          const attomAddr2 = geocodeCity && geocodeState
+            ? `${geocodeCity}, ${geocodeState}${geocodeZip ? `, ${geocodeZip}` : ''}`
+            : address.split(',').slice(1).join(',').trim()
+          console.log('[property-lookup] ATTOM request: address1=', attomAddr1, 'address2=', attomAddr2)
           const attomRes = await fetch(
-            `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/expandedprofile?address1=${encodeURIComponent(address)}&address2=`,
+            `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/expandedprofile?address1=${encodeURIComponent(attomAddr1)}&address2=${encodeURIComponent(attomAddr2)}`,
             {
               headers: { apikey: attomKey, Accept: 'application/json' },
             }
@@ -741,10 +755,16 @@ serve(async (req) => {
             if (property) {
               attomData = property
               sources.push('attom')
+              console.log('[property-lookup] ATTOM SUCCESS — got property data')
+            } else {
+              console.warn('[property-lookup] ATTOM returned OK but no property in response')
             }
+          } else {
+            const errText = await attomRes.text()
+            console.warn('[property-lookup] ATTOM failed:', attomRes.status, errText.substring(0, 200))
           }
-        } catch {
-          /* ATTOM failed, non-critical */
+        } catch (attomErr) {
+          console.warn('[property-lookup] ATTOM fetch error:', attomErr)
         }
       }
     }
@@ -808,31 +828,46 @@ serve(async (req) => {
     if (attomData) featureSources.push('attom')
 
     // Extract ATTOM fields if available
-    const building = (attomData as Record<string, Record<string, unknown>>)?.building || {}
-    const lot = (attomData as Record<string, Record<string, unknown>>)?.lot || {}
-    const assessment = (attomData as Record<string, Record<string, unknown>>)?.assessment || {}
-    const sale = (attomData as Record<string, Record<string, unknown>>)?.sale || {}
-    const saleHistory = sale?.amount as Record<string, unknown> | undefined
+    // ATTOM expandedprofile nesting: property[0].building, .lot, .assessment, .sale, .summary
+    const attomObj = attomData as Record<string, unknown> | null
+    const building = (attomObj?.building as Record<string, unknown>) || {}
+    const buildingSize = (building.size as Record<string, unknown>) || {}
+    const buildingRooms = (building.rooms as Record<string, unknown>) || {}
+    const buildingConstruction = (building.construction as Record<string, unknown>) || {}
+    const buildingUtility = (building.utility as Record<string, unknown>) || {}
+    const buildingInterior = (building.interior as Record<string, unknown>) || {}
+    const buildingParking = (building.parking as Record<string, unknown>) || {}
+    const lot = (attomObj?.lot as Record<string, unknown>) || {}
+    const assessment = (attomObj?.assessment as Record<string, unknown>) || {}
+    const assessedVals = (assessment.assessed as Record<string, unknown>) || {}
+    const market = (assessment.market as Record<string, unknown>) || {}
+    const sale = (attomObj?.sale as Record<string, unknown>) || {}
+    const saleAmount = (sale.amount as Record<string, unknown>) || {}
+    const summary = (attomObj?.summary as Record<string, unknown>) || {}
+
+    if (attomData) {
+      console.log('[property-lookup] ATTOM fields: yearbuilt=', summary.yearbuilt, 'beds=', buildingRooms.beds, 'baths=', buildingRooms.bathstotal, 'sqft=', buildingSize.livingsize, 'lot=', lot.lotsize2)
+    }
 
     await supabase.from('property_features').insert({
       scan_id: scanId,
-      year_built: (building.yearbuilt as number) || null,
-      stories: (building.noofstories as number) || structures[0]?.estimated_stories || null,
-      living_sqft: (building.size?.livingsize as number) || null,
-      lot_sqft: (lot.lotsize2 as number) || null,
-      beds: (building.rooms?.beds as number) || null,
-      baths_full: (building.rooms?.bathsfull as number) || null,
-      baths_half: (building.rooms?.bathshalf as number) || null,
-      construction_type: (building.construction?.constructiontype as string) || null,
-      wall_type: (building.construction?.wallType as string) || null,
-      roof_type_record: (building.construction?.roofcover as string) || null,
-      heating_type: (building.utility?.heatingtype as string) || null,
-      cooling_type: (building.utility?.coolingtype as string) || null,
+      year_built: (summary.yearbuilt as number) || (building.yearbuilt as number) || null,
+      stories: (buildingSize.stories as number) || (building.noofstories as number) || structures[0]?.estimated_stories || null,
+      living_sqft: (buildingSize.livingsize as number) || (buildingSize.universalsize as number) || null,
+      lot_sqft: (lot.lotsize2 as number) || (lot.lotsize1 as number) || null,
+      beds: (buildingRooms.beds as number) || null,
+      baths_full: (buildingRooms.bathsfull as number) || null,
+      baths_half: (buildingRooms.bathshalf as number) || null,
+      construction_type: (buildingConstruction.constructiontype as string) || null,
+      wall_type: (buildingConstruction.wallType as string) || null,
+      roof_type_record: (buildingConstruction.roofcover as string) || null,
+      heating_type: (buildingUtility.heatingtype as string) || null,
+      cooling_type: (buildingUtility.coolingtype as string) || null,
       pool_type: (lot.pooltype as string) || null,
-      garage_spaces: (building.parking?.garagetype as number) || 0,
-      assessed_value: (assessment.assessed?.assdttlvalue as number) || null,
-      last_sale_price: (saleHistory?.saleamt as number) || null,
-      last_sale_date: (sale.salesearchdate as string) || null,
+      garage_spaces: (buildingParking.garagetype as number) || 0,
+      assessed_value: (assessedVals.assdttlvalue as number) || (market.mktttlvalue as number) || null,
+      last_sale_price: (saleAmount.saleamt as number) || null,
+      last_sale_date: (sale.salesearchdate as string) || (saleAmount.salerecdate as string) || null,
       elevation_ft: elevationFt,
       terrain_slope_pct: null,
       tree_coverage_pct: null,
@@ -842,11 +877,11 @@ serve(async (req) => {
       data_sources: featureSources,
       raw_attom: attomData,
       raw_regrid: regridData,
-      // NEW: enhanced property details from ATTOM or inferred
-      basement_type: (building.interior?.bsmttype as string) || null,
-      foundation_type: (building.construction?.foundationtype as string) || null,
-      exterior_material: (building.construction?.wallType as string) || null,
-      roof_material: (building.construction?.roofcover as string) || null,
+      // Enhanced property details from ATTOM or inferred
+      basement_type: (buildingInterior.bsmttype as string) || null,
+      foundation_type: (buildingConstruction.foundationtype as string) || null,
+      exterior_material: (buildingConstruction.wallType as string) || null,
+      roof_material: (buildingConstruction.roofcover as string) || null,
       neighborhood_type: null, // updated after census data fetch
       census_data: {},
     })
