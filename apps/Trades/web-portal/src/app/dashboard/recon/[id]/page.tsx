@@ -116,6 +116,7 @@ const SOURCE_COLORS: Record<string, string> = {
   google_streetview: '#DC2626',
   fema_flood: '#0EA5E9',
   us_census: '#7C3AED',
+  nws_alerts: '#F97316',
 };
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -129,6 +130,7 @@ const SOURCE_LABELS: Record<string, string> = {
   google_streetview: 'Street View',
   fema_flood: 'FEMA Flood',
   us_census: 'US Census',
+  nws_alerts: 'NWS Weather',
 };
 
 const EXTERNAL_LINK_LABELS: Record<string, { label: string; color: string }> = {

@@ -10,6 +10,9 @@
 // 7b. Google Street View Static API → exterior property image
 // 7c. FEMA Flood Zone API (FREE) → flood zone + risk assessment
 // 7d. External deep links (Zillow, Redfin, Realtor.com, Google Maps, FEMA, County Assessor)
+// 7d2. US Census ACS (FREE) → demographics, median income, home values, neighborhood type
+// 7d3. Property type inference from building footprint
+// 7d4. NWS Weather Alerts (FREE) → active weather alerts for the property location
 // 7e. Auto-create storage folder → save satellite, street view, recon report
 // 8. Confidence scoring → grade + factors
 // 9. Auto-trigger roof calculator + trade estimator
@@ -1023,6 +1026,36 @@ serve(async (req) => {
     }
 
     // ========================================================================
+    // STEP 7d4: NWS WEATHER ALERTS (FREE — current weather alerts for area)
+    // ========================================================================
+    let activeAlerts: Array<{ event: string; severity: string; headline: string; expires: string }> = []
+    if (lat && lng) {
+      try {
+        const nwsRes = await fetch(
+          `https://api.weather.gov/alerts/active?point=${lat},${lng}&status=actual`,
+          { headers: { 'User-Agent': 'Zafto-PropertyIntelligence/1.0 (recon)', Accept: 'application/geo+json' } }
+        )
+        if (nwsRes.ok) {
+          const nwsData = await nwsRes.json()
+          const features = nwsData?.features || []
+          activeAlerts = features.slice(0, 5).map((f: Record<string, Record<string, string>>) => ({
+            event: f.properties?.event || 'Unknown',
+            severity: f.properties?.severity || 'Unknown',
+            headline: f.properties?.headline || '',
+            expires: f.properties?.expires || '',
+          }))
+          if (activeAlerts.length > 0) {
+            sources.push('nws_alerts')
+            console.log('[property-lookup] NWS alerts:', activeAlerts.length)
+          }
+        }
+        apiTimings.push({ api: 'nws_alerts', ms: 0, status: 200, cost: 0 })
+      } catch {
+        /* NWS is nice-to-have, not critical */
+      }
+    }
+
+    // ========================================================================
     // STEP 7d3: INFER PROPERTY TYPE
     // ========================================================================
     let propertyType: string | null = null
@@ -1107,6 +1140,7 @@ serve(async (req) => {
       neighborhood_type: neighborhoodType,
       census: censusData,
       external_links: externalLinks,
+      active_weather_alerts: activeAlerts,
       street_view_url: streetViewUrl,
       sources,
       structures: structures.map(s => ({
