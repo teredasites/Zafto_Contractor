@@ -203,10 +203,8 @@ function DashboardShell({
                 aria-pressed={consoleState !== 'collapsed'}
               >
                 <ZMark size={16} />
-                <span className="hidden sm:inline">Z</span>
               </button>
 
-              <ProModeToggle />
               <ThemeToggle />
               <NotificationBell />
               <ActiveWorkDropdown />
@@ -481,47 +479,3 @@ function ActiveWorkDropdown() {
   );
 }
 
-function ProModeToggle() {
-  const [isOn, setIsOn] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('zafto_pro_mode') === 'true';
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const handleProModeChange = (e: CustomEvent) => {
-      setIsOn(e.detail as boolean);
-    };
-    window.addEventListener('proModeChange', handleProModeChange as EventListener);
-    return () => window.removeEventListener('proModeChange', handleProModeChange as EventListener);
-  }, []);
-
-  const handleToggle = () => {
-    const newValue = !isOn;
-    setIsOn(newValue);
-    localStorage.setItem('zafto_pro_mode', String(newValue));
-    window.dispatchEvent(new CustomEvent('proModeChange', { detail: newValue }));
-  };
-
-  return (
-    <button
-      onClick={handleToggle}
-      className={cn(
-        'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all',
-        isOn
-          ? 'bg-accent text-white'
-          : 'text-muted hover:text-main hover:bg-surface-hover',
-      )}
-      aria-label={`Pro mode ${isOn ? 'enabled' : 'disabled'}`}
-      aria-pressed={isOn}
-      role="switch"
-    >
-      <ZMark size={14} />
-      <span>PRO</span>
-      <span className={cn('w-7 h-3.5 rounded-full relative transition-colors', isOn ? 'bg-white/30' : 'bg-secondary')} aria-hidden="true">
-        <span className={cn('absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white shadow-sm transition-all duration-200', isOn ? 'left-3.5' : 'left-0.5')} />
-      </span>
-    </button>
-  );
-}

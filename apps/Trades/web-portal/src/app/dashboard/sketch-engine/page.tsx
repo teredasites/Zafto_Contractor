@@ -26,11 +26,15 @@ import {
   Map,
   Maximize2,
   Grid3X3,
+  ChevronRight,
+  Clock,
+  MoreHorizontal,
+  FolderOpen,
+  Sparkles,
+  Zap,
+  Activity,
 } from 'lucide-react';
 import type Konva from 'konva';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   useFloorPlan,
   useFloorPlanList,
@@ -148,18 +152,18 @@ const statusConfig: Record<
 };
 
 const SK_FEATURES = [
-  { icon: <PenTool className="h-5 w-5" />, label: 'Draw Tools', detail: 'Walls, doors, windows, rooms — click-to-draw precision', color: 'text-emerald-400 bg-emerald-500/10' },
-  { icon: <RulerIcon className="h-5 w-5" />, label: 'Auto Measurements', detail: 'Live sqft, perimeter, and wall area as you draw', color: 'text-blue-400 bg-blue-500/10' },
-  { icon: <Layers className="h-5 w-5" />, label: 'Trade Layers', detail: 'Electrical, plumbing, HVAC, damage overlays per trade', color: 'text-purple-400 bg-purple-500/10' },
-  { icon: <Box className="h-5 w-5" />, label: '3D Visualization', detail: 'Instant 3D walkthrough preview from your floor plan', color: 'text-orange-400 bg-orange-500/10' },
-  { icon: <Camera className="h-5 w-5" />, label: 'Photo Pins', detail: 'Pin geolocated jobsite photos directly on the plan', color: 'text-pink-400 bg-pink-500/10' },
-  { icon: <Map className="h-5 w-5" />, label: 'Site Plans', detail: 'Outdoor structures, fencing, landscaping, driveways', color: 'text-teal-400 bg-teal-500/10' },
-  { icon: <LayoutTemplate className="h-5 w-5" />, label: 'Templates', detail: 'Pre-built residential and commercial starting layouts', color: 'text-amber-400 bg-amber-500/10' },
-  { icon: <Calculator className="h-5 w-5" />, label: 'Auto Estimates', detail: 'Generate line-item estimates from room measurements', color: 'text-cyan-400 bg-cyan-500/10' },
-  { icon: <Maximize2 className="h-5 w-5" />, label: 'Rulers & Grid', detail: 'Imperial/metric rulers with snap-to-grid alignment', color: 'text-indigo-400 bg-indigo-500/10' },
-  { icon: <History className="h-5 w-5" />, label: 'Version History', detail: 'Named snapshots — restore any previous version', color: 'text-rose-400 bg-rose-500/10' },
-  { icon: <Grid3X3 className="h-5 w-5" />, label: 'Multi-Floor', detail: 'Separate floor tabs for multi-story buildings', color: 'text-lime-400 bg-lime-500/10' },
-  { icon: <Download className="h-5 w-5" />, label: 'Export', detail: 'PDF, PNG, and JSON output for clients and records', color: 'text-sky-400 bg-sky-500/10' },
+  { icon: PenTool, label: 'Draw Tools', detail: 'Walls, doors, windows, rooms', color: '#10B981' },
+  { icon: RulerIcon, label: 'Measurements', detail: 'Live sqft & perimeter', color: '#3B82F6' },
+  { icon: Layers, label: 'Trade Layers', detail: '18 trade overlays', color: '#8B5CF6' },
+  { icon: Box, label: '3D Preview', detail: 'Instant walkthrough', color: '#F59E0B' },
+  { icon: Camera, label: 'Photo Pins', detail: 'Geolocated photos', color: '#EC4899' },
+  { icon: Map, label: 'Site Plans', detail: 'Structures & landscaping', color: '#14B8A6' },
+  { icon: LayoutTemplate, label: 'Templates', detail: 'Pre-built layouts', color: '#D97706' },
+  { icon: Calculator, label: 'Auto Estimates', detail: 'Room → line items', color: '#06B6D4' },
+  { icon: Maximize2, label: 'Rulers & Grid', detail: 'Imperial or metric', color: '#6366F1' },
+  { icon: History, label: 'Version History', detail: 'Named snapshots', color: '#F43F5E' },
+  { icon: Grid3X3, label: 'Multi-Floor', detail: 'Floor tabs', color: '#84CC16' },
+  { icon: Download, label: 'Export', detail: 'PDF, PNG, JSON', color: '#0EA5E9' },
 ];
 
 // =============================================================================
@@ -209,6 +213,7 @@ function ListView({
   const { plans, loading, error, refetch } = useFloorPlanList();
   const { createPlan } = useFloorPlan(null);
   const [creating, setCreating] = useState(false);
+  const [showCapabilities, setShowCapabilities] = useState(false);
 
   const handleCreate = async () => {
     setCreating(true);
@@ -222,46 +227,105 @@ function ListView({
     }
   };
 
+  const totalWalls = plans.reduce((sum, p) => sum + p.wallCount, 0);
+  const totalRooms = plans.reduce((sum, p) => sum + p.roomCount, 0);
+  const inProgress = plans.filter((p) => p.status === 'in_progress').length;
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-emerald-950/20 p-6">
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                <PenTool size={20} className="text-emerald-400" />
+    <div className="space-y-6 max-w-[1400px] mx-auto">
+      {/* ── Hero Header ── */}
+      <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[#0c1f1a] via-[#0f1a24] to-[#111318]">
+        {/* Mesh gradient orbs */}
+        <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-emerald-500/[0.07] blur-3xl" />
+        <div className="absolute -bottom-16 left-1/4 w-48 h-48 rounded-full bg-blue-500/[0.05] blur-3xl" />
+        <div className="absolute top-1/2 right-1/3 w-32 h-32 rounded-full bg-purple-500/[0.04] blur-2xl" />
+
+        <div className="relative z-10 p-8">
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                <PenTool size={22} className="text-emerald-400" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-zinc-100">Sketch Engine</h1>
-                <p className="text-sm text-zinc-400">Professional floor plans, site plans, and auto-generated estimates</p>
+                <h1 className="text-2xl font-bold text-white tracking-tight">Sketch Engine</h1>
+                <p className="text-sm text-zinc-400 mt-1 max-w-lg">
+                  Professional floor plans, trade layer overlays, 3D visualization, and auto-generated estimates — all in one canvas.
+                </p>
               </div>
             </div>
-            <Button
+
+            <button
               onClick={handleCreate}
               disabled={creating}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white"
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-emerald-900/30 hover:shadow-emerald-800/40 disabled:opacity-50 flex-shrink-0"
             >
               {creating ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4" />
               )}
               New Floor Plan
-            </Button>
+            </button>
           </div>
+
+          {/* Quick stats */}
+          {plans.length > 0 && (
+            <div className="flex items-center gap-6 mt-6 pt-5 border-t border-white/[0.06]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center">
+                  <FolderOpen size={14} className="text-zinc-400" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{plans.length}</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">Floor Plans</p>
+                </div>
+              </div>
+              <div className="w-px h-8 bg-white/[0.06]" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center">
+                  <RulerIcon size={14} className="text-zinc-400" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{totalWalls}</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">Total Walls</p>
+                </div>
+              </div>
+              <div className="w-px h-8 bg-white/[0.06]" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center">
+                  <Grid3X3 size={14} className="text-zinc-400" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white leading-none">{totalRooms}</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">Total Rooms</p>
+                </div>
+              </div>
+              {inProgress > 0 && (
+                <>
+                  <div className="w-px h-8 bg-white/[0.06]" />
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                      <Activity size={14} className="text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-amber-400 leading-none">{inProgress}</p>
+                      <p className="text-[11px] text-zinc-500 mt-0.5">In Progress</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
-        <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-emerald-500/5" />
-        <div className="absolute -right-4 -bottom-10 w-28 h-28 rounded-full bg-emerald-500/5" />
       </div>
 
-      {/* Error Banner (small, doesn't block content) */}
+      {/* Error Banner */}
       {error && (
-        <div className="flex items-center justify-between bg-red-900/20 border border-red-800/50 rounded-lg px-4 py-2.5">
+        <div className="flex items-center justify-between bg-red-900/15 border border-red-500/20 rounded-xl px-4 py-3">
           <p className="text-sm text-red-400">{error}</p>
           <button
             onClick={refetch}
-            className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium text-red-400 hover:text-red-300 transition-colors"
           >
             <RefreshCw size={12} />
             Retry
@@ -269,39 +333,70 @@ function ListView({
         </div>
       )}
 
-      {/* Capabilities Grid — ALWAYS visible */}
-      <div>
-        <h2 className="text-sm font-medium text-zinc-400 mb-3 uppercase tracking-wider">Engine Capabilities</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-          {SK_FEATURES.map((feat) => {
-            const [textColor, bgColor] = feat.color.split(' ');
-            return (
-              <div key={feat.label} className="p-3 rounded-lg border border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 transition-colors group">
-                <div className={`w-8 h-8 mx-auto mb-2 rounded-lg ${bgColor} flex items-center justify-center`}>
-                  <span className={textColor}>{feat.icon}</span>
-                </div>
-                <p className="text-xs font-medium text-zinc-200 text-center">{feat.label}</p>
-                <p className="text-[10px] text-zinc-500 mt-0.5 text-center leading-tight">{feat.detail}</p>
-              </div>
-            );
-          })}
-        </div>
+      {/* ── Capabilities Strip (collapsible) ── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] overflow-hidden">
+        <button
+          onClick={() => setShowCapabilities(!showCapabilities)}
+          className="w-full flex items-center justify-between px-5 py-3 hover:bg-white/[0.02] transition-colors"
+        >
+          <div className="flex items-center gap-2.5">
+            <Sparkles size={14} className="text-emerald-400" />
+            <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Engine Capabilities</span>
+            <span className="text-[10px] text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">{SK_FEATURES.length} tools</span>
+          </div>
+          <ChevronRight
+            size={14}
+            className={`text-zinc-500 transition-transform duration-200 ${showCapabilities ? 'rotate-90' : ''}`}
+          />
+        </button>
+
+        {showCapabilities && (
+          <div className="px-5 pb-4 pt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              {SK_FEATURES.map((feat) => {
+                const Icon = feat.icon;
+                return (
+                  <div
+                    key={feat.label}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition-colors group"
+                  >
+                    <div
+                      className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: `${feat.color}15` }}
+                    >
+                      <Icon size={14} style={{ color: feat.color }} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-semibold text-zinc-200 leading-tight truncate">{feat.label}</p>
+                      <p className="text-[10px] text-zinc-500 leading-tight truncate">{feat.detail}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Loading */}
+      {/* ── Loading ── */}
       {loading && (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
-          <span className="ml-2 text-sm text-zinc-500">Loading floor plans...</span>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex items-center gap-3">
+            <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
+            <span className="text-sm text-zinc-400">Loading floor plans...</span>
+          </div>
         </div>
       )}
 
-      {/* Your Floor Plans — shows when plans exist */}
+      {/* ── Floor Plans Grid ── */}
       {!loading && plans.length > 0 && (
         <div>
-          <h2 className="text-sm font-medium text-zinc-400 mb-3 uppercase tracking-wider">
-            Your Floor Plans ({plans.length})
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider">
+              Your Floor Plans
+            </h2>
+            <span className="text-xs text-zinc-500">{plans.length} plan{plans.length !== 1 ? 's' : ''}</span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {plans.map((plan) => (
               <PlanCard
@@ -310,26 +405,63 @@ function ListView({
                 onOpen={() => onOpenEditor(plan.id)}
               />
             ))}
+
+            {/* Create new card */}
+            <button
+              onClick={handleCreate}
+              disabled={creating}
+              className="group rounded-xl border-2 border-dashed border-zinc-800 hover:border-emerald-500/30 bg-transparent hover:bg-emerald-500/[0.03] transition-all flex flex-col items-center justify-center py-12 min-h-[180px] disabled:opacity-50"
+            >
+              <div className="w-12 h-12 rounded-xl bg-zinc-800/60 group-hover:bg-emerald-500/10 flex items-center justify-center transition-colors mb-3">
+                {creating ? (
+                  <Loader2 size={20} className="text-zinc-400 animate-spin" />
+                ) : (
+                  <Plus size={20} className="text-zinc-500 group-hover:text-emerald-400 transition-colors" />
+                )}
+              </div>
+              <p className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300 transition-colors">New Floor Plan</p>
+            </button>
           </div>
         </div>
       )}
 
-      {/* Empty State — only when no plans and no error */}
+      {/* ── Empty State ── */}
       {!loading && !error && plans.length === 0 && (
-        <div className="text-center py-8 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30">
-          <PenTool className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
-          <h3 className="text-base font-semibold text-zinc-100 mb-1">No floor plans yet</h3>
-          <p className="text-sm text-zinc-400 max-w-md mx-auto">
-            Create your first floor plan to start drawing walls, placing doors and windows, defining rooms, and generating estimates.
-          </p>
-          <button
-            onClick={handleCreate}
-            disabled={creating}
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
-          >
-            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-            Create Your First Floor Plan
-          </button>
+        <div className="rounded-2xl border border-[var(--border)] bg-gradient-to-b from-[var(--bg-secondary)] to-transparent p-12">
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-5">
+              <PenTool size={28} className="text-emerald-400" />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Create Your First Floor Plan</h3>
+            <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+              Draw walls, place doors and windows, define rooms with auto-measurements,
+              add trade layers, and generate estimates — all from one canvas.
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={handleCreate}
+                disabled={creating}
+                className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-emerald-900/30 disabled:opacity-50"
+              >
+                {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                Start Drawing
+              </button>
+            </div>
+
+            {/* Mini feature highlights */}
+            <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-white/[0.06]">
+              {[
+                { icon: Layers, label: '18 Trade Layers' },
+                { icon: Box, label: '3D Preview' },
+                { icon: Calculator, label: 'Auto Estimates' },
+              ].map((f) => (
+                <div key={f.label} className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                  <f.icon size={12} className="text-zinc-600" />
+                  {f.label}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -346,37 +478,76 @@ function PlanCard({
   const status = statusConfig[plan.status] || statusConfig.draft;
 
   return (
-    <Card
-      className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all cursor-pointer group"
+    <div
       onClick={onOpen}
+      className="group rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] hover:border-emerald-500/30 transition-all cursor-pointer overflow-hidden"
     >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <PenTool className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-              <h3 className="text-sm font-medium text-zinc-100 truncate">
-                {plan.name}
-              </h3>
-            </div>
-            <p className="text-xs text-zinc-500 mt-1">
-              Floor {plan.floorLevel}
+      {/* Plan preview area */}
+      <div className="relative h-32 bg-gradient-to-br from-zinc-900 to-zinc-800/50 border-b border-[var(--border)] flex items-center justify-center overflow-hidden">
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+          }}
+        />
+        {/* Floor plan icon */}
+        <div className="relative flex items-center gap-3 text-zinc-600">
+          <PenTool size={28} className="opacity-30" />
+          <div className="text-left">
+            <p className="text-xs font-medium text-zinc-500">
+              {plan.wallCount}W / {plan.roomCount}R
             </p>
+            <p className="text-[10px] text-zinc-600">Floor {plan.floorLevel}</p>
           </div>
-          <Badge className={`${status.bgColor} ${status.color} text-xs`}>
-            {status.label}
-          </Badge>
         </div>
-        <div className="flex items-center gap-3 mt-3 text-xs text-zinc-500">
-          <span>
-            <RulerIcon className="h-3 w-3 inline mr-1" />
+
+        {/* Status pill — top right */}
+        <div className={`absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${status.bgColor} ${status.color}`}>
+          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'currentColor' }} />
+          {status.label}
+        </div>
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/[0.04] transition-colors flex items-center justify-center">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur rounded-lg text-xs font-medium text-white">
+            Open Editor
+            <ChevronRight size={12} />
+          </div>
+        </div>
+      </div>
+
+      {/* Plan details */}
+      <div className="px-4 py-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="text-sm font-semibold text-zinc-100 truncate group-hover:text-emerald-300 transition-colors">
+            {plan.name}
+          </h3>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="p-1 rounded-md text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
+          >
+            <MoreHorizontal size={14} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3 mt-2 text-[11px] text-zinc-500">
+          <span className="flex items-center gap-1">
+            <RulerIcon size={10} />
             {plan.wallCount} walls
           </span>
-          <span>{plan.roomCount} rooms</span>
-          <span className="ml-auto">{formatDate(plan.updatedAt)}</span>
+          <span className="flex items-center gap-1">
+            <Grid3X3 size={10} />
+            {plan.roomCount} rooms
+          </span>
+          <span className="flex items-center gap-1 ml-auto">
+            <Clock size={10} />
+            {formatDate(plan.updatedAt)}
+          </span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 

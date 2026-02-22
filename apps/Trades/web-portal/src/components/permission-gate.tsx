@@ -430,17 +430,9 @@ interface ProModeGateProps {
   feature?: string;
 }
 
-export function ProModeGate({ children, fallback = null, feature }: ProModeGateProps) {
-  const { isProMode, hasProFeature, loading } = usePermissions();
-
-  if (loading) return null;
-
-  let hasAccess = isProMode;
-  if (feature) {
-    hasAccess = hasProFeature(feature);
-  }
-
-  return hasAccess ? <>{children}</> : <>{fallback}</>;
+export function ProModeGate({ children }: ProModeGateProps) {
+  // Pro mode feature removed — all features always visible
+  return <>{children}</>;
 }
 
 // ============================================================

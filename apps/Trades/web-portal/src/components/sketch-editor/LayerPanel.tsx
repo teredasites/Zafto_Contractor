@@ -238,7 +238,14 @@ export default function LayerPanel({
                   )}
                 </button>
                 <button
-                  onClick={() => onActiveLayerChange(layer.id)}
+                  onClick={() => {
+                    if (isActive) {
+                      setExpandedId(isExpanded ? null : layer.id);
+                    } else {
+                      onActiveLayerChange(layer.id);
+                      setExpandedId(layer.id);
+                    }
+                  }}
                   className="flex-1 flex items-center gap-1.5 min-w-0"
                 >
                   <Icon size={12} color={color} />
