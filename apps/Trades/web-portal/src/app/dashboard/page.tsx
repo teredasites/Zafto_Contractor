@@ -55,7 +55,7 @@ import { ZMark } from '@/components/z-console/z-mark';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { isProMode, companyId, loading: permLoading } = usePermissions();
+  const { companyId, loading: permLoading } = usePermissions();
 
   const { stats, loading: statsLoading } = useStats();
   const { jobs } = useJobs();
@@ -114,19 +114,6 @@ export default function DashboardPage() {
   const revenueData = reportData?.monthlyRevenue || [];
   const jobsByStatusData = reportData?.jobsByStatus || [];
   const revenueByCategoryData = reportData?.revenueByCategory || [];
-
-  const handleToggleProMode = async () => {
-    if (!companyId) return;
-    const newMode = isProMode ? 'simple' : 'pro';
-    try {
-      const supabase = getSupabase();
-      const { data: current } = await supabase.from('companies').select('settings').eq('id', companyId).single();
-      const settings = (current?.settings as Record<string, unknown>) || {};
-      await supabase.from('companies').update({ settings: { ...settings, ui_mode: newMode } }).eq('id', companyId);
-    } catch (e) {
-      console.error('Failed to toggle mode:', e);
-    }
-  };
 
   const todayJobs = schedule.filter((s) => {
     const today = new Date();

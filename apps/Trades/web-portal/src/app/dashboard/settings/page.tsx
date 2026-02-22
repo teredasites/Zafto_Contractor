@@ -1228,97 +1228,10 @@ function AppearanceSettings() {
         </CardContent>
       </Card>
 
-      {/* Pro Mode Toggle */}
-      <ProModeCard />
     </div>
   );
 }
 
-function ProModeCard() {
-  // Initialize from localStorage synchronously
-  const [isProMode, setIsProMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('zafto_pro_mode') === 'true';
-    }
-    return false;
-  });
-
-  // Listen for changes from other toggles
-  useEffect(() => {
-    const handleProModeChange = (e: CustomEvent) => {
-      setIsProMode(e.detail as boolean);
-    };
-    window.addEventListener('proModeChange', handleProModeChange as EventListener);
-    return () => window.removeEventListener('proModeChange', handleProModeChange as EventListener);
-  }, []);
-
-  const handleToggle = () => {
-    const newValue = !isProMode;
-    setIsProMode(newValue);
-    localStorage.setItem('zafto_pro_mode', String(newValue));
-    window.dispatchEvent(new CustomEvent('proModeChange', { detail: newValue }));
-  };
-
-  return (
-    <Card className={cn(
-      'transition-colors',
-      isProMode && 'border-accent/50 bg-accent/5'
-    )}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              'p-2.5 rounded-xl transition-colors',
-              isProMode ? 'bg-accent/20' : 'bg-secondary'
-            )}>
-              <Sparkles size={22} className={isProMode ? 'text-accent' : 'text-muted'} />
-            </div>
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                Pro Mode
-                {isProMode && (
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-accent text-white rounded">
-                    ON
-                  </span>
-                )}
-              </CardTitle>
-              <CardDescription>
-                {isProMode
-                  ? 'Full CRM with leads, tasks & automations'
-                  : 'Simple mode - Bid, Job, Invoice flow'}
-              </CardDescription>
-            </div>
-          </div>
-          <button
-            onClick={handleToggle}
-            className={cn(
-              'w-11 h-6 rounded-full transition-colors relative flex-shrink-0',
-              isProMode ? 'bg-accent' : 'bg-slate-300 dark:bg-slate-600'
-            )}
-          >
-            <span
-              className={cn(
-                'absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-200',
-                isProMode ? 'left-6' : 'left-1'
-              )}
-            />
-          </button>
-        </div>
-      </CardHeader>
-      {isProMode && (
-        <CardContent>
-          <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
-            <Info size={16} className="text-muted mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-muted">
-              Pro Mode unlocks: Lead Pipeline, Tasks & Follow-ups, Communication Hub,
-              Service Agreements, Equipment Tracking, Multi-Property Support, and Automations.
-            </p>
-          </div>
-        </CardContent>
-      )}
-    </Card>
-  );
-}
 
 function GoodBetterBestCard() {
   const [enabled, setEnabled] = useState(() => {
