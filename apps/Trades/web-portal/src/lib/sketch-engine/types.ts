@@ -105,6 +105,7 @@ export type SketchTool =
   | 'door'
   | 'window'
   | 'fixture'
+  | 'tradeSymbol'
   | 'label'
   | 'dimension'
   | 'lasso'
@@ -721,6 +722,7 @@ export interface EditorState {
   windowType: WindowType;
   windowWidth: number;
   pendingFixtureType: FixtureType | null;
+  pendingTradeSymbol: TradeSymbolType | null;
   units: MeasurementUnit;
 }
 
@@ -742,6 +744,7 @@ export function createDefaultEditorState(): EditorState {
     windowType: 'standard',
     windowWidth: 36,
     pendingFixtureType: null,
+    pendingTradeSymbol: null,
     units: 'imperial',
   };
 }

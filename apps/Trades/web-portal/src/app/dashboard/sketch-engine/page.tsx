@@ -1013,7 +1013,7 @@ function EditorView({
                 </div>
 
                 {showLayers && (
-                  <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
+                  <div className="absolute top-3 left-16 z-10 flex flex-col gap-2">
                     <LayerPanel
                       layers={planData.tradeLayers}
                       activeLayerId={editorState.activeLayerId}
@@ -1033,8 +1033,10 @@ function EditorView({
                           : null
                       }
                       onPlaceSymbol={(symbolType) => {
-                        // Set tool to fixture and store symbol type for placement
-                        handleEditorStateChange({ activeTool: 'fixture' as SketchTool });
+                        handleEditorStateChange({
+                          activeTool: 'tradeSymbol' as SketchTool,
+                          pendingTradeSymbol: symbolType,
+                        });
                       }}
                     />
                   </div>
