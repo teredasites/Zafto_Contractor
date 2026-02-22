@@ -72,6 +72,7 @@ import {
 } from '@/lib/sketch-engine/commands';
 import { formatDate } from '@/lib/utils';
 import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
+import { useJobs } from '@/lib/hooks/use-jobs';
 import type { ContextMenuEvent } from '@/components/sketch-editor/SketchCanvas';
 
 // Dynamic import for Konva (SSR incompatible)
@@ -674,7 +675,7 @@ function EditorView({
   planId: string;
   onClose: () => void;
 }) {
-  const { plan, loading, error, saving, savePlanData } =
+  const { plan, loading, error, saving, savePlanData, updatePlanJob } =
     useFloorPlan(planId);
 
   // SK7: Snapshots
@@ -718,6 +719,10 @@ function EditorView({
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [reconScanId, setReconScanId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuEvent | null>(null);
+  const [showJobPicker, setShowJobPicker] = useState(false);
+
+  // Jobs list for linking floor plan to a job
+  const { jobs } = useJobs();
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const undoManagerRef = useRef(new UndoRedoManager());
@@ -1194,10 +1199,64 @@ function EditorView({
         >
           <ArrowLeft size={16} />
         </button>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex items-center gap-2">
           <h2 className="text-sm font-semibold text-gray-800 truncate">
             {plan?.name || 'Floor Plan'}
           </h2>
+          {/* Job link indicator / picker */}
+          <div className="relative">
+            <button
+              onClick={() => setShowJobPicker(p => !p)}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${
+                plan?.jobId
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200'
+              }`}
+              title={plan?.jobId ? 'Linked to job — click to change' : 'Link to a job'}
+            >
+              <Link size={10} />
+              {plan?.jobId
+                ? (jobs.find(j => j.id === plan.jobId)?.title || 'Linked').slice(0, 20)
+                : 'Link to Job'}
+            </button>
+            {showJobPicker && (
+              <div className="absolute top-full left-0 mt-1 w-64 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-xl z-50">
+                <div className="p-2 border-b border-gray-100">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Select Job</span>
+                </div>
+                {plan?.jobId && (
+                  <button
+                    onClick={() => { updatePlanJob(null); setShowJobPicker(false); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors border-b border-gray-100"
+                  >
+                    <Link size={10} />
+                    Unlink from job
+                  </button>
+                )}
+                {jobs.length === 0 ? (
+                  <div className="px-3 py-4 text-xs text-gray-400 text-center">No jobs found</div>
+                ) : (
+                  jobs.slice(0, 20).map(job => (
+                    <button
+                      key={job.id}
+                      onClick={() => { updatePlanJob(job.id); setShowJobPicker(false); }}
+                      className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-gray-50 transition-colors ${
+                        plan?.jobId === job.id ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                      }`}
+                    >
+                      <div className="flex-1 text-left truncate">
+                        <span className="font-medium">{job.title}</span>
+                        {job.address?.street && (
+                          <span className="text-gray-400 ml-1">— {job.address.street}</span>
+                        )}
+                      </div>
+                      {plan?.jobId === job.id && <span className="text-emerald-500 text-[10px]">Current</span>}
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-400">
           {saving && (
@@ -1312,6 +1371,41 @@ function EditorView({
             </>
           )}
         </div>
+      </div>
+
+      {/* Capabilities strip — all 12 engine features accessible */}
+      <div className="h-8 border-b border-gray-100 flex items-center gap-1 px-2 bg-gray-50/80 overflow-x-auto">
+        {[
+          { icon: PenTool, label: 'Draw', action: () => handleToolChange('wall' as SketchTool), active: ['wall', 'arcWall', 'door', 'window', 'fixture'].includes(editorState.activeTool), color: '#10B981' },
+          { icon: RulerIcon, label: 'Measure', action: () => handleToolChange('dimension' as SketchTool), active: editorState.activeTool === 'dimension', color: '#3B82F6' },
+          { icon: Layers, label: 'Layers', action: () => setShowLayers(p => !p), active: showLayers, color: '#8B5CF6' },
+          { icon: Box, label: '3D', action: () => setIs3DView(p => !p), active: is3DView, color: '#F59E0B' },
+          { icon: Camera, label: 'Pins', action: () => setPinMode(p => !p), active: pinMode, color: '#EC4899' },
+          { icon: Map, label: 'Site', action: () => { setPlanMode('site'); setIs3DView(false); }, active: planMode === 'site', color: '#14B8A6' },
+          { icon: LayoutTemplate, label: 'Templates', action: () => setShowTemplatePicker(true), active: false, color: '#D97706' },
+          { icon: Calculator, label: 'Estimate', action: () => planData.rooms.length > 0 && setShowEstimateModal(true), active: false, color: '#06B6D4' },
+          { icon: Maximize2, label: 'Grid', action: () => handleEditorStateChange({ showGrid: !editorState.showGrid }), active: editorState.showGrid, color: '#6366F1' },
+          { icon: History, label: 'History', action: () => setShowHistory(p => !p), active: showHistory, color: '#F43F5E' },
+          { icon: Grid3X3, label: 'Floors', action: () => {}, active: false, color: '#84CC16' },
+          { icon: Download, label: 'Export', action: () => planData.walls.length > 0 && setShowExportModal(true), active: false, color: '#0EA5E9' },
+        ].map((feat) => {
+          const Icon = feat.icon;
+          return (
+            <button
+              key={feat.label}
+              onClick={feat.action}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium whitespace-nowrap transition-colors ${
+                feat.active
+                  ? 'bg-white shadow-sm border border-gray-200 text-gray-800'
+                  : 'text-gray-500 hover:bg-white/60 hover:text-gray-700'
+              }`}
+              title={feat.label}
+            >
+              <Icon size={11} style={{ color: feat.active ? feat.color : undefined }} />
+              {feat.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Pin mode indicator */}
