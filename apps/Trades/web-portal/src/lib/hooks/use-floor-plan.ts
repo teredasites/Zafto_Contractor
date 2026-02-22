@@ -358,6 +358,77 @@ export function useFloorPlan(planId: string | null) {
     [planId],
   );
 
+  const deletePlan = useCallback(
+    async (id?: string) => {
+      const targetId = id || planId;
+      if (!targetId) return false;
+      try {
+        const supabase = getSupabase();
+        const { error: deleteError } = await supabase
+          .from('property_floor_plans')
+          .update({ deleted_at: new Date().toISOString() })
+          .eq('id', targetId);
+        if (deleteError) throw deleteError;
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to delete plan');
+        return false;
+      }
+    },
+    [planId],
+  );
+
+  const duplicatePlan = useCallback(
+    async (id?: string) => {
+      const targetId = id || planId;
+      if (!targetId) return null;
+      try {
+        const supabase = getSupabase();
+        // Fetch source plan
+        const { data: source, error: fetchErr } = await supabase
+          .from('property_floor_plans')
+          .select('*')
+          .eq('id', targetId)
+          .single();
+        if (fetchErr || !source) throw fetchErr || new Error('Plan not found');
+        // Create copy
+        const { data: copy, error: copyErr } = await supabase
+          .from('property_floor_plans')
+          .insert({
+            company_id: source.company_id,
+            name: `${source.name} (Copy)`,
+            property_id: source.property_id,
+            job_id: source.job_id,
+            plan_data: source.plan_data,
+            status: 'draft',
+            floor_level: source.floor_level,
+            floor_number: source.floor_number,
+          })
+          .select()
+          .single();
+        if (copyErr) throw copyErr;
+        return copy?.id as string;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to duplicate plan');
+        return null;
+      }
+    },
+    [planId],
+  );
+
+  const updatePlanJob = useCallback(
+    async (jobId: string | null, targetId?: string) => {
+      const id = targetId || planId;
+      if (!id) return;
+      const supabase = getSupabase();
+      await supabase
+        .from('property_floor_plans')
+        .update({ job_id: jobId })
+        .eq('id', id);
+    },
+    [planId],
+  );
+
   // Cleanup
   useEffect(() => {
     return () => {
@@ -377,6 +448,9 @@ export function useFloorPlan(planId: string | null) {
     savePlanData,
     createPlan,
     updatePlanName,
+    deletePlan,
+    duplicatePlan,
+    updatePlanJob,
     refetch: fetchPlan,
   };
 }
@@ -392,6 +466,8 @@ export interface FloorPlanListItem {
   floorLevel: number;
   wallCount: number;
   roomCount: number;
+  jobId: string | null;
+  propertyId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -409,7 +485,7 @@ export function useFloorPlanList() {
 
       const { data, error: fetchError } = await supabase
         .from('property_floor_plans')
-        .select('id, name, status, floor_level, plan_data, created_at, updated_at')
+        .select('id, name, status, floor_level, plan_data, job_id, property_id, created_at, updated_at')
         .is('deleted_at', null)
         .order('updated_at', { ascending: false })
         .limit(100);
@@ -428,6 +504,8 @@ export function useFloorPlanList() {
             floorLevel: (row.floor_level as number) || 1,
             wallCount: walls?.length ?? 0,
             roomCount: rooms?.length ?? 0,
+            jobId: (row.job_id as string) || null,
+            propertyId: (row.property_id as string) || null,
             createdAt: row.created_at as string,
             updatedAt: row.updated_at as string,
           };
