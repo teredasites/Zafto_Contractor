@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/translations';
 import {
   useMoldAssessments,
   useMoldLabSamples,
@@ -80,6 +81,7 @@ function formatDate(iso: string | null | undefined): string {
 // ── Main Page ──
 
 export default function MoldRemediationPage() {
+  const { t } = useTranslation();
   const { assessments, loading, error } = useMoldAssessments('');
   const { states: licensing } = useMoldStateLicensing();
   const [searchQuery, setSearchQuery] = useState('');
@@ -128,7 +130,7 @@ export default function MoldRemediationPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Mold Remediation</h1>
+        <h1 className="text-2xl font-bold text-white">{t('moldRemediation.title')}</h1>
         <p className="text-sm text-zinc-400 mt-1">IICRC S520 compliant assessments, containment, air sampling, and clearance</p>
       </div>
 
@@ -172,7 +174,7 @@ export default function MoldRemediationPage() {
         <div className="col-span-5 space-y-3">
           {filtered.length === 0 ? (
             <div className="text-center py-12 text-zinc-500">
-              <p className="text-sm">No mold assessments found</p>
+              <p className="text-sm">{t('moldRemediation.noRecords')}</p>
             </div>
           ) : (
             filtered.map((a) => (

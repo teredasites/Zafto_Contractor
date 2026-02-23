@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/translations';
 import { useLocksmithLogs, LOCKSMITH_SERVICE_LABELS, LOCK_TYPE_LABELS } from '@/lib/hooks/use-locksmith';
 import { SearchInput } from '@/components/ui/input';
 
@@ -16,6 +17,7 @@ function formatDate(iso: string): string {
 }
 
 export default function LocksmithPage() {
+  const { t } = useTranslation();
   const { logs, loading } = useLocksmithLogs();
   const [search, setSearch] = useState('');
 
@@ -45,7 +47,7 @@ export default function LocksmithPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Locksmith</h1>
+          <h1 className="text-2xl font-bold text-white">{t('locksmith.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">Service logs, master key systems, automotive</p>
         </div>
         <div className="max-w-xs">
@@ -76,7 +78,7 @@ export default function LocksmithPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500"><p>No locksmith services found</p></div>
+          <div className="text-center py-12 text-zinc-500"><p>{t('locksmith.noRecords')}</p></div>
         ) : (
           filtered.map((l) => (
             <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">

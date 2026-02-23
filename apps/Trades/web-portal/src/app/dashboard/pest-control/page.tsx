@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/translations';
 import {
   useTreatmentLogs,
   useBaitStations,
@@ -27,6 +28,7 @@ function formatDate(iso: string | null): string {
 }
 
 export default function PestControlPage() {
+  const { t } = useTranslation();
   const { logs, loading: logsLoading } = useTreatmentLogs();
   const { stations } = useBaitStations();
   const { reports } = useWdiReports();
@@ -61,7 +63,7 @@ export default function PestControlPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Pest Control</h1>
+        <h1 className="text-2xl font-bold text-white">{t('pestControl.title')}</h1>
         <p className="text-sm text-zinc-400 mt-1">Treatment logs, bait stations, WDI/NPMA-33 reports</p>
       </div>
 
@@ -110,7 +112,7 @@ export default function PestControlPage() {
       {tab === 'treatments' && (
         <div className="space-y-3">
           {filteredLogs.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500"><p>No treatments found</p></div>
+            <div className="text-center py-12 text-zinc-500"><p>{t('pestControl.noRecords')}</p></div>
           ) : (
             filteredLogs.map((l) => (
               <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
