@@ -51,6 +51,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { cn, formatRelativeTime } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { locales, localeNames, localeFlags, type Locale } from '@/lib/i18n-config';
+import { useTranslation, setLocale as setAppLocale } from '@/lib/translations';
 import { useTeam } from '@/lib/hooks/use-jobs';
 import { usePermissions, PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@/components/permission-gate';
 import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useApiKeys } from '@/lib/hooks/use-enterprise';
@@ -224,8 +225,8 @@ function ProfileSettings() {
       if (user) {
         await supabase.from('users').update({ preferred_locale: locale }).eq('id', user.id);
       }
-      document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-      window.location.reload();
+      // Set cookie + dispatch localeChange event — all components using useTranslation() update live
+      setAppLocale(locale);
     } catch {
       // Revert on error
       setSelectedLocale(selectedLocale);

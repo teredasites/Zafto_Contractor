@@ -194,7 +194,8 @@
     "rent": "Rent",
     "maintenance": "Maintenance",
     "assets": "Assets",
-    "unitTurns": "Unit Turns"
+    "unitTurns": "Unit Turns",
+    "overview": "Overview"
   },
   "dashboard": {
     "title": "Dashboard",
