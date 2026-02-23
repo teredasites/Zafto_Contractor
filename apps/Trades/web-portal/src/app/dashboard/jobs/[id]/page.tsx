@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
@@ -45,7 +46,8 @@ import { useLeadScore } from '@/lib/hooks/use-area-scan';
 import { useJobSchedule } from '@/lib/hooks/use-job-schedule';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 import { MiniGantt } from '@/components/scheduling/MiniGantt';
-import type { Job, JobType, JobNote, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
+import { usePhotos } from '@/lib/hooks/use-photos';
+import type { Job, JobType, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 
 type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
@@ -616,29 +618,58 @@ function TasksTab({ job }: { job: Job }) {
 function MaterialsTab({ job }: { job: Job }) {
   const [materials, setMaterials] = useState<{ id: string; name: string; category: string; quantity: number; unit: string; unit_cost: number; total_cost: number; is_billable: boolean }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: '', category: 'general', quantity: '1', unit: 'ea', unit_cost: '' });
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    const fetchMaterials = async () => {
-      try {
-        const supabase = getSupabase();
-        const { data } = await supabase
-          .from('job_materials')
-          .select('id, name, category, quantity, unit, unit_cost, total_cost, is_billable')
-          .eq('job_id', job.id)
-          .is('deleted_at', null)
-          .order('created_at', { ascending: true });
+  const fetchMaterials = useCallback(async () => {
+    try {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('job_materials')
+        .select('id, name, category, quantity, unit, unit_cost, total_cost, is_billable')
+        .eq('job_id', job.id)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: true });
 
-        if (!cancelled) setMaterials(data || []);
-      } catch {
-        if (!cancelled) setMaterials([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    fetchMaterials();
-    return () => { cancelled = true; };
+      setMaterials(data || []);
+    } catch {
+      setMaterials([]);
+    } finally {
+      setLoading(false);
+    }
   }, [job.id]);
+
+  useEffect(() => { fetchMaterials(); }, [fetchMaterials]);
+
+  const handleAdd = async () => {
+    if (!formData.name.trim()) return;
+    setSaving(true);
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      const qty = Number(formData.quantity) || 1;
+      const unitCost = Number(formData.unit_cost) || 0;
+      await supabase.from('job_materials').insert({
+        job_id: job.id,
+        company_id: user?.app_metadata?.company_id,
+        name: formData.name.trim(),
+        category: formData.category,
+        quantity: qty,
+        unit: formData.unit,
+        unit_cost: unitCost,
+        total_cost: qty * unitCost,
+        is_billable: true,
+      });
+      setFormData({ name: '', category: 'general', quantity: '1', unit: 'ea', unit_cost: '' });
+      setShowForm(false);
+      await fetchMaterials();
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const totalCost = materials.reduce((sum, m) => sum + (Number(m.total_cost) || Number(m.unit_cost) * Number(m.quantity) || 0), 0);
 
@@ -661,12 +692,57 @@ function MaterialsTab({ job }: { job: Job }) {
             <p className="text-xs text-muted mt-1">{materials.length} items &middot; {formatCurrency(totalCost)} total</p>
           )}
         </div>
-        <Button variant="secondary" size="sm">
+        <Button variant="secondary" size="sm" onClick={() => setShowForm(!showForm)}>
           <Plus size={14} />
           Add Material
         </Button>
       </CardHeader>
-      {materials.length === 0 ? (
+
+      {/* Add Material Form */}
+      {showForm && (
+        <CardContent className="border-b border-main pb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div className="col-span-2">
+              <Input
+                label="Item Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g. Copper pipe 3/4"
+              />
+            </div>
+            <Input
+              label="Qty"
+              type="number"
+              value={formData.quantity}
+              onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+              min="0"
+            />
+            <Input
+              label="Unit"
+              value={formData.unit}
+              onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+              placeholder="ea, ft, gal"
+            />
+            <Input
+              label="Unit Cost"
+              type="number"
+              value={formData.unit_cost}
+              onChange={(e) => setFormData({ ...formData, unit_cost: e.target.value })}
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div className="flex items-center gap-2 mt-3">
+            <Button size="sm" onClick={handleAdd} disabled={saving || !formData.name.trim()}>
+              {saving ? 'Adding...' : 'Add'}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowForm(false)}>Cancel</Button>
+          </div>
+        </CardContent>
+      )}
+
+      {materials.length === 0 && !showForm ? (
         <CardContent>
           <div className="text-center py-8">
             <Package size={32} className="mx-auto text-muted mb-2" />
@@ -674,7 +750,7 @@ function MaterialsTab({ job }: { job: Job }) {
             <p className="text-xs text-muted mt-1">Add materials to track costs</p>
           </div>
         </CardContent>
-      ) : (
+      ) : materials.length > 0 ? (
         <CardContent className="p-0">
           <table className="w-full">
             <thead>
@@ -699,36 +775,127 @@ function MaterialsTab({ job }: { job: Job }) {
             </tbody>
           </table>
         </CardContent>
-      )}
+      ) : null}
     </Card>
   );
 }
 
 function PhotosTab({ job }: { job: Job }) {
+  const { photos, loading: photosLoading, refresh } = usePhotos(job.id);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const companyId = user.app_metadata?.company_id;
+
+      for (const file of Array.from(files)) {
+        const timestamp = Date.now();
+        const storagePath = `${companyId}/jobs/${job.id}/${timestamp}_${file.name}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('photos')
+          .upload(storagePath, file, { contentType: file.type });
+        if (uploadErr) continue;
+
+        await supabase.from('photos').insert({
+          company_id: companyId,
+          job_id: job.id,
+          uploaded_by_user_id: user.id,
+          storage_path: storagePath,
+          file_name: file.name,
+          file_size: file.size,
+          mime_type: file.type,
+          category: 'general',
+          caption: '',
+          tags: [],
+          is_client_visible: false,
+        });
+      }
+      await refresh();
+    } catch {
+      // silent
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  if (photosLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Photos</CardTitle>
-        <Button variant="secondary" size="sm">
-          <Plus size={14} />
-          Upload Photo
+        <CardTitle className="text-base">Photos ({photos.length})</CardTitle>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? (
+            <span className="flex items-center gap-2">
+              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
+              Uploading...
+            </span>
+          ) : (
+            <>
+              <Plus size={14} />
+              Upload Photo
+            </>
+          )}
         </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => handleUpload(e.target.files)}
+        />
       </CardHeader>
       <CardContent>
-        {job.photos.length === 0 ? (
+        {photos.length === 0 ? (
           <div className="py-12 text-center">
             <Camera size={48} className="mx-auto text-muted mb-4 opacity-50" />
             <p className="text-muted">No photos uploaded yet</p>
-            <Button variant="secondary" size="sm" className="mt-4">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="mt-4"
+              onClick={() => fileInputRef.current?.click()}
+            >
               <Plus size={14} />
               Upload First Photo
             </Button>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {job.photos.map((photo) => (
-              <div key={photo.id} className="aspect-square rounded-lg bg-secondary overflow-hidden">
-                <img src={photo.url} alt={photo.caption || 'Job photo'} className="w-full h-full object-cover" />
+            {photos.map((photo) => (
+              <div key={photo.id} className="aspect-square rounded-lg bg-secondary overflow-hidden relative group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.signedUrl || ''}
+                  alt={photo.caption || photo.fileName}
+                  className="w-full h-full object-cover"
+                />
+                {photo.category !== 'general' && (
+                  <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 text-white text-[10px] rounded capitalize">
+                    {photo.category}
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -739,44 +906,110 @@ function PhotosTab({ job }: { job: Job }) {
 }
 
 function TimeTab({ job }: { job: Job }) {
-  const [entries] = useState([
-    { id: '1', member: 'Mike Johnson', date: new Date(), start: '8:00 AM', end: '12:30 PM', hours: 4.5 },
-    { id: '2', member: 'Carlos Rivera', date: new Date(), start: '8:00 AM', end: '12:30 PM', hours: 4.5 },
-  ]);
+  const [entries, setEntries] = useState<{ id: string; user_name: string; clock_in: string; clock_out: string | null; hours: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchEntries = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('time_entries')
+          .select('id, clock_in, clock_out, total_hours, users!inner(full_name)')
+          .eq('job_id', job.id)
+          .is('deleted_at', null)
+          .order('clock_in', { ascending: false });
+
+        if (!cancelled && data) {
+          setEntries(data.map((e: Record<string, unknown>) => {
+            const user = e.users as Record<string, unknown> | null;
+            const clockIn = e.clock_in as string;
+            const clockOut = e.clock_out as string | null;
+            const totalHours = Number(e.total_hours) || 0;
+            const computed = clockOut
+              ? (new Date(clockOut).getTime() - new Date(clockIn).getTime()) / 3600000
+              : 0;
+            return {
+              id: e.id as string,
+              user_name: (user?.full_name as string) || 'Unknown',
+              clock_in: clockIn,
+              clock_out: clockOut,
+              hours: totalHours || Math.round(computed * 100) / 100,
+            };
+          }));
+        }
+      } catch {
+        if (!cancelled) setEntries([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    fetchEntries();
+    return () => { cancelled = true; };
+  }, [job.id]);
 
   const totalHours = entries.reduce((sum, e) => sum + e.hours, 0);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-base">Time Entries</CardTitle>
-          <p className="text-sm text-muted mt-1">Total: {totalHours} hours</p>
+          <p className="text-sm text-muted mt-1">
+            {entries.length === 0 ? 'No time logged' : `Total: ${totalHours.toFixed(1)} hours`}
+          </p>
         </div>
-        <Button variant="secondary" size="sm">
-          <Plus size={14} />
-          Add Entry
+        <Button variant="secondary" size="sm" onClick={() => window.location.href = '/dashboard/time-clock'}>
+          <Clock size={14} />
+          Time Clock
         </Button>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="divide-y divide-main">
-          {entries.map((entry) => (
-            <div key={entry.id} className="px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar name={entry.member} size="sm" />
-                <div>
-                  <p className="font-medium text-main">{entry.member}</p>
-                  <p className="text-sm text-muted">{formatDate(entry.date)}</p>
+      {entries.length === 0 ? (
+        <CardContent>
+          <div className="text-center py-8">
+            <Clock size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">No time entries yet</p>
+            <p className="text-xs text-muted mt-1">Team members can clock in from the Time Clock page</p>
+          </div>
+        </CardContent>
+      ) : (
+        <CardContent className="p-0">
+          <div className="divide-y divide-main">
+            {entries.map((entry) => (
+              <div key={entry.id} className="px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar name={entry.user_name} size="sm" />
+                  <div>
+                    <p className="font-medium text-main">{entry.user_name}</p>
+                    <p className="text-sm text-muted">{formatDate(new Date(entry.clock_in))}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-medium text-main">{entry.hours} hrs</p>
-                <p className="text-sm text-muted">{entry.start} - {entry.end}</p>
+                <p className="font-medium text-main">{entry.hours.toFixed(1)} hrs</p>
+                <p className="text-sm text-muted">
+                  {new Date(entry.clock_in).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                  {entry.clock_out && (
+                    <> - {new Date(entry.clock_out).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</>
+                  )}
+                  {!entry.clock_out && ' (active)'}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </CardContent>
+      )}
     </Card>
   );
 }
@@ -875,41 +1108,86 @@ function MetaRow({ label, value }: { label: string; value?: string | number }) {
 }
 
 function NotesTab({ job }: { job: Job }) {
-  const [newNote, setNewNote] = useState('');
+  const [notes, setNotes] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchNotes = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('jobs')
+          .select('internal_notes')
+          .eq('id', job.id)
+          .single();
+        if (!cancelled && data) {
+          setNotes((data.internal_notes as string) || '');
+        }
+      } catch {
+        // silent
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    fetchNotes();
+    return () => { cancelled = true; };
+  }, [job.id]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      const supabase = getSupabase();
+      const { error } = await supabase
+        .from('jobs')
+        .update({ internal_notes: notes })
+        .eq('id', job.id);
+      if (!error) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Notes</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-base">Job Notes</CardTitle>
+        {saved && (
+          <span className="flex items-center gap-1 text-xs text-emerald-500">
+            <CheckCircle size={12} />
+            Saved
+          </span>
+        )}
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex gap-3">
-          <textarea
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Add a note..."
-            className="flex-1 px-4 py-3 bg-secondary border border-main rounded-lg resize-none text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50"
-            rows={3}
-          />
-        </div>
-        <Button disabled={!newNote.trim()}>Add Note</Button>
-
-        <div className="space-y-4 pt-4 border-t border-main">
-          {job.notes.length === 0 ? (
-            <p className="text-center text-muted py-4">No notes yet</p>
-          ) : (
-            job.notes.map((note) => (
-              <div key={note.id} className="p-4 bg-secondary rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Avatar name={note.authorName} size="sm" />
-                  <span className="font-medium text-main text-sm">{note.authorName}</span>
-                  <span className="text-xs text-muted">{formatDateTime(note.createdAt)}</span>
-                </div>
-                <p className="text-main">{note.content}</p>
-              </div>
-            ))
-          )}
-        </div>
+      <CardContent className="space-y-3">
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add notes about this job — scope details, access instructions, materials needed, customer preferences..."
+          className="w-full px-4 py-3 bg-secondary border border-main rounded-lg resize-y text-main text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 min-h-[150px]"
+          rows={8}
+        />
+        <Button onClick={handleSave} disabled={saving}>
+          {saving ? 'Saving...' : 'Save Notes'}
+        </Button>
       </CardContent>
     </Card>
   );
