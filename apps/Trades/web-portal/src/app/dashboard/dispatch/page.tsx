@@ -26,6 +26,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
 import { cn, formatRelativeTime } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================
 // Types
@@ -97,6 +98,7 @@ function estimateDriveMinutes(distMeters: number): number {
 
 export default function DispatchPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [unassignedJobs, setUnassignedJobs] = useState<DispatchJob[]>([]);
   const [assignedJobs, setAssignedJobs] = useState<DispatchJob[]>([]);
   const [techs, setTechs] = useState<TechStatus[]>([]);
@@ -513,12 +515,12 @@ export default function DispatchPage() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-main">
-              Dispatch Board
+              {t('dispatch.title')}
             </h1>
             <p className="text-sm text-muted">
-              {unassignedJobs.length} unassigned &middot;{' '}
-              {assignedJobs.length} dispatched &middot;{' '}
-              {availableTechs.length} available
+              {unassignedJobs.length} {t('dispatch.unassigned').toLowerCase()} &middot;{' '}
+              {assignedJobs.length} {t('dispatch.dispatched').toLowerCase()} &middot;{' '}
+              {availableTechs.length} {t('common.available').toLowerCase()}
             </p>
           </div>
         </div>
@@ -534,7 +536,7 @@ export default function DispatchPage() {
                   : 'bg-secondary text-muted hover:text-main'
               )}
             >
-              <List size={14} /> List
+              <List size={14} /> {t('dispatch.listView')}
             </button>
             <button
               onClick={() => setViewMode('map')}
@@ -545,11 +547,11 @@ export default function DispatchPage() {
                   : 'bg-secondary text-muted hover:text-main'
               )}
             >
-              <Map size={14} /> Map
+              <Map size={14} /> {t('dispatch.mapView')}
             </button>
           </div>
           <Button variant="secondary" onClick={fetchData}>
-            <RefreshCw size={14} className="mr-1" /> Refresh
+            <RefreshCw size={14} className="mr-1" /> {t('common.refresh')}
           </Button>
         </div>
       </div>
@@ -558,7 +560,7 @@ export default function DispatchPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="py-3">
-            <p className="text-xs text-muted">Unassigned</p>
+            <p className="text-xs text-muted">{t('dispatch.unassigned')}</p>
             <p className="text-2xl font-bold text-main">
               {unassignedJobs.length}
             </p>
@@ -566,7 +568,7 @@ export default function DispatchPage() {
         </Card>
         <Card>
           <CardContent className="py-3">
-            <p className="text-xs text-muted">Dispatched</p>
+            <p className="text-xs text-muted">{t('dispatch.dispatched')}</p>
             <p className="text-2xl font-bold text-accent">
               {assignedJobs.length}
             </p>
@@ -574,7 +576,7 @@ export default function DispatchPage() {
         </Card>
         <Card>
           <CardContent className="py-3">
-            <p className="text-xs text-muted">Available Techs</p>
+            <p className="text-xs text-muted">{t('dispatch.availableTechs')}</p>
             <p className="text-2xl font-bold text-emerald-500">
               {availableTechs.length}
             </p>
@@ -582,7 +584,7 @@ export default function DispatchPage() {
         </Card>
         <Card>
           <CardContent className="py-3">
-            <p className="text-xs text-muted">On Job</p>
+            <p className="text-xs text-muted">{t('dispatch.onJob')}</p>
             <p className="text-2xl font-bold text-amber-500">
               {onJobTechs.length}
             </p>
@@ -594,7 +596,7 @@ export default function DispatchPage() {
       {draggedJobId && (
         <div className="bg-accent/10 border border-accent/30 rounded-lg px-4 py-2 text-sm text-accent flex items-center gap-2">
           <Navigation size={14} />
-          Drop on an available technician to dispatch
+          {t('dispatch.dropHint')}
         </div>
       )}
 
@@ -605,10 +607,10 @@ export default function DispatchPage() {
             <div className="min-h-[400px] flex flex-col items-center justify-center text-center">
               <Map size={48} className="text-muted mb-4" />
               <h3 className="text-lg font-semibold text-main mb-1">
-                Map View
+                {t('dispatch.mapViewTitle')}
               </h3>
               <p className="text-sm text-muted max-w-md mb-4">
-                Interactive map showing job locations and technician positions.
+                {t('dispatch.mapViewDesc')}
               </p>
 
               {/* Summary grid as text-based map alternative */}
@@ -616,7 +618,7 @@ export default function DispatchPage() {
                 {/* Jobs with locations */}
                 <div className="text-left">
                   <h4 className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">
-                    Job Locations ({[...unassignedJobs, ...assignedJobs].filter((j) => j.latitude).length} with GPS)
+                    {t('dispatch.jobLocations')} ({[...unassignedJobs, ...assignedJobs].filter((j) => j.latitude).length} {t('dispatch.withGPS')})
                   </h4>
                   {[...unassignedJobs, ...assignedJobs]
                     .filter((j) => j.latitude)
@@ -645,7 +647,7 @@ export default function DispatchPage() {
                 {/* Techs with GPS */}
                 <div className="text-left">
                   <h4 className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">
-                    Tech Locations ({techs.filter((t) => t.lastLocation).length} with GPS)
+                    {t('dispatch.techLocations')} ({techs.filter((t) => t.lastLocation).length} {t('dispatch.withGPS')})
                   </h4>
                   {techs
                     .filter((t) => t.lastLocation)
@@ -676,7 +678,7 @@ export default function DispatchPage() {
                     ))}
                   {techs.filter((t) => t.lastLocation).length === 0 && (
                     <p className="text-xs text-muted">
-                      No technicians with GPS data
+                      {t('dispatch.noTechsGPS')}
                     </p>
                   )}
                 </div>
@@ -693,7 +695,7 @@ export default function DispatchPage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-main">
-                Unassigned Jobs
+                {t('dispatch.unassignedJobs')}
               </h2>
               <div className="flex gap-1">
                 <Filter size={14} className="text-muted mt-1 mr-1" />
@@ -720,7 +722,7 @@ export default function DispatchPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <Zap size={24} className="mx-auto text-muted mb-2" />
-                  <p className="text-muted">No unassigned jobs</p>
+                  <p className="text-muted">{t('dispatch.noUnassigned')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -814,7 +816,7 @@ export default function DispatchPage() {
                             </div>
                           ) : (
                             <span className="text-xs text-muted">
-                              No techs available
+                              {t('dispatch.noTechsAvailable')}
                             </span>
                           )}
                           {/* SMS status indicator */}
@@ -851,7 +853,7 @@ export default function DispatchPage() {
             {assignedJobs.length > 0 && (
               <>
                 <h2 className="text-lg font-semibold text-main mt-6">
-                  Dispatched Jobs
+                  {t('dispatch.dispatchedJobs')}
                 </h2>
                 <div className="space-y-2">
                   {assignedJobs.map((job) => (
@@ -898,10 +900,10 @@ export default function DispatchPage() {
           {/* Right: Tech Panel */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-main">
-              Technicians
+              {t('dispatch.technicians')}
               {draggedJobId && (
                 <span className="text-xs text-accent ml-2 font-normal">
-                  Drop job here
+                  {t('dispatch.dropJobHere')}
                 </span>
               )}
             </h2>
@@ -912,7 +914,7 @@ export default function DispatchPage() {
                 <CardHeader className="py-2">
                   <CardTitle className="text-sm text-emerald-500 flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Available ({availableTechs.length})
+                    {t('dispatch.available')} ({availableTechs.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 pt-0">
@@ -937,7 +939,7 @@ export default function DispatchPage() {
                           {tech.fullName}
                         </p>
                         <p className="text-xs text-muted">
-                          Clocked in{' '}
+                          {t('dispatch.clockedIn')}{' '}
                           {tech.clockInTime
                             ? formatRelativeTime(tech.clockInTime)
                             : ''}
@@ -965,7 +967,7 @@ export default function DispatchPage() {
                 <CardHeader className="py-2">
                   <CardTitle className="text-sm text-amber-500 flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-amber-500" />
-                    On Job ({onJobTechs.length})
+                    {t('dispatch.onJobLabel')} ({onJobTechs.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 pt-0">
@@ -993,7 +995,7 @@ export default function DispatchPage() {
                           }
                           className="text-xs text-accent hover:underline"
                         >
-                          View
+                          {t('common.view')}
                         </button>
                       )}
                     </div>
@@ -1008,7 +1010,7 @@ export default function DispatchPage() {
                 <CardHeader className="py-2">
                   <CardTitle className="text-sm text-muted flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-slate-400" />
-                    Offline ({offlineTechs.length})
+                    {t('dispatch.offline')} ({offlineTechs.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 pt-0">
@@ -1037,7 +1039,7 @@ export default function DispatchPage() {
               <Card>
                 <CardContent className="py-8 text-center">
                   <AlertCircle size={24} className="mx-auto text-muted mb-2" />
-                  <p className="text-sm text-muted">No team members found</p>
+                  <p className="text-sm text-muted">{t('dispatch.noTeamMembers')}</p>
                 </CardContent>
               </Card>
             )}
