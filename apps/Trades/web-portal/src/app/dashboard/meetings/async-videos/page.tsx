@@ -23,6 +23,7 @@ import { useAsyncVideos } from '@/lib/hooks/use-async-videos';
 import type { AsyncVideo } from '@/lib/hooks/use-async-videos';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 const recipientTypeLabels: Record<string, string> = {
   client: 'Client',
@@ -87,7 +88,7 @@ function VideoRow({ video }: { video: AsyncVideo }) {
               {video.jobTitle}
             </span>
           )}
-          <span>{new Date(video.sentAt).toLocaleDateString()}</span>
+          <span>{formatDateLocale(video.sentAt)}</span>
         </div>
         {video.message && (
           <p className="text-xs text-zinc-400 mt-1 line-clamp-1">{video.message}</p>

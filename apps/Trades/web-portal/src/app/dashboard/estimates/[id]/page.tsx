@@ -21,6 +21,7 @@ import { useLaborUnits } from '@/lib/hooks/use-labor-units';
 import { useEstimateVersions } from '@/lib/hooks/use-estimate-versions';
 import { useLaborRates, type LaborRateResult } from '@/lib/hooks/use-labor-rates';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 const ACTION_TYPES = [
   { value: 'remove', label: 'Remove' },
@@ -1726,7 +1727,7 @@ function EstimatePreview({
             <div><span className="text-zinc-500">{t('estimates.carrierLabel')}</span> <span className="text-zinc-200 ml-1">{estimate.carrierName || '—'}</span></div>
             <div><span className="text-zinc-500">{t('estimates.adjusterLabel')}</span> <span className="text-zinc-200 ml-1">{estimate.adjusterName || '—'}</span></div>
             <div><span className="text-zinc-500">{t('estimates.deductibleLabel')}</span> <span className="text-zinc-200 ml-1">${fmtCurrency(estimate.deductible)}</span></div>
-            <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-1">{estimate.dateOfLoss ? new Date(estimate.dateOfLoss).toLocaleDateString() : '—'}</span></div>
+            <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-1">{estimate.dateOfLoss ? formatDateLocale(estimate.dateOfLoss) : '—'}</span></div>
           </div>
         </div>
       )}
@@ -1930,7 +1931,7 @@ function EstimatePreview({
       {/* Footer */}
       <div className="mt-8 pt-4 border-t border-zinc-800 text-center">
         <p className="text-[10px] text-zinc-600">
-          Generated via ZAFTO &middot; {new Date().toLocaleDateString()} &middot; {estimate.estimateNumber} &middot; {lineItems.length} line items
+          Generated via ZAFTO &middot; {formatDateLocale(new Date())} &middot; {estimate.estimateNumber} &middot; {lineItems.length} line items
         </p>
       </div>
     </div>
@@ -2112,16 +2113,16 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                                 'px-3 py-2 text-right',
                                 mat.best_supplier === 'homedepot' ? 'text-green-400 font-medium' : 'text-zinc-300'
                               )}>
-                                {hd?.total_price != null ? `$${hd.total_price.toFixed(2)}` : '-'}
+                                {hd?.total_price != null ? `${formatCurrency(hd.total_price)}` : '-'}
                               </td>
                               <td className={cn(
                                 'px-3 py-2 text-right',
                                 mat.best_supplier === 'lowes' ? 'text-green-400 font-medium' : 'text-zinc-300'
                               )}>
-                                {lowes?.total_price != null ? `$${lowes.total_price.toFixed(2)}` : '-'}
+                                {lowes?.total_price != null ? `${formatCurrency(lowes.total_price)}` : '-'}
                               </td>
                               <td className="px-3 py-2 text-right text-green-400 font-medium">
-                                {mat.best_price != null ? `$${mat.best_price.toFixed(2)}` : '-'}
+                                {mat.best_price != null ? `${formatCurrency(mat.best_price)}` : '-'}
                               </td>
                             </>
                           )}
@@ -2146,7 +2147,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                           }, 0).toFixed(2)}
                         </td>
                         <td className="px-3 py-2 text-right text-green-400 font-semibold">
-                          ${currentMaterials.reduce((sum, m) => sum + (m.best_price || 0), 0).toFixed(2)}
+                          {formatCurrency(currentMaterials.reduce((sum, m) => sum + (m.best_price || 0), 0))}
                         </td>
                       </tr>
                     </tfoot>
@@ -2206,8 +2207,8 @@ function LaborRatesPanel({ rates, loading: ratesLoading }: { rates: LaborRateRes
               <div key={rate.trade} className="flex items-center justify-between px-3 py-1.5 bg-zinc-800/50 rounded border border-zinc-700/30">
                 <span className="text-[11px] text-zinc-300 capitalize">{rate.trade}</span>
                 <div className="text-right">
-                  <span className="text-xs text-zinc-200 font-medium">${rate.burdenedRate.toFixed(2)}/hr</span>
-                  <span className="text-[10px] text-zinc-600 ml-1">(base ${rate.baseHourlyRate.toFixed(2)})</span>
+                  <span className="text-xs text-zinc-200 font-medium">{formatCurrency(rate.burdenedRate)}/hr</span>
+                  <span className="text-[10px] text-zinc-600 ml-1">(base {formatCurrency(rate.baseHourlyRate)})</span>
                 </div>
               </div>
             ))}

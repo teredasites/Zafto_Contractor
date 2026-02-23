@@ -20,12 +20,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
-import { formatCurrency, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import {
   useFiscalPeriods,
 } from '@/lib/hooks/use-fiscal-periods';
 import type { FiscalPeriodData, AuditLogEntry } from '@/lib/hooks/use-fiscal-periods';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
@@ -243,7 +244,7 @@ function PeriodRow({
       {/* Closed At */}
       <td className="px-4 py-3">
         <span className="text-xs text-muted tabular-nums">
-          {period.closedAt ? new Date(period.closedAt).toLocaleDateString() : '--'}
+          {period.closedAt ? formatDateLocale(period.closedAt) : '--'}
         </span>
       </td>
 

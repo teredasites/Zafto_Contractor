@@ -42,6 +42,7 @@ import {
 } from '@/lib/hooks/use-tpa-assignments';
 import { useTpaPrograms, type TpaProgramData } from '@/lib/hooks/use-tpa-programs';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ==================== CONSTANTS ====================
 
@@ -587,7 +588,7 @@ export default function TpaAssignmentsPage() {
                         <div className="hidden xl:block text-right flex-shrink-0">
                           <p className="text-[10px] text-muted uppercase">{t('common.estimated')}</p>
                           <p className="text-sm font-medium text-main">
-                            ${assignment.totalEstimated.toLocaleString()}
+                            {formatCurrency(assignment.totalEstimated)}
                           </p>
                         </div>
                       )}

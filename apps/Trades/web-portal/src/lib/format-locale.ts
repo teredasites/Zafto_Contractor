@@ -110,3 +110,27 @@ export function formatPercent(value: number, locale?: Locale, decimals = 1): str
     maximumFractionDigits: decimals,
   }).format(value / 100);
 }
+
+/** Format compact currency (e.g., "$1.2M", "$10K", "$500") in user's locale */
+export function formatCompactCurrency(amount: number, locale?: Locale): string {
+  const loc = getIntlLocale(locale || getCurrentLocale());
+  return new Intl.NumberFormat(loc, {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(amount);
+}
+
+/** Format time only (e.g., "2:30 PM") in user's locale */
+export function formatTimeLocale(
+  date: Date | string,
+  locale?: Locale
+): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const loc = getIntlLocale(locale || getCurrentLocale());
+  return new Intl.DateTimeFormat(loc, {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(d);
+}

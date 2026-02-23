@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useScheduleBaselines } from '@/lib/hooks/use-schedule-baselines';
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
+import { formatCompactCurrency, formatDateLocale } from '@/lib/format-locale';
 import type { ScheduleBaseline, ScheduleBaselineTask } from '@/lib/types/scheduling';
 import { useTranslation } from '@/lib/translations';
 
@@ -122,15 +123,10 @@ export default function BaselinesPage() {
   };
 
   const formatDate = (d: string) => {
-    const date = new Date(d);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return formatDateLocale(d);
   };
 
-  const formatCost = (cost: number) => {
-    if (cost >= 1000000) return `$${(cost / 1000000).toFixed(1)}M`;
-    if (cost >= 1000) return `$${(cost / 1000).toFixed(1)}K`;
-    return `$${cost.toFixed(0)}`;
-  };
+  const formatCost = (cost: number) => formatCompactCurrency(cost);
 
   if (loading) {
     return (

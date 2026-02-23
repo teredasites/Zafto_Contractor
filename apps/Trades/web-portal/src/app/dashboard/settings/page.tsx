@@ -70,6 +70,7 @@ import {
   DEFAULT_PRIORITY_LEVELS,
 } from '@/lib/hooks/use-company-config';
 import { useZDocs, type ZDocsTemplate } from '@/lib/hooks/use-zdocs';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys' | 'templates' | 'custom_fields' | 'business';
 
@@ -787,7 +788,7 @@ function BillingSettings() {
             ].map((invoice, i) => (
               <div key={i} className="flex items-center justify-between px-6 py-4">
                 <div>
-                  <p className="font-medium text-main">${invoice.amount.toFixed(2)}</p>
+                  <p className="font-medium text-main">{formatCurrency(invoice.amount)}</p>
                   <p className="text-sm text-muted">{invoice.date}</p>
                 </div>
                 <div className="flex items-center gap-3">

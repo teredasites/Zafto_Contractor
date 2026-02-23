@@ -30,6 +30,7 @@ import type {
   DamageSeverity,
   AssessmentStatus,
 } from '@/lib/hooks/use-fire-restoration';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // =============================================================================
 // CONFIG
@@ -432,7 +433,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
               </div>
               <div>
                 <p className="text-lg font-bold">
-                  ${stats.totalEstimatedValue.toLocaleString()}
+                  {formatCurrency(stats.totalEstimatedValue)}
                 </p>
                 <p className="text-xs text-muted-foreground">{tr('common.estValue')}</p>
               </div>

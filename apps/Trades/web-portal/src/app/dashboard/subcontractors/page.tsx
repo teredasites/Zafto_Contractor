@@ -9,6 +9,7 @@ import {
 import { useSubcontractors, TRADE_TYPE_OPTIONS } from '@/lib/hooks/use-subcontractors';
 import type { Subcontractor, ComplianceAlert } from '@/lib/hooks/use-subcontractors';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type ViewMode = 'directory' | 'compliance' | '1099';
 
@@ -179,7 +180,7 @@ export default function SubcontractorsPage() {
           <div className="text-xs text-zinc-500">{t('common.active')}</div>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-          <div className="text-2xl font-bold text-white">${totalPaid.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-white">{formatCurrency(totalPaid)}</div>
           <div className="text-xs text-zinc-500">{t('common.totalPaid')}</div>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
@@ -281,7 +282,7 @@ export default function SubcontractorsPage() {
                     </div>
                   )}
                   <span className="text-zinc-400">{sub.totalJobsAssigned} jobs</span>
-                  <span className="text-green-400">${sub.totalPaid.toLocaleString()}</span>
+                  <span className="text-green-400">{formatCurrency(sub.totalPaid)}</span>
                 </div>
               </div>
 
@@ -448,7 +449,7 @@ export default function SubcontractorsPage() {
                   <tr key={sub.id} className="border-b border-zinc-800">
                     <td className="py-2 text-white">{sub.name}</td>
                     <td className="py-2 text-zinc-400">{sub.companyName || '-'}</td>
-                    <td className="py-2 text-right text-green-400">${sub.totalPaid.toLocaleString()}</td>
+                    <td className="py-2 text-right text-green-400">{formatCurrency(sub.totalPaid)}</td>
                     <td className="py-2 text-center">
                       <CheckCircle2 size={16} className="text-amber-400 mx-auto" />
                     </td>

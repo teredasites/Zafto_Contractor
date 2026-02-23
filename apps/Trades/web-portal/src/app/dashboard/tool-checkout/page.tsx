@@ -36,6 +36,7 @@ import type {
   EquipmentCondition,
 } from '@/lib/hooks/use-equipment-checkout';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -410,13 +411,13 @@ function CheckoutList({ checkouts, items, onCheckin, overdue }: {
                   <div>
                     <h4 className="font-medium text-main">{co.equipmentName || item?.name || 'Unknown'}</h4>
                     <div className="flex items-center gap-3 text-xs text-muted mt-1">
-                      <span>Out: {new Date(co.checkedOutAt).toLocaleDateString()}</span>
+                      <span>Out: {formatDateLocale(co.checkedOutAt)}</span>
                       <span className={cn('px-1.5 py-0.5 rounded', conditionBg(co.checkoutCondition), conditionColor(co.checkoutCondition))}>
                         {CONDITION_LABELS[co.checkoutCondition]}
                       </span>
                       {co.expectedReturnDate && (
                         <span className={isOverdue ? 'text-red-500 font-medium' : ''}>
-                          Due: {new Date(co.expectedReturnDate).toLocaleDateString()}
+                          Due: {formatDateLocale(co.expectedReturnDate)}
                         </span>
                       )}
                     </div>
@@ -732,14 +733,14 @@ function CheckinModal({ checkout, onClose, onSuccess }: {
             <div className="p-3 bg-secondary rounded-lg space-y-1">
               <p className="font-medium text-main">{checkout.equipmentName || 'Tool'}</p>
               <p className="text-sm text-muted">
-                Checked out: {new Date(checkout.checkedOutAt).toLocaleDateString()}
+                Checked out: {formatDateLocale(checkout.checkedOutAt)}
               </p>
               <p className="text-sm text-muted">
                 Condition at checkout: {CONDITION_LABELS[checkout.checkoutCondition]}
               </p>
               {isOverdue && (
                 <p className="text-sm text-red-500 font-medium">
-                  OVERDUE — was due {new Date(checkout.expectedReturnDate!).toLocaleDateString()}
+                  OVERDUE — was due {formatDateLocale(checkout.expectedReturnDate!)}
                 </p>
               )}
             </div>
@@ -871,19 +872,19 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
             {item.purchaseCost != null && (
               <div>
                 <p className="text-sm text-muted mb-1">{t('toolCheckout.purchaseCost')}</p>
-                <p className="text-main">${item.purchaseCost.toFixed(2)}</p>
+                <p className="text-main">{formatCurrency(item.purchaseCost)}</p>
               </div>
             )}
             {item.warrantyExpiry && (
               <div>
                 <p className="text-sm text-muted mb-1">{t('common.warrantyExpiry')}</p>
-                <p className="text-main">{new Date(item.warrantyExpiry).toLocaleDateString()}</p>
+                <p className="text-main">{formatDateLocale(item.warrantyExpiry)}</p>
               </div>
             )}
             {item.nextCalibrationDate && (
               <div>
                 <p className="text-sm text-muted mb-1">{t('toolCheckout.nextCalibration')}</p>
-                <p className="text-main">{new Date(item.nextCalibrationDate).toLocaleDateString()}</p>
+                <p className="text-main">{formatDateLocale(item.nextCalibrationDate)}</p>
               </div>
             )}
           </div>
@@ -901,11 +902,11 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
               <h3 className="font-medium text-main mb-3">{t('toolCheckout.activeCheckout')}</h3>
               {itemCheckouts.map((co) => (
                 <div key={co.id} className="p-3 bg-secondary rounded-lg text-sm space-y-1">
-                  <p className="text-main">Checked out: {new Date(co.checkedOutAt).toLocaleDateString()}</p>
+                  <p className="text-main">Checked out: {formatDateLocale(co.checkedOutAt)}</p>
                   <p className="text-muted">Condition: {CONDITION_LABELS[co.checkoutCondition]}</p>
                   {co.expectedReturnDate && (
                     <p className={new Date(co.expectedReturnDate) < new Date() ? 'text-red-500 font-medium' : 'text-muted'}>
-                      Due: {new Date(co.expectedReturnDate).toLocaleDateString()}
+                      Due: {formatDateLocale(co.expectedReturnDate)}
                     </p>
                   )}
                   {co.notes && <p className="text-muted italic">{co.notes}</p>}

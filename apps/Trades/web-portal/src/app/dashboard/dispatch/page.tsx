@@ -27,6 +27,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { cn, formatRelativeTime } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ============================================================
 // Types
@@ -775,12 +776,9 @@ export default function DispatchPage() {
                               {job.scheduledStart && (
                                 <span className="flex items-center gap-1">
                                   <Clock size={12} />{' '}
-                                  {new Date(
+                                  {formatTimeLocale(
                                     job.scheduledStart
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                  })}
+                                  )}
                                 </span>
                               )}
                             </div>

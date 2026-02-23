@@ -27,6 +27,7 @@ import { useScheduleImportExport } from '@/lib/hooks/use-schedule-import-export'
 import { useScheduleCosts } from '@/lib/hooks/use-schedule-costs';
 import type { ScheduleTask, ScheduleDependency } from '@/lib/types/scheduling';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type ZoomLevel = 'day' | 'week' | 'month';
 
@@ -238,17 +239,17 @@ export default function GanttPage() {
           <span className="text-secondary font-medium">{t('scheduling.evm')}</span>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">{t('marketplace.budgetLabel')}</span>
-            <span className="font-semibold text-primary">${costs.total_budgeted.toLocaleString()}</span>
+            <span className="font-semibold text-primary">{formatCurrency(costs.total_budgeted)}</span>
           </div>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">Actual:</span>
             <span className={`font-semibold ${costs.cost_variance < 0 ? 'text-error' : 'text-primary'}`}>
-              ${costs.total_actual.toLocaleString()}
+              {formatCurrency(costs.total_actual)}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">EV:</span>
-            <span className="font-semibold text-primary">${costs.ev.toLocaleString()}</span>
+            <span className="font-semibold text-primary">{formatCurrency(costs.ev)}</span>
           </div>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">SPI:</span>
@@ -264,12 +265,12 @@ export default function GanttPage() {
           </div>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">EAC:</span>
-            <span className="font-semibold text-primary">${costs.eac.toLocaleString()}</span>
+            <span className="font-semibold text-primary">{formatCurrency(costs.eac)}</span>
           </div>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">VAC:</span>
             <span className={`font-semibold ${costs.vac < 0 ? 'text-error' : 'text-success'}`}>
-              ${costs.vac.toLocaleString()}
+              {formatCurrency(costs.vac)}
             </span>
           </div>
         </div>

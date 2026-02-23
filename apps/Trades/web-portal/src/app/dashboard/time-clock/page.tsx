@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { useTeam } from '@/lib/hooks/use-jobs';
 import { useTimeClock, type TimeEntry } from '@/lib/hooks/use-time-clock';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type TimeEntryStatus = 'active' | 'completed' | 'approved' | 'rejected';
 
@@ -39,7 +40,7 @@ const getWeekRange = (date: Date) => {
 
 const formatWeekRange = (start: Date, end: Date) => {
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}, ${end.getFullYear()}`;
+  return `${formatDateLocale(start)} - ${formatDateLocale(end)}, ${end.getFullYear()}`;
 };
 
 export default function TimeClockPage() {
@@ -106,7 +107,7 @@ export default function TimeClockPage() {
   };
 
   const formatTime = (isoStr: string) => {
-    return new Date(isoStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return formatTimeLocale(isoStr);
   };
 
   const formatHours = (minutes?: number | null) => {
@@ -269,7 +270,7 @@ export default function TimeClockPage() {
                       const isWeekend = day.getDay() === 0 || day.getDay() === 6;
                       return (
                         <th key={i} className={cn('text-center px-2 py-3 text-xs font-semibold uppercase tracking-wider min-w-[100px]', isToday ? 'bg-accent/5 text-accent' : 'text-muted', isWeekend && 'opacity-50')}>
-                          <div>{day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                          <div>{formatDateLocale(day)}</div>
                           <div className="text-lg font-bold">{day.getDate()}</div>
                         </th>
                       );

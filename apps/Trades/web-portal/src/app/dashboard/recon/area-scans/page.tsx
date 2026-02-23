@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useAreaScans, type AreaScanData } from '@/lib/hooks/use-area-scan';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
@@ -110,7 +111,7 @@ function ScanCard({ scan }: { scan: AreaScanData }) {
       </div>
 
       <div className="mt-2 text-[11px] text-muted">
-        {new Date(scan.createdAt).toLocaleDateString()}
+        {formatDateLocale(scan.createdAt)}
       </div>
     </Link>
   );

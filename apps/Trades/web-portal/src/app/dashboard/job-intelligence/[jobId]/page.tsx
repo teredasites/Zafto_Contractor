@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useJobIntelligence } from '@/lib/hooks/use-job-intelligence';
 import { useTranslation } from '@/lib/translations';
+import { formatCompactCurrency } from '@/lib/format-locale';
 
 export default function JobAutopsyDetailPage() {
   const { t, formatDate } = useTranslation();
@@ -326,7 +327,5 @@ function MetaRow({ label, value }: { label: string; value: string }) {
 }
 
 function fmtMoney(v: number): string {
-  if (v >= 1000000) return `$${(v / 1000000).toFixed(1)}M`;
-  if (v >= 1000) return `$${(v / 1000).toFixed(1)}K`;
-  return `$${v.toFixed(0)}`;
+  return formatCompactCurrency(v);
 }

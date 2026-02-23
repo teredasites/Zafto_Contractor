@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from '@/lib/translations';
 import { useGarageDoorLogs, GARAGE_DOOR_SERVICE_LABELS, DOOR_TYPE_LABELS } from '@/lib/hooks/use-garage-door';
 import { SearchInput } from '@/components/ui/input';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 const SERVICE_COLORS: Record<string, string> = {
   spring_replacement: 'bg-orange-500/15 text-orange-400',
@@ -75,7 +76,7 @@ export default function GarageDoorPage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
           <p className="text-xs text-zinc-500 mb-1">{t('common.revenue')}</p>
           <p className="text-2xl font-bold text-green-400">
-            ${logs.reduce((s, l) => s + (l.total_cost ?? 0), 0).toLocaleString()}
+            {formatCurrency(logs.reduce((s, l) => s + (l.total_cost ?? 0), 0))}
           </p>
         </div>
       </div>
@@ -117,7 +118,7 @@ export default function GarageDoorPage() {
                 )}
               </div>
               {l.diagnosis && <p className="text-xs text-zinc-400 mt-1">{l.diagnosis}</p>}
-              {l.total_cost && <p className="text-sm font-bold text-white mt-1">${Number(l.total_cost).toLocaleString()}</p>}
+              {l.total_cost && <p className="text-sm font-bold text-white mt-1">{formatCurrency(Number(l.total_cost))}</p>}
             </div>
           ))
         )}

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 export default function BudgetsPage() {
   const { t } = useTranslation();
@@ -119,13 +120,13 @@ export default function BudgetsPage() {
                         <div className="text-right hidden sm:block">
                           <p className="text-muted text-xs">{t('common.budget')}</p>
                           <p className="font-medium text-main">
-                            ${summary.totalBudget.toLocaleString()}
+                            {formatCurrency(summary.totalBudget)}
                           </p>
                         </div>
                         <div className="text-right hidden sm:block">
                           <p className="text-muted text-xs">{t('common.actual')}</p>
                           <p className="font-medium text-main">
-                            ${summary.totalActual.toLocaleString()}
+                            {formatCurrency(summary.totalActual)}
                           </p>
                         </div>
                         <div className="text-right">
@@ -171,10 +172,10 @@ export default function BudgetsPage() {
                                 {CATEGORY_LABELS[cat.category] || cat.category}
                               </span>
                               <span className="text-right text-muted">
-                                ${cat.budgeted.toLocaleString()}
+                                {formatCurrency(cat.budgeted)}
                               </span>
                               <span className="text-right text-main">
-                                ${cat.actual.toLocaleString()}
+                                {formatCurrency(cat.actual)}
                               </span>
                               <span
                                 className={cn(
@@ -182,7 +183,7 @@ export default function BudgetsPage() {
                                   cat.variance >= 0 ? 'text-emerald-500' : 'text-red-500'
                                 )}
                               >
-                                {cat.variance >= 0 ? '+' : ''}${cat.variance.toLocaleString()}
+                                {cat.variance >= 0 ? '+' : ''}{formatCurrency(cat.variance)}
                               </span>
                               <div className="flex items-center justify-end gap-2">
                                 <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
@@ -249,7 +250,7 @@ function SummaryCard({
                     : 'text-main'
               )}
             >
-              ${Math.abs(amount).toLocaleString()}
+              {formatCurrency(Math.abs(amount))}
             </p>
           </div>
           <div

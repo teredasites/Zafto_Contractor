@@ -41,6 +41,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
 import { getSupabase } from '@/lib/supabase';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ════════════════════════════════════════════════════════════════
 // CONVERSATION LIST ITEM
@@ -177,7 +178,7 @@ function MessageBubble({ message, isOwn }: { message: ChatMessage; isOwn: boolea
         )}
         <div className="flex items-center gap-1 mt-1">
           <span className="text-[10px] text-zinc-500">
-            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {formatTimeLocale(message.createdAt)}
           </span>
           {message.isEdited && <span className="text-[10px] text-zinc-600">(edited)</span>}
         </div>

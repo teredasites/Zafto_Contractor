@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useJobIntelligence, type JobCostAutopsy, type AutopsyInsight } from '@/lib/hooks/use-job-intelligence';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 export default function JobIntelligencePage() {
   const { t } = useTranslation();
@@ -225,7 +226,7 @@ function OverviewTab({
                       </p>
                       <p className="text-xs text-zinc-500">
                         {a.completed_at
-                          ? new Date(a.completed_at).toLocaleDateString()
+                          ? formatDateLocale(a.completed_at)
                           : 'No date'}
                       </p>
                     </div>
@@ -523,7 +524,5 @@ function EmptyState({ message }: { message: string }) {
 }
 
 function fmtMoney(v: number): string {
-  if (v >= 1000000) return `$${(v / 1000000).toFixed(1)}M`;
-  if (v >= 1000) return `$${(v / 1000).toFixed(1)}K`;
-  return `$${v.toFixed(0)}`;
+  return formatCompactCurrency(v);
 }

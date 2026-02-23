@@ -18,6 +18,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatTime, cn } from '@/lib/utils';
 import { useSchedule, useTeam } from '@/lib/hooks/use-jobs';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
@@ -215,11 +216,7 @@ export default function CalendarPage() {
               <CardTitle>
                 {selectedDate ? (
                   <span>
-                    {selectedDate.toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {formatDateLocale(selectedDate)}
                   </span>
                 ) : (
                   t('calendar.selectDay')

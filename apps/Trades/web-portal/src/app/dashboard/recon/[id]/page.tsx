@@ -59,6 +59,7 @@ import {
 } from '@/lib/hooks/use-property-scan';
 import { useStormAssess } from '@/lib/hooks/use-storm-assess';
 import { useTranslation } from '@/lib/translations';
+import { formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type TabType = 'property' | 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
 
@@ -337,9 +338,9 @@ export default function ReconDetailPage() {
   const quickStats = [
     { label: 'Beds', value: features?.beds != null ? String(features.beds) : '—', icon: Home, color: '#8B5CF6' },
     { label: 'Baths', value: bathsTotal > 0 ? String(bathsTotal) : '—', icon: Droplet, color: '#3B82F6' },
-    { label: 'Sqft', value: features?.livingSqft ? `${features.livingSqft.toLocaleString()}` : '—', icon: Ruler, color: '#10B981' },
+    { label: 'Sqft', value: features?.livingSqft ? `{formatCurrency(features.livingSqft)}` : '—', icon: Ruler, color: '#10B981' },
     { label: 'Year Built', value: features?.yearBuilt ? String(features.yearBuilt) : '—', icon: Calendar, color: '#F59E0B' },
-    { label: 'Roof Area', value: roof ? `${roof.totalAreaSqft.toLocaleString()} sqft` : '—', icon: Layers, color: '#A855F7' },
+    { label: 'Roof Area', value: roof ? `{formatCurrency(roof.totalAreaSqft)} sqft` : '—', icon: Layers, color: '#A855F7' },
     { label: 'Sources', value: String(scan.scanSources.length), icon: Database, color: '#EC4899' },
   ];
 
@@ -660,7 +661,7 @@ export default function ReconDetailPage() {
 
 function formatCurrency(val: number | null): string {
   if (val == null) return '—';
-  return `$${val.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  return `${formatCurrency(val)}`;
 }
 
 function formatLabel(val: string | null): string {
@@ -725,7 +726,7 @@ function PropertyTab({ features, scan }: {
             <DataRow label="Cooling" value={formatLabel(features.coolingType)} />
             <DataRow label="Pool" value={features.poolType ? formatLabel(features.poolType) : 'None'} />
             <DataRow label="Garage" value={features.garageSpaces > 0 ? `${features.garageSpaces}-car` : 'None'} />
-            <DataRow label="Elevation" value={features.elevationFt != null ? `${features.elevationFt.toLocaleString()} ft` : '—'} />
+            <DataRow label="Elevation" value={features.elevationFt != null ? `{formatCurrency(features.elevationFt)} ft` : '—'} />
             <DataRow label="Property Type" value={formatLabel(scan.propertyType)} />
           </div>
         </Panel>
@@ -739,7 +740,7 @@ function PropertyTab({ features, scan }: {
             {features.estimatedValue != null && (
               <DataRow label="Estimated Value" value={formatCurrency(features.estimatedValue)} highlight />
             )}
-            <DataRow label="Lot Size" value={features.lotSqft ? `${features.lotSqft.toLocaleString()} sqft` : '—'} />
+            <DataRow label="Lot Size" value={features.lotSqft ? `{formatCurrency(features.lotSqft)} sqft` : '—'} />
             <DataRow label="Neighborhood" value={formatLabel(features.neighborhoodType)} />
           </div>
         </Panel>
@@ -749,7 +750,7 @@ function PropertyTab({ features, scan }: {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Panel title="Terrain & Site" icon={Map} color="#3B82F6">
           <div className="space-y-0">
-            <DataRow label="Elevation" value={features.elevationFt != null ? `${features.elevationFt.toLocaleString()} ft` : '—'} mono />
+            <DataRow label="Elevation" value={features.elevationFt != null ? `{formatCurrency(features.elevationFt)} ft` : '—'} mono />
             {features.terrainSlopePct != null && (
               <DataRow label="Terrain Slope" value={`${features.terrainSlopePct.toFixed(1)}%`} mono />
             )}

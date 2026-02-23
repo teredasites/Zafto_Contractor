@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useJobIntelligence } from '@/lib/hooks/use-job-intelligence';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 export default function AdjustmentsPage() {
   const { t } = useTranslation();
@@ -175,7 +176,7 @@ function AdjustmentCard({
       return `${Number(pct) >= 0 ? '+' : ''}${pct}% ${(typeLabels[adjustment.adjustment_type] || adjustment.adjustment_type).toLowerCase()}`;
     }
     if (adjustment.suggested_flat_amount) {
-      return `+$${adjustment.suggested_flat_amount.toFixed(2)} ${(typeLabels[adjustment.adjustment_type] || adjustment.adjustment_type).toLowerCase()}`;
+      return `+${formatCurrency(adjustment.suggested_flat_amount)} ${(typeLabels[adjustment.adjustment_type] || adjustment.adjustment_type).toLowerCase()}`;
     }
     return typeLabels[adjustment.adjustment_type] || adjustment.adjustment_type;
   })();
@@ -211,7 +212,7 @@ function AdjustmentCard({
           <span>Avg variance: {adjustment.avg_variance_pct.toFixed(1)}%</span>
         )}
         <span>
-          {new Date(adjustment.created_at).toLocaleDateString()}
+          {formatDateLocale(adjustment.created_at)}
         </span>
       </div>
 
@@ -246,7 +247,7 @@ function AdjustmentCard({
 
       {adjustment.applied_at && (
         <p className="text-xs text-zinc-600 mt-2">
-          Applied on {new Date(adjustment.applied_at).toLocaleDateString()}
+          Applied on {formatDateLocale(adjustment.applied_at)}
         </p>
       )}
     </div>

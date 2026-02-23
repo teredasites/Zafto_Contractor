@@ -47,6 +47,7 @@ import {
   type PayType,
 } from '@/lib/hooks/use-hiring';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 // ==================== STATUS CONFIGS ====================
 
@@ -392,10 +393,10 @@ function PostingsTab({
     if (!posting.payRangeMin && !posting.payRangeMax) return 'TBD';
     const suffix = payTypeLabels[posting.payType] || '';
     if (posting.payRangeMin && posting.payRangeMax) {
-      return `$${posting.payRangeMin.toLocaleString()} - $${posting.payRangeMax.toLocaleString()}${suffix}`;
+      return `${formatCurrency(posting.payRangeMin)} - ${formatCurrency(posting.payRangeMax)}${suffix}`;
     }
-    if (posting.payRangeMin) return `From $${posting.payRangeMin.toLocaleString()}${suffix}`;
-    return `Up to $${posting.payRangeMax.toLocaleString()}${suffix}`;
+    if (posting.payRangeMin) return `From ${formatCurrency(posting.payRangeMin)}${suffix}`;
+    return `Up to ${formatCurrency(posting.payRangeMax)}${suffix}`;
   };
 
   const handleAction = async (id: string, action: 'publish' | 'pause' | 'close') => {
