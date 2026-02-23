@@ -554,7 +554,7 @@ function MyBidsTab({
       <Card>
         <CardContent className="py-12 text-center">
           <Gavel size={40} className="mx-auto text-muted mb-3" />
-          <p className="text-main font-medium">No bids yet</p>
+          <p className="text-main font-medium">{t('common.noBidsYet')}</p>
           <p className="text-muted text-sm mt-1">Browse available leads and place your first bid</p>
         </CardContent>
       </Card>
@@ -899,7 +899,7 @@ function ContractorProfileTab({
                 placeholder="90210, 90211, 90212"
                 className={inputClass}
               />
-              <p className="text-xs text-muted mt-1">Comma-separated list</p>
+              <p className="text-xs text-muted mt-1">{tr('common.commaSeparatedList')}</p>
             </div>
           </div>
         </CardContent>
@@ -916,7 +916,7 @@ function ContractorProfileTab({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Trade Categories</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.tradeCategories')}</label>
               <input
                 type="text"
                 value={trades}
@@ -924,7 +924,7 @@ function ContractorProfileTab({
                 placeholder="HVAC, Plumbing, Electrical"
                 className={inputClass}
               />
-              <p className="text-xs text-muted mt-1">Comma-separated list</p>
+              <p className="text-xs text-muted mt-1">{tr('common.commaSeparatedList')}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Specializations</label>
@@ -935,7 +935,7 @@ function ContractorProfileTab({
                 placeholder="Water heater install, AC repair"
                 className={inputClass}
               />
-              <p className="text-xs text-muted mt-1">Comma-separated list</p>
+              <p className="text-xs text-muted mt-1">{tr('common.commaSeparatedList')}</p>
             </div>
           </div>
         </CardContent>
@@ -962,7 +962,7 @@ function ContractorProfileTab({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">License State</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.licenseState')}</label>
               <input
                 type="text"
                 value={licenseState}

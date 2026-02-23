@@ -184,7 +184,7 @@ export default function EquipmentInsightsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-muted" />
-                    <p className="text-xs text-muted">Next Service</p>
+                    <p className="text-xs text-muted">{t('common.nextService')}</p>
                   </div>
                   <p className="text-lg font-semibold text-main">
                     {insights.next_service_date || 'None scheduled'}

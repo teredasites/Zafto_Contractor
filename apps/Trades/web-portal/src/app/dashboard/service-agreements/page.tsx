@@ -294,7 +294,7 @@ function AgreementCard({ agreement, onClick }: { agreement: ServiceAgreement; on
             <p className="font-semibold text-main">{formatCurrency(agreement.amount)}/{frequencyLabels[agreement.billingFrequency].toLowerCase()}</p>
           </div>
           <div>
-            <p className="text-xs text-muted">Next Billing</p>
+            <p className="text-xs text-muted">{t('common.nextBilling')}</p>
             <p className="text-sm text-main">{formatDate(agreement.nextBillingDate)}</p>
           </div>
         </div>
@@ -368,7 +368,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
               <p className="font-semibold text-main">{formatDate(agreement.endDate)}</p>
             </div>
             <div className="p-4 bg-secondary rounded-lg text-center">
-              <p className="text-sm text-muted mb-1">Next Service</p>
+              <p className="text-sm text-muted mb-1">{t('common.nextService')}</p>
               <p className="font-semibold text-main">
                 {agreement.nextServiceDate ? formatDate(agreement.nextServiceDate) : 'N/A'}
               </p>
@@ -377,7 +377,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
 
           {/* Billing */}
           <div className="p-4 bg-secondary rounded-lg">
-            <h3 className="font-medium text-main mb-3">Billing</h3>
+            <h3 className="font-medium text-main mb-3">{t('common.billing')}</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted mb-1">{t('common.amount')}</p>
@@ -385,7 +385,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
                 <p className="text-sm text-muted">{frequencyLabels[agreement.billingFrequency]}</p>
               </div>
               <div>
-                <p className="text-sm text-muted mb-1">Next Billing</p>
+                <p className="text-sm text-muted mb-1">{t('common.nextBilling')}</p>
                 <p className="text-lg font-medium text-main">{formatDate(agreement.nextBillingDate)}</p>
                 <div className="flex items-center gap-1 mt-1">
                   <RefreshCw size={12} className={agreement.autoRenew ? 'text-blue-500' : 'text-muted'} />

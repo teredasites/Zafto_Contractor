@@ -263,7 +263,7 @@ export default function TimeClockPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-main">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-48">Employee</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-48">{t('common.employee')}</th>
                     {weekDays.map((day, i) => {
                       const isToday = day.toDateString() === new Date().toDateString();
                       const isWeekend = day.getDay() === 0 || day.getDay() === 6;
@@ -327,7 +327,7 @@ export default function TimeClockPage() {
       {view === 'list' && weekEntries.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Time Entries</CardTitle>
+            <CardTitle>{t('common.timeEntries')}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-main">

@@ -320,7 +320,7 @@ export default function ImportEstimatePage() {
                   <th className="px-3 py-2 text-left w-8" />
                   <th className="px-3 py-2 text-left w-20">{t('common.code')}</th>
                   <th className="px-3 py-2 text-left">{t('common.description')}</th>
-                  <th className="px-3 py-2 text-left w-16">Room</th>
+                  <th className="px-3 py-2 text-left w-16">{t('common.room')}</th>
                   <th className="px-3 py-2 text-right w-12">{t('common.qty')}</th>
                   <th className="px-3 py-2 text-right w-20">Xact Price</th>
                   <th className="px-3 py-2 text-right w-20">ZAFTO Price</th>

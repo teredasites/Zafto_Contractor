@@ -327,7 +327,7 @@ function ListView({
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white leading-none">{totalRooms}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Total Rooms</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">{t('common.totalRooms')}</p>
                 </div>
               </div>
               {inProgress > 0 && (

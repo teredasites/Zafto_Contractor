@@ -1046,17 +1046,17 @@ function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: Wal
           </h3>
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Property Type</span>
+              <span className="text-muted">{t('common.propertyType')}</span>
               <span className="text-main">{walkthrough.propertyType || '--'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Walkthrough Type</span>
+              <span className="text-muted">{t('common.walkthroughType')}</span>
               <span className="text-main">
                 {TYPE_LABELS[walkthrough.walkthroughType] || walkthrough.walkthroughType || '--'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Started</span>
+              <span className="text-muted">{t('common.started')}</span>
               <span className="text-main">
                 {walkthrough.startedAt ? formatDateTime(walkthrough.startedAt) : '--'}
               </span>
@@ -1068,7 +1068,7 @@ function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: Wal
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Total Rooms</span>
+              <span className="text-muted">{t('common.totalRooms')}</span>
               <span className="text-main">{walkthrough.totalRooms}</span>
             </div>
             <div className="flex justify-between">

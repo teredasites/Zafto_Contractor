@@ -398,7 +398,7 @@ export default function JurisdictionsPage() {
                             className="flex items-center gap-2 text-blue-400 hover:text-blue-300"
                           >
                             <Globe className="h-3.5 w-3.5" />
-                            <span>Website</span>
+                            <span>{t('common.website')}</span>
                             <ExternalLink className="h-3 w-3" />
                           </a>
                         )}

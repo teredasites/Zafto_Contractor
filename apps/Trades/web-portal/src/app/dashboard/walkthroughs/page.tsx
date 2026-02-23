@@ -318,10 +318,10 @@ export default function WalkthroughsPage() {
               <span>{t('common.name')}</span>
               <span>{t('common.type')}</span>
               <span>{t('common.address')}</span>
-              <span className="text-center">Rooms</span>
+              <span className="text-center">{t('common.rooms')}</span>
               <span className="text-center">{t('common.photos')}</span>
               <span>{t('common.status')}</span>
-              <span>Started</span>
+              <span>{t('common.started')}</span>
               <span />
             </div>
             <div className="divide-y divide-main">

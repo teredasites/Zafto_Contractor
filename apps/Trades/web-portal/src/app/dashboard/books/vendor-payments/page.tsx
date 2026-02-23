@@ -282,7 +282,7 @@ function PaymentModal({ vendors, onSave, onClose }: {
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-surface rounded-xl shadow-2xl w-full max-w-md border border-main" onClick={(e) => e.stopPropagation()}>
         <div className="px-6 py-4 border-b border-main">
-          <h2 className="text-lg font-semibold text-main">Record Payment</h2>
+          <h2 className="text-lg font-semibold text-main">{t('common.recordPayment')}</h2>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -306,17 +306,17 @@ function PaymentModal({ vendors, onSave, onClose }: {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Payment Method</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.paymentMethod')}</label>
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
               <option value="check">{t('common.check')}</option>
               <option value="bank_transfer">Bank Transfer</option>
-              <option value="credit_card">Credit Card</option>
+              <option value="credit_card">{t('common.creditCard')}</option>
               <option value="cash">{t('common.cash')}</option>
             </select>
           </div>
           {paymentMethod === 'check' && (
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Check Number</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.checkNumber')}</label>
               <Input value={checkNumber} onChange={(e) => setCheckNumber(e.target.value)} />
             </div>
           )}

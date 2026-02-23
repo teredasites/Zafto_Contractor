@@ -797,7 +797,7 @@ export default function TpaProgramsPage() {
                   {/* Key metrics row */}
                   <div className="grid grid-cols-3 gap-3 py-3 border-t border-main/20">
                     <div>
-                      <p className="text-[11px] text-muted uppercase tracking-wide">Fee</p>
+                      <p className="text-[11px] text-muted uppercase tracking-wide">{t('common.fee')}</p>
                       <p className="text-sm font-medium text-main mt-0.5">
                         {program.referralFeeType === 'percentage' && program.referralFeePct != null
                           ? `${program.referralFeePct}%`

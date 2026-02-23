@@ -242,7 +242,7 @@ export default function TpaAssignmentDetailPage() {
                       )}>
                         {STATUS_LABELS[status]}
                       </span>
-                      {isActive && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent font-medium">Current</span>}
+                      {isActive && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent font-medium">{t('common.current')}</span>}
                     </div>
                   );
                 })}
@@ -266,7 +266,7 @@ export default function TpaAssignmentDetailPage() {
                   <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalInvoiced.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wide">Collected</p>
+                  <p className="text-xs text-muted uppercase tracking-wide">{t('common.collected')}</p>
                   <p className="text-lg font-semibold text-emerald-400 mt-0.5">${assignment.totalCollected.toLocaleString()}</p>
                 </div>
                 <div>

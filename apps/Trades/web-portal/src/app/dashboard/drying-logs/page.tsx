@@ -193,8 +193,8 @@ export default function DryingLogsPage() {
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.type')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.summary')}</th>
                 <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.equipment')}</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Indoor</th>
-                <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Photos</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.indoor')}</th>
+                <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.photos')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">
@@ -284,7 +284,7 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
                 <p className="font-medium text-main">{log.airMoversRunning}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider mb-1">Air Scrubbers</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.airScrubbers')}</p>
                 <p className="font-medium text-main">{log.airScrubbersRunning}</p>
               </div>
               <div>

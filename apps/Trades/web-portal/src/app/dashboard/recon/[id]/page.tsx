@@ -469,7 +469,7 @@ export default function ReconDetailPage() {
 
             {/* Source badges */}
             <div className="mb-4">
-              <p className="text-[9px] font-semibold text-muted uppercase tracking-wider mb-1.5">Data Sources</p>
+              <p className="text-[9px] font-semibold text-muted uppercase tracking-wider mb-1.5">{t('common.dataSources')}</p>
               <div className="flex flex-wrap gap-1">
                 {scan.scanSources.map(src => (
                   <span key={src} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface border border-main/50 text-[10px] font-medium text-muted">
@@ -1087,9 +1087,9 @@ function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estima
                   </div>
                 </div>
                 <div className="pl-2 grid grid-cols-2 gap-y-1 text-[11px]">
-                  <span className="text-muted">Waste</span>
+                  <span className="text-muted">{tr('common.waste')}</span>
                   <span className="text-main text-right font-medium">{t.wasteFactorPct}%</span>
-                  <span className="text-muted">Complexity</span>
+                  <span className="text-muted">{tr('common.complexity')}</span>
                   <span className="text-main text-right font-medium">{t.complexityScore}/10</span>
                   <span className="text-muted">{tr('common.crew')}</span>
                   <span className="text-main text-right font-medium">{t.recommendedCrewSize}</span>
@@ -1148,7 +1148,7 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
             {trade.estimatedLaborHours != null && <DataRow label="Labor" value={`${trade.estimatedLaborHours} hours`} highlight />}
             {trade.dataSources.length > 0 && (
               <div className="pt-2 mt-2 border-t border-main">
-                <p className="text-[10px] text-muted uppercase tracking-wider mb-1.5">Data Sources</p>
+                <p className="text-[10px] text-muted uppercase tracking-wider mb-1.5">{t('common.dataSources')}</p>
                 <div className="flex flex-wrap gap-1">
                   {trade.dataSources.map(s => (
                     <span key={s} className="px-2 py-0.5 rounded bg-surface border border-main/50 text-[10px] text-muted">{s.replace(/_/g, ' ')}</span>
@@ -1170,7 +1170,7 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.item')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Base Qty</th>
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.unit')}</th>
-                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Waste</th>
+                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.waste')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Total Qty</th>
                 </tr>
               </thead>
@@ -1323,12 +1323,12 @@ function StormTab({ scanId, scanState }: { scanId: string; scanState: string | n
         <div className="space-y-3">
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-[10px] font-medium text-muted uppercase tracking-wider block mb-1">Storm Date</label>
+              <label className="text-[10px] font-medium text-muted uppercase tracking-wider block mb-1">{t('common.stormDate')}</label>
               <input type="date" value={stormDate} onChange={(e) => setStormDate(e.target.value)}
                 className="w-full bg-surface border border-main rounded-lg px-3 py-2 text-sm text-main focus:border-accent focus:outline-none transition-colors" />
             </div>
             <div>
-              <label className="text-[10px] font-medium text-muted uppercase tracking-wider block mb-1">State</label>
+              <label className="text-[10px] font-medium text-muted uppercase tracking-wider block mb-1">{t('common.state')}</label>
               <input type="text" value={state} onChange={(e) => setState(e.target.value.toUpperCase())}
                 placeholder="CT" maxLength={2}
                 className="w-full bg-surface border border-main rounded-lg px-3 py-2 text-sm text-main focus:border-accent focus:outline-none uppercase transition-colors" />

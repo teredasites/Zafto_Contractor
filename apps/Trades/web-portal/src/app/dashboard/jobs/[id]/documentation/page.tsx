@@ -142,7 +142,7 @@ export default function JobDocumentationPage() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className={cn('text-3xl font-bold', complianceColor)}>{validation.compliancePercentage}%</p>
-            <p className="text-sm text-muted">Compliance</p>
+            <p className="text-sm text-muted">{t('common.compliance')}</p>
           </CardContent>
         </Card>
         <Card>

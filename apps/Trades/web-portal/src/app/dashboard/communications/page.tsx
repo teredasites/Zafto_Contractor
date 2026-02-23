@@ -472,7 +472,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">To</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.to')}</label>
             <input
               type="text"
               placeholder="Search customers..."
@@ -482,7 +482,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
 
           {type === 'email' && (
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Subject</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.subject')}</label>
               <input
                 type="text"
                 placeholder="Enter subject..."

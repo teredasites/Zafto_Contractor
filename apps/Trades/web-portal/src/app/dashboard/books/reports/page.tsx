@@ -127,7 +127,7 @@ function AgingTable({ rows, entityLabel }: { rows: AgingRow[]; entityLabel: stri
         <thead>
           <tr className="border-b border-default">
             <th className="text-left px-3 py-2 text-muted font-medium">{entityLabel}</th>
-            <th className="text-right px-3 py-2 text-muted font-medium">Current</th>
+            <th className="text-right px-3 py-2 text-muted font-medium">{tr('common.current')}</th>
             <th className="text-right px-3 py-2 text-muted font-medium">1-30</th>
             <th className="text-right px-3 py-2 text-muted font-medium">31-60</th>
             <th className="text-right px-3 py-2 text-muted font-medium">61-90</th>
@@ -538,7 +538,7 @@ export default function FinancialReportsPage() {
                   onChange={(e) => setSelectedAccountId(e.target.value)}
                   className="w-full px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent"
                 >
-                  <option value="">Select account...</option>
+                  <option value="">{t('common.selectAccount')}</option>
                   {accounts.map(a => (
                     <option key={a.id} value={a.id}>{a.accountNumber} — {a.accountName}</option>
                   ))}
@@ -750,7 +750,7 @@ export default function FinancialReportsPage() {
                   <thead>
                     <tr className="border-b border-default">
                       <th className="text-left px-3 py-2 text-muted font-medium">Account #</th>
-                      <th className="text-left px-3 py-2 text-muted font-medium">Account Name</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.accountName')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.debit')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.credit')}</th>
                     </tr>
@@ -769,7 +769,7 @@ export default function FinancialReportsPage() {
                       );
                     })}
                     <tr className="border-t-2 border-default font-bold">
-                      <td className="px-3 py-3" colSpan={2}>Totals</td>
+                      <td className="px-3 py-3" colSpan={2}>{t('common.totals')}</td>
                       <td className="px-3 py-3 text-right tabular-nums text-main">{formatCurrency(tbData.debitTotal)}</td>
                       <td className="px-3 py-3 text-right tabular-nums text-main">{formatCurrency(tbData.creditTotal)}</td>
                     </tr>
@@ -813,7 +813,7 @@ export default function FinancialReportsPage() {
                     <table className="w-full text-sm">
                       <tbody>
                         <tr className="bg-secondary/50">
-                          <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>Rental Income</td>
+                          <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>{t('common.rentalIncome')}</td>
                         </tr>
                         <tr className="border-b border-default">
                           <td className="px-3 py-1.5 text-muted pl-6">Rents received</td>
@@ -935,7 +935,7 @@ export default function FinancialReportsPage() {
                             </tr>
                           ))}
                           <tr className="border-t-2 border-default font-bold">
-                            <td className="px-3 py-3 text-main">Totals</td>
+                            <td className="px-3 py-3 text-main">{t('common.totals')}</td>
                             <td className="px-3 py-3 text-right tabular-nums text-main">{formatCurrency(jobCostingData.totalRevenue)}</td>
                             <td className="px-3 py-3 text-right tabular-nums text-main">{formatCurrency(jobCostingData.totalCosts)}</td>
                             <td className={cn('px-3 py-3 text-right tabular-nums', jobCostingData.totalProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>

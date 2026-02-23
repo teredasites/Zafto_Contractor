@@ -325,8 +325,8 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
               <div>
                 <label className="block text-sm font-medium text-main mb-1">Schedule E Category</label>
                 <select value={scheduleECategory} onChange={(e) => setScheduleECategory(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
-                  <option value="">Select...</option>
-                  <option value="advertising">Advertising</option>
+                  <option value="">{t('common.selectEllipsis')}</option>
+                  <option value="advertising">{t('common.advertising')}</option>
                   <option value="auto_and_travel">Auto and travel</option>
                   <option value="cleaning_maintenance">Cleaning and maintenance</option>
                   <option value="commissions">Commissions</option>
@@ -335,10 +335,10 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
                   <option value="management_fees">Management fees</option>
                   <option value="mortgage_interest">Mortgage interest</option>
                   <option value="other_interest">Other interest</option>
-                  <option value="repairs">Repairs</option>
+                  <option value="repairs">{t('common.repairs')}</option>
                   <option value="supplies">Supplies</option>
-                  <option value="taxes">Taxes</option>
-                  <option value="utilities">Utilities</option>
+                  <option value="taxes">{t('common.taxes')}</option>
+                  <option value="utilities">{t('common.utilities')}</option>
                   <option value="depreciation">Depreciation</option>
                   <option value="other">Other expenses</option>
                 </select>
@@ -363,7 +363,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Payment Method</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.paymentMethod')}</label>
               <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
                 {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{PAYMENT_METHOD_LABELS[m]}</option>)}
               </select>
@@ -371,7 +371,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
           </div>
           {paymentMethod === 'check' && (
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Check Number</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.checkNumber')}</label>
               <Input value={checkNumber} onChange={(e) => setCheckNumber(e.target.value)} />
             </div>
           )}

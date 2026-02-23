@@ -431,12 +431,12 @@ function TemplateModal({
                 <option value="fuel">Fuel</option>
                 <option value="tools">Tools</option>
                 <option value="equipment">{t('common.equipment')}</option>
-                <option value="vehicle">Vehicle</option>
+                <option value="vehicle">{t('common.vehicle')}</option>
                 <option value="insurance">{t('common.insurance')}</option>
                 <option value="permits">Permits</option>
-                <option value="advertising">Advertising</option>
+                <option value="advertising">{t('common.advertising')}</option>
                 <option value="office">Office</option>
-                <option value="utilities">Utilities</option>
+                <option value="utilities">{t('common.utilities')}</option>
                 <option value="subcontractor">Subcontractor</option>
                 <option value="uncategorized">Uncategorized</option>
               </select>

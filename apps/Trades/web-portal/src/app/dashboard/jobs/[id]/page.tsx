@@ -471,7 +471,7 @@ function OverviewTab({ job }: { job: Job }) {
       {job.tags.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Tags</CardTitle>
+            <CardTitle className="text-base">{t('common.tags')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -762,7 +762,7 @@ function MaterialsTab({ job }: { job: Job }) {
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.item')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.qty')}</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Unit Cost</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.unitCost')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.total')}</th>
               </tr>
             </thead>

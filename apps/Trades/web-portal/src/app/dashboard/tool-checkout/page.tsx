@@ -840,19 +840,19 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
           <div className="grid grid-cols-2 gap-4">
             {item.manufacturer && (
               <div>
-                <p className="text-sm text-muted mb-1">Manufacturer</p>
+                <p className="text-sm text-muted mb-1">{t('common.manufacturer')}</p>
                 <p className="text-main">{item.manufacturer}</p>
               </div>
             )}
             {item.modelNumber && (
               <div>
-                <p className="text-sm text-muted mb-1">Model</p>
+                <p className="text-sm text-muted mb-1">{t('common.model')}</p>
                 <p className="text-main">{item.modelNumber}</p>
               </div>
             )}
             {item.serialNumber && (
               <div>
-                <p className="text-sm text-muted mb-1">Serial Number</p>
+                <p className="text-sm text-muted mb-1">{t('common.serialNumber')}</p>
                 <p className="font-mono text-main">{item.serialNumber}</p>
               </div>
             )}
@@ -876,7 +876,7 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
             )}
             {item.warrantyExpiry && (
               <div>
-                <p className="text-sm text-muted mb-1">Warranty Expiry</p>
+                <p className="text-sm text-muted mb-1">{t('common.warrantyExpiry')}</p>
                 <p className="text-main">{new Date(item.warrantyExpiry).toLocaleDateString()}</p>
               </div>
             )}

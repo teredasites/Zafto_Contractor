@@ -581,7 +581,7 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
         <Card>
           <CardHeader>
-            <CardTitle>Record Payment</CardTitle>
+            <CardTitle>{t('common.recordPayment')}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -601,17 +601,17 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Payment Method</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.paymentMethod')}</label>
                 <select
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
                   className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
                 >
-                  <option value="card">Credit Card</option>
+                  <option value="card">{t('common.creditCard')}</option>
                   <option value="ach">Bank Transfer (ACH)</option>
                   <option value="check">{t('common.check')}</option>
                   <option value="cash">{t('common.cash')}</option>
-                  <option value="other">Other</option>
+                  <option value="other">{t('common.other')}</option>
                 </select>
               </div>
 

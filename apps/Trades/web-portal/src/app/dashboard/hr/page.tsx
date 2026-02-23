@@ -279,7 +279,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
             className="sm:w-48"
           />
         </div>
-        <Button onClick={() => setShowNewModal(true)}><UserPlus size={16} />Add Employee</Button>
+        <Button onClick={() => setShowNewModal(true)}><UserPlus size={16} />{t('common.addEmployee')}</Button>
       </div>
 
       <Card>
@@ -287,7 +287,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">Employee</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">{t('common.employee')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Job Title</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('hiring.department')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
@@ -321,7 +321,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
             <Users size={48} className="mx-auto text-muted mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">No employees found</h3>
             <p className="text-muted mb-4">Add employee records to manage your workforce.</p>
-            <Button onClick={() => setShowNewModal(true)}><UserPlus size={16} />Add Employee</Button>
+            <Button onClick={() => setShowNewModal(true)}><UserPlus size={16} />{t('common.addEmployee')}</Button>
           </div>
         )}
       </Card>
@@ -452,7 +452,7 @@ function NewEmployeeModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Add Employee</CardTitle>
+          <CardTitle>{t('common.addEmployee')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}><X size={18} /></Button>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -489,7 +489,7 @@ function NewEmployeeModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><UserPlus size={16} />Add Employee</Button>
+            <Button className="flex-1"><UserPlus size={16} />{t('common.addEmployee')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -675,7 +675,7 @@ function TrainingTab({ records, search, onSearchChange }: {
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">Training</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Employee</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.employee')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.date')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.expiration')}</th>

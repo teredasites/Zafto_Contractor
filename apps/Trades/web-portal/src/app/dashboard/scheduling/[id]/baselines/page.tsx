@@ -259,7 +259,7 @@ export default function BaselinesPage() {
                     </div>
                     <div className="text-center">
                       <p className="text-sm font-bold text-primary">{formatCost(baseline.total_cost)}</p>
-                      <p className="text-[10px] text-tertiary">Cost</p>
+                      <p className="text-[10px] text-tertiary">{t('common.cost')}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-sm font-bold text-primary">

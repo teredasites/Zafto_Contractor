@@ -142,7 +142,7 @@ export default function FireRestorationPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{structural}</p>
-                  <p className="text-xs text-muted-foreground">Structural</p>
+                  <p className="text-xs text-muted-foreground">{t('common.structural')}</p>
                 </div>
               </div>
             </CardContent>
@@ -320,7 +320,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
                 Structural Concerns
               </div>
               <div className="mt-1 flex flex-wrap gap-1">
-                {assessment.structuralCompromise && <Badge variant="error">Structural</Badge>}
+                {assessment.structuralCompromise && <Badge variant="error">{tr('common.structural')}</Badge>}
                 {assessment.roofDamage && <Badge variant="error">Roof</Badge>}
                 {assessment.foundationDamage && <Badge variant="error">Foundation</Badge>}
                 {assessment.loadBearingAffected && <Badge variant="error">Load-Bearing</Badge>}
@@ -434,7 +434,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
                 <p className="text-lg font-bold">
                   ${stats.totalEstimatedValue.toLocaleString()}
                 </p>
-                <p className="text-xs text-muted-foreground">Est. Value</p>
+                <p className="text-xs text-muted-foreground">{tr('common.estValue')}</p>
               </div>
             </div>
           )}

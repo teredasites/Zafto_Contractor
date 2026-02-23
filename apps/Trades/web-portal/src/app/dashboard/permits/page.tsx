@@ -195,7 +195,7 @@ export default function PermitsPage() {
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Job / Customer</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('permits.jurisdiction')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Inspections</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.inspections')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
               </tr>
             </thead>
@@ -270,20 +270,20 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
-              <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{permit.jobName}</p></div>
+              <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.job')}</p><p className="font-medium text-main">{permit.jobName}</p></div>
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.customer')}</p><p className="font-medium text-main">{permit.customerName}</p></div>
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('permits.jurisdiction')}</p><p className="font-medium text-main">{permit.jurisdiction}</p></div>
             </div>
             <div className="space-y-3">
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.address')}</p><p className="font-medium text-main">{permit.address}</p></div>
-              <div><p className="text-xs text-muted uppercase tracking-wider">Fee</p><p className="font-medium text-main">${permit.fee}</p></div>
+              <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.fee')}</p><p className="font-medium text-main">${permit.fee}</p></div>
               {permit.expirationDate && <div><p className="text-xs text-muted uppercase tracking-wider">Expires</p><p className="font-medium text-main">{formatDate(permit.expirationDate)}</p></div>}
             </div>
           </div>
 
           {permit.inspections.length > 0 && (
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider mb-3">Inspections</p>
+              <p className="text-xs text-muted uppercase tracking-wider mb-3">{t('common.inspections')}</p>
               <div className="space-y-2">
                 {permit.inspections.map((insp) => (
                   <div key={insp.id} className="p-3 bg-secondary rounded-lg">
@@ -332,7 +332,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
-            <Button variant="secondary" className="flex-1"><Upload size={16} />Upload Document</Button>
+            <Button variant="secondary" className="flex-1"><Upload size={16} />{t('common.uploadDocument')}</Button>
             <Button className="flex-1"><ClipboardCheck size={16} />Schedule Inspection</Button>
           </div>
         </CardContent>
@@ -354,14 +354,14 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Permit Type *</label>
             <select value={form.permitType} onChange={e => update('permitType', e.target.value)} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="electrical">Electrical</option>
-              <option value="plumbing">Plumbing</option>
+              <option value="electrical">{t('common.electrical')}</option>
+              <option value="plumbing">{t('common.plumbing')}</option>
               <option value="mechanical">Mechanical / HVAC</option>
               <option value="building">Building</option>
-              <option value="roofing">Roofing</option>
-              <option value="solar">Solar</option>
+              <option value="roofing">{t('common.roofing')}</option>
+              <option value="solar">{t('common.solar')}</option>
               <option value="demolition">Demolition</option>
-              <option value="other">Other</option>
+              <option value="other">{t('common.other')}</option>
             </select>
           </div>
           <div>
@@ -374,7 +374,7 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
               <input type="text" value={form.jurisdiction} onChange={e => update('jurisdiction', e.target.value)} placeholder="City of Hartford" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Job Site Address</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.jobSiteAddress')}</label>
               <input type="text" value={form.address} onChange={e => update('address', e.target.value)} placeholder="123 Oak Ave, Hartford, CT" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
           </div>

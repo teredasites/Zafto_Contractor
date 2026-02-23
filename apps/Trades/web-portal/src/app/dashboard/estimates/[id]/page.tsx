@@ -1607,7 +1607,7 @@ function TotalsPanel({
         {/* Change order total */}
         {changeOrderTotal != null && changeOrderTotal !== 0 && (
           <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-700/50">
-            <span className="text-amber-400">Approved Change Orders</span>
+            <span className="text-amber-400">{tr('common.approvedChangeOrders')}</span>
             <span className={cn('font-medium', changeOrderTotal > 0 ? 'text-amber-300' : 'text-red-300')}>
               {changeOrderTotal > 0 ? '+' : ''}{fmtCurrency(changeOrderTotal)}
             </span>
@@ -1792,7 +1792,7 @@ function EstimatePreview({
       {/* Change Orders */}
       {(changeOrderTotal ?? 0) > 0 && (
         <div className="mt-6 border border-amber-500/20 bg-amber-500/5 rounded-lg p-4">
-          <h3 className="text-xs uppercase tracking-wider text-amber-400 mb-2">Approved Change Orders</h3>
+          <h3 className="text-xs uppercase tracking-wider text-amber-400 mb-2">{t('common.approvedChangeOrders')}</h3>
           <div className="flex justify-between text-sm">
             <span className="text-zinc-400">Change order total</span>
             <span className="text-amber-300 font-medium">${fmtCurrency(changeOrderTotal ?? 0)}</span>
@@ -1821,7 +1821,7 @@ function EstimatePreview({
                   <div className="flex items-center gap-2 mb-2">
                     <span className={`text-xs font-bold text-${color}-400`}>{label}</span>
                     <span className="text-[10px] text-zinc-500">{desc}</span>
-                    {isActive && <span className="text-[9px] bg-zinc-700 text-zinc-300 px-1.5 py-0.5 rounded">Current</span>}
+                    {isActive && <span className="text-[9px] bg-zinc-700 text-zinc-300 px-1.5 py-0.5 rounded">{t('common.current')}</span>}
                   </div>
                   <div className="text-lg font-bold text-zinc-100">${fmtCurrency(tier.grand)}</div>
                   <div className="text-[10px] text-zinc-500 mt-1">{tier.items.length} items priced</div>
@@ -1843,11 +1843,11 @@ function EstimatePreview({
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-zinc-500 bg-zinc-800/50">
-                  <th className="text-left py-2 px-3 font-medium">Trade</th>
+                  <th className="text-left py-2 px-3 font-medium">{t('common.trade')}</th>
                   <th className="text-right py-2 px-3 font-medium">Base Rate</th>
                   <th className="text-right py-2 px-3 font-medium">Burden</th>
                   <th className="text-right py-2 px-3 font-medium">Burdened Rate</th>
-                  <th className="text-left py-2 px-3 font-medium">Source</th>
+                  <th className="text-left py-2 px-3 font-medium">{t('common.source')}</th>
                 </tr>
               </thead>
               <tbody>

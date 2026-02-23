@@ -149,7 +149,7 @@ export default function MoistureDryingMonitorPage() {
         {assessment && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-muted uppercase tracking-wider mb-1">Classification</p>
+              <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.classification')}</p>
               <p className={cn('text-lg font-semibold', CATEGORY_LABELS[assessment.waterCategory]?.color || 'text-main')}>
                 Cat {assessment.waterCategory} / Class {assessment.waterClass}
               </p>
@@ -311,7 +311,7 @@ function OverviewTab({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Source</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.source')}</p>
                 <p className="text-main">{SOURCE_LABELS[assessment.sourceType]}</p>
                 {assessment.sourceDescription && <p className="text-xs text-muted">{assessment.sourceDescription}</p>}
               </div>
@@ -355,14 +355,14 @@ function OverviewTab({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-blue-900/10 rounded-lg border border-blue-800/20">
-                  <p className="text-xs text-blue-400 uppercase tracking-wider mb-1">Indoor</p>
+                  <p className="text-xs text-blue-400 uppercase tracking-wider mb-1">{t('common.indoor')}</p>
                   <p className="text-lg font-semibold text-main">{latestPsych.indoorTempF}°F / {latestPsych.indoorRh}% RH</p>
                   <p className="text-xs text-muted">
                     GPP: {latestPsych.indoorGpp?.toFixed(1) ?? '—'} | Dew: {latestPsych.indoorDewPointF?.toFixed(1) ?? '—'}°F
                   </p>
                 </div>
                 <div className="p-3 bg-zinc-800/50 rounded-lg border border-zinc-700/30">
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Outdoor</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.outdoor')}</p>
                   {latestPsych.outdoorTempF != null ? (
                     <>
                       <p className="text-lg font-semibold text-main">{latestPsych.outdoorTempF}°F / {latestPsych.outdoorRh}% RH</p>
@@ -568,10 +568,10 @@ function PsychrometricTab({
               <thead>
                 <tr className="border-b border-main">
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.date')}</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Room</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Indoor</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.room')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.indoor')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP In</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Outdoor</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.outdoor')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Out</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Diff</th>
                   <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.equipment')}</th>
@@ -727,7 +727,7 @@ function ContentsTab({
       {items.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card><CardContent className="p-4">
-            <p className="text-xs text-muted uppercase">Total Items</p>
+            <p className="text-xs text-muted uppercase">{t('common.totalItems')}</p>
             <p className="text-xl font-bold text-main">{financialSummary.totalItems}</p>
           </CardContent></Card>
           <Card><CardContent className="p-4">
@@ -739,14 +739,14 @@ function ContentsTab({
             <p className="text-xl font-bold text-main">{formatCurrency(financialSummary.totalReplacement)}</p>
           </CardContent></Card>
           <Card><CardContent className="p-4">
-            <p className="text-xs text-muted uppercase">ACV</p>
+            <p className="text-xs text-muted uppercase">{t('common.acv')}</p>
             <p className="text-xl font-bold text-main">{formatCurrency(financialSummary.totalAcv)}</p>
           </CardContent></Card>
         </div>
       )}
 
       <div className="flex justify-end">
-        <Button onClick={() => setShowAdd(true)}><Plus size={16} />Add Item</Button>
+        <Button onClick={() => setShowAdd(true)}><Plus size={16} />{t('common.addItem')}</Button>
       </div>
 
       {items.length === 0 ? (

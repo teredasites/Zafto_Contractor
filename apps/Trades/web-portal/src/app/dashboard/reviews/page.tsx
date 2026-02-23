@@ -184,7 +184,7 @@ export default function ReviewsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">Avg Rating</p>
+                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('common.avgRating')}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <p className="text-2xl font-bold text-white">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '--'}</p>
                   {stats.avgRating > 0 && <Star className="h-5 w-5 text-amber-500 fill-amber-500" />}

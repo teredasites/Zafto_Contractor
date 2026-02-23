@@ -1078,7 +1078,7 @@ export default function NewBidPage() {
                   <div className="space-y-4 pt-2">
                     <div className="flex items-center gap-2 text-muted">
                       <MapPin size={16} />
-                      <span className="text-sm font-medium">Job Site Address</span>
+                      <span className="text-sm font-medium">{t('common.jobSiteAddress')}</span>
                     </div>
                     <Input
                       value={jobSiteStreet}

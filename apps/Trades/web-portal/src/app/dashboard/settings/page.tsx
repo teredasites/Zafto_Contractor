@@ -206,6 +206,7 @@ export default function SettingsPage() {
 }
 
 function ProfileSettings() {
+  const { t } = useTranslation();
   const [selectedLocale, setSelectedLocale] = useState<Locale>('en');
   const [savingLocale, setSavingLocale] = useState(false);
 
@@ -264,13 +265,13 @@ function ProfileSettings() {
             <Input label="Phone" type="tel" defaultValue="(860) 555-1001" icon={<Phone size={16} />} />
           </div>
 
-          <Button>Save Changes</Button>
+          <Button>{t('common.saveChanges')}</Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Language</CardTitle>
+          <CardTitle>{t('common.language')}</CardTitle>
           <CardDescription>Choose your preferred language. The entire app will switch to your selection.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -413,7 +414,7 @@ function CompanySettings() {
             <Input label="Tax ID / EIN" defaultValue="12-3456789" />
           </div>
 
-          <Button>Save Changes</Button>
+          <Button>{t('common.saveChanges')}</Button>
         </CardContent>
       </Card>
 
@@ -525,11 +526,11 @@ function TeamSettings() {
           <div className="space-y-4">
             <div className="grid grid-cols-6 gap-4 text-xs font-medium text-muted uppercase pb-2 border-b border-main">
               <span>{t('common.role')}</span>
-              <span className="text-center">Bids</span>
-              <span className="text-center">Jobs</span>
-              <span className="text-center">Invoices</span>
+              <span className="text-center">{t('common.bids')}</span>
+              <span className="text-center">{t('common.jobs')}</span>
+              <span className="text-center">{t('common.invoices')}</span>
               <span className="text-center">{t('common.team')}</span>
-              <span className="text-center">Billing</span>
+              <span className="text-center">{t('common.billing')}</span>
             </div>
             <PermissionRow role="Owner" permissions={[true, true, true, true, true]} roleColors={roleColors} />
             <PermissionRow role="Admin" permissions={[true, true, true, true, false]} roleColors={roleColors} />
@@ -665,13 +666,13 @@ function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels:
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
         <Card>
           <CardHeader>
-            <CardTitle>Invite Team Member</CardTitle>
+            <CardTitle>{t('common.inviteTeamMember')}</CardTitle>
             <CardDescription>Send an invitation to join your team</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Email Address</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.emailAddress')}</label>
                 <Input
                   type="email"
                   value={email}
@@ -754,7 +755,7 @@ function BillingSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Payment Method</CardTitle>
+          <CardTitle>{t('common.paymentMethod')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between p-4 border border-main rounded-xl">
@@ -1738,7 +1739,7 @@ function IntegrationSettings() {
           {gcal.connected ? (
             <>
               <div className="flex items-center gap-3">
-                <Badge variant="success">Connected</Badge>
+                <Badge variant="success">{t('common.connected')}</Badge>
                 {gcal.email && <span className="text-sm text-muted">{gcal.email}</span>}
               </div>
               <div className="flex items-center gap-2">
@@ -1783,7 +1784,7 @@ function IntegrationSettings() {
                 </div>
                 {integration.connected ? (
                   <div className="flex items-center gap-3">
-                    <Badge variant="success">Connected</Badge>
+                    <Badge variant="success">{t('common.connected')}</Badge>
                     <Button variant="ghost" size="sm">{t('common.manage')}</Button>
                   </div>
                 ) : (
@@ -2049,7 +2050,7 @@ function RolesSettings() {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <CardTitle>Custom Roles</CardTitle>
+                <CardTitle>{t('common.customRoles')}</CardTitle>
                 {!isBusinessOrHigher && (
                   <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 rounded-full">
                     <Lock size={10} />
@@ -2071,11 +2072,11 @@ function RolesSettings() {
           {!isBusinessOrHigher ? (
             <div className="text-center py-8">
               <Lock size={32} className="mx-auto mb-3 text-muted opacity-40" />
-              <p className="font-medium text-main">Custom Roles</p>
+              <p className="font-medium text-main">{t('common.customRoles')}</p>
               <p className="text-sm text-muted mt-1 max-w-md mx-auto">
                 Create roles tailored to your team structure with per-permission control. Available on Business plan and above.
               </p>
-              <Button variant="secondary" className="mt-4">Upgrade Plan</Button>
+              <Button variant="secondary" className="mt-4">{t('common.upgradePlan')}</Button>
             </div>
           ) : loading ? (
             <div className="space-y-3">
@@ -2147,7 +2148,7 @@ function RolesSettings() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CardTitle>Approval Workflows</CardTitle>
+            <CardTitle>{t('common.approvalWorkflows')}</CardTitle>
             {!isEnterprise && (
               <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full">
                 <Lock size={10} />
@@ -2161,11 +2162,11 @@ function RolesSettings() {
           {!isEnterprise ? (
             <div className="text-center py-8">
               <Lock size={32} className="mx-auto mb-3 text-muted opacity-40" />
-              <p className="font-medium text-main">Approval Workflows</p>
+              <p className="font-medium text-main">{t('common.approvalWorkflows')}</p>
               <p className="text-sm text-muted mt-1 max-w-md mx-auto">
                 Require admin approval for bids over a threshold, change orders, and large expenses. Available on Enterprise plan.
               </p>
-              <Button variant="secondary" className="mt-4">Upgrade Plan</Button>
+              <Button variant="secondary" className="mt-4">{t('common.upgradePlan')}</Button>
             </div>
           ) : (
             <ApprovalWorkflowToggles
@@ -2577,7 +2578,7 @@ function TemplatesSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Document Templates</CardTitle>
+              <CardTitle>{tr('common.documentTemplates')}</CardTitle>
               <CardDescription>Manage bid, invoice, estimate, and agreement templates</CardDescription>
             </div>
             <Button onClick={() => setShowCreate(!showCreate)}>
@@ -2601,7 +2602,7 @@ function TemplatesSettings() {
               <Input label="Description" placeholder="What this template is for..." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setShowCreate(false)}>{tr('common.cancel')}</Button>
-                <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>Create Template</Button>
+                <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>{tr('common.createTemplate')}</Button>
               </div>
             </div>
           )}
@@ -3089,7 +3090,7 @@ function BusinessConfigSettings() {
               <div>
                 <label className="text-xs font-medium text-muted mb-1 block">Default Payment Terms</label>
                 <select value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
-                  <option value="due_on_receipt">Due on Receipt</option>
+                  <option value="due_on_receipt">{t('common.dueOnReceipt')}</option>
                   <option value="net_15">Net 15</option>
                   <option value="net_30">Net 30</option>
                   <option value="net_45">Net 45</option>

@@ -172,7 +172,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{avgRating.toFixed(1)}</p>
-                <p className="text-sm text-muted">Avg Rating</p>
+                <p className="text-sm text-muted">{t('common.avgRating')}</p>
               </div>
             </div>
           </CardContent>
@@ -187,7 +187,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
                 <p className="text-2xl font-semibold text-main">
                   {new Set(vendors.flatMap((v) => v.tradeCategories)).size}
                 </p>
-                <p className="text-sm text-muted">Trade Categories</p>
+                <p className="text-sm text-muted">{t('common.tradeCategories')}</p>
               </div>
             </div>
           </CardContent>
@@ -234,7 +234,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Categories</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Terms</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.terms')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Rating</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 </tr>
@@ -456,7 +456,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.vendor')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Terms</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.terms')}</th>
                   <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.ytdPayments')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">1099</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>

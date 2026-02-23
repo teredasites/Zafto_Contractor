@@ -159,7 +159,7 @@ export default function PmInspectionsPage() {
           <div className="col-span-1">{t('common.condition')}</div>
           <div className="col-span-1">{t('common.status')}</div>
           <div className="col-span-1">{t('common.items')}</div>
-          <div className="col-span-2">Repairs</div>
+          <div className="col-span-2">{t('common.repairs')}</div>
         </div>
 
         {filteredInspections.map((ins) => {
@@ -357,7 +357,7 @@ function NewInspectionModal({ onClose, onCreate }: {
               <option value="routine">Routine</option>
               <option value="drive_by">Drive-By</option>
               <option value="annual">{t('common.annual')}</option>
-              <option value="emergency">Emergency</option>
+              <option value="emergency">{t('common.emergency')}</option>
             </select>
           </div>
           <div>

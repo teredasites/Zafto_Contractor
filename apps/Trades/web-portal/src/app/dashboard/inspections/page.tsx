@@ -211,8 +211,8 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{inspection.jobName}</p></div>
-            <div><p className="text-xs text-muted uppercase tracking-wider">Assigned To</p><p className="font-medium text-main">{inspection.assignedTo}</p></div>
+            <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.job')}</p><p className="font-medium text-main">{inspection.jobName}</p></div>
+            <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.assignedTo')}</p><p className="font-medium text-main">{inspection.assignedTo}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.address')}</p><p className="font-medium text-main">{inspection.address}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.date')}</p><p className="font-medium text-main">{formatDate(inspection.scheduledDate)}</p></div>
           </div>
@@ -254,7 +254,7 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             <Button variant="secondary" className="flex-1"><Camera size={16} />{t('jobs.addPhoto')}</Button>
-            {inspection.status !== 'passed' && <Button className="flex-1"><CheckCircle size={16} />Mark Passed</Button>}
+            {inspection.status !== 'passed' && <Button className="flex-1"><CheckCircle size={16} />{t('common.markPassed')}</Button>}
           </div>
         </CardContent>
       </Card>
@@ -276,7 +276,7 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
               <option value="safety">Safety</option>
               <option value="punch_list">{t('common.punchList')}</option>
               <option value="pre_closeout">Pre-Closeout</option>
-              <option value="compliance">Compliance</option>
+              <option value="compliance">{t('common.compliance')}</option>
               <option value="progress">Progress Check</option>
             </select>
           </div>
@@ -288,7 +288,7 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">Select job</option><option value="j1">Full Home Rewire</option><option value="j2">HVAC Install</option>
+                <option value="">{t('common.selectJob')}</option><option value="j1">Full Home Rewire</option><option value="j2">HVAC Install</option>
               </select>
             </div>
             <div>

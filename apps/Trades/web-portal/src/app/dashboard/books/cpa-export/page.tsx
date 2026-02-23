@@ -495,7 +495,7 @@ export default function CPAExportPage() {
                 <p className="text-sm font-medium text-main">Schedule E</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Rental Income</span>
+                    <span className="text-muted">{t('common.rentalIncome')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData?.scheduleE?.totalIncome || 0)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -688,8 +688,8 @@ export default function CPAExportPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-3 py-2 text-muted font-medium">Vendor Name</th>
-                      <th className="text-left px-3 py-2 text-muted font-medium">Tax ID</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.vendorName')}</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.taxId')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.ytdPayments')}</th>
                       <th className="text-center px-3 py-2 text-muted font-medium">1099 Required</th>
                     </tr>

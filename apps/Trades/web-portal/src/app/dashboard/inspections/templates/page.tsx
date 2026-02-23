@@ -119,7 +119,7 @@ export default function InspectionTemplatesPage() {
         {filtered.length === 0 && (
           <Card className="col-span-full"><CardContent className="p-12 text-center">
             <FileCheck size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No templates found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('common.noTemplatesFound')}</h3>
             <p className="text-muted mb-4">{tab === 'system' ? 'System templates are provisioned automatically.' : 'Create custom templates for your inspections.'}</p>
             {tab === 'company' && <Button><Plus size={16} />{t('common.newTemplate')}</Button>}
           </CardContent></Card>

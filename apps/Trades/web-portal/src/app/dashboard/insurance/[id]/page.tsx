@@ -793,7 +793,7 @@ function SupplementsTab({
             className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30 resize-none"
           />
           <div>
-            <label className="text-xs text-muted-foreground mb-1.5 block">Reason</label>
+            <label className="text-xs text-muted-foreground mb-1.5 block">{t('common.reason')}</label>
             <div className="flex flex-wrap gap-1.5">
               {REASON_OPTIONS.map((opt) => (
                 <button
@@ -822,7 +822,7 @@ function SupplementsTab({
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">ACV</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t('common.acv')}</label>
               <input type="number" step="0.01" min="0" placeholder="Optional" value={acvAmount} onChange={(e) => setAcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>

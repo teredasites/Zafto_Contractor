@@ -271,7 +271,7 @@ export default function ReconciliationPage() {
                     onChange={(e) => setSelectedAccountId(e.target.value)}
                     className="w-full px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent"
                   >
-                    <option value="">Select account...</option>
+                    <option value="">{t('common.selectAccount')}</option>
                     {accounts.map((acct) => (
                       <option key={acct.id} value={acct.id}>
                         {acct.accountName} ({ACCOUNT_TYPE_LABELS[acct.accountType]} {acct.mask ? `••••${acct.mask}` : ''})
