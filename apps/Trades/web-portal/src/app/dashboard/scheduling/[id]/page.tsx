@@ -518,7 +518,7 @@ export default function GanttPage() {
             />
             <div className="flex justify-end gap-3">
               <button onClick={() => setShowAddTask(false)} className="px-4 py-2 text-sm text-secondary">{t('common.cancel')}</button>
-              <button onClick={handleAddTask} disabled={!newTaskName.trim()} className="px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium disabled:opacity-50">Add</button>
+              <button onClick={handleAddTask} disabled={!newTaskName.trim()} className="px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium disabled:opacity-50">{t('common.add')}</button>
             </div>
           </div>
         </div>

@@ -302,10 +302,10 @@ export default function ClaimDetailPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-border bg-muted/50">
-                          <th className="text-left px-4 py-2 font-medium text-xs">Area</th>
+                          <th className="text-left px-4 py-2 font-medium text-xs">{t('common.area')}</th>
                           <th className="text-left px-4 py-2 font-medium text-xs">Material</th>
                           <th className="text-right px-4 py-2 font-medium text-xs">Reading</th>
-                          <th className="text-right px-4 py-2 font-medium text-xs">Target</th>
+                          <th className="text-right px-4 py-2 font-medium text-xs">{t('common.target')}</th>
                           <th className="text-center px-4 py-2 font-medium text-xs">{t('common.status')}</th>
                           <th className="text-right px-4 py-2 font-medium text-xs">{t('common.date')}</th>
                         </tr>

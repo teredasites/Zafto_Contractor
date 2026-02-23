@@ -303,7 +303,7 @@ export default function JobDocumentationPage() {
                                 {item.itemName}
                               </span>
                               {item.isRequired && (
-                                <Badge variant="error" className="text-[10px] px-1.5 py-0">Required</Badge>
+                                <Badge variant="error" className="text-[10px] px-1.5 py-0">{t('common.required')}</Badge>
                               )}
                               <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
                                 {EVIDENCE_LABELS[item.evidenceType]} x{item.minCount}

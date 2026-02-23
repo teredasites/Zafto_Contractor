@@ -149,12 +149,12 @@ export default function LeasesPage() {
         {/* Header row */}
         <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted">
           <div className="col-span-2">{t('common.tenant')}</div>
-          <div className="col-span-3">Property / Unit</div>
+          <div className="col-span-3">{t('common.propertyUnit')}</div>
           <div className="col-span-1 text-right">Rent</div>
-          <div className="col-span-1">Start</div>
-          <div className="col-span-1">End</div>
-          <div className="col-span-1">Type</div>
-          <div className="col-span-1">Status</div>
+          <div className="col-span-1">{t('common.start')}</div>
+          <div className="col-span-1">{t('common.end')}</div>
+          <div className="col-span-1">{t('common.type')}</div>
+          <div className="col-span-1">{t('common.status')}</div>
           <div className="col-span-1">Auto-Renew</div>
           <div className="col-span-1"></div>
         </div>
@@ -207,7 +207,7 @@ export default function LeasesPage() {
                     Yes
                   </span>
                 ) : (
-                  <span className="text-xs text-muted">No</span>
+                  <span className="text-xs text-muted">{t('common.no')}</span>
                 )}
               </div>
               <div className="col-span-1 text-right">

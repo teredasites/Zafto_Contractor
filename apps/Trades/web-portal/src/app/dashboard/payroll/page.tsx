@@ -242,13 +242,13 @@ export default function PayrollPage() {
               <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
                 <div className="col-span-1" />
                 <div className="col-span-2">Date Range</div>
-                <div className="col-span-1">Type</div>
-                <div className="col-span-1">Status</div>
+                <div className="col-span-1">{t('common.type')}</div>
+                <div className="col-span-1">{t('common.status')}</div>
                 <div className="col-span-1">Employees</div>
                 <div className="col-span-2">Gross Pay</div>
                 <div className="col-span-1">Taxes</div>
                 <div className="col-span-2">Net Pay</div>
-                <div className="col-span-1">Actions</div>
+                <div className="col-span-1">{t('common.actions')}</div>
               </div>
 
               {filteredPeriods.map((period) => {

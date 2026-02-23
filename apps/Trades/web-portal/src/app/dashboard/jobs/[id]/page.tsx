@@ -147,7 +147,7 @@ export default function JobDetailPage() {
                   {JOB_TYPE_LABELS[job.jobType]}
                 </span>
               )}
-              {job.priority === 'urgent' && <Badge variant="error">Urgent</Badge>}
+              {job.priority === 'urgent' && <Badge variant="error">{t('common.urgent')}</Badge>}
               {job.priority === 'high' && <Badge variant="warning">High</Badge>}
             </div>
             <p className="text-muted mt-1">
@@ -247,7 +247,7 @@ export default function JobDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-muted mb-1">Value</p>
+                <p className="text-sm text-muted mb-1">{t('common.value')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(job.estimatedValue)}</p>
               </div>
               <div className="flex justify-between text-sm">

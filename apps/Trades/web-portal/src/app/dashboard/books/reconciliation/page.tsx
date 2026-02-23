@@ -324,7 +324,7 @@ export default function ReconciliationPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-4 py-3 text-muted font-medium">Account</th>
+                      <th className="text-left px-4 py-3 text-muted font-medium">{t('common.account')}</th>
                       <th className="text-left px-4 py-3 text-muted font-medium">Statement Date</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">Statement Balance</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">Difference</th>
@@ -481,8 +481,8 @@ export default function ReconciliationPage() {
                   onChange={handleSelectAll}
                   className="w-4 h-4 accent-accent"
                 />
-                <span className="flex-1 text-xs font-medium text-muted">Date</span>
-                <span className="flex-[3] text-xs font-medium text-muted">Description</span>
+                <span className="flex-1 text-xs font-medium text-muted">{t('common.date')}</span>
+                <span className="flex-[3] text-xs font-medium text-muted">{t('common.description')}</span>
                 <span className="w-24 text-right text-xs font-medium text-muted">Deposits</span>
                 <span className="w-24 text-right text-xs font-medium text-muted">Payments</span>
               </div>

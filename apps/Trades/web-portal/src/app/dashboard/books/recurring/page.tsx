@@ -644,12 +644,12 @@ export default function RecurringPage() {
           {/* Table header */}
           <div className="flex items-center gap-3 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
             <div className="w-4" /> {/* expand spacer */}
-            <div className="flex-1">Name</div>
-            <div className="w-20 text-center">Type</div>
-            <div className="w-20 text-center">Frequency</div>
+            <div className="flex-1">{t('common.name')}</div>
+            <div className="w-20 text-center">{t('common.type')}</div>
+            <div className="w-20 text-center">{t('common.frequency')}</div>
             <div className="w-24 text-center">Next Due</div>
-            <div className="w-24 text-right">Amount</div>
-            <div className="w-20 text-center">Status</div>
+            <div className="w-24 text-right">{t('common.amount')}</div>
+            <div className="w-20 text-center">{t('common.status')}</div>
             <div className="w-32" /> {/* actions spacer */}
           </div>
 

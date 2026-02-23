@@ -277,7 +277,7 @@ export default function NewInvoicePage() {
                       <div className="fixed inset-0 z-40" onClick={() => setShowCustomerSearch(false)} />
                       <div className="absolute top-full left-0 right-0 mt-2 bg-surface border border-main rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
                         {filteredCustomers.length === 0 ? (
-                          <div className="p-4 text-center text-muted">No customers found</div>
+                          <div className="p-4 text-center text-muted">{t('common.noCustomersFound')}</div>
                         ) : (
                           filteredCustomers.map((customer) => (
                             <button
@@ -350,12 +350,12 @@ export default function NewInvoicePage() {
                 <thead>
                   <tr className="border-b border-main">
                     <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.description')}</th>
-                    <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-24">Qty</th>
-                    <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-32">Price</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-24">{t('common.qty')}</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-32">{t('common.price')}</th>
                     {isInsuranceJob && (
                       <th className="text-left text-xs font-medium text-muted uppercase px-4 py-3 w-40">{t('common.source')}</th>
                     )}
-                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3 w-32">Total</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3 w-32">{t('common.total')}</th>
                     <th className="w-12"></th>
                   </tr>
                 </thead>
@@ -403,7 +403,7 @@ export default function NewInvoicePage() {
                             <option value="carrier">Carrier</option>
                             <option value="deductible">Deductible</option>
                             <option value="upgrade">Upgrade</option>
-                            <option value="standard">Standard</option>
+                            <option value="standard">{t('common.standard')}</option>
                           </select>
                         </td>
                       )}

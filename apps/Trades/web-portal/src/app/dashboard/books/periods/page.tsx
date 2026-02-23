@@ -559,10 +559,10 @@ export default function FiscalPeriodsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
-                    <th className="px-6 py-3 text-left">Period</th>
+                    <th className="px-6 py-3 text-left">{t('common.period')}</th>
                     <th className="px-4 py-3 text-left">{t('common.type')}</th>
-                    <th className="px-4 py-3 text-left">Start</th>
-                    <th className="px-4 py-3 text-left">End</th>
+                    <th className="px-4 py-3 text-left">{t('common.start')}</th>
+                    <th className="px-4 py-3 text-left">{t('common.end')}</th>
                     <th className="px-4 py-3 text-left">{t('common.status')}</th>
                     <th className="px-4 py-3 text-left">Closed At</th>
                     <th className="px-4 py-3 text-right">{t('common.actions')}</th>
@@ -597,10 +597,10 @@ export default function FiscalPeriodsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
-                    <th className="px-6 py-3 text-left">Period</th>
+                    <th className="px-6 py-3 text-left">{t('common.period')}</th>
                     <th className="px-4 py-3 text-left">{t('common.type')}</th>
-                    <th className="px-4 py-3 text-left">Start</th>
-                    <th className="px-4 py-3 text-left">End</th>
+                    <th className="px-4 py-3 text-left">{t('common.start')}</th>
+                    <th className="px-4 py-3 text-left">{t('common.end')}</th>
                     <th className="px-4 py-3 text-left">{t('common.status')}</th>
                     <th className="px-4 py-3 text-left">Closed At</th>
                     <th className="px-4 py-3 text-right">{t('common.actions')}</th>
@@ -739,7 +739,7 @@ export default function FiscalPeriodsPage() {
                     <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
                       <th className="px-6 py-3 text-left">Timestamp</th>
                       <th className="px-4 py-3 text-left">Action</th>
-                      <th className="px-4 py-3 text-left">Summary</th>
+                      <th className="px-4 py-3 text-left">{t('common.summary')}</th>
                     </tr>
                   </thead>
                   <tbody>

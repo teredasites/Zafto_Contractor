@@ -283,7 +283,7 @@ export default function InvoiceDetailPage() {
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted">Due Date</p>
+                  <p className="text-sm text-muted">{t('common.dueDate')}</p>
                   <p className={cn(
                     'font-medium',
                     isOverdue ? 'text-red-600' : 'text-main'
@@ -353,9 +353,9 @@ export default function InvoiceDetailPage() {
                 <thead>
                   <tr className="border-b border-main">
                     <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.description')}</th>
-                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Qty</th>
-                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
-                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Total</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.qty')}</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.price')}</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.total')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-main">

@@ -221,11 +221,11 @@ export default function ChartOfAccountsPage() {
                   {/* Table header */}
                   <div className="grid grid-cols-12 gap-2 px-6 py-2 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50">
                     <div className="col-span-2">Number</div>
-                    <div className="col-span-4">Name</div>
+                    <div className="col-span-4">{t('common.name')}</div>
                     <div className="col-span-2 text-right">Debits</div>
                     <div className="col-span-2 text-right">Credits</div>
-                    <div className="col-span-1 text-right">Balance</div>
-                    <div className="col-span-1 text-right">Actions</div>
+                    <div className="col-span-1 text-right">{t('common.balance')}</div>
+                    <div className="col-span-1 text-right">{t('common.actions')}</div>
                   </div>
                   {/* Rows */}
                   {typeAccounts.map((account) => {

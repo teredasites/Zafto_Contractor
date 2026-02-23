@@ -245,7 +245,7 @@ export default function TenantDetailPage() {
                   <span className="font-medium text-main">{activeLease.propertyAddress ?? '--'}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Unit</span>
+                  <span className="text-muted">{t('common.unit')}</span>
                   <span className="font-medium text-main">{activeLease.unitNumber ?? '--'}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">

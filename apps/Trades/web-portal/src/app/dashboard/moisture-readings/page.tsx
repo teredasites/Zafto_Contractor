@@ -205,10 +205,10 @@ export default function MoistureReadingsPage() {
               <tr className="border-b border-main">
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Date/Time</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.job')}</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Area</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.area')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Material</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Reading</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Target</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.target')}</th>
                 <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Dry?</th>
               </tr>
             </thead>

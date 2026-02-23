@@ -170,12 +170,12 @@ export default function UnitsPage() {
         <div className="bg-surface border border-main rounded-xl divide-y divide-main">
           {/* Table Header */}
           <div className="px-6 py-3 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
-            <div className="col-span-2">Unit</div>
+            <div className="col-span-2">{t('common.unit')}</div>
             <div className="col-span-3">{t('common.property')}</div>
             <div className="col-span-2">Bed / Bath</div>
             <div className="col-span-1">Sq Ft</div>
             <div className="col-span-2 text-right">{t('common.marketRent')}</div>
-            <div className="col-span-2 text-right">Status</div>
+            <div className="col-span-2 text-right">{t('common.status')}</div>
           </div>
 
           {/* Table Rows */}

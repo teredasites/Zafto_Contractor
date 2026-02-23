@@ -350,7 +350,7 @@ export default function DocumentsPage() {
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.job')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Size</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Uploaded</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Signature</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signature')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
                     </tr>
                   </thead>
@@ -414,7 +414,7 @@ export default function DocumentsPage() {
                         </Badge>
                       )}
                       {tmpl.isSystem && (
-                        <Badge variant="info" size="sm">System</Badge>
+                        <Badge variant="info" size="sm">{t('common.system')}</Badge>
                       )}
                     </div>
                   </div>

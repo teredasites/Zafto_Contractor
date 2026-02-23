@@ -95,7 +95,7 @@ export default function ExpensesPage() {
           <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(grandTotal)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wide">Draft</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t('common.draft')}</p>
           <p className="text-xl font-semibold text-main mt-1">{expenses.filter((e) => e.status === 'draft').length}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -116,8 +116,8 @@ export default function ExpensesPage() {
         </div>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
           <option value="">All Statuses</option>
-          <option value="draft">Draft</option>
-          <option value="approved">Approved</option>
+          <option value="draft">{t('common.draft')}</option>
+          <option value="approved">{t('common.approved')}</option>
           <option value="posted">Posted</option>
           <option value="voided">Voided</option>
         </select>
@@ -142,15 +142,15 @@ export default function ExpensesPage() {
         <CardContent className="p-0">
           {/* Header */}
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
-            <div className="col-span-1">Date</div>
-            <div className="col-span-2">Description</div>
-            <div className="col-span-2">Vendor</div>
-            <div className="col-span-1">Category</div>
+            <div className="col-span-1">{t('common.date')}</div>
+            <div className="col-span-2">{t('common.description')}</div>
+            <div className="col-span-2">{t('common.vendor')}</div>
+            <div className="col-span-1">{t('common.category')}</div>
             <div className="col-span-1">{t('common.property')}</div>
             <div className="col-span-1">Method</div>
-            <div className="col-span-1 text-right">Amount</div>
-            <div className="col-span-1">Status</div>
-            <div className="col-span-2 text-right">Actions</div>
+            <div className="col-span-1 text-right">{t('common.amount')}</div>
+            <div className="col-span-1">{t('common.status')}</div>
+            <div className="col-span-2 text-right">{t('common.actions')}</div>
           </div>
           <div className="divide-y divide-main">
             {filtered.length === 0 && (

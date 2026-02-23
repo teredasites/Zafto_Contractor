@@ -205,7 +205,7 @@ export default function BranchFinancialsPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="purple">Enterprise</Badge>
+          <Badge variant="purple">{t('common.enterprise')}</Badge>
           {!compareMode && (
             <Button
               variant="secondary"
@@ -261,7 +261,7 @@ export default function BranchFinancialsPage() {
           <div className="flex items-end gap-4 flex-wrap">
             {!compareMode && (
               <div>
-                <label className="text-xs text-muted block mb-1">Branch</label>
+                <label className="text-xs text-muted block mb-1">{t('common.branch')}</label>
                 <select
                   value={selectedBranchId || ''}
                   onChange={(e) => setBranchId(e.target.value || null)}
@@ -376,7 +376,7 @@ export default function BranchFinancialsPage() {
                     </thead>
                     <tbody>
                       <tr className="border-b border-default hover:bg-secondary/50">
-                        <td className="px-4 py-3 text-main font-medium">Revenue</td>
+                        <td className="px-4 py-3 text-main font-medium">{t('common.revenue')}</td>
                         {comparison.map((c) => (
                           <td key={c.branchId} className="px-4 py-3 text-right tabular-nums text-emerald-600 font-medium">
                             {fmt(c.revenue)}
@@ -384,7 +384,7 @@ export default function BranchFinancialsPage() {
                         ))}
                       </tr>
                       <tr className="border-b border-default hover:bg-secondary/50">
-                        <td className="px-4 py-3 text-main font-medium">Expenses</td>
+                        <td className="px-4 py-3 text-main font-medium">{t('common.expenses')}</td>
                         {comparison.map((c) => (
                           <td key={c.branchId} className="px-4 py-3 text-right tabular-nums text-red-600 font-medium">
                             {fmt(c.expenses)}
@@ -392,7 +392,7 @@ export default function BranchFinancialsPage() {
                         ))}
                       </tr>
                       <tr className="border-b border-default hover:bg-secondary/50">
-                        <td className="px-4 py-3 text-main font-medium">Net Income</td>
+                        <td className="px-4 py-3 text-main font-medium">{t('common.netIncome')}</td>
                         {comparison.map((c) => (
                           <td key={c.branchId} className={cn(
                             'px-4 py-3 text-right tabular-nums font-semibold',
@@ -508,11 +508,11 @@ export default function BranchFinancialsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-4 py-3 text-muted font-medium">Branch</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Revenue</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Expenses</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Net Income</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Margin</th>
+                      <th className="text-left px-4 py-3 text-muted font-medium">{t('common.branch')}</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.revenue')}</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.expenses')}</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.netIncome')}</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.margin')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -562,7 +562,7 @@ export default function BranchFinancialsPage() {
                         ))}
                         {/* Totals Row */}
                         <tr className="border-t-2 border-default font-bold bg-secondary/30">
-                          <td className="px-4 py-3 text-main">Total</td>
+                          <td className="px-4 py-3 text-main">{t('common.total')}</td>
                           <td className="px-4 py-3 text-right tabular-nums text-emerald-600">
                             {formatCurrency(totalRevenue)}
                           </td>

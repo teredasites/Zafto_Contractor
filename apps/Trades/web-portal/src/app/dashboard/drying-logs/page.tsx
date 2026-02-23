@@ -191,8 +191,8 @@ export default function DryingLogsPage() {
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.date')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.job')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.type')}</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Summary</th>
-                <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Equipment</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.summary')}</th>
+                <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.equipment')}</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Indoor</th>
                 <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Photos</th>
               </tr>

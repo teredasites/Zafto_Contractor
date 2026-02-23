@@ -150,7 +150,7 @@ export default function ChangeOrdersPage() {
         {filteredCOs.length === 0 && (
           <Card><CardContent className="p-12 text-center">
             <FileDiff size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No change orders found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('common.noChangeOrdersFound')}</h3>
             <p className="text-muted mb-4">Change orders track scope modifications, cost adjustments, and customer approvals.</p>
             <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newChangeOrder')}</Button>
           </CardContent></Card>

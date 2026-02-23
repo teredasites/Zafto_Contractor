@@ -145,7 +145,7 @@ export default function SettingsPage() {
                 {visibleEnterpriseTabs.length > 0 && (
                   <>
                     <div className="pt-3 pb-1 px-3">
-                      <p className="text-[11px] font-semibold text-muted uppercase tracking-wider">Enterprise</p>
+                      <p className="text-[11px] font-semibold text-muted uppercase tracking-wider">{t('common.enterprise')}</p>
                     </div>
                     {visibleEnterpriseTabs.map((tab) => (
                       <button

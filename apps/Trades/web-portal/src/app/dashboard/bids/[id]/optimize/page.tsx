@@ -393,7 +393,7 @@ export default function BidOptimizePage() {
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <Sparkles size={14} className="text-purple-500" />
-              <span className="text-sm text-muted">Powered by Z</span>
+              <span className="text-sm text-muted">{t('common.poweredByZ')}</span>
             </div>
           </div>
         </div>

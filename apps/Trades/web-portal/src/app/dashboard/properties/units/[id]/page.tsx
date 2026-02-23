@@ -228,7 +228,7 @@ export default function UnitDetailPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Name</span>
+                    <span className="text-muted">{t('common.name')}</span>
                     <button
                       onClick={() => router.push(`/dashboard/properties/tenants/${activeTenant.id}`)}
                       className="font-medium text-accent hover:underline"
@@ -237,11 +237,11 @@ export default function UnitDetailPage() {
                     </button>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Email</span>
+                    <span className="text-muted">{t('common.email')}</span>
                     <span className="font-medium text-main">{activeTenant.email ?? '--'}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Phone</span>
+                    <span className="text-muted">{t('common.phone')}</span>
                     <span className="font-medium text-main">{activeTenant.phone ?? '--'}</span>
                   </div>
                 </CardContent>

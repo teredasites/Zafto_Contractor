@@ -186,7 +186,7 @@ export default function MaintenancePage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><AlertTriangle size={20} className="text-amber-600 dark:text-amber-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{openCount}</p><p className="text-sm text-muted">Open</p></div>
+          <div><p className="text-2xl font-semibold text-main">{openCount}</p><p className="text-sm text-muted">{t('common.open')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Clock size={20} className="text-purple-600 dark:text-purple-400" /></div>
@@ -312,14 +312,14 @@ export default function MaintenancePage() {
         /* List View */
         <div className="bg-surface border border-main rounded-xl divide-y divide-main">
           <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted">
-            <div className="col-span-3">Title</div>
-            <div className="col-span-2">Property / Unit</div>
+            <div className="col-span-3">{t('common.title')}</div>
+            <div className="col-span-2">{t('common.propertyUnit')}</div>
             <div className="col-span-1">{t('common.tenant')}</div>
-            <div className="col-span-1">Category</div>
+            <div className="col-span-1">{t('common.category')}</div>
             <div className="col-span-1">Urgency</div>
-            <div className="col-span-1">Status</div>
-            <div className="col-span-1">Created</div>
-            <div className="col-span-2 text-right">Actions</div>
+            <div className="col-span-1">{t('common.status')}</div>
+            <div className="col-span-1">{t('common.createdAt')}</div>
+            <div className="col-span-2 text-right">{t('common.actions')}</div>
           </div>
 
           {filteredRequests.map((req) => {
