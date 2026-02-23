@@ -27,6 +27,7 @@ import {
   type VehicleStatus,
   type MaintenanceStatus,
 } from '@/lib/hooks/use-fleet';
+import { useTranslation } from '@/lib/translations';
 
 // ────────────────────────────────────────────────────────
 // Status config
@@ -60,6 +61,7 @@ const vehicleTypeLabels: Record<string, string> = {
 // ────────────────────────────────────────────────────────
 
 export default function FleetPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedVehicle, setExpandedVehicle] = useState<string | null>(null);
@@ -129,13 +131,13 @@ export default function FleetPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Fleet Management</h1>
-          <p className="text-muted mt-1">Track vehicles, maintenance, and fuel costs</p>
+          <h1 className="text-2xl font-semibold text-main">{t('fleet.title')}</h1>
+          <p className="text-muted mt-1">{t('fleet.manageDesc')}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary"><Fuel size={16} />Log Fuel</Button>
-          <Button variant="secondary"><Wrench size={16} />Schedule Maintenance</Button>
-          <Button><Plus size={16} />Add Vehicle</Button>
+          <Button variant="secondary"><Fuel size={16} />{t('fleet.logFuel')}</Button>
+          <Button variant="secondary"><Wrench size={16} />{t('fleet.scheduleMaintenance')}</Button>
+          <Button><Plus size={16} />{t('fleet.newVehicle')}</Button>
         </div>
       </div>
 
@@ -149,7 +151,7 @@ export default function FleetPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{vehicles.length}</p>
-                <p className="text-sm text-muted">Total Vehicles</p>
+                <p className="text-sm text-muted">{t('fleet.totalVehicles')}</p>
               </div>
             </div>
           </CardContent>
@@ -162,7 +164,7 @@ export default function FleetPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activeVehicles.length}</p>
-                <p className="text-sm text-muted">Active</p>
+                <p className="text-sm text-muted">{t('common.active')}</p>
               </div>
             </div>
           </CardContent>
@@ -175,7 +177,7 @@ export default function FleetPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{inMaintenanceCount}</p>
-                <p className="text-sm text-muted">In Maintenance</p>
+                <p className="text-sm text-muted">{t('fleet.inMaintenance')}</p>
               </div>
             </div>
           </CardContent>
@@ -188,7 +190,7 @@ export default function FleetPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(fuelSpendMTD)}</p>
-                <p className="text-sm text-muted">Fuel Spend (MTD)</p>
+                <p className="text-sm text-muted">{t('fleet.fuelSpendMTD')}</p>
               </div>
             </div>
           </CardContent>
@@ -200,7 +202,7 @@ export default function FleetPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search vehicles..."
+          placeholder={t('fleet.searchVehicles')}
           className="sm:w-80"
         />
         <Select
@@ -223,7 +225,7 @@ export default function FleetPage() {
           {filteredVehicles.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <Truck size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No vehicles found</p>
+              <p>{t('fleet.noVehicles')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">

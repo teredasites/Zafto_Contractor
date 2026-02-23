@@ -24,6 +24,7 @@ import { SearchInput, Select, Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useRestorationTools } from '@/lib/hooks/use-restoration-tools';
+import { useTranslation } from '@/lib/translations';
 import type { RestorationEquipmentWithJob } from '@/lib/hooks/use-restoration-tools';
 import { EQUIPMENT_TYPE_LABELS } from '@/lib/hooks/mappers';
 import type { EquipmentStatus } from '@/types';
@@ -65,6 +66,7 @@ function getEquipmentIcon(type: string) {
 }
 
 export default function EquipmentPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -111,12 +113,12 @@ export default function EquipmentPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Equipment</h1>
-          <p className="text-muted mt-1">Manage restoration equipment deployments and tracking</p>
+          <h1 className="text-2xl font-semibold text-main">{t('equipment.title')}</h1>
+          <p className="text-muted mt-1">{t('equipment.manageDesc')}</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
-          Add Equipment
+          {t('equipment.addEquipment')}
         </Button>
       </div>
 
@@ -130,7 +132,7 @@ export default function EquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalEquipment}</p>
-                <p className="text-sm text-muted">Total Items</p>
+                <p className="text-sm text-muted">{t('equipment.totalItems')}</p>
               </div>
             </div>
           </CardContent>
@@ -143,7 +145,7 @@ export default function EquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{deployedCount}</p>
-                <p className="text-sm text-muted">Deployed</p>
+                <p className="text-sm text-muted">{t('equipment.deployed')}</p>
               </div>
             </div>
           </CardContent>
@@ -156,7 +158,7 @@ export default function EquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{maintenanceCount}</p>
-                <p className="text-sm text-muted">Maintenance</p>
+                <p className="text-sm text-muted">{t('equipment.maintenance')}</p>
               </div>
             </div>
           </CardContent>
@@ -169,7 +171,7 @@ export default function EquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totalDailyRate)}</p>
-                <p className="text-sm text-muted">Daily Rate</p>
+                <p className="text-sm text-muted">{t('equipment.dailyRate')}</p>
               </div>
             </div>
           </CardContent>
@@ -181,7 +183,7 @@ export default function EquipmentPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search equipment..."
+          placeholder={t('equipment.searchEquipment')}
           className="sm:w-80"
         />
         <Select
@@ -213,10 +215,10 @@ export default function EquipmentPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Wrench size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No equipment found</h3>
-            <p className="text-muted mb-4">Track dehumidifiers, air movers, and other restoration equipment deployed to job sites.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('equipment.noEquipment')}</h3>
+            <p className="text-muted mb-4">{t('equipment.noEquipmentDesc')}</p>
             <Button onClick={() => setShowAddModal(true)}>
-              <Plus size={16} />Add Equipment
+              <Plus size={16} />{t('equipment.addEquipment')}
             </Button>
           </CardContent>
         </Card>
