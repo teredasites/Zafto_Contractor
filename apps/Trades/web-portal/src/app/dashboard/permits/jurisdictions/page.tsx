@@ -290,7 +290,7 @@ export default function JurisdictionsPage() {
               />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setShowAddForm(false)}>Cancel</Button>
+              <Button variant="ghost" onClick={() => setShowAddForm(false)}>{t('common.cancel')}</Button>
               <Button onClick={handleAdd} disabled={!addForm.state_code || !addForm.jurisdiction_name}>
                 Add Jurisdiction
               </Button>
@@ -321,8 +321,8 @@ export default function JurisdictionsPage() {
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-lg font-semibold text-white">{j.jurisdiction_name}</h3>
                       <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>Cancel</Button>
-                        <Button size="sm" onClick={saveEdit}>Save</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>{t('common.cancel')}</Button>
+                        <Button size="sm" onClick={saveEdit}>{t('common.save')}</Button>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">

@@ -272,7 +272,7 @@ export default function ResourcesPage() {
               </div>
             )}
             <div className="flex justify-end gap-3">
-              <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-secondary">Cancel</button>
+              <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-secondary">{t('common.cancel')}</button>
               <button onClick={handleCreate} disabled={!newName.trim() || creating} className="px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium disabled:opacity-50">
                 {creating ? 'Adding...' : 'Add'}
               </button>

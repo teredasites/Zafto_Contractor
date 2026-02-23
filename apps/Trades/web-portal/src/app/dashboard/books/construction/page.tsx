@@ -383,7 +383,7 @@ export default function ConstructionAccountingPage() {
               />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="secondary" onClick={() => setReleaseModalId(null)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => setReleaseModalId(null)}>{t('common.cancel')}</Button>
               <Button onClick={handleReleaseRetention} disabled={!releaseAmount || Number(releaseAmount) <= 0}>
                 <Unlock size={14} />
                 Release

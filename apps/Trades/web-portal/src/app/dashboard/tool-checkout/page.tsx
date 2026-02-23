@@ -156,7 +156,7 @@ export default function ToolCheckoutPage() {
         <AlertTriangle size={48} className="text-red-400 mb-4" />
         <h2 className="text-lg font-semibold text-main mb-2">Failed to load equipment</h2>
         <p className="text-muted mb-4">{itemsError || checkoutsError}</p>
-        <Button onClick={refetchAll}><RotateCcw size={16} /> Retry</Button>
+        <Button onClick={refetchAll}><RotateCcw size={16} /> {t('common.retry')}</Button>
       </div>
     );
   }

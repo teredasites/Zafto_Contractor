@@ -97,7 +97,7 @@ export default function InspectionEnginePage() {
             <XCircle size={48} className="mx-auto text-red-500 mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">Error loading inspections</h3>
             <p className="text-muted mb-4">{error}</p>
-            <Button onClick={refetch}>Retry</Button>
+            <Button onClick={refetch}>{t('common.retry')}</Button>
           </CardContent>
         </Card>
       </div>

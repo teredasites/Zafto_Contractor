@@ -254,7 +254,7 @@ export default function CustomerDetailPage() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Edit Customer</CardTitle>
             <Button variant="ghost" size="icon" onClick={() => setIsEditing(false)}>
-              <span className="sr-only">Close</span>&times;
+              <span className="sr-only">{t('common.close')}</span>&times;
             </Button>
           </CardHeader>
           <CardContent>
@@ -278,7 +278,7 @@ export default function CustomerDetailPage() {
             </div>
             {editErrors.submit && <p className="text-sm text-red-500 mt-2">{editErrors.submit}</p>}
             <div className="flex items-center justify-end gap-3 mt-4">
-              <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button variant="ghost" onClick={() => setIsEditing(false)}>{t('common.cancel')}</Button>
               <Button onClick={handleSaveEdit} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
             </div>
           </CardContent>

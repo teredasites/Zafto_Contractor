@@ -548,7 +548,7 @@ export default function SubcontractorsPage() {
             </div>
 
             <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
-              <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white">Cancel</button>
+              <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white">{t('common.cancel')}</button>
               <button onClick={handleAdd} disabled={saving || !formName.trim()} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-2 rounded-lg text-sm font-medium">
                 {saving ? 'Saving...' : 'Add Subcontractor'}
               </button>
