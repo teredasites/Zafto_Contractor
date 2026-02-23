@@ -223,7 +223,7 @@ export default function NewJobPage() {
                 required
               />
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.description')}</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}

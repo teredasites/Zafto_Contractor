@@ -198,7 +198,7 @@ export default function InventoryPage() {
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Qty</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Min</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Unit Cost</th>
-                <th className="text-right text-sm font-medium text-muted px-6 py-3">Value</th>
+                <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.value')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
               </tr>
             </thead>

@@ -209,8 +209,8 @@ export default function DashboardPage() {
               <Satellite size={24} className="text-accent" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-main">Property Recon</h3>
-              <p className="text-sm text-muted">Scan any address for instant roof, wall, and trade measurements</p>
+              <h3 className="font-semibold text-main">{t('dashboard.propertyRecon')}</h3>
+              <p className="text-sm text-muted">{t('dashboard.propertyReconDesc')}</p>
             </div>
             <ArrowRight size={18} className="text-muted group-hover:text-accent transition-colors" />
           </CardContent>
@@ -221,8 +221,8 @@ export default function DashboardPage() {
               <PenTool size={24} className="text-emerald-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-main">Sketch Engine</h3>
-              <p className="text-sm text-muted">CAD floor plans with trade layers, 3D view, and auto-generated estimates</p>
+              <h3 className="font-semibold text-main">{t('dashboard.sketchEngine')}</h3>
+              <p className="text-sm text-muted">{t('dashboard.sketchEngineDesc')}</p>
             </div>
             <ArrowRight size={18} className="text-muted group-hover:text-emerald-500 transition-colors" />
           </CardContent>
@@ -238,17 +238,17 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
-                  <CardTitle>Revenue Overview</CardTitle>
-                  <p className="text-sm text-muted mt-1">Monthly revenue for the past year</p>
+                  <CardTitle>{t('dashboard.revenueOverview')}</CardTitle>
+                  <p className="text-sm text-muted mt-1">{t('dashboard.monthlyRevenue')}</p>
                 </div>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-blue-500" />
-                    <span className="text-muted">Revenue</span>
+                    <span className="text-muted">{t('common.revenue')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-muted">Profit</span>
+                    <span className="text-muted">{t('common.profit')}</span>
                   </div>
                 </div>
               </CardHeader>
@@ -258,19 +258,19 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-main">
                   <div>
-                    <p className="text-sm text-muted">Total Revenue</p>
+                    <p className="text-sm text-muted">{t('dashboard.totalRevenue')}</p>
                     <p className="text-xl font-semibold text-main">
                       {formatCurrency(revenueData.reduce((sum, d) => sum + d.revenue, 0))}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted">Total Expenses</p>
+                    <p className="text-sm text-muted">{t('dashboard.totalExpenses')}</p>
                     <p className="text-xl font-semibold text-main">
                       {formatCurrency(revenueData.reduce((sum, d) => sum + d.expenses, 0))}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted">Net Profit</p>
+                    <p className="text-sm text-muted">{t('dashboard.netProfit')}</p>
                     <p className="text-xl font-semibold text-emerald-600">
                       {formatCurrency(revenueData.reduce((sum, d) => sum + d.profit, 0))}
                     </p>
@@ -283,9 +283,9 @@ export default function DashboardPage() {
           {/* Today's Schedule */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle>Today's Schedule</CardTitle>
+              <CardTitle>{t('dashboard.todaysSchedule')}</CardTitle>
               <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/calendar')}>
-                View All
+                {t('dashboard.viewAll')}
                 <ArrowRight size={14} />
               </Button>
             </CardHeader>
@@ -293,7 +293,7 @@ export default function DashboardPage() {
               {todayJobs.length === 0 ? (
                 <div className="px-6 py-8 text-center text-muted">
                   <Calendar size={40} className="mx-auto mb-2 opacity-50" />
-                  <p>No jobs scheduled for today</p>
+                  <p>{t('dashboard.noJobsToday')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-main">
@@ -339,7 +339,7 @@ export default function DashboardPage() {
           {/* Upcoming Jobs */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle>Active Jobs</CardTitle>
+              <CardTitle>{t('dashboard.activeJobs')}</CardTitle>
               <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/jobs')}>
                 View All
                 <ArrowRight size={14} />
@@ -419,7 +419,7 @@ export default function DashboardPage() {
               {/* Jobs by Status Chart */}
               <Card>
                 <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm">Jobs by Status</CardTitle>
+                  <CardTitle className="text-sm">{t('dashboard.jobsByStatus')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <div className="flex items-center justify-center">
@@ -442,7 +442,7 @@ export default function DashboardPage() {
               {/* Revenue by Category */}
               <Card>
                 <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm">Revenue by Category</CardTitle>
+                  <CardTitle className="text-sm">{t('dashboard.revenueByCategory')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <DonutLegend
@@ -509,7 +509,7 @@ export default function DashboardPage() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Building2 size={14} className="text-teal-500" />
-                    Rental Portfolio
+                    {t('dashboard.rentalPortfolio')}
                   </CardTitle>
                   <button
                     onClick={() => router.push('/dashboard/properties')}
@@ -522,31 +522,31 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-2 bg-secondary rounded-lg text-center">
                       <p className="text-lg font-semibold text-main">{properties.length}</p>
-                      <p className="text-[10px] text-muted">Properties</p>
+                      <p className="text-[10px] text-muted">{t('dashboard.properties')}</p>
                     </div>
                     <div className="p-2 bg-secondary rounded-lg text-center">
                       <p className="text-lg font-semibold text-main">{occupancyRate}%</p>
-                      <p className="text-[10px] text-muted">Occupancy</p>
+                      <p className="text-[10px] text-muted">{t('dashboard.occupancy')}</p>
                     </div>
                   </div>
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-muted">Rent Due (This Month)</span>
+                      <span className="text-muted">{t('dashboard.rentDueThisMonth')}</span>
                       <span className="font-medium text-main">{formatCurrency(rentDueThisMonth)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted">Rent Collected</span>
+                      <span className="text-muted">{t('dashboard.rentCollected')}</span>
                       <span className="font-medium text-emerald-600 dark:text-emerald-400">{formatCurrency(rentCollectedThisMonth)}</span>
                     </div>
                     {openMaintenance > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted">Open Maintenance</span>
+                        <span className="text-muted">{t('dashboard.openMaintenance')}</span>
                         <span className="font-medium text-amber-600 dark:text-amber-400">{openMaintenance}</span>
                       </div>
                     )}
                     {expiringLeases > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted">Leases Expiring (30d)</span>
+                        <span className="text-muted">{t('dashboard.leasesExpiring30d')}</span>
                         <span className="font-medium text-red-500">{expiringLeases}</span>
                       </div>
                     )}
@@ -571,7 +571,7 @@ export default function DashboardPage() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
                     <Clock size={14} className="text-indigo-500" />
-                    REPS Hour Tracker
+                    {t('dashboard.repsHourTracker')}
                   </CardTitle>
                   <span className="text-[10px] text-muted">{new Date().getFullYear()} Tax Year</span>
                 </CardHeader>
@@ -592,7 +592,7 @@ export default function DashboardPage() {
                   </div>
                   {repsHours >= 750 && (
                     <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-center">
-                      <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">REPS Qualified</p>
+                      <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">{t('dashboard.repsQualified')}</p>
                     </div>
                   )}
                 </CardContent>
@@ -621,7 +621,7 @@ export default function DashboardPage() {
                       className="mt-2 text-red-700 dark:text-red-300 hover:text-red-900 hover:bg-red-100 dark:hover:bg-red-900/30 p-0"
                       onClick={() => router.push('/dashboard/invoices?status=overdue')}
                     >
-                      View Invoices
+                      {t('dashboard.viewInvoices')}
                       <ArrowRight size={14} />
                     </Button>
                   </div>
@@ -634,7 +634,7 @@ export default function DashboardPage() {
           <ProModeGate>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-main">

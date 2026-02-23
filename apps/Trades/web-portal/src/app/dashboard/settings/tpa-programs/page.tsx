@@ -403,7 +403,7 @@ export default function TpaProgramsPage() {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Notes</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.notes')}</label>
                 <textarea
                   value={form.notes}
                   onChange={e => updateField('notes', e.target.value)}

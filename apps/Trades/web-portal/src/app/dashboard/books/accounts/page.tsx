@@ -249,7 +249,7 @@ export default function ChartOfAccountsPage() {
                             <Lock size={12} className="text-muted flex-shrink-0" />
                           )}
                           {!account.isActive && (
-                            <Badge variant="default" size="sm">Inactive</Badge>
+                            <Badge variant="default" size="sm">{t('common.inactive')}</Badge>
                           )}
                         </div>
                         <div className="col-span-2 text-right text-sm tabular-nums text-muted">

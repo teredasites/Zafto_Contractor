@@ -471,7 +471,7 @@ export default function SubcontractorsPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">Name *</label>
+                <label className="text-xs text-zinc-500 mb-1 block">{t('common.nameRequired')}</label>
                 <input value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
               </div>
               <div>
@@ -480,11 +480,11 @@ export default function SubcontractorsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Email</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.email')}</label>
                   <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Phone</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.phone')}</label>
                   <input value={formPhone} onChange={(e) => setFormPhone(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
               </div>
@@ -542,7 +542,7 @@ export default function SubcontractorsPage() {
               </label>
 
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">Notes</label>
+                <label className="text-xs text-zinc-500 mb-1 block">{t('common.notes')}</label>
                 <textarea value={formNotes} onChange={(e) => setFormNotes(e.target.value)} rows={2} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
               </div>
             </div>
