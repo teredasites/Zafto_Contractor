@@ -129,7 +129,7 @@ export default function BookingTypesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-zinc-100">{t('meetingsBookingTypes.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">Configure meeting types for client self-scheduling</p>
+            <p className="text-sm text-zinc-500 mt-1">{t('meetingsBooking.configureMeetingTypesForClientSelfscheduling')}</p>
           </div>
         </div>
 
@@ -143,8 +143,8 @@ export default function BookingTypesPage() {
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-8 text-center">
               <Video className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
-              <h3 className="font-medium text-zinc-100">No booking types configured</h3>
-              <p className="text-sm text-zinc-500 mt-1">Create booking types to let clients schedule meetings</p>
+              <h3 className="font-medium text-zinc-100">{t('meetingsBooking.noBookingTypesConfigured')}</h3>
+              <p className="text-sm text-zinc-500 mt-1">{t('meetingsBooking.createBookingTypesToLetClientsScheduleMeetings')}</p>
             </CardContent>
           </Card>
         ) : (

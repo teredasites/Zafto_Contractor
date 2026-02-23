@@ -323,7 +323,7 @@ export default function WarrantiesPage() {
             <CardContent className="p-12 text-center">
               <Shield size={48} className="mx-auto text-muted mb-4" />
               <h3 className="text-lg font-medium text-main mb-2">{t('warranties.noWarrantiesFound')}</h3>
-              <p className="text-muted mb-4">Add warranties to track coverage for your jobs and equipment.</p>
+              <p className="text-muted mb-4">{t('warranties.addWarrantiesToTrackCoverageForYourJobsAndEquipmen')}</p>
               <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.addWarranty')}</Button>
             </CardContent>
           </Card>
@@ -667,17 +667,17 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
               <label className="block text-sm font-medium text-main mb-1.5">Customer *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
                 <option value="">{t('common.selectCustomer')}</option>
-                <option value="c1">Robert Chen</option>
-                <option value="c2">Sarah Martinez</option>
-                <option value="c3">Mike Thompson</option>
+                <option value="c1">{t('warranties.robertChen')}</option>
+                <option value="c2">{t('warranties.sarahMartinez')}</option>
+                <option value="c3">{t('warranties.mikeThompson')}</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
                 <option value="">{t('common.selectJob')}</option>
-                <option value="j1">Full Home Rewire</option>
-                <option value="j2">HVAC Install</option>
+                <option value="j1">{t('warranties.fullHomeRewire')}</option>
+                <option value="j2">{t('warranties.hvacInstall')}</option>
               </select>
             </div>
           </div>

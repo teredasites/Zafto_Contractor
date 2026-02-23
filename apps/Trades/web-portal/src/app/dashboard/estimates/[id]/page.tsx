@@ -1232,7 +1232,7 @@ function AreaSection({
           <div className="grid grid-cols-[1fr_70px_70px_80px_90px_36px] gap-2 px-4 py-2 text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800/50">
             <span>{tr('common.item')}</span>
             <span className="text-right">{tr('common.qty')}</span>
-            <span className="text-right">Unit $</span>
+            <span className="text-right">{tr('estimates.unit')}</span>
             <span className="text-right">{tr('common.total')}</span>
             <span className="text-center">{tr('common.action')}</span>
             <span />
@@ -1748,7 +1748,7 @@ function EstimatePreview({
                   <th className="text-left py-1.5 font-medium">{t('common.description')}</th>
                   <th className="text-center py-1.5 font-medium">{t('common.action')}</th>
                   <th className="text-right py-1.5 font-medium">{t('common.qty')}</th>
-                  <th className="text-right py-1.5 font-medium">Unit $</th>
+                  <th className="text-right py-1.5 font-medium">{t('estimates.unit')}</th>
                   <th className="text-right py-1.5 font-medium">{t('common.total')}</th>
                 </tr>
               </thead>
@@ -1794,11 +1794,11 @@ function EstimatePreview({
         <div className="mt-6 border border-amber-500/20 bg-amber-500/5 rounded-lg p-4">
           <h3 className="text-xs uppercase tracking-wider text-amber-400 mb-2">{t('common.approvedChangeOrders')}</h3>
           <div className="flex justify-between text-sm">
-            <span className="text-zinc-400">Change order total</span>
+            <span className="text-zinc-400">{t('estimates.changeOrderTotal')}</span>
             <span className="text-amber-300 font-medium">${fmtCurrency(changeOrderTotal ?? 0)}</span>
           </div>
           <div className="flex justify-between text-sm font-bold mt-1 pt-1 border-t border-amber-500/20">
-            <span className="text-zinc-200">Adjusted Grand Total</span>
+            <span className="text-zinc-200">{t('estimates.adjustedGrandTotal')}</span>
             <span className="text-zinc-100">${fmtCurrency(totals.grand + (changeOrderTotal ?? 0))}</span>
           </div>
         </div>
@@ -1807,7 +1807,7 @@ function EstimatePreview({
       {/* G/B/B Tier Comparison */}
       {gbbComparison && gbbComparison.good.items.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Material Tier Options</h3>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">{t('estimates.materialTierOptions')}</h3>
           <div className="grid grid-cols-3 gap-3">
             {([
               { key: 'good' as const, label: 'Good', desc: 'Standard', color: 'blue' },
@@ -1838,15 +1838,15 @@ function EstimatePreview({
       {/* Labor Rate Summary */}
       {laborRates && laborRates.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Labor Rate Summary</h3>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">{t('estimates.laborRateSummary')}</h3>
           <div className="border border-zinc-700/50 rounded-lg overflow-hidden">
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-zinc-500 bg-zinc-800/50">
                   <th className="text-left py-2 px-3 font-medium">{t('common.trade')}</th>
-                  <th className="text-right py-2 px-3 font-medium">Base Rate</th>
-                  <th className="text-right py-2 px-3 font-medium">Burden</th>
-                  <th className="text-right py-2 px-3 font-medium">Burdened Rate</th>
+                  <th className="text-right py-2 px-3 font-medium">{t('estimates.baseRate')}</th>
+                  <th className="text-right py-2 px-3 font-medium">{t('estimates.burden')}</th>
+                  <th className="text-right py-2 px-3 font-medium">{t('estimates.burdenedRate')}</th>
                   <th className="text-left py-2 px-3 font-medium">{t('common.source')}</th>
                 </tr>
               </thead>
@@ -1874,7 +1874,7 @@ function EstimatePreview({
       {/* Warranty Summary */}
       {catalogMaterials && catalogMaterials.some(m => m.warrantyYears) && (
         <div className="mt-8">
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Warranty Coverage</h3>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">{t('estimates.warrantyCoverage')}</h3>
           <div className="space-y-1">
             {catalogMaterials.filter(m => m.warrantyYears).slice(0, 10).map((mat, i) => (
               <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-zinc-800/50">
@@ -1914,13 +1914,13 @@ function EstimatePreview({
       <div className="mt-10 grid grid-cols-2 gap-12">
         <div>
           <div className="border-t border-zinc-600 pt-2 mt-12">
-            <p className="text-xs text-zinc-500">Contractor Signature</p>
+            <p className="text-xs text-zinc-500">{t('estimates.contractorSignature')}</p>
             <p className="text-xs text-zinc-400 mt-1">Date: _______________</p>
           </div>
         </div>
         <div>
           <div className="border-t border-zinc-600 pt-2 mt-12">
-            <p className="text-xs text-zinc-500">Customer Acceptance</p>
+            <p className="text-xs text-zinc-500">{t('estimates.customerAcceptance')}</p>
             <p className="text-xs text-zinc-400 mt-1">Date: _______________</p>
           </div>
         </div>
@@ -2015,7 +2015,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
         <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-700/50">
           <div className="flex items-center gap-2">
             <ShoppingCart size={18} className="text-orange-400" />
-            <span className="text-sm font-semibold text-zinc-100">Material Pricing</span>
+            <span className="text-sm font-semibold text-zinc-100">{t('estimates.materialPricing')}</span>
             {!pricingAvailable && !loading && (
               <span className="text-[10px] text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded">
                 Manual pricing mode
@@ -2032,7 +2032,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 size={20} className="animate-spin text-zinc-400" />
-              <span className="ml-2 text-sm text-zinc-400">Loading material data...</span>
+              <span className="ml-2 text-sm text-zinc-400">{t('estimates.loadingMaterialData')}</span>
             </div>
           ) : error ? (
             <div className="flex items-center justify-center py-16 text-red-400 gap-2">
@@ -2042,8 +2042,8 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
           ) : tradeKeys.length === 0 ? (
             <div className="text-center py-16">
               <Package size={32} className="mx-auto text-zinc-600 mb-2" />
-              <p className="text-sm text-zinc-400">No trade data found for this property scan.</p>
-              <p className="text-xs text-zinc-500 mt-1">Run a property scan with trade estimation first.</p>
+              <p className="text-sm text-zinc-400">{t('estimates.noTradeDataFoundForThisPropertyScan')}</p>
+              <p className="text-xs text-zinc-500 mt-1">{t('estimates.runAPropertyScanWithTradeEstimationFirst')}</p>
             </div>
           ) : (
             <>
@@ -2069,7 +2069,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/20 text-yellow-400 text-xs mb-4">
                   <AlertCircle size={14} className="mt-0.5 shrink-0" />
                   <div>
-                    <p className="font-medium">Supplier pricing not configured</p>
+                    <p className="font-medium">{t('estimates.supplierPricingNotConfigured')}</p>
                     <p className="text-yellow-500/70 mt-0.5">
                       Material quantities are from Recon measurements. Configure supplier API keys in Settings to see real-time pricing from Home Depot and Lowe&apos;s.
                     </p>
@@ -2085,10 +2085,10 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                       <th className="text-left px-3 py-2 font-medium">{t('common.material')}</th>
                       <th className="text-right px-3 py-2 font-medium">{t('common.qty')}</th>
                       <th className="text-right px-3 py-2 font-medium">{t('common.unit')}</th>
-                      <th className="text-right px-3 py-2 font-medium">W/ Waste</th>
+                      <th className="text-right px-3 py-2 font-medium">{t('estimates.wWaste')}</th>
                       {pricingAvailable && (
                         <>
-                          <th className="text-right px-3 py-2 font-medium">HD Price</th>
+                          <th className="text-right px-3 py-2 font-medium">{t('estimates.hdPrice')}</th>
                           <th className="text-right px-3 py-2 font-medium">Lowe&apos;s</th>
                           <th className="text-right px-3 py-2 font-medium">Best</th>
                         </>

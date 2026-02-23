@@ -148,7 +148,7 @@ export default function MaintenancePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('propertiesMaintenance.title')}</h1>
-          <p className="text-muted mt-1">Track and manage property maintenance requests</p>
+          <p className="text-muted mt-1">{t('propertyMaint.trackAndManagePropertyMaintenanceRequests')}</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center p-1 bg-secondary rounded-lg">
@@ -182,7 +182,7 @@ export default function MaintenancePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><Wrench size={20} className="text-blue-600 dark:text-blue-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{totalCount}</p><p className="text-sm text-muted">Total Requests</p></div>
+          <div><p className="text-2xl font-semibold text-main">{totalCount}</p><p className="text-sm text-muted">{t('propertyMaint.totalRequests')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><AlertTriangle size={20} className="text-amber-600 dark:text-amber-400" /></div>
@@ -387,8 +387,8 @@ export default function MaintenancePage() {
           {filteredRequests.length === 0 && (
             <div className="px-6 py-12 text-center">
               <Wrench size={48} className="mx-auto text-muted mb-4" />
-              <h3 className="text-lg font-medium text-main mb-2">No maintenance requests found</h3>
-              <p className="text-muted">All caught up. No open requests match your filters.</p>
+              <h3 className="text-lg font-medium text-main mb-2">{t('propertyMaint.noMaintenanceRequestsFound')}</h3>
+              <p className="text-muted">{t('propertyMaint.allCaughtUpNoOpenRequestsMatchYourFilters')}</p>
             </div>
           )}
         </div>

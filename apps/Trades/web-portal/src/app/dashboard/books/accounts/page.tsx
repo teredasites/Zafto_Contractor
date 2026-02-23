@@ -220,10 +220,10 @@ export default function ChartOfAccountsPage() {
                 <div className="border-t border-main">
                   {/* Table header */}
                   <div className="grid grid-cols-12 gap-2 px-6 py-2 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50">
-                    <div className="col-span-2">Number</div>
+                    <div className="col-span-2">{t('booksAccounts.number')}</div>
                     <div className="col-span-4">{t('common.name')}</div>
-                    <div className="col-span-2 text-right">Debits</div>
-                    <div className="col-span-2 text-right">Credits</div>
+                    <div className="col-span-2 text-right">{t('booksAccounts.debits')}</div>
+                    <div className="col-span-2 text-right">{t('booksAccounts.credits')}</div>
                     <div className="col-span-1 text-right">{t('common.balance')}</div>
                     <div className="col-span-1 text-right">{t('common.actions')}</div>
                   </div>
@@ -437,7 +437,7 @@ function AccountModal({
           {!isEdit && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1">Account Number</label>
+                <label className="block text-sm font-medium text-main mb-1">{t('booksAccounts.accountNumber')}</label>
                 <Input
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
@@ -446,7 +446,7 @@ function AccountModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1">Account Type</label>
+                <label className="block text-sm font-medium text-main mb-1">{t('booksAccounts.accountType')}</label>
                 <select
                   value={accountType}
                   onChange={(e) => handleTypeChange(e.target.value)}

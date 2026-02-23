@@ -236,7 +236,7 @@ export default function CertificationsPage() {
                         </div>
                       )}
                       {!cert.expirationDate && (
-                        <div className="text-xs text-muted">No expiration</div>
+                        <div className="text-xs text-muted">{t('certifications.noExpiration')}</div>
                       )}
                       <ChevronRight size={16} className="text-muted" />
                     </div>
@@ -396,7 +396,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
             <label className="text-xs font-medium text-muted mb-1.5 block">Employee *</label>
             <select value={userId} onChange={e => setUserId(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30">
-              <option value="">Select employee...</option>
+              <option value="">{tr('certifications.selectEmployee')}</option>
               {members.map(m => (
                 <option key={m.id} value={m.userId || m.id}>{m.name || m.email}</option>
               ))}
@@ -408,7 +408,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
             <label className="text-xs font-medium text-muted mb-1.5 block">Certification Type *</label>
             <select value={certType} onChange={e => handleTypeChange(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30">
-              <option value="">Select type...</option>
+              <option value="">{tr('certifications.selectType')}</option>
               {certTypes.map(t => (
                 <option key={t.typeKey} value={t.typeKey}>{t.displayName}</option>
               ))}
@@ -430,7 +430,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30" />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted mb-1.5 block">Certificate Number</label>
+              <label className="text-xs font-medium text-muted mb-1.5 block">{tr('certifications.certificateNumber')}</label>
               <input type="text" value={certNumber} onChange={e => setCertNumber(e.target.value)} placeholder="License #"
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30" />
             </div>
@@ -455,7 +455,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={renewalRequired} onChange={e => setRenewalRequired(e.target.checked)}
                 className="rounded border-border text-accent focus:ring-accent" />
-              <span className="text-sm text-main">Renewal required</span>
+              <span className="text-sm text-main">{tr('certifications.renewalRequired')}</span>
             </label>
             {renewalRequired && (
               <div className="flex items-center gap-2">
@@ -479,8 +479,8 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30">
                 <option value="active">{tr('common.active')}</option>
                 <option value="expired">{tr('common.expired')}</option>
-                <option value="pending_renewal">Pending Renewal</option>
-                <option value="revoked">Revoked</option>
+                <option value="pending_renewal">{tr('certifications.pendingRenewal')}</option>
+                <option value="revoked">{tr('certifications.revoked')}</option>
               </select>
             </div>
           )}

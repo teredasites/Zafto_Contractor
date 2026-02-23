@@ -194,7 +194,7 @@ export default function TenantDetailPage() {
               {tenantLeases.length === 0 ? (
                 <div className="py-8 text-center">
                   <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
-                  <p className="text-muted">No lease history</p>
+                  <p className="text-muted">{t('propertyTenants.noLeaseHistory')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-main">
@@ -281,10 +281,10 @@ export default function TenantDetailPage() {
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Current Lease</CardTitle>
+                <CardTitle className="text-base">{t('propertyTenants.currentLease')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted text-center py-4">No active lease</p>
+                <p className="text-sm text-muted text-center py-4">{t('propertyTenants.noActiveLease')}</p>
               </CardContent>
             </Card>
           )}
@@ -300,8 +300,8 @@ export default function TenantDetailPage() {
             <CardContent>
               <div className="py-6 text-center">
                 <DollarSign size={32} className="mx-auto text-muted mb-2 opacity-50" />
-                <p className="text-sm text-muted">Rent charges and payments will appear here</p>
-                <p className="text-xs text-muted mt-1">Powered by the rent ledger</p>
+                <p className="text-sm text-muted">{t('propertyTenants.rentChargesAndPaymentsWillAppearHere')}</p>
+                <p className="text-xs text-muted mt-1">{t('propertyTenants.poweredByTheRentLedger')}</p>
               </div>
             </CardContent>
           </Card>
@@ -319,11 +319,11 @@ export default function TenantDetailPage() {
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted">Total Leases</span>
+                <span className="text-muted">{t('propertyTenants.totalLeases')}</span>
                 <span className="font-medium text-main">{tenantLeases.length}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted">Tenant Since</span>
+                <span className="text-muted">{t('propertyTenants.tenantSince')}</span>
                 <span className="font-medium text-main">{formatDate(tenant.createdAt)}</span>
               </div>
             </CardContent>

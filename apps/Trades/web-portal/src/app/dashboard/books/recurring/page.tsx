@@ -360,7 +360,7 @@ function TemplateModal({
                 onChange={(e) => setTransactionType(e.target.value as TransactionType)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
-                <option value="expense">Expense</option>
+                <option value="expense">{t('booksRecurring.expense')}</option>
                 <option value="invoice">{t('common.invoice')}</option>
               </select>
             </div>
@@ -372,7 +372,7 @@ function TemplateModal({
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
                 <option value="weekly">{t('common.weekly')}</option>
-                <option value="biweekly">Bi-Weekly</option>
+                <option value="biweekly">{t('booksRecurring.biweekly')}</option>
                 <option value="monthly">{t('common.monthly')}</option>
                 <option value="quarterly">{t('common.quarterly')}</option>
                 <option value="annually">{t('common.annually')}</option>
@@ -428,17 +428,17 @@ function TemplateModal({
               >
                 <option value="materials">{t('common.materials')}</option>
                 <option value="labor">{t('common.labor')}</option>
-                <option value="fuel">Fuel</option>
+                <option value="fuel">{t('booksRecurring.fuel')}</option>
                 <option value="tools">Tools</option>
                 <option value="equipment">{t('common.equipment')}</option>
                 <option value="vehicle">{t('common.vehicle')}</option>
                 <option value="insurance">{t('common.insurance')}</option>
                 <option value="permits">Permits</option>
                 <option value="advertising">{t('common.advertising')}</option>
-                <option value="office">Office</option>
+                <option value="office">{t('booksRecurring.office')}</option>
                 <option value="utilities">{t('common.utilities')}</option>
                 <option value="subcontractor">Subcontractor</option>
-                <option value="uncategorized">Uncategorized</option>
+                <option value="uncategorized">{t('booksRecurring.uncategorized')}</option>
               </select>
             </div>
           )}
@@ -561,7 +561,7 @@ export default function RecurringPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('booksRecurring.title')}</h1>
-          <p className="text-muted mt-1">Automate repeating expenses and invoices</p>
+          <p className="text-muted mt-1">{t('booksRecurring.automateRepeatingExpensesAndInvoices')}</p>
         </div>
         <Button onClick={() => { setEditingTemplate(null); setModalOpen(true); }}>
           <Plus size={16} />
@@ -609,7 +609,7 @@ export default function RecurringPage() {
                 <Calendar size={20} className="text-amber-500" />
               </div>
               <div>
-                <p className="text-muted text-xs">Due This Week</p>
+                <p className="text-muted text-xs">{t('booksRecurring.dueThisWeek')}</p>
                 <p className="text-xl font-bold text-main">{dueThisWeek}</p>
               </div>
             </div>
@@ -622,7 +622,7 @@ export default function RecurringPage() {
                 <Clock size={20} className="text-accent" />
               </div>
               <div>
-                <p className="text-muted text-xs">Total Generated</p>
+                <p className="text-muted text-xs">{t('booksRecurring.totalGenerated')}</p>
                 <p className="text-xl font-bold text-main">{totalGenerated}</p>
               </div>
             </div>
@@ -657,7 +657,7 @@ export default function RecurringPage() {
           {templates.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <Repeat size={40} className="mx-auto text-muted mb-3" />
-              <h3 className="text-sm font-medium text-main mb-1">No recurring templates</h3>
+              <h3 className="text-sm font-medium text-main mb-1">{t('booksRecurring.noRecurringTemplates')}</h3>
               <p className="text-xs text-muted mb-4">
                 Create a template to automate repeating expenses or invoices.
               </p>

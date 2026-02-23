@@ -394,7 +394,7 @@ export default function FiscalPeriodsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('booksPeriods.title')}</h1>
-          <p className="text-muted mt-1">Manage accounting periods and year-end close</p>
+          <p className="text-muted mt-1">{t('booksPeriods.manageAccountingPeriodsAndYearendClose')}</p>
         </div>
         <div className="flex items-center gap-3">
           {/* Year Selector */}
@@ -453,7 +453,7 @@ export default function FiscalPeriodsPage() {
                 <Calendar size={20} className="text-blue-500" />
               </div>
               <div>
-                <p className="text-muted text-xs">Monthly Periods</p>
+                <p className="text-muted text-xs">{t('booksPeriods.monthlyPeriods')}</p>
                 <p className="text-xl font-bold text-main">{closedCount} / {totalPeriods > 0 ? totalPeriods : 12}</p>
                 <p className="text-xs text-muted">closed</p>
               </div>
@@ -474,7 +474,7 @@ export default function FiscalPeriodsPage() {
                 )}
               </div>
               <div>
-                <p className="text-muted text-xs">Year-End Ready</p>
+                <p className="text-muted text-xs">{t('booksPeriods.yearendReady')}</p>
                 <p className="text-xl font-bold text-main">{allMonthlyClosed ? 'Yes' : 'No'}</p>
                 <p className="text-xs text-muted">
                   {allMonthlyClosed ? 'All periods closed' : `${12 - closedCount} period${12 - closedCount !== 1 ? 's' : ''} still open`}
@@ -493,7 +493,7 @@ export default function FiscalPeriodsPage() {
                 <BookOpen size={20} className={yearEndDone ? 'text-emerald-500' : 'text-slate-400'} />
               </div>
               <div>
-                <p className="text-muted text-xs">Retained Earnings</p>
+                <p className="text-muted text-xs">{t('booksPeriods.retainedEarnings')}</p>
                 <p className="text-xl font-bold text-main">{yearEndDone ? 'Posted' : 'Pending'}</p>
                 <p className="text-xs text-muted">FY {selectedYear}</p>
               </div>
@@ -521,7 +521,7 @@ export default function FiscalPeriodsPage() {
                 <p>{yearEndResult.error}</p>
               ) : (
                 <div>
-                  <p className="font-medium">Year-end close completed successfully.</p>
+                  <p className="font-medium">{t('booksPeriods.yearendCloseCompletedSuccessfully')}</p>
                   <p className="mt-1">
                     Closing journal entry created: <span className="font-mono font-medium">YE-{selectedYear}</span>
                   </p>
@@ -546,7 +546,7 @@ export default function FiscalPeriodsPage() {
           {monthlyPeriods.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <Calendar size={40} className="mx-auto text-muted mb-3" />
-              <h3 className="text-sm font-medium text-main mb-1">No monthly periods</h3>
+              <h3 className="text-sm font-medium text-main mb-1">{t('booksPeriods.noMonthlyPeriods')}</h3>
               <p className="text-xs text-muted mb-4">
                 Generate periods for FY {selectedYear} to get started.
               </p>
@@ -636,7 +636,7 @@ export default function FiscalPeriodsPage() {
         <CardContent className="space-y-4">
           {/* Checklist */}
           <div className="space-y-3">
-            <p className="text-sm font-medium text-main">Requirements Checklist</p>
+            <p className="text-sm font-medium text-main">{t('booksPeriods.requirementsChecklist')}</p>
 
             {/* Requirement 1: All monthly periods generated */}
             <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary/50">
@@ -714,7 +714,7 @@ export default function FiscalPeriodsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Clock size={18} className="text-muted" />
-              <CardTitle className="text-base">Period Audit Log</CardTitle>
+              <CardTitle className="text-base">{t('booksPeriods.periodAuditLog')}</CardTitle>
             </div>
             <div className="flex items-center gap-2 text-muted">
               <span className="text-xs">{auditLogOpen ? 'Collapse' : 'Expand'}</span>
@@ -738,7 +738,7 @@ export default function FiscalPeriodsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
-                      <th className="px-6 py-3 text-left">Timestamp</th>
+                      <th className="px-6 py-3 text-left">{t('booksPeriods.timestamp')}</th>
                       <th className="px-4 py-3 text-left">{t('common.action')}</th>
                       <th className="px-4 py-3 text-left">{t('common.summary')}</th>
                     </tr>

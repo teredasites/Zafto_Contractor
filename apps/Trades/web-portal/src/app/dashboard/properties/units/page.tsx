@@ -82,7 +82,7 @@ export default function UnitsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-main">{t('propertiesUnits.title')}</h1>
-        <p className="text-[13px] text-muted mt-1">View and manage all units across your properties</p>
+        <p className="text-[13px] text-muted mt-1">{t('propertyUnits.viewAndManageAllUnitsAcrossYourProperties')}</p>
       </div>
 
       {/* Stats */}
@@ -108,7 +108,7 @@ export default function UnitsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{occupiedCount}</p>
-                <p className="text-sm text-muted">Occupied</p>
+                <p className="text-sm text-muted">{t('propertyUnits.occupied')}</p>
               </div>
             </div>
           </CardContent>
@@ -121,7 +121,7 @@ export default function UnitsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{vacantCount}</p>
-                <p className="text-sm text-muted">Vacant</p>
+                <p className="text-sm text-muted">{t('propertyUnits.vacant')}</p>
               </div>
             </div>
           </CardContent>
@@ -134,7 +134,7 @@ export default function UnitsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(avgRent)}</p>
-                <p className="text-sm text-muted">Avg Rent</p>
+                <p className="text-sm text-muted">{t('propertyUnits.avgRent')}</p>
               </div>
             </div>
           </CardContent>
@@ -164,7 +164,7 @@ export default function UnitsPage() {
       {filteredUnits.length === 0 ? (
         <div className="py-12 text-center">
           <Home size={48} className="mx-auto text-muted mb-3 opacity-50" />
-          <p className="text-muted">No units found</p>
+          <p className="text-muted">{t('propertyUnits.noUnitsFound')}</p>
         </div>
       ) : (
         <div className="bg-surface border border-main rounded-xl divide-y divide-main">
@@ -172,8 +172,8 @@ export default function UnitsPage() {
           <div className="px-6 py-3 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
             <div className="col-span-2">{t('common.unit')}</div>
             <div className="col-span-3">{t('common.property')}</div>
-            <div className="col-span-2">Bed / Bath</div>
-            <div className="col-span-1">Sq Ft</div>
+            <div className="col-span-2">{t('propertyUnits.bedBath')}</div>
+            <div className="col-span-1">{t('propertyUnits.sqFt')}</div>
             <div className="col-span-2 text-right">{t('common.marketRent')}</div>
             <div className="col-span-2 text-right">{t('common.status')}</div>
           </div>

@@ -90,13 +90,13 @@ export default function LienRulesPage() {
                     </div>
                     <div className="flex items-center gap-3 text-xs">
                       {rule.preliminary_notice_required ? (
-                        <Badge variant="warning" size="sm">Notice Required</Badge>
+                        <Badge variant="warning" size="sm">{t('lienRules.noticeRequired')}</Badge>
                       ) : (
-                        <Badge variant="secondary" size="sm">No Notice</Badge>
+                        <Badge variant="secondary" size="sm">{t('lienRules.noNotice')}</Badge>
                       )}
                       <span className="text-zinc-400">{rule.lien_filing_deadline_days}d to file</span>
                       {rule.notarization_required && (
-                        <Badge variant="error" size="sm">Notarize</Badge>
+                        <Badge variant="error" size="sm">{t('lienRules.notarize')}</Badge>
                       )}
                     </div>
                   </div>
@@ -148,13 +148,13 @@ export default function LienRulesPage() {
                             }
                           </p>
                           {rule.notice_of_intent_required && (
-                            <p className="text-amber-400">Notice of Intent required</p>
+                            <p className="text-amber-400">{t('lienRules.noticeOfIntentRequired')}</p>
                           )}
                         </div>
                       </div>
                       {rule.statutory_reference && (
                         <div className="col-span-2">
-                          <h4 className="text-xs font-semibold text-zinc-400 mb-1 uppercase">Statutory Reference</h4>
+                          <h4 className="text-xs font-semibold text-zinc-400 mb-1 uppercase">{t('lienRules.statutoryReference')}</h4>
                           <p className="text-zinc-300 text-xs">{rule.statutory_reference}</p>
                         </div>
                       )}

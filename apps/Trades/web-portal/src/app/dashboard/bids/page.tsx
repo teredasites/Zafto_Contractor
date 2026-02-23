@@ -75,7 +75,7 @@ export default function BidsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('bids.title')}</h1>
-          <p className="text-muted mt-1">Create and manage your bids</p>
+          <p className="text-muted mt-1">{t('bids.createAndManageYourBids')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/bids/new')}>
           <Plus size={16} />

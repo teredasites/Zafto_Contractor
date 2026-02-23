@@ -46,7 +46,7 @@ export default function BudgetsPage() {
               </Link>
               <h1 className="text-2xl font-semibold text-main">{t('booksBudgets.title')}</h1>
             </div>
-            <p className="text-[13px] text-muted ml-8">Compare job budgets to actual expenses. Identify overruns early.</p>
+            <p className="text-[13px] text-muted ml-8">{t('booksBudgets.compareJobBudgetsToActualExpensesIdentifyOverrunsE')}</p>
           </div>
         </div>
 
@@ -69,8 +69,8 @@ export default function BudgetsPage() {
         {/* Job Breakdown */}
         <Card>
           <CardHeader>
-            <CardTitle>Job-Level Breakdown</CardTitle>
-            <CardDescription>Click a job to see category-level budget details</CardDescription>
+            <CardTitle>{t('booksBudgets.joblevelBreakdown')}</CardTitle>
+            <CardDescription>{t('booksBudgets.clickAJobToSeeCategorylevelBudgetDetails')}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -87,8 +87,8 @@ export default function BudgetsPage() {
             ) : summaries.length === 0 ? (
               <div className="text-center py-8 text-muted">
                 <DollarSign size={32} className="mx-auto mb-2 opacity-40" />
-                <p>No job budgets created yet.</p>
-                <p className="text-sm mt-1">Create budgets from the job detail page to start tracking.</p>
+                <p>{t('booksBudgets.noJobBudgetsCreatedYet')}</p>
+                <p className="text-sm mt-1">{t('booksBudgets.createBudgetsFromTheJobDetailPageToStartTracking')}</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -157,7 +157,7 @@ export default function BudgetsPage() {
                           <span className="text-right">{t('common.budget')}</span>
                           <span className="text-right">{t('common.actual')}</span>
                           <span className="text-right">{t('common.variance')}</span>
-                          <span className="text-right">Usage</span>
+                          <span className="text-right">{t('booksBudgets.usage')}</span>
                         </div>
                         {summary.categories.map((cat) => {
                           const pct =

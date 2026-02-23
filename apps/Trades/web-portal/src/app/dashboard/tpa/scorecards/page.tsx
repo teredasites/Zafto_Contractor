@@ -106,7 +106,7 @@ function NewScorecardModal({
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
       <div className="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-lg max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-          <h3 className="font-medium text-white">New Scorecard</h3>
+          <h3 className="font-medium text-white">{t('tpaScorecards.newScorecard')}</h3>
           <Button variant="ghost" size="icon" onClick={onClose} className="h-7 w-7">
             <X className="h-4 w-4" />
           </Button>
@@ -114,7 +114,7 @@ function NewScorecardModal({
         <div className="p-4 space-y-4">
           {/* Program */}
           <div>
-            <label className="text-xs text-zinc-400 block mb-1">TPA Program</label>
+            <label className="text-xs text-zinc-400 block mb-1">{t('tpaScorecards.tpaProgram')}</label>
             <select
               className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm text-white"
               value={programId}
@@ -130,11 +130,11 @@ function NewScorecardModal({
           {/* Period */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Period Start</label>
+              <label className="text-xs text-zinc-400 block mb-1">{t('tpaScorecards.periodStart')}</label>
               <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Period End</label>
+              <label className="text-xs text-zinc-400 block mb-1">{t('tpaScorecards.periodEnd')}</label>
               <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} />
             </div>
           </div>
@@ -354,7 +354,7 @@ export default function ScorecardsPage() {
             value={selectedProgram}
             onChange={(e) => setSelectedProgram(e.target.value)}
           >
-            <option value="all">All Programs</option>
+            <option value="all">{t('tpaScorecards.allPrograms')}</option>
             {activePrograms.map((p) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
@@ -372,7 +372,7 @@ export default function ScorecardsPage() {
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-400" />
-              <span className="text-sm font-medium text-red-400">Score Alerts</span>
+              <span className="text-sm font-medium text-red-400">{t('tpaScorecards.scoreAlerts')}</span>
             </div>
             <div className="space-y-1">
               {alerts.map((sc) => (
@@ -426,7 +426,7 @@ export default function ScorecardsPage() {
       {(loading || programsLoading) && (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
-          <span className="ml-2 text-sm text-zinc-400">Loading scorecards...</span>
+          <span className="ml-2 text-sm text-zinc-400">{t('tpaScorecards.loadingScorecards')}</span>
         </div>
       )}
 
@@ -452,7 +452,7 @@ export default function ScorecardsPage() {
             {scorecards.length === 0 ? (
               <div className="py-12 text-center">
                 <Star className="h-8 w-8 text-zinc-600 mx-auto mb-2" />
-                <p className="text-sm text-zinc-400">No scorecards yet</p>
+                <p className="text-sm text-zinc-400">{t('tpaScorecards.noScorecardsYet')}</p>
                 <p className="text-xs text-zinc-500 mt-1">
                   Add your first scorecard to start tracking performance
                 </p>

@@ -574,7 +574,7 @@ export default function TeamChatPage() {
                       <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
                         <div className="text-center">
                           <MessageSquare className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                          <p>No messages yet. Start the conversation.</p>
+                          <p>{t('common.noMessagesYetStartTheConversation')}</p>
                         </div>
                       </div>
                     ) : (
@@ -622,7 +622,7 @@ export default function TeamChatPage() {
                 <div className="flex items-center justify-center h-full text-zinc-500">
                   <div className="text-center">
                     <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">Select a conversation to start chatting</p>
+                    <p className="text-sm">{t('common.selectAConversationToStartChatting')}</p>
                     <Button
                       variant="ghost"
                       size="sm"

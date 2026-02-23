@@ -123,7 +123,7 @@ export default function SmsPage() {
       <div className="space-y-4">
         <div>
           <h1 className="text-2xl font-bold text-zinc-100">{t('phoneSms.title')}</h1>
-          <p className="text-sm text-zinc-500 mt-1">SMS conversations with customers</p>
+          <p className="text-sm text-zinc-500 mt-1">{t('phoneSms.smsConversationsWithCustomers')}</p>
         </div>
 
         <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
@@ -144,7 +144,7 @@ export default function SmsPage() {
                 ) : filteredThreads.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                     <MessageSquare className="h-8 w-8 mb-2 opacity-50" />
-                    <p className="text-sm">No conversations</p>
+                    <p className="text-sm">{t('phoneSms.noConversations')}</p>
                   </div>
                 ) : (
                   filteredThreads.map(thread => (
@@ -222,7 +222,7 @@ export default function SmsPage() {
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center text-zinc-500">
                   <MessageSquare className="h-12 w-12 mb-3 opacity-30" />
-                  <p className="text-sm">Select a conversation</p>
+                  <p className="text-sm">{t('phoneSms.selectAConversation')}</p>
                 </div>
               )}
             </div>

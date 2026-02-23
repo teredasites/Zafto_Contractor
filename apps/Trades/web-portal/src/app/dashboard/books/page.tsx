@@ -192,7 +192,7 @@ export default function BooksPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('books.title')}</h1>
-          <p className="text-muted mt-1">Financial dashboard</p>
+          <p className="text-muted mt-1">{t('books.financialDashboard')}</p>
         </div>
         <div className="flex items-center gap-3">
           <Button
@@ -249,7 +249,7 @@ export default function BooksPage() {
                     <Wallet size={20} className="text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Cash Position</p>
+                <p className="text-sm text-muted">{t('books.cashPosition')}</p>
                 <p className="text-2xl font-bold text-main mt-1">
                   {formatCurrency(totalBalance)}
                 </p>
@@ -267,7 +267,7 @@ export default function BooksPage() {
                     <TrendingUp size={20} className="text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Accounts Receivable</p>
+                <p className="text-sm text-muted">{t('books.accountsReceivable')}</p>
                 <p className="text-2xl font-bold text-main mt-1">
                   {formatCurrency(totalAR)}
                 </p>
@@ -285,7 +285,7 @@ export default function BooksPage() {
                     <TrendingDown size={20} className="text-amber-600 dark:text-amber-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Accounts Payable</p>
+                <p className="text-sm text-muted">{t('books.accountsPayable')}</p>
                 <p className="text-2xl font-bold text-main mt-1">
                   {formatCurrency(totalAP)}
                 </p>
@@ -344,8 +344,8 @@ export default function BooksPage() {
             <Card className="lg:col-span-2">
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
                 <div>
-                  <CardTitle>Profit & Loss Summary</CardTitle>
-                  <p className="text-sm text-muted mt-1">Current month-to-date</p>
+                  <CardTitle>{t('books.profitLossSummary')}</CardTitle>
+                  <p className="text-sm text-muted mt-1">{t('books.currentMonthtodate')}</p>
                 </div>
                 <Button
                   variant="ghost"
@@ -394,8 +394,8 @@ export default function BooksPage() {
             {/* Expenses by Category Donut */}
             <Card>
               <CardHeader>
-                <CardTitle>Expenses by Category</CardTitle>
-                <p className="text-sm text-muted mt-1">MTD breakdown</p>
+                <CardTitle>{t('books.expensesByCategory')}</CardTitle>
+                <p className="text-sm text-muted mt-1">{t('books.mtdBreakdown')}</p>
               </CardHeader>
               <CardContent>
                 {expenseChartData.length > 0 ? (
@@ -417,7 +417,7 @@ export default function BooksPage() {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Receipt size={32} className="text-muted mb-3" />
-                    <p className="text-sm text-muted">No expenses recorded yet.</p>
+                    <p className="text-sm text-muted">{t('books.noExpensesRecordedYet')}</p>
                   </div>
                 )}
               </CardContent>
@@ -426,7 +426,7 @@ export default function BooksPage() {
 
           {/* Alerts Section */}
           <div>
-            <h2 className="text-lg font-semibold text-main mb-4">Alerts & Action Items</h2>
+            <h2 className="text-lg font-semibold text-main mb-4">{t('books.alertsActionItems')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Overdue AR */}
               <Card className={cn(
@@ -458,7 +458,7 @@ export default function BooksPage() {
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-emerald-600 mt-1">All clear</p>
+                        <p className="text-sm text-emerald-600 mt-1">{t('books.allClear')}</p>
                       )}
                     </div>
                   </div>
@@ -484,7 +484,7 @@ export default function BooksPage() {
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-main">Unreviewed Transactions</p>
+                      <p className="text-sm font-medium text-main">{t('books.unreviewedTransactions')}</p>
                       {unreviewedCount > 0 ? (
                         <>
                           <p className="text-lg font-bold text-amber-600 mt-1">
@@ -495,7 +495,7 @@ export default function BooksPage() {
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-emerald-600 mt-1">All reviewed</p>
+                        <p className="text-sm text-emerald-600 mt-1">{t('books.allReviewed')}</p>
                       )}
                     </div>
                   </div>
@@ -521,7 +521,7 @@ export default function BooksPage() {
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-main">Unreconciled Accounts</p>
+                      <p className="text-sm font-medium text-main">{t('books.unreconciledAccounts')}</p>
                       {unreconciledAccounts.length > 0 ? (
                         <>
                           <p className="text-lg font-bold text-amber-600 mt-1">
@@ -532,7 +532,7 @@ export default function BooksPage() {
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-emerald-600 mt-1">All reconciled</p>
+                        <p className="text-sm text-emerald-600 mt-1">{t('books.allReconciled')}</p>
                       )}
                     </div>
                   </div>
@@ -558,7 +558,7 @@ export default function BooksPage() {
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-main">Due Bills</p>
+                      <p className="text-sm font-medium text-main">{t('books.dueBills')}</p>
                       {apCurrentTotal > 0 ? (
                         <>
                           <p className="text-lg font-bold text-blue-600 mt-1">
@@ -569,7 +569,7 @@ export default function BooksPage() {
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-emerald-600 mt-1">No bills due</p>
+                        <p className="text-sm text-emerald-600 mt-1">{t('books.noBillsDue')}</p>
                       )}
                     </div>
                   </div>
@@ -581,7 +581,7 @@ export default function BooksPage() {
           {/* Quick Links Grid */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Links</CardTitle>
+              <CardTitle>{t('books.quickLinks')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">

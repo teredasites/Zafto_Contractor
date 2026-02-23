@@ -235,7 +235,7 @@ export default function GanttPage() {
       {/* EVM Bar */}
       {showEvm && costs && costs.total_budgeted > 0 && (
         <div className="flex items-center gap-6 px-4 py-2 border-b border-main bg-surface text-xs">
-          <span className="text-secondary font-medium">EVM</span>
+          <span className="text-secondary font-medium">{t('scheduling.evm')}</span>
           <div className="flex items-center gap-1">
             <span className="text-tertiary">{t('marketplace.budgetLabel')}</span>
             <span className="font-semibold text-primary">${costs.total_budgeted.toLocaleString()}</span>
@@ -294,7 +294,7 @@ export default function GanttPage() {
             {/* Task list header */}
             <div className="flex items-center px-3 text-xs font-medium text-secondary bg-surface-alt border-b border-main" style={{ height: HEADER_HEIGHT }}>
               <span className="flex-1">Task Name</span>
-              <span className="w-14 text-right">Dur</span>
+              <span className="w-14 text-right">{t('scheduling.dur')}</span>
               <span className="w-14 text-right">%</span>
             </div>
             {/* Task rows */}
@@ -528,7 +528,7 @@ export default function GanttPage() {
       {showImport && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setShowImport(false); clearResults(); }}>
           <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-primary mb-1">Import Schedule</h2>
+            <h2 className="text-lg font-semibold text-primary mb-1">{t('scheduling.importSchedule')}</h2>
             <p className="text-xs text-tertiary mb-4">Supports P6 XER, MS Project XML, and CSV</p>
 
             {ieError && (
@@ -566,7 +566,7 @@ export default function GanttPage() {
               <div>
                 <label className="block w-full p-8 border-2 border-dashed border-main rounded-xl text-center cursor-pointer hover:border-accent/50 transition-colors mb-4">
                   <Upload className="w-8 h-8 text-tertiary mx-auto mb-2" />
-                  <p className="text-sm text-secondary mb-1">Drop file here or click to browse</p>
+                  <p className="text-sm text-secondary mb-1">{t('scheduling.dropFileHereOrClickToBrowse')}</p>
                   <p className="text-xs text-tertiary">.xer, .xml, .csv</p>
                   <input
                     type="file"
@@ -601,8 +601,8 @@ export default function GanttPage() {
       {showExport && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setShowExport(false); clearResults(); }}>
           <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-primary mb-1">Export Schedule</h2>
-            <p className="text-xs text-tertiary mb-4">Download in your preferred format</p>
+            <h2 className="text-lg font-semibold text-primary mb-1">{t('scheduling.exportSchedule')}</h2>
+            <p className="text-xs text-tertiary mb-4">{t('scheduling.downloadInYourPreferredFormat')}</p>
 
             {ieError && (
               <div className="p-3 bg-error/5 border border-error/20 rounded-lg mb-3">
@@ -613,7 +613,7 @@ export default function GanttPage() {
             {exportResult ? (
               <div className="space-y-3">
                 <div className="p-4 bg-success/5 border border-success/20 rounded-lg text-center">
-                  <p className="text-sm font-medium text-primary mb-2">Export Ready</p>
+                  <p className="text-sm font-medium text-primary mb-2">{t('scheduling.exportReady')}</p>
                   <p className="text-xs text-secondary mb-3">{exportResult.filename} ({exportResult.tasks_exported} tasks)</p>
                   <a
                     href={exportResult.download_url}

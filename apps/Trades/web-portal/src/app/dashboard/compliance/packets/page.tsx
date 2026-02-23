@@ -159,11 +159,11 @@ export default function CompliancePacketsPage() {
       {creating && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Create Compliance Packet</CardTitle>
+            <CardTitle className="text-base">{t('compliancePackets.createCompliancePacket')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm text-zinc-400 mb-1 block">Packet Name</label>
+              <label className="text-sm text-zinc-400 mb-1 block">{t('compliancePackets.packetName')}</label>
               <input
                 type="text"
                 value={packetName}
@@ -209,7 +209,7 @@ export default function CompliancePacketsPage() {
                   </button>
                 ))}
                 {certs.length === 0 && (
-                  <p className="text-sm text-zinc-500 text-center py-4">No active certifications found</p>
+                  <p className="text-sm text-zinc-500 text-center py-4">{t('compliancePackets.noActiveCertificationsFound')}</p>
                 )}
               </div>
             </div>
@@ -231,8 +231,8 @@ export default function CompliancePacketsPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <Package className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No compliance packets yet</p>
-            <p className="text-sm text-zinc-500 mt-1">Create a packet to bundle your certifications for sharing</p>
+            <p className="text-zinc-400">{t('compliancePackets.noCompliancePacketsYet')}</p>
+            <p className="text-sm text-zinc-500 mt-1">{t('compliancePackets.createAPacketToBundleYourCertificationsForSharing')}</p>
           </CardContent>
         </Card>
       ) : (

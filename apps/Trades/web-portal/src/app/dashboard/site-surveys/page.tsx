@@ -132,7 +132,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
           {survey.totalSqft && <p className="text-xs text-zinc-500">{survey.totalSqft.toLocaleString()} sqft</p>}
         </div>
         <div>
-          <p className="text-xs text-zinc-500 mb-1">Conditions</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('siteSurveys.conditions')}</p>
           <div className="space-y-1">
             {survey.exteriorCondition && (
               <div className="flex items-center gap-2">
@@ -207,7 +207,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
       )}
       {survey.accessNotes && (
         <div>
-          <p className="text-xs text-zinc-500 mb-1">Access Notes</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('siteSurveys.accessNotes')}</p>
           <p className="text-sm text-zinc-300">{survey.accessNotes}</p>
         </div>
       )}
@@ -251,7 +251,7 @@ export default function SiteSurveysPage() {
         <div className="grid grid-cols-4 gap-4">
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">Total Surveys</p>
+              <p className="text-xs text-zinc-500">{t('siteSurveys.totalSurveys')}</p>
               <p className="text-2xl font-bold text-zinc-100 mt-1">{surveys.length}</p>
             </CardContent>
           </Card>
@@ -269,7 +269,7 @@ export default function SiteSurveysPage() {
           </Card>
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">Hazards Found</p>
+              <p className="text-xs text-zinc-500">{t('siteSurveys.hazardsFound')}</p>
               <p className="text-2xl font-bold text-red-400 mt-1">{hazardCount}</p>
             </CardContent>
           </Card>
@@ -318,7 +318,7 @@ export default function SiteSurveysPage() {
           ) : filtered.length === 0 ? (
             <CardContent className="p-8 text-center">
               <MapPin className="h-8 w-8 mx-auto mb-3 text-zinc-600" />
-              <p className="text-zinc-400 text-sm">No surveys yet. Create one to start documenting site conditions.</p>
+              <p className="text-zinc-400 text-sm">{t('siteSurveys.noSurveysYetCreateOneToStartDocumentingSiteConditi')}</p>
             </CardContent>
           ) : (
             filtered.map(survey => (

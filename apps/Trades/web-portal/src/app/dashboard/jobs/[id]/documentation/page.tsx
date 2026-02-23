@@ -104,7 +104,7 @@ export default function JobDocumentationPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <AlertTriangle size={48} className="mx-auto text-red-500 mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">Failed to load documentation</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('jobsDocs.failedToLoadDocumentation')}</h3>
             <p className="text-muted">{error}</p>
           </CardContent>
         </Card>
@@ -129,11 +129,11 @@ export default function JobDocumentationPage() {
           </button>
           <div>
             <h1 className="text-2xl font-semibold text-main">{t('jobsDocumentation.title')}</h1>
-            <p className="text-muted mt-0.5">TPA-compliant documentation checklist and tracking</p>
+            <p className="text-muted mt-0.5">{t('jobsDocs.tpacompliantDocumentationChecklistAndTracking')}</p>
           </div>
         </div>
         {validation.isFullyCompliant && (
-          <Badge variant="success">Fully Compliant</Badge>
+          <Badge variant="success">{t('jobsDocs.fullyCompliant')}</Badge>
         )}
       </div>
 
@@ -148,13 +148,13 @@ export default function JobDocumentationPage() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-main">{validation.requiredCompleted}/{validation.requiredTotal}</p>
-            <p className="text-sm text-muted">Required Items</p>
+            <p className="text-sm text-muted">{t('jobsDocs.requiredItems')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-main">{validation.completedItems}/{validation.totalItems}</p>
-            <p className="text-sm text-muted">All Items</p>
+            <p className="text-sm text-muted">{t('jobsDocs.allItems')}</p>
           </CardContent>
         </Card>
         <Card>
@@ -168,11 +168,11 @@ export default function JobDocumentationPage() {
               ) : (
                 <>
                   <Circle size={20} className="text-muted" />
-                  <p className="text-sm text-muted">No COC Yet</p>
+                  <p className="text-sm text-muted">{t('jobsDocs.noCocYet')}</p>
                 </>
               )}
             </div>
-            <p className="text-sm text-muted mt-1">Certificate</p>
+            <p className="text-sm text-muted mt-1">{t('jobsDocs.certificate')}</p>
           </CardContent>
         </Card>
       </div>
@@ -181,7 +181,7 @@ export default function JobDocumentationPage() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-main">Overall Compliance</span>
+            <span className="text-sm font-medium text-main">{t('jobsDocs.overallCompliance')}</span>
             <span className={cn('text-sm font-bold', complianceColor)}>{validation.compliancePercentage}%</span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
@@ -215,8 +215,8 @@ export default function JobDocumentationPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Shield size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No checklist template found</h3>
-            <p className="text-muted">No documentation checklist is configured for this job type.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('jobsDocs.noChecklistTemplateFound')}</h3>
+            <p className="text-muted">{t('jobsDocs.noDocumentationChecklistIsConfiguredForThisJobType')}</p>
           </CardContent>
         </Card>
       ) : (

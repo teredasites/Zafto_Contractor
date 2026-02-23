@@ -92,7 +92,7 @@ export default function PricingCoveragePage() {
         </button>
         <div>
           <h1 className="text-xl font-semibold text-zinc-100">{t('estimatesPricing.title')}</h1>
-          <p className="text-sm text-zinc-500">Crowd-sourced pricing data by region and trade category</p>
+          <p className="text-sm text-zinc-500">{t('estimatesPricing.crowdsourcedPricingDataByRegionAndTradeCategory')}</p>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export default function PricingCoveragePage() {
           onChange={(e) => setFilterRegion(e.target.value)}
           className="px-3 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-sm text-zinc-200"
         >
-          <option value="">All regions</option>
+          <option value="">{t('estimatesPricing.allRegions')}</option>
           {regions.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
       </div>
@@ -140,8 +140,8 @@ export default function PricingCoveragePage() {
               <tr className="text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800">
                 <th className="px-4 py-2.5 text-left">{t('common.category')}</th>
                 <th className="px-4 py-2.5 text-left">{t('common.region')}</th>
-                <th className="px-4 py-2.5 text-right">Entries</th>
-                <th className="px-4 py-2.5 text-right">Avg Price</th>
+                <th className="px-4 py-2.5 text-right">{t('estimatesPricing.entries')}</th>
+                <th className="px-4 py-2.5 text-right">{t('estimatesPricing.avgPrice')}</th>
                 <th className="px-4 py-2.5 text-center">{t('common.confidence')}</th>
                 <th className="px-4 py-2.5 text-right">{t('recon.sources')}</th>
                 <th className="px-4 py-2.5 text-right">{t('common.lastUpdated')}</th>

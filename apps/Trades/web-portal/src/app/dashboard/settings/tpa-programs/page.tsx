@@ -511,7 +511,7 @@ export default function TpaProgramsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2"><Clock size={16} /> SLA Thresholds</CardTitle>
-              <CardDescription>Service Level Agreement deadlines auto-calculate from assignment time</CardDescription>
+              <CardDescription>{t('settingsTpa.serviceLevelAgreementDeadlinesAutocalculateFromAss')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

@@ -168,7 +168,7 @@ export default function NewCustomerPage() {
         </button>
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('customersNew.title')}</h1>
-          <p className="text-muted mt-1">Create a new customer record</p>
+          <p className="text-muted mt-1">{t('customers.createANewCustomerRecord')}</p>
         </div>
       </div>
 
@@ -310,7 +310,7 @@ export default function NewCustomerPage() {
           {/* Access & Communication */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Access & Communication</CardTitle>
+              <CardTitle className="text-base">{t('customers.accessCommunication')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
@@ -328,7 +328,7 @@ export default function NewCustomerPage() {
                 icon={<Phone size={16} />}
               />
               <div>
-                <label className="text-xs text-muted font-medium mb-2 block">Preferred Contact Method</label>
+                <label className="text-xs text-muted font-medium mb-2 block">{t('customers.preferredContactMethod')}</label>
                 <div className="flex gap-2">
                   {(['phone', 'email', 'text'] as const).map((method) => (
                     <button
@@ -348,7 +348,7 @@ export default function NewCustomerPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-main">
-                <span className="text-sm text-main">Email marketing opt-in</span>
+                <span className="text-sm text-main">{t('customers.emailMarketingOptin')}</span>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, emailOptIn: !formData.emailOptIn })}
@@ -358,7 +358,7 @@ export default function NewCustomerPage() {
                 </button>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-main">SMS opt-in</span>
+                <span className="text-sm text-main">{t('customers.smsOptin')}</span>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, smsOptIn: !formData.smsOptIn })}
@@ -430,7 +430,7 @@ export default function NewCustomerPage() {
                   </Badge>
                 ))}
                 {tags.length === 0 && (
-                  <p className="text-sm text-muted">No tags added</p>
+                  <p className="text-sm text-muted">{t('customers.noTagsAdded')}</p>
                 )}
               </div>
 

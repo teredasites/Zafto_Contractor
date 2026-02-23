@@ -126,7 +126,7 @@ export default function LeadsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('leads.title')}</h1>
-          <p className="text-muted mt-1">Track and manage your sales opportunities</p>
+          <p className="text-muted mt-1">{t('leads.trackAndManageYourSalesOpportunities')}</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center p-1 bg-secondary rounded-lg">
@@ -293,7 +293,7 @@ export default function LeadsPage() {
                 {filteredLeads.length === 0 && (
                   <tr><td colSpan={7} className="px-6 py-16 text-center">
                     <p className="text-sm font-medium text-main">{t('leads.noRecords')}</p>
-                    <p className="text-xs text-muted mt-1">Add your first lead or adjust your filters</p>
+                    <p className="text-xs text-muted mt-1">{t('leads.addYourFirstLeadOrAdjustYourFilters')}</p>
                   </td></tr>
                 )}
                 {filteredLeads.map((lead) => {
@@ -468,7 +468,7 @@ function NewLeadModal({ onClose, onCreate }: {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Add New Lead</CardTitle>
+          <CardTitle>{t('leads.addNewLead')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -512,18 +512,18 @@ function NewLeadModal({ onClose, onCreate }: {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{t('common.trade')}</label>
               <select value={trade} onChange={(e) => setTrade(e.target.value)} className={inputCls}>
-                <option value="">Select trade</option>
+                <option value="">{t('leads.selectTrade')}</option>
                 <option value="electrical">{t('common.electrical')}</option>
                 <option value="plumbing">{t('common.plumbing')}</option>
-                <option value="hvac">HVAC</option>
+                <option value="hvac">{t('leads.hvac')}</option>
                 <option value="roofing">{t('common.roofing')}</option>
-                <option value="painting">Painting</option>
-                <option value="carpentry">Carpentry</option>
-                <option value="flooring">Flooring</option>
-                <option value="landscaping">Landscaping</option>
-                <option value="general">General Contracting</option>
+                <option value="painting">{t('leads.painting')}</option>
+                <option value="carpentry">{t('leads.carpentry')}</option>
+                <option value="flooring">{t('leads.flooring')}</option>
+                <option value="landscaping">{t('leads.landscaping')}</option>
+                <option value="general">{t('leads.generalContracting')}</option>
                 <option value="solar">{t('common.solar')}</option>
-                <option value="restoration">Restoration</option>
+                <option value="restoration">{t('leads.restoration')}</option>
                 <option value="other">{t('common.other')}</option>
               </select>
             </div>
@@ -531,7 +531,7 @@ function NewLeadModal({ onClose, onCreate }: {
               <label className="block text-sm font-medium text-main mb-1.5">{t('common.urgency')}</label>
               <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className={inputCls}>
                 <option value="normal">{t('common.normal')}</option>
-                <option value="soon">Soon</option>
+                <option value="soon">{t('leads.soon')}</option>
                 <option value="urgent">{t('common.urgent')}</option>
                 <option value="emergency">{t('common.emergency')}</option>
               </select>
@@ -541,12 +541,12 @@ function NewLeadModal({ onClose, onCreate }: {
               <select value={source} onChange={(e) => setSource(e.target.value)} className={inputCls}>
                 <option value="website">{t('common.website')}</option>
                 <option value="referral">{t('common.referral')}</option>
-                <option value="google">Google</option>
-                <option value="yelp">Yelp</option>
+                <option value="google">{t('leads.google')}</option>
+                <option value="yelp">{t('leads.yelp')}</option>
                 <option value="facebook">Facebook</option>
-                <option value="instagram">Instagram</option>
-                <option value="nextdoor">Nextdoor</option>
-                <option value="homeadvisor">HomeAdvisor</option>
+                <option value="instagram">{t('leads.instagram')}</option>
+                <option value="nextdoor">{t('leads.nextdoor')}</option>
+                <option value="homeadvisor">{t('leads.homeadvisor')}</option>
                 <option value="thumbtack">Thumbtack</option>
                 <option value="angi">Angi</option>
                 <option value="other">{t('common.other')}</option>

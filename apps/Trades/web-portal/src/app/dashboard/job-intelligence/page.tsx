@@ -37,7 +37,7 @@ export default function JobIntelligencePage() {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-zinc-400">
         <AlertTriangle className="h-12 w-12 mb-4 text-red-400" />
-        <p>Failed to load intelligence data</p>
+        <p>{t('jobIntel.failedToLoadIntelligenceData')}</p>
       </div>
     );
   }

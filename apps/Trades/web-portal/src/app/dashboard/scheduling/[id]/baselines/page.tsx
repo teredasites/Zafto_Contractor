@@ -178,7 +178,7 @@ export default function BaselinesPage() {
         <div className="p-4 bg-success/5 border border-success/20 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bookmark className="w-4 h-4 text-success" />
-            <span className="text-sm font-medium text-primary">Baseline captured</span>
+            <span className="text-sm font-medium text-primary">{t('schedulingBaselines.baselineCaptured')}</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-secondary">
             <span>SPI: {captureResult.spi.toFixed(2)}</span>
@@ -204,8 +204,8 @@ export default function BaselinesPage() {
           <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
             <Bookmark className="w-8 h-8 text-secondary" />
           </div>
-          <h3 className="text-lg font-semibold text-primary mb-1">No baselines yet</h3>
-          <p className="text-sm text-secondary mb-1">Capture a baseline to snapshot your current schedule</p>
+          <h3 className="text-lg font-semibold text-primary mb-1">{t('schedulingBaselines.noBaselinesYet')}</h3>
+          <p className="text-sm text-secondary mb-1">{t('schedulingBaselines.captureABaselineToSnapshotYourCurrentSchedule')}</p>
           <p className="text-xs text-tertiary">Max 5 baselines per project</p>
         </div>
       ) : (
@@ -251,11 +251,11 @@ export default function BaselinesPage() {
                   <div className="grid grid-cols-4 gap-3 mt-4">
                     <div className="text-center">
                       <p className="text-sm font-bold text-primary">{baseline.total_tasks}</p>
-                      <p className="text-[10px] text-tertiary">Tasks</p>
+                      <p className="text-[10px] text-tertiary">{t('schedulingBaselines.tasks')}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-sm font-bold text-primary">{baseline.total_milestones}</p>
-                      <p className="text-[10px] text-tertiary">Milestones</p>
+                      <p className="text-[10px] text-tertiary">{t('schedulingBaselines.milestones')}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-sm font-bold text-primary">{formatCost(baseline.total_cost)}</p>
@@ -305,7 +305,7 @@ export default function BaselinesPage() {
                     {/* Task snapshot */}
                     {expandedTasks && (
                       <div>
-                        <h4 className="text-xs font-semibold text-primary mb-2">Task Snapshot</h4>
+                        <h4 className="text-xs font-semibold text-primary mb-2">{t('schedulingBaselines.taskSnapshot')}</h4>
                         <div className="space-y-1.5">
                           <div className="flex items-center gap-2 text-xs">
                             <ListTodo className="w-3.5 h-3.5 text-tertiary" />
@@ -340,9 +340,9 @@ export default function BaselinesPage() {
                     {/* Variance report */}
                     {varianceRows && (
                       <div>
-                        <h4 className="text-xs font-semibold text-primary mb-2">Variance Report</h4>
+                        <h4 className="text-xs font-semibold text-primary mb-2">{t('schedulingBaselines.varianceReport')}</h4>
                         {varianceRows.length === 0 ? (
-                          <p className="text-xs text-tertiary">No matching tasks for comparison.</p>
+                          <p className="text-xs text-tertiary">{t('schedulingBaselines.noMatchingTasksForComparison')}</p>
                         ) : (
                           <div className="space-y-2">
                             {/* Summary chips */}
@@ -408,7 +408,7 @@ export default function BaselinesPage() {
       {showCapture && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowCapture(false)}>
           <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-primary">Capture Baseline</h2>
+            <h2 className="text-lg font-semibold text-primary">{t('schedulingBaselines.captureBaseline')}</h2>
             <p className="text-xs text-tertiary mt-1 mb-4">
               Snapshot all current task data (max 5 per project)
             </p>

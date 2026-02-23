@@ -956,7 +956,7 @@ function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: Wal
           {walkthrough.notes ? (
             <p className="text-sm text-muted whitespace-pre-wrap">{walkthrough.notes}</p>
           ) : (
-            <p className="text-sm text-muted/50">No notes recorded</p>
+            <p className="text-sm text-muted/50">{t('walkthroughs.noNotesRecorded')}</p>
           )}
         </CardContent>
       </Card>
@@ -1072,7 +1072,7 @@ function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: Wal
               <span className="text-main">{walkthrough.totalRooms}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Total Photos</span>
+              <span className="text-muted">{t('walkthroughs.totalPhotos')}</span>
               <span className="text-main">{walkthrough.totalPhotos}</span>
             </div>
           </div>

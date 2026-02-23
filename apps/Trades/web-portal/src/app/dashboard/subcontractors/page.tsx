@@ -156,7 +156,7 @@ export default function SubcontractorsPage() {
             <HardHat size={24} className="text-orange-400" />
             {t('subcontractors.title')}
           </h1>
-          <p className="text-zinc-400 text-sm mt-1">Manage your subcontractor network</p>
+          <p className="text-zinc-400 text-sm mt-1">{t('subcontractors.manageYourSubcontractorNetwork')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={handle1099Export} className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-sm flex items-center gap-2">
@@ -172,7 +172,7 @@ export default function SubcontractorsPage() {
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className="text-2xl font-bold text-white">{subs.length}</div>
-          <div className="text-xs text-zinc-500">Total Subs</div>
+          <div className="text-xs text-zinc-500">{t('subcontractors.totalSubs')}</div>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className="text-2xl font-bold text-green-400">{activeSubs}</div>
@@ -184,7 +184,7 @@ export default function SubcontractorsPage() {
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className={`text-2xl font-bold ${alertCount > 0 ? 'text-amber-400' : 'text-green-400'}`}>{alertCount}</div>
-          <div className="text-xs text-zinc-500">Compliance Alerts</div>
+          <div className="text-xs text-zinc-500">{t('subcontractors.complianceAlerts')}</div>
         </div>
       </div>
 
@@ -221,7 +221,7 @@ export default function SubcontractorsPage() {
               onChange={(e) => setTradeFilter(e.target.value)}
               className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
             >
-              <option value="">All Trades</option>
+              <option value="">{t('subcontractors.allTrades')}</option>
               {TRADE_TYPE_OPTIONS.map((t) => (
                 <option key={t} value={t}>{formatTradeLabel(t)}</option>
               ))}
@@ -234,7 +234,7 @@ export default function SubcontractorsPage() {
               <option value="">{t('common.allStatus')}</option>
               <option value="active">{t('common.active')}</option>
               <option value="inactive">{t('common.inactive')}</option>
-              <option value="suspended">Suspended</option>
+              <option value="suspended">{t('subcontractors.suspended')}</option>
             </select>
           </div>
         )}
@@ -247,7 +247,7 @@ export default function SubcontractorsPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
               <HardHat size={40} className="text-zinc-700 mx-auto mb-3" />
               <p className="text-zinc-500">No subcontractors found</p>
-              <button onClick={() => setShowAdd(true)} className="text-blue-400 text-sm mt-2 hover:text-blue-300">Add your first sub</button>
+              <button onClick={() => setShowAdd(true)} className="text-blue-400 text-sm mt-2 hover:text-blue-300">{t('subcontractors.addYourFirstSub')}</button>
             </div>
           ) : filtered.map((sub) => (
             <div key={sub.id} className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
@@ -380,8 +380,8 @@ export default function SubcontractorsPage() {
           {complianceAlerts.length === 0 ? (
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
               <Shield size={40} className="text-green-400 mx-auto mb-3" />
-              <p className="text-green-400 font-medium">All Clear</p>
-              <p className="text-zinc-500 text-sm mt-1">No compliance issues found</p>
+              <p className="text-green-400 font-medium">{t('subcontractors.allClear')}</p>
+              <p className="text-zinc-500 text-sm mt-1">{t('subcontractors.noComplianceIssuesFound')}</p>
             </div>
           ) : (
             complianceAlerts.map((alert, i) => (
@@ -490,7 +490,7 @@ export default function SubcontractorsPage() {
               </div>
 
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">Trades</label>
+                <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.trades')}</label>
                 <div className="flex flex-wrap gap-1.5">
                   {TRADE_TYPE_OPTIONS.map((t) => (
                     <button
@@ -508,7 +508,7 @@ export default function SubcontractorsPage() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">License #</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.license')}</label>
                   <input value={formLicenseNum} onChange={(e) => setFormLicenseNum(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
@@ -516,14 +516,14 @@ export default function SubcontractorsPage() {
                   <input value={formLicenseState} onChange={(e) => setFormLicenseState(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">License Expiry</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.licenseExpiry')}</label>
                   <input type="date" value={formLicenseExpiry} onChange={(e) => setFormLicenseExpiry(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Insurance Carrier</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.insuranceCarrier')}</label>
                   <input value={formInsCarrier} onChange={(e) => setFormInsCarrier(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
@@ -531,7 +531,7 @@ export default function SubcontractorsPage() {
                   <input value={formInsPolicy} onChange={(e) => setFormInsPolicy(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Insurance Expiry</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.insuranceExpiry')}</label>
                   <input type="date" value={formInsExpiry} onChange={(e) => setFormInsExpiry(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
               </div>

@@ -61,7 +61,7 @@ export default function AdjustmentsPage() {
       {adjustments.length === 0 ? (
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-12 text-center">
           <TrendingUp className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
-          <p className="text-zinc-400">No pricing adjustments yet</p>
+          <p className="text-zinc-400">{t('jobIntelAdj.noPricingAdjustmentsYet')}</p>
           <p className="text-zinc-600 text-sm mt-2">
             Complete 5+ jobs of the same type with consistent variance to trigger suggestions
           </p>

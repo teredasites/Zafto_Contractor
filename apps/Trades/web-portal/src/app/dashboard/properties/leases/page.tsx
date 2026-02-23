@@ -121,7 +121,7 @@ export default function LeasesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><FileText size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{activeCount}</p><p className="text-sm text-muted">Active Leases</p></div>
+          <div><p className="text-2xl font-semibold text-main">{activeCount}</p><p className="text-sm text-muted">{t('propertyLeases.activeLeases')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><AlertTriangle size={20} className="text-amber-600 dark:text-amber-400" /></div>
@@ -129,11 +129,11 @@ export default function LeasesPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><RefreshCcw size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{monthToMonthCount}</p><p className="text-sm text-muted">Month-to-Month</p></div>
+          <div><p className="text-2xl font-semibold text-main">{monthToMonthCount}</p><p className="text-sm text-muted">{t('propertyLeases.monthtomonth')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg"><DollarSign size={20} className="text-cyan-600 dark:text-cyan-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(totalMonthlyRent)}</p><p className="text-sm text-muted">Total Monthly Rent</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(totalMonthlyRent)}</p><p className="text-sm text-muted">{t('propertyLeases.totalMonthlyRent')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -225,8 +225,8 @@ export default function LeasesPage() {
         {filteredLeases.length === 0 && (
           <div className="px-6 py-12 text-center">
             <FileText size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No leases found</h3>
-            <p className="text-muted mb-4">Create your first lease to start tracking rental agreements.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('propertyLeases.noLeasesFound')}</h3>
+            <p className="text-muted mb-4">{t('propertyLeases.createYourFirstLeaseToStartTrackingRentalAgreement')}</p>
             <Button onClick={() => router.push('/dashboard/properties/leases/new')}>
               <Plus size={16} />
               New Lease

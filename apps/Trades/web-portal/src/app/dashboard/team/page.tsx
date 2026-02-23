@@ -180,7 +180,7 @@ export default function TeamPage() {
                     </div>
                     <div>
                       <p className="text-lg font-semibold text-main">{onlineCount}</p>
-                      <p className="text-xs text-muted">Online</p>
+                      <p className="text-xs text-muted">{t('common.online')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -397,7 +397,7 @@ export default function TeamPage() {
                   </div>
                   <div>
                     <p className="text-2xl font-semibold text-main">{onlineCount}</p>
-                    <p className="text-sm text-muted">Online Now</p>
+                    <p className="text-sm text-muted">{t('common.onlineNow')}</p>
                   </div>
                 </div>
               </CardContent>

@@ -97,7 +97,7 @@ export default function TenantsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-main">{t('propertiesTenants.title')}</h1>
-        <p className="text-[13px] text-muted mt-1">Manage tenants across all your properties</p>
+        <p className="text-[13px] text-muted mt-1">{t('propertyTenants.manageTenantsAcrossAllYourProperties')}</p>
       </div>
 
       {/* Stats */}
@@ -110,7 +110,7 @@ export default function TenantsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{tenants.length}</p>
-                <p className="text-sm text-muted">Total Tenants</p>
+                <p className="text-sm text-muted">{t('propertyTenants.totalTenants')}</p>
               </div>
             </div>
           </CardContent>
@@ -179,7 +179,7 @@ export default function TenantsPage() {
       {filteredTenants.length === 0 ? (
         <div className="py-12 text-center">
           <Users size={48} className="mx-auto text-muted mb-3 opacity-50" />
-          <p className="text-muted">No tenants found</p>
+          <p className="text-muted">{t('propertyTenants.noTenantsFound')}</p>
         </div>
       ) : (
         <div className="bg-surface border border-main rounded-xl divide-y divide-main">

@@ -115,7 +115,7 @@ export default function TpaAssignmentDetailPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <AlertCircle size={48} className="text-red-400/50 mb-4" />
-            <h3 className="text-lg font-semibold text-main">Assignment Not Found</h3>
+            <h3 className="text-lg font-semibold text-main">{t('tpaAssignments.assignmentNotFound')}</h3>
             <p className="text-sm text-muted mt-1">{error || 'This assignment may have been deleted.'}</p>
           </CardContent>
         </Card>
@@ -270,7 +270,7 @@ export default function TpaAssignmentDetailPage() {
                   <p className="text-lg font-semibold text-emerald-400 mt-0.5">${assignment.totalCollected.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wide">Supplements</p>
+                  <p className="text-xs text-muted uppercase tracking-wide">{t('tpaAssignments.supplements')}</p>
                   <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalSupplements.toLocaleString()}</p>
                 </div>
               </div>
@@ -314,7 +314,7 @@ export default function TpaAssignmentDetailPage() {
           {/* Policyholder */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Policyholder</CardTitle>
+              <CardTitle className="text-base">{t('tpaAssignments.policyholder')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {assignment.policyholderName && (
@@ -330,7 +330,7 @@ export default function TpaAssignmentDetailPage() {
                   <Mail size={13} /> {assignment.policyholderEmail}
                 </a>
               )}
-              {!assignment.policyholderName && <p className="text-sm text-muted">No policyholder info</p>}
+              {!assignment.policyholderName && <p className="text-sm text-muted">{t('tpaAssignments.noPolicyholderInfo')}</p>}
             </CardContent>
           </Card>
 
@@ -353,7 +353,7 @@ export default function TpaAssignmentDetailPage() {
                   <Mail size={13} /> {assignment.adjusterEmail}
                 </a>
               )}
-              {!assignment.adjusterName && <p className="text-sm text-muted">No adjuster info</p>}
+              {!assignment.adjusterName && <p className="text-sm text-muted">{t('tpaAssignments.noAdjusterInfo')}</p>}
             </CardContent>
           </Card>
 
@@ -369,7 +369,7 @@ export default function TpaAssignmentDetailPage() {
                   <p>{assignment.propertyCity}{assignment.propertyState ? `, ${assignment.propertyState}` : ''} {assignment.propertyZip}</p>
                 </div>
               ) : (
-                <p className="text-sm text-muted">No property address</p>
+                <p className="text-sm text-muted">{t('tpaAssignments.noPropertyAddress')}</p>
               )}
             </CardContent>
           </Card>
@@ -378,7 +378,7 @@ export default function TpaAssignmentDetailPage() {
           {assignment.esaRequested && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Emergency Authorization</CardTitle>
+                <CardTitle className="text-base">{t('tpaAssignments.emergencyAuthorization')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -401,7 +401,7 @@ export default function TpaAssignmentDetailPage() {
           {/* Identifiers */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Reference Numbers</CardTitle>
+              <CardTitle className="text-base">{t('tpaAssignments.referenceNumbers')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {[

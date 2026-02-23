@@ -46,7 +46,7 @@ export default function VendorsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('vendors.title')}</h1>
-          <p className="text-muted mt-1">Manage suppliers and accounting vendors</p>
+          <p className="text-muted mt-1">{t('vendors.manageSuppliersAndAccountingVendors')}</p>
         </div>
       </div>
 
@@ -146,7 +146,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{vendors.length}</p>
-                <p className="text-sm text-muted">Total Suppliers</p>
+                <p className="text-sm text-muted">{t('vendors.totalSuppliers')}</p>
               </div>
             </div>
           </CardContent>
@@ -230,12 +230,12 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
             <table className="w-full">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Supplier</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('vendors.supplier')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Categories</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.terms')}</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Rating</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('vendors.rating')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 </tr>
               </thead>
@@ -377,7 +377,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{vendors.length}</p>
-                <p className="text-sm text-muted">Accounting Vendors</p>
+                <p className="text-sm text-muted">{t('vendors.accountingVendors')}</p>
               </div>
             </div>
           </CardContent>
@@ -502,7 +502,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
                           {(vendor.ytdPayments || 0) >= 600 ? '1099 Required' : '1099 Eligible'}
                         </Badge>
                       ) : (
-                        <span className="text-xs text-muted">N/A</span>
+                        <span className="text-xs text-muted">{t('vendors.na')}</span>
                       )}
                     </td>
                     <td className="px-6 py-3">

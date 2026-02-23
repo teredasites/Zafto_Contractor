@@ -183,7 +183,7 @@ export default function PurchaseOrdersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('purchaseOrders.title')}</h1>
-          <p className="text-muted mt-1">Order materials and track deliveries</p>
+          <p className="text-muted mt-1">{t('purchaseOrders.orderMaterialsAndTrackDeliveries')}</p>
         </div>
         <Button onClick={() => setShowNewPOModal(true)}>
           <Plus size={16} />
@@ -201,7 +201,7 @@ export default function PurchaseOrdersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalPOs}</p>
-                <p className="text-sm text-muted">Total POs</p>
+                <p className="text-sm text-muted">{t('purchaseOrders.totalPos')}</p>
               </div>
             </div>
           </CardContent>
@@ -227,7 +227,7 @@ export default function PurchaseOrdersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(receivedValue)}</p>
-                <p className="text-sm text-muted">Received Value</p>
+                <p className="text-sm text-muted">{t('purchaseOrders.receivedValue')}</p>
               </div>
             </div>
           </CardContent>
@@ -240,7 +240,7 @@ export default function PurchaseOrdersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{openOrders}</p>
-                <p className="text-sm text-muted">Open Orders</p>
+                <p className="text-sm text-muted">{t('purchaseOrders.openOrders')}</p>
               </div>
             </div>
           </CardContent>
@@ -274,7 +274,7 @@ export default function PurchaseOrdersPage() {
           ) : filteredPOs.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <Package size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No purchase orders found</p>
+              <p>{t('purchaseOrders.noPurchaseOrdersFound')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -433,13 +433,13 @@ function PORow({
                 </tbody>
               </table>
             ) : (
-              <p className="text-sm text-muted mb-4">No line items recorded</p>
+              <p className="text-sm text-muted mb-4">{t('purchaseOrders.noLineItemsRecorded')}</p>
             )}
 
             {/* Receiving Records */}
             {receivingRecords.length > 0 && (
               <div className="mb-4">
-                <p className="text-sm font-medium text-main mb-2">Receiving History</p>
+                <p className="text-sm font-medium text-main mb-2">{t('purchaseOrders.receivingHistory')}</p>
                 <div className="space-y-2">
                   {receivingRecords.map((rec) => (
                     <div key={rec.id} className="flex items-center gap-3 text-sm p-2 bg-surface rounded-lg">
@@ -494,7 +494,7 @@ function PORow({
                 </div>
                 {po.shippingAmount > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-muted">Shipping</span>
+                    <span className="text-muted">{t('purchaseOrders.shipping')}</span>
                     <span className="text-main">{formatCurrency(po.shippingAmount)}</span>
                   </div>
                 )}

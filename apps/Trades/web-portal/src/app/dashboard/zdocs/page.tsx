@@ -191,7 +191,7 @@ export default function ZDocsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalRenders}</p>
-                <p className="text-sm text-muted">Documents Generated</p>
+                <p className="text-sm text-muted">{t('zdocs.documentsGenerated')}</p>
               </div>
             </div>
           </CardContent>
@@ -533,7 +533,7 @@ function DocumentsTab({
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.title')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.template')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Entity</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('zdocs.entity')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signature')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.created')}</th>
@@ -634,7 +634,7 @@ function DocumentsTab({
           {filtered.length === 0 && (
             <div className="text-center py-12 text-muted">
               <FileText size={40} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">No generated documents found</p>
+              <p className="text-sm">{t('zdocs.noGeneratedDocumentsFound')}</p>
             </div>
           )}
         </CardContent>
@@ -734,7 +734,7 @@ function SignaturesTab({
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-main">
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Signer</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('zdocs.signer')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.email')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.role')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
@@ -772,7 +772,7 @@ function SignaturesTab({
         {Object.keys(grouped).length === 0 && (
           <div className="text-center py-12 text-muted">
             <FileSignature size={40} className="mx-auto mb-3 opacity-30" />
-            <p className="text-sm">No signature requests found</p>
+            <p className="text-sm">{t('zdocs.noSignatureRequestsFound')}</p>
           </div>
         )}
       </div>
@@ -864,7 +864,7 @@ function CreateTemplateModal({
               onChange={(e) => setRequiresSignature(e.target.checked)}
               className="w-4 h-4 rounded border-main text-emerald-600 focus:ring-emerald-500"
             />
-            <span className="text-sm font-medium text-main">Requires signature</span>
+            <span className="text-sm font-medium text-main">{t('zdocs.requiresSignature')}</span>
           </label>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>

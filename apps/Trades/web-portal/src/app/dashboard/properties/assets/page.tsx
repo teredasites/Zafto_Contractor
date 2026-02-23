@@ -209,15 +209,15 @@ export default function AssetsPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><Wrench size={20} className="text-red-600 dark:text-red-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{needsServiceCount}</p><p className="text-sm text-muted">Needing Service</p></div>
+          <div><p className="text-2xl font-semibold text-main">{needsServiceCount}</p><p className="text-sm text-muted">{t('propertyAssets.needingService')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><Shield size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{underWarrantyCount}</p><p className="text-sm text-muted">Under Warranty</p></div>
+          <div><p className="text-2xl font-semibold text-main">{underWarrantyCount}</p><p className="text-sm text-muted">{t('propertyAssets.underWarranty')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Clock size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{avgAge}</p><p className="text-sm text-muted">Average Age</p></div>
+          <div><p className="text-2xl font-semibold text-main">{avgAge}</p><p className="text-sm text-muted">{t('propertyAssets.averageAge')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -305,13 +305,13 @@ export default function AssetsPage() {
                 {/* Expanded: Service History */}
                 {isExpanded && (
                   <div className="mt-4 pt-3 border-t border-main" onClick={(e) => e.stopPropagation()}>
-                    <p className="text-xs text-muted uppercase tracking-wider mb-2">Service History</p>
+                    <p className="text-xs text-muted uppercase tracking-wider mb-2">{t('propertyAssets.serviceHistory')}</p>
                     {recordsLoading ? (
                       <div className="flex items-center justify-center py-4">
                         <Loader2 size={16} className="animate-spin text-muted" />
                       </div>
                     ) : serviceRecords.length === 0 ? (
-                      <p className="text-xs text-muted text-center py-3">No service records</p>
+                      <p className="text-xs text-muted text-center py-3">{t('propertyAssets.noServiceRecords')}</p>
                     ) : (
                       <div className="space-y-2">
                         {serviceRecords.slice(0, 5).map((record) => (
@@ -346,7 +346,7 @@ export default function AssetsPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Package size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No assets found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('propertyAssets.noAssetsFound')}</h3>
             <p className="text-muted mb-4">Start tracking your property assets like HVAC systems, water heaters, and appliances.</p>
             <Button onClick={() => setShowNewModal(true)}>
               <Plus size={16} />
@@ -429,7 +429,7 @@ function NewAssetModal({ onClose, onCreate }: {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Add Property Asset</CardTitle>
+          <CardTitle>{t('propertyAssets.addPropertyAsset')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <XCircle size={18} />
           </Button>
@@ -447,7 +447,7 @@ function NewAssetModal({ onClose, onCreate }: {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Unit ID</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('propertyAssets.unitId')}</label>
               <input
                 type="text"
                 value={unitId}
@@ -517,7 +517,7 @@ function NewAssetModal({ onClose, onCreate }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Install Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('propertyAssets.installDate')}</label>
               <input
                 type="date"
                 value={installDate}

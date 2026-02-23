@@ -288,13 +288,13 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">{t('common.selectJob')}</option><option value="j1">Full Home Rewire</option><option value="j2">HVAC Install</option>
+                <option value="">{t('common.selectJob')}</option><option value="j1">{t('warranties.fullHomeRewire')}</option><option value="j2">{t('warranties.hvacInstall')}</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Assigned To *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">{t('common.selectTeamMember')}</option><option value="u1">John Smith</option><option value="u2">Mike Johnson</option>
+                <option value="">{t('common.selectTeamMember')}</option><option value="u1">{t('inspections.johnSmith')}</option><option value="u2">{t('inspections.mikeJohnson')}</option>
               </select>
             </div>
           </div>

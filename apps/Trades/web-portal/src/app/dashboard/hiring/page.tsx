@@ -1012,7 +1012,7 @@ function InterviewsTab({
       {/* Past / Completed Interviews */}
       {past.length > 0 && (
         <div>
-          <h3 className="text-sm font-medium text-muted mb-3 uppercase tracking-wider">Past / Completed</h3>
+          <h3 className="text-sm font-medium text-muted mb-3 uppercase tracking-wider">{t('hiring.pastCompleted')}</h3>
           <Card>
             <CardContent className="p-0">
               <table className="w-full">
@@ -1376,7 +1376,7 @@ function NewApplicantModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Portfolio / Website</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{tr('hiring.portfolioWebsite')}</label>
             <input type="url" value={portfolioUrl} onChange={(e) => setPortfolioUrl(e.target.value)} placeholder="https://portfolio.example.com" className={inputCls} />
           </div>
 

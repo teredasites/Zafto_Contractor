@@ -2145,7 +2145,7 @@ Example:
                 {/* Option Tabs (if multiple) */}
                 {useMultipleOptions && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Pricing Options</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('bids.pricingOptions')}</h3>
                     <div className="flex gap-2 mb-4">
                       {options.map((option, index) => (
                         <button
@@ -2213,7 +2213,7 @@ Example:
                 {/* Add-ons (if any) */}
                 {addOns.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Optional Add-Ons</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('bids.optionalAddons')}</h3>
                     <div className="space-y-2">
                       {addOns.map((addon) => (
                         <div key={addon.id} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -2236,7 +2236,7 @@ Example:
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-blue-900 dark:text-blue-100">Deposit Required to Start</div>
+                        <div className="font-medium text-blue-900 dark:text-blue-100">{t('bids.depositRequiredToStart')}</div>
                         <div className="text-sm text-blue-700 dark:text-blue-300">{depositPercent}% of total</div>
                       </div>
                       <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatCurrency(depositAmount)}</div>
@@ -2255,9 +2255,9 @@ Example:
                 {/* Signature Area */}
                 <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
                   <div className="text-center">
-                    <div className="text-gray-400 dark:text-gray-500 mb-4">Customer Signature</div>
+                    <div className="text-gray-400 dark:text-gray-500 mb-4">{t('bids.customerSignature')}</div>
                     <div className="h-16 border-b border-gray-300 dark:border-gray-600 mb-2" />
-                    <div className="text-sm text-gray-500">Sign above to approve this estimate</div>
+                    <div className="text-sm text-gray-500">{t('bids.signAboveToApproveThisEstimate')}</div>
                   </div>
                 </div>
 

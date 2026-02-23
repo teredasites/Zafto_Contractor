@@ -185,17 +185,17 @@ export default function NewAreaScanPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-muted mb-1">Storm Type</label>
+                <label className="block text-[11px] text-muted mb-1">{t('reconScans.stormType')}</label>
                 <select
                   value={stormType}
                   onChange={e => setStormType(e.target.value)}
                   className="w-full px-2 py-1.5 border border-main rounded-md bg-surface text-main text-sm focus:outline-none focus:ring-1 focus:ring-accent"
                 >
                   <option value="">{t('common.selectEllipsis')}</option>
-                  <option value="hail">Hail</option>
-                  <option value="wind">Wind</option>
-                  <option value="tornado">Tornado</option>
-                  <option value="flood">Flood</option>
+                  <option value="hail">{t('reconScans.hail')}</option>
+                  <option value="wind">{t('reconScans.wind')}</option>
+                  <option value="tornado">{t('reconScans.tornado')}</option>
+                  <option value="flood">{t('reconScans.flood')}</option>
                 </select>
               </div>
               <div>

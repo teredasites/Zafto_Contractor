@@ -111,7 +111,7 @@ export default function MoistureReadingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('moistureReadings.title')}</h1>
-          <p className="text-muted mt-1">Track and monitor moisture levels across restoration jobs</p>
+          <p className="text-muted mt-1">{t('moistureReadings.trackAndMonitorMoistureLevelsAcrossRestorationJobs')}</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
@@ -129,7 +129,7 @@ export default function MoistureReadingsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.totalReadings}</p>
-                <p className="text-sm text-muted">Total Readings</p>
+                <p className="text-sm text-muted">{t('moistureReadings.totalReadings')}</p>
               </div>
             </div>
           </CardContent>
@@ -155,7 +155,7 @@ export default function MoistureReadingsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{atTarget}</p>
-                <p className="text-sm text-muted">Areas at Target</p>
+                <p className="text-sm text-muted">{t('moistureReadings.areasAtTarget')}</p>
               </div>
             </div>
           </CardContent>
@@ -168,7 +168,7 @@ export default function MoistureReadingsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{avgReading}</p>
-                <p className="text-sm text-muted">Avg Reading</p>
+                <p className="text-sm text-muted">{t('moistureReadings.avgReading')}</p>
               </div>
             </div>
           </CardContent>
@@ -203,7 +203,7 @@ export default function MoistureReadingsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Date/Time</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('moistureReadings.datetime')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.job')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.area')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.material')}</th>
@@ -279,7 +279,7 @@ function AddReadingModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Moisture Reading</CardTitle>
+            <CardTitle>{t('moistureReadings.addMoistureReading')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -304,9 +304,9 @@ function AddReadingModal({ onClose }: { onClose: () => void }) {
               <label className="block text-sm font-medium text-main mb-1.5">{t('common.unit')}</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
                 <option value="percent">Percent (%)</option>
-                <option value="relative">Relative</option>
-                <option value="wme">WME</option>
-                <option value="grains">Grains</option>
+                <option value="relative">{t('moistureReadings.relative')}</option>
+                <option value="wme">{t('moistureReadings.wme')}</option>
+                <option value="grains">{t('moistureReadings.grains')}</option>
               </select>
             </div>
           </div>
@@ -321,11 +321,11 @@ function AddReadingModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-2 pt-2">
             <input type="checkbox" id="isDry" className="rounded border-main bg-main" />
-            <label htmlFor="isDry" className="text-sm text-main">Mark as Dry</label>
+            <label htmlFor="isDry" className="text-sm text-main">{t('moistureReadings.markAsDry')}</label>
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Save Reading</Button>
+            <Button className="flex-1"><Plus size={16} />{t('moistureReadings.saveReading')}</Button>
           </div>
         </CardContent>
       </Card>

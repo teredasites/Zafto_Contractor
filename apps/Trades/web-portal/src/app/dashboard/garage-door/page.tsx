@@ -65,11 +65,11 @@ export default function GarageDoorPage() {
           <p className="text-2xl font-bold text-white">{logs.length}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Spring Jobs</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.springJobs')}</p>
           <p className="text-2xl font-bold text-orange-400">{springJobs}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Failed Sensors</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.failedSensors')}</p>
           <p className="text-2xl font-bold text-red-400">{failedSensors}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">

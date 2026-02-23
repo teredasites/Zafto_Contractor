@@ -167,15 +167,15 @@ export default function PermitsPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><FileCheck size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{activeCount}</p><p className="text-sm text-muted">Active Permits</p></div>
+          <div><p className="text-2xl font-semibold text-main">{activeCount}</p><p className="text-sm text-muted">{t('permits.activePermits')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg"><ClipboardCheck size={20} className="text-cyan-600 dark:text-cyan-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{upcomingInspections}</p><p className="text-sm text-muted">Upcoming Inspections</p></div>
+          <div><p className="text-2xl font-semibold text-main">{upcomingInspections}</p><p className="text-sm text-muted">{t('permits.upcomingInspections')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><AlertTriangle size={20} className="text-red-600 dark:text-red-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{failedCount}</p><p className="text-sm text-muted">Failed / Needs Correction</p></div>
+          <div><p className="text-2xl font-semibold text-main">{failedCount}</p><p className="text-sm text-muted">{t('permits.failedNeedsCorrection')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -193,7 +193,7 @@ export default function PermitsPage() {
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.permit')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Job / Customer</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('permits.jobCustomer')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('permits.jurisdiction')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.inspections')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
@@ -333,7 +333,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             <Button variant="secondary" className="flex-1"><Upload size={16} />{t('common.uploadDocument')}</Button>
-            <Button className="flex-1"><ClipboardCheck size={16} />Schedule Inspection</Button>
+            <Button className="flex-1"><ClipboardCheck size={16} />{t('permits.scheduleInspection')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -349,18 +349,18 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <CardHeader><CardTitle>New Permit Application</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t('permits.newPermitApplication')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Permit Type *</label>
             <select value={form.permitType} onChange={e => update('permitType', e.target.value)} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
               <option value="electrical">{t('common.electrical')}</option>
               <option value="plumbing">{t('common.plumbing')}</option>
-              <option value="mechanical">Mechanical / HVAC</option>
-              <option value="building">Building</option>
+              <option value="mechanical">{t('permits.mechanicalHvac')}</option>
+              <option value="building">{t('permits.building')}</option>
               <option value="roofing">{t('common.roofing')}</option>
               <option value="solar">{t('common.solar')}</option>
-              <option value="demolition">Demolition</option>
+              <option value="demolition">{t('permits.demolition')}</option>
               <option value="other">{t('common.other')}</option>
             </select>
           </div>

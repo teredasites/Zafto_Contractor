@@ -95,7 +95,7 @@ export default function InspectionEnginePage() {
         <Card>
           <CardContent className="p-12 text-center">
             <XCircle size={48} className="mx-auto text-red-500 mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">Error loading inspections</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('inspectionEngine.errorLoadingInspections')}</h3>
             <p className="text-muted mb-4">{error}</p>
             <Button onClick={refetch}>{t('common.retry')}</Button>
           </CardContent>
@@ -161,7 +161,7 @@ export default function InspectionEnginePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('inspections.title')}</h1>
-          <p className="text-muted mt-1">Template-based inspections with pass/fail/conditional items</p>
+          <p className="text-muted mt-1">{t('inspectionEngine.templatebasedInspectionsWithPassfailconditionalIte')}</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="secondary">
@@ -271,7 +271,7 @@ export default function InspectionEnginePage() {
               <tr className="border-b border-main">
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.title')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.job')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Inspector</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('inspectionEngine.inspector')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.status')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.score')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.result')}</th>
@@ -380,7 +380,7 @@ export default function InspectionEnginePage() {
               {templates.length === 0 && (
                 <div className="px-6 py-8 text-center">
                   <Shield size={36} className="mx-auto text-muted mb-3" />
-                  <p className="text-sm text-muted">No active templates found.</p>
+                  <p className="text-sm text-muted">{t('inspectionEngine.noActiveTemplatesFound')}</p>
                 </div>
               )}
 
@@ -437,7 +437,7 @@ export default function InspectionEnginePage() {
                                       <span className="text-muted ml-1">- {item.description}</span>
                                     )}
                                     {item.requiresPhotoOnFail && (
-                                      <Badge variant="warning" className="ml-2">Photo on fail</Badge>
+                                      <Badge variant="warning" className="ml-2">{t('inspectionEngine.photoOnFail')}</Badge>
                                     )}
                                   </div>
                                 </div>

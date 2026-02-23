@@ -68,7 +68,7 @@ export default function JobCostRadarPage() {
         <div className="grid grid-cols-4 gap-4">
           <Card className={stats.critical > 0 ? 'border-red-200 dark:border-red-800' : ''}>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground">Portfolio Health</p>
+              <p className="text-xs text-muted-foreground">{t('jobCostRadar.portfolioHealth')}</p>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-2xl font-semibold">{stats.critical > 0 ? 'At Risk' : stats.activeJobs > 0 ? 'Healthy' : 'No Active Jobs'}</p>
                 {stats.critical > 0 && <AlertTriangle className="w-5 h-5 text-red-500" />}
@@ -78,7 +78,7 @@ export default function JobCostRadarPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground">Total Budget vs Projected</p>
+              <p className="text-xs text-muted-foreground">{t('jobCostRadar.totalBudgetVsProjected')}</p>
               <p className="text-2xl font-semibold mt-1">{formatCurrency(stats.projectedTotal)}</p>
               {stats.projectedTotal > stats.totalBudget ? (
                 <p className="text-xs text-red-500 mt-1">{formatCurrency(stats.projectedTotal - stats.totalBudget)} over budget</p>
@@ -89,14 +89,14 @@ export default function JobCostRadarPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground">Avg Projected Margin</p>
+              <p className="text-xs text-muted-foreground">{t('jobCostRadar.avgProjectedMargin')}</p>
               <p className={cn('text-2xl font-semibold mt-1', stats.avgMarginProjected < 10 ? 'text-red-500' : '')}>{stats.avgMarginProjected}%</p>
               <p className="text-xs text-muted-foreground mt-1">Originally {stats.avgMarginOriginal}%</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground">Active Spend</p>
+              <p className="text-xs text-muted-foreground">{t('jobCostRadar.activeSpend')}</p>
               <p className="text-2xl font-semibold mt-1">{formatCurrency(stats.totalSpend)}</p>
               <p className="text-xs text-muted-foreground mt-1">of {formatCurrency(stats.totalBudget)} budgeted</p>
             </CardContent>
@@ -149,7 +149,7 @@ export default function JobCostRadarPage() {
                         <p className="text-sm font-medium">{formatCurrency(job.bidAmount)}</p>
                       </div>
                       <div className="p-2 rounded-md bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Projected</p>
+                        <p className="text-xs text-muted-foreground">{t('jobCostRadar.projected')}</p>
                         <p className={cn('text-sm font-medium', budgetOverrun > 0 ? 'text-red-500' : 'text-emerald-500')}>{formatCurrency(job.projectedTotal)}</p>
                       </div>
                       <div className="p-2 rounded-md bg-muted/40">
@@ -202,7 +202,7 @@ export default function JobCostRadarPage() {
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Budgeted</span>
+                      <span className="text-muted-foreground">{t('jobCostRadar.budgeted')}</span>
                       <span>{formatCurrency(selectedJob.bidAmount * 0.4)}</span>
                     </div>
                     <div className="flex justify-between text-xs">
@@ -218,7 +218,7 @@ export default function JobCostRadarPage() {
                 <div className="p-3 rounded-lg border border-border/60">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Total Spend</span>
+                    <span className="text-sm font-medium">{t('jobCostRadar.totalSpend')}</span>
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
@@ -243,11 +243,11 @@ export default function JobCostRadarPage() {
                   <p className="text-lg font-semibold">{formatCurrency(selectedJob.changeOrdersTotal)}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 text-center">
-                  <p className="text-xs text-muted-foreground">Original Margin</p>
+                  <p className="text-xs text-muted-foreground">{t('jobCostRadar.originalMargin')}</p>
                   <p className="text-lg font-semibold">{selectedJob.originalMargin}%</p>
                 </div>
                 <div className={cn('p-3 rounded-lg text-center', selectedJob.projectedMargin < 0 ? 'bg-red-50 dark:bg-red-950/30' : 'bg-muted/40')}>
-                  <p className="text-xs text-muted-foreground">Projected Margin</p>
+                  <p className="text-xs text-muted-foreground">{t('jobCostRadar.projectedMargin')}</p>
                   <p className={cn('text-lg font-semibold', selectedJob.projectedMargin < 0 ? 'text-red-500' : '')}>{selectedJob.projectedMargin}%</p>
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function JobCostRadarPage() {
               {/* All alerts */}
               {selectedJob.alerts.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Alerts</p>
+                  <p className="text-sm font-medium">{t('jobCostRadar.alerts')}</p>
                   {selectedJob.alerts.map((alert, i) => (
                     <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-amber-50 dark:bg-amber-950/20 text-sm text-amber-700 dark:text-amber-300">
                       <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />

@@ -317,13 +317,13 @@ function PnLTable({
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-zinc-800 text-zinc-400">
-                <th className="text-left px-4 py-2 font-medium">Program</th>
+                <th className="text-left px-4 py-2 font-medium">{t('tpa.program')}</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.revenue')}</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.cost')}</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.margin')}</th>
                 <th className="text-right px-4 py-2 font-medium">Margin %</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.referral')}</th>
-                <th className="text-right px-4 py-2 font-medium">Supp. Rate</th>
+                <th className="text-right px-4 py-2 font-medium">{t('tpa.suppRate')}</th>
               </tr>
             </thead>
             <tbody>
@@ -507,7 +507,7 @@ export default function TpaDashboardPage() {
           <CardContent className="p-4 flex items-center gap-3">
             <AlertTriangle className="h-5 w-5 text-red-400" />
             <div>
-              <p className="text-sm font-medium text-red-400">Failed to load data</p>
+              <p className="text-sm font-medium text-red-400">{t('tpa.failedToLoadData')}</p>
               <p className="text-xs text-red-400/70">{error}</p>
             </div>
           </CardContent>

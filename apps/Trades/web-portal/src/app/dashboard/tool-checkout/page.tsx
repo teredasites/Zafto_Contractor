@@ -233,8 +233,8 @@ export default function ToolCheckoutPage() {
             <Card>
               <CardContent className="p-12 text-center">
                 <Package size={48} className="mx-auto text-muted mb-4" />
-                <h3 className="text-lg font-medium text-main mb-2">No tools found</h3>
-                <p className="text-muted mb-4">Add tools and equipment to track checkout/return across your team.</p>
+                <h3 className="text-lg font-medium text-main mb-2">{t('toolCheckout.noToolsFound')}</h3>
+                <p className="text-muted mb-4">{t('toolCheckout.addToolsAndEquipmentToTrackCheckoutreturnAcrossYou')}</p>
                 <Button onClick={() => setShowAddModal(true)}><Plus size={16} /> Add Tool</Button>
               </CardContent>
             </Card>
@@ -485,7 +485,7 @@ function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Tool / Equipment</CardTitle>
+            <CardTitle>{t('toolCheckout.addToolEquipment')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -610,7 +610,7 @@ function CheckoutModal({ item, onClose, onSuccess }: {
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Checkout Tool</CardTitle>
+            <CardTitle>{t('toolCheckout.checkoutTool')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -627,7 +627,7 @@ function CheckoutModal({ item, onClose, onSuccess }: {
 
             {/* Condition at checkout */}
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Condition at Checkout</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('toolCheckout.conditionAtCheckout')}</label>
               <div className="flex flex-wrap gap-2">
                 {(Object.entries(CONDITION_LABELS) as [EquipmentCondition, string][])
                   .filter(([k]) => k !== 'retired')
@@ -720,7 +720,7 @@ function CheckinModal({ checkout, onClose, onSuccess }: {
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Return Tool</CardTitle>
+            <CardTitle>{t('toolCheckout.returnTool')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -746,7 +746,7 @@ function CheckinModal({ checkout, onClose, onSuccess }: {
 
             {/* Return condition */}
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Condition at Return</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('toolCheckout.conditionAtReturn')}</label>
               <div className="flex flex-wrap gap-2">
                 {(Object.entries(CONDITION_LABELS) as [EquipmentCondition, string][])
                   .filter(([k]) => k !== 'retired')
@@ -769,7 +769,7 @@ function CheckinModal({ checkout, onClose, onSuccess }: {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Return Notes</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('toolCheckout.returnNotes')}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -858,19 +858,19 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
             )}
             {item.barcode && (
               <div>
-                <p className="text-sm text-muted mb-1">Barcode</p>
+                <p className="text-sm text-muted mb-1">{t('toolCheckout.barcode')}</p>
                 <p className="font-mono text-main">{item.barcode}</p>
               </div>
             )}
             {item.storageLocation && (
               <div>
-                <p className="text-sm text-muted mb-1">Storage Location</p>
+                <p className="text-sm text-muted mb-1">{t('toolCheckout.storageLocation')}</p>
                 <p className="text-main">{item.storageLocation}</p>
               </div>
             )}
             {item.purchaseCost != null && (
               <div>
-                <p className="text-sm text-muted mb-1">Purchase Cost</p>
+                <p className="text-sm text-muted mb-1">{t('toolCheckout.purchaseCost')}</p>
                 <p className="text-main">${item.purchaseCost.toFixed(2)}</p>
               </div>
             )}
@@ -882,7 +882,7 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
             )}
             {item.nextCalibrationDate && (
               <div>
-                <p className="text-sm text-muted mb-1">Next Calibration</p>
+                <p className="text-sm text-muted mb-1">{t('toolCheckout.nextCalibration')}</p>
                 <p className="text-main">{new Date(item.nextCalibrationDate).toLocaleDateString()}</p>
               </div>
             )}
@@ -898,7 +898,7 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
           {/* Active checkouts for this item */}
           {itemCheckouts.length > 0 && (
             <div>
-              <h3 className="font-medium text-main mb-3">Active Checkout</h3>
+              <h3 className="font-medium text-main mb-3">{t('toolCheckout.activeCheckout')}</h3>
               {itemCheckouts.map((co) => (
                 <div key={co.id} className="p-3 bg-secondary rounded-lg text-sm space-y-1">
                   <p className="text-main">Checked out: {new Date(co.checkedOutAt).toLocaleDateString()}</p>

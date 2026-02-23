@@ -99,13 +99,13 @@ function ContextPanel({ jobId, canSeeFinancials }: { jobId: string; canSeeFinanc
     fetchJob();
   }, [jobId]);
 
-  if (loading) return <div className="p-4 text-zinc-500 text-sm">Loading job context...</div>;
+  if (loading) return <div className="p-4 text-zinc-500 text-sm">{t('meetingsRoom.loadingJobContext')}</div>;
   if (!job) return null;
 
   return (
     <div className="w-72 border-l border-zinc-800 bg-zinc-900/80 overflow-y-auto flex-shrink-0">
       <div className="p-4 border-b border-zinc-800">
-        <h3 className="font-medium text-zinc-100 text-sm">Job Context</h3>
+        <h3 className="font-medium text-zinc-100 text-sm">{t('meetingsRoom.jobContext')}</h3>
       </div>
       <div className="p-4 space-y-4">
         <div>
@@ -236,7 +236,7 @@ export default function MeetingRoomPage() {
       <div className="fixed inset-0 bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 text-emerald-500 animate-spin mx-auto" />
-          <p className="text-zinc-400 mt-3">Joining meeting...</p>
+          <p className="text-zinc-400 mt-3">{t('meetingsRoom.joiningMeeting')}</p>
         </div>
       </div>
     );
@@ -248,13 +248,13 @@ export default function MeetingRoomPage() {
         <Card className="bg-zinc-900 border-zinc-800 max-w-md w-full">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-10 w-10 text-red-400 mx-auto" />
-            <h2 className="text-lg font-medium text-zinc-100 mt-3">Unable to Join</h2>
+            <h2 className="text-lg font-medium text-zinc-100 mt-3">{t('meetingsRoom.unableToJoin')}</h2>
             <p className="text-sm text-zinc-400 mt-2">{error || 'Meeting not found'}</p>
             <div className="flex gap-2 mt-4 justify-center">
               <Button variant="outline" onClick={() => router.push('/dashboard/meetings')}>
                 Back to Meetings
               </Button>
-              <Button onClick={joinRoom}>Try Again</Button>
+              <Button onClick={joinRoom}>{t('meetingsRoom.tryAgain')}</Button>
             </div>
           </CardContent>
         </Card>

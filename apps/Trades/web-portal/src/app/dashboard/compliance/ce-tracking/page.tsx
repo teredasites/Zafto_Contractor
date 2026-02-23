@@ -109,7 +109,7 @@ export default function CETrackingPage() {
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-white">{t('complianceCeTracking.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">Track continuing education hours toward license renewals</p>
+          <p className="text-sm text-zinc-400 mt-1">{t('complianceCe.trackContinuingEducationHoursTowardLicenseRenewals')}</p>
         </div>
       </div>
 
@@ -166,7 +166,7 @@ export default function CETrackingPage() {
       {summary.categoryBreakdown.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Credits by Category</CardTitle>
+            <CardTitle className="text-base">{t('complianceCe.creditsByCategory')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -192,8 +192,8 @@ export default function CETrackingPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <GraduationCap className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No CE credits recorded yet</p>
-            <p className="text-sm text-zinc-500 mt-1">Credits will appear here as courses are completed</p>
+            <p className="text-zinc-400">{t('complianceCe.noCeCreditsRecordedYet')}</p>
+            <p className="text-sm text-zinc-500 mt-1">{t('complianceCe.creditsWillAppearHereAsCoursesAreCompleted')}</p>
           </CardContent>
         </Card>
       ) : (

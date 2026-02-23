@@ -139,7 +139,7 @@ export default function ServiceAgreementsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('serviceAgreements.title')}</h1>
-          <p className="text-muted mt-1">Manage recurring maintenance contracts</p>
+          <p className="text-muted mt-1">{t('serviceAgreements.manageRecurringMaintenanceContracts')}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>
           <Plus size={16} />
@@ -157,7 +157,7 @@ export default function ServiceAgreementsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activeCount}</p>
-                <p className="text-sm text-muted">Active Agreements</p>
+                <p className="text-sm text-muted">{t('serviceAgreements.activeAgreements')}</p>
               </div>
             </div>
           </CardContent>
@@ -170,7 +170,7 @@ export default function ServiceAgreementsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(monthlyRecurring)}</p>
-                <p className="text-sm text-muted">Monthly Recurring</p>
+                <p className="text-sm text-muted">{t('serviceAgreements.monthlyRecurring')}</p>
               </div>
             </div>
           </CardContent>
@@ -183,7 +183,7 @@ export default function ServiceAgreementsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{upcomingServices}</p>
-                <p className="text-sm text-muted">Services This Month</p>
+                <p className="text-sm text-muted">{t('serviceAgreements.servicesThisMonth')}</p>
               </div>
             </div>
           </CardContent>
@@ -399,7 +399,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
 
           {/* Services Included */}
           <div>
-            <h3 className="font-medium text-main mb-3">Services Included</h3>
+            <h3 className="font-medium text-main mb-3">{t('serviceAgreements.servicesIncluded')}</h3>
             <ul className="space-y-2">
               {agreement.servicesIncluded.map((service, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm">
@@ -447,7 +447,7 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>New Service Agreement</CardTitle>
+            <CardTitle>{t('serviceAgreements.newServiceAgreement')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -458,9 +458,9 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Customer *</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="">Select customer...</option>
-              <option value="c1">Thompson Auto Shop</option>
-              <option value="c2">Sarah Martinez</option>
+              <option value="">{t('serviceAgreements.selectCustomer')}</option>
+              <option value="c1">{t('serviceAgreements.thompsonAutoShop')}</option>
+              <option value="c2">{t('warranties.sarahMartinez')}</option>
             </select>
           </div>
           <Select
@@ -497,11 +497,11 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
           </div>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" className="w-4 h-4 rounded border-main text-accent focus:ring-accent" />
-            <span className="text-sm text-main">Auto-renew at end of term</span>
+            <span className="text-sm text-main">{t('serviceAgreements.autorenewAtEndOfTerm')}</span>
           </label>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Create Agreement</Button>
+            <Button className="flex-1"><Plus size={16} />{t('serviceAgreements.createAgreement')}</Button>
           </div>
         </CardContent>
       </Card>

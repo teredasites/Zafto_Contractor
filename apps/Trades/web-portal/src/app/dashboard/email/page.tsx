@@ -239,7 +239,7 @@ export default function EmailPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalSent}</p>
-                <p className="text-sm text-muted">Sent This Month</p>
+                <p className="text-sm text-muted">{t('email.sentThisMonth')}</p>
               </div>
             </div>
           </CardContent>
@@ -252,7 +252,7 @@ export default function EmailPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{deliveryRate}%</p>
-                <p className="text-sm text-muted">Delivery Rate</p>
+                <p className="text-sm text-muted">{t('email.deliveryRate')}</p>
               </div>
             </div>
           </CardContent>
@@ -265,7 +265,7 @@ export default function EmailPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{openRate}%</p>
-                <p className="text-sm text-muted">Avg Open Rate</p>
+                <p className="text-sm text-muted">{t('email.avgOpenRate')}</p>
               </div>
             </div>
           </CardContent>
@@ -384,7 +384,7 @@ function TemplatesTab({
         <CardContent className="py-16 text-center">
           <FileText size={48} className="mx-auto mb-3 text-muted opacity-50" />
           <p className="text-muted">{t('common.noTemplatesFound')}</p>
-          <p className="text-sm text-muted mt-1">Create your first email template to get started</p>
+          <p className="text-sm text-muted mt-1">{t('email.createYourFirstEmailTemplateToGetStarted')}</p>
         </CardContent>
       </Card>
     );
@@ -451,7 +451,7 @@ function SentTab({ sends }: { sends: ReturnType<typeof useEmail>['sends'] }) {
       <Card>
         <CardContent className="py-16 text-center">
           <Send size={48} className="mx-auto mb-3 text-muted opacity-50" />
-          <p className="text-muted">No sent emails found</p>
+          <p className="text-muted">{t('email.noSentEmailsFound')}</p>
         </CardContent>
       </Card>
     );
@@ -524,8 +524,8 @@ function CampaignsTab({
       <Card>
         <CardContent className="py-16 text-center">
           <Megaphone size={48} className="mx-auto mb-3 text-muted opacity-50" />
-          <p className="text-muted">No campaigns found</p>
-          <p className="text-sm text-muted mt-1">Create a campaign to send bulk emails</p>
+          <p className="text-muted">{t('email.noCampaignsFound')}</p>
+          <p className="text-sm text-muted mt-1">{t('email.createACampaignToSendBulkEmails')}</p>
         </CardContent>
       </Card>
     );
@@ -538,13 +538,13 @@ function CampaignsTab({
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Campaign</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('email.campaign')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Recipients</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('email.recipients')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.sent')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.delivered')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Open Rate</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Click Rate</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('email.openRate')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('email.clickRate')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.schedule')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
               </tr>
@@ -631,7 +631,7 @@ function UnsubscribesTab({ unsubscribes }: { unsubscribes: ReturnType<typeof use
       <Card>
         <CardContent className="py-16 text-center">
           <UserMinus size={48} className="mx-auto mb-3 text-muted opacity-50" />
-          <p className="text-muted">No unsubscribes</p>
+          <p className="text-muted">{t('email.noUnsubscribes')}</p>
         </CardContent>
       </Card>
     );
@@ -783,7 +783,7 @@ function TemplateModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Trigger Event</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('email.triggerEvent')}</label>
               <input
                 type="text"
                 value={triggerEvent}
@@ -803,7 +803,7 @@ function TemplateModal({
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-main mb-1.5">HTML Body</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('email.htmlBody')}</label>
               <textarea
                 value={bodyHtml}
                 onChange={(e) => setBodyHtml(e.target.value)}
@@ -813,7 +813,7 @@ function TemplateModal({
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-main mb-1.5">Plain Text Body</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('email.plainTextBody')}</label>
               <textarea
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}

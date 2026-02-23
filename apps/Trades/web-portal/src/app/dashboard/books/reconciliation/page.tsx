@@ -260,12 +260,12 @@ export default function ReconciliationPage() {
           {/* Start New Reconciliation */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Start New Reconciliation</CardTitle>
+              <CardTitle className="text-base">{t('booksRecon.startNewReconciliation')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-4">
                 <div className="flex-1">
-                  <label className="text-xs text-muted block mb-1">Bank Account</label>
+                  <label className="text-xs text-muted block mb-1">{t('booksRecon.bankAccount')}</label>
                   <select
                     value={selectedAccountId}
                     onChange={(e) => setSelectedAccountId(e.target.value)}
@@ -289,7 +289,7 @@ export default function ReconciliationPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-muted block mb-1">Statement Ending Balance</label>
+                  <label className="text-xs text-muted block mb-1">{t('booksRecon.statementEndingBalance')}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -313,7 +313,7 @@ export default function ReconciliationPage() {
           {/* Past Reconciliations */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Reconciliation History</CardTitle>
+              <CardTitle className="text-base">{t('booksRecon.reconciliationHistory')}</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {reconciliations.length === 0 ? (
@@ -411,7 +411,7 @@ export default function ReconciliationPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <CheckCircle size={14} className="text-muted" />
-                  <span className="text-xs text-muted">Cleared Balance</span>
+                  <span className="text-xs text-muted">{t('booksRecon.clearedBalance')}</span>
                 </div>
                 <p className="text-lg font-semibold text-main">{formatCurrency(clearedBalance)}</p>
               </CardContent>
@@ -483,8 +483,8 @@ export default function ReconciliationPage() {
                 />
                 <span className="flex-1 text-xs font-medium text-muted">{t('common.date')}</span>
                 <span className="flex-[3] text-xs font-medium text-muted">{t('common.description')}</span>
-                <span className="w-24 text-right text-xs font-medium text-muted">Deposits</span>
-                <span className="w-24 text-right text-xs font-medium text-muted">Payments</span>
+                <span className="w-24 text-right text-xs font-medium text-muted">{t('booksRecon.deposits')}</span>
+                <span className="w-24 text-right text-xs font-medium text-muted">{t('booksRecon.payments')}</span>
               </div>
 
               {filteredTransactions.length === 0 ? (

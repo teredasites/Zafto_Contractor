@@ -214,7 +214,7 @@ export default function NewInvoicePage() {
         </button>
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('invoicesNew.title')}</h1>
-          <p className="text-muted mt-1">Create a new invoice</p>
+          <p className="text-muted mt-1">{t('invoices.createANewInvoice')}</p>
         </div>
       </div>
 
@@ -402,7 +402,7 @@ export default function NewInvoicePage() {
                           >
                             <option value="carrier">{t('common.carrier')}</option>
                             <option value="deductible">{t('common.deductible')}</option>
-                            <option value="upgrade">Upgrade</option>
+                            <option value="upgrade">{t('invoices.upgrade')}</option>
                             <option value="standard">{t('common.standard')}</option>
                           </select>
                         </td>
@@ -594,7 +594,7 @@ export default function NewInvoicePage() {
                 </div>
               )}
               <div className="flex justify-between font-semibold text-lg pt-2 border-t border-main">
-                <span>Total Due</span>
+                <span>{t('invoices.totalDue')}</span>
                 <span>{formatCurrency(total)}</span>
               </div>
               {retainageAmount > 0 && (

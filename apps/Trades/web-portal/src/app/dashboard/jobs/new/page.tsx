@@ -199,7 +199,7 @@ export default function NewJobPage() {
         </button>
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('jobsNew.title')}</h1>
-          <p className="text-muted mt-1">Create a new job</p>
+          <p className="text-muted mt-1">{t('jobs.createANewJob')}</p>
         </div>
       </div>
 
@@ -597,7 +597,7 @@ export default function NewJobPage() {
                     onChange={(e) => setFormData({ ...formData, useCustomerAddress: e.target.checked })}
                     className="w-4 h-4 text-accent rounded"
                   />
-                  <span className="text-sm text-main">Use customer address</span>
+                  <span className="text-sm text-main">{t('jobs.useCustomerAddress')}</span>
                 </label>
               )}
 

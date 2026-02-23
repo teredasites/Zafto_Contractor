@@ -179,7 +179,7 @@ export default function ResourcesPage() {
           <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
             <HardHat className="w-8 h-8 text-secondary" />
           </div>
-          <h3 className="text-lg font-semibold text-primary mb-1">No resources</h3>
+          <h3 className="text-lg font-semibold text-primary mb-1">{t('schedulingResources.noResources')}</h3>
           <p className="text-sm text-secondary mb-4">Add labor, equipment, or materials</p>
           <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium">
             <Plus className="w-4 h-4" /> Add Resource
@@ -225,7 +225,7 @@ export default function ResourcesPage() {
       {showAdd && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAdd(false)}>
           <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-primary mb-4">Add Resource</h2>
+            <h2 className="text-lg font-semibold text-primary mb-4">{t('schedulingResources.addResource')}</h2>
             <input
               type="text"
               placeholder="Resource name"
@@ -252,7 +252,7 @@ export default function ResourcesPage() {
             </div>
             {newType === 'labor' && teamMembers.length > 0 && (
               <div className="mb-3">
-                <label className="text-xs text-secondary mb-1 block">Link Team Member</label>
+                <label className="text-xs text-secondary mb-1 block">{t('schedulingResources.linkTeamMember')}</label>
                 <select
                   value={selectedUserId}
                   onChange={(e) => {

@@ -137,7 +137,7 @@ export default function AsyncVideosPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-zinc-100">{t('meetingsAsyncVideos.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">Loom-style video messages tied to jobs</p>
+            <p className="text-sm text-zinc-500 mt-1">{t('meetingsAsync.loomstyleVideoMessagesTiedToJobs')}</p>
           </div>
         </div>
 
@@ -208,7 +208,7 @@ export default function AsyncVideosPage() {
               <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                 <Video className="h-8 w-8 mb-2 opacity-50" />
                 <p>No {tab === 'all' ? '' : tab} videos</p>
-                <p className="text-xs mt-1">Record a video from any job page</p>
+                <p className="text-xs mt-1">{t('meetingsAsync.recordAVideoFromAnyJobPage')}</p>
               </div>
             ) : (
               <div>

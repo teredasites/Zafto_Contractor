@@ -96,7 +96,7 @@ export default function InventoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('inventory.title')}</h1>
-          <p className="text-muted mt-1">Track materials and supplies</p>
+          <p className="text-muted mt-1">{t('inventory.trackMaterialsAndSupplies')}</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
@@ -181,7 +181,7 @@ export default function InventoryPage() {
             onChange={(e) => setShowLowStock(e.target.checked)}
             className="w-4 h-4 rounded border-main text-accent focus:ring-accent"
           />
-          <span className="text-sm text-main">Show low stock only</span>
+          <span className="text-sm text-main">{t('inventory.showLowStockOnly')}</span>
         </label>
       </div>
 
@@ -196,7 +196,7 @@ export default function InventoryPage() {
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.category')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.location')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.qty')}</th>
-                <th className="text-right text-sm font-medium text-muted px-6 py-3">Min</th>
+                <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('inventory.min')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.unitCost')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.value')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
@@ -206,7 +206,7 @@ export default function InventoryPage() {
               {filteredItems.length === 0 && (
                 <tr><td colSpan={7} className="px-6 py-16 text-center">
                   <p className="text-sm font-medium text-main">No inventory items found</p>
-                  <p className="text-xs text-muted mt-1">Add materials and supplies to track your inventory</p>
+                  <p className="text-xs text-muted mt-1">{t('inventory.addMaterialsAndSuppliesToTrackYourInventory')}</p>
                 </td></tr>
               )}
               {filteredItems.map((item) => {
@@ -218,7 +218,7 @@ export default function InventoryPage() {
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-main">{item.name}</span>
                         {isOutOfStock && (
-                          <Badge variant="error" size="sm">Out</Badge>
+                          <Badge variant="error" size="sm">{t('inventory.out')}</Badge>
                         )}
                         {isLowStock && !isOutOfStock && (
                           <Badge variant="warning" size="sm">{t('common.low')}</Badge>
@@ -290,7 +290,7 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Inventory Item</CardTitle>
+            <CardTitle>{t('inventory.addInventoryItem')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -337,7 +337,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Adjust Quantity</CardTitle>
+            <CardTitle>{t('inventory.adjustQuantity')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -383,19 +383,19 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
               onChange={(e) => setReason(e.target.value)}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
             >
-              <option value="">Select reason...</option>
-              <option value="job">Used on job</option>
-              <option value="restock">Restocked</option>
-              <option value="damaged">Damaged/Lost</option>
-              <option value="count">Inventory count</option>
-              <option value="return">Returned to vendor</option>
+              <option value="">{t('inventory.selectReason')}</option>
+              <option value="job">{t('inventory.usedOnJob')}</option>
+              <option value="restock">{t('inventory.restocked')}</option>
+              <option value="damaged">{t('inventory.damagedlost')}</option>
+              <option value="count">{t('inventory.inventoryCount')}</option>
+              <option value="return">{t('inventory.returnedToVendor')}</option>
               <option value="other">{t('common.other')}</option>
             </select>
           </div>
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1">Save Adjustment</Button>
+            <Button className="flex-1">{t('inventory.saveAdjustment')}</Button>
           </div>
         </CardContent>
       </Card>
