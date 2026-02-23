@@ -106,8 +106,8 @@ export default function JobDetailPage() {
     return (
       <div className="text-center py-12">
         <Briefcase size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Job not found</h2>
-        <p className="text-muted mt-2">The job you're looking for doesn't exist.</p>
+        <h2 className="text-xl font-semibold text-main">{t('jobs.jobNotFound')}</h2>
+        <p className="text-muted mt-2">{t('jobs.jobDoesntExist')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/jobs')}>
           Back to Jobs
         </Button>
@@ -148,7 +148,7 @@ export default function JobDetailPage() {
                 </span>
               )}
               {job.priority === 'urgent' && <Badge variant="error">{t('common.urgent')}</Badge>}
-              {job.priority === 'high' && <Badge variant="warning">High</Badge>}
+              {job.priority === 'high' && <Badge variant="warning">{t('common.high')}</Badge>}
             </div>
             <p className="text-muted mt-1">
               {job.customer?.firstName} {job.customer?.lastName}
@@ -393,7 +393,7 @@ export default function JobDetailPage() {
             </CardHeader>
             <CardContent>
               {assignedMembers.length === 0 ? (
-                <p className="text-sm text-muted">No team members assigned</p>
+                <p className="text-sm text-muted">{t('jobs.noTeamMembersAssigned')}</p>
               ) : (
                 <div className="space-y-3">
                   {assignedMembers.map((member) => member && (
@@ -750,8 +750,8 @@ function MaterialsTab({ job }: { job: Job }) {
         <CardContent>
           <div className="text-center py-8">
             <Package size={32} className="mx-auto text-muted mb-2" />
-            <p className="text-sm text-muted">No materials logged</p>
-            <p className="text-xs text-muted mt-1">Add materials to track costs</p>
+            <p className="text-sm text-muted">{t('jobs.noMaterialsLogged')}</p>
+            <p className="text-xs text-muted mt-1">{t('jobs.addMaterialsToTrackCosts')}</p>
           </div>
         </CardContent>
       ) : materials.length > 0 ? (

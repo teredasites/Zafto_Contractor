@@ -345,7 +345,7 @@ export default function TpaProgramsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Program Type</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.programType')}</label>
                 <div className="grid grid-cols-2 gap-2 mt-1">
                   {TPA_TYPES.map(t => (
                     <button
@@ -365,14 +365,14 @@ export default function TpaProgramsPage() {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Carrier Names</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.carrierNames')}</label>
                 <Input
                   value={form.carrierNames}
                   onChange={e => updateField('carrierNames', e.target.value)}
                   placeholder="State Farm, Allstate, USAA (comma-separated)"
                   className="mt-1"
                 />
-                <p className="text-[11px] text-muted mt-1">Insurance carriers served by this TPA</p>
+                <p className="text-[11px] text-muted mt-1">{t('tpa.insuranceCarriersServed')}</p>
               </div>
               <div>
                 <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('settings.serviceArea')}</label>
@@ -384,7 +384,7 @@ export default function TpaProgramsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Loss Types Covered</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.lossTypesCovered')}</label>
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {LOSS_TYPES.map(lt => (
                     <button
@@ -422,7 +422,7 @@ export default function TpaProgramsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Referral Fee Type</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.referralFeeType')}</label>
                 <div className="grid grid-cols-2 gap-2 mt-1">
                   {FEE_TYPES.map(ft => (
                     <button
@@ -563,7 +563,7 @@ export default function TpaProgramsPage() {
                     placeholder="5"
                     className="mt-1"
                   />
-                  <p className="text-[11px] text-muted mt-1">Business days</p>
+                  <p className="text-[11px] text-muted mt-1">{t('common.businessDays')}</p>
                 </div>
               </div>
             </CardContent>
@@ -573,11 +573,11 @@ export default function TpaProgramsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2"><Globe size={16} /> Portal & Contacts</CardTitle>
-              <CardDescription>TPA portal access and program contacts</CardDescription>
+              <CardDescription>{t('tpa.tpaPortalAccess')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Portal URL</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.portalUrl')}</label>
                 <Input
                   value={form.portalUrl}
                   onChange={e => updateField('portalUrl', e.target.value)}
@@ -586,7 +586,7 @@ export default function TpaProgramsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Portal Username</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.portalUsername')}</label>
                 <Input
                   value={form.portalUsername}
                   onChange={e => updateField('portalUsername', e.target.value)}
@@ -595,7 +595,7 @@ export default function TpaProgramsPage() {
                 />
               </div>
               <div className="border-t border-main/30 pt-4">
-                <span className="text-xs font-semibold text-muted uppercase tracking-wide">Primary Contact</span>
+                <span className="text-xs font-semibold text-muted uppercase tracking-wide">{t('common.primaryContact')}</span>
                 <div className="grid grid-cols-1 gap-3 mt-2">
                   <Input
                     value={form.primaryContactName}
@@ -616,7 +616,7 @@ export default function TpaProgramsPage() {
                 </div>
               </div>
               <div className="border-t border-main/30 pt-4">
-                <span className="text-xs font-semibold text-muted uppercase tracking-wide">Secondary Contact</span>
+                <span className="text-xs font-semibold text-muted uppercase tracking-wide">{t('common.secondaryContact')}</span>
                 <div className="grid grid-cols-1 gap-3 mt-2">
                   <Input
                     value={form.secondaryContactName}
@@ -676,7 +676,7 @@ export default function TpaProgramsPage() {
           </Link>
           <div>
             <h1 className="text-xl font-semibold text-main">{t('settingsTpaPrograms.title')}</h1>
-            <p className="text-sm text-muted mt-0.5">Manage Third-Party Administrator program enrollments</p>
+            <p className="text-sm text-muted mt-0.5">{t('tpa.manageTpaEnrollments')}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -721,7 +721,7 @@ export default function TpaProgramsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <Shield size={48} className="text-muted/30 mb-4" />
-            <h3 className="text-lg font-semibold text-main mb-1">No TPA Programs</h3>
+            <h3 className="text-lg font-semibold text-main mb-1">{t('common.noTpaPrograms')}</h3>
             <p className="text-sm text-muted mb-6 max-w-md">
               Enroll in a TPA program to start receiving insurance restoration assignments.
               Configure SLA thresholds, referral fees, and contacts for each program.
@@ -815,7 +815,7 @@ export default function TpaProgramsPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] text-muted uppercase tracking-wide">Net Terms</p>
+                      <p className="text-[11px] text-muted uppercase tracking-wide">{t('common.netTerms')}</p>
                       <p className="text-sm font-medium text-main mt-0.5">
                         {program.paymentTermsDays}d
                       </p>

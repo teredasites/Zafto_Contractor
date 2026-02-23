@@ -370,9 +370,9 @@ export default function ConstructionAccountingPage() {
       {releaseModalId && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setReleaseModalId(null)}>
           <div className="bg-surface rounded-xl shadow-2xl w-full max-w-sm border border-main p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-main mb-4">Release Retention</h3>
+            <h3 className="text-lg font-semibold text-main mb-4">{t('common.releaseRetention')}</h3>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-main mb-1">Release Amount</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.releaseAmount')}</label>
               <Input
                 type="number"
                 step="0.01"
@@ -428,7 +428,7 @@ function BillingTab({
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 size={24} className="animate-spin text-muted" />
-        <span className="ml-3 text-muted text-sm">Loading billings...</span>
+        <span className="ml-3 text-muted text-sm">{t('books.loadingBillings')}</span>
       </div>
     );
   }
@@ -464,7 +464,7 @@ function BillingTab({
             <div className="col-span-2 text-right">{t('common.contract')}</div>
             <div className="col-span-1 text-right">{t('common.completed')}</div>
             <div className="col-span-1 text-right">{t('common.retainage')}</div>
-            <div className="col-span-1 text-right">Payment Due</div>
+            <div className="col-span-1 text-right">{t('common.paymentDue')}</div>
             <div className="col-span-1 text-center">{t('common.status')}</div>
             <div className="col-span-1 text-right">{t('common.actions')}</div>
           </div>
@@ -612,7 +612,7 @@ function RetentionTab({
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 size={24} className="animate-spin text-muted" />
-        <span className="ml-3 text-muted text-sm">Loading retention records...</span>
+        <span className="ml-3 text-muted text-sm">{t('books.loadingRetentionRecords')}</span>
       </div>
     );
   }
@@ -643,8 +643,8 @@ function RetentionTab({
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
             <div className="col-span-2">{t('common.job')}</div>
             <div className="col-span-1 text-right">{t('common.rate')}</div>
-            <div className="col-span-2 text-right">Total Billed</div>
-            <div className="col-span-2 text-right">Total Retained</div>
+            <div className="col-span-2 text-right">{t('common.totalBilled')}</div>
+            <div className="col-span-2 text-right">{t('common.totalRetained')}</div>
             <div className="col-span-1 text-right">{t('common.released')}</div>
             <div className="col-span-1 text-right">{t('common.balance')}</div>
             <div className="col-span-1 text-center">{t('common.status')}</div>
@@ -709,7 +709,7 @@ function WIPTab({
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 size={24} className="animate-spin text-muted" />
-        <span className="ml-3 text-muted text-sm">Generating WIP report...</span>
+        <span className="ml-3 text-muted text-sm">{t('books.generatingWipReport')}</span>
       </div>
     );
   }
@@ -743,10 +743,10 @@ function WIPTab({
             <thead>
               <tr className="border-b border-main bg-secondary/50">
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.job')}</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Costs Incurred</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Billings to Date</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Estimated Gross</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Over/Under</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.costsIncurred')}</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.billingsToDate')}</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.estimatedGross')}</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('books.overUnder')}</th>
                 <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.status')}</th>
               </tr>
             </thead>
@@ -861,7 +861,7 @@ function PayrollTab({
               </select>
             </div>
             <div>
-              <label className="text-xs text-muted block mb-1">Week Starting</label>
+              <label className="text-xs text-muted block mb-1">{t('common.weekStarting')}</label>
               <input
                 type="date"
                 value={payrollWeekStart}
@@ -903,8 +903,8 @@ function PayrollTab({
                 <tr className="border-b border-main bg-secondary/50">
                   <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.employee')}</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.classification')}</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">ST Hours</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">OT Hours</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.stHours')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.otHours')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.rate')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.grossPay')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.deductions')}</th>
@@ -1076,7 +1076,7 @@ function NewBillingModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-main flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-main">New Progress Billing Application</h2>
+          <h2 className="text-lg font-semibold text-main">{t('books.newProgressBilling')}</h2>
           <button onClick={onClose} className="p-1 hover:bg-surface-hover rounded-lg">
             <X size={18} className="text-muted" />
           </button>
@@ -1160,7 +1160,7 @@ function NewBillingModal({
                     <th className="text-left px-2 py-2 text-muted font-medium w-14">{t('common.item')}</th>
                     <th className="text-left px-2 py-2 text-muted font-medium min-w-[140px]">{t('common.description')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.scheduled')}</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">Prev. Done</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('books.prevDone')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.thisPeriod')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.materials')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.total')}</th>
@@ -1258,19 +1258,19 @@ function NewBillingModal({
           {/* Summary */}
           <div className="grid grid-cols-3 gap-4 bg-secondary/50 rounded-lg p-4">
             <div>
-              <p className="text-xs text-muted">Total Completed to Date</p>
+              <p className="text-xs text-muted">{t('books.totalCompletedToDate')}</p>
               <p className="text-lg font-semibold text-main tabular-nums">
                 {formatCurrency(sovItems.reduce((s, item) => s + item.total_completed, 0))}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted">Total Retainage</p>
+              <p className="text-xs text-muted">{t('books.totalRetainage')}</p>
               <p className="text-lg font-semibold text-main tabular-nums">
                 {formatCurrency(sovItems.reduce((s, item) => s + item.retainage, 0))}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted">Current Payment Due</p>
+              <p className="text-xs text-muted">{t('common.currentPaymentDue')}</p>
               <p className="text-lg font-bold text-accent tabular-nums">
                 {formatCurrency(
                   sovItems.reduce((s, item) => s + item.total_completed, 0)
@@ -1340,7 +1340,7 @@ function NewRetentionModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-main flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-main">New Retention Record</h2>
+          <h2 className="text-lg font-semibold text-main">{t('books.newRetentionRecord')}</h2>
           <button onClick={onClose} className="p-1 hover:bg-surface-hover rounded-lg">
             <X size={18} className="text-muted" />
           </button>
@@ -1371,7 +1371,7 @@ function NewRetentionModal({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Release Conditions</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.releaseConditions')}</label>
             <textarea
               value={conditions}
               onChange={(e) => setConditions(e.target.value)}

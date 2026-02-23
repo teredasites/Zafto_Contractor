@@ -277,7 +277,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
             <div className="space-y-3">
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.address')}</p><p className="font-medium text-main">{permit.address}</p></div>
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.fee')}</p><p className="font-medium text-main">${permit.fee}</p></div>
-              {permit.expirationDate && <div><p className="text-xs text-muted uppercase tracking-wider">Expires</p><p className="font-medium text-main">{formatDate(permit.expirationDate)}</p></div>}
+              {permit.expirationDate && <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.expires')}</p><p className="font-medium text-main">{formatDate(permit.expirationDate)}</p></div>}
             </div>
           </div>
 

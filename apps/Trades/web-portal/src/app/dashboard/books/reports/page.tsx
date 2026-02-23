@@ -138,7 +138,7 @@ function AgingTable({ rows, entityLabel }: { rows: AgingRow[]; entityLabel: stri
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={7} className="px-3 py-8 text-center text-muted">No outstanding balances</td>
+              <td colSpan={7} className="px-3 py-8 text-center text-muted">{tr('books.noOutstandingBalances')}</td>
             </tr>
           ) : (
             <>
@@ -441,7 +441,7 @@ export default function FinancialReportsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('booksReports.title')}</h1>
-          <p className="text-muted mt-1">Generate and review financial statements</p>
+          <p className="text-muted mt-1">{t('books.generateAndReview')}</p>
         </div>
         <Button variant="secondary" onClick={() => window.print()}>
           <Download size={16} />
@@ -500,8 +500,8 @@ export default function FinancialReportsPage() {
                     className="px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent"
                   >
                     <option value="this_month">{t('common.thisMonth')}</option>
-                    <option value="last_month">Last Month</option>
-                    <option value="this_quarter">This Quarter</option>
+                    <option value="last_month">{t('common.lastMonth')}</option>
+                    <option value="this_quarter">{t('common.thisQuarter')}</option>
                     <option value="this_year">{t('common.thisYear')}</option>
                     <option value="last_year">{t('common.lastYear')}</option>
                     <option value="custom">{t('common.custom')}</option>
@@ -525,7 +525,7 @@ export default function FinancialReportsPage() {
             )}
             {needsAsOfDate && (
               <div>
-                <label className="text-xs text-muted block mb-1">As of Date</label>
+                <label className="text-xs text-muted block mb-1">{t('books.asOfDate')}</label>
                 <input type="date" value={asOfDate} onChange={(e) => setAsOfDate(e.target.value)}
                   className="px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent" />
               </div>
@@ -566,7 +566,7 @@ export default function FinancialReportsPage() {
           {activeTab === 'pnl' && pnlData && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Profit & Loss Statement</CardTitle>
+                <CardTitle className="text-base">{t('books.profitAndLossStatement')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <AccountSection title="Revenue" accounts={pnlData.revenue} />
@@ -610,7 +610,7 @@ export default function FinancialReportsPage() {
                 <AccountSection title="Equity" accounts={bsData.equity} />
                 {bsData.currentYearNetIncome !== 0 && (
                   <div className="flex items-center justify-between py-1.5 px-2 text-sm">
-                    <span className="text-muted italic">Current Year Net Income</span>
+                    <span className="text-muted italic">{t('books.currentYearNetIncome')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(bsData.currentYearNetIncome)}</span>
                   </div>
                 )}
@@ -628,29 +628,29 @@ export default function FinancialReportsPage() {
           {activeTab === 'cash_flow' && cfData && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Cash Flow Statement</CardTitle>
+                <CardTitle className="text-base">{t('books.cashFlowStatement')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-main mb-2">Operating Activities</h3>
+                    <h3 className="text-sm font-semibold text-main mb-2">{t('books.operatingActivities')}</h3>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between px-2 py-1"><span className="text-muted">{t('common.netIncome')}</span><span className="tabular-nums text-main">{formatCurrency(cfData.netIncome)}</span></div>
-                      <div className="flex justify-between px-2 py-1"><span className="text-muted">AR Change</span><span className="tabular-nums text-main">{formatCurrency(-cfData.arChange)}</span></div>
-                      <div className="flex justify-between px-2 py-1"><span className="text-muted">AP Change</span><span className="tabular-nums text-main">{formatCurrency(cfData.apChange)}</span></div>
-                      <div className="flex justify-between px-2 py-2 border-t border-default font-semibold"><span className="text-main">Net Operating</span><span className="tabular-nums text-main">{formatCurrency(cfData.operatingActivities)}</span></div>
+                      <div className="flex justify-between px-2 py-1"><span className="text-muted">{t('books.arChange')}</span><span className="tabular-nums text-main">{formatCurrency(-cfData.arChange)}</span></div>
+                      <div className="flex justify-between px-2 py-1"><span className="text-muted">{t('books.apChange')}</span><span className="tabular-nums text-main">{formatCurrency(cfData.apChange)}</span></div>
+                      <div className="flex justify-between px-2 py-2 border-t border-default font-semibold"><span className="text-main">{t('books.netOperating')}</span><span className="tabular-nums text-main">{formatCurrency(cfData.operatingActivities)}</span></div>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-main mb-2">Investing Activities</h3>
-                    <div className="flex justify-between px-2 py-2 text-sm font-semibold"><span className="text-main">Equipment / Vehicles</span><span className="tabular-nums text-main">{formatCurrency(-cfData.investingActivities)}</span></div>
+                    <h3 className="text-sm font-semibold text-main mb-2">{t('books.investingActivities')}</h3>
+                    <div className="flex justify-between px-2 py-2 text-sm font-semibold"><span className="text-main">{t('books.equipmentVehicles')}</span><span className="tabular-nums text-main">{formatCurrency(-cfData.investingActivities)}</span></div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-main mb-2">Financing Activities</h3>
-                    <div className="flex justify-between px-2 py-2 text-sm font-semibold"><span className="text-main">Loans / Equity</span><span className="tabular-nums text-main">{formatCurrency(cfData.financingActivities)}</span></div>
+                    <h3 className="text-sm font-semibold text-main mb-2">{t('books.financingActivities')}</h3>
+                    <div className="flex justify-between px-2 py-2 text-sm font-semibold"><span className="text-main">{t('books.loansEquity')}</span><span className="tabular-nums text-main">{formatCurrency(cfData.financingActivities)}</span></div>
                   </div>
                   <div className="flex items-center justify-between py-4 px-3 bg-accent/10 rounded-lg font-bold text-base border border-accent/20">
-                    <span className="text-main">Net Change in Cash</span>
+                    <span className="text-main">{t('books.netChangeInCash')}</span>
                     <span className={cn('tabular-nums', cfData.netCashChange >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                       {formatCurrency(cfData.netCashChange)}
                     </span>
@@ -664,7 +664,7 @@ export default function FinancialReportsPage() {
           {activeTab === 'ar_aging' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Accounts Receivable Aging</CardTitle>
+                <CardTitle className="text-base">{t('books.accountsReceivableAging')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <AgingTable rows={arData} entityLabel="Customer" />
@@ -676,7 +676,7 @@ export default function FinancialReportsPage() {
           {activeTab === 'ap_aging' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Accounts Payable Aging</CardTitle>
+                <CardTitle className="text-base">{t('books.accountsPayableAging')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <AgingTable rows={apData} entityLabel="Vendor" />
@@ -689,7 +689,7 @@ export default function FinancialReportsPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">General Ledger Detail</CardTitle>
+                  <CardTitle className="text-base">{t('books.generalLedgerDetail')}</CardTitle>
                   <div className="text-sm text-muted">
                     Opening: <span className="font-medium text-main tabular-nums">{formatCurrency(glData.openingBalance)}</span>
                     {' | '}
@@ -703,7 +703,7 @@ export default function FinancialReportsPage() {
                     <tr className="border-b border-default">
                       <th className="text-left px-3 py-2 text-muted font-medium">{t('common.date')}</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">{t('common.reference')}</th>
-                      <th className="text-left px-3 py-2 text-muted font-medium">Memo</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.memo')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.debit')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.credit')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.balance')}</th>
@@ -711,7 +711,7 @@ export default function FinancialReportsPage() {
                   </thead>
                   <tbody>
                     {glData.entries.length === 0 ? (
-                      <tr><td colSpan={6} className="px-3 py-8 text-center text-muted">No entries for this period</td></tr>
+                      <tr><td colSpan={6} className="px-3 py-8 text-center text-muted">{t('books.noEntriesForPeriod')}</td></tr>
                     ) : (
                       glData.entries.map(e => (
                         <tr key={e.id} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -738,9 +738,9 @@ export default function FinancialReportsPage() {
                   <CardTitle className="text-base">{t('common.trialBalance')}</CardTitle>
                   <div className="flex items-center gap-2">
                     {tbData.isBalanced ? (
-                      <Badge variant="success"><CheckCircle size={12} className="mr-1" />Balanced</Badge>
+                      <Badge variant="success"><CheckCircle size={12} className="mr-1" />{t('common.balanced')}</Badge>
                     ) : (
-                      <Badge variant="error"><AlertCircle size={12} className="mr-1" />Out of Balance</Badge>
+                      <Badge variant="error"><AlertCircle size={12} className="mr-1" />{t('common.outOfBalance')}</Badge>
                     )}
                   </div>
                 </div>

@@ -137,7 +137,7 @@ export default function NewPropertyPage() {
         </button>
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('propertiesNew.title')}</h1>
-          <p className="text-[13px] text-muted mt-1">Add a new property to your portfolio</p>
+          <p className="text-[13px] text-muted mt-1">{t('properties.addPropertyToPortfolio')}</p>
         </div>
       </div>
 
@@ -253,7 +253,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Lot Size</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.lotSize')}</label>
                 <input
                   type="text"
                   value={form.lotSize}
@@ -277,7 +277,7 @@ export default function NewPropertyPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Purchase Date</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.purchaseDate')}</label>
                 <input
                   type="date"
                   value={form.purchaseDate}
@@ -322,7 +322,7 @@ export default function NewPropertyPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Lender</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.lender')}</label>
                 <input
                   type="text"
                   value={form.mortgageLender}
@@ -345,7 +345,7 @@ export default function NewPropertyPage() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Monthly Payment</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.monthlyPayment')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -356,7 +356,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Escrow</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.escrow')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -367,7 +367,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Principal Balance</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.principalBalance')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -402,7 +402,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Policy Number</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.policyNumber')}</label>
                 <input
                   type="text"
                   value={form.insurancePolicyNumber}
@@ -414,7 +414,7 @@ export default function NewPropertyPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Annual Premium</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.annualPremium')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -425,7 +425,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Expiry Date</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.expiryDate')}</label>
                 <input
                   type="date"
                   value={form.insuranceExpiry}
@@ -440,11 +440,11 @@ export default function NewPropertyPage() {
         {/* Tax */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Property Tax</CardTitle>
+            <CardTitle className="text-base">{t('common.propertyTax')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Annual Property Tax</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.annualPropertyTax')}</label>
               <input
                 type="number"
                 step="0.01"

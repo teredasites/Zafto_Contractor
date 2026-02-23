@@ -86,8 +86,8 @@ export default function ClaimDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <AlertTriangle className="w-8 h-8 text-red-500 mb-3" />
-        <p className="text-sm font-medium">Claim not found</p>
-        <button onClick={() => router.back()} className="text-sm text-amber-500 mt-2 hover:underline">Go back</button>
+        <p className="text-sm font-medium">{t('insurance.claimNotFound')}</p>
+        <button onClick={() => router.back()} className="text-sm text-amber-500 mt-2 hover:underline">{t('common.goBack')}</button>
       </div>
     );
   }
@@ -201,7 +201,7 @@ export default function ClaimDetailPage() {
               <div className="space-y-4">
                 {/* Loss Details */}
                 <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="text-[15px] font-semibold mb-3">Loss Details</h3>
+                  <h3 className="text-[15px] font-semibold mb-3">{t('common.lossDetails')}</h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <DetailRow label="Category" value={CLAIM_CATEGORY_LABELS[claim.claimCategory]} />
                     <DetailRow label="Loss Type" value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
@@ -217,7 +217,7 @@ export default function ClaimDetailPage() {
 
                 {/* Financials */}
                 <div className="rounded-xl border border-border bg-card p-5">
-                  <h3 className="text-[15px] font-semibold mb-3">Financials</h3>
+                  <h3 className="text-[15px] font-semibold mb-3">{t('common.financials')}</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <FinancialCard label="Approved" value={claim.approvedAmount} />
                     <FinancialCard label="Supplements" value={claim.supplementTotal} />
@@ -227,7 +227,7 @@ export default function ClaimDetailPage() {
                     <FinancialCard label="RCV" value={claim.rcv} />
                   </div>
                   <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-                    <span className="text-sm font-medium">Net Payable</span>
+                    <span className="text-sm font-medium">{t('common.netPayable')}</span>
                     <span className={`text-lg font-semibold ${netPayable >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       ${netPayable.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
@@ -237,7 +237,7 @@ export default function ClaimDetailPage() {
                 {/* Xactimate */}
                 {(claim.xactimateClaimId || claim.xactimateFileUrl) && (
                   <div className="rounded-xl border border-border bg-card p-5">
-                    <h3 className="text-[15px] font-semibold mb-3">Xactimate</h3>
+                    <h3 className="text-[15px] font-semibold mb-3">{t('insurance.xactimate')}</h3>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       {claim.xactimateClaimId && <DetailRow label="Claim ID" value={claim.xactimateClaimId} />}
                       {claim.xactimateFileUrl && <DetailRow label="File URL" value={claim.xactimateFileUrl} />}
@@ -409,7 +409,7 @@ export default function ClaimDetailPage() {
         <div className="space-y-4">
           {/* Claim Info */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-[15px] font-semibold mb-3">Claim Info</h3>
+            <h3 className="text-[15px] font-semibold mb-3">{t('common.claimInfo')}</h3>
             <div className="space-y-2.5 text-sm">
               <DetailRow label="Claim #" value={claim.claimNumber} />
               <DetailRow label="Carrier" value={claim.insuranceCompany} />
@@ -766,7 +766,7 @@ function SupplementsTab({
       {showCreate && (
         <div className="rounded-xl border border-amber-500/30 bg-card p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">New Supplement</span>
+            <span className="text-sm font-medium">{t('common.newSupplement')}</span>
             <div className="flex items-center gap-2">
               <button onClick={resetForm} className="text-xs text-muted-foreground hover:text-foreground">{t('common.cancel')}</button>
               <button
@@ -817,7 +817,7 @@ function SupplementsTab({
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">RCV</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t('common.rcv')}</label>
               <input type="number" step="0.01" min="0" placeholder="Optional" value={rcvAmount} onChange={(e) => setRcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>

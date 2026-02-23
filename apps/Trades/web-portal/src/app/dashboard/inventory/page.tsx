@@ -221,7 +221,7 @@ export default function InventoryPage() {
                           <Badge variant="error" size="sm">Out</Badge>
                         )}
                         {isLowStock && !isOutOfStock && (
-                          <Badge variant="warning" size="sm">Low</Badge>
+                          <Badge variant="warning" size="sm">{t('common.low')}</Badge>
                         )}
                       </div>
                     </td>

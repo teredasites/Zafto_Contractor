@@ -277,7 +277,7 @@ export default function ReconPage() {
             </div>
             <div>
               <p className="text-lg font-bold text-main">{stats.total}</p>
-              <p className="text-[11px] text-muted">Total Scans</p>
+              <p className="text-[11px] text-muted">{t('common.totalScans')}</p>
             </div>
           </div>
           <div className="rounded-lg border border-main bg-card px-4 py-3 flex items-center gap-3">
@@ -295,7 +295,7 @@ export default function ReconPage() {
             </div>
             <div>
               <p className="text-lg font-bold text-main">{stats.highConf}</p>
-              <p className="text-[11px] text-muted">High Confidence</p>
+              <p className="text-[11px] text-muted">{t('common.highConfidence')}</p>
             </div>
           </div>
         </div>
@@ -348,7 +348,7 @@ export default function ReconPage() {
       {loading && (
         <div className="flex items-center justify-center py-16">
           <Loader2 size={18} className="animate-spin text-muted" />
-          <span className="ml-2 text-sm text-muted">Loading scans...</span>
+          <span className="ml-2 text-sm text-muted">{t('recon.loadingScans')}</span>
         </div>
       )}
 

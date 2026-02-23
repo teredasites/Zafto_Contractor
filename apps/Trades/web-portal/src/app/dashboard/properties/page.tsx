@@ -94,7 +94,7 @@ export default function PropertiesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('properties.title')}</h1>
-          <p className="text-[13px] text-muted mt-1">Manage your property portfolio</p>
+          <p className="text-[13px] text-muted mt-1">{t('properties.managePropertyPortfolio')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/properties/new')}>
           <Plus size={16} />
@@ -112,7 +112,7 @@ export default function PropertiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats?.totalProperties ?? properties.length}</p>
-                <p className="text-sm text-muted">Total Properties</p>
+                <p className="text-sm text-muted">{t('common.totalProperties')}</p>
               </div>
             </div>
           </CardContent>
@@ -138,7 +138,7 @@ export default function PropertiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats?.occupancyRate?.toFixed(1) ?? '0.0'}%</p>
-                <p className="text-sm text-muted">Occupancy Rate</p>
+                <p className="text-sm text-muted">{t('common.occupancyRate')}</p>
               </div>
             </div>
           </CardContent>
@@ -151,7 +151,7 @@ export default function PropertiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats?.totalRentCollected ?? 0)}</p>
-                <p className="text-sm text-muted">Rent Collected</p>
+                <p className="text-sm text-muted">{t('common.rentCollected')}</p>
               </div>
             </div>
           </CardContent>
@@ -190,7 +190,7 @@ export default function PropertiesPage() {
       {filteredProperties.length === 0 ? (
         <div className="py-12 text-center">
           <Building2 size={48} className="mx-auto text-muted mb-3 opacity-50" />
-          <p className="text-muted">No properties found</p>
+          <p className="text-muted">{t('common.noPropertiesFound')}</p>
           <Button className="mt-4" onClick={() => router.push('/dashboard/properties/new')}>
             <Plus size={16} />
             Add Your First Property

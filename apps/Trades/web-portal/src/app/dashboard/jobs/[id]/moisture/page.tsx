@@ -159,7 +159,7 @@ export default function MoistureDryingMonitorPage() {
         )}
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider mb-1">Drying Progress</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('moisture.dryingProgress')}</p>
             <div className="flex items-baseline gap-2">
               <p className={cn('text-2xl font-bold', dryingProgress.allDry ? 'text-emerald-400' : dryingProgress.percentDry >= 75 ? 'text-amber-400' : 'text-red-400')}>
                 {dryingProgress.percentDry}%
@@ -176,7 +176,7 @@ export default function MoistureDryingMonitorPage() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider mb-1">Locations</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.locations')}</p>
             <div className="flex items-center gap-3">
               <div>
                 <p className="text-2xl font-bold text-main">{dryingProgress.totalLocations}</p>
@@ -191,7 +191,7 @@ export default function MoistureDryingMonitorPage() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider mb-1">Last Reading</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.lastReading')}</p>
             {dryingProgress.latestReadingAt ? (
               <>
                 <p className="text-sm text-main font-medium">{formatDateTime(dryingProgress.latestReadingAt)}</p>
@@ -203,13 +203,13 @@ export default function MoistureDryingMonitorPage() {
                 )}
               </>
             ) : (
-              <p className="text-sm text-muted">No readings yet</p>
+              <p className="text-sm text-muted">{t('moisture.noReadingsYet')}</p>
             )}
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider mb-1">Contents</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.contents')}</p>
             <p className="text-2xl font-bold text-main">{financialSummary.totalItems}</p>
             <p className="text-xs text-muted">{financialSummary.packedOutCount} packed out, {financialSummary.disposedCount} disposed</p>
           </CardContent>
@@ -221,7 +221,7 @@ export default function MoistureDryingMonitorPage() {
         <div className="bg-emerald-900/20 border border-emerald-700/30 rounded-xl p-4 flex items-center gap-3">
           <CheckCircle2 size={24} className="text-emerald-400" />
           <div>
-            <p className="font-medium text-emerald-300">All Locations at Target</p>
+            <p className="font-medium text-emerald-300">{t('moisture.allLocationsAtTarget')}</p>
             <p className="text-sm text-emerald-400/70">All {dryingProgress.totalLocations} monitored locations have reached or are below their drying goal.</p>
           </div>
         </div>
@@ -276,7 +276,7 @@ function OverviewTab({
       <Card>
         <CardContent className="p-12 text-center">
           <Droplets size={48} className="mx-auto text-muted mb-4" />
-          <h3 className="text-lg font-medium text-main mb-2">No Water Damage Assessment</h3>
+          <h3 className="text-lg font-medium text-main mb-2">{t('moisture.noWaterDamageAssessment')}</h3>
           <p className="text-muted">Create an assessment to start tracking IICRC S500 classification, moisture readings, and drying progress.</p>
         </CardContent>
       </Card>
@@ -292,7 +292,7 @@ function OverviewTab({
       {assessment && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Water Damage Assessment</CardTitle>
+            <CardTitle className="text-base">{t('moisture.waterDamageAssessment')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -316,7 +316,7 @@ function OverviewTab({
                 {assessment.sourceDescription && <p className="text-xs text-muted">{assessment.sourceDescription}</p>}
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Source Stopped</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('moisture.sourceStopped')}</p>
                 <Badge variant={assessment.sourceStopped ? 'success' : 'warning'}>
                   {assessment.sourceStopped ? 'Yes' : 'No'}
                 </Badge>
@@ -324,21 +324,21 @@ function OverviewTab({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Total Affected</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('moisture.totalAffected')}</p>
                 <p className="text-main font-medium">{assessment.totalSqftAffected.toLocaleString()} sq ft</p>
                 <p className="text-xs text-muted">{assessment.floorsAffected} floor{assessment.floorsAffected > 1 ? 's' : ''}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Est. Drying</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('moisture.estDrying')}</p>
                 <p className="text-main font-medium">{assessment.estimatedDryingDays ?? '—'} days</p>
               </div>
             </div>
             {(assessment.containmentRequired || assessment.asbestosSuspect || assessment.leadPaintSuspect || assessment.emergencyServicesRequired) && (
               <div className="flex flex-wrap gap-2 pt-2 border-t border-main">
-                {assessment.emergencyServicesRequired && <Badge variant="error">Emergency Services</Badge>}
-                {assessment.containmentRequired && <Badge variant="warning">Containment Required</Badge>}
-                {assessment.asbestosSuspect && <Badge variant="error">Asbestos Suspect</Badge>}
-                {assessment.leadPaintSuspect && <Badge variant="error">Lead Paint Suspect</Badge>}
+                {assessment.emergencyServicesRequired && <Badge variant="error">{t('moisture.emergencyServices')}</Badge>}
+                {assessment.containmentRequired && <Badge variant="warning">{t('moisture.containmentRequired')}</Badge>}
+                {assessment.asbestosSuspect && <Badge variant="error">{t('moisture.asbestosSuspect')}</Badge>}
+                {assessment.leadPaintSuspect && <Badge variant="error">{t('moisture.leadPaintSuspect')}</Badge>}
               </div>
             )}
           </CardContent>
@@ -348,7 +348,7 @@ function OverviewTab({
       {/* Latest Psychrometric Reading */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Latest Conditions</CardTitle>
+          <CardTitle className="text-base">{t('moisture.latestConditions')}</CardTitle>
         </CardHeader>
         <CardContent>
           {latestPsych ? (
@@ -386,7 +386,7 @@ function OverviewTab({
           ) : (
             <div className="text-center py-6">
               <Thermometer size={36} className="mx-auto text-muted mb-2" />
-              <p className="text-sm text-muted">No psychrometric readings yet</p>
+              <p className="text-sm text-muted">{t('moisture.noPsychrometricReadings')}</p>
             </div>
           )}
         </CardContent>
@@ -395,7 +395,7 @@ function OverviewTab({
       {/* Location Grid — latest readings by area */}
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle className="text-base">Moisture Location Grid</CardTitle>
+          <CardTitle className="text-base">{t('moisture.moistureLocationGrid')}</CardTitle>
         </CardHeader>
         <CardContent>
           {readings.length > 0 ? (
@@ -403,7 +403,7 @@ function OverviewTab({
           ) : (
             <div className="text-center py-8">
               <Droplets size={36} className="mx-auto text-muted mb-2" />
-              <p className="text-sm text-muted">No moisture readings recorded for this job</p>
+              <p className="text-sm text-muted">{t('moisture.noMoistureReadingsRecorded')}</p>
             </div>
           )}
         </CardContent>
@@ -478,7 +478,7 @@ function ReadingsTab({ readings }: { readings: ReturnType<typeof useDryingMonito
     return (
       <Card><CardContent className="p-12 text-center">
         <Droplets size={48} className="mx-auto text-muted mb-4" />
-        <h3 className="text-lg font-medium text-main mb-2">No Moisture Readings</h3>
+        <h3 className="text-lg font-medium text-main mb-2">{t('moisture.noMoistureReadings')}</h3>
         <p className="text-muted">Readings are added from the mobile app during on-site monitoring.</p>
       </CardContent></Card>
     );
@@ -496,7 +496,7 @@ function ReadingsTab({ readings }: { readings: ReturnType<typeof useDryingMonito
               <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.material')}</th>
               <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.reading')}</th>
               <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.target')}</th>
-              <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Ref Std</th>
+              <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('moisture.refStd')}</th>
               <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.status')}</th>
             </tr>
           </thead>
@@ -558,7 +558,7 @@ function PsychrometricTab({
       {psychLogs.length === 0 ? (
         <Card><CardContent className="p-12 text-center">
           <Thermometer size={48} className="mx-auto text-muted mb-4" />
-          <h3 className="text-lg font-medium text-main mb-2">No Psychrometric Logs</h3>
+          <h3 className="text-lg font-medium text-main mb-2">{t('moisture.noPsychrometricLogs')}</h3>
           <p className="text-muted">Track indoor/outdoor temperature, humidity, and GPP to optimize drying.</p>
         </CardContent></Card>
       ) : (
@@ -570,9 +570,9 @@ function PsychrometricTab({
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.date')}</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.room')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.indoor')}</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP In</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('moisture.gppIn')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.outdoor')}</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Out</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('moisture.gppOut')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Diff</th>
                   <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.equipment')}</th>
                 </tr>

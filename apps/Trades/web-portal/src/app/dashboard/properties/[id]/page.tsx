@@ -275,7 +275,7 @@ export default function PropertyDetailPage() {
             ) : propertyUnits.length === 0 ? (
               <div className="py-12 text-center">
                 <Home size={40} className="mx-auto text-muted mb-2 opacity-50" />
-                <p className="text-muted">No units added yet</p>
+                <p className="text-muted">{t('properties.noUnitsAddedYet')}</p>
               </div>
             ) : (
               <div className="divide-y divide-main">
@@ -320,13 +320,13 @@ export default function PropertyDetailPage() {
             <Card>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totalMonthlyRent)}</p>
-                <p className="text-sm text-muted">Monthly Income</p>
+                <p className="text-sm text-muted">{t('common.monthlyIncome')}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold text-main">{formatCurrency(monthlyExpenses)}</p>
-                <p className="text-sm text-muted">Monthly Expenses</p>
+                <p className="text-sm text-muted">{t('common.monthlyExpenses')}</p>
               </CardContent>
             </Card>
             <Card>
@@ -342,11 +342,11 @@ export default function PropertyDetailPage() {
           {/* Expense Breakdown */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Expense Breakdown</CardTitle>
+              <CardTitle className="text-base">{t('common.expenseBreakdown')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted">Mortgage Payment</span>
+                <span className="text-muted">{t('common.mortgagePayment')}</span>
                 <span className="font-medium text-main">{formatCurrency(monthlyMortgage)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -358,7 +358,7 @@ export default function PropertyDetailPage() {
                 <span className="font-medium text-main">{formatCurrency(monthlyTax)}</span>
               </div>
               <div className="flex items-center justify-between text-sm pt-3 border-t border-main">
-                <span className="font-medium text-main">Total Monthly Expenses</span>
+                <span className="font-medium text-main">{t('common.totalMonthlyExpenses')}</span>
                 <span className="font-semibold text-main">{formatCurrency(monthlyExpenses)}</span>
               </div>
             </CardContent>
@@ -372,7 +372,7 @@ export default function PropertyDetailPage() {
             <CardContent className="p-0">
               {activeLeases.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-muted">No active leases</p>
+                  <p className="text-muted">{t('common.noActiveLeases')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-main">
@@ -398,13 +398,13 @@ export default function PropertyDetailPage() {
       {activeTab === 'maintenance' && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Maintenance Requests</CardTitle>
+            <CardTitle className="text-base">{t('common.maintenanceRequests')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="py-8 text-center">
               <Wrench size={40} className="mx-auto text-muted mb-2 opacity-50" />
-              <p className="text-muted">Maintenance requests for this property will appear here</p>
-              <p className="text-xs text-muted mt-1">Requests are managed from the main Maintenance section</p>
+              <p className="text-muted">{t('properties.maintenanceRequestsAppearHere')}</p>
+              <p className="text-xs text-muted mt-1">{t('properties.requestsManagedFromMaintenance')}</p>
             </div>
           </CardContent>
         </Card>
@@ -413,13 +413,13 @@ export default function PropertyDetailPage() {
       {activeTab === 'assets' && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Property Assets</CardTitle>
+            <CardTitle className="text-base">{t('properties.propertyAssets')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="py-8 text-center">
               <Package size={40} className="mx-auto text-muted mb-2 opacity-50" />
-              <p className="text-muted">Track HVAC, water heaters, appliances, and more</p>
-              <p className="text-xs text-muted mt-1">Asset tracking for this property will appear here</p>
+              <p className="text-muted">{t('properties.trackHvacAppliances')}</p>
+              <p className="text-xs text-muted mt-1">{t('properties.assetTrackingAppearHere')}</p>
             </div>
           </CardContent>
         </Card>
