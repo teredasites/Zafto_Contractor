@@ -23,10 +23,12 @@ import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
+import { useTranslation } from '@/lib/translations';
 import type { Customer } from '@/types';
 
 export default function CustomersPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [tagFilter, setTagFilter] = useState('all');
   const [view, setView] = useState<'list' | 'grid'>('list');
@@ -70,12 +72,12 @@ export default function CustomersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Customers</h1>
-          <p className="text-[13px] text-muted mt-1">Manage your customer relationships</p>
+          <h1 className="text-2xl font-semibold text-main">{t('customers.title')}</h1>
+          <p className="text-[13px] text-muted mt-1">{t('customers.manageDesc')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/customers/new')}>
           <Plus size={16} />
-          Add Customer
+          {t('customers.addCustomer')}
         </Button>
       </div>
 
@@ -89,7 +91,7 @@ export default function CustomersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{customers.length}</p>
-                <p className="text-sm text-muted">Total Customers</p>
+                <p className="text-sm text-muted">{t('customers.totalCustomers')}</p>
               </div>
             </div>
           </CardContent>
@@ -102,7 +104,7 @@ export default function CustomersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totalRevenue)}</p>
-                <p className="text-sm text-muted">Total Revenue</p>
+                <p className="text-sm text-muted">{t('customers.totalRevenue')}</p>
               </div>
             </div>
           </CardContent>
@@ -115,7 +117,7 @@ export default function CustomersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalJobs}</p>
-                <p className="text-sm text-muted">Total Jobs</p>
+                <p className="text-sm text-muted">{t('customers.totalJobs')}</p>
               </div>
             </div>
           </CardContent>
@@ -130,7 +132,7 @@ export default function CustomersPage() {
                 <p className="text-2xl font-semibold text-main">
                   {formatCurrency(customers.length > 0 ? totalRevenue / customers.length : 0)}
                 </p>
-                <p className="text-sm text-muted">Avg. Revenue</p>
+                <p className="text-sm text-muted">{t('customers.avgRevenue')}</p>
               </div>
             </div>
           </CardContent>
@@ -142,7 +144,7 @@ export default function CustomersPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search customers..."
+          placeholder={t('customers.searchCustomers')}
           className="sm:w-80"
         />
         <Select
@@ -187,7 +189,7 @@ export default function CustomersPage() {
             {filteredCustomers.length === 0 ? (
               <div className="py-12 text-center text-muted">
                 <Users size={40} className="mx-auto mb-2 opacity-50" />
-                <p>No customers found</p>
+                <p>{t('customers.noCustomers')}</p>
               </div>
             ) : (
               <div className="divide-y divide-main">
