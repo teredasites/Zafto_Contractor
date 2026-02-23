@@ -66,10 +66,10 @@ export default function TenantDetailPage() {
     return (
       <div className="text-center py-12">
         <User size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Tenant not found</h2>
-        <p className="text-muted mt-2">The tenant you are looking for does not exist.</p>
+        <h2 className="text-xl font-semibold text-main">{t('tenants.notFound')}</h2>
+        <p className="text-muted mt-2">{t('tenants.notFoundDesc')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/properties/tenants')}>
-          Back to Tenants
+          {t('common.back')}
         </Button>
       </div>
     );

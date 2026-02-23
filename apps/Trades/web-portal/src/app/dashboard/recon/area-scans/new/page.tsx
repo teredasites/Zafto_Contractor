@@ -125,7 +125,7 @@ export default function NewAreaScanPage() {
         <div>
           <h1 className="text-lg font-semibold text-main flex items-center gap-2">
             <Satellite size={20} />
-            New Area Scan
+            {t('reconAreaScansNew.title')}
           </h1>
           <p className="text-sm text-muted mt-0.5">
             Draw a polygon to scan an area for leads

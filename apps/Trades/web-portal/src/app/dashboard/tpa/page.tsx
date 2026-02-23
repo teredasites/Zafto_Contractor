@@ -461,7 +461,7 @@ export default function TpaDashboardPage() {
         <div>
           <h1 className="text-xl font-semibold text-white flex items-center gap-2">
             <Building2 className="h-5 w-5 text-blue-400" />
-            TPA Dashboard
+            {t('tpaDashboard.title')}
           </h1>
           <p className="text-sm text-zinc-400 mt-0.5">
             Program performance, financials, and compliance overview

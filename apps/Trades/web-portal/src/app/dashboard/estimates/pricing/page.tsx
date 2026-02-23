@@ -93,7 +93,7 @@ export default function PricingCoveragePage() {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-xl font-semibold text-zinc-100">Pricing Database Coverage</h1>
+          <h1 className="text-xl font-semibold text-zinc-100">{t('estimatesPricing.title')}</h1>
           <p className="text-sm text-zinc-500">Crowd-sourced pricing data by region and trade category</p>
         </div>
       </div>

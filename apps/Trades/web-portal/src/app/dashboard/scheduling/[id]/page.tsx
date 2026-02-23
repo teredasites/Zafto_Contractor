@@ -281,8 +281,8 @@ export default function GanttPage() {
           <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
             <Plus className="w-8 h-8 text-secondary" />
           </div>
-          <h3 className="text-lg font-semibold text-primary mb-1">No tasks yet</h3>
-          <p className="text-sm text-secondary mb-4">Add tasks to build your project schedule</p>
+          <h3 className="text-lg font-semibold text-primary mb-1">{t('scheduling.noTasks')}</h3>
+          <p className="text-sm text-secondary mb-4">{t('scheduling.noTasksDesc')}</p>
           <button onClick={() => setShowAddTask(true)} className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium">
             <Plus className="w-4 h-4" /> Add Task
           </button>

@@ -305,9 +305,9 @@ export default function AreaScanDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-2">
         <AlertCircle size={24} className="text-red-400" />
-        <p className="text-sm text-red-400">{error || 'Area scan not found'}</p>
+        <p className="text-sm text-red-400">{error || t('areaScans.notFound')}</p>
         <Link href="/dashboard/recon/area-scans" className="text-sm text-accent hover:underline mt-2">
-          Back to area scans
+          {t('common.back')}
         </Link>
       </div>
     );

@@ -75,7 +75,7 @@ export default function LegalAcknowledgmentPage() {
           >
             <Shield size={28} className="text-accent" />
           </div>
-          <h1 className="text-xl font-semibold text-main">Professional-Grade Tools</h1>
+          <h1 className="text-xl font-semibold text-main">{t('legalAcknowledgment.title')}</h1>
         </div>
 
         <div

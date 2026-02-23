@@ -315,7 +315,7 @@ export default function ReconPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-semibold text-main">
-            Property Scans{!loading && scans.length > 0 ? ` (${filtered.length})` : ''}
+            {t('recon.title')}{!loading && scans.length > 0 ? ` (${filtered.length})` : ''}
           </h2>
         </div>
         <div className="flex items-center gap-2">

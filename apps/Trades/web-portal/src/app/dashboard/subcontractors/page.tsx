@@ -154,7 +154,7 @@ export default function SubcontractorsPage() {
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
             <HardHat size={24} className="text-orange-400" />
-            Subcontractors
+            {t('subcontractors.title')}
           </h1>
           <p className="text-zinc-400 text-sm mt-1">Manage your subcontractor network</p>
         </div>

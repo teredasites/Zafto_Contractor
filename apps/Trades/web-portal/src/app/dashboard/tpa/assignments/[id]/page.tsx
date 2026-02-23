@@ -110,7 +110,7 @@ export default function TpaAssignmentDetailPage() {
     return (
       <div className="space-y-4">
         <Link href="/dashboard/tpa/assignments" className="flex items-center gap-2 text-sm text-muted hover:text-main transition-colors">
-          <ArrowLeft size={16} /> Back to Assignments
+          <ArrowLeft size={16} /> {t('common.back')}
         </Link>
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">

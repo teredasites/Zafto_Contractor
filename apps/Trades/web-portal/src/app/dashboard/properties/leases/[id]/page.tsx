@@ -131,10 +131,10 @@ export default function LeaseDetailPage() {
     return (
       <div className="text-center py-12">
         <FileText size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Lease not found</h2>
-        <p className="text-muted mt-2">{error || 'The lease you are looking for does not exist.'}</p>
+        <h2 className="text-xl font-semibold text-main">{t('leases.notFound')}</h2>
+        <p className="text-muted mt-2">{error || t('leases.notFoundDesc')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/properties/leases')}>
-          Back to Leases
+          {t('common.back')}
         </Button>
       </div>
     );
