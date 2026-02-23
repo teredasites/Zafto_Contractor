@@ -328,8 +328,8 @@ export default function ReconciliationPage() {
                       <th className="text-left px-4 py-3 text-muted font-medium">Statement Date</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">Statement Balance</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">Difference</th>
-                      <th className="text-center px-4 py-3 text-muted font-medium">Status</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Actions</th>
+                      <th className="text-center px-4 py-3 text-muted font-medium">{t('common.status')}</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>

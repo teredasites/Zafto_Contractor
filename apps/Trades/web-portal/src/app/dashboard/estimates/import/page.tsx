@@ -319,7 +319,7 @@ export default function ImportEstimatePage() {
                 <tr className="text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800">
                   <th className="px-3 py-2 text-left w-8" />
                   <th className="px-3 py-2 text-left w-20">Code</th>
-                  <th className="px-3 py-2 text-left">Description</th>
+                  <th className="px-3 py-2 text-left">{t('common.description')}</th>
                   <th className="px-3 py-2 text-left w-16">Room</th>
                   <th className="px-3 py-2 text-right w-12">Qty</th>
                   <th className="px-3 py-2 text-right w-20">Xact Price</th>

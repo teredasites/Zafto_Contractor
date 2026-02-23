@@ -165,7 +165,7 @@ export default function InspectionTemplatesPage() {
                 <Button variant="secondary" className="flex-1" onClick={() => setSelectedTemplate(null)}>{t('common.close')}</Button>
                 {!selectedTemplate.isSystem && (
                   <>
-                    <Button variant="secondary" className="flex-1"><Edit size={16} />Edit</Button>
+                    <Button variant="secondary" className="flex-1"><Edit size={16} />{t('common.edit')}</Button>
                     <Button variant="secondary" className="flex-1"><Trash2 size={16} />{t('common.delete')}</Button>
                   </>
                 )}

@@ -560,12 +560,12 @@ export default function FiscalPeriodsPage() {
                 <thead>
                   <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
                     <th className="px-6 py-3 text-left">Period</th>
-                    <th className="px-4 py-3 text-left">Type</th>
+                    <th className="px-4 py-3 text-left">{t('common.type')}</th>
                     <th className="px-4 py-3 text-left">Start</th>
                     <th className="px-4 py-3 text-left">End</th>
-                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">{t('common.status')}</th>
                     <th className="px-4 py-3 text-left">Closed At</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
+                    <th className="px-4 py-3 text-right">{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -598,12 +598,12 @@ export default function FiscalPeriodsPage() {
                 <thead>
                   <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
                     <th className="px-6 py-3 text-left">Period</th>
-                    <th className="px-4 py-3 text-left">Type</th>
+                    <th className="px-4 py-3 text-left">{t('common.type')}</th>
                     <th className="px-4 py-3 text-left">Start</th>
                     <th className="px-4 py-3 text-left">End</th>
-                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">{t('common.status')}</th>
                     <th className="px-4 py-3 text-left">Closed At</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
+                    <th className="px-4 py-3 text-right">{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>

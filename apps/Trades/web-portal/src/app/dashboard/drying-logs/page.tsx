@@ -188,9 +188,9 @@ export default function DryingLogsPage() {
             <thead>
               <tr className="border-b border-main">
                 <th className="w-8 px-2 py-3"></th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Date</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.date')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Job</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Type</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.type')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Summary</th>
                 <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Equipment</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Indoor</th>

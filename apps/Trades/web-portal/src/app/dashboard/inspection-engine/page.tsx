@@ -272,10 +272,10 @@ export default function InspectionEnginePage() {
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Title</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Job</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Inspector</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Status</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.status')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Score</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Result</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Date</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.date')}</th>
                 <th className="text-center px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Signed</th>
               </tr>
             </thead>

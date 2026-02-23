@@ -233,7 +233,7 @@ export default function BaselinesPage() {
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm font-semibold text-primary truncate">{baseline.name}</h3>
                         {baseline.is_active && (
-                          <span className="px-2 py-0.5 text-[10px] font-semibold bg-accent/10 text-accent rounded">Active</span>
+                          <span className="px-2 py-0.5 text-[10px] font-semibold bg-accent/10 text-accent rounded">{t('common.active')}</span>
                         )}
                       </div>
                       <p className="text-xs text-tertiary mt-0.5">

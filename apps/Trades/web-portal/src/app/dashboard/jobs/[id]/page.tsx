@@ -268,7 +268,7 @@ export default function JobDetailPage() {
               </div>
               {job.scheduledStart && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Scheduled</span>
+                  <span className="text-muted">{t('common.scheduled')}</span>
                   <span className="text-main">{formatDate(job.scheduledStart)}</span>
                 </div>
               )}

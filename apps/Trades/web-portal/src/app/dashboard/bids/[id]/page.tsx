@@ -414,7 +414,7 @@ export default function BidDetailPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="text-left text-sm text-muted border-b border-main">
-                        <th className="pb-2 font-medium">Description</th>
+                        <th className="pb-2 font-medium">{t('common.description')}</th>
                         <th className="pb-2 font-medium text-right">Qty</th>
                         <th className="pb-2 font-medium text-right">Price</th>
                         <th className="pb-2 font-medium text-right">Total</th>

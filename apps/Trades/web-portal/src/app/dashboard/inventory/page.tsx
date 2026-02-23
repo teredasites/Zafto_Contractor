@@ -193,8 +193,8 @@ export default function InventoryPage() {
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Item</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">SKU</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Category</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Location</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.category')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.location')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Qty</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Min</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Unit Cost</th>
