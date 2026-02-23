@@ -193,7 +193,7 @@ export default function JurisdictionsPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         <StatCard label="Total Jurisdictions" value={stats.total} icon={MapPin} />
-        <StatCard label="Verified" value={stats.verified} icon={CheckCircle} />
+        <StatCard label={t('common.verified')} value={stats.verified} icon={CheckCircle} />
         <StatCard label="Online Submission" value={stats.withOnline} icon={Globe} />
         <StatCard label="Community Updated" value={stats.contributed} icon={Users} />
       </div>
@@ -261,7 +261,7 @@ export default function JurisdictionsPage() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <Input
-                placeholder="Phone"
+                placeholder={t('phone.title')}
                 value={addForm.building_dept_phone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddForm(f => ({ ...f, building_dept_phone: e.target.value }))}
               />
@@ -284,7 +284,7 @@ export default function JurisdictionsPage() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddForm(f => ({ ...f, avg_turnaround_days: e.target.value }))}
               />
               <Input
-                placeholder="Notes"
+                placeholder={t('walkthroughs.notes')}
                 value={addForm.notes}
                 onChange={(e) => setAddForm(f => ({ ...f, notes: e.target.value }))}
               />
@@ -332,7 +332,7 @@ export default function JurisdictionsPage() {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm(f => ({ ...f, building_dept_name: e.target.value }))}
                       />
                       <Input
-                        placeholder="Phone"
+                        placeholder={t('phone.title')}
                         value={(editForm.building_dept_phone as string) || ''}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm(f => ({ ...f, building_dept_phone: e.target.value }))}
                       />
@@ -355,7 +355,7 @@ export default function JurisdictionsPage() {
                         }
                       />
                       <Input
-                        placeholder="Notes"
+                        placeholder={t('walkthroughs.notes')}
                         value={(editForm.notes as string) || ''}
                         onChange={(e) => setEditForm(f => ({ ...f, notes: e.target.value }))}
                       />

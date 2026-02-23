@@ -371,9 +371,9 @@ function NewCOModal({ onClose, onCreate }: {
             <div className="space-y-2">
               {lineItems.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-12 gap-2 items-start">
-                  <input type="text" value={item.description} onChange={(e) => updateLineItem(idx, 'description', e.target.value)} placeholder="Description" className={`col-span-6 ${inputCls}`} />
-                  <input type="number" value={item.quantity} onChange={(e) => updateLineItem(idx, 'quantity', e.target.value)} placeholder="Qty" min="0" step="0.01" className={`col-span-2 ${inputCls}`} />
-                  <input type="number" value={item.unitPrice} onChange={(e) => updateLineItem(idx, 'unitPrice', e.target.value)} placeholder="Price" min="0" step="0.01" className={`col-span-3 ${inputCls}`} />
+                  <input type="text" value={item.description} onChange={(e) => updateLineItem(idx, 'description', e.target.value)} placeholder={t('common.description')} className={`col-span-6 ${inputCls}`} />
+                  <input type="number" value={item.quantity} onChange={(e) => updateLineItem(idx, 'quantity', e.target.value)} placeholder={t('common.qty')} min="0" step="0.01" className={`col-span-2 ${inputCls}`} />
+                  <input type="number" value={item.unitPrice} onChange={(e) => updateLineItem(idx, 'unitPrice', e.target.value)} placeholder={t('common.price')} min="0" step="0.01" className={`col-span-3 ${inputCls}`} />
                   <button type="button" onClick={() => removeLineItem(idx)} disabled={lineItems.length <= 1} className="col-span-1 flex items-center justify-center h-[42px] text-muted hover:text-red-500 disabled:opacity-30">
                     <Trash2 size={14} />
                   </button>

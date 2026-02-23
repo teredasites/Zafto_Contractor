@@ -128,10 +128,10 @@ export default function CertificationsPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <SummaryCard label="Total" count={counts.all} icon={Award} color="text-main" />
-        <SummaryCard label="Active" count={counts.active} icon={CheckCircle2} color="text-emerald-500" />
-        <SummaryCard label="Expiring Soon" count={counts.expiring} icon={AlertTriangle} color="text-amber-500" />
-        <SummaryCard label="Expired" count={counts.expired + counts.revoked} icon={XCircle} color="text-red-500" />
+        <SummaryCard label={t('invoices.total')} count={counts.all} icon={Award} color="text-main" />
+        <SummaryCard label={t('automations.active')} count={counts.active} icon={CheckCircle2} color="text-emerald-500" />
+        <SummaryCard label={t('certifications.expiring')} count={counts.expiring} icon={AlertTriangle} color="text-amber-500" />
+        <SummaryCard label={t('certifications.expired')} count={counts.expired + counts.revoked} icon={XCircle} color="text-red-500" />
       </div>
 
       {/* Search + Filter */}

@@ -72,7 +72,7 @@ export default function KeyboardShortcutsPage() {
         <button
           onClick={() => router.back()}
           className="p-2 rounded-lg text-muted hover:text-main hover:bg-surface-hover transition-colors"
-          aria-label="Go back"
+          aria-label={t('common.goBack')}
         >
           <ArrowLeft size={20} />
         </button>

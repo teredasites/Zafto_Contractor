@@ -432,7 +432,7 @@ function TemplatesTab({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDuplicate(template.id)}
-                    title="Duplicate"
+                    title={tr('common.duplicate')}
                   >
                     <Copy size={14} />
                   </Button>
@@ -441,7 +441,7 @@ function TemplatesTab({
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(template.id)}
-                      title="Archive"
+                      title={tr('common.archive')}
                     >
                       <Trash2 size={14} />
                     </Button>
@@ -515,7 +515,7 @@ function DocumentsTab({
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search documents..."
+          placeholder={t('documents.searchDocuments')}
           className="sm:w-80"
         />
         <Select
@@ -596,12 +596,12 @@ function DocumentsTab({
                           variant="ghost"
                           size="sm"
                           onClick={() => setExpandedId(isExpanded ? null : render.id)}
-                          title="Preview"
+                          title={t('common.preview')}
                         >
                           <Eye size={14} />
                         </Button>
                         {render.pdfStoragePath && (
-                          <Button variant="ghost" size="sm" title="Download PDF">
+                          <Button variant="ghost" size="sm" title={t('invoices.downloadPDF')}>
                             <Download size={14} />
                           </Button>
                         )}
@@ -619,7 +619,7 @@ function DocumentsTab({
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDelete(render.id)}
-                          title="Delete"
+                          title={t('common.delete')}
                         >
                           <Trash2 size={14} />
                         </Button>

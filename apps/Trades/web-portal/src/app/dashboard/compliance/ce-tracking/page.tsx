@@ -117,7 +117,7 @@ export default function CETrackingPage() {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard label="Total Credits" value={summary.totalCredits} icon={GraduationCap} />
         <StatCard label="Courses Completed" value={summary.totalCourses} icon={Award} />
-        <StatCard label="Verified" value={summary.verifiedCredits} icon={CheckCircle} variant="success" />
+        <StatCard label={t('common.verified')} value={summary.verifiedCredits} icon={CheckCircle} variant="success" />
         <StatCard label="Pending Verification" value={summary.pendingCredits} icon={Clock} variant="warning" />
         <StatCard label="Renewals Due" value={renewalSummary.upcoming} icon={FileText} variant={renewalSummary.overdue > 0 ? 'error' : 'default'} />
       </div>

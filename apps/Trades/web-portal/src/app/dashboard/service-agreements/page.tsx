@@ -464,7 +464,7 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
           <Select
-            label="Type"
+            label={t('common.type')}
             options={[
               { value: 'hvac', label: 'HVAC Maintenance' },
               { value: 'electrical', label: 'Electrical Inspection' },
@@ -474,9 +474,9 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
             ]}
           />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Amount" type="number" placeholder="199.00" />
+            <Input label={t('invoices.amount')} type="number" placeholder="199.00" />
             <Select
-              label="Frequency"
+              label={t('common.frequency')}
               options={[
                 { value: 'monthly', label: 'Monthly' },
                 { value: 'quarterly', label: 'Quarterly' },

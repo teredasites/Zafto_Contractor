@@ -203,10 +203,10 @@ export default function ClaimDetailPage() {
                 <div className="rounded-xl border border-border bg-card p-5">
                   <h3 className="text-[15px] font-semibold mb-3">{t('common.lossDetails')}</h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <DetailRow label="Category" value={CLAIM_CATEGORY_LABELS[claim.claimCategory]} />
-                    <DetailRow label="Loss Type" value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
-                    <DetailRow label="Date of Loss" value={formatDate(claim.dateOfLoss)} />
-                    {claim.lossDescription && <DetailRow label="Description" value={claim.lossDescription} className="col-span-2" />}
+                    <DetailRow label={t('common.category')} value={CLAIM_CATEGORY_LABELS[claim.claimCategory]} />
+                    <DetailRow label={t('common.lossType')} value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
+                    <DetailRow label={t('estimates.dateOfLoss')} value={formatDate(claim.dateOfLoss)} />
+                    {claim.lossDescription && <DetailRow label={t('common.description')} value={claim.lossDescription} className="col-span-2" />}
                   </div>
                 </div>
 
@@ -219,12 +219,12 @@ export default function ClaimDetailPage() {
                 <div className="rounded-xl border border-border bg-card p-5">
                   <h3 className="text-[15px] font-semibold mb-3">{t('common.financials')}</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <FinancialCard label="Approved" value={claim.approvedAmount} />
+                    <FinancialCard label={t('permits.approved')} value={claim.approvedAmount} />
                     <FinancialCard label="Supplements" value={claim.supplementTotal} />
-                    <FinancialCard label="Deductible" value={claim.deductible} negative />
+                    <FinancialCard label={t('common.deductible')} value={claim.deductible} negative />
                     <FinancialCard label="Depreciation" value={claim.depreciation} negative />
-                    <FinancialCard label="ACV" value={claim.acv} />
-                    <FinancialCard label="RCV" value={claim.rcv} />
+                    <FinancialCard label={t('common.acv')} value={claim.acv} />
+                    <FinancialCard label={t('common.rcv')} value={claim.rcv} />
                   </div>
                   <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                     <span className="text-sm font-medium">{t('common.netPayable')}</span>
@@ -360,7 +360,7 @@ export default function ClaimDetailPage() {
 
             {activeTab === 'equipment' && (
               <div className="space-y-3">
-                {equipment.length === 0 && <EmptyTab icon={Wrench} label="No equipment deployed" />}
+                {equipment.length === 0 && <EmptyTab icon={Wrench} label={t('common.noEquipmentDeployed')} />}
                 {equipment.map((e) => {
                   const days = e.totalDays || Math.max(1, Math.ceil((Date.now() - new Date(e.deployedAt).getTime()) / 86400000));
                   const totalCost = e.dailyRate * days;
@@ -411,11 +411,11 @@ export default function ClaimDetailPage() {
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-[15px] font-semibold mb-3">{t('common.claimInfo')}</h3>
             <div className="space-y-2.5 text-sm">
-              <DetailRow label="Claim #" value={claim.claimNumber} />
-              <DetailRow label="Carrier" value={claim.insuranceCompany} />
-              {claim.policyNumber && <DetailRow label="Policy #" value={claim.policyNumber} />}
-              <DetailRow label="Loss Type" value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
-              <DetailRow label="Date of Loss" value={formatDate(claim.dateOfLoss)} />
+              <DetailRow label={t('common.claimNumber')} value={claim.claimNumber} />
+              <DetailRow label={t('common.carrier')} value={claim.insuranceCompany} />
+              {claim.policyNumber && <DetailRow label={t('common.policyNumber')} value={claim.policyNumber} />}
+              <DetailRow label={t('common.lossType')} value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
+              <DetailRow label={t('estimates.dateOfLoss')} value={formatDate(claim.dateOfLoss)} />
               {claim.coverageLimit != null && <DetailRow label="Coverage Limit" value={`$${claim.coverageLimit.toLocaleString()}`} />}
             </div>
           </div>
@@ -455,7 +455,7 @@ export default function ClaimDetailPage() {
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-[15px] font-semibold mb-3">{t('common.timeline')}</h3>
             <div className="space-y-2 text-xs">
-              <TimelineRow label="Created" date={claim.createdAt} />
+              <TimelineRow label={t('common.createdAt')} date={claim.createdAt} />
               {claim.scopeSubmittedAt && <TimelineRow label="Scope Submitted" date={claim.scopeSubmittedAt} />}
               {claim.estimateApprovedAt && <TimelineRow label="Estimate Approved" date={claim.estimateApprovedAt} />}
               {claim.workStartedAt && <TimelineRow label="Work Started" date={claim.workStartedAt} />}
@@ -469,9 +469,9 @@ export default function ClaimDetailPage() {
             <h3 className="text-[15px] font-semibold mb-3">{t('common.summary')}</h3>
             <div className="grid grid-cols-2 gap-3">
               <StatCard label="Supplements" value={supplements.length.toString()} />
-              <StatCard label="Inspections" value={tpiInspections.length.toString()} />
+              <StatCard label={t('inspections.title')} value={tpiInspections.length.toString()} />
               <StatCard label="Readings" value={moistureReadings.length.toString()} />
-              <StatCard label="Equipment" value={equipment.filter(e => e.status === 'deployed').length.toString()} />
+              <StatCard label={t('equipment.title')} value={equipment.filter(e => e.status === 'deployed').length.toString()} />
             </div>
           </div>
         </div>
@@ -818,12 +818,12 @@ function SupplementsTab({
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">{t('common.rcv')}</label>
-              <input type="number" step="0.01" min="0" placeholder="Optional" value={rcvAmount} onChange={(e) => setRcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
+              <input type="number" step="0.01" min="0" placeholder={t('common.optional')} value={rcvAmount} onChange={(e) => setRcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">{t('common.acv')}</label>
-              <input type="number" step="0.01" min="0" placeholder="Optional" value={acvAmount} onChange={(e) => setAcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
+              <input type="number" step="0.01" min="0" placeholder={t('common.optional')} value={acvAmount} onChange={(e) => setAcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>

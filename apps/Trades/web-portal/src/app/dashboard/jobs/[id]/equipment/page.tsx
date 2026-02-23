@@ -711,12 +711,12 @@ function DeployEquipmentModal({
           {source === 'manual' && (
             <>
               <div className="grid grid-cols-2 gap-4">
-                <Input label="Make" value={make} onChange={(e) => setMake(e.target.value)} placeholder="Dri-Eaz" />
-                <Input label="Model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="LGR 3500i" />
+                <Input label={t('fleet.make')} value={make} onChange={(e) => setMake(e.target.value)} placeholder="Dri-Eaz" />
+                <Input label={t('fleet.model')} value={model} onChange={(e) => setModel(e.target.value)} placeholder="LGR 3500i" />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Input label="Serial Number" value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} placeholder="Optional" />
-                <Input label="Asset Tag" value={assetTag} onChange={(e) => setAssetTag(e.target.value)} placeholder="Optional" />
+                <Input label={t('common.serialNumber')} value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} placeholder={t('common.optional')} />
+                <Input label="Asset Tag" value={assetTag} onChange={(e) => setAssetTag(e.target.value)} placeholder={t('common.optional')} />
               </div>
             </>
           )}

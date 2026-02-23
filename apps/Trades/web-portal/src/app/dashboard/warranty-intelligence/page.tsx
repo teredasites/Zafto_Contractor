@@ -235,9 +235,9 @@ function DashboardView({
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <StatCard icon={Shield} label="Total Equipment" value={stats.totalEquipment} color="blue" />
-        <StatCard icon={ShieldCheck} label="Active Warranties" value={stats.activeWarranties} color="green" />
-        <StatCard icon={Clock} label="Expiring Soon" value={stats.expiringSoon} color="yellow" />
-        <StatCard icon={FileText} label="Open Claims" value={stats.openClaims} color="orange" />
+        <StatCard icon={ShieldCheck} label={t('warranties.activeWarranties')} value={stats.activeWarranties} color="green" />
+        <StatCard icon={Clock} label={t('certifications.expiring')} value={stats.expiringSoon} color="yellow" />
+        <StatCard icon={FileText} label={t('warranties.openClaims')} value={stats.openClaims} color="orange" />
         <StatCard icon={DollarSign} label="Claims Approved" value={formatCurrency(stats.approvedClaimValue)} color="green" />
       </div>
 

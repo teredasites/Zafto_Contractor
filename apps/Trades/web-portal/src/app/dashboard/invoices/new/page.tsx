@@ -259,7 +259,7 @@ export default function NewInvoicePage() {
                       <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <input
                         type="text"
-                        placeholder="Search customers..."
+                        placeholder={t('customers.searchCustomers')}
                         value={customerSearch}
                         onChange={(e) => setCustomerSearch(e.target.value)}
                         onFocus={() => setShowCustomerSearch(true)}
@@ -516,7 +516,7 @@ export default function NewInvoicePage() {
                 </select>
               </div>
               <Input
-                label="Due Date"
+                label={t('invoices.dueDate')}
                 type="date"
                 value={formData.dueDate}
                 onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}

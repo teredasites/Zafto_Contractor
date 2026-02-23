@@ -358,9 +358,9 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <Input label="Dehumidifiers" type="number" placeholder="0" />
-            <Input label="Air Movers" type="number" placeholder="0" />
-            <Input label="Air Scrubbers" type="number" placeholder="0" />
+            <Input label={t('moisture.dehumidifiers')} type="number" placeholder="0" />
+            <Input label={t('moisture.airMovers')} type="number" placeholder="0" />
+            <Input label={t('common.airScrubbers')} type="number" placeholder="0" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input label="Indoor Temp (F)" type="number" placeholder="72" />

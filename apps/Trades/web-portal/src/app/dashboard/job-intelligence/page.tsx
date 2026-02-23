@@ -87,7 +87,7 @@ export default function JobIntelligencePage() {
         />
         <StatCard
           icon={DollarSign}
-          label="Total Revenue"
+          label={t('customers.totalRevenue')}
           value={fmtMoney(summary.totalRevenue)}
         />
         <StatCard

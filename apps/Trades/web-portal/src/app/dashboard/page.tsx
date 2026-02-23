@@ -475,7 +475,7 @@ export default function DashboardPage() {
                 )}
                 {verticals.reconstruction && (
                   <VerticalSummaryCard
-                    title="Reconstruction Pipeline"
+                    title={t('dashboard.reconstructionPipeline')}
                     icon={<Briefcase size={14} className="text-orange-500" />}
                     description="Active reconstruction claims detected"
                     linkLabel="View Claims"
@@ -484,7 +484,7 @@ export default function DashboardPage() {
                 )}
                 {verticals.commercial && (
                   <VerticalSummaryCard
-                    title="Commercial Claims"
+                    title={t('dashboard.commercialClaims')}
                     icon={<MapPin size={14} className="text-indigo-500" />}
                     description="Commercial property claims active"
                     linkLabel="View Claims"
@@ -493,7 +493,7 @@ export default function DashboardPage() {
                 )}
                 {verticals.warranty && (
                   <VerticalSummaryCard
-                    title="Warranty Network"
+                    title={t('dashboard.warrantyNetwork')}
                     icon={<Shield size={14} className="text-purple-500" />}
                     description="Multiple warranty company relationships"
                     linkLabel="View Warranties"

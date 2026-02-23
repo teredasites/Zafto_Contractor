@@ -443,22 +443,22 @@ function OverviewTab({ job }: { job: Job }) {
         <CardContent>
           <div className="space-y-4">
             <TimelineItem
-              label="Created"
+              label={t('common.createdAt')}
               date={job.createdAt}
               completed={true}
             />
             <TimelineItem
-              label="Scheduled"
+              label={t('jobs.statusScheduled')}
               date={job.scheduledStart}
               completed={!!job.scheduledStart}
             />
             <TimelineItem
-              label="Started"
+              label={t('common.started')}
               date={job.actualStart}
               completed={!!job.actualStart}
             />
             <TimelineItem
-              label="Completed"
+              label={t('inspections.completed')}
               date={job.actualEnd}
               completed={job.status === 'completed' || job.status === 'invoiced' || job.status === 'paid'}
               isLast
@@ -715,20 +715,20 @@ function MaterialsTab({ job }: { job: Job }) {
               />
             </div>
             <Input
-              label="Qty"
+              label={t('common.qty')}
               type="number"
               value={formData.quantity}
               onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
               min="0"
             />
             <Input
-              label="Unit"
+              label={t('common.unit')}
               value={formData.unit}
               onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
               placeholder="ea, ft, gal"
             />
             <Input
-              label="Unit Cost"
+              label={t('jobs.materials.unitCost')}
               type="number"
               value={formData.unit_cost}
               onChange={(e) => setFormData({ ...formData, unit_cost: e.target.value })}

@@ -202,7 +202,7 @@ export default function SmsPage() {
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
-                        placeholder="Type a message..."
+                        placeholder={t('teamChat.typeMessage')}
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}

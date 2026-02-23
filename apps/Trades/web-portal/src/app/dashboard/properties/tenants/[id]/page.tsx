@@ -122,17 +122,17 @@ export default function TenantDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <DetailRow icon={<Mail size={16} />} label="Email" value={tenant.email ?? '--'} />
-              <DetailRow icon={<Phone size={16} />} label="Phone" value={tenant.phone ?? '--'} />
+              <DetailRow icon={<Mail size={16} />} label={t('email.title')} value={tenant.email ?? '--'} />
+              <DetailRow icon={<Phone size={16} />} label={t('phone.title')} value={tenant.phone ?? '--'} />
               <DetailRow icon={<Calendar size={16} />} label="Date of Birth" value={tenant.dateOfBirth ? formatDate(tenant.dateOfBirth) : '--'} />
               <DetailRow icon={<Briefcase size={16} />} label="Employer" value={tenant.employer ?? '--'} />
-              <DetailRow icon={<DollarSign size={16} />} label="Monthly Income" value={tenant.monthlyIncome ? formatCurrency(tenant.monthlyIncome) : '--'} />
+              <DetailRow icon={<DollarSign size={16} />} label={t('common.monthlyIncome')} value={tenant.monthlyIncome ? formatCurrency(tenant.monthlyIncome) : '--'} />
 
               <div className="pt-3 border-t border-main">
                 <h4 className="text-sm font-medium text-main mb-2">{t('hr.emergencyContact')}</h4>
                 <div className="space-y-2">
-                  <DetailRow icon={<Shield size={16} />} label="Name" value={tenant.emergencyContactName ?? '--'} />
-                  <DetailRow icon={<Phone size={16} />} label="Phone" value={tenant.emergencyContactPhone ?? '--'} />
+                  <DetailRow icon={<Shield size={16} />} label={t('common.name')} value={tenant.emergencyContactName ?? '--'} />
+                  <DetailRow icon={<Phone size={16} />} label={t('phone.title')} value={tenant.emergencyContactPhone ?? '--'} />
                 </div>
               </div>
 

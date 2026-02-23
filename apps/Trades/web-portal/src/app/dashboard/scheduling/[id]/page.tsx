@@ -183,18 +183,18 @@ export default function GanttPage() {
           <button
             onClick={() => setShowDeps(!showDeps)}
             className={`p-1.5 rounded-md ${showDeps ? 'bg-accent/10 text-accent' : 'hover:bg-surface-alt text-secondary'}`}
-            title="Dependencies"
+            title={t('scheduling.dependencies')}
           >
             <Link2 className="w-4 h-4" />
           </button>
 
           <div className="w-px h-5 bg-main mx-1" />
 
-          <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/resources`)} className="p-1.5 hover:bg-surface-alt rounded-md" title="Resources">
+          <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/resources`)} className="p-1.5 hover:bg-surface-alt rounded-md" title={t('schedulingResources.title')}>
             <Users className="w-4 h-4 text-secondary" />
           </button>
 
-          <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/baselines`)} className="p-1.5 hover:bg-surface-alt rounded-md" title="Baselines">
+          <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/baselines`)} className="p-1.5 hover:bg-surface-alt rounded-md" title={t('schedulingBaselines.title')}>
             <Bookmark className="w-4 h-4 text-secondary" />
           </button>
 
@@ -488,7 +488,7 @@ export default function GanttPage() {
             <button onClick={() => { updateProgress(task.id, 100); }} className="p-1 hover:bg-success/10 rounded text-success" title="Mark complete">
               <CheckCircle2 className="w-4 h-4" />
             </button>
-            <button onClick={() => { deleteTask(task.id); setSelectedTask(null); }} className="p-1 hover:bg-error/10 rounded text-error" title="Delete">
+            <button onClick={() => { deleteTask(task.id); setSelectedTask(null); }} className="p-1 hover:bg-error/10 rounded text-error" title={t('common.delete')}>
               <Trash2 className="w-4 h-4" />
             </button>
           </div>

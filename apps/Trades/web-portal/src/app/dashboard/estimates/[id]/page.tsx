@@ -1180,7 +1180,7 @@ function AreaSection({
           )}
           {area && (
             <>
-              <button onClick={() => setShowDimensions(!showDimensions)} className="p-1 text-zinc-500 hover:text-zinc-300" title="Dimensions">
+              <button onClick={() => setShowDimensions(!showDimensions)} className="p-1 text-zinc-500 hover:text-zinc-300" title={tr('common.dimensions')}>
                 <Ruler className="w-3.5 h-3.5" />
               </button>
               <button onClick={() => onDeleteArea(area.id)} className="p-1 text-zinc-600 hover:text-red-400">

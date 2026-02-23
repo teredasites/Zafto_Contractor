@@ -516,7 +516,7 @@ function BillingTab({
                           <button
                             onClick={() => onSubmit(b.id)}
                             className="p-1 text-muted hover:text-blue-600 rounded transition-colors"
-                            title="Submit"
+                            title={t('common.submit')}
                           >
                             <Send size={14} />
                           </button>
@@ -525,7 +525,7 @@ function BillingTab({
                           <button
                             onClick={() => onApprove(b.id)}
                             className="p-1 text-muted hover:text-emerald-600 rounded transition-colors"
-                            title="Approve"
+                            title={t('common.approve')}
                           >
                             <CheckCircle size={14} />
                           </button>

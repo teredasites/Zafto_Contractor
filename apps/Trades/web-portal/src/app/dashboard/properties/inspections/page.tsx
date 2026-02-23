@@ -144,7 +144,7 @@ export default function PmInspectionsPage() {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search inspections..." className="sm:w-80" />
+        <SearchInput value={search} onChange={setSearch} placeholder={t('inspections.searchInspections')} className="sm:w-80" />
         <Select options={typeOptions} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="sm:w-48" />
         <Select options={statusOptions} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="sm:w-48" />
       </div>

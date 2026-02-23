@@ -109,7 +109,7 @@ export default function VendorsPage() {
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 max-w-sm">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-          <Input placeholder="Search vendors..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('vendors.searchVendors')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex items-center gap-1.5">
           {['all', ...VENDOR_TYPES].map((type) => (
@@ -362,12 +362,12 @@ function VendorModal({ vendor, onSave, onClose }: {
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1">{t('common.address')}</label>
-            <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street" />
+            <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={t('common.street')} />
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" />
-            <Input value={state} onChange={(e) => setState(e.target.value)} placeholder="State" />
-            <Input value={zip} onChange={(e) => setZip(e.target.value)} placeholder="ZIP" />
+            <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder={t('common.city')} />
+            <Input value={state} onChange={(e) => setState(e.target.value)} placeholder={t('common.state')} />
+            <Input value={zip} onChange={(e) => setZip(e.target.value)} placeholder={t('common.zip')} />
           </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm text-main cursor-pointer">

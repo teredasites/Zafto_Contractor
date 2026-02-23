@@ -268,7 +268,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex flex-col sm:flex-row gap-4">
-          <SearchInput value={search} onChange={onSearchChange} placeholder="Search employees..." className="sm:w-80" />
+          <SearchInput value={search} onChange={onSearchChange} placeholder={t('hr.searchEmployees')} className="sm:w-80" />
           <Select
             options={[
               { value: 'all', label: 'All Statuses' },
@@ -480,7 +480,7 @@ function NewEmployeeModal({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{t('hiring.department')}</label>
-              <input type="text" placeholder="Electrical" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <input type="text" placeholder={t('common.electrical')} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
           </div>
           <div>

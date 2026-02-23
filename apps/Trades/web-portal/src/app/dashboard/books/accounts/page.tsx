@@ -140,11 +140,11 @@ export default function ChartOfAccountsPage() {
 
       {/* Summary Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <SummaryCard label="Total Assets" value={totalAssets} color="blue" />
+        <SummaryCard label={t('common.totalAssets')} value={totalAssets} color="blue" />
         <SummaryCard label="Total Liabilities" value={totalLiabilities} color="orange" />
         <SummaryCard label="Total Equity" value={totalEquity} color="purple" />
-        <SummaryCard label="Total Revenue" value={totalRevenue} color="emerald" />
-        <SummaryCard label="Total Expenses" value={totalExpenses} color="red" />
+        <SummaryCard label={t('customers.totalRevenue')} value={totalRevenue} color="emerald" />
+        <SummaryCard label={t('dashboard.totalExpenses')} value={totalExpenses} color="red" />
       </div>
 
       {/* Filters */}
@@ -270,7 +270,7 @@ export default function ChartOfAccountsPage() {
                               <button
                                 onClick={() => { setEditingAccount(account); setModalOpen(true); }}
                                 className="p-1 text-muted hover:text-main rounded transition-colors"
-                                title="Edit"
+                                title={t('common.edit')}
                               >
                                 <Pencil size={14} />
                               </button>
@@ -278,7 +278,7 @@ export default function ChartOfAccountsPage() {
                                 <button
                                   onClick={() => handleDeactivate(account)}
                                   className="p-1 text-muted hover:text-red-600 rounded transition-colors"
-                                  title="Deactivate"
+                                  title={t('common.deactivate')}
                                 >
                                   <ToggleRight size={14} />
                                 </button>

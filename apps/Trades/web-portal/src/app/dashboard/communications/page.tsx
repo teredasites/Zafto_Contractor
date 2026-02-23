@@ -475,7 +475,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.to')}</label>
             <input
               type="text"
-              placeholder="Search customers..."
+              placeholder={t('customers.searchCustomers')}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
             />
           </div>

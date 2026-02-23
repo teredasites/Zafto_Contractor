@@ -141,9 +141,9 @@ export default function MaintenancePipelinePage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <StatCard icon={BarChart3} label="Total Predictions" value={stats.total} color="blue" />
           <StatCard icon={Clock} label="Upcoming (30d)" value={stats.upcoming} color="yellow" />
-          <StatCard icon={AlertTriangle} label="Overdue" value={stats.overdue} color="red" />
+          <StatCard icon={AlertTriangle} label={t('toolCheckout.overdue')} value={stats.overdue} color="red" />
           <StatCard icon={CheckCircle} label="Booked" value={stats.booked} color="green" />
-          <StatCard icon={DollarSign} label="Pipeline Value" value={formatCurrency(stats.totalEstimatedRevenue)} color="green" />
+          <StatCard icon={DollarSign} label={t('common.pipelineValue')} value={formatCurrency(stats.totalEstimatedRevenue)} color="green" />
         </div>
 
         {/* View Mode Tabs */}

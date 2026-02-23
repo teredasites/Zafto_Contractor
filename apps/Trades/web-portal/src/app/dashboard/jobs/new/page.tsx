@@ -216,7 +216,7 @@ export default function NewJobPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
-                label="Job Title"
+                label={t('common.jobTitle')}
                 placeholder="e.g., Panel Upgrade, Outlet Installation"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -234,7 +234,7 @@ export default function NewJobPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Select
-                  label="Priority"
+                  label={t('common.priority')}
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                   options={[
@@ -265,7 +265,7 @@ export default function NewJobPage() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <Input
-                  label="Estimated Value"
+                  label={t('common.estimatedValue')}
                   type="number"
                   placeholder="0.00"
                   value={formData.estimatedValue}
@@ -351,7 +351,7 @@ export default function NewJobPage() {
                     onChange={(e) => setFormData({ ...formData, policyNumber: e.target.value })}
                   />
                   <Input
-                    label="Date of Loss"
+                    label={t('estimates.dateOfLoss')}
                     type="date"
                     value={formData.dateOfLoss}
                     onChange={(e) => setFormData({ ...formData, dateOfLoss: e.target.value })}
@@ -381,7 +381,7 @@ export default function NewJobPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
-                    label="Deductible"
+                    label={t('common.deductible')}
                     type="number"
                     placeholder="0.00"
                     value={formData.deductible}
@@ -429,7 +429,7 @@ export default function NewJobPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <Select
-                    label="Warranty Type"
+                    label={t('warranties.warrantyType')}
                     value={formData.warrantyType}
                     onChange={(e) => setFormData({ ...formData, warrantyType: e.target.value })}
                     options={[
@@ -496,7 +496,7 @@ export default function NewJobPage() {
                       <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <input
                         type="text"
-                        placeholder="Search customers..."
+                        placeholder={t('customers.searchCustomers')}
                         value={customerSearch}
                         onChange={(e) => setCustomerSearch(e.target.value)}
                         onFocus={() => setShowCustomerSearch(true)}
@@ -611,19 +611,19 @@ export default function NewJobPage() {
                   />
                   <div className="grid grid-cols-3 gap-4">
                     <Input
-                      label="City"
+                      label={t('common.city')}
                       placeholder="Hartford"
                       value={formData.address.city}
                       onChange={(e) => setFormData({ ...formData, address: { ...formData.address, city: e.target.value } })}
                     />
                     <Input
-                      label="State"
+                      label={t('common.state')}
                       placeholder="CT"
                       value={formData.address.state}
                       onChange={(e) => setFormData({ ...formData, address: { ...formData.address, state: e.target.value } })}
                     />
                     <Input
-                      label="ZIP"
+                      label={t('common.zip')}
                       placeholder="06103"
                       value={formData.address.zip}
                       onChange={(e) => setFormData({ ...formData, address: { ...formData.address, zip: e.target.value } })}
@@ -647,13 +647,13 @@ export default function NewJobPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
-                label="Date"
+                label={t('common.date')}
                 type="date"
                 value={formData.scheduledDate}
                 onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
               />
               <Input
-                label="Time"
+                label={t('jobs.tabs.time')}
                 type="time"
                 value={formData.scheduledTime}
                 onChange={(e) => setFormData({ ...formData, scheduledTime: e.target.value })}

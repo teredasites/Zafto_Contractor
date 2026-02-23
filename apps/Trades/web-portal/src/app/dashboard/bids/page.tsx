@@ -144,7 +144,7 @@ export default function BidsPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search bids..."
+          placeholder={t('bidsPage.searchBids')}
           className="sm:w-80"
         />
         <Select
