@@ -234,7 +234,7 @@ export default function CompliancePage() {
           <Card>
             <CardContent className="p-8 text-center">
               <Shield className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-400">No certifications found</p>
+              <p className="text-zinc-400">{t('common.noCertificationsFound')}</p>
               <p className="text-sm text-zinc-500 mt-1">
                 {searchQuery ? 'Try adjusting your search' : 'Add certifications to track compliance'}
               </p>

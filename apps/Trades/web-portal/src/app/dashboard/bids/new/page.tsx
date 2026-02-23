@@ -2079,7 +2079,7 @@ Example:
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Estimate</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('common.estimate')}</div>
                     <div className="font-mono text-lg font-semibold text-gray-900 dark:text-white">#EST-2026-001</div>
                   </div>
                 </div>

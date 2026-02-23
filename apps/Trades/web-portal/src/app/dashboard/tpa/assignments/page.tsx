@@ -297,13 +297,13 @@ export default function TpaAssignmentsPage() {
                   <Input value={form.assignmentNumber} onChange={e => updateField('assignmentNumber', e.target.value)} placeholder="TPA-assigned ID" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted uppercase tracking-wide">Claim #</label>
+                  <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.claimNumber')}</label>
                   <Input value={form.claimNumber} onChange={e => updateField('claimNumber', e.target.value)} placeholder="Claim number" className="mt-1" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted uppercase tracking-wide">Policy #</label>
+                  <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.policyNumber')}</label>
                   <Input value={form.policyNumber} onChange={e => updateField('policyNumber', e.target.value)} placeholder="Policy number" className="mt-1" />
                 </div>
                 <div>
@@ -332,7 +332,7 @@ export default function TpaAssignmentsPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted uppercase tracking-wide">Date of Loss</label>
+                  <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.dateOfLoss')}</label>
                   <Input type="date" value={form.lossDate} onChange={e => updateField('lossDate', e.target.value)} className="mt-1" />
                 </div>
               </div>
@@ -563,19 +563,19 @@ export default function TpaAssignmentsPage() {
                       {/* SLA indicators */}
                       <div className="hidden md:flex items-center gap-4 flex-shrink-0">
                         <div className="text-right">
-                          <p className="text-[10px] text-muted uppercase">Contact</p>
+                          <p className="text-[10px] text-muted uppercase">{t('common.contact')}</p>
                           <p className={cn('text-xs font-medium', SLA_COLORS[contactSla])}>
                             {formatTimeRemaining(assignment.firstContactDeadline, assignment.firstContactAt)}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] text-muted uppercase">Onsite</p>
+                          <p className="text-[10px] text-muted uppercase">{t('common.onsite')}</p>
                           <p className={cn('text-xs font-medium', SLA_COLORS[onsiteSla])}>
                             {formatTimeRemaining(assignment.onsiteDeadline, assignment.onsiteAt)}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] text-muted uppercase">Estimate</p>
+                          <p className="text-[10px] text-muted uppercase">{t('common.estimate')}</p>
                           <p className={cn('text-xs font-medium', SLA_COLORS[estimateSla])}>
                             {formatTimeRemaining(assignment.estimateDeadline, assignment.estimateSubmittedAt)}
                           </p>
@@ -585,7 +585,7 @@ export default function TpaAssignmentsPage() {
                       {/* Financial */}
                       {assignment.totalEstimated > 0 && (
                         <div className="hidden xl:block text-right flex-shrink-0">
-                          <p className="text-[10px] text-muted uppercase">Estimated</p>
+                          <p className="text-[10px] text-muted uppercase">{t('common.estimated')}</p>
                           <p className="text-sm font-medium text-main">
                             ${assignment.totalEstimated.toLocaleString()}
                           </p>

@@ -106,7 +106,7 @@ export default function LienRulesPage() {
                   <div className="px-4 pb-4 border-t border-zinc-800 pt-3">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">Preliminary Notice</h4>
+                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('common.preliminaryNotice')}</h4>
                         {rule.preliminary_notice_required ? (
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -120,12 +120,12 @@ export default function LienRulesPage() {
                         ) : (
                           <div className="flex items-center gap-2">
                             <XCircle className="h-3.5 w-3.5 text-zinc-500" />
-                            <span className="text-zinc-400">Not required</span>
+                            <span className="text-zinc-400">{t('common.notRequired')}</span>
                           </div>
                         )}
                       </div>
                       <div>
-                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">Lien Filing</h4>
+                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('common.lienFiling')}</h4>
                         <div className="space-y-1">
                           <p className="text-white">
                             <span className="font-medium">{rule.lien_filing_deadline_days}</span> days from {rule.lien_filing_from.replace(/_/g, ' ')}
@@ -134,7 +134,7 @@ export default function LienRulesPage() {
                       </div>
                       {rule.lien_enforcement_deadline_days && (
                         <div>
-                          <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">Enforcement</h4>
+                          <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('common.enforcement')}</h4>
                           <p className="text-white">{rule.lien_enforcement_deadline_days} days from filing</p>
                         </div>
                       )}
@@ -144,7 +144,7 @@ export default function LienRulesPage() {
                           <p className="text-zinc-400">
                             Notarization: {rule.notarization_required ?
                               <span className="text-amber-400">{t('common.required')}</span> :
-                              <span className="text-zinc-500">Not required</span>
+                              <span className="text-zinc-500">{t('common.notRequired')}</span>
                             }
                           </p>
                           {rule.notice_of_intent_required && (

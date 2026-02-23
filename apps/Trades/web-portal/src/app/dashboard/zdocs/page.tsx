@@ -217,7 +217,7 @@ export default function ZDocsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{recentRenders.length}</p>
-                <p className="text-sm text-muted">This Month</p>
+                <p className="text-sm text-muted">{t('common.thisMonth')}</p>
               </div>
             </div>
           </CardContent>

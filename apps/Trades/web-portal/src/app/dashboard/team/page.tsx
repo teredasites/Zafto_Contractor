@@ -291,7 +291,7 @@ export default function TeamPage() {
             {/* Field Techs List */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Field Techs</CardTitle>
+                <CardTitle className="text-sm">{t('common.fieldTechs')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-main">
@@ -410,7 +410,7 @@ export default function TeamPage() {
                   </div>
                   <div>
                     <p className="text-2xl font-semibold text-main">{fieldCount}</p>
-                    <p className="text-sm text-muted">Field Techs</p>
+                    <p className="text-sm text-muted">{t('common.fieldTechs')}</p>
                   </div>
                 </div>
               </CardContent>

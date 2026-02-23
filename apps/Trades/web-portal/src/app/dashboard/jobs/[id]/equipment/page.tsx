@@ -113,7 +113,7 @@ export default function JobEquipmentPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <AlertTriangle size={48} className="mx-auto text-red-500 mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">Failed to load equipment</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('common.failedToLoadEquipment')}</h3>
             <p className="text-muted">{error}</p>
           </CardContent>
         </Card>

@@ -233,7 +233,7 @@ export default function BooksPage() {
       {isLoading && (
         <div className="flex items-center justify-center py-12">
           <Loader2 size={24} className="animate-spin text-muted" />
-          <span className="ml-3 text-muted text-sm">Loading financial data...</span>
+          <span className="ml-3 text-muted text-sm">{t('common.loadingFinancialData')}</span>
         </div>
       )}
 

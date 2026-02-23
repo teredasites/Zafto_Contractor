@@ -258,7 +258,7 @@ export default function TpaAssignmentDetailPage() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wide">Estimated</p>
+                  <p className="text-xs text-muted uppercase tracking-wide">{t('common.estimated')}</p>
                   <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalEstimated.toLocaleString()}</p>
                 </div>
                 <div>
@@ -298,7 +298,7 @@ export default function TpaAssignmentDetailPage() {
                   )}
                   {assignment.lossDate && (
                     <div>
-                      <p className="text-xs text-muted uppercase tracking-wide">Date of Loss</p>
+                      <p className="text-xs text-muted uppercase tracking-wide">{t('common.dateOfLoss')}</p>
                       <p className="text-sm text-main mt-0.5">{formatDate(assignment.lossDate)}</p>
                     </div>
                   )}

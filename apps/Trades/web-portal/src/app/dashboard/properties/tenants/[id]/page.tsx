@@ -241,7 +241,7 @@ export default function TenantDetailPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Property</span>
+                  <span className="text-muted">{t('common.property')}</span>
                   <span className="font-medium text-main">{activeLease.propertyAddress ?? '--'}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -271,7 +271,7 @@ export default function TenantDetailPage() {
                   <span className="font-medium text-main">{formatCurrency(activeLease.depositAmount)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Deposit Held</span>
+                  <span className="text-muted">{t('common.depositHeld')}</span>
                   <Badge variant={activeLease.depositHeld ? 'success' : 'warning'} size="sm">
                     {activeLease.depositHeld ? 'Yes' : 'No'}
                   </Badge>
@@ -309,7 +309,7 @@ export default function TenantDetailPage() {
           {/* Quick Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Quick Info</CardTitle>
+              <CardTitle className="text-base">{t('common.quickInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between text-sm">

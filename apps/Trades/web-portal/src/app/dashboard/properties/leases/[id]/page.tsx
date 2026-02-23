@@ -218,7 +218,7 @@ export default function LeaseDetailPage() {
                   <p className="text-sm font-semibold text-main">{formatCurrency(lease.rentAmount)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Due Day</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.dueDay')}</p>
                   <p className="text-sm font-medium text-main">{lease.rentDueDay}{lease.rentDueDay === 1 ? 'st' : lease.rentDueDay === 2 ? 'nd' : lease.rentDueDay === 3 ? 'rd' : 'th'} of month</p>
                 </div>
                 <div>
@@ -352,7 +352,7 @@ export default function LeaseDetailPage() {
           {/* Quick Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Quick Info</CardTitle>
+              <CardTitle className="text-base">{t('common.quickInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
@@ -370,7 +370,7 @@ export default function LeaseDetailPage() {
                 <span className="text-main">{formatCurrency(lease.depositAmount)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Deposit Held</span>
+                <span className="text-muted">{t('common.depositHeld')}</span>
                 <span className={cn('text-xs font-medium', lease.depositHeld ? 'text-emerald-600' : 'text-amber-600')}>
                   {lease.depositHeld ? 'Yes' : 'No'}
                 </span>
@@ -403,7 +403,7 @@ export default function LeaseDetailPage() {
           {/* Tenant Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Tenant</CardTitle>
+              <CardTitle className="text-base">{t('common.tenant')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="font-medium text-main">{lease.tenantName || 'Unknown Tenant'}</p>
@@ -413,7 +413,7 @@ export default function LeaseDetailPage() {
           {/* Property Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Property</CardTitle>
+              <CardTitle className="text-base">{t('common.property')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-main">{lease.propertyAddress || 'N/A'}</p>

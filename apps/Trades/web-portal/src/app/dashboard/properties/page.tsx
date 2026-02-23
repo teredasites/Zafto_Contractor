@@ -125,7 +125,7 @@ export default function PropertiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats?.totalUnits ?? 0}</p>
-                <p className="text-sm text-muted">Total Units</p>
+                <p className="text-sm text-muted">{t('common.totalUnits')}</p>
               </div>
             </div>
           </CardContent>

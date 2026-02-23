@@ -64,7 +64,7 @@ export default function InspectionTemplatesPage() {
           <h1 className="text-2xl font-semibold text-main">{t('inspectionsTemplates.title')}</h1>
           <p className="text-muted mt-1">Manage checklists for inspections across all trades</p>
         </div>
-        <Button><Plus size={16} />New Template</Button>
+        <Button><Plus size={16} />{t('common.newTemplate')}</Button>
       </div>
 
       {/* Stats */}
@@ -75,7 +75,7 @@ export default function InspectionTemplatesPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><FileCheck size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{companyTemplates.length}</p><p className="text-sm text-muted">Custom Templates</p></div>
+          <div><p className="text-2xl font-semibold text-main">{companyTemplates.length}</p><p className="text-sm text-muted">{t('common.customTemplates')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><FileCheck size={20} className="text-purple-600 dark:text-purple-400" /></div>
@@ -121,7 +121,7 @@ export default function InspectionTemplatesPage() {
             <FileCheck size={48} className="mx-auto text-muted mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">No templates found</h3>
             <p className="text-muted mb-4">{tab === 'system' ? 'System templates are provisioned automatically.' : 'Create custom templates for your inspections.'}</p>
-            {tab === 'company' && <Button><Plus size={16} />New Template</Button>}
+            {tab === 'company' && <Button><Plus size={16} />{t('common.newTemplate')}</Button>}
           </CardContent></Card>
         )}
       </div>
