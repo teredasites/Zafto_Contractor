@@ -31,6 +31,19 @@ import {
   AlertTriangle,
   GanttChart,
   ChevronRight,
+  Copy,
+  Timer,
+  UserPlus,
+  Download,
+  Zap,
+  Cloud,
+  Sun,
+  CloudRain,
+  CloudSnow,
+  Wind,
+  Thermometer,
+  Image,
+  ListChecks,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -97,6 +110,42 @@ export default function JobDetailPage() {
       // Error silenced — job may still update via DB
     } finally {
       setCompleting(false);
+    }
+  };
+
+  const handleCloneJob = async () => {
+    if (!job) return;
+    const confirmed = window.confirm(`Clone "${job.title}" with all settings? A new draft job will be created.`);
+    if (!confirmed) return;
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const companyId = user.app_metadata?.company_id;
+      const { data: newJob, error } = await supabase.from('jobs').insert({
+        company_id: companyId,
+        customer_id: job.customerId,
+        title: `${job.title} (Copy)`,
+        description: job.description,
+        status: 'lead',
+        priority: job.priority,
+        job_type: job.jobType,
+        type_metadata: job.typeMetadata,
+        tags: job.tags,
+        address_street: job.address.street,
+        address_city: job.address.city,
+        address_state: job.address.state,
+        address_zip: job.address.zip,
+        estimated_value: job.estimatedValue,
+        assigned_to: job.assignedTo,
+        trade_type: job.tradeType || null,
+      }).select('id').single();
+      if (error) throw error;
+      if (newJob) {
+        router.push(`/dashboard/jobs/${newJob.id}`);
+      }
+    } catch (err) {
+      alert('Failed to clone job. Please try again.');
     }
   };
 
@@ -219,6 +268,9 @@ export default function JobDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Quick Actions Bar */}
+      <QuickActionsBar job={job} onClone={handleCloneJob} />
 
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-secondary rounded-lg w-fit">
@@ -360,6 +412,9 @@ export default function JobDetailPage() {
             </CardContent>
           </Card>
 
+          {/* Weather Widget */}
+          <WeatherWidget address={job.address} trades={job.tradeType ? [job.tradeType] : []} />
+
           {/* Schedule */}
           {schedule && (
             <Card>
@@ -459,6 +514,12 @@ function OverviewTab({ job }: { job: Job }) {
       {/* Activity Timeline */}
       <ActivityTimeline jobId={job.id} job={job} />
 
+      {/* Job Costing Live View */}
+      <JobCostingView job={job} />
+
+      {/* Completion Checklist */}
+      <JobCompletionChecklist jobId={job.id} job={job} />
+
       {/* Tags */}
       {job.tags.length > 0 && (
         <Card>
@@ -474,6 +535,34 @@ function OverviewTab({ job }: { job: Job }) {
           </CardContent>
         </Card>
       )}
+    </div>
+  );
+}
+
+// ── Quick Actions Bar ──
+function QuickActionsBar({ job, onClone }: { job: Job; onClone: () => void }) {
+  const { t } = useTranslation();
+  const router = useRouter();
+
+  const actions = [
+    { label: t('estimates.createEstimate'), icon: <FileText size={14} />, onClick: () => router.push(`/dashboard/estimates/new?jobId=${job.id}`) },
+    { label: t('invoices.createInvoice'), icon: <Receipt size={14} />, onClick: () => router.push(`/dashboard/invoices/new?jobId=${job.id}`) },
+    { label: t('common.addPhoto'), icon: <Camera size={14} />, onClick: () => router.push(`/dashboard/jobs/${job.id}?tab=photos`) },
+    { label: t('common.addNote'), icon: <MessageSquare size={14} />, onClick: () => router.push(`/dashboard/jobs/${job.id}?tab=notes`) },
+    { label: t('common.schedule'), icon: <Calendar size={14} />, onClick: () => router.push(`/dashboard/scheduling?jobId=${job.id}`) },
+    { label: t('common.assignTeam'), icon: <UserPlus size={14} />, onClick: () => {} },
+    { label: t('common.timeClock'), icon: <Timer size={14} />, onClick: () => router.push(`/dashboard/time-clock?jobId=${job.id}`) },
+    { label: t('common.clone'), icon: <Copy size={14} />, onClick: onClone },
+  ];
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {actions.map((action) => (
+        <Button key={action.label} variant="secondary" size="sm" onClick={action.onClick} className="gap-1.5">
+          {action.icon}
+          {action.label}
+        </Button>
+      ))}
     </div>
   );
 }
@@ -1050,11 +1139,16 @@ function MaterialsTab({ job }: { job: Job }) {
   );
 }
 
+const PHOTO_CATEGORIES = ['all', 'before', 'during', 'after', 'general', 'inspection', 'damage'] as const;
+
 function PhotosTab({ job }: { job: Job }) {
   const { t } = useTranslation();
   const { photos, loading: photosLoading, refresh } = usePhotos(job.id);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [filter, setFilter] = useState<string>('all');
+  const [uploadCategory, setUploadCategory] = useState<string>('general');
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -1081,7 +1175,7 @@ function PhotosTab({ job }: { job: Job }) {
           file_name: file.name,
           file_size: file.size,
           mime_type: file.type,
-          category: 'general',
+          category: uploadCategory,
           caption: '',
           tags: [],
           is_client_visible: false,
@@ -1096,6 +1190,12 @@ function PhotosTab({ job }: { job: Job }) {
     }
   };
 
+  const filteredPhotos = filter === 'all' ? photos : photos.filter(p => p.category === filter);
+  const categoryCounts = photos.reduce((acc, p) => {
+    acc[p.category] = (acc[p.category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
   if (photosLoading) {
     return (
       <Card>
@@ -1107,72 +1207,142 @@ function PhotosTab({ job }: { job: Job }) {
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Photos ({photos.length})</CardTitle>
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-        >
-          {uploading ? (
-            <span className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
-              Uploading...
-            </span>
-          ) : (
-            <>
-              <Plus size={14} />
-              Upload Photo
-            </>
-          )}
-        </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={(e) => handleUpload(e.target.files)}
-        />
-      </CardHeader>
-      <CardContent>
-        {photos.length === 0 ? (
-          <div className="py-12 text-center">
-            <Camera size={48} className="mx-auto text-muted mb-4 opacity-50" />
-            <p className="text-muted">{t('common.noPhotosUploadedYet')}</p>
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">{t('common.photos')} ({photos.length})</CardTitle>
+          <div className="flex items-center gap-2">
+            <select
+              value={uploadCategory}
+              onChange={(e) => setUploadCategory(e.target.value)}
+              className="text-xs bg-secondary border border-main rounded px-2 py-1 text-main"
+            >
+              {PHOTO_CATEGORIES.filter(c => c !== 'all').map(c => (
+                <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+              ))}
+            </select>
             <Button
               variant="secondary"
               size="sm"
-              className="mt-4"
               onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
             >
-              <Plus size={14} />
-              Upload First Photo
+              {uploading ? (
+                <span className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
+                  Uploading...
+                </span>
+              ) : (
+                <>
+                  <Plus size={14} />
+                  Upload
+                </>
+              )}
             </Button>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {photos.map((photo) => (
-              <div key={photo.id} className="aspect-square rounded-lg bg-secondary overflow-hidden relative group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={photo.signedUrl || ''}
-                  alt={photo.caption || photo.fileName}
-                  className="w-full h-full object-cover"
-                />
-                {photo.category !== 'general' && (
-                  <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 text-white text-[10px] rounded capitalize">
-                    {photo.category}
-                  </span>
-                )}
-              </div>
-            ))}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => handleUpload(e.target.files)}
+          />
+        </CardHeader>
+
+        {/* Category filter chips */}
+        {photos.length > 0 && (
+          <div className="px-6 pb-2 flex flex-wrap gap-1.5">
+            {PHOTO_CATEGORIES.map(cat => {
+              const count = cat === 'all' ? photos.length : (categoryCounts[cat] || 0);
+              if (cat !== 'all' && count === 0) return null;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={cn(
+                    'px-2.5 py-1 text-xs rounded-full font-medium transition-colors',
+                    filter === cat
+                      ? 'bg-accent text-white'
+                      : 'bg-secondary text-muted hover:text-main'
+                  )}
+                >
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)} ({count})
+                </button>
+              );
+            })}
           </div>
         )}
-      </CardContent>
-    </Card>
+
+        <CardContent>
+          {filteredPhotos.length === 0 ? (
+            <div className="py-12 text-center">
+              <Camera size={48} className="mx-auto text-muted mb-4 opacity-50" />
+              <p className="text-muted">{t('common.noPhotosUploadedYet')}</p>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="mt-4"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Plus size={14} />
+                Upload First Photo
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {filteredPhotos.map((photo) => (
+                <div
+                  key={photo.id}
+                  className="aspect-square rounded-lg bg-secondary overflow-hidden relative group cursor-pointer"
+                  onClick={() => setSelectedPhoto(selectedPhoto === photo.id ? null : photo.id)}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo.signedUrl || ''}
+                    alt={photo.caption || photo.fileName}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="text-[10px] text-white truncate">{photo.fileName}</p>
+                    <p className="text-[9px] text-white/70">{formatDateLocale(new Date(photo.createdAt))}</p>
+                  </div>
+                  {photo.category !== 'general' && (
+                    <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 text-white text-[10px] rounded capitalize">
+                      {photo.category}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Lightbox */}
+      {selectedPhoto && (() => {
+        const photo = photos.find(p => p.id === selectedPhoto);
+        if (!photo) return null;
+        return (
+          <div
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photo.signedUrl || ''}
+              alt={photo.caption || photo.fileName}
+              className="max-w-[90vw] max-h-[90vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="absolute bottom-8 text-center text-white">
+              <p className="text-sm">{photo.fileName}</p>
+              <p className="text-xs text-white/60 capitalize">{photo.category} &middot; {formatDateLocale(new Date(photo.createdAt))}</p>
+            </div>
+          </div>
+        );
+      })()}
+    </div>
   );
 }
 
@@ -2226,6 +2396,386 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
           <Button variant="secondary" size="sm" onClick={handleScan} disabled={scanning}>
             <Satellite size={14} />
             {scanning ? '...' : 'Rescan'}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Job Costing Live View ──
+function JobCostingView({ job }: { job: Job }) {
+  const { t } = useTranslation();
+  const { estimates } = useEstimates();
+  const { invoices } = useInvoices();
+  const jobEstimates = estimates.filter(e => e.jobId === job.id);
+  const jobInvoices = invoices.filter(inv => inv.jobId === job.id);
+
+  // Estimated revenue = approved estimate total (or job estimated value)
+  const estimatedRevenue = jobEstimates.reduce((sum, e) => {
+    if (e.status === 'approved' || e.status === 'completed') return sum + (e.grandTotal || 0);
+    return sum;
+  }, 0) || job.estimatedValue || 0;
+
+  // Actual revenue = paid invoices
+  const actualRevenue = jobInvoices.reduce((sum, inv) => {
+    if (inv.status === 'paid') return sum + (inv.total || 0);
+    return sum;
+  }, 0);
+
+  // Invoiced = all sent/paid invoices
+  const invoicedTotal = jobInvoices.reduce((sum, inv) => sum + (inv.total || 0), 0);
+
+  // For actual costs, we'd need time clock entries and PO data
+  // For now show what we can derive from invoices vs estimates
+  const estimatedCost = estimatedRevenue * 0.6; // Industry average ~40% margin
+  const margin = estimatedRevenue > 0 ? ((estimatedRevenue - estimatedCost) / estimatedRevenue * 100) : 0;
+  const profitLoss = actualRevenue - estimatedCost;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <DollarSign size={18} className="text-muted" />
+          {t('common.jobCosting')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Revenue */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-secondary rounded-lg p-3">
+            <p className="text-xs text-muted mb-1">{t('common.estimatedCost')}</p>
+            <p className="text-lg font-semibold text-main">{formatCurrency(estimatedRevenue)}</p>
+          </div>
+          <div className="bg-secondary rounded-lg p-3">
+            <p className="text-xs text-muted mb-1">Invoiced</p>
+            <p className="text-lg font-semibold text-main">{formatCurrency(invoicedTotal)}</p>
+          </div>
+        </div>
+
+        {/* P&L Bars */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted">Collected</span>
+            <span className={cn('font-medium', actualRevenue > 0 ? 'text-emerald-400' : 'text-muted')}>
+              {formatCurrency(actualRevenue)}
+            </span>
+          </div>
+          {estimatedRevenue > 0 && (
+            <div className="h-2 bg-secondary rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all"
+                style={{ width: `${Math.min((actualRevenue / estimatedRevenue) * 100, 100)}%` }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Margin */}
+        <div className="flex justify-between items-center text-sm border-t border-main pt-3">
+          <span className="text-muted">{t('common.grossMargin')}</span>
+          <span className={cn('font-semibold', margin >= 30 ? 'text-emerald-400' : margin >= 15 ? 'text-amber-400' : 'text-red-400')}>
+            {margin.toFixed(1)}%
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Weather Widget ──
+const WEATHER_CODE_MAP: Record<number, { label: string; icon: 'sun' | 'cloud' | 'rain' | 'snow' | 'wind' }> = {
+  0: { label: 'Clear', icon: 'sun' },
+  1: { label: 'Mostly Clear', icon: 'sun' },
+  2: { label: 'Partly Cloudy', icon: 'cloud' },
+  3: { label: 'Overcast', icon: 'cloud' },
+  45: { label: 'Fog', icon: 'cloud' },
+  48: { label: 'Rime Fog', icon: 'cloud' },
+  51: { label: 'Light Drizzle', icon: 'rain' },
+  53: { label: 'Drizzle', icon: 'rain' },
+  55: { label: 'Heavy Drizzle', icon: 'rain' },
+  61: { label: 'Light Rain', icon: 'rain' },
+  63: { label: 'Rain', icon: 'rain' },
+  65: { label: 'Heavy Rain', icon: 'rain' },
+  71: { label: 'Light Snow', icon: 'snow' },
+  73: { label: 'Snow', icon: 'snow' },
+  75: { label: 'Heavy Snow', icon: 'snow' },
+  77: { label: 'Snow Grains', icon: 'snow' },
+  80: { label: 'Light Showers', icon: 'rain' },
+  81: { label: 'Showers', icon: 'rain' },
+  82: { label: 'Heavy Showers', icon: 'rain' },
+  85: { label: 'Snow Showers', icon: 'snow' },
+  86: { label: 'Heavy Snow Showers', icon: 'snow' },
+  95: { label: 'Thunderstorm', icon: 'rain' },
+  96: { label: 'Hail Storm', icon: 'rain' },
+  99: { label: 'Heavy Hail', icon: 'rain' },
+};
+
+const WEATHER_ICONS = {
+  sun: <Sun size={16} className="text-yellow-400" />,
+  cloud: <Cloud size={16} className="text-zinc-400" />,
+  rain: <CloudRain size={16} className="text-blue-400" />,
+  snow: <CloudSnow size={16} className="text-blue-200" />,
+  wind: <Wind size={16} className="text-zinc-400" />,
+};
+
+interface TradeWeatherRule {
+  trade: string;
+  condition: string;
+  check: (temp: number, wind: number, precip: number) => boolean;
+}
+
+const TRADE_WEATHER_RULES: TradeWeatherRule[] = [
+  { trade: 'roofing', condition: 'Wind >25 mph', check: (_t, w) => w > 25 },
+  { trade: 'roofing', condition: 'Temp <40\u00b0F', check: (t) => t < 40 },
+  { trade: 'painting', condition: 'Temp <50\u00b0F', check: (t) => t < 50 },
+  { trade: 'painting', condition: 'Rain expected', check: (_t, _w, p) => p > 0.5 },
+  { trade: 'concrete', condition: 'Temp <40\u00b0F', check: (t) => t < 40 },
+  { trade: 'concrete', condition: 'Rain expected', check: (_t, _w, p) => p > 1 },
+  { trade: 'siding', condition: 'Wind >30 mph', check: (_t, w) => w > 30 },
+  { trade: 'landscaping', condition: 'Frozen ground (<32\u00b0F)', check: (t) => t < 32 },
+  { trade: 'electrical', condition: 'Lightning risk', check: () => false }, // placeholder
+  { trade: 'hvac', condition: 'Extreme cold (<0\u00b0F)', check: (t) => t < 0 },
+  { trade: 'solar', condition: 'Wind >25 mph', check: (_t, w) => w > 25 },
+];
+
+interface WeatherDay {
+  date: string;
+  tempMax: number;
+  tempMin: number;
+  weatherCode: number;
+  windMax: number;
+  precipSum: number;
+}
+
+function WeatherWidget({ address, trades }: { address: { city: string; state: string; zip: string }; trades: string[] }) {
+  const { t } = useTranslation();
+  const [weather, setWeather] = useState<WeatherDay[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const fetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+    const fetchWeather = async () => {
+      try {
+        // Geocode the address using Open-Meteo's geocoding
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(address.city + ' ' + address.state)}&count=1&language=en&format=json`);
+        const geoData = await geoRes.json();
+        if (!geoData.results?.[0]) { setLoading(false); return; }
+        const { latitude, longitude } = geoData.results[0];
+
+        // Fetch 5-day forecast
+        const wxRes = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode,windspeed_10m_max,precipitation_sum&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=5`
+        );
+        const wxData = await wxRes.json();
+        if (!wxData.daily) { setLoading(false); return; }
+
+        const days: WeatherDay[] = wxData.daily.time.map((date: string, i: number) => ({
+          date,
+          tempMax: Math.round(wxData.daily.temperature_2m_max[i]),
+          tempMin: Math.round(wxData.daily.temperature_2m_min[i]),
+          weatherCode: wxData.daily.weathercode[i],
+          windMax: Math.round(wxData.daily.windspeed_10m_max[i]),
+          precipSum: wxData.daily.precipitation_sum[i],
+        }));
+        setWeather(days);
+      } catch {
+        // Weather unavailable — not critical
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWeather();
+  }, [address.city, address.state]);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Cloud size={18} className="text-muted" />{t('common.weather')}</CardTitle></CardHeader>
+        <CardContent><div className="animate-pulse h-20 bg-secondary rounded" /></CardContent>
+      </Card>
+    );
+  }
+
+  if (!weather) return null;
+
+  const today = weather[0];
+  const todayInfo = WEATHER_CODE_MAP[today.weatherCode] || { label: 'Unknown', icon: 'cloud' as const };
+
+  // Check trade-specific weather warnings
+  const warnings: string[] = [];
+  const normalizedTrades = trades.map(t => t.toLowerCase());
+  for (const rule of TRADE_WEATHER_RULES) {
+    if (normalizedTrades.some(tr => tr.includes(rule.trade))) {
+      if (rule.check(today.tempMax, today.windMax, today.precipSum)) {
+        warnings.push(`${rule.trade}: ${rule.condition}`);
+      }
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <Cloud size={18} className="text-muted" />
+          {t('common.weather')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {/* Today */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {WEATHER_ICONS[todayInfo.icon]}
+            <span className="text-sm font-medium text-main">{todayInfo.label}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Thermometer size={14} className="text-muted" />
+            <span className="text-main font-medium">{today.tempMax}\u00b0</span>
+            <span className="text-muted">/ {today.tempMin}\u00b0</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-xs text-muted">
+          <span className="flex items-center gap-1"><Wind size={12} /> {today.windMax} mph</span>
+          {today.precipSum > 0 && <span className="flex items-center gap-1"><CloudRain size={12} /> {today.precipSum.toFixed(1)}&quot;</span>}
+        </div>
+
+        {/* Trade warnings */}
+        {warnings.length > 0 && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 space-y-1">
+            {warnings.map((w, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs text-amber-500">
+                <AlertTriangle size={12} />
+                <span className="capitalize">{w}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 5-day */}
+        <div className="grid grid-cols-5 gap-1 pt-2 border-t border-main">
+          {weather.map((day) => {
+            const info = WEATHER_CODE_MAP[day.weatherCode] || { label: '?', icon: 'cloud' as const };
+            const dayName = new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+            return (
+              <div key={day.date} className="flex flex-col items-center gap-1 text-[10px]">
+                <span className="text-muted">{dayName}</span>
+                {WEATHER_ICONS[info.icon]}
+                <span className="text-main font-medium">{day.tempMax}\u00b0</span>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Job Completion Checklist ──
+interface ChecklistItem {
+  id: string;
+  label: string;
+  checked: boolean;
+}
+
+function JobCompletionChecklist({ jobId, job }: { jobId: string; job: Job }) {
+  const { t } = useTranslation();
+  const [items, setItems] = useState<ChecklistItem[]>([]);
+  const [newItem, setNewItem] = useState('');
+  const loadedRef = useRef(false);
+
+  useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+    const loadChecklist = async () => {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('job_checklist_items')
+        .select('id, label, is_checked')
+        .eq('job_id', jobId)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: true });
+      if (data) {
+        setItems(data.map((d: { id: string; label: string; is_checked: boolean }) => ({ id: d.id, label: d.label, checked: d.is_checked })));
+      }
+    };
+    loadChecklist();
+  }, [jobId]);
+
+  const toggleItem = async (id: string) => {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    const newChecked = !item.checked;
+    setItems(prev => prev.map(i => i.id === id ? { ...i, checked: newChecked } : i));
+    const supabase = getSupabase();
+    await supabase.from('job_checklist_items').update({ is_checked: newChecked }).eq('id', id);
+  };
+
+  const addItem = async () => {
+    if (!newItem.trim()) return;
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const companyId = user.app_metadata?.company_id;
+    const { data, error } = await supabase
+      .from('job_checklist_items')
+      .insert({ job_id: jobId, company_id: companyId, label: newItem.trim(), is_checked: false })
+      .select('id, label, is_checked')
+      .single();
+    if (data && !error) {
+      setItems(prev => [...prev, { id: data.id, label: data.label, checked: data.is_checked }]);
+      setNewItem('');
+    }
+  };
+
+  const progress = items.length > 0 ? Math.round((items.filter(i => i.checked).length / items.length) * 100) : 0;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <ListChecks size={18} className="text-muted" />
+          {t('common.completionChecklist')}
+          {items.length > 0 && (
+            <span className="ml-auto text-sm font-semibold text-accent">{progress}%</span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {items.length > 0 && (
+          <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-accent transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+        <div className="space-y-2">
+          {items.map((item) => (
+            <label key={item.id} className="flex items-center gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={item.checked}
+                onChange={() => toggleItem(item.id)}
+                className="w-4 h-4 rounded border-zinc-600 text-accent focus:ring-accent"
+              />
+              <span className={cn('text-sm', item.checked ? 'line-through text-muted' : 'text-main')}>
+                {item.label}
+              </span>
+            </label>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <Input
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+            placeholder="Add checklist item..."
+            className="text-sm"
+            onKeyDown={(e) => e.key === 'Enter' && addItem()}
+          />
+          <Button variant="secondary" size="sm" onClick={addItem}>
+            <Plus size={14} />
           </Button>
         </div>
       </CardContent>
