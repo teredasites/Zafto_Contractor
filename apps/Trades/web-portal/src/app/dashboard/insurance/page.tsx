@@ -143,8 +143,8 @@ export default function InsurancePage() {
           <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-4">
             <Shield className="w-6 h-6 text-amber-500" />
           </div>
-          <p className="text-sm font-medium">No insurance claims</p>
-          <p className="text-xs text-muted-foreground mt-1">Create an insurance job to start tracking claims</p>
+          <p className="text-sm font-medium">{t('insurance.noInsuranceClaims')}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t('insurance.createInsuranceJob')}</p>
         </div>
       )}
 

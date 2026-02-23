@@ -141,7 +141,7 @@ export default function JobEquipmentPage() {
           </button>
           <div>
             <h1 className="text-2xl font-semibold text-main">{t('jobsEquipment.title')}</h1>
-            <p className="text-muted mt-0.5">IICRC-compliant deployment tracking and billing</p>
+            <p className="text-muted mt-0.5">{t('jobs.iicrcCompliantTracking')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ export default function JobEquipmentPage() {
                 <p className="text-2xl font-semibold text-main">
                   {summary.dehumidifiers}D / {summary.airMovers}AM / {summary.airScrubbers}AS
                 </p>
-                <p className="text-sm text-muted">Dehu / Movers / Scrubbers</p>
+                <p className="text-sm text-muted">{t('jobs.dehuMoversScrubbers')}</p>
               </div>
             </div>
           </CardContent>
@@ -207,7 +207,7 @@ export default function JobEquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(summary.totalBillableAmount)}</p>
-                <p className="text-sm text-muted">Total Billable</p>
+                <p className="text-sm text-muted">{t('common.totalBillable')}</p>
               </div>
             </div>
           </CardContent>
@@ -507,7 +507,7 @@ function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] })
       <Card>
         <CardContent className="p-12 text-center">
           <Package size={48} className="mx-auto text-muted mb-4" />
-          <h3 className="text-lg font-medium text-main mb-2">No removed equipment</h3>
+          <h3 className="text-lg font-medium text-main mb-2">{t('jobs.noRemovedEquipment')}</h3>
           <p className="text-muted">Equipment removed from this job will appear here with billing history.</p>
         </CardContent>
       </Card>
@@ -523,8 +523,8 @@ function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] })
               <th className="text-left p-3 text-muted font-medium">{t('common.equipment')}</th>
               <th className="text-left p-3 text-muted font-medium">{t('common.area')}</th>
               <th className="text-left p-3 text-muted font-medium">{t('common.deployed')}</th>
-              <th className="text-left p-3 text-muted font-medium">Removed</th>
-              <th className="text-right p-3 text-muted font-medium">Days</th>
+              <th className="text-left p-3 text-muted font-medium">{t('common.removed')}</th>
+              <th className="text-right p-3 text-muted font-medium">{t('common.days')}</th>
               <th className="text-right p-3 text-muted font-medium">{t('common.rate')}</th>
               <th className="text-right p-3 text-muted font-medium">{t('common.total')}</th>
             </tr>
@@ -656,7 +656,7 @@ function DeployEquipmentModal({
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Deploy Equipment</CardTitle>
+            <CardTitle>{t('common.deployEquipment')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>

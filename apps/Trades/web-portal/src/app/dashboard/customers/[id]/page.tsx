@@ -161,8 +161,8 @@ export default function CustomerDetailPage() {
     return (
       <div className="text-center py-12">
         <User size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Customer not found</h2>
-        <p className="text-muted mt-2">The customer you're looking for doesn't exist.</p>
+        <h2 className="text-xl font-semibold text-main">{t('customers.customerNotFound')}</h2>
+        <p className="text-muted mt-2">{t('customers.customerDoesntExist')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/customers')}>
           Back to Customers
         </Button>
@@ -252,7 +252,7 @@ export default function CustomerDetailPage() {
       {isEditing && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Edit Customer</CardTitle>
+            <CardTitle className="text-base">{t('common.editCustomer')}</CardTitle>
             <Button variant="ghost" size="icon" onClick={() => setIsEditing(false)}>
               <span className="sr-only">{t('common.close')}</span>&times;
             </Button>
@@ -328,11 +328,11 @@ export default function CustomerDetailPage() {
           {/* Stats */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Customer Value</CardTitle>
+              <CardTitle className="text-base">{t('common.customerValue')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-muted mb-1">Lifetime Revenue</p>
+                <p className="text-sm text-muted mb-1">{t('common.lifetimeRevenue')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(customer.totalRevenue)}</p>
               </div>
               <div className="flex justify-between text-sm">
@@ -370,13 +370,13 @@ export default function CustomerDetailPage() {
                   </Badge>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Avg. Days to Pay</span>
+                  <span className="text-muted">{t('common.avgDaysToPay')}</span>
                   <span className={cn('font-medium', paymentStats.avgDaysToPay > 30 ? 'text-amber-500' : 'text-main')}>
                     {paymentStats.avgDaysToPay} days
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">On-Time Rate</span>
+                  <span className="text-muted">{t('common.onTimeRate')}</span>
                   <span className={cn('font-medium', paymentStats.onTimeRate >= 80 ? 'text-emerald-500' : 'text-amber-500')}>
                     {paymentStats.onTimeRate}%
                   </span>
@@ -386,7 +386,7 @@ export default function CustomerDetailPage() {
                   <span className="font-medium text-main">{formatCurrency(paymentStats.totalLifetimeSpend)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Invoices Paid</span>
+                  <span className="text-muted">{t('common.invoicesPaid')}</span>
                   <span className="font-medium text-main">{paymentStats.paidCount}</span>
                 </div>
               </CardContent>
@@ -396,7 +396,7 @@ export default function CustomerDetailPage() {
           {/* Contact Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Contact Information</CardTitle>
+              <CardTitle className="text-base">{t('common.contactInformation')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
@@ -436,7 +436,7 @@ export default function CustomerDetailPage() {
                   <Badge key={tag} variant="default">{tag}</Badge>
                 ))}
                 {customer.tags.length === 0 && (
-                  <p className="text-sm text-muted">No tags</p>
+                  <p className="text-sm text-muted">{t('common.noTags')}</p>
                 )}
               </div>
             </CardContent>

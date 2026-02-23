@@ -109,7 +109,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
           <div className="flex items-center gap-2"><Calendar size={14} className="text-muted" /><span className="font-medium text-main">{formatDate(inspection.scheduledDate)}</span></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider mb-1">Score</p>
+          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.score')}</p>
           <div className="flex items-center gap-2"><BarChart3 size={14} className="text-muted" /><span className="font-medium text-main">{inspection.overallScore !== undefined ? `${inspection.overallScore}%` : '—'}</span></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -138,7 +138,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
 
       {/* Checklist */}
       <Card>
-        <CardHeader><CardTitle className="text-base">Checklist Items</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{t('common.checklistItems')}</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-2">
             {inspection.checklist.map(item => (
@@ -157,7 +157,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
             ))}
 
             {inspection.checklist.length === 0 && (
-              <p className="text-center text-muted py-6">No checklist items recorded.</p>
+              <p className="text-center text-muted py-6">{t('inspections.noChecklistItemsRecorded')}</p>
             )}
           </div>
         </CardContent>
@@ -173,7 +173,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
 
       {/* Actions */}
       <div className="flex items-center gap-3">
-        <Button variant="secondary"><FileText size={16} />Generate Report</Button>
+        <Button variant="secondary"><FileText size={16} />{t('common.generateReport')}</Button>
         {inspection.status !== 'passed' && <Button><CheckCircle size={16} />{t('common.markPassed')}</Button>}
       </div>
     </div>

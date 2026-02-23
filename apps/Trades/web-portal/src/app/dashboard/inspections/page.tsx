@@ -89,7 +89,7 @@ export default function InspectionsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('inspections.title')}</h1>
-          <p className="text-muted mt-1">Quality control, safety compliance, and punch lists</p>
+          <p className="text-muted mt-1">{t('inspections.qualityControlSafety')}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newInspection')}</Button>
       </div>
@@ -105,7 +105,7 @@ export default function InspectionsPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{passedCount}</p><p className="text-sm text-muted">Passed</p></div>
+          <div><p className="text-2xl font-semibold text-main">{passedCount}</p><p className="text-sm text-muted">{t('common.passed')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><XCircle size={20} className="text-red-600 dark:text-red-400" /></div>
@@ -267,17 +267,17 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <CardHeader><CardTitle>New Inspection</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t('common.newInspection')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Inspection Type *</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="quality">Quality Control</option>
-              <option value="safety">Safety</option>
+              <option value="quality">{t('common.qualityControl')}</option>
+              <option value="safety">{t('common.safety')}</option>
               <option value="punch_list">{t('common.punchList')}</option>
-              <option value="pre_closeout">Pre-Closeout</option>
+              <option value="pre_closeout">{t('inspections.preCloseout')}</option>
               <option value="compliance">{t('common.compliance')}</option>
-              <option value="progress">Progress Check</option>
+              <option value="progress">{t('inspections.progressCheck')}</option>
             </select>
           </div>
           <div>
@@ -294,18 +294,18 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Assigned To *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">Select team member</option><option value="u1">John Smith</option><option value="u2">Mike Johnson</option>
+                <option value="">{t('common.selectTeamMember')}</option><option value="u1">John Smith</option><option value="u2">Mike Johnson</option>
               </select>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Scheduled Date</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.scheduledDate')}</label>
             <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Checklist Template</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.checklistTemplate')}</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="">Start blank</option>
+              <option value="">{t('common.startBlank')}</option>
               <option value="electrical_rough">Electrical Rough-In (7 items)</option>
               <option value="safety_standard">Standard Safety (8 items)</option>
               <option value="hvac_closeout">HVAC Closeout (8 items)</option>
@@ -319,7 +319,7 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Create Inspection</Button>
+            <Button className="flex-1"><Plus size={16} />{t('common.createInspection')}</Button>
           </div>
         </CardContent>
       </Card>

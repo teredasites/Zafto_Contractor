@@ -145,7 +145,7 @@ export default function WarrantiesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('warranties.title')}</h1>
-          <p className="text-muted mt-1">Track labor and equipment warranties across all jobs</p>
+          <p className="text-muted mt-1">{t('warranties.trackWarrantiesAcrossJobs')}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>
           <Plus size={16} />
@@ -185,7 +185,7 @@ export default function WarrantiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activeCount}</p>
-                <p className="text-sm text-muted">Active Warranties</p>
+                <p className="text-sm text-muted">{t('warranties.activeWarranties')}</p>
               </div>
             </div>
           </CardContent>
@@ -211,7 +211,7 @@ export default function WarrantiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{claimsCount}</p>
-                <p className="text-sm text-muted">Pending Claims</p>
+                <p className="text-sm text-muted">{t('warranties.pendingClaims')}</p>
               </div>
             </div>
           </CardContent>
@@ -224,7 +224,7 @@ export default function WarrantiesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalCovered}</p>
-                <p className="text-sm text-muted">Jobs Covered</p>
+                <p className="text-sm text-muted">{t('warranties.jobsCovered')}</p>
               </div>
             </div>
           </CardContent>
@@ -322,7 +322,7 @@ export default function WarrantiesPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <Shield size={48} className="mx-auto text-muted mb-4" />
-              <h3 className="text-lg font-medium text-main mb-2">No warranties found</h3>
+              <h3 className="text-lg font-medium text-main mb-2">{t('warranties.noWarrantiesFound')}</h3>
               <p className="text-muted mb-4">Add warranties to track coverage for your jobs and equipment.</p>
               <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.addWarranty')}</Button>
             </CardContent>
@@ -373,7 +373,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
               </div>
               {warranty.laborDuration && (
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider">Labor Coverage</p>
+                  <p className="text-xs text-muted uppercase tracking-wider">{t('common.laborCoverage')}</p>
                   <p className="font-medium text-main">{warranty.laborDuration}</p>
                 </div>
               )}
@@ -389,7 +389,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
               </div>
               {warranty.partsDuration && (
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider">Parts Coverage</p>
+                  <p className="text-xs text-muted uppercase tracking-wider">{t('common.partsCoverage')}</p>
                   <p className="font-medium text-main">{warranty.partsDuration}</p>
                 </div>
               )}
@@ -441,7 +441,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
-            <Button className="flex-1"><FileText size={16} />File Claim</Button>
+            <Button className="flex-1"><FileText size={16} />{t('common.fileClaim')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -653,7 +653,7 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
             <label className="block text-sm font-medium text-main mb-1.5">Warranty Type *</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
               <option value="labor">{t('warranties.laborWarranty')}</option>
-              <option value="equipment">Equipment Warranty</option>
+              <option value="equipment">{t('common.equipmentWarranty')}</option>
               <option value="manufacturer">{t('warranties.manufacturerWarranty')}</option>
               <option value="extended">{t('warranties.extendedWarranty')}</option>
             </select>
@@ -666,7 +666,7 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Customer *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">Select customer</option>
+                <option value="">{t('common.selectCustomer')}</option>
                 <option value="c1">Robert Chen</option>
                 <option value="c2">Sarah Martinez</option>
                 <option value="c3">Mike Thompson</option>
@@ -693,11 +693,11 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Labor Duration</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.laborDuration')}</label>
               <input type="text" placeholder="1 year" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Parts Duration</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.partsDuration')}</label>
               <input type="text" placeholder="5 years" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
           </div>

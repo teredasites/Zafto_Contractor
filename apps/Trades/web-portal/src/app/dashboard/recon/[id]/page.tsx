@@ -306,8 +306,8 @@ export default function ReconDetailPage() {
           <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent animate-spin" />
           <Satellite size={22} className="absolute inset-0 m-auto text-accent" />
         </div>
-        <p className="text-sm text-muted font-medium">Analyzing property intelligence...</p>
-        <p className="text-[10px] text-muted/60">Satellite imagery, roof measurements, structural data</p>
+        <p className="text-sm text-muted font-medium">{t('recon.analyzingPropertyIntelligence')}</p>
+        <p className="text-[10px] text-muted/60">{t('recon.satelliteImageryRoofData')}</p>
       </div>
     );
   }
@@ -478,7 +478,7 @@ export default function ReconDetailPage() {
                   </span>
                 ))}
                 {scan.scanSources.length === 0 && (
-                  <span className="text-[10px] text-muted/50">No sources</span>
+                  <span className="text-[10px] text-muted/50">{t('recon.noSources')}</span>
                 )}
               </div>
             </div>
@@ -488,7 +488,7 @@ export default function ReconDetailPage() {
               const fc = FLOOD_RISK_CONFIG[scan.floodRisk || 'low'] || FLOOD_RISK_CONFIG.low;
               return (
                 <div className="mb-4">
-                  <p className="text-[9px] font-semibold text-muted uppercase tracking-wider mb-1.5">Flood Zone</p>
+                  <p className="text-[9px] font-semibold text-muted uppercase tracking-wider mb-1.5">{t('common.floodZone')}</p>
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold"
                       style={{ color: fc.color, backgroundColor: fc.bg }}>
@@ -583,7 +583,7 @@ export default function ReconDetailPage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <ExternalLink size={13} className="text-accent" />
-              <h3 className="text-[13px] font-semibold text-main">Property Research Links</h3>
+              <h3 className="text-[13px] font-semibold text-main">{t('recon.propertyResearchLinks')}</h3>
             </div>
             {scan.storageFolder && (
               <span className="flex items-center gap-1.5 text-[10px] text-muted">
@@ -1134,7 +1134,7 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
                 value={typeof val === 'number' ? val : String(val ?? '—')} />
             ))}
             {Object.keys(trade.measurements).length === 0 && (
-              <p className="text-xs text-muted py-4 text-center">No detailed measurements</p>
+              <p className="text-xs text-muted py-4 text-center">{t('recon.noDetailedMeasurements')}</p>
             )}
           </div>
         </Panel>
@@ -1168,10 +1168,10 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
               <thead>
                 <tr className="border-b border-main">
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.item')}</th>
-                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Base Qty</th>
+                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">{t('recon.baseQty')}</th>
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.unit')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.waste')}</th>
-                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Total Qty</th>
+                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">{t('recon.totalQty')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1381,7 +1381,7 @@ function StormTab({ scanId, scanState }: { scanId: string; scanState: string | n
                   </svg>
                   <span className="absolute text-3xl font-bold text-main">{result.probability || 0}%</span>
                 </div>
-                <p className="text-xs text-muted mt-2">Estimated storm damage probability</p>
+                <p className="text-xs text-muted mt-2">{t('recon.estimatedStormDamage')}</p>
               </div>
             </Panel>
 

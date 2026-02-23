@@ -174,12 +174,12 @@ export default function HRPage() {
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><AlertTriangle size={20} className="text-red-600 dark:text-red-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{expiringTraining.length}</p><p className="text-sm text-muted">Expiring Certs</p></div>
+          <div><p className="text-2xl font-semibold text-main">{expiringTraining.length}</p><p className="text-sm text-muted">{t('hr.expiringCerts')}</p></div>
         </div></CardContent></Card>
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><FileText size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{pendingReviews.length}</p><p className="text-sm text-muted">Pending Reviews</p></div>
+          <div><p className="text-2xl font-semibold text-main">{pendingReviews.length}</p><p className="text-sm text-muted">{t('hr.pendingReviews')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -288,7 +288,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">{t('common.employee')}</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Job Title</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.jobTitle')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('hiring.department')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('hr.hireDate')}</th>
@@ -319,8 +319,8 @@ function EmployeesTab({ employees, search, onSearchChange }: {
         {filtered.length === 0 && (
           <div className="p-12 text-center">
             <Users size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No employees found</h3>
-            <p className="text-muted mb-4">Add employee records to manage your workforce.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('hr.noEmployeesFound')}</h3>
+            <p className="text-muted mb-4">{t('hr.addEmployeeRecords')}</p>
             <Button onClick={() => setShowNewModal(true)}><UserPlus size={16} />{t('common.addEmployee')}</Button>
           </div>
         )}
@@ -615,8 +615,8 @@ function OnboardingTab({ checklists, search, onSearchChange }: {
         {filtered.length === 0 && (
           <Card><CardContent className="p-12 text-center">
             <ClipboardList size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No onboarding checklists found</h3>
-            <p className="text-muted">Create checklists when onboarding new employees.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('hr.noOnboardingChecklists')}</h3>
+            <p className="text-muted">{t('hr.createChecklistsForOnboarding')}</p>
           </CardContent></Card>
         )}
       </div>
@@ -674,7 +674,7 @@ function TrainingTab({ records, search, onSearchChange }: {
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">Training</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">{t('common.training')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.employee')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.date')}</th>
@@ -724,8 +724,8 @@ function TrainingTab({ records, search, onSearchChange }: {
                     <td className="px-4 py-3.5">
                       {record.passed != null ? (
                         record.passed
-                          ? <Badge variant="success" dot>Pass</Badge>
-                          : <Badge variant="error" dot>Fail</Badge>
+                          ? <Badge variant="success" dot>{t('common.pass')}</Badge>
+                          : <Badge variant="error" dot>{t('common.fail')}</Badge>
                       ) : (
                         <span className="text-sm text-muted">-</span>
                       )}
@@ -741,8 +741,8 @@ function TrainingTab({ records, search, onSearchChange }: {
         {filtered.length === 0 && (
           <div className="p-12 text-center">
             <GraduationCap size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No training records found</h3>
-            <p className="text-muted">Track employee training, certifications, and compliance.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('hr.noTrainingRecords')}</h3>
+            <p className="text-muted">{t('hr.trackEmployeeTraining')}</p>
           </div>
         )}
       </Card>

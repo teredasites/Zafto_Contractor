@@ -117,7 +117,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-main">{t('settings.title')}</h1>
-        <p className="text-[13px] text-muted mt-1">Manage your account and preferences</p>
+        <p className="text-[13px] text-muted mt-1">{t('settings.manageAccountPreferences')}</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -166,7 +166,7 @@ export default function SettingsPage() {
                 )}
 
                 <div className="pt-3 pb-1 px-3">
-                  <p className="text-[11px] font-semibold text-muted uppercase tracking-wider">Data</p>
+                  <p className="text-[11px] font-semibold text-muted uppercase tracking-wider">{t('settings.data')}</p>
                 </div>
                 <a
                   href="/dashboard/settings/import"
@@ -241,8 +241,8 @@ function ProfileSettings() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-          <CardDescription>Update your personal details</CardDescription>
+          <CardTitle>{t('settings.profileInformation')}</CardTitle>
+          <CardDescription>{t('settings.updatePersonalDetails')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-6">
@@ -253,7 +253,7 @@ function ProfileSettings() {
               </button>
             </div>
             <div>
-              <h3 className="font-medium text-main">Profile Photo</h3>
+              <h3 className="font-medium text-main">{t('settings.profilePhoto')}</h3>
               <p className="text-sm text-muted">JPG, PNG or GIF. Max 2MB</p>
             </div>
           </div>
@@ -340,7 +340,7 @@ function CompanySettings() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Company Information</CardTitle>
+          <CardTitle>{t('settings.companyInformation')}</CardTitle>
           <CardDescription>Update your business details. Logo appears on all bids, invoices, and client portal.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -367,13 +367,13 @@ function CompanySettings() {
               ) : (
                 <div className="text-center">
                   <Camera size={24} className="mx-auto text-muted" />
-                  <span className="text-xs text-muted mt-1 block">Add Logo</span>
+                  <span className="text-xs text-muted mt-1 block">{t('settings.addLogo')}</span>
                 </div>
               )}
             </div>
             <div>
-              <h3 className="font-medium text-main">Company Logo</h3>
-              <p className="text-sm text-muted">Appears on bids, invoices, and client portal</p>
+              <h3 className="font-medium text-main">{t('settings.companyLogo')}</h3>
+              <p className="text-sm text-muted">{t('settings.appearsOnBidsInvoices')}</p>
               <p className="text-xs text-muted mt-1">PNG, JPG, or SVG. Max 2MB. Square works best.</p>
               <div className="flex gap-2 mt-2">
                 <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
@@ -463,7 +463,7 @@ function TeamSettings() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>{t('settings.teamMembers')}</CardTitle>
-            <CardDescription>Manage who has access to your account</CardDescription>
+            <CardDescription>{t('settings.manageAccess')}</CardDescription>
           </div>
           <Button onClick={() => setShowInviteModal(true)}>
             <Plus size={16} />
@@ -482,8 +482,8 @@ function TeamSettings() {
       {pendingInvites.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Pending Invites</CardTitle>
-            <CardDescription>Invitations that haven't been accepted yet</CardDescription>
+            <CardTitle>{t('settings.pendingInvites')}</CardTitle>
+            <CardDescription>{t('settings.invitationsNotAccepted')}</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-main">
@@ -519,8 +519,8 @@ function TeamSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Role Permissions</CardTitle>
-          <CardDescription>What each role can access</CardDescription>
+          <CardTitle>{t('settings.rolePermissions')}</CardTitle>
+          <CardDescription>{t('settings.whatEachRoleCanAccess')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -667,7 +667,7 @@ function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels:
         <Card>
           <CardHeader>
             <CardTitle>{t('common.inviteTeamMember')}</CardTitle>
-            <CardDescription>Send an invitation to join your team</CardDescription>
+            <CardDescription>{t('settings.sendInvitation')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -718,22 +718,22 @@ function BillingSettings() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
+          <CardTitle>{t('settings.currentPlan')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between p-4 bg-accent-light rounded-xl">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-main text-lg">Pro Plan</h3>
+                <h3 className="font-semibold text-main text-lg">{t('settings.proPlan')}</h3>
                 <Badge variant="success">{t('common.active')}</Badge>
               </div>
               <p className="text-muted mt-1">$29.99/month - billed monthly</p>
             </div>
-            <Button variant="secondary">Change Plan</Button>
+            <Button variant="secondary">{t('settings.changePlan')}</Button>
           </div>
 
           <div className="mt-6">
-            <h4 className="font-medium text-main mb-3">Plan Features</h4>
+            <h4 className="font-medium text-main mb-3">{t('settings.planFeatures')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {[
                 'Unlimited bids & invoices',
@@ -775,7 +775,7 @@ function BillingSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Billing History</CardTitle>
+          <CardTitle>{t('settings.billingHistory')}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y divide-main">

@@ -188,7 +188,7 @@ export default function HiringPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('hiring.title')}</h1>
-          <p className="text-muted mt-1">Manage job postings, applicants, and interviews</p>
+          <p className="text-muted mt-1">{t('hiring.managePostingsApplicants')}</p>
         </div>
         <div className="flex items-center gap-3">
           {activeTab === 'postings' && (
@@ -216,7 +216,7 @@ export default function HiringPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activePostings.length}</p>
-                <p className="text-sm text-muted">Active Postings</p>
+                <p className="text-sm text-muted">{t('common.activePostings')}</p>
               </div>
             </div>
           </CardContent>
@@ -242,7 +242,7 @@ export default function HiringPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{inPipeline}</p>
-                <p className="text-sm text-muted">In Pipeline</p>
+                <p className="text-sm text-muted">{t('common.inPipeline')}</p>
               </div>
             </div>
           </CardContent>
@@ -255,7 +255,7 @@ export default function HiringPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{interviewsThisWeek}</p>
-                <p className="text-sm text-muted">Interviews This Week</p>
+                <p className="text-sm text-muted">{t('hiring.interviewsThisWeek')}</p>
               </div>
             </div>
           </CardContent>
@@ -571,7 +571,7 @@ function PostingsTab({
         {filtered.length === 0 && (
           <div className="text-center py-12 text-muted">
             <Briefcase size={40} className="mx-auto mb-3 opacity-30" />
-            <p className="text-sm">No job postings found</p>
+            <p className="text-sm">{t('common.noJobPostingsFound')}</p>
           </div>
         )}
       </div>
@@ -1065,7 +1065,7 @@ function InterviewsTab({
       {filtered.length === 0 && (
         <div className="text-center py-12 text-muted">
           <Calendar size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">No interviews found</p>
+          <p className="text-sm">{t('hiring.noInterviewsFound')}</p>
         </div>
       )}
     </div>
@@ -1138,7 +1138,7 @@ function NewPostingModal({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Create Job Posting</CardTitle>
+          <CardTitle>{t('common.createJobPosting')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -1219,7 +1219,7 @@ function NewPostingModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Positions Available</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.positionsAvailable')}</label>
               <input
                 type="number"
                 value={positions}
@@ -1324,7 +1324,7 @@ function NewApplicantModal({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Add Applicant</CardTitle>
+          <CardTitle>{tr('common.addApplicant')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {postingOptions.length > 0 ? (
@@ -1335,7 +1335,7 @@ function NewApplicantModal({
               onChange={(e) => setJobPostingId(e.target.value)}
             />
           ) : (
-            <p className="text-sm text-muted">No active job postings. Create one first.</p>
+            <p className="text-sm text-muted">{tr('hiring.noActivePostings')}</p>
           )}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -1370,7 +1370,7 @@ function NewApplicantModal({
           <div className="grid grid-cols-2 gap-4">
             <Select label="Source" options={sourceOptions} value={source} onChange={(e) => setSource(e.target.value as ApplicantSource)} />
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Years Experience</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.yearsExperience')}</label>
               <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} placeholder="5" min="0" className={inputCls} />
             </div>
           </div>
@@ -1381,7 +1381,7 @@ function NewApplicantModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Trade Specialties</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{tr('common.tradeSpecialties')}</label>
             <div className="flex flex-wrap gap-1.5">
               {TRADE_OPTIONS.map((t) => (
                 <button

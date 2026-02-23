@@ -145,7 +145,7 @@ export default function MarketplacePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('marketplace.title')}</h1>
-          <p className="text-muted mt-1">Find leads, place bids, and grow your business</p>
+          <p className="text-muted mt-1">{t('marketplace.findLeadsGrowBusiness')}</p>
         </div>
       </div>
 
@@ -172,7 +172,7 @@ export default function MarketplacePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{myActiveBids.length}</p>
-                <p className="text-sm text-muted">My Active Bids</p>
+                <p className="text-sm text-muted">{t('marketplace.myActiveBids')}</p>
               </div>
             </div>
           </CardContent>
@@ -198,7 +198,7 @@ export default function MarketplacePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(avgBidAmount)}</p>
-                <p className="text-sm text-muted">Avg Bid Amount</p>
+                <p className="text-sm text-muted">{t('marketplace.avgBidAmount')}</p>
               </div>
             </div>
           </CardContent>
@@ -555,7 +555,7 @@ function MyBidsTab({
         <CardContent className="py-12 text-center">
           <Gavel size={40} className="mx-auto text-muted mb-3" />
           <p className="text-main font-medium">{t('common.noBidsYet')}</p>
-          <p className="text-muted text-sm mt-1">Browse available leads and place your first bid</p>
+          <p className="text-muted text-sm mt-1">{t('marketplace.browseAvailableLeads')}</p>
         </CardContent>
       </Card>
     );
@@ -567,10 +567,10 @@ function MyBidsTab({
         <table className="w-full">
           <thead>
             <tr className="border-b border-main">
-              <th className="text-left text-sm font-medium text-muted px-6 py-3">Lead</th>
+              <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('marketplace.lead')}</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('marketplace.bidAmount')}</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
-              <th className="text-left text-sm font-medium text-muted px-6 py-3">Submitted</th>
+              <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('marketplace.submitted')}</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
             </tr>
           </thead>
@@ -821,13 +821,13 @@ function ContractorProfileTab({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Award size={18} className="text-muted" />
-            <CardTitle>Business Information</CardTitle>
+            <CardTitle>{tr('marketplace.businessInformation')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Display Name</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.displayName')}</label>
               <input
                 type="text"
                 value={displayName}

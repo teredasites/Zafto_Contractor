@@ -414,7 +414,7 @@ export default function EstimateEditorPage() {
     return (
       <div className="text-center py-16 text-zinc-500">
         <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <p className="text-lg font-medium">Estimate not found</p>
+        <p className="text-lg font-medium">{t('estimates.estimateNotFound')}</p>
         <button onClick={() => router.push('/dashboard/estimates')} className="text-sm text-blue-400 hover:underline mt-2">
           Back to estimates
         </button>
@@ -690,7 +690,7 @@ export default function EstimateEditorPage() {
           {areas.length === 0 && lineItems.length === 0 ? (
             <div className="text-center py-16 text-zinc-500">
               <Calculator className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p className="text-lg font-medium">No rooms or line items yet</p>
+              <p className="text-lg font-medium">{t('estimates.noRoomsOrLineItems')}</p>
               <p className="text-sm mt-1">Add a room above, then use the Item Browser to add line items</p>
               <button
                 onClick={() => setSidebarOpen(true)}
@@ -762,7 +762,7 @@ export default function EstimateEditorPage() {
       {sidebarOpen && (
         <div className="fixed right-0 top-16 bottom-0 w-[380px] bg-zinc-900 border-l border-zinc-800 flex flex-col z-20">
           <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
-            <span className="text-sm font-medium text-zinc-200">ZAFTO Code Database</span>
+            <span className="text-sm font-medium text-zinc-200">{t('estimates.zaftoCodeDatabase')}</span>
             <button onClick={() => setSidebarOpen(false)} className="p-1 text-zinc-500 hover:text-zinc-300">
               <X className="w-4 h-4" />
             </button>
@@ -1675,7 +1675,7 @@ function EstimatePreview({
           Back to editor
         </button>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-500 uppercase tracking-wider mr-1">Download PDF</span>
+          <span className="text-[10px] text-zinc-500 uppercase tracking-wider mr-1">{t('common.downloadPdf')}</span>
           {(['standard', 'detailed', 'summary', 'proposal'] as const).map((t) => (
             <button key={t} onClick={() => handlePdf(t)}
               className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 capitalize">
@@ -1718,7 +1718,7 @@ function EstimatePreview({
       {/* Insurance */}
       {estimate.estimateType === 'insurance' && (
         <div className="bg-purple-500/5 border border-purple-500/10 rounded-xl p-5 mb-8">
-          <h3 className="text-xs uppercase tracking-wider text-purple-400 mb-3">Insurance Details</h3>
+          <h3 className="text-xs uppercase tracking-wider text-purple-400 mb-3">{t('estimates.insuranceDetails')}</h3>
           <div className="grid grid-cols-3 gap-4 text-xs">
             <div><span className="text-zinc-500">Claim:</span> <span className="text-zinc-200 ml-1">{estimate.claimNumber || '—'}</span></div>
             <div><span className="text-zinc-500">Policy:</span> <span className="text-zinc-200 ml-1">{estimate.policyNumber || '—'}</span></div>

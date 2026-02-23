@@ -902,7 +902,7 @@ export default function NewBidPage() {
           </button>
           <div>
             <h1 className="text-2xl font-semibold text-main">{t('bidsNew.title')}</h1>
-            <p className="text-muted mt-1">Create a new bid for a customer</p>
+            <p className="text-muted mt-1">{t('bids.createNewBid')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -939,7 +939,7 @@ export default function NewBidPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <User size={18} className="text-muted" />
-              <CardTitle className="text-base">Customer Information</CardTitle>
+              <CardTitle className="text-base">{t('common.customerInformation')}</CardTitle>
               {selectedCustomer && (
                 <Badge variant="secondary">{selectedCustomer.firstName} {selectedCustomer.lastName}</Badge>
               )}
@@ -979,7 +979,7 @@ export default function NewBidPage() {
                     className="w-full px-4 py-3 text-left hover:bg-surface-hover flex items-center gap-2 border-b border-main text-accent"
                   >
                     <Plus size={16} />
-                    <span className="font-medium">Create New Customer</span>
+                    <span className="font-medium">{t('common.createNewCustomer')}</span>
                   </button>
                   {filteredCustomers.map((customer) => (
                     <button
@@ -1003,7 +1003,7 @@ export default function NewBidPage() {
               <>
                 <div className="pt-2 border-t border-main">
                   {isNewCustomer && (
-                    <p className="text-sm text-accent mb-4 font-medium">Creating new customer</p>
+                    <p className="text-sm text-accent mb-4 font-medium">{t('bids.creatingNewCustomer')}</p>
                   )}
                   <Input
                     label="Customer Name *"
@@ -1071,7 +1071,7 @@ export default function NewBidPage() {
                       onChange={(e) => setJobSiteSame(e.target.checked)}
                       className="w-4 h-4 rounded border-main text-accent focus:ring-accent"
                     />
-                    <span className="text-sm text-main">Job site same as customer address</span>
+                    <span className="text-sm text-main">{t('bids.jobSiteSameAsCustomer')}</span>
                   </label>
                 </div>
                 {!jobSiteSame && (
@@ -1210,7 +1210,7 @@ Example:
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Image size={18} className="text-muted" />
-              <CardTitle className="text-base">Photos & Attachments</CardTitle>
+              <CardTitle className="text-base">{t('common.photosAttachments')}</CardTitle>
               {photos.length > 0 && (
                 <Badge variant="secondary">{photos.length}</Badge>
               )}
@@ -1255,7 +1255,7 @@ Example:
                 <span className="text-base font-medium text-main mb-1">
                   {isDraggingPhoto ? 'Drop photos here' : 'Upload Photos'}
                 </span>
-                <span className="text-sm text-muted">Drag & drop or click to browse</span>
+                <span className="text-sm text-muted">{t('bids.dragDropOrClick')}</span>
                 <span className="text-xs text-muted mt-2">PNG, JPG, HEIC up to 10MB each</span>
               </div>
             ) : (
@@ -1293,8 +1293,8 @@ Example:
                         }}
                         className="absolute bottom-2 left-2 right-2 text-xs bg-black/70 text-white rounded px-2 py-1"
                       >
-                        <option value="site">Site Photo</option>
-                        <option value="plan">Plan/Drawing</option>
+                        <option value="site">{t('bids.sitePhoto')}</option>
+                        <option value="plan">{t('bids.planDrawing')}</option>
                         <option value="reference">{t('common.reference')}</option>
                       </select>
                     </div>
@@ -1304,7 +1304,7 @@ Example:
                     className="h-36 border-2 border-dashed border-main rounded-lg flex flex-col items-center justify-center gap-2 hover:border-accent hover:bg-surface-hover transition-colors"
                   >
                     <Upload size={24} className="text-muted" />
-                    <span className="text-sm text-muted">Add More</span>
+                    <span className="text-sm text-muted">{t('bids.addMore')}</span>
                   </button>
                 </div>
               </div>
@@ -1399,7 +1399,7 @@ Example:
                   }}
                   className="w-4 h-4 rounded border-main text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-muted">Recommended</span>
+                <span className="text-sm text-muted">{t('common.recommended')}</span>
               </label>
             </div>
           )}
@@ -1588,7 +1588,7 @@ Example:
                   <span className="text-main">{formatCurrency(activeOption.taxAmount)}</span>
                 </div>
                 <div className="flex justify-between font-semibold pt-2 border-t border-main">
-                  <span>Option Total</span>
+                  <span>{t('common.optionTotal')}</span>
                   <span>{formatCurrency(activeOption.total)}</span>
                 </div>
               </div>
@@ -1598,7 +1598,7 @@ Example:
           {/* Copy to Other Options */}
           {useMultipleOptions && (
             <div className="flex gap-2 pt-2">
-              <span className="text-sm text-muted">Copy items to:</span>
+              <span className="text-sm text-muted">{t('bids.copyItemsTo')}</span>
               {options
                 .filter((_, i) => i !== activeOptionIndex)
                 .map((opt) => (
@@ -1765,7 +1765,7 @@ Example:
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-main">Tax Rate</label>
+                <label className="block text-sm font-medium text-main">{t('common.taxRate')}</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -1782,7 +1782,7 @@ Example:
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-main">Required Deposit</label>
+                <label className="block text-sm font-medium text-main">{t('common.requiredDeposit')}</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -1811,7 +1811,7 @@ Example:
                   onChange={(e) => { setDiscountType(e.target.value as 'none' | 'percent' | 'flat'); if (e.target.value === 'none') setDiscountValue(0); }}
                   className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
                 >
-                  <option value="none">No Discount</option>
+                  <option value="none">{t('common.noDiscount')}</option>
                   <option value="percent">Percentage (%)</option>
                   <option value="flat">Flat Amount ($)</option>
                 </select>
@@ -1934,7 +1934,7 @@ Example:
                         )}
                         <div className="flex items-center gap-2">
                           {tmpl.hasGoodBetterBest && (
-                            <Badge variant="secondary" size="sm">Good/Better/Best</Badge>
+                            <Badge variant="secondary" size="sm">{t('common.goodBetterBest')}</Badge>
                           )}
                           {tmpl.isSystem && (
                             <Badge variant="secondary" size="sm">{t('common.system')}</Badge>
@@ -1982,7 +1982,7 @@ Example:
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-surface border border-main rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-main">
-              <h2 className="text-lg font-semibold text-main">Price Book</h2>
+              <h2 className="text-lg font-semibold text-main">{t('common.priceBook')}</h2>
               <button
                 onClick={() => setShowPriceBook(false)}
                 className="p-2 hover:bg-surface-hover rounded-lg"
@@ -2026,7 +2026,7 @@ Example:
                   </button>
                 ))}
                 {filteredPriceBook.length === 0 && (
-                  <p className="text-center text-muted py-8">No items found</p>
+                  <p className="text-center text-muted py-8">{t('common.noItemsFound')}</p>
                 )}
               </div>
             </div>
@@ -2042,7 +2042,7 @@ Example:
             <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Eye size={14} />
-                <span>Property Portal Preview</span>
+                <span>{t('bids.propertyPortalPreview')}</span>
               </div>
               <button
                 onClick={() => setShowPreview(false)}
@@ -2067,7 +2067,7 @@ Example:
                       />
                     ) : (
                       <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-400 text-center">No Logo</span>
+                        <span className="text-xs font-medium text-gray-400 text-center">{t('bids.noLogo')}</span>
                       </div>
                     )}
                     <div>
@@ -2090,7 +2090,7 @@ Example:
                 {/* Project & Customer Info */}
                 <div className="grid grid-cols-2 gap-8">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Prepared For</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('bids.preparedFor')}</h3>
                     <div className="text-gray-900 dark:text-white font-medium">{customerName || 'Customer Name'}</div>
                     {customerEmail && <div className="text-sm text-gray-600 dark:text-gray-400">{customerEmail}</div>}
                     {customerPhone && <div className="text-sm text-gray-600 dark:text-gray-400">{customerPhone}</div>}
@@ -2118,7 +2118,7 @@ Example:
                 {/* Photos (if any) */}
                 {photos.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Project Photos</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('bids.projectPhotos')}</h3>
                     <div className="grid grid-cols-4 gap-3">
                       {photos.slice(0, 4).map((photo) => (
                         <img
