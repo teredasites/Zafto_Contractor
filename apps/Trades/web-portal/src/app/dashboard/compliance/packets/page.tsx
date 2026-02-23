@@ -146,7 +146,7 @@ export default function CompliancePacketsPage() {
           <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-white">Compliance Packets</h1>
+          <h1 className="text-2xl font-bold text-white">{t('compliancePackets.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">Bundle certifications for sharing with GCs, inspectors, or clients</p>
         </div>
         <Button onClick={() => setCreating(!creating)} className="gap-2">

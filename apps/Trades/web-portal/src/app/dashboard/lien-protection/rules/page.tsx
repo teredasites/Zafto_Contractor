@@ -60,7 +60,7 @@ export default function LienRulesPage() {
           <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">State Lien Rules</h1>
+          <h1 className="text-2xl font-bold text-white">{t('lienProtectionrules.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">
             {rules.length} states/territories. {noticeRequired} require preliminary notice.
           </p>

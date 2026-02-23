@@ -100,7 +100,7 @@ export default function ResourcesPage() {
             <ArrowLeft className="w-4 h-4 text-secondary" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-primary">Resources</h1>
+            <h1 className="text-xl font-semibold text-primary">{t('schedulingResources.title')}</h1>
             <p className="text-sm text-secondary">{project?.name || 'Schedule'}</p>
           </div>
         </div>

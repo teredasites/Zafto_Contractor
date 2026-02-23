@@ -168,7 +168,7 @@ export default function ToolCheckoutPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Tool Checkout</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('toolCheckout.title')}</h1>
           <p className="text-muted mt-1">Track company tools & equipment — checkout, return, condition history</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>

@@ -136,7 +136,7 @@ export default function NewPropertyPage() {
           <ArrowLeft size={20} className="text-muted" />
         </button>
         <div>
-          <h1 className="text-2xl font-semibold text-main">Add Property</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('propertiesNew.title')}</h1>
           <p className="text-[13px] text-muted mt-1">Add a new property to your portfolio</p>
         </div>
       </div>

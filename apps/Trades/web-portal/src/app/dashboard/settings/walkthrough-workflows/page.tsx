@@ -233,7 +233,7 @@ export default function WalkthroughWorkflowsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Walkthrough Workflows</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('settingsWalkthroughWorkflows.title')}</h1>
           <p className="text-[13px] text-muted mt-1">
             Customize walkthrough templates to standardize your field capture process.
           </p>

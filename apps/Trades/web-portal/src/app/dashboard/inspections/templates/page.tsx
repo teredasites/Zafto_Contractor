@@ -61,7 +61,7 @@ export default function InspectionTemplatesPage() {
       <CommandPalette />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Inspection Templates</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('inspectionsTemplates.title')}</h1>
           <p className="text-muted mt-1">Manage checklists for inspections across all trades</p>
         </div>
         <Button><Plus size={16} />New Template</Button>

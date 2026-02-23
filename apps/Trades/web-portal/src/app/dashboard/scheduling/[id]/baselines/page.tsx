@@ -152,7 +152,7 @@ export default function BaselinesPage() {
             <ArrowLeft className="w-4 h-4 text-secondary" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-primary">Baselines</h1>
+            <h1 className="text-xl font-semibold text-primary">{t('schedulingBaselines.title')}</h1>
             <p className="text-sm text-secondary">{project?.name || 'Schedule'}</p>
           </div>
         </div>

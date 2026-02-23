@@ -104,7 +104,7 @@ export default function FaxPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">Fax</h1>
+            <h1 className="text-2xl font-bold text-zinc-100">{t('phoneFax.title')}</h1>
             <p className="text-sm text-zinc-500 mt-1">Send and receive faxes</p>
           </div>
         </div>

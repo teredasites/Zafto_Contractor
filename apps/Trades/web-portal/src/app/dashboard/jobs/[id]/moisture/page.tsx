@@ -136,7 +136,7 @@ export default function MoistureDryingMonitorPage() {
           <ArrowLeft size={20} className="text-muted" />
         </button>
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold text-main">Moisture & Drying Monitor</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('jobsMoisture.title')}</h1>
           <p className="text-muted mt-0.5">IICRC S500 compliant water damage tracking</p>
         </div>
         {!assessment && (

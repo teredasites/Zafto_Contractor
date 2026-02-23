@@ -58,7 +58,7 @@ export default function PortfolioPage() {
           <ArrowLeft className="w-4 h-4 text-secondary" />
         </button>
         <div>
-          <h1 className="text-xl font-semibold text-primary">Portfolio View</h1>
+          <h1 className="text-xl font-semibold text-primary">{t('schedulingPortfolio.title')}</h1>
           <p className="text-sm text-secondary">{summary.total_projects} active projects</p>
         </div>
       </div>

@@ -179,7 +179,7 @@ export default function JurisdictionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Permit Jurisdictions</h1>
+          <h1 className="text-2xl font-bold text-white">{t('permitsJurisdictions.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">
             Community-powered building department database. Help fellow contractors by updating info for your area.
           </p>

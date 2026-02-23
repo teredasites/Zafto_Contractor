@@ -171,7 +171,7 @@ export default function PermitDetailPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Job Permits</h1>
+          <h1 className="text-2xl font-bold text-white">{t('permits.title')}</h1>
           <p className="text-sm text-zinc-400">{permits.length} permit{permits.length !== 1 ? 's' : ''} for this job</p>
         </div>
       </div>

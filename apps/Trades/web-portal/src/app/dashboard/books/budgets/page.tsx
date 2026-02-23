@@ -44,7 +44,7 @@ export default function BudgetsPage() {
               <Link href="/dashboard/books" className="text-muted hover:text-main transition-colors">
                 <ArrowLeft size={20} />
               </Link>
-              <h1 className="text-2xl font-semibold text-main">Budget vs Actual</h1>
+              <h1 className="text-2xl font-semibold text-main">{t('booksBudgets.title')}</h1>
             </div>
             <p className="text-[13px] text-muted ml-8">Compare job budgets to actual expenses. Identify overruns early.</p>
           </div>

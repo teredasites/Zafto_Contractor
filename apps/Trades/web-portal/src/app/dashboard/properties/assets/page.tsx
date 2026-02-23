@@ -192,7 +192,7 @@ export default function AssetsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Asset Health Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('propertiesAssets.title')}</h1>
           <p className="text-muted mt-1">Track property assets, service schedules, and warranties</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>

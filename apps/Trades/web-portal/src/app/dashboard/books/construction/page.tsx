@@ -222,7 +222,7 @@ export default function ConstructionAccountingPage() {
             <ArrowLeft size={18} className="text-muted" />
           </button>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Construction Accounting</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksConstruction.title')}</h1>
             <p className="text-muted mt-0.5">
               G702/G703 billing, retention, WIP analysis, and certified payroll
             </p>

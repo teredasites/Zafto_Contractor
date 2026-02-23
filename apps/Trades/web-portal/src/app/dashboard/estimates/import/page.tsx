@@ -208,7 +208,7 @@ export default function ImportEstimatePage() {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-xl font-semibold text-zinc-100">Import Xactimate Estimate</h1>
+          <h1 className="text-xl font-semibold text-zinc-100">{t('estimatesImport.title')}</h1>
           <p className="text-sm text-zinc-500">Upload an Xactimate PDF export to import line items</p>
         </div>
       </div>

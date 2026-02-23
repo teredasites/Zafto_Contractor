@@ -287,7 +287,7 @@ export default function TaxSettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Tax & 1099 Compliance</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('booksTaxSettings.title')}</h1>
           <p className="text-muted mt-1">Map accounts to tax lines, track 1099 vendors, and preview your Schedule C</p>
         </div>
       </div>

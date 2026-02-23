@@ -124,7 +124,7 @@ export default function UnitTurnsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Unit Turns</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('propertiesTurns.title')}</h1>
           <p className="text-muted mt-1">Manage turnover tasks from move-out to re-lease</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>

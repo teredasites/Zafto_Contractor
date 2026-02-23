@@ -108,7 +108,7 @@ export default function LeasesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Leases</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('propertiesLeases.title')}</h1>
           <p className="text-muted mt-1">Manage tenant leases, renewals, and terms</p>
         </div>
         <Button onClick={() => router.push('/dashboard/properties/leases/new')}>

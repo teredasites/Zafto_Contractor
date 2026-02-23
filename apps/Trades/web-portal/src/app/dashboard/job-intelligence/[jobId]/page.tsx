@@ -64,7 +64,7 @@ export default function JobAutopsyDetailPage() {
         <ArrowLeft className="h-4 w-4" /> Back to Intelligence
       </Link>
 
-      <h1 className="text-2xl font-semibold text-white mb-1">Job Cost Autopsy</h1>
+      <h1 className="text-2xl font-semibold text-white mb-1">{t('jobIntelligence.title')}</h1>
       <p className="text-sm text-zinc-500 mb-6">
         {(autopsy.job_type || 'Unknown').replace(/_/g, ' ')}
         {autopsy.completed_at && ` — ${new Date(autopsy.completed_at).toLocaleDateString()}`}

@@ -140,7 +140,7 @@ export default function JobEquipmentPage() {
             <ArrowLeft size={18} className="text-muted" />
           </button>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Equipment Tracking</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('jobsEquipment.title')}</h1>
             <p className="text-muted mt-0.5">IICRC-compliant deployment tracking and billing</p>
           </div>
         </div>

@@ -559,7 +559,7 @@ export default function RecurringPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Recurring Transactions</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('booksRecurring.title')}</h1>
           <p className="text-muted mt-1">Automate repeating expenses and invoices</p>
         </div>
         <Button onClick={() => { setEditingTemplate(null); setModalOpen(true); }}>

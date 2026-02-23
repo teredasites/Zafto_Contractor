@@ -81,7 +81,7 @@ export default function UnitsPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-main">All Units</h1>
+        <h1 className="text-2xl font-semibold text-main">{t('propertiesUnits.title')}</h1>
         <p className="text-[13px] text-muted mt-1">View and manage all units across your properties</p>
       </div>
 

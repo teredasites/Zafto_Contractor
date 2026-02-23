@@ -190,7 +190,7 @@ export default function DataImportPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Data Import</h1>
+          <h1 className="text-2xl font-bold text-white">{t('settingsImport.title')}</h1>
           <p className="text-zinc-400 text-sm mt-1">
             Import your data from CSV files, Jobber, HousecallPro, ServiceTitan, or QuickBooks
           </p>

@@ -227,7 +227,7 @@ export default function ReconciliationPage() {
             </button>
           )}
           <div>
-            <h1 className="text-2xl font-semibold text-main">Bank Reconciliation</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksReconciliation.title')}</h1>
             <p className="text-muted mt-1">
               {view === 'active'
                 ? `Reconciling ${selectedAccount?.accountName || 'Account'}`
