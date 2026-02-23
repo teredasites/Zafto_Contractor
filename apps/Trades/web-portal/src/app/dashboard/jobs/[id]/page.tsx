@@ -44,6 +44,7 @@ import {
   Thermometer,
   Image,
   ListChecks,
+  Printer,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -146,6 +147,143 @@ export default function JobDetailPage() {
       }
     } catch (err) {
       alert('Failed to clone job. Please try again.');
+    }
+  };
+
+  const handlePrintJobSummary = (j: Job) => {
+    const statusLabel = j.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const priorityLabel = j.priority.charAt(0).toUpperCase() + j.priority.slice(1);
+    const jobTypeLabel = JOB_TYPE_LABELS[j.jobType] || j.jobType;
+    const customerName = j.customer ? `${j.customer.firstName} ${j.customer.lastName}` : 'N/A';
+    const addressStr = `${j.address.street}, ${j.address.city}, ${j.address.state} ${j.address.zip}`;
+    const printDate = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const notesHtml = j.notes.length > 0
+      ? j.notes.slice(0, 20).map(n =>
+          `<div style="margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px;">
+            <div style="font-size:11px;color:#888;">${n.authorName} &mdash; ${new Date(n.createdAt).toLocaleDateString()}</div>
+            <div style="font-size:13px;margin-top:4px;">${n.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+          </div>`
+        ).join('')
+      : '<p style="color:#999;font-size:13px;">No notes</p>';
+
+    const tagsHtml = j.tags.length > 0
+      ? j.tags.map(tag => `<span style="display:inline-block;padding:2px 8px;background:#e5e7eb;border-radius:4px;font-size:12px;margin-right:4px;">${tag}</span>`).join('')
+      : '';
+
+    const assignedHtml = (j.teamMembers && j.teamMembers.length > 0)
+      ? j.teamMembers.map(m => `<li>${m.name} (${m.role.replace(/_/g, ' ')})</li>`).join('')
+      : assignedMembers.length > 0
+        ? assignedMembers.map(m => m ? `<li>${m.name} (${m.role.replace(/_/g, ' ')})</li>` : '').join('')
+        : '<li style="color:#999;">No team assigned</li>';
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Job Summary - ${j.title.replace(/</g, '&lt;')}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; color: #1a1a1a; padding: 40px; max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    h2 { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e5e7eb; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #111; }
+    .header-left { flex: 1; }
+    .header-right { text-align: right; font-size: 12px; color: #666; }
+    .meta-row { display: flex; gap: 24px; margin-top: 8px; font-size: 13px; color: #555; }
+    .meta-row span { display: inline-flex; align-items: center; gap: 4px; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .badge-status { background: #dbeafe; color: #1e40af; }
+    .badge-priority-urgent { background: #fee2e2; color: #991b1b; }
+    .badge-priority-high { background: #fef3c7; color: #92400e; }
+    .badge-priority-normal { background: #e5e7eb; color: #374151; }
+    .badge-priority-low { background: #f3f4f6; color: #6b7280; }
+    .section { margin-bottom: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid #f3f4f6; }
+    .detail-label { color: #6b7280; }
+    .detail-value { font-weight: 500; text-align: right; }
+    .description { font-size: 13px; line-height: 1.6; color: #374151; white-space: pre-wrap; }
+    ul { list-style: none; padding: 0; }
+    ul li { font-size: 13px; padding: 4px 0; }
+    .footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
+    @media print {
+      body { padding: 20px; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>${j.title.replace(/</g, '&lt;')}</h1>
+      <div class="meta-row">
+        <span class="badge badge-status">${statusLabel}</span>
+        <span class="badge badge-priority-${j.priority}">${priorityLabel}</span>
+        <span>${jobTypeLabel}</span>
+        ${j.tradeType ? `<span>${j.tradeType}</span>` : ''}
+      </div>
+    </div>
+    <div class="header-right">
+      <div style="font-weight:600;font-size:13px;">Job Summary</div>
+      <div>Printed: ${printDate}</div>
+      <div>ID: ${j.id.slice(0, 8)}...</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="section">
+      <h2>Job Details</h2>
+      <div class="detail-row"><span class="detail-label">Estimated Value</span><span class="detail-value">${formatCurrency(j.estimatedValue)}</span></div>
+      <div class="detail-row"><span class="detail-label">Actual Cost</span><span class="detail-value">${formatCurrency(j.actualCost)}</span></div>
+      <div class="detail-row"><span class="detail-label">Created</span><span class="detail-value">${new Date(j.createdAt).toLocaleDateString()}</span></div>
+      ${j.scheduledStart ? `<div class="detail-row"><span class="detail-label">Scheduled Start</span><span class="detail-value">${new Date(j.scheduledStart).toLocaleDateString()}</span></div>` : ''}
+      ${j.scheduledEnd ? `<div class="detail-row"><span class="detail-label">Scheduled End</span><span class="detail-value">${new Date(j.scheduledEnd).toLocaleDateString()}</span></div>` : ''}
+      ${j.actualStart ? `<div class="detail-row"><span class="detail-label">Actual Start</span><span class="detail-value">${new Date(j.actualStart).toLocaleDateString()}</span></div>` : ''}
+      ${j.actualEnd ? `<div class="detail-row"><span class="detail-label">Actual End</span><span class="detail-value">${new Date(j.actualEnd).toLocaleDateString()}</span></div>` : ''}
+      ${j.estimatedDuration ? `<div class="detail-row"><span class="detail-label">Est. Duration</span><span class="detail-value">${j.estimatedDuration} hrs</span></div>` : ''}
+      <div class="detail-row"><span class="detail-label">Source</span><span class="detail-value">${j.source || 'N/A'}</span></div>
+    </div>
+
+    <div>
+      <div class="section">
+        <h2>Customer</h2>
+        <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${customerName}</span></div>
+        ${j.customer?.email ? `<div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${j.customer.email}</span></div>` : ''}
+        ${j.customer?.phone ? `<div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${j.customer.phone}</span></div>` : ''}
+      </div>
+      <div class="section">
+        <h2>Location</h2>
+        <p style="font-size:13px;">${addressStr}</p>
+      </div>
+      <div class="section">
+        <h2>Assigned Team</h2>
+        <ul>${assignedHtml}</ul>
+      </div>
+    </div>
+  </div>
+
+  ${j.description ? `<div class="section"><h2>Description</h2><p class="description">${j.description.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>` : ''}
+
+  ${tagsHtml ? `<div class="section"><h2>Tags</h2><div>${tagsHtml}</div></div>` : ''}
+
+  <div class="section">
+    <h2>Notes</h2>
+    ${notesHtml}
+  </div>
+
+  <div class="footer">
+    Generated by Zafto &mdash; ${printDate}
+  </div>
+
+  <script>window.onload = function() { window.print(); }</script>
+</body>
+</html>`;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
     }
   };
 
@@ -270,7 +408,7 @@ export default function JobDetailPage() {
       </div>
 
       {/* Quick Actions Bar */}
-      <QuickActionsBar job={job} onClone={handleCloneJob} />
+      <QuickActionsBar job={job} onClone={handleCloneJob} onPrint={() => handlePrintJobSummary(job)} />
 
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-secondary rounded-lg w-fit">
@@ -540,7 +678,7 @@ function OverviewTab({ job }: { job: Job }) {
 }
 
 // ── Quick Actions Bar ──
-function QuickActionsBar({ job, onClone }: { job: Job; onClone: () => void }) {
+function QuickActionsBar({ job, onClone, onPrint }: { job: Job; onClone: () => void; onPrint: () => void }) {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -553,6 +691,7 @@ function QuickActionsBar({ job, onClone }: { job: Job; onClone: () => void }) {
     { label: t('common.assignTeam'), icon: <UserPlus size={14} />, onClick: () => {} },
     { label: t('common.timeClock'), icon: <Timer size={14} />, onClick: () => router.push(`/dashboard/time-clock?jobId=${job.id}`) },
     { label: t('common.clone'), icon: <Copy size={14} />, onClick: onClone },
+    { label: t('common.printExport'), icon: <Printer size={14} />, onClick: onPrint },
   ];
 
   return (
