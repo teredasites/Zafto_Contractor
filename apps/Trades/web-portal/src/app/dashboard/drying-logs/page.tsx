@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select, Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDateTime, formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useRestorationTools } from '@/lib/hooks/use-restoration-tools';
 import type { DryingLogWithJob } from '@/lib/hooks/use-restoration-tools';
 
@@ -42,6 +43,7 @@ const logTypeOptions = [
 ];
 
 export default function DryingLogsPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -92,7 +94,7 @@ export default function DryingLogsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Drying Logs</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('dryingLogs.title')}</h1>
           <p className="text-muted mt-1">Document drying progress and environmental conditions</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
@@ -211,7 +213,7 @@ export default function DryingLogsPage() {
         {filtered.length === 0 && (
           <CardContent className="p-12 text-center">
             <Wind size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No drying logs found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('dryingLogs.noRecords')}</h3>
             <p className="text-muted mb-4">Start documenting drying progress with setup logs, daily readings, and equipment changes.</p>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus size={16} />Add Entry

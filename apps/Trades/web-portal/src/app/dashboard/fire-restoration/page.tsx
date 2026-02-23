@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/translations';
 import {
   Flame,
   Plus,
@@ -61,6 +62,7 @@ const severityOptions = [
 // =============================================================================
 
 export default function FireRestorationPage() {
+  const { t } = useTranslation();
   const { assessments, loading, error, createAssessment, deleteAssessment } = useFireRestoration();
   const [searchQuery, setSearchQuery] = useState('');
   const [severityFilter, setSeverityFilter] = useState('all');
@@ -97,7 +99,7 @@ export default function FireRestorationPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Fire Restoration</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('fireRestoration.title')}</h1>
             <p className="text-sm text-muted-foreground">
               Fire damage assessments, soot classification, content pack-out, odor treatment
             </p>
@@ -191,7 +193,7 @@ export default function FireRestorationPage() {
           <Card>
             <CardContent className="py-16 text-center">
               <Flame className="mx-auto mb-3 h-12 w-12 text-muted-foreground/30" />
-              <p className="text-sm font-medium text-muted-foreground">No fire assessments</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('fireRestoration.noRecords')}</p>
               <p className="mt-1 text-xs text-muted-foreground/70">
                 Fire assessments are created from job details in the mobile app
               </p>

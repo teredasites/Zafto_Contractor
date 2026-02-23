@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/translations';
 import { useApplianceRepairLogs, APPLIANCE_TYPE_LABELS, REPAIR_VS_REPLACE_LABELS } from '@/lib/hooks/use-appliance-repair';
 import { SearchInput } from '@/components/ui/input';
 
@@ -16,6 +17,7 @@ function formatDate(iso: string): string {
 }
 
 export default function ApplianceRepairPage() {
+  const { t } = useTranslation();
   const { logs, loading } = useApplianceRepairLogs();
   const [search, setSearch] = useState('');
 
@@ -45,7 +47,7 @@ export default function ApplianceRepairPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Appliance Repair</h1>
+          <h1 className="text-2xl font-bold text-white">{t('applianceRepair.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">Service logs, error codes, repair vs replace analysis</p>
         </div>
         <div className="max-w-xs">
@@ -76,7 +78,7 @@ export default function ApplianceRepairPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500"><p>No appliance services found</p></div>
+          <div className="text-center py-12 text-zinc-500"><p>{t('applianceRepair.noRecords')}</p></div>
         ) : (
           filtered.map((l) => (
             <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">

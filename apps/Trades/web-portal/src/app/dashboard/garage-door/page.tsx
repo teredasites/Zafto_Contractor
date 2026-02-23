@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/translations';
 import { useGarageDoorLogs, GARAGE_DOOR_SERVICE_LABELS, DOOR_TYPE_LABELS } from '@/lib/hooks/use-garage-door';
 import { SearchInput } from '@/components/ui/input';
 
@@ -24,6 +25,7 @@ function statusBadge(status: string | null) {
 }
 
 export default function GarageDoorPage() {
+  const { t } = useTranslation();
   const { logs, loading } = useGarageDoorLogs();
   const [search, setSearch] = useState('');
 
@@ -53,7 +55,7 @@ export default function GarageDoorPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Garage Door</h1>
+          <h1 className="text-2xl font-bold text-white">{t('garageDoor.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">Service logs, spring specs, safety tests</p>
         </div>
         <div className="max-w-xs">
@@ -84,7 +86,7 @@ export default function GarageDoorPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500"><p>No garage door services found</p></div>
+          <div className="text-center py-12 text-zinc-500"><p>{t('garageDoor.noRecords')}</p></div>
         ) : (
           filtered.map((l) => (
             <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">

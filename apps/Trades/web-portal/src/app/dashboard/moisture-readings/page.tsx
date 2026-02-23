@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select, Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDateTime, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useRestorationTools } from '@/lib/hooks/use-restoration-tools';
 import type { MoistureReadingWithJob } from '@/lib/hooks/use-restoration-tools';
 
@@ -62,6 +63,7 @@ function getReadingBg(reading: MoistureReadingWithJob): string {
 }
 
 export default function MoistureReadingsPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [materialFilter, setMaterialFilter] = useState('all');
   const [dryFilter, setDryFilter] = useState('all');
@@ -108,7 +110,7 @@ export default function MoistureReadingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Moisture Readings</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('moistureReadings.title')}</h1>
           <p className="text-muted mt-1">Track and monitor moisture levels across restoration jobs</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
@@ -256,7 +258,7 @@ export default function MoistureReadingsPage() {
         {filtered.length === 0 && (
           <CardContent className="p-12 text-center">
             <Droplets size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No moisture readings found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('moistureReadings.noRecords')}</h3>
             <p className="text-muted mb-4">Start logging moisture readings to track drying progress across restoration jobs.</p>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus size={16} />Add Reading
