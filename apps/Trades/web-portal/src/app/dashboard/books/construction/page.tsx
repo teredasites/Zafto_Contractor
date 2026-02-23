@@ -27,7 +27,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
-import { TierGate } from '@/components/permission-gate';
+
 import {
   useConstructionAccounting,
 } from '@/lib/hooks/use-construction-accounting';
@@ -207,24 +207,6 @@ export default function ConstructionAccountingPage() {
   };
 
   return (
-    <TierGate minimumTier="enterprise" fallback={
-      <div className="space-y-8 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-semibold text-main">Construction Accounting</h1>
-          <p className="text-[13px] text-muted mt-1">AIA billing, retainage, WIP, and certified payroll</p>
-        </div>
-        <Card>
-          <CardContent className="text-center py-12">
-            <HardHat size={40} className="mx-auto mb-3 text-muted opacity-40" />
-            <h3 className="text-lg font-semibold text-main">Enterprise Feature</h3>
-            <p className="text-sm text-muted mt-2 max-w-md mx-auto">
-              Construction-specific accounting with AIA G702/G703 progress billing, retainage tracking, WIP reporting, and certified payroll is available on the Enterprise plan.
-            </p>
-            <Button variant="secondary" className="mt-6">Upgrade Plan</Button>
-          </CardContent>
-        </Card>
-      </div>
-    }>
     <div className="space-y-6 animate-fade-in">
       <CommandPalette />
 
@@ -409,7 +391,6 @@ export default function ConstructionAccountingPage() {
         </div>
       )}
     </div>
-    </TierGate>
   );
 }
 

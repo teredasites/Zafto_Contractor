@@ -52,7 +52,7 @@ import { cn, formatRelativeTime } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { locales, localeNames, localeFlags, type Locale } from '@/lib/i18n-config';
 import { useTeam } from '@/lib/hooks/use-jobs';
-import { usePermissions, TierGate, PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@/components/permission-gate';
+import { usePermissions, PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@/components/permission-gate';
 import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useApiKeys } from '@/lib/hooks/use-enterprise';
 import { useApprovals } from '@/lib/hooks/use-approvals';
 import type { ApprovalThresholdData } from '@/lib/hooks/pm-mappers';

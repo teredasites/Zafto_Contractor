@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { cn } from '@/lib/utils';
-import { TierGate } from '@/components/permission-gate';
+
 import { useBudgetVsActual, CATEGORY_LABELS } from '@/lib/hooks/use-job-budgets';
 import {
   DollarSign,
@@ -32,8 +32,7 @@ export default function BudgetsPage() {
   );
 
   return (
-    <TierGate minimumTier="enterprise" fallback={<UpgradePrompt />}>
-      <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
         <CommandPalette />
 
         {/* Header */}
@@ -218,7 +217,6 @@ export default function BudgetsPage() {
           </CardContent>
         </Card>
       </div>
-    </TierGate>
   );
 }
 
