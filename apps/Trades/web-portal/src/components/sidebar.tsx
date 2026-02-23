@@ -77,6 +77,7 @@ import { PermissionGate, PERMISSIONS } from '@/components/permission-gate';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
 import { useCompanyFeatures } from '@/lib/hooks/use-tpa-programs';
+import { useTranslation } from '@/lib/translations';
 import type { User } from '@supabase/supabase-js';
 
 // ── Types ──
@@ -328,9 +329,53 @@ interface SidebarProps {
   onSignOut: () => void;
 }
 
+// ── Nav item name → i18n key mapping ──
+const navI18nKeys: Record<string, string> = {
+  'Dashboard': 'nav.dashboard', 'Leads': 'nav.leads', 'Bids': 'nav.bids',
+  'Estimates': 'nav.estimates', 'Jobs': 'nav.jobs', 'Change Orders': 'nav.changeOrders',
+  'Invoices': 'nav.invoices', 'Customers': 'nav.customers', 'Service Agreements': 'nav.serviceAgreements',
+  'Warranties': 'nav.warranties', 'Warranty Intel': 'nav.warrantyIntel', 'Reviews': 'nav.reviews',
+  'Ledger': 'nav.ledger', 'Reports': 'nav.reports', 'Revenue': 'nav.revenue',
+  'Payroll': 'nav.payroll', 'Job Intelligence': 'nav.jobIntelligence', 'Job Cost Radar': 'nav.jobCostRadar',
+  'Pricing Rules': 'nav.pricingRules', 'Pricing Analytics': 'nav.pricingAnalytics',
+  'Dispatch': 'nav.dispatch', 'Subcontractors': 'nav.subcontractors', 'Calendar': 'nav.calendar',
+  'Schedule': 'nav.schedule', 'Meetings': 'nav.meetings', 'Time Clock': 'nav.timeClock',
+  'Inspections': 'nav.inspections', 'Inspection Engine': 'nav.inspectionEngine',
+  'OSHA Standards': 'nav.oshaStandards', 'Permits': 'nav.permits', 'Jurisdictions': 'nav.jurisdictions',
+  'Compliance': 'nav.compliance', 'CE Tracking': 'nav.ceTracking', 'Compliance Packets': 'nav.compliancePackets',
+  'Lien Protection': 'nav.lienProtection', 'Maintenance Pipeline': 'nav.maintenancePipeline',
+  'Communications': 'nav.communications', 'Team Chat': 'nav.teamChat', 'Calls': 'nav.calls',
+  'Messages': 'nav.messages', 'Fax': 'nav.fax', 'Email': 'nav.emailNav',
+  'Claims': 'nav.claims', 'Moisture Readings': 'nav.moistureReadings', 'Drying Logs': 'nav.dryingLogs',
+  'Site Surveys': 'nav.siteSurveys', 'Sketch Engine': 'nav.sketchEngine',
+  'TPA Dashboard': 'nav.tpaDashboard', 'Programs': 'nav.programs', 'Assignments': 'nav.assignments',
+  'Scorecards': 'nav.scorecards', 'Property Scans': 'nav.propertyScans', 'Area Scans': 'nav.areaScans',
+  'Team': 'nav.team', 'Certifications': 'nav.certifications', 'Equipment': 'nav.equipment',
+  'Tool Checkout': 'nav.toolCheckout', 'Vendors': 'nav.vendors', 'Purchase Orders': 'nav.purchaseOrders',
+  'Fleet': 'nav.fleet', 'HR': 'nav.hr', 'Hiring': 'nav.hiring', 'Marketplace': 'nav.marketplace', 'Overview': 'nav.overview',
+  'Walkthroughs': 'nav.walkthroughs', 'ZForge': 'nav.zforge', 'Documents': 'nav.documents',
+  'Automations': 'nav.automations', 'Growth': 'nav.growth',
+  'Portfolio': 'nav.portfolio', 'Units': 'nav.units', 'Tenants': 'nav.tenants',
+  'Leases': 'nav.leases', 'Rent': 'nav.rent', 'Maintenance': 'nav.maintenance',
+  'Assets': 'nav.assets', 'Unit Turns': 'nav.unitTurns',
+  'Settings': 'nav.settings', 'Sign out': 'common.signOut',
+  // Group labels
+  'Business': 'nav.business', 'Finance': 'nav.finance', 'Operations': 'nav.operations',
+  'Comms': 'nav.comms', 'Insurance': 'nav.insurance', 'TPA Programs': 'nav.tpa',
+  'Recon': 'nav.recon', 'Tools': 'nav.tools', 'Properties': 'nav.properties',
+};
+
 export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation();
+  // Translate nav names: lookup i18n key, fallback to original English name
+  const tn = useCallback((name: string) => {
+    const key = navI18nKeys[name];
+    if (!key) return name;
+    const translated = t(key);
+    return translated === key ? name : translated; // If key not found, use original
+  }, [t]);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>({ business: true });
@@ -497,7 +542,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         ) : (
           <item.icon size={18} className="flex-shrink-0" />
         )}
-        <span>{item.name}</span>
+        <span>{tn(item.name)}</span>
       </Link>
     );
 
@@ -566,7 +611,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                 <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-accent" />
               )}
               <LayoutDashboard size={16} className="flex-shrink-0" />
-              <span>Dashboard</span>
+              <span>{tn('Dashboard')}</span>
             </Link>
           </div>
 
@@ -593,7 +638,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                     ) : (
                       <ZMark size={12} className="flex-shrink-0" />
                     )}
-                    <span>{group.label}</span>
+                    <span>{tn(group.label)}</span>
                   </div>
                   <ChevronDown
                     size={13}
@@ -629,14 +674,14 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             )}
           >
             <Settings size={16} className="flex-shrink-0" />
-            <span>Settings</span>
+            <span>{tn('Settings')}</span>
           </Link>
           <button
             onClick={onSignOut}
             className="w-full flex items-center gap-3 px-3 py-[7px] rounded-md text-[14px] font-medium text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
           >
             <LogOut size={16} className="flex-shrink-0" />
-            <span>Sign out</span>
+            <span>{tn('Sign out')}</span>
           </button>
         </div>
       </aside>
@@ -687,10 +732,10 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
               <span className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-accent" />
             )}
             <LayoutDashboard size={20} className="flex-shrink-0" />
-            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Dashboard</span>}
+            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">{tn('Dashboard')}</span>}
             {!isWide && hoveredGroup === '__dashboard' && !activeGroup && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[14px] font-medium text-main">Dashboard</span>
+                <span className="text-[14px] font-medium text-main">{tn('Dashboard')}</span>
               </div>
             )}
           </Link>
@@ -726,7 +771,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                       ) : (
                         <ZMark size={12} className="flex-shrink-0" />
                       )}
-                      <span className="whitespace-nowrap">{group.label}</span>
+                      <span className="whitespace-nowrap">{tn(group.label)}</span>
                     </div>
                     <ChevronDown
                       size={13}
@@ -779,7 +824,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                 {/* Hover tooltip — narrow mode only */}
                 {isHovered && !isOpen && (
                   <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                    <span className="text-[14px] font-medium text-main">{group.label}</span>
+                    <span className="text-[14px] font-medium text-main">{tn(group.label)}</span>
                   </div>
                 )}
               </div>
@@ -806,10 +851,10 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             )}
           >
             <Settings size={20} className="flex-shrink-0" />
-            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Settings</span>}
+            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">{tn('Settings')}</span>}
             {!isWide && hoveredGroup === '__settings' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[14px] font-medium text-main">Settings</span>
+                <span className="text-[14px] font-medium text-main">{tn('Settings')}</span>
               </div>
             )}
           </Link>
@@ -889,10 +934,10 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             )}
           >
             <LogOut size={18} className="flex-shrink-0" />
-            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Sign out</span>}
+            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">{tn('Sign out')}</span>}
             {!isWide && hoveredGroup === '__signout' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[14px] font-medium text-main">Sign out</span>
+                <span className="text-[14px] font-medium text-main">{tn('Sign out')}</span>
               </div>
             )}
           </button>
@@ -937,7 +982,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           {/* Panel header */}
           <div className="h-12 flex items-center justify-between px-4 border-b border-main flex-shrink-0">
             <span className="text-[14px] font-semibold tracking-[0.02em] text-main">
-              {currentDetailGroup.label}
+              {tn(currentDetailGroup.label)}
             </span>
             <button
               onClick={() => setActiveGroup(null)}
@@ -948,7 +993,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           </div>
 
           {/* Panel items */}
-          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]" aria-label={`${currentDetailGroup.label} navigation`}>
+          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]" aria-label={`${tn(currentDetailGroup.label)} navigation`}>
             {currentDetailGroup.items.map(item => renderDetailItem(item))}
           </nav>
         </div>
