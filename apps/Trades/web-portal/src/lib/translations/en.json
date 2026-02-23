@@ -365,29 +365,31 @@
   "invoices": {
     "title": "Invoices",
     "new": "New Invoice",
-    "edit": "Edit Invoice",
-    "detail": "Invoice Details",
-    "number": "Invoice #",
-    "noInvoices": "No invoices found",
-    "noInvoicesDesc": "Create your first invoice to get started.",
-    "createInvoice": "Create Invoice",
     "searchInvoices": "Search invoices...",
-    "sendInvoice": "Send Invoice",
-    "recordPayment": "Record Payment",
-    "markPaid": "Mark as Paid",
-    "dueDate": "Due Date",
-    "datePaid": "Date Paid",
-    "balanceDue": "Balance Due",
-    "amountPaid": "Amount Paid",
-    "paymentTerms": "Payment Terms",
-    "paymentMethod": "Payment Method",
-    "sendReminder": "Send Reminder",
+    "noInvoices": "No invoices yet",
+    "noInvoicesDesc": "Create your first invoice to get started.",
+    "totalOutstanding": "Total Outstanding",
+    "overdueAmount": "Overdue Amount",
+    "paidThisMonth": "Paid This Month",
+    "averagePayDays": "Avg. Pay Days",
     "statusDraft": "Draft",
     "statusSent": "Sent",
-    "statusViewed": "Viewed",
-    "statusPartial": "Partial",
     "statusPaid": "Paid",
-    "statusOverdue": "Overdue"
+    "statusOverdue": "Overdue",
+    "statusVoid": "Void",
+    "dueDate": "Due Date",
+    "amount": "Amount",
+    "sendInvoice": "Send Invoice",
+    "markPaid": "Mark as Paid",
+    "voidInvoice": "Void Invoice",
+    "downloadPDF": "Download PDF",
+    "paymentReceived": "Payment Received",
+    "lineItems": "Line Items",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "total": "Total",
+    "notes": "Notes",
+    "terms": "Terms"
   },
   "customers": {
     "title": "Customers",
@@ -521,65 +523,20 @@
     "maintenanceJobs": "Maintenance Jobs"
   },
   "recon": {
-    "title": "Property Scans",
+    "title": "Recon",
     "newScan": "New Scan",
-    "scanAddress": "Enter address to scan...",
     "noScans": "No property scans yet",
-    "noScansDesc": "Enter an address to get a complete property intelligence report.",
-    "scanning": "Scanning property...",
-    "scanComplete": "Scan complete",
-    "scanFailed": "Scan failed",
-    "tabs": {
-      "overview": "Overview",
-      "property": "Property",
-      "hazards": "Hazards",
-      "weather": "Weather",
-      "environmental": "Environmental",
-      "codes": "Codes",
-      "measurements": "Measurements",
-      "links": "External Links"
-    },
-    "hazards": {
-      "leadPaint": "Lead Paint Risk",
-      "asbestos": "Asbestos Risk",
-      "radon": "Radon Zone",
-      "floodZone": "Flood Zone",
-      "wildfire": "Wildfire Risk",
-      "seismic": "Seismic Risk",
-      "problemPanel": "Problem Panel",
-      "termite": "Termite Risk",
-      "galvanizedPipe": "Galvanized Pipe",
-      "knobAndTube": "Knob & Tube Wiring",
-      "polybutylene": "Polybutylene Pipe"
-    },
-    "property": {
-      "sqft": "Square Feet",
-      "stories": "Stories",
-      "beds": "Bedrooms",
-      "baths": "Bathrooms",
-      "yearBuilt": "Year Built",
-      "lotSize": "Lot Size",
-      "construction": "Construction Type",
-      "foundation": "Foundation",
-      "roofMaterial": "Roof Material",
-      "heating": "Heating",
-      "cooling": "Cooling",
-      "assessedValue": "Assessed Value",
-      "marketValue": "Market Value",
-      "lastSale": "Last Sale"
-    }
+    "areaScans": "Area Scans"
   },
   "insurance": {
     "title": "Insurance Claims",
-    "newClaim": "New Claim",
+    "new": "New Claim",
+    "searchClaims": "Search claims...",
     "noClaims": "No claims found",
-    "claimNumber": "Claim #",
-    "policyNumber": "Policy #",
-    "carrier": "Carrier",
-    "adjuster": "Adjuster",
-    "dateOfLoss": "Date of Loss",
-    "causeOfLoss": "Cause of Loss",
-    "deductible": "Deductible"
+    "totalClaims": "Total Claims",
+    "pendingReview": "Pending Review",
+    "approved": "Approved",
+    "claimAmount": "Claim Amount"
   },
   "settings": {
     "title": "Settings",
@@ -669,13 +626,10 @@
   },
   "compliance": {
     "title": "Compliance",
-    "permits": "Permits",
-    "newPermit": "New Permit",
-    "oshaStandards": "OSHA Standards",
+    "manageDesc": "Track licenses, certifications, and regulatory compliance",
     "ceTracking": "CE Tracking",
     "packets": "Compliance Packets",
-    "certifications": "Certifications",
-    "lienProtection": "Lien Protection"
+    "noCerts": "No compliance records found"
   },
   "comms": {
     "title": "Communications",
@@ -714,14 +668,15 @@
   },
   "equipment": {
     "title": "Equipment",
-    "newEquipment": "Add Equipment",
-    "noEquipment": "No equipment tracked yet",
-    "serialNumber": "Serial Number",
-    "condition": "Condition",
-    "location": "Location",
-    "assignedTo": "Assigned To",
-    "lastService": "Last Service",
-    "nextService": "Next Service"
+    "manageDesc": "Manage restoration equipment deployments and tracking",
+    "addEquipment": "Add Equipment",
+    "searchEquipment": "Search equipment...",
+    "noEquipment": "No equipment found",
+    "noEquipmentDesc": "Track dehumidifiers, air movers, and other restoration equipment deployed to job sites.",
+    "totalItems": "Total Items",
+    "deployed": "Deployed",
+    "maintenance": "Maintenance",
+    "dailyRate": "Daily Rate"
   },
   "vendors": {
     "title": "Vendors",
@@ -751,18 +706,6 @@
     "vin": "VIN",
     "mileage": "Mileage",
     "licensePlate": "License Plate"
-  },
-  "equipment": {
-    "title": "Equipment",
-    "manageDesc": "Manage restoration equipment deployments and tracking",
-    "addEquipment": "Add Equipment",
-    "searchEquipment": "Search equipment...",
-    "noEquipment": "No equipment found",
-    "noEquipmentDesc": "Track dehumidifiers, air movers, and other restoration equipment deployed to job sites.",
-    "totalItems": "Total Items",
-    "deployed": "Deployed",
-    "maintenance": "Maintenance",
-    "dailyRate": "Daily Rate"
   },
   "timeClock": {
     "title": "Time Clock",
@@ -822,35 +765,6 @@
     "offline": "Offline",
     "clockedIn": "Clocked in",
     "noTeamMembers": "No team members found"
-  },
-  "invoices": {
-    "title": "Invoices",
-    "new": "New Invoice",
-    "searchInvoices": "Search invoices...",
-    "noInvoices": "No invoices yet",
-    "noInvoicesDesc": "Create your first invoice to get started.",
-    "totalOutstanding": "Total Outstanding",
-    "overdueAmount": "Overdue Amount",
-    "paidThisMonth": "Paid This Month",
-    "averagePayDays": "Avg. Pay Days",
-    "statusDraft": "Draft",
-    "statusSent": "Sent",
-    "statusPaid": "Paid",
-    "statusOverdue": "Overdue",
-    "statusVoid": "Void",
-    "dueDate": "Due Date",
-    "amount": "Amount",
-    "sendInvoice": "Send Invoice",
-    "markPaid": "Mark as Paid",
-    "voidInvoice": "Void Invoice",
-    "downloadPDF": "Download PDF",
-    "paymentReceived": "Payment Received",
-    "lineItems": "Line Items",
-    "subtotal": "Subtotal",
-    "tax": "Tax",
-    "total": "Total",
-    "notes": "Notes",
-    "terms": "Terms"
   },
   "bidsPage": {
     "title": "Bids",
@@ -991,13 +905,6 @@
     "paused": "Paused",
     "runs": "Runs"
   },
-  "compliance": {
-    "title": "Compliance",
-    "manageDesc": "Track licenses, certifications, and regulatory compliance",
-    "ceTracking": "CE Tracking",
-    "packets": "Compliance Packets",
-    "noCerts": "No compliance records found"
-  },
   "certifications": {
     "title": "Certifications",
     "add": "Add Certification",
@@ -1029,18 +936,8 @@
     "completed": "Completed",
     "passRate": "Pass Rate"
   },
-  "insurance": {
-    "title": "Insurance Claims",
-    "new": "New Claim",
-    "searchClaims": "Search claims...",
-    "noClaims": "No claims found",
-    "totalClaims": "Total Claims",
-    "pendingReview": "Pending Review",
-    "approved": "Approved",
-    "claimAmount": "Claim Amount"
-  },
   "permits": {
-    "title": "Permits",
+    "title": "Job Permits",
     "new": "New Permit",
     "searchPermits": "Search permits...",
     "noPermits": "No permits found",
@@ -1097,12 +994,6 @@
     "noSketches": "No sketches yet",
     "noSketchesDesc": "Create CAD-grade floor plans and trade drawings."
   },
-  "recon": {
-    "title": "Recon",
-    "newScan": "New Scan",
-    "noScans": "No property scans yet",
-    "areaScans": "Area Scans"
-  },
   "tpa": {
     "title": "Programs (TPA)",
     "assignments": "Assignments",
@@ -1123,7 +1014,7 @@
     "manageDesc": "Configure pricing rules, markups, and margins"
   },
   "jobIntelligence": {
-    "title": "Job Intelligence",
+    "title": "Job Cost Autopsy",
     "noData": "No intelligence data available",
     "adjustments": "Adjustments"
   },
@@ -1132,7 +1023,7 @@
     "noData": "No cost data available"
   },
   "revenueInsights": {
-    "title": "Revenue Insights",
+    "title": "Revenue Intelligence",
     "noData": "No revenue data available"
   },
   "lienProtection": {
@@ -1182,7 +1073,7 @@
     "noRecords": "No appliance repair records"
   },
   "zdocs": {
-    "title": "ZDocs",
+    "title": "ZForge",
     "newDoc": "New Document",
     "noDocs": "No documents found"
   },
@@ -1204,5 +1095,143 @@
     "uploadFailed": "Upload failed. Please try again.",
     "fileTooLarge": "File is too large. Maximum size is {maxSize}.",
     "invalidFormat": "Invalid file format."
+  },
+  "bidsNew": {
+    "title": "New Bid"
+  },
+  "bidsOptimize": {
+    "title": "Bid Brain"
+  },
+  "booksAccounts": {
+    "title": "Chart of Accounts"
+  },
+  "booksBanking": {
+    "title": "Banking"
+  },
+  "booksBranches": {
+    "title": "Branch Financials"
+  },
+  "booksBudgets": {
+    "title": "Budget vs Actual"
+  },
+  "booksConstruction": {
+    "title": "Construction Accounting"
+  },
+  "booksCpaExport": {
+    "title": "CPA Export Package"
+  },
+  "booksExpenses": {
+    "title": "Expenses"
+  },
+  "booksPeriods": {
+    "title": "Fiscal Periods"
+  },
+  "booksReconciliation": {
+    "title": "Bank Reconciliation"
+  },
+  "booksRecurring": {
+    "title": "Recurring Transactions"
+  },
+  "booksReports": {
+    "title": "Financial Reports"
+  },
+  "booksTaxSettings": {
+    "title": "Tax & 1099 Compliance"
+  },
+  "booksVendorPayments": {
+    "title": "Vendor Payments"
+  },
+  "booksVendors": {
+    "title": "Vendors"
+  },
+  "complianceCeTracking": {
+    "title": "CE Credit Tracking"
+  },
+  "compliancePackets": {
+    "title": "Compliance Packets"
+  },
+  "customersNew": {
+    "title": "Add Customer"
+  },
+  "estimatesImport": {
+    "title": "Import Xactimate Estimate"
+  },
+  "inspectionsTemplates": {
+    "title": "Inspection Templates"
+  },
+  "invoicesNew": {
+    "title": "New Invoice"
+  },
+  "jobIntelligenceadjustments": {
+    "title": "Pricing Adjustments"
+  },
+  "jobsNew": {
+    "title": "New Job"
+  },
+  "jobsDocumentation": {
+    "title": "Documentation Compliance"
+  },
+  "jobsEquipment": {
+    "title": "Equipment Tracking"
+  },
+  "jobsMoisture": {
+    "title": "Moisture & Drying Monitor"
+  },
+  "lienProtectionrules": {
+    "title": "State Lien Rules"
+  },
+  "meetingsAsyncVideos": {
+    "title": "Async Videos"
+  },
+  "meetingsBookingTypes": {
+    "title": "Booking Types"
+  },
+  "permitsJurisdictions": {
+    "title": "Permit Jurisdictions"
+  },
+  "phoneFax": {
+    "title": "Fax"
+  },
+  "phoneSms": {
+    "title": "Messages"
+  },
+  "propertiesAssets": {
+    "title": "Asset Health Dashboard"
+  },
+  "propertiesInspections": {
+    "title": "Property Inspections"
+  },
+  "propertiesMaintenance": {
+    "title": "Maintenance Pipeline"
+  },
+  "propertiesNew": {
+    "title": "Add Property"
+  },
+  "propertiesRent": {
+    "title": "Rent Roll"
+  },
+  "propertiesTurns": {
+    "title": "Unit Turns"
+  },
+  "schedulingPortfolio": {
+    "title": "Portfolio View"
+  },
+  "schedulingBaselines": {
+    "title": "Baselines"
+  },
+  "schedulingResources": {
+    "title": "Resources"
+  },
+  "settingsImport": {
+    "title": "Data Import"
+  },
+  "settingsPhone": {
+    "title": "Phone System Configuration"
+  },
+  "settingsTpaPrograms": {
+    "title": "TPA Programs"
+  },
+  "settingsWalkthroughWorkflows": {
+    "title": "Walkthrough Workflows"
   }
 }

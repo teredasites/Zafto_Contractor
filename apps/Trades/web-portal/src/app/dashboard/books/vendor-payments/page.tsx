@@ -152,7 +152,7 @@ export default function VendorPaymentsPage() {
             <ArrowLeft size={18} className="text-muted" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Vendor Payments</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksVendorPayments.title')}</h1>
             <p className="text-muted mt-0.5">{payments.length} payments</p>
           </div>
         </div>

@@ -50,7 +50,7 @@ export default function JobCostRadarPage() {
               <Radar className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-foreground">Job Cost Radar</h1>
+              <h1 className="text-lg font-semibold text-foreground">{t('jobCostRadar.title')}</h1>
               <p className="text-sm text-muted-foreground">Real-time burn rate tracking — catch overruns before they happen</p>
             </div>
           </div>

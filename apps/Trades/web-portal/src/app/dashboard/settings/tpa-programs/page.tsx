@@ -675,7 +675,7 @@ export default function TpaProgramsPage() {
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-xl font-semibold text-main">TPA Programs</h1>
+            <h1 className="text-xl font-semibold text-main">{t('settingsTpaPrograms.title')}</h1>
             <p className="text-sm text-muted mt-0.5">Manage Third-Party Administrator program enrollments</p>
           </div>
         </div>

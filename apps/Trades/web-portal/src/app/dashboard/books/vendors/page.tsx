@@ -65,7 +65,7 @@ export default function VendorsPage() {
             <ArrowLeft size={18} className="text-muted" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Vendors</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksVendors.title')}</h1>
             <p className="text-muted mt-0.5">{vendors.filter((v) => v.isActive).length} active vendors</p>
           </div>
         </div>

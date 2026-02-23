@@ -113,7 +113,7 @@ export default function PmInspectionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Property Inspections</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('propertiesInspections.title')}</h1>
           <p className="text-muted mt-1">Manage move-in, move-out, routine, and emergency inspections</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>

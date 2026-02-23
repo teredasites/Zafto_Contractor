@@ -128,7 +128,7 @@ export default function JobDocumentationPage() {
             <ArrowLeft size={18} className="text-muted" />
           </button>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Documentation Compliance</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('jobsDocumentation.title')}</h1>
             <p className="text-muted mt-0.5">TPA-compliant documentation checklist and tracking</p>
           </div>
         </div>

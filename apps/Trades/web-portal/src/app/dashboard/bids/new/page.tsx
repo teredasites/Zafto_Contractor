@@ -901,7 +901,7 @@ export default function NewBidPage() {
             <ArrowLeft size={20} className="text-muted" />
           </button>
           <div>
-            <h1 className="text-2xl font-semibold text-main">New Bid</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('bidsNew.title')}</h1>
             <p className="text-muted mt-1">Create a new bid for a customer</p>
           </div>
         </div>

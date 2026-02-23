@@ -44,7 +44,7 @@ export default function AdjustmentsPage() {
       <div className="flex items-center gap-3 mb-6">
         <Lightbulb className="h-6 w-6 text-amber-400" />
         <div>
-          <h1 className="text-2xl font-semibold text-white">Pricing Adjustments</h1>
+          <h1 className="text-2xl font-semibold text-white">{t('jobIntelligenceadjustments.title')}</h1>
           <p className="text-sm text-zinc-500">
             Smart suggestions based on job cost analysis
           </p>

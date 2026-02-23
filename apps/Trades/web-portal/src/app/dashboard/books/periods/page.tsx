@@ -398,7 +398,7 @@ export default function FiscalPeriodsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Fiscal Periods</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('booksPeriods.title')}</h1>
           <p className="text-muted mt-1">Manage accounting periods and year-end close</p>
         </div>
         <div className="flex items-center gap-3">

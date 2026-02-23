@@ -78,7 +78,7 @@ export default function KeyboardShortcutsPage() {
         </button>
         <div className="flex items-center gap-2">
           <Keyboard size={20} className="text-muted" />
-          <h1 className="text-xl font-semibold text-main">Keyboard Shortcuts</h1>
+          <h1 className="text-xl font-semibold text-main">{t('keyboardShortcuts.title')}</h1>
         </div>
       </div>
 

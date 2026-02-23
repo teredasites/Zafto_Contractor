@@ -97,6 +97,7 @@ const enterpriseTabs: { id: SettingsTab; label: string; icon: React.ReactNode; m
 ];
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   const { isTeamOrHigher, isBusinessOrHigher, isEnterprise } = usePermissions();
 
@@ -115,7 +116,7 @@ export default function SettingsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-main">Settings</h1>
+        <h1 className="text-2xl font-semibold text-main">{t('settings.title')}</h1>
         <p className="text-[13px] text-muted mt-1">Manage your account and preferences</p>
       </div>
 

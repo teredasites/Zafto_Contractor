@@ -128,7 +128,7 @@ export default function ChartOfAccountsPage() {
             <ArrowLeft size={18} className="text-muted" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Chart of Accounts</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksAccounts.title')}</h1>
             <p className="text-muted mt-0.5">{accounts.filter((a) => a.isActive).length} active accounts</p>
           </div>
         </div>

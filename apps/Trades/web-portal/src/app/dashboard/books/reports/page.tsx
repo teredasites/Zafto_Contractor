@@ -439,7 +439,7 @@ export default function FinancialReportsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Financial Reports</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('booksReports.title')}</h1>
           <p className="text-muted mt-1">Generate and review financial statements</p>
         </div>
         <Button variant="secondary" onClick={() => window.print()}>

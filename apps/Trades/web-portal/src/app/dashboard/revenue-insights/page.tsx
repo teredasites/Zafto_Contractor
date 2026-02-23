@@ -90,7 +90,7 @@ export default function RevenueInsightsPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-main">Revenue Intelligence</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('revenueInsights.title')}</h1>
             <p className="text-muted mt-1">AI-powered revenue analytics and recommendations</p>
           </div>
           <Badge variant="purple" size="md" className="self-start mt-1">

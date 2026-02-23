@@ -382,7 +382,7 @@ export default function BankingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Banking</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('booksBanking.title')}</h1>
           <p className="text-muted mt-1">Connect and manage your bank accounts</p>
         </div>
         <PlaidLinkButton onSuccess={handlePlaidSuccess} />

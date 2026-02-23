@@ -167,7 +167,7 @@ export default function NewCustomerPage() {
           <ArrowLeft size={20} className="text-muted" />
         </button>
         <div>
-          <h1 className="text-2xl font-semibold text-main">Add Customer</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('customersNew.title')}</h1>
           <p className="text-muted mt-1">Create a new customer record</p>
         </div>
       </div>

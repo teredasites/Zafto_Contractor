@@ -96,7 +96,7 @@ export default function TenantsPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-main">Tenants</h1>
+        <h1 className="text-2xl font-semibold text-main">{t('propertiesTenants.title')}</h1>
         <p className="text-[13px] text-muted mt-1">Manage tenants across all your properties</p>
       </div>
 

@@ -168,7 +168,7 @@ export default function BranchFinancialsPage() {
     <TierGate minimumTier="business" fallback={
       <div className="space-y-8 animate-fade-in">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Branch Financials</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('booksBranches.title')}</h1>
           <p className="text-[13px] text-muted mt-1">Multi-branch P&L and performance comparison</p>
         </div>
         <Card>

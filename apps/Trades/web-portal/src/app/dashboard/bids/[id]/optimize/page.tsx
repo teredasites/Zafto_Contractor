@@ -385,7 +385,7 @@ export default function BidOptimizePage() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Brain size={24} className="text-[var(--accent)]" />
-                <h1 className="text-2xl font-bold text-main">Bid Brain</h1>
+                <h1 className="text-2xl font-bold text-main">{t('bidsOptimize.title')}</h1>
               </div>
               {bid && (
                 <Badge variant="secondary" size="md">{bid.bidNumber}</Badge>

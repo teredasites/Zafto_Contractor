@@ -100,7 +100,7 @@ export default function WarrantyIntelligencePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-100">Warranty Intelligence</h1>
+            <h1 className="text-2xl font-semibold text-zinc-100">{t('warrantyIntelligence.title')}</h1>
             <p className="text-sm text-zinc-400 mt-1">
               Track equipment warranties, claims, recalls, and outreach
             </p>

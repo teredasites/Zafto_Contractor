@@ -78,7 +78,7 @@ export default function ExpensesPage() {
             <ArrowLeft size={18} className="text-muted" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Expenses</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksExpenses.title')}</h1>
             <p className="text-muted mt-0.5">{expenses.length} records</p>
           </div>
         </div>

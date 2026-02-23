@@ -170,9 +170,7 @@ export default function PhoneSettingsPage() {
           <Phone size={20} className="text-accent" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold text-main">
-            Phone System Configuration
-          </h1>
+          <h1 className="text-2xl font-semibold text-main">{t('settingsPhone.title')}</h1>
           <p className="text-sm text-muted">
             Configure business hours, call routing, AI receptionist, and more
           </p>
