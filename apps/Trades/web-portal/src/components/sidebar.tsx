@@ -128,6 +128,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
       { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote, permission: PERMISSIONS.FINANCIALS_VIEW },
       { name: 'Job Intelligence', href: '/dashboard/job-intelligence', icon: FileBarChart },
+      { name: 'Job Cost Radar', href: '/dashboard/job-cost-radar', icon: Radar },
       { name: 'Pricing Rules', href: '/dashboard/pricing-settings', icon: Cog },
       { name: 'Pricing Analytics', href: '/dashboard/pricing-analytics', icon: BarChart3 },
     ],
@@ -246,19 +247,8 @@ const navigationGroups: NavGroup[] = [
       { name: 'Unit Turns', href: '/dashboard/properties/turns', icon: RotateCcw },
     ],
   },
-  {
-    label: 'Z Intelligence',
-    key: 'z-intelligence',
-    railIcon: null, // ZMark component
-    items: [
-      { name: 'Z AI', href: '/dashboard/z', icon: null },
-      { name: 'Z Voice', href: '/dashboard/z-voice', icon: Mic },
-      { name: 'Bid Brain', href: '/dashboard/bid-brain', icon: Brain },
-      { name: 'Job Cost Radar', href: '/dashboard/job-cost-radar', icon: Radar },
-      { name: 'Equipment Memory', href: '/dashboard/equipment-memory', icon: Cpu },
-      { name: 'Revenue Autopilot', href: '/dashboard/revenue-autopilot', icon: Rocket },
-    ],
-  },
+  // Z Intelligence — Phase E (AI). Hidden until AI layer is built.
+  // Job Cost Radar moved to Finance group.
 ];
 
 // ── CPA-only nav (minimal — finance only) ──
