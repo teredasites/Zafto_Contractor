@@ -24,6 +24,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { cn } from '@/lib/utils';
 import { useTeam } from '@/lib/hooks/use-jobs';
 import { useTimeClock, type TimeEntry } from '@/lib/hooks/use-time-clock';
+import { useTranslation } from '@/lib/translations';
 
 type TimeEntryStatus = 'active' | 'completed' | 'approved' | 'rejected';
 
@@ -42,6 +43,7 @@ const formatWeekRange = (start: Date, end: Date) => {
 };
 
 export default function TimeClockPage() {
+  const { t } = useTranslation();
   const { team } = useTeam();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -155,13 +157,13 @@ export default function TimeClockPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Time Clock</h1>
-          <p className="text-muted mt-1">Manage employee timesheets and approvals</p>
+          <h1 className="text-2xl font-semibold text-main">{t('timeClock.title')}</h1>
+          <p className="text-muted mt-1">{t('timeClock.manageDesc')}</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="secondary" onClick={handleExport}>
             <Download size={16} />
-            Export
+            {t('common.export')}
           </Button>
         </div>
       </div>
@@ -169,28 +171,28 @@ export default function TimeClockPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="On The Clock Now"
+          title={t('timeClock.onTheClockNow')}
           value={summary.activeNow.toString()}
           icon={<Play size={20} className="text-green-500" />}
           trend="neutral"
-          changeLabel="Active employees"
+          changeLabel={t('timeClock.activeEmployees')}
         />
         <StatsCard
-          title="Total Hours This Week"
+          title={t('timeClock.totalHoursThisWeek')}
           value={`${Math.floor(summary.totalHoursWeek)}h ${Math.round((summary.totalHoursWeek % 1) * 60)}m`}
           icon={<Timer size={20} />}
           trend="neutral"
           changeLabel={`${Math.round(summary.totalHoursWeek / 8)} day equiv.`}
         />
         <StatsCard
-          title="Pending Approval"
+          title={t('timeClock.pendingApproval')}
           value={summary.pendingApproval.toString()}
           icon={<AlertCircle size={20} className="text-amber-500" />}
           trend={summary.pendingApproval > 0 ? 'down' : 'neutral'}
-          changeLabel="entries to review"
+          changeLabel={t('timeClock.entriesToReview')}
         />
         <StatsCard
-          title="Overtime Hours"
+          title={t('timeClock.overtimeHours')}
           value={`${Math.floor(summary.totalOvertimeWeek)}h ${Math.round((summary.totalOvertimeWeek % 1) * 60)}m`}
           icon={<Coffee size={20} />}
           trend="neutral"
@@ -213,7 +215,7 @@ export default function TimeClockPage() {
             </Button>
           </div>
           <Button variant="ghost" size="sm" onClick={() => setCurrentWeek(new Date())} className="text-accent">
-            Today
+            {t('scheduling.today')}
           </Button>
         </div>
 
@@ -223,7 +225,7 @@ export default function TimeClockPage() {
             onChange={(e) => setSelectedUser(e.target.value || null)}
             className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
           >
-            <option value="">All Employees</option>
+            <option value="">{t('timeClock.allEmployees')}</option>
             {team.map((member) => (
               <option key={member.id} value={member.id}>{member.name}</option>
             ))}
@@ -232,11 +234,11 @@ export default function TimeClockPage() {
           <div className="flex rounded-lg border border-main overflow-hidden">
             <button onClick={() => setView('week')}
               className={cn('px-3 py-2 text-sm font-medium transition-colors', view === 'week' ? 'bg-accent text-white' : 'bg-surface text-muted hover:bg-surface-hover')}>
-              Week
+              {t('scheduling.week')}
             </button>
             <button onClick={() => setView('list')}
               className={cn('px-3 py-2 text-sm font-medium transition-colors', view === 'list' ? 'bg-accent text-white' : 'bg-surface text-muted hover:bg-surface-hover')}>
-              List
+              {t('scheduling.list')}
             </button>
           </div>
         </div>
@@ -247,8 +249,8 @@ export default function TimeClockPage() {
         <Card>
           <CardContent className="py-16 text-center">
             <Clock className="h-12 w-12 text-muted mx-auto mb-3 opacity-40" />
-            <p className="text-muted">No time entries for this week</p>
-            <p className="text-xs text-muted mt-1">Time entries will appear here when employees clock in</p>
+            <p className="text-muted">{t('timeClock.noEntries')}</p>
+            <p className="text-xs text-muted mt-1">{t('timeClock.noEntriesDesc')}</p>
           </CardContent>
         </Card>
       )}
@@ -389,19 +391,19 @@ export default function TimeClockPage() {
               <div className="flex items-center gap-3">
                 <AlertCircle size={20} className="text-amber-500" />
                 <div>
-                  <p className="font-medium text-main">{summary.pendingApproval} entries pending approval</p>
-                  <p className="text-sm text-muted">Review and approve employee time entries</p>
+                  <p className="font-medium text-main">{summary.pendingApproval} {t('timeClock.entriesPendingApproval')}</p>
+                  <p className="text-sm text-muted">{t('timeClock.reviewAndApprove')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="secondary" size="sm" onClick={() => setView('list')}>Review All</Button>
+                <Button variant="secondary" size="sm" onClick={() => setView('list')}>{t('timeClock.reviewAll')}</Button>
                 <Button size="sm" onClick={async () => {
-                  if (!confirm('Approve all pending time entries?')) return;
+                  if (!confirm(t('timeClock.approveAllConfirm'))) return;
                   const pending = weekEntries.filter(e => e.status === 'completed');
                   for (const entry of pending) { await approveEntry(entry.id); }
                 }}>
                   <Check size={16} />
-                  Approve All
+                  {t('timeClock.approveAll')}
                 </Button>
               </div>
             </div>
