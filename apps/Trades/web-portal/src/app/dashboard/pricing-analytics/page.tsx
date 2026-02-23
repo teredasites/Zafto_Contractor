@@ -259,7 +259,7 @@ export default function PricingAnalyticsPage() {
             <CheckCircle className="h-5 w-5 text-emerald-400" />
             <div>
               <p className="text-lg font-bold text-emerald-400">{stats.accepted}</p>
-              <p className="text-xs text-zinc-500">Accepted</p>
+              <p className="text-xs text-zinc-500">{t('common.accepted')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

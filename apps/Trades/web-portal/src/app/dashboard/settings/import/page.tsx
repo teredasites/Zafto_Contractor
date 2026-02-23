@@ -470,7 +470,7 @@ export default function DataImportPage() {
             ) : (
               <AlertTriangle size={48} className="text-amber-400 mx-auto" />
             )}
-            <h3 className="text-white text-lg font-medium">Import Complete</h3>
+            <h3 className="text-white text-lg font-medium">{t('common.importComplete')}</h3>
           </div>
 
           <div className="grid grid-cols-3 gap-4">

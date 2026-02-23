@@ -88,7 +88,7 @@ export default function ChangeOrdersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><Clock size={20} className="text-amber-600 dark:text-amber-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{pendingCount}</p><p className="text-sm text-muted">Pending Approval</p></div>
+          <div><p className="text-2xl font-semibold text-main">{pendingCount}</p><p className="text-sm text-muted">{t('common.pendingApproval')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><ArrowUpRight size={20} className="text-emerald-600 dark:text-emerald-400" /></div>

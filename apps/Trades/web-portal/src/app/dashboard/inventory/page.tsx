@@ -127,7 +127,7 @@ export default function InventoryPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totalValue)}</p>
-                <p className="text-sm text-muted">Total Value</p>
+                <p className="text-sm text-muted">{t('common.totalValue')}</p>
               </div>
             </div>
           </CardContent>

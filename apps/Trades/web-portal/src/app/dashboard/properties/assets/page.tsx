@@ -205,7 +205,7 @@ export default function AssetsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><Package size={20} className="text-blue-600 dark:text-blue-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{totalAssets}</p><p className="text-sm text-muted">Total Assets</p></div>
+          <div><p className="text-2xl font-semibold text-main">{totalAssets}</p><p className="text-sm text-muted">{t('common.totalAssets')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><Wrench size={20} className="text-red-600 dark:text-red-400" /></div>

@@ -283,22 +283,22 @@ export default function ImportEstimatePage() {
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between"><span className="text-zinc-500">Claim #</span><span className="text-zinc-200">{claimInfo.claimNumber || 'N/A'}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">Customer</span><span className="text-zinc-200">{claimInfo.customerName || 'N/A'}</span></div>
-                <div className="flex justify-between"><span className="text-zinc-500">Address</span><span className="text-zinc-200">{claimInfo.propertyAddress || 'N/A'}</span></div>
-                <div className="flex justify-between"><span className="text-zinc-500">Loss Type</span><span className="text-zinc-200">{claimInfo.lossType || 'N/A'}</span></div>
-                <div className="flex justify-between"><span className="text-zinc-500">Carrier</span><span className="text-zinc-200">{claimInfo.carrier || 'N/A'}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('common.address')}</span><span className="text-zinc-200">{claimInfo.propertyAddress || 'N/A'}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('common.lossType')}</span><span className="text-zinc-200">{claimInfo.lossType || 'N/A'}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('common.carrier')}</span><span className="text-zinc-200">{claimInfo.carrier || 'N/A'}</span></div>
               </div>
             </div>
             <div className="bg-zinc-800/40 border border-zinc-700/30 rounded-lg p-4">
               <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Parse Summary</h3>
               <div className="space-y-1.5 text-xs">
-                <div className="flex justify-between"><span className="text-zinc-500">Line Items</span><span className="text-zinc-200">{summary.lineCount}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('common.lineItems')}</span><span className="text-zinc-200">{summary.lineCount}</span></div>
                 <div className="flex justify-between">
                   <span className="text-zinc-500">Code Matches</span>
                   <span className="text-green-400">{summary.matchedCodes} matched / {summary.unmatchedCodes} unmatched</span>
                 </div>
                 <div className="flex justify-between"><span className="text-zinc-500">Price Discrepancies</span><span className="text-amber-400">{summary.itemsWithDiscrepancy}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">Xactimate Total</span><span className="text-zinc-200 font-medium">${fmt(summary.rawTotal)}</span></div>
-                <div className="flex justify-between"><span className="text-zinc-500">O&P</span><span className="text-zinc-200">${fmt(summary.rawOverhead)} + ${fmt(summary.rawProfit)}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('common.oAndP')}</span><span className="text-zinc-200">${fmt(summary.rawOverhead)} + ${fmt(summary.rawProfit)}</span></div>
               </div>
             </div>
           </div>
@@ -419,7 +419,7 @@ export default function ImportEstimatePage() {
           <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
             <CheckCircle className="w-8 h-8 text-green-500" />
           </div>
-          <h2 className="text-lg font-semibold text-zinc-100">Import Complete</h2>
+          <h2 className="text-lg font-semibold text-zinc-100">{t('common.importComplete')}</h2>
           <p className="text-sm text-zinc-400 mt-2">
             {items.filter(i => i.selected).length} line items imported successfully
           </p>

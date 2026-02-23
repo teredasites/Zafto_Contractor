@@ -540,7 +540,7 @@ export default function GanttPage() {
             {importResult ? (
               <div className="space-y-3">
                 <div className="p-4 bg-success/5 border border-success/20 rounded-lg">
-                  <p className="text-sm font-medium text-primary mb-2">Import Complete</p>
+                  <p className="text-sm font-medium text-primary mb-2">{t('common.importComplete')}</p>
                   <div className="grid grid-cols-2 gap-2 text-xs text-secondary">
                     <span>Tasks: {importResult.tasks_imported}</span>
                     <span>Dependencies: {importResult.dependencies_imported}</span>

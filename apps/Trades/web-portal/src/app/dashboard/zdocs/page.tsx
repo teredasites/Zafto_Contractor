@@ -178,7 +178,7 @@ export default function ZDocsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activeTemplates.length}</p>
-                <p className="text-sm text-muted">Active Templates</p>
+                <p className="text-sm text-muted">{t('common.activeTemplates')}</p>
               </div>
             </div>
           </CardContent>
@@ -204,7 +204,7 @@ export default function ZDocsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{pendingSignatures.length}</p>
-                <p className="text-sm text-muted">Pending Signatures</p>
+                <p className="text-sm text-muted">{t('common.pendingSignatures')}</p>
               </div>
             </div>
           </CardContent>

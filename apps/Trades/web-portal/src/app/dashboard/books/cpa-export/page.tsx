@@ -305,7 +305,7 @@ export default function CPAExportPage() {
         <CardContent>
           <div className="flex items-end gap-4 flex-wrap">
             <div>
-              <label className="text-xs text-muted block mb-1">Start Date</label>
+              <label className="text-xs text-muted block mb-1">{t('common.startDate')}</label>
               <input
                 type="date"
                 value={startDate}
@@ -315,7 +315,7 @@ export default function CPAExportPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-muted block mb-1">End Date</label>
+              <label className="text-xs text-muted block mb-1">{t('common.endDate')}</label>
               <input
                 type="date"
                 value={endDate}
@@ -371,15 +371,15 @@ export default function CPAExportPage() {
                 <p className="text-sm font-medium text-main">Profit & Loss</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Revenue</span>
+                    <span className="text-muted">{t('common.revenue')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.pnl.totalRevenue)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Expenses</span>
+                    <span className="text-muted">{t('common.expenses')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.pnl.totalExpenses + packageData.pnl.totalCogs)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">
-                    <span className="text-main">Net Income</span>
+                    <span className="text-main">{t('common.netIncome')}</span>
                     <span className={cn('tabular-nums', packageData.pnl.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                       {formatCurrency(packageData.pnl.netIncome)}
                     </span>
@@ -399,7 +399,7 @@ export default function CPAExportPage() {
                     <Download size={14} />
                   </Button>
                 </div>
-                <p className="text-sm font-medium text-main">Balance Sheet</p>
+                <p className="text-sm font-medium text-main">{t('common.balanceSheet')}</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted">Assets</span>
@@ -428,7 +428,7 @@ export default function CPAExportPage() {
                     <Download size={14} />
                   </Button>
                 </div>
-                <p className="text-sm font-medium text-main">Trial Balance</p>
+                <p className="text-sm font-medium text-main">{t('common.trialBalance')}</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted">Total Debits</span>
@@ -439,7 +439,7 @@ export default function CPAExportPage() {
                     <span className="tabular-nums text-main">{formatCurrency(packageData.trialBalance.creditTotal)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm pt-1.5 border-t border-default">
-                    <span className="text-main font-semibold">Status</span>
+                    <span className="text-main font-semibold">{t('common.status')}</span>
                     {packageData.trialBalance.isBalanced ? (
                       <Badge variant="success">
                         <CheckCircle size={12} className="mr-1" />
@@ -499,7 +499,7 @@ export default function CPAExportPage() {
                     <span className="tabular-nums text-main">{formatCurrency(packageData?.scheduleE?.totalIncome || 0)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Expenses</span>
+                    <span className="text-muted">{t('common.expenses')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData?.scheduleE?.totalExpenses || 0)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">

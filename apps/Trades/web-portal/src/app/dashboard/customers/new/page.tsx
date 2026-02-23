@@ -395,7 +395,7 @@ export default function NewCustomerPage() {
           {/* Source */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Lead Source</CardTitle>
+              <CardTitle className="text-base">{t('common.leadSource')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Select

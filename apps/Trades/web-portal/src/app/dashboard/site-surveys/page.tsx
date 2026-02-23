@@ -256,13 +256,13 @@ export default function SiteSurveysPage() {
           </Card>
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">In Progress</p>
+              <p className="text-xs text-zinc-500">{t('common.inProgress')}</p>
               <p className="text-2xl font-bold text-amber-400 mt-1">{inProgress.length}</p>
             </CardContent>
           </Card>
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">Completed</p>
+              <p className="text-xs text-zinc-500">{t('common.completed')}</p>
               <p className="text-2xl font-bold text-emerald-400 mt-1">{completed.length}</p>
             </CardContent>
           </Card>

@@ -595,7 +595,7 @@ export default function RecurringPage() {
                 <Repeat size={20} className="text-emerald-500" />
               </div>
               <div>
-                <p className="text-muted text-xs">Active Templates</p>
+                <p className="text-muted text-xs">{t('common.activeTemplates')}</p>
                 <p className="text-xl font-bold text-main">{activeCount}</p>
               </div>
             </div>
@@ -638,7 +638,7 @@ export default function RecurringPage() {
       {/* Templates List */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Templates</CardTitle>
+          <CardTitle className="text-base">{t('common.templates')}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {/* Table header */}

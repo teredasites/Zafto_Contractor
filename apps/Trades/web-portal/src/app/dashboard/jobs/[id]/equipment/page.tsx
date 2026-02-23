@@ -108,7 +108,7 @@ export default function JobEquipmentPage() {
     return (
       <div className="space-y-6">
         <button onClick={() => router.back()} className="flex items-center gap-2 text-muted hover:text-main transition-colors">
-          <ArrowLeft size={18} /><span>Back to Job</span>
+          <ArrowLeft size={18} /><span>{t('common.backToJob')}</span>
         </button>
         <Card>
           <CardContent className="p-12 text-center">
@@ -166,7 +166,7 @@ export default function JobEquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{summary.totalDeployed}</p>
-                <p className="text-sm text-muted">Active</p>
+                <p className="text-sm text-muted">{t('common.active')}</p>
               </div>
             </div>
           </CardContent>

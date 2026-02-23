@@ -280,7 +280,7 @@ export default function ReconciliationPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-muted block mb-1">Statement Date</label>
+                  <label className="text-xs text-muted block mb-1">{t('common.statementDate')}</label>
                   <input
                     type="date"
                     value={statementDate}
@@ -393,7 +393,7 @@ export default function ReconciliationPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <Calendar size={14} className="text-muted" />
-                  <span className="text-xs text-muted">Statement Date</span>
+                  <span className="text-xs text-muted">{t('common.statementDate')}</span>
                 </div>
                 <p className="text-lg font-semibold text-main">{activeRec?.statementDate}</p>
               </CardContent>

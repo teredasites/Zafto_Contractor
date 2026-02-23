@@ -130,11 +130,11 @@ export default function PmInspectionsPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><Calendar size={20} className="text-amber-600 dark:text-amber-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{scheduledCount}</p><p className="text-sm text-muted">Scheduled</p></div>
+          <div><p className="text-2xl font-semibold text-main">{scheduledCount}</p><p className="text-sm text-muted">{t('common.scheduled')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{completedCount}</p><p className="text-sm text-muted">Completed</p></div>
+          <div><p className="text-2xl font-semibold text-main">{completedCount}</p><p className="text-sm text-muted">{t('common.completed')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><Wrench size={20} className="text-red-600 dark:text-red-400" /></div>

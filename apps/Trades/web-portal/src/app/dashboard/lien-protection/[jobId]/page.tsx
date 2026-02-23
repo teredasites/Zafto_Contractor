@@ -218,7 +218,7 @@ export default function LienDetailPage() {
       {lien.notes && (
         <Card>
           <CardContent className="p-4">
-            <h3 className="text-sm font-medium text-zinc-400 mb-2">Notes</h3>
+            <h3 className="text-sm font-medium text-zinc-400 mb-2">{t('common.notes')}</h3>
             <p className="text-sm text-white">{lien.notes}</p>
           </CardContent>
         </Card>

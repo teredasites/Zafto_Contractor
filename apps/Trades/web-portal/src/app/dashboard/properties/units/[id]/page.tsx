@@ -257,19 +257,19 @@ export default function UnitDetailPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Lease Type</span>
+                    <span className="text-muted">{t('common.leaseType')}</span>
                     <span className="font-medium text-main capitalize">{activeLease.leaseType.replace('_', ' ')}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Start Date</span>
+                    <span className="text-muted">{t('common.startDate')}</span>
                     <span className="font-medium text-main">{formatDate(activeLease.startDate)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">End Date</span>
+                    <span className="text-muted">{t('common.endDate')}</span>
                     <span className="font-medium text-main">{activeLease.endDate ? formatDate(activeLease.endDate) : 'Month-to-month'}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Monthly Rent</span>
+                    <span className="text-muted">{t('common.monthlyRent')}</span>
                     <span className="font-semibold text-main">{formatCurrency(activeLease.rentAmount)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -277,7 +277,7 @@ export default function UnitDetailPage() {
                     <span className="font-medium text-main">{activeLease.rentDueDay}th of each month</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Deposit</span>
+                    <span className="text-muted">{t('common.deposit')}</span>
                     <span className="font-medium text-main">{formatCurrency(activeLease.depositAmount)}</span>
                   </div>
                 </CardContent>

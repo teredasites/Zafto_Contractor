@@ -330,7 +330,7 @@ export default function GrowthPage() {
                     {/* Metrics */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-2 rounded-lg bg-surface-hover">
-                        <p className="text-[10px] text-muted">Priority</p>
+                        <p className="text-[10px] text-muted">{t('common.priority')}</p>
                         <Badge variant={priorityConfig[selectedAction.priority]?.variant || 'info'} size="sm" className="mt-0.5">
                           {selectedAction.priority}
                         </Badge>

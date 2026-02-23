@@ -278,7 +278,7 @@ export default function BranchFinancialsPage() {
               </div>
             )}
             <div>
-              <label className="text-xs text-muted block mb-1">Start Date</label>
+              <label className="text-xs text-muted block mb-1">{t('common.startDate')}</label>
               <input
                 type="date"
                 value={startDate}
@@ -287,7 +287,7 @@ export default function BranchFinancialsPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-muted block mb-1">End Date</label>
+              <label className="text-xs text-muted block mb-1">{t('common.endDate')}</label>
               <input
                 type="date"
                 value={endDate}
@@ -442,7 +442,7 @@ export default function BranchFinancialsPage() {
                     <TrendingUp size={20} className="text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Total Revenue</p>
+                <p className="text-sm text-muted">{t('common.revenue')}</p>
                 <p className="text-2xl font-bold text-main mt-1 tabular-nums">
                   {formatCurrency(totalRevenue)}
                 </p>
@@ -456,7 +456,7 @@ export default function BranchFinancialsPage() {
                     <TrendingDown size={20} className="text-red-600 dark:text-red-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Total Expenses</p>
+                <p className="text-sm text-muted">{t('common.expenses')}</p>
                 <p className="text-2xl font-bold text-main mt-1 tabular-nums">
                   {formatCurrency(totalExpenses)}
                 </p>
@@ -470,7 +470,7 @@ export default function BranchFinancialsPage() {
                     <DollarSign size={20} className="text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Net Income</p>
+                <p className="text-sm text-muted">{t('common.netIncome')}</p>
                 <p className={cn(
                   'text-2xl font-bold mt-1 tabular-nums',
                   totalNetIncome >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -487,7 +487,7 @@ export default function BranchFinancialsPage() {
                     <Building2 size={20} className="text-purple-600 dark:text-purple-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Profit Margin</p>
+                <p className="text-sm text-muted">{t('common.profitMargin')}</p>
                 <p className={cn(
                   'text-2xl font-bold mt-1 tabular-nums',
                   totalProfitMargin >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -601,7 +601,7 @@ export default function BranchFinancialsPage() {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted uppercase tracking-wide">Revenue</p>
+                <p className="text-xs text-muted uppercase tracking-wide">{t('common.revenue')}</p>
                 <p className="text-lg font-semibold text-emerald-600 mt-1 tabular-nums">
                   {formatCurrency(branchPnL.revenue)}
                 </p>
@@ -617,7 +617,7 @@ export default function BranchFinancialsPage() {
             </Card>
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted uppercase tracking-wide">Gross Profit</p>
+                <p className="text-xs text-muted uppercase tracking-wide">{t('common.grossProfit')}</p>
                 <p className={cn(
                   'text-lg font-semibold mt-1 tabular-nums',
                   branchPnL.grossProfit >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -628,7 +628,7 @@ export default function BranchFinancialsPage() {
             </Card>
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted uppercase tracking-wide">Expenses</p>
+                <p className="text-xs text-muted uppercase tracking-wide">{t('common.expenses')}</p>
                 <p className="text-lg font-semibold text-red-600 mt-1 tabular-nums">
                   {formatCurrency(branchPnL.expenses)}
                 </p>
@@ -636,7 +636,7 @@ export default function BranchFinancialsPage() {
             </Card>
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted uppercase tracking-wide">Net Income</p>
+                <p className="text-xs text-muted uppercase tracking-wide">{t('common.netIncome')}</p>
                 <p className={cn(
                   'text-lg font-semibold mt-1 tabular-nums',
                   branchPnL.netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -665,7 +665,7 @@ export default function BranchFinancialsPage() {
               <div className="space-y-3">
                 {/* Revenue */}
                 <div className="flex items-center justify-between py-2 px-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
-                  <span className="text-sm font-medium text-main">Revenue</span>
+                  <span className="text-sm font-medium text-main">{t('common.revenue')}</span>
                   <span className="text-sm font-semibold text-emerald-600 tabular-nums">
                     {formatCurrency(branchPnL.revenue)}
                   </span>
@@ -681,7 +681,7 @@ export default function BranchFinancialsPage() {
 
                 {/* Gross Profit */}
                 <div className="flex items-center justify-between py-2 px-3 bg-secondary/50 rounded-lg border-t border-b border-default">
-                  <span className="text-sm font-semibold text-main">Gross Profit</span>
+                  <span className="text-sm font-semibold text-main">{t('common.grossProfit')}</span>
                   <span className={cn(
                     'text-sm font-semibold tabular-nums',
                     branchPnL.grossProfit >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -700,7 +700,7 @@ export default function BranchFinancialsPage() {
 
                 {/* Net Income */}
                 <div className="flex items-center justify-between py-3 px-3 bg-accent/10 rounded-lg border border-accent/20">
-                  <span className="text-base font-bold text-main">Net Income</span>
+                  <span className="text-base font-bold text-main">{t('common.netIncome')}</span>
                   <span className={cn(
                     'text-base font-bold tabular-nums',
                     branchPnL.netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -712,7 +712,7 @@ export default function BranchFinancialsPage() {
                 {/* Profit Margin */}
                 {branchPnL.revenue > 0 && (
                   <div className="flex items-center justify-between py-2 px-3">
-                    <span className="text-sm text-muted">Profit Margin</span>
+                    <span className="text-sm text-muted">{t('common.profitMargin')}</span>
                     <span className={cn(
                       'text-sm font-semibold tabular-nums',
                       branchPnL.netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'
