@@ -464,12 +464,12 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Make" placeholder="Dri-Eaz" />
-            <Input label="Model" placeholder="LGR 3500i" />
+            <Input label={t('fleet.make')} placeholder="Dri-Eaz" />
+            <Input label={t('fleet.model')} placeholder="LGR 3500i" />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Serial Number" placeholder="Optional" />
-            <Input label="Asset Tag" placeholder="Optional" />
+            <Input label={t('common.serialNumber')} placeholder={t('common.optional')} />
+            <Input label="Asset Tag" placeholder={t('common.optional')} />
           </div>
           <Input label="Area Deployed *" placeholder="Living Room - East Wall" />
           <Input label="Daily Rate ($)" type="number" placeholder="0.00" />

@@ -113,17 +113,17 @@ export default function JobAutopsyDetailPage() {
         <h3 className="text-sm font-medium text-zinc-300 mb-4">Cost Comparison</h3>
         <div className="space-y-6">
           <ComparisonBar
-            label="Labor"
+            label={t('estimates.labor')}
             estimated={autopsy.estimated_labor_cost || 0}
             actual={autopsy.actual_labor_cost || 0}
           />
           <ComparisonBar
-            label="Material"
+            label={t('estimates.material')}
             estimated={autopsy.estimated_material_cost || 0}
             actual={autopsy.actual_material_cost || 0}
           />
           <ComparisonBar
-            label="Total"
+            label={t('invoices.total')}
             estimated={autopsy.estimated_total || 0}
             actual={autopsy.actual_total || 0}
           />
@@ -221,10 +221,10 @@ export default function JobAutopsyDetailPage() {
       <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
         <h3 className="text-sm font-medium text-zinc-300 mb-4">Job Info</h3>
         <div className="grid grid-cols-2 gap-4">
-          <MetaRow label="Job Type" value={(autopsy.job_type || 'N/A').replace(/_/g, ' ')} />
-          <MetaRow label="Trade" value={autopsy.trade_type || 'N/A'} />
+          <MetaRow label={t('hiring.jobType')} value={(autopsy.job_type || 'N/A').replace(/_/g, ' ')} />
+          <MetaRow label={t('common.trade')} value={autopsy.trade_type || 'N/A'} />
           <MetaRow
-            label="Completed"
+            label={t('inspections.completed')}
             value={
               autopsy.completed_at
                 ? formatDate(autopsy.completed_at)
@@ -232,7 +232,7 @@ export default function JobAutopsyDetailPage() {
             }
           />
           <MetaRow
-            label="Labor Hours"
+            label={t('estimates.laborHours')}
             value={`${(autopsy.actual_labor_hours || 0).toFixed(1)} actual / ${(autopsy.estimated_labor_hours || 0).toFixed(1)} est`}
           />
         </div>

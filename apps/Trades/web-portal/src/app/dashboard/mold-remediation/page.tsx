@@ -275,10 +275,10 @@ function AssessmentDetail({
 
       {/* Overview Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <InfoRow label="Affected Area" value={a.affectedAreaSqft ? `${a.affectedAreaSqft} sqft` : 'TBD'} />
+        <InfoRow label={t('moisture.affectedArea')} value={a.affectedAreaSqft ? `${a.affectedAreaSqft} sqft` : 'TBD'} />
         <InfoRow label="Suspected Cause" value={CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown'} />
         <InfoRow label="Moisture Source" value={a.moistureSourceStatus === 'active_leak' ? 'Active Leak' : a.moistureSourceStatus === 'resolved' ? 'Resolved' : 'Unknown'} />
-        <InfoRow label="Occupancy" value={a.occupancyStatus ? a.occupancyStatus.charAt(0).toUpperCase() + a.occupancyStatus.slice(1) : 'Unknown'} />
+        <InfoRow label={t('dashboard.occupancy')} value={a.occupancyStatus ? a.occupancyStatus.charAt(0).toUpperCase() + a.occupancyStatus.slice(1) : 'Unknown'} />
         <InfoRow label="PPE Required" value={levelInfo.ppe} />
         <InfoRow label="Assessment Date" value={formatDate(a.assessmentDate)} />
       </div>

@@ -846,7 +846,7 @@ function RoofTab({ roof, facets, scan }: {
 
       {/* Two-column: edges + structure */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Panel title="Edge Lengths" icon={Ruler} color="#3B82F6">
+        <Panel title={t('common.edgeLengths')} icon={Ruler} color="#3B82F6">
           <div className="space-y-2">
             {edges.map(edge => {
               const pct = totalEdge > 0 ? (edge.value / totalEdge) * 100 : 0;
@@ -869,8 +869,8 @@ function RoofTab({ roof, facets, scan }: {
 
         <Panel title="Structure" icon={Home} color="#8B5CF6">
           <div className="space-y-0">
-            <DataRow label="Shape" value={roof.predominantShape ? (SHAPE_LABELS[roof.predominantShape] || roof.predominantShape) : 'Unknown'} />
-            {roof.predominantMaterial && <DataRow label="Material" value={roof.predominantMaterial.replace(/_/g, ' ')} highlight />}
+            <DataRow label={t('common.shape')} value={roof.predominantShape ? (SHAPE_LABELS[roof.predominantShape] || roof.predominantShape) : 'Unknown'} />
+            {roof.predominantMaterial && <DataRow label={t('estimates.material')} value={roof.predominantMaterial.replace(/_/g, ' ')} highlight />}
             <DataRow label="Facet Count" value={roof.facetCount} />
             <DataRow label="Penetrations" value={roof.penetrationCount} />
             <DataRow label="Pitch" value={`${roof.pitchDegrees.toFixed(1)}°`} />
@@ -1140,12 +1140,12 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
         </Panel>
 
         {/* Job Intelligence */}
-        <Panel title="Job Intelligence" icon={Activity} color="#F59E0B">
+        <Panel title={t('nav.jobIntelligence')} icon={Activity} color="#F59E0B">
           <div className="space-y-0">
-            <DataRow label="Complexity" value={`${trade.complexityScore}/10`} highlight={trade.complexityScore >= 7} />
-            <DataRow label="Waste Factor" value={`${trade.wasteFactorPct}%`} />
-            <DataRow label="Crew" value={`${trade.recommendedCrewSize} workers`} />
-            {trade.estimatedLaborHours != null && <DataRow label="Labor" value={`${trade.estimatedLaborHours} hours`} highlight />}
+            <DataRow label={t('common.complexity')} value={`${trade.complexityScore}/10`} highlight={trade.complexityScore >= 7} />
+            <DataRow label={t('estimates.wasteFactor')} value={`${trade.wasteFactorPct}%`} />
+            <DataRow label={t('common.crew')} value={`${trade.recommendedCrewSize} workers`} />
+            {trade.estimatedLaborHours != null && <DataRow label={t('estimates.labor')} value={`${trade.estimatedLaborHours} hours`} highlight />}
             {trade.dataSources.length > 0 && (
               <div className="pt-2 mt-2 border-t border-main">
                 <p className="text-[10px] text-muted uppercase tracking-wider mb-1.5">{t('common.dataSources')}</p>

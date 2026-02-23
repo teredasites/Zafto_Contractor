@@ -271,7 +271,7 @@ export default function CompliancePacketsPage() {
                     <div className="flex items-center gap-2">
                       {packet.status === 'ready' && (
                         <>
-                          <Button variant="ghost" size="sm" title="Download">
+                          <Button variant="ghost" size="sm" title={t('common.download')}>
                             <Download className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="sm" title="Share via email">
@@ -282,7 +282,7 @@ export default function CompliancePacketsPage() {
                           </Button>
                         </>
                       )}
-                      <Button variant="ghost" size="sm" onClick={() => deletePacket(packet.id)} title="Delete">
+                      <Button variant="ghost" size="sm" onClick={() => deletePacket(packet.id)} title={t('common.delete')}>
                         <Trash2 className="h-4 w-4 text-red-400" />
                       </Button>
                     </div>

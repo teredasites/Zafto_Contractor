@@ -239,7 +239,7 @@ export default function DocumentsPage() {
           <SearchInput
             value={search}
             onChange={setSearch}
-            placeholder="Search documents..."
+            placeholder={t('documents.searchDocuments')}
             className="sm:w-80"
           />
           <Select
@@ -655,7 +655,7 @@ function UploadModal({
           />
 
           <Select
-            label="Folder"
+            label={t('common.folder')}
             options={folderOptions}
             value={folderId}
             onChange={(e) => setFolderId(e.target.value)}

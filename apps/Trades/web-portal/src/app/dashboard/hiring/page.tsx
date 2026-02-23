@@ -977,7 +977,7 @@ function InterviewsTab({
                               variant="ghost"
                               size="sm"
                               onClick={() => handleAction(interview.id, 'complete')}
-                              title="Complete"
+                              title={t('jobs.statusComplete')}
                             >
                               <Check size={14} />
                             </Button>
@@ -985,7 +985,7 @@ function InterviewsTab({
                               variant="ghost"
                               size="sm"
                               onClick={() => handleAction(interview.id, 'reschedule')}
-                              title="Reschedule"
+                              title={t('common.reschedule')}
                             >
                               <Clock size={14} />
                             </Button>
@@ -993,7 +993,7 @@ function InterviewsTab({
                               variant="ghost"
                               size="sm"
                               onClick={() => handleAction(interview.id, 'cancel')}
-                              title="Cancel"
+                              title={t('common.cancel')}
                             >
                               <X size={14} />
                             </Button>
@@ -1368,7 +1368,7 @@ function NewApplicantModal({
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Select label="Source" options={sourceOptions} value={source} onChange={(e) => setSource(e.target.value as ApplicantSource)} />
+            <Select label={tr('leads.source')} options={sourceOptions} value={source} onChange={(e) => setSource(e.target.value as ApplicantSource)} />
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{tr('common.yearsExperience')}</label>
               <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} placeholder="5" min="0" className={inputCls} />

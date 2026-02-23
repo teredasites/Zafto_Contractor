@@ -149,7 +149,7 @@ export default function InvoicesPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search invoices..."
+          placeholder={t('invoices.searchInvoices')}
           className="sm:w-80"
         />
         <Select

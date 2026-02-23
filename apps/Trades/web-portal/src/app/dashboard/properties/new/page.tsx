@@ -215,13 +215,13 @@ export default function NewPropertyPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <Select
-                label="Property Type"
+                label={t('common.propertyType')}
                 value={form.propertyType}
                 onChange={(e) => handleChange('propertyType', e.target.value)}
                 options={Object.entries(propertyTypeLabels).map(([value, label]) => ({ value, label }))}
               />
               <Select
-                label="Status"
+                label={t('common.status')}
                 value={form.status}
                 onChange={(e) => handleChange('status', e.target.value)}
                 options={[

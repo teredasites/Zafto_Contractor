@@ -605,12 +605,12 @@ export default function TpaProgramsPage() {
                   <Input
                     value={form.primaryContactPhone}
                     onChange={e => updateField('primaryContactPhone', e.target.value)}
-                    placeholder="Phone"
+                    placeholder={t('phone.title')}
                   />
                   <Input
                     value={form.primaryContactEmail}
                     onChange={e => updateField('primaryContactEmail', e.target.value)}
-                    placeholder="Email"
+                    placeholder={t('email.title')}
                     type="email"
                   />
                 </div>
@@ -626,12 +626,12 @@ export default function TpaProgramsPage() {
                   <Input
                     value={form.secondaryContactPhone}
                     onChange={e => updateField('secondaryContactPhone', e.target.value)}
-                    placeholder="Phone"
+                    placeholder={t('phone.title')}
                   />
                   <Input
                     value={form.secondaryContactEmail}
                     onChange={e => updateField('secondaryContactEmail', e.target.value)}
-                    placeholder="Email"
+                    placeholder={t('email.title')}
                     type="email"
                   />
                 </div>
@@ -763,7 +763,7 @@ export default function TpaProgramsPage() {
                       <button
                         onClick={() => handleEdit(program)}
                         className="p-1.5 rounded-md text-muted hover:text-main hover:bg-surface-hover transition-colors"
-                        title="Edit"
+                        title={t('common.edit')}
                       >
                         <Pencil size={14} />
                       </button>
@@ -771,7 +771,7 @@ export default function TpaProgramsPage() {
                         onClick={() => handleDelete(program.id)}
                         disabled={isDeleting}
                         className="p-1.5 rounded-md text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                        title="Remove"
+                        title={t('common.remove')}
                       >
                         <Trash2 size={14} />
                       </button>

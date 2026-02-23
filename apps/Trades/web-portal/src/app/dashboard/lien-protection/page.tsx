@@ -115,7 +115,7 @@ export default function LienProtectionPage() {
         <StatCard label="Active Liens" value={summary.totalActive} icon={Shield} />
         <StatCard label="At Risk" value={summary.totalAtRisk} icon={AlertTriangle} variant="warning" />
         <StatCard label="Amount Owed" value={`$${summary.totalAmountOwed.toLocaleString()}`} icon={DollarSign} variant="error" />
-        <StatCard label="Urgent" value={summary.urgentCount} icon={Clock} variant="error" />
+        <StatCard label={t('common.urgent')} value={summary.urgentCount} icon={Clock} variant="error" />
         <StatCard label="Liens Filed" value={summary.liensFiled} icon={FileText} />
       </div>
 

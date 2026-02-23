@@ -163,7 +163,7 @@ export default function LienDetailPage() {
           <CardContent>
             <div className="space-y-1">
               <TimelineStep label="First Work" date={lien.first_work_date} completed={!!lien.first_work_date} formatDate={formatDate} />
-              <TimelineStep label="Preliminary Notice" date={lien.preliminary_notice_date} completed={lien.preliminary_notice_sent} hasDoc={!!lien.preliminary_notice_document_path} formatDate={formatDate} />
+              <TimelineStep label={t('common.preliminaryNotice')} date={lien.preliminary_notice_date} completed={lien.preliminary_notice_sent} hasDoc={!!lien.preliminary_notice_document_path} formatDate={formatDate} />
               <TimelineStep label="Last Work" date={lien.last_work_date} completed={!!lien.last_work_date} formatDate={formatDate} />
               <TimelineStep label="Lien Filed" date={lien.lien_filing_date} completed={lien.lien_filed} hasDoc={!!lien.lien_filing_document_path} formatDate={formatDate} />
               <TimelineStep label="Lien Released" date={lien.lien_release_date} completed={lien.lien_released} hasDoc={!!lien.lien_release_document_path} formatDate={formatDate} />

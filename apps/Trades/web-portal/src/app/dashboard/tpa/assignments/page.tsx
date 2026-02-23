@@ -358,8 +358,8 @@ export default function TpaAssignmentsPage() {
               <CardContent className="space-y-3">
                 <Input value={form.adjusterName} onChange={e => updateField('adjusterName', e.target.value)} placeholder="Adjuster name" />
                 <div className="grid grid-cols-2 gap-3">
-                  <Input value={form.adjusterPhone} onChange={e => updateField('adjusterPhone', e.target.value)} placeholder="Phone" />
-                  <Input value={form.adjusterEmail} onChange={e => updateField('adjusterEmail', e.target.value)} placeholder="Email" type="email" />
+                  <Input value={form.adjusterPhone} onChange={e => updateField('adjusterPhone', e.target.value)} placeholder={t('phone.title')} />
+                  <Input value={form.adjusterEmail} onChange={e => updateField('adjusterEmail', e.target.value)} placeholder={t('email.title')} type="email" />
                 </div>
               </CardContent>
             </Card>
@@ -370,8 +370,8 @@ export default function TpaAssignmentsPage() {
               <CardContent className="space-y-3">
                 <Input value={form.policyholderName} onChange={e => updateField('policyholderName', e.target.value)} placeholder="Homeowner name" />
                 <div className="grid grid-cols-2 gap-3">
-                  <Input value={form.policyholderPhone} onChange={e => updateField('policyholderPhone', e.target.value)} placeholder="Phone" />
-                  <Input value={form.policyholderEmail} onChange={e => updateField('policyholderEmail', e.target.value)} placeholder="Email" type="email" />
+                  <Input value={form.policyholderPhone} onChange={e => updateField('policyholderPhone', e.target.value)} placeholder={t('phone.title')} />
+                  <Input value={form.policyholderEmail} onChange={e => updateField('policyholderEmail', e.target.value)} placeholder={t('email.title')} type="email" />
                 </div>
               </CardContent>
             </Card>
@@ -382,8 +382,8 @@ export default function TpaAssignmentsPage() {
               <CardContent className="space-y-3">
                 <Input value={form.propertyAddress} onChange={e => updateField('propertyAddress', e.target.value)} placeholder="Street address" />
                 <div className="grid grid-cols-3 gap-3">
-                  <Input value={form.propertyCity} onChange={e => updateField('propertyCity', e.target.value)} placeholder="City" />
-                  <Input value={form.propertyState} onChange={e => updateField('propertyState', e.target.value)} placeholder="State" />
+                  <Input value={form.propertyCity} onChange={e => updateField('propertyCity', e.target.value)} placeholder={t('common.city')} />
+                  <Input value={form.propertyState} onChange={e => updateField('propertyState', e.target.value)} placeholder={t('common.state')} />
                   <Input value={form.propertyZip} onChange={e => updateField('propertyZip', e.target.value)} placeholder="Zip" />
                 </div>
               </CardContent>

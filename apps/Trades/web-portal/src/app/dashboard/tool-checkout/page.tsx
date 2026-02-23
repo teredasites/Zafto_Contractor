@@ -179,11 +179,11 @@ export default function ToolCheckoutPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={<Package size={20} />} label="Total Tools" value={totalItems} color="blue" />
-        <StatCard icon={<CheckCircle size={20} />} label="Available" value={availableCount} color="emerald" />
-        <StatCard icon={<ArrowRightLeft size={20} />} label="Checked Out" value={checkedOutCount} color="amber" />
+        <StatCard icon={<CheckCircle size={20} />} label={t('dispatch.available')} value={availableCount} color="emerald" />
+        <StatCard icon={<ArrowRightLeft size={20} />} label={t('toolCheckout.checkedOut')} value={checkedOutCount} color="amber" />
         <StatCard
           icon={<AlertTriangle size={20} />}
-          label="Overdue"
+          label={t('toolCheckout.overdue')}
           value={overdueCount}
           color="red"
           highlight={overdueCount > 0}
@@ -509,13 +509,13 @@ function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Manufacturer" placeholder="Milwaukee" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} />
+              <Input label={t('common.manufacturer')} placeholder="Milwaukee" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} />
               <Input label="Model Number" placeholder="2804-20" value={modelNumber} onChange={(e) => setModelNumber(e.target.value)} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Serial Number" placeholder="Optional" value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} />
-              <Input label="Barcode" placeholder="Optional" value={barcode} onChange={(e) => setBarcode(e.target.value)} />
+              <Input label={t('common.serialNumber')} placeholder={t('common.optional')} value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} />
+              <Input label="Barcode" placeholder={t('common.optional')} value={barcode} onChange={(e) => setBarcode(e.target.value)} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">

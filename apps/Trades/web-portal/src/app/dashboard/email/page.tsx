@@ -776,7 +776,7 @@ function TemplateModal({
             </div>
             <div>
               <Select
-                label="Type"
+                label={t('common.type')}
                 options={typeOptions}
                 value={templateType}
                 onChange={(e) => setTemplateType(e.target.value as EmailTemplate['templateType'])}

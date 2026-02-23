@@ -598,7 +598,7 @@ export default function TeamChatPage() {
                         value={compose}
                         onChange={e => setCompose(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Type a message..."
+                        placeholder={t('teamChat.typeMessage')}
                         className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                         rows={1}
                       />

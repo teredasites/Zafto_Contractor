@@ -259,10 +259,10 @@ function ProfileSettings() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="First Name" defaultValue="Mike" />
-            <Input label="Last Name" defaultValue="Johnson" />
-            <Input label="Email" type="email" defaultValue="mike@mitchellelectric.com" icon={<Mail size={16} />} />
-            <Input label="Phone" type="tel" defaultValue="(860) 555-1001" icon={<Phone size={16} />} />
+            <Input label={t('customers.firstName')} defaultValue="Mike" />
+            <Input label={t('customers.lastName')} defaultValue="Johnson" />
+            <Input label={t('email.title')} type="email" defaultValue="mike@mitchellelectric.com" icon={<Mail size={16} />} />
+            <Input label={t('phone.title')} type="tel" defaultValue="(860) 555-1001" icon={<Phone size={16} />} />
           </div>
 
           <Button>{t('common.saveChanges')}</Button>
@@ -390,21 +390,21 @@ function CompanySettings() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="Company Name" defaultValue="Mitchell Electric LLC" />
-            <Input label="Trade" defaultValue="Electrical" />
-            <Input label="Email" type="email" defaultValue="info@mitchellelectric.com" />
-            <Input label="Phone" type="tel" defaultValue="(860) 555-1000" />
-            <Input label="Website" defaultValue="www.mitchellelectric.com" className="md:col-span-2" />
+            <Input label={t('settings.companyName')} defaultValue="Mitchell Electric LLC" />
+            <Input label={t('common.trade')} defaultValue="Electrical" />
+            <Input label={t('email.title')} type="email" defaultValue="info@mitchellelectric.com" />
+            <Input label={t('phone.title')} type="tel" defaultValue="(860) 555-1000" />
+            <Input label={t('leads.sources.website')} defaultValue="www.mitchellelectric.com" className="md:col-span-2" />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.address')}</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input placeholder="Street Address" defaultValue="123 Main Street" className="md:col-span-2" />
-              <Input placeholder="City" defaultValue="Hartford" />
+              <Input placeholder={t('common.city')} defaultValue="Hartford" />
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="State" defaultValue="CT" />
-                <Input placeholder="ZIP" defaultValue="06103" />
+                <Input placeholder={t('common.state')} defaultValue="CT" />
+                <Input placeholder={t('common.zip')} defaultValue="06103" />
               </div>
             </div>
           </div>
@@ -1516,14 +1516,14 @@ function SecuritySettings() {
             </div>
           )}
           <Input
-            label="Current Password"
+            label={t('settings.currentPassword')}
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             autoComplete="current-password"
           />
           <Input
-            label="New Password"
+            label={t('settings.newPassword')}
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -1884,11 +1884,11 @@ function BranchesSettings() {
               <h4 className="font-medium text-main">{editingId ? 'Edit Branch' : 'New Branch'}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input label="Branch Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                <Input label="Phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
-                <Input label="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
-                <Input label="City" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
-                <Input label="State" value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} />
-                <Input label="ZIP" value={formData.zipCode} onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })} />
+                <Input label={t('phone.title')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                <Input label={t('common.address')} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
+                <Input label={t('common.city')} value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
+                <Input label={t('common.state')} value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} />
+                <Input label={t('common.zip')} value={formData.zipCode} onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })} />
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleSave}>{editingId ? 'Update' : 'Create'}</Button>
@@ -2599,7 +2599,7 @@ function TemplatesSettings() {
                   </select>
                 </div>
               </div>
-              <Input label="Description" placeholder="What this template is for..." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
+              <Input label={tr('common.description')} placeholder="What this template is for..." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setShowCreate(false)}>{tr('common.cancel')}</Button>
                 <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>{tr('common.createTemplate')}</Button>
@@ -2639,11 +2639,11 @@ function TemplatesSettings() {
                       </div>
                     </div>
                     <div className="flex gap-1">
-                      <button onClick={() => duplicateTemplate(tmpl.id)} className="p-1.5 text-muted hover:text-main rounded hover:bg-surface-hover" title="Duplicate">
+                      <button onClick={() => duplicateTemplate(tmpl.id)} className="p-1.5 text-muted hover:text-main rounded hover:bg-surface-hover" title={tr('common.duplicate')}>
                         <Layers size={14} />
                       </button>
                       {!tmpl.isSystem && (
-                        <button onClick={() => deleteTemplate(tmpl.id)} className="p-1.5 text-muted hover:text-red-500 rounded hover:bg-surface-hover" title="Delete">
+                        <button onClick={() => deleteTemplate(tmpl.id)} className="p-1.5 text-muted hover:text-red-500 rounded hover:bg-surface-hover" title={tr('common.delete')}>
                           <Trash2 size={14} />
                         </button>
                       )}
@@ -2827,7 +2827,7 @@ function CustomFieldsSettings() {
                     >
                       {field.isActive ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
                     </button>
-                    <button onClick={() => deleteField(field.id)} className="p-1.5 text-muted hover:text-red-500 rounded hover:bg-surface-hover" title="Delete">
+                    <button onClick={() => deleteField(field.id)} className="p-1.5 text-muted hover:text-red-500 rounded hover:bg-surface-hover" title={t('common.delete')}>
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -2986,7 +2986,7 @@ function BusinessConfigSettings() {
               ))}
               <div className="flex items-end gap-2">
                 <div className="flex-1">
-                  <Input label="Name" placeholder="State Tax" value={newTaxName} onChange={(e) => setNewTaxName(e.target.value)} />
+                  <Input label={t('common.name')} placeholder="State Tax" value={newTaxName} onChange={(e) => setNewTaxName(e.target.value)} />
                 </div>
                 <div className="w-24">
                   <Input label="Rate %" type="number" step="0.01" min="0" max="100" placeholder="6.35" value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value.replace(/[^0-9.]/g, ''))} />

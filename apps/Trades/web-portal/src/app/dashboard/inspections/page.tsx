@@ -114,7 +114,7 @@ export default function InspectionsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search inspections..." className="sm:w-80" />
+        <SearchInput value={search} onChange={setSearch} placeholder={t('inspections.searchInspections')} className="sm:w-80" />
         <Select options={[{ value: 'all', label: 'All Statuses' }, ...Object.entries(statusConfig).map(([k, v]) => ({ value: k, label: v.label }))]} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="sm:w-48" />
         <Select options={[{ value: 'all', label: 'All Types' }, ...Object.entries(typeConfig).map(([k, v]) => ({ value: k, label: v.label }))]} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="sm:w-48" />
       </div>

@@ -435,7 +435,7 @@ export default function TeamPage() {
             <SearchInput
               value={search}
               onChange={setSearch}
-              placeholder="Search team members..."
+              placeholder={t('teamPage.searchMembers')}
               className="sm:w-80"
             />
             <Select
@@ -642,7 +642,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
             />
           </div>
           <Select
-            label="Role"
+            label={t('teamPage.role')}
             options={[
               { value: 'admin', label: 'Admin - Full access except billing' },
               { value: 'office_manager', label: 'Office Manager - Customers, bids, jobs, invoices' },

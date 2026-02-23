@@ -184,12 +184,12 @@ export default function PropertyDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <DetailRow label="Address" value={formatPropertyAddress(property)} />
-              <DetailRow label="Property Type" value={propertyTypeLabels[property.propertyType]} />
+              <DetailRow label={t('common.address')} value={formatPropertyAddress(property)} />
+              <DetailRow label={t('common.propertyType')} value={propertyTypeLabels[property.propertyType]} />
               <DetailRow label="Unit Count" value={String(property.unitCount)} />
-              <DetailRow label="Year Built" value={property.yearBuilt ? String(property.yearBuilt) : '--'} />
-              <DetailRow label="Square Footage" value={property.squareFootage ? `${property.squareFootage.toLocaleString()} sq ft` : '--'} />
-              <DetailRow label="Lot Size" value={property.lotSize ?? '--'} />
+              <DetailRow label={t('common.yearBuilt')} value={property.yearBuilt ? String(property.yearBuilt) : '--'} />
+              <DetailRow label={t('common.squareFootage')} value={property.squareFootage ? `${property.squareFootage.toLocaleString()} sq ft` : '--'} />
+              <DetailRow label={t('common.lotSize')} value={property.lotSize ?? '--'} />
             </CardContent>
           </Card>
 
@@ -202,11 +202,11 @@ export default function PropertyDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <DetailRow label="Purchase Price" value={property.purchasePrice ? formatCurrency(property.purchasePrice) : '--'} />
-              <DetailRow label="Current Value" value={property.currentValue ? formatCurrency(property.currentValue) : '--'} />
-              <DetailRow label="Purchase Date" value={property.purchaseDate ? formatDate(property.purchaseDate) : '--'} />
+              <DetailRow label={t('common.purchasePrice')} value={property.purchasePrice ? formatCurrency(property.purchasePrice) : '--'} />
+              <DetailRow label={t('common.currentValue')} value={property.currentValue ? formatCurrency(property.currentValue) : '--'} />
+              <DetailRow label={t('common.purchaseDate')} value={property.purchaseDate ? formatDate(property.purchaseDate) : '--'} />
               <DetailRow label="Monthly Rent Income" value={formatCurrency(totalMonthlyRent)} />
-              <DetailRow label="Monthly Expenses" value={formatCurrency(monthlyExpenses)} />
+              <DetailRow label={t('common.monthlyExpenses')} value={formatCurrency(monthlyExpenses)} />
               <DetailRow label="Net Operating Income" value={formatCurrency(noi)} highlight={noi >= 0 ? 'positive' : 'negative'} />
             </CardContent>
           </Card>
@@ -220,11 +220,11 @@ export default function PropertyDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <DetailRow label="Lender" value={property.mortgageLender ?? '--'} />
+              <DetailRow label={t('common.lender')} value={property.mortgageLender ?? '--'} />
               <DetailRow label="Interest Rate" value={property.mortgageRate ? `${property.mortgageRate}%` : '--'} />
-              <DetailRow label="Monthly Payment" value={property.mortgagePayment ? formatCurrency(property.mortgagePayment) : '--'} />
-              <DetailRow label="Escrow" value={property.mortgageEscrow ? formatCurrency(property.mortgageEscrow) : '--'} />
-              <DetailRow label="Principal Balance" value={property.mortgagePrincipalBalance ? formatCurrency(property.mortgagePrincipalBalance) : '--'} />
+              <DetailRow label={t('common.monthlyPayment')} value={property.mortgagePayment ? formatCurrency(property.mortgagePayment) : '--'} />
+              <DetailRow label={t('common.escrow')} value={property.mortgageEscrow ? formatCurrency(property.mortgageEscrow) : '--'} />
+              <DetailRow label={t('common.principalBalance')} value={property.mortgagePrincipalBalance ? formatCurrency(property.mortgagePrincipalBalance) : '--'} />
             </CardContent>
           </Card>
 
@@ -239,9 +239,9 @@ export default function PropertyDetailPage() {
             <CardContent className="space-y-3">
               <DetailRow label="Insurance Carrier" value={property.insuranceCarrier ?? '--'} />
               <DetailRow label="Policy Number" value={property.insurancePolicyNumber ?? '--'} />
-              <DetailRow label="Annual Premium" value={property.insurancePremium ? formatCurrency(property.insurancePremium) : '--'} />
-              <DetailRow label="Expiry Date" value={property.insuranceExpiry ? formatDate(property.insuranceExpiry) : '--'} />
-              <DetailRow label="Annual Property Tax" value={property.propertyTaxAnnual ? formatCurrency(property.propertyTaxAnnual) : '--'} />
+              <DetailRow label={t('common.annualPremium')} value={property.insurancePremium ? formatCurrency(property.insurancePremium) : '--'} />
+              <DetailRow label={t('common.expiryDate')} value={property.insuranceExpiry ? formatDate(property.insuranceExpiry) : '--'} />
+              <DetailRow label={t('common.annualPropertyTax')} value={property.propertyTaxAnnual ? formatCurrency(property.propertyTaxAnnual) : '--'} />
             </CardContent>
           </Card>
 

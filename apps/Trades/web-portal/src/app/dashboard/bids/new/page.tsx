@@ -1015,7 +1015,7 @@ export default function NewBidPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
-                    label="Email"
+                    label={t('email.title')}
                     type="email"
                     value={customerEmail}
                     onChange={(e) => setCustomerEmail(e.target.value)}
@@ -1023,7 +1023,7 @@ export default function NewBidPage() {
                     disabled={!!selectedCustomer}
                   />
                   <Input
-                    label="Phone"
+                    label={t('phone.title')}
                     type="tel"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
@@ -1040,21 +1040,21 @@ export default function NewBidPage() {
                 />
                 <div className="grid grid-cols-3 gap-4">
                   <Input
-                    label="City"
+                    label={t('common.city')}
                     value={customerCity}
                     onChange={(e) => setCustomerCity(e.target.value)}
                     placeholder="Hartford"
                     disabled={!!selectedCustomer}
                   />
                   <Input
-                    label="State"
+                    label={t('common.state')}
                     value={customerState}
                     onChange={(e) => setCustomerState(e.target.value)}
                     placeholder="CT"
                     disabled={!!selectedCustomer}
                   />
                   <Input
-                    label="ZIP"
+                    label={t('common.zip')}
                     value={customerZip}
                     onChange={(e) => setCustomerZip(e.target.value)}
                     placeholder="06101"
@@ -1089,17 +1089,17 @@ export default function NewBidPage() {
                       <Input
                         value={jobSiteCity}
                         onChange={(e) => setJobSiteCity(e.target.value)}
-                        placeholder="City"
+                        placeholder={t('common.city')}
                       />
                       <Input
                         value={jobSiteState}
                         onChange={(e) => setJobSiteState(e.target.value)}
-                        placeholder="State"
+                        placeholder={t('common.state')}
                       />
                       <Input
                         value={jobSiteZip}
                         onChange={(e) => setJobSiteZip(e.target.value)}
-                        placeholder="ZIP"
+                        placeholder={t('common.zip')}
                       />
                     </div>
                   </div>
@@ -1139,7 +1139,7 @@ export default function NewBidPage() {
                 className="md:col-span-1"
               />
               <Select
-                label="Trade"
+                label={t('common.trade')}
                 options={tradeOptions}
                 value={trade}
                 onChange={(e) => setTrade(e.target.value)}
@@ -1533,14 +1533,14 @@ Example:
                           <button
                             onClick={() => duplicateLineItem(item.id)}
                             className="p-1 hover:bg-surface-hover rounded text-muted"
-                            title="Duplicate"
+                            title={t('common.duplicate')}
                           >
                             <CopyPlus size={16} />
                           </button>
                           <button
                             onClick={() => deleteLineItem(item.id)}
                             className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-red-500"
-                            title="Delete"
+                            title={t('common.delete')}
                           >
                             <Trash2 size={16} />
                           </button>

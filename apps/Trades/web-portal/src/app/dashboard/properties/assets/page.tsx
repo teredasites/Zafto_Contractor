@@ -452,7 +452,7 @@ function NewAssetModal({ onClose, onCreate }: {
                 type="text"
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
-                placeholder="Optional"
+                placeholder={t('common.optional')}
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
               />
             </div>

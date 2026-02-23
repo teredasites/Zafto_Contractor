@@ -312,7 +312,7 @@ function AddReadingModal({ onClose }: { onClose: () => void }) {
           </div>
           <Input label="Target Value" type="number" placeholder="Optional target" />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Meter Type" placeholder="Pin / Pinless" />
+            <Input label={t('moisture.meterType')} placeholder="Pin / Pinless" />
             <Input label="Meter Model" placeholder="Delmhorst BD-2100" />
           </div>
           <div className="grid grid-cols-2 gap-4">

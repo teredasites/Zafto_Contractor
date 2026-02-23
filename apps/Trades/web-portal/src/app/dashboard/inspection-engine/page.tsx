@@ -258,7 +258,7 @@ export default function InspectionEnginePage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search inspections..."
+          placeholder={t('inspections.searchInspections')}
           className="sm:w-80"
         />
       </div>

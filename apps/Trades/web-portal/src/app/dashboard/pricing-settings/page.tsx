@@ -212,7 +212,7 @@ export default function PricingSettingsPage() {
                     <button
                       onClick={() => deleteRule(rule.id)}
                       className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
-                      title="Delete"
+                      title={t('common.delete')}
                     >
                       <Trash2 className="h-4 w-4 text-zinc-600 hover:text-red-400" />
                     </button>

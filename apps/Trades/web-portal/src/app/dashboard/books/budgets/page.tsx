@@ -59,7 +59,7 @@ export default function BudgetsPage() {
             icon={<TrendingUp size={20} />}
           />
           <SummaryCard
-            label="Variance"
+            label={t('common.variance')}
             amount={totals.variance}
             icon={totals.variance >= 0 ? <TrendingDown size={20} /> : <AlertTriangle size={20} />}
             variant={totals.variance >= 0 ? 'positive' : 'negative'}

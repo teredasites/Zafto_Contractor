@@ -125,7 +125,7 @@ export default function ExpensesPage() {
           <option value="">All Categories</option>
           {EXPENSE_CATEGORIES.map((c) => <option key={c} value={c}>{EXPENSE_CATEGORY_LABELS[c]}</option>)}
         </select>
-        <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36" placeholder="From" />
+        <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36" placeholder={t('email.from')} />
         <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36" placeholder="To" />
         <select value={propertyFilter} onChange={(e) => setPropertyFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
           <option value="">All Properties</option>
@@ -182,7 +182,7 @@ export default function ExpensesPage() {
                       </a>
                     )}
                     {expense.status === 'draft' && (
-                      <button onClick={() => approveExpense(expense.id)} className="p-1 text-muted hover:text-amber-600 rounded transition-colors" title="Approve">
+                      <button onClick={() => approveExpense(expense.id)} className="p-1 text-muted hover:text-amber-600 rounded transition-colors" title={t('common.approve')}>
                         <Check size={14} />
                       </button>
                     )}
@@ -192,7 +192,7 @@ export default function ExpensesPage() {
                       </button>
                     )}
                     {(expense.status === 'posted' || expense.status === 'approved') && (
-                      <button onClick={() => setVoidId(expense.id)} className="p-1 text-muted hover:text-red-600 rounded transition-colors" title="Void">
+                      <button onClick={() => setVoidId(expense.id)} className="p-1 text-muted hover:text-red-600 rounded transition-colors" title={t('invoices.statusVoid')}>
                         <Ban size={14} />
                       </button>
                     )}

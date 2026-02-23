@@ -569,15 +569,15 @@ export default function FinancialReportsPage() {
                 <CardTitle className="text-base">{t('books.profitAndLossStatement')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <AccountSection title="Revenue" accounts={pnlData.revenue} />
-                <AccountSection title="Cost of Goods Sold" accounts={pnlData.cogs} />
+                <AccountSection title={t('reports.revenue')} accounts={pnlData.revenue} />
+                <AccountSection title={t('common.costOfGoodsSold')} accounts={pnlData.cogs} />
                 <div className="flex items-center justify-between py-3 px-2 bg-secondary/50 rounded-lg font-semibold text-sm">
                   <span className="text-main">{t('common.grossProfit')}</span>
                   <span className={cn('tabular-nums', pnlData.grossProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                     {formatCurrency(pnlData.grossProfit)}
                   </span>
                 </div>
-                <AccountSection title="Operating Expenses" accounts={pnlData.expenses} />
+                <AccountSection title={t('common.operatingExpenses')} accounts={pnlData.expenses} />
                 <div className="flex items-center justify-between py-4 px-3 bg-accent/10 rounded-lg font-bold text-base border border-accent/20">
                   <span className="text-main">{t('common.netIncome')}</span>
                   <span className={cn('tabular-nums', pnlData.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
@@ -600,14 +600,14 @@ export default function FinancialReportsPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                <AccountSection title="Assets" accounts={bsData.assets} />
+                <AccountSection title={t('properties.assets')} accounts={bsData.assets} />
                 <div className="flex items-center justify-between py-3 px-2 bg-secondary/50 rounded-lg font-semibold text-sm">
                   <span className="text-main">{t('common.totalAssets')}</span>
                   <span className="tabular-nums text-main">{formatCurrency(bsData.totalAssets)}</span>
                 </div>
 
-                <AccountSection title="Liabilities" accounts={bsData.liabilities} />
-                <AccountSection title="Equity" accounts={bsData.equity} />
+                <AccountSection title={t('common.liabilities')} accounts={bsData.liabilities} />
+                <AccountSection title={t('common.equity')} accounts={bsData.equity} />
                 {bsData.currentYearNetIncome !== 0 && (
                   <div className="flex items-center justify-between py-1.5 px-2 text-sm">
                     <span className="text-muted italic">{t('books.currentYearNetIncome')}</span>

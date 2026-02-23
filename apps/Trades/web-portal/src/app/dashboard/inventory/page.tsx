@@ -299,9 +299,9 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
         <CardContent className="space-y-4">
           <Input label="Item Name *" placeholder="20A Single Pole Breaker" />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="SKU" placeholder="SPB-20" />
+            <Input label={t('common.sku')} placeholder="SPB-20" />
             <Select
-              label="Category"
+              label={t('common.category')}
               options={[
                 { value: 'Electrical', label: 'Electrical' },
                 { value: 'Plumbing', label: 'Plumbing' },
@@ -313,9 +313,9 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-3 gap-4">
             <Input label="Quantity" type="number" placeholder="0" />
             <Input label="Min Quantity" type="number" placeholder="10" />
-            <Input label="Unit Cost" type="number" placeholder="0.00" />
+            <Input label={t('jobs.materials.unitCost')} type="number" placeholder="0.00" />
           </div>
-          <Input label="Location" placeholder="Shelf A1" />
+          <Input label={t('common.location')} placeholder="Shelf A1" />
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />{t('common.addItem')}</Button>

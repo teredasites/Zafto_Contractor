@@ -145,9 +145,9 @@ export default function CompliancePage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard label="Total Certifications" value={summary.totalCerts} icon={FileCheck} />
-        <StatCard label="Active" value={summary.activeCerts} icon={CheckCircle} variant="success" />
-        <StatCard label="Expired" value={summary.expiredCerts} icon={XCircle} variant="error" />
-        <StatCard label="Expiring Soon" value={summary.expiringSoon} icon={AlertTriangle} variant="warning" />
+        <StatCard label={t('automations.active')} value={summary.activeCerts} icon={CheckCircle} variant="success" />
+        <StatCard label={t('certifications.expired')} value={summary.expiredCerts} icon={XCircle} variant="error" />
+        <StatCard label={t('certifications.expiring')} value={summary.expiringSoon} icon={AlertTriangle} variant="warning" />
         <StatCard
           label="Total Coverage"
           value={summary.totalCoverage > 0 ? `$${(summary.totalCoverage / 1000000).toFixed(1)}M` : '$0'}

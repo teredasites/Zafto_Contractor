@@ -680,9 +680,9 @@ function AddPsychrometricModal({
             <Input label="Outdoor RH (%)" type="number" value={outdoorRh} onChange={(e) => setOutdoorRh(e.target.value)} placeholder="65" />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <Input label="Dehumidifiers" type="number" value={dehuCount} onChange={(e) => setDehuCount(e.target.value)} />
-            <Input label="Air Movers" type="number" value={amCount} onChange={(e) => setAmCount(e.target.value)} />
-            <Input label="Scrubbers" type="number" value={asCount} onChange={(e) => setAsCount(e.target.value)} />
+            <Input label={t('moisture.dehumidifiers')} type="number" value={dehuCount} onChange={(e) => setDehuCount(e.target.value)} />
+            <Input label={t('moisture.airMovers')} type="number" value={amCount} onChange={(e) => setAmCount(e.target.value)} />
+            <Input label={t('common.scrubbers')} type="number" value={asCount} onChange={(e) => setAsCount(e.target.value)} />
           </div>
           <div className="flex gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>

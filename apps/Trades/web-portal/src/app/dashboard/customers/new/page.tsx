@@ -192,7 +192,7 @@ export default function NewCustomerPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Input
-                    label="First Name"
+                    label={t('customers.firstName')}
                     placeholder="John"
                     value={formData.firstName}
                     onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); setErrors((prev) => { const { firstName, ...rest } = prev; return rest; }); }}
@@ -202,7 +202,7 @@ export default function NewCustomerPage() {
                 </div>
                 <div>
                   <Input
-                    label="Last Name"
+                    label={t('customers.lastName')}
                     placeholder="Smith"
                     value={formData.lastName}
                     onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); setErrors((prev) => { const { lastName, ...rest } = prev; return rest; }); }}
@@ -214,7 +214,7 @@ export default function NewCustomerPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Input
-                    label="Email"
+                    label={t('email.title')}
                     type="email"
                     placeholder="john@email.com"
                     value={formData.email}
@@ -225,7 +225,7 @@ export default function NewCustomerPage() {
                 </div>
                 <div>
                   <Input
-                    label="Phone"
+                    label={t('phone.title')}
                     type="tel"
                     placeholder="(860) 555-0123"
                     value={formData.phone}
@@ -286,19 +286,19 @@ export default function NewCustomerPage() {
               />
               <div className="grid grid-cols-3 gap-4">
                 <Input
-                  label="City"
+                  label={t('common.city')}
                   placeholder="Hartford"
                   value={formData.address.city}
                   onChange={(e) => setFormData({ ...formData, address: { ...formData.address, city: e.target.value } })}
                 />
                 <Input
-                  label="State"
+                  label={t('common.state')}
                   placeholder="CT"
                   value={formData.address.state}
                   onChange={(e) => setFormData({ ...formData, address: { ...formData.address, state: e.target.value } })}
                 />
                 <Input
-                  label="ZIP"
+                  label={t('common.zip')}
                   placeholder="06103"
                   value={formData.address.zip}
                   onChange={(e) => setFormData({ ...formData, address: { ...formData.address, zip: e.target.value } })}

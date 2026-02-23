@@ -259,21 +259,21 @@ export default function CustomerDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="First Name" value={editData.firstName} onChange={(e) => setEditData({ ...editData, firstName: e.target.value })} error={editErrors.firstName} />
-              <Input label="Last Name" value={editData.lastName} onChange={(e) => setEditData({ ...editData, lastName: e.target.value })} error={editErrors.lastName} />
-              <Input label="Email" type="email" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} error={editErrors.email} />
-              <Input label="Phone" value={editData.phone} onChange={(e) => setEditData({ ...editData, phone: e.target.value })} error={editErrors.phone} />
+              <Input label={t('customers.firstName')} value={editData.firstName} onChange={(e) => setEditData({ ...editData, firstName: e.target.value })} error={editErrors.firstName} />
+              <Input label={t('customers.lastName')} value={editData.lastName} onChange={(e) => setEditData({ ...editData, lastName: e.target.value })} error={editErrors.lastName} />
+              <Input label={t('email.title')} type="email" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} error={editErrors.email} />
+              <Input label={t('phone.title')} value={editData.phone} onChange={(e) => setEditData({ ...editData, phone: e.target.value })} error={editErrors.phone} />
               <Input label="Alternate Phone" value={editData.alternatePhone} onChange={(e) => setEditData({ ...editData, alternatePhone: e.target.value })} />
-              <Select label="Type" value={editData.customerType} onChange={(e) => setEditData({ ...editData, customerType: e.target.value as 'residential' | 'commercial' })} options={[{ value: 'residential', label: 'Residential' }, { value: 'commercial', label: 'Commercial' }]} />
-              <Input label="Street" value={editData.street} onChange={(e) => setEditData({ ...editData, street: e.target.value })} />
-              <Input label="City" value={editData.city} onChange={(e) => setEditData({ ...editData, city: e.target.value })} />
-              <Input label="State" value={editData.state} onChange={(e) => setEditData({ ...editData, state: e.target.value })} />
-              <Input label="ZIP" value={editData.zip} onChange={(e) => setEditData({ ...editData, zip: e.target.value })} />
+              <Select label={t('common.type')} value={editData.customerType} onChange={(e) => setEditData({ ...editData, customerType: e.target.value as 'residential' | 'commercial' })} options={[{ value: 'residential', label: 'Residential' }, { value: 'commercial', label: 'Commercial' }]} />
+              <Input label={t('common.street')} value={editData.street} onChange={(e) => setEditData({ ...editData, street: e.target.value })} />
+              <Input label={t('common.city')} value={editData.city} onChange={(e) => setEditData({ ...editData, city: e.target.value })} />
+              <Input label={t('common.state')} value={editData.state} onChange={(e) => setEditData({ ...editData, state: e.target.value })} />
+              <Input label={t('common.zip')} value={editData.zip} onChange={(e) => setEditData({ ...editData, zip: e.target.value })} />
               <div className="md:col-span-2">
                 <Input label="Access Instructions" value={editData.accessInstructions} onChange={(e) => setEditData({ ...editData, accessInstructions: e.target.value })} />
               </div>
               <div className="md:col-span-2">
-                <Input label="Notes" value={editData.notes} onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
+                <Input label={t('walkthroughs.notes')} value={editData.notes} onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
               </div>
             </div>
             {editErrors.submit && <p className="text-sm text-red-500 mt-2">{editErrors.submit}</p>}

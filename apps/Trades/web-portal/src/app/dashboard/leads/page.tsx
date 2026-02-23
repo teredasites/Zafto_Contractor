@@ -217,7 +217,7 @@ export default function LeadsPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search leads..."
+          placeholder={t('leadsPage.searchLeads')}
           className="sm:w-80"
         />
         <Select
@@ -563,9 +563,9 @@ function NewLeadModal({ onClose, onCreate }: {
             <div className="grid grid-cols-1 gap-2">
               <input type="text" value={street} onChange={(e) => setStreet(e.target.value)} placeholder="123 Main Street" className={inputCls} />
               <div className="grid grid-cols-6 gap-2">
-                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" className={`col-span-3 ${inputCls}`} />
+                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder={t('common.city')} className={`col-span-3 ${inputCls}`} />
                 <input type="text" value={state} onChange={(e) => setState(e.target.value)} placeholder="ST" maxLength={2} className={`col-span-1 ${inputCls}`} />
-                <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="ZIP" className={`col-span-2 ${inputCls}`} />
+                <input type="text" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('common.zip')} className={`col-span-2 ${inputCls}`} />
               </div>
             </div>
           </div>
