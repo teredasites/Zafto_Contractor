@@ -50,6 +50,7 @@ import { formatDate, cn } from '@/lib/utils';
 import {
   usePropertyScan,
   type PropertyScanData,
+  type PropertyFeaturesData,
   type RoofMeasurementData,
   type RoofFacetData,
   type WallMeasurementData,
@@ -58,7 +59,7 @@ import {
 } from '@/lib/hooks/use-property-scan';
 import { useStormAssess } from '@/lib/hooks/use-storm-assess';
 
-type TabType = 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
+type TabType = 'property' | 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   complete: { label: 'Complete', color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
@@ -69,7 +70,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 };
 
 const TABS: { key: TabType; label: string; icon: LucideIcon; color: string }[] = [
-  { key: 'roof', label: 'Roof', icon: Home, color: '#8B5CF6' },
+  { key: 'property', label: 'Property', icon: Building, color: '#8B5CF6' },
+  { key: 'roof', label: 'Roof', icon: Home, color: '#A855F7' },
   { key: 'walls', label: 'Walls', icon: Ruler, color: '#3B82F6' },
   { key: 'trades', label: 'Trade Data', icon: BarChart3, color: '#10B981' },
   { key: 'solar', label: 'Solar', icon: Sun, color: '#F59E0B' },
@@ -280,12 +282,12 @@ export default function ReconDetailPage() {
   const router = useRouter();
   const params = useParams();
   const scanId = params.id as string;
-  const [activeTab, setActiveTab] = useState<TabType>('roof');
+  const [activeTab, setActiveTab] = useState<TabType>('property');
   const [selectedTrade, setSelectedTrade] = useState<TradeType | null>(null);
   const [estimating, setEstimating] = useState(false);
   const [imgView, setImgView] = useState<'satellite' | 'streets' | 'streetview'>('satellite');
 
-  const { scan, roof, facets, walls, tradeBids, loading, error, triggerTradeEstimate } = usePropertyScan(scanId, 'scan');
+  const { scan, features, roof, facets, walls, tradeBids, loading, error, triggerTradeEstimate } = usePropertyScan(scanId, 'scan');
 
   const handleEstimate = useCallback(async () => {
     if (!scan) return;
@@ -328,12 +330,13 @@ export default function ReconDetailPage() {
   const streetMapUrl = hasCoords ? getStreetMapUrl(scan.latitude!, scan.longitude!) : null;
   const imageryOld = scan.imageryAgeMonths != null && scan.imageryAgeMonths > 18;
 
+  const bathsTotal = (features?.bathsFull || 0) + (features?.bathsHalf || 0) * 0.5;
   const quickStats = [
-    { label: 'Roof Area', value: roof ? `${roof.totalAreaSqft.toLocaleString()} sqft` : '—', icon: Home, color: '#8B5CF6' },
-    { label: 'Squares', value: roof ? roof.totalAreaSquares.toFixed(1) : '—', icon: Layers, color: '#3B82F6' },
-    { label: 'Pitch', value: roof?.pitchPrimary || (roof ? `${roof.pitchDegrees.toFixed(1)}°` : '—'), icon: TrendingUp, color: '#10B981' },
-    { label: 'Facets', value: roof ? String(roof.facetCount) : '—', icon: Layers, color: '#06B6D4' },
-    { label: 'Shape', value: roof?.predominantShape ? (SHAPE_LABELS[roof.predominantShape] || roof.predominantShape) : '—', icon: Building, color: '#F59E0B' },
+    { label: 'Beds', value: features?.beds != null ? String(features.beds) : '—', icon: Home, color: '#8B5CF6' },
+    { label: 'Baths', value: bathsTotal > 0 ? String(bathsTotal) : '—', icon: Droplet, color: '#3B82F6' },
+    { label: 'Sqft', value: features?.livingSqft ? `${features.livingSqft.toLocaleString()}` : '—', icon: Ruler, color: '#10B981' },
+    { label: 'Year Built', value: features?.yearBuilt ? String(features.yearBuilt) : '—', icon: Calendar, color: '#F59E0B' },
+    { label: 'Roof Area', value: roof ? `${roof.totalAreaSqft.toLocaleString()} sqft` : '—', icon: Layers, color: '#A855F7' },
     { label: 'Sources', value: String(scan.scanSources.length), icon: Database, color: '#EC4899' },
   ];
 
@@ -626,6 +629,7 @@ export default function ReconDetailPage() {
       </div>
 
       {/* ── TAB CONTENT ────────────────────────────────── */}
+      {activeTab === 'property' && <PropertyTab features={features} scan={scan} />}
       {activeTab === 'roof' && <RoofTab roof={roof} facets={facets} scan={scan} />}
       {activeTab === 'walls' && <WallsTab walls={walls} onEstimate={handleEstimate} estimating={estimating} />}
       {activeTab === 'trades' && (
@@ -643,6 +647,153 @@ export default function ReconDetailPage() {
           Always verify on site before material orders. Roof analysis powered by Google Solar API where available.
         </p>
       </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// PROPERTY TAB
+// ============================================================================
+
+function formatCurrency(val: number | null): string {
+  if (val == null) return '—';
+  return `$${val.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+}
+
+function formatLabel(val: string | null): string {
+  if (!val) return '—';
+  return val.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function PropertyTab({ features, scan }: {
+  features: PropertyFeaturesData | null; scan: PropertyScanData;
+}) {
+  if (!features) {
+    return (
+      <EmptyTab
+        icon={Building}
+        title="Property Details Pending"
+        description="Property characteristics were not found for this address. This typically means the ATTOM property data API did not return results for this location. Public record data may not be available for newer construction or certain rural areas."
+      />
+    );
+  }
+
+  const bathsTotal = (features.bathsFull || 0) + (features.bathsHalf || 0) * 0.5;
+  const propertyAge = features.yearBuilt ? new Date().getFullYear() - features.yearBuilt : null;
+
+  // Census data extraction
+  const census = features.censusData || {};
+  const population = census.population as number | undefined;
+  const medianIncome = census.median_household_income as number | undefined;
+  const medianHomeValue = census.median_home_value as number | undefined;
+  const ownerOccupied = census.owner_occupied_pct as number | undefined;
+  const vacancyRate = census.vacancy_rate as number | undefined;
+
+  return (
+    <div className="space-y-4">
+      {/* Property KPI strip */}
+      <KpiStrip items={[
+        { label: 'Living Area', value: features.livingSqft ? features.livingSqft.toLocaleString() : '—', unit: 'sqft', icon: Ruler, color: '#8B5CF6' },
+        { label: 'Lot Size', value: features.lotSqft ? features.lotSqft.toLocaleString() : '—', unit: 'sqft', icon: Map, color: '#3B82F6' },
+        { label: 'Bedrooms', value: features.beds != null ? String(features.beds) : '—', icon: Home, color: '#10B981' },
+        { label: 'Bathrooms', value: bathsTotal > 0 ? String(bathsTotal) : '—', icon: Droplet, color: '#06B6D4' },
+        { label: 'Year Built', value: features.yearBuilt ? String(features.yearBuilt) : '—', unit: propertyAge != null ? `(${propertyAge}yr)` : undefined, icon: Calendar, color: '#F59E0B' },
+        { label: 'Assessed Value', value: formatCurrency(features.assessedValue), icon: TrendingUp, color: '#EC4899' },
+      ]} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Building Characteristics */}
+        <Panel title="Building Characteristics" icon={Building} color="#8B5CF6">
+          <div className="space-y-0">
+            <DataRow label="Stories" value={features.stories ?? '—'} />
+            <DataRow label="Construction" value={formatLabel(features.constructionType)} />
+            <DataRow label="Foundation" value={formatLabel(features.foundationType)} />
+            <DataRow label="Basement" value={formatLabel(features.basementType)} />
+            <DataRow label="Exterior" value={formatLabel(features.exteriorMaterial || features.wallType)} highlight />
+            <DataRow label="Roof Cover" value={formatLabel(features.roofMaterial || features.roofTypeRecord)} />
+          </div>
+        </Panel>
+
+        {/* Systems & Features */}
+        <Panel title="Systems & Features" icon={Zap} color="#F59E0B">
+          <div className="space-y-0">
+            <DataRow label="Heating" value={formatLabel(features.heatingType)} />
+            <DataRow label="Cooling" value={formatLabel(features.coolingType)} />
+            <DataRow label="Pool" value={features.poolType ? formatLabel(features.poolType) : 'None'} />
+            <DataRow label="Garage" value={features.garageSpaces > 0 ? `${features.garageSpaces}-car` : 'None'} />
+            <DataRow label="Elevation" value={features.elevationFt != null ? `${features.elevationFt.toLocaleString()} ft` : '—'} />
+            <DataRow label="Property Type" value={formatLabel(scan.propertyType)} />
+          </div>
+        </Panel>
+
+        {/* Financial */}
+        <Panel title="Financial & Sales" icon={TrendingUp} color="#10B981">
+          <div className="space-y-0">
+            <DataRow label="Assessed Value" value={formatCurrency(features.assessedValue)} highlight />
+            <DataRow label="Last Sale Price" value={formatCurrency(features.lastSalePrice)} highlight />
+            <DataRow label="Last Sale Date" value={features.lastSaleDate ? new Date(features.lastSaleDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'} />
+            {features.estimatedValue != null && (
+              <DataRow label="Estimated Value" value={formatCurrency(features.estimatedValue)} highlight />
+            )}
+            <DataRow label="Lot Size" value={features.lotSqft ? `${features.lotSqft.toLocaleString()} sqft` : '—'} />
+            <DataRow label="Neighborhood" value={formatLabel(features.neighborhoodType)} />
+          </div>
+        </Panel>
+      </div>
+
+      {/* Terrain & Site */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Panel title="Terrain & Site" icon={Map} color="#3B82F6">
+          <div className="space-y-0">
+            <DataRow label="Elevation" value={features.elevationFt != null ? `${features.elevationFt.toLocaleString()} ft` : '—'} mono />
+            {features.terrainSlopePct != null && (
+              <DataRow label="Terrain Slope" value={`${features.terrainSlopePct.toFixed(1)}%`} mono />
+            )}
+            {features.treeCoveragePct != null && (
+              <DataRow label="Tree Coverage" value={`${features.treeCoveragePct.toFixed(0)}%`} />
+            )}
+            {features.buildingHeightFt != null && (
+              <DataRow label="Building Height" value={`${features.buildingHeightFt.toFixed(0)} ft`} mono />
+            )}
+            <DataRow label="Lot Description" value={formatLabel(features.lotDescription)} />
+            {scan.floodZone && <DataRow label="Flood Zone" value={`Zone ${scan.floodZone}`} highlight />}
+          </div>
+        </Panel>
+
+        {/* Census / Neighborhood */}
+        {(population || medianIncome || medianHomeValue) ? (
+          <Panel title="Neighborhood Demographics" icon={Users} color="#7C3AED">
+            <div className="space-y-0">
+              {population != null && <DataRow label="Population" value={population.toLocaleString()} />}
+              {medianIncome != null && <DataRow label="Median Household Income" value={formatCurrency(medianIncome)} highlight />}
+              {medianHomeValue != null && <DataRow label="Median Home Value" value={formatCurrency(medianHomeValue)} highlight />}
+              {ownerOccupied != null && <DataRow label="Owner Occupied" value={`${ownerOccupied.toFixed(1)}%`} />}
+              {vacancyRate != null && <DataRow label="Vacancy Rate" value={`${vacancyRate.toFixed(1)}%`} />}
+            </div>
+          </Panel>
+        ) : (
+          <Panel title="Neighborhood Demographics" icon={Users} color="#7C3AED">
+            <div className="text-center py-6">
+              <Users size={20} className="mx-auto mb-2 text-muted/30" />
+              <p className="text-xs text-muted">Census demographics not available for this area</p>
+            </div>
+          </Panel>
+        )}
+      </div>
+
+      {/* Data sources for this property */}
+      {features.dataSources.length > 0 && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface border border-main/50">
+          <Database size={11} className="text-muted shrink-0" />
+          <span className="text-[10px] text-muted">Property data from:</span>
+          {features.dataSources.map(src => (
+            <span key={src} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-card text-[10px] font-medium text-muted">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: SOURCE_COLORS[src] || '#6B7280' }} />
+              {SOURCE_LABELS[src] || src.replace(/_/g, ' ')}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
