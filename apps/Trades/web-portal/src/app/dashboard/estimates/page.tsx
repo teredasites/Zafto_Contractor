@@ -277,6 +277,7 @@ function CreateEstimateModal({
   onCreate: (data: { title: string; estimateType: EstimateType; customerName?: string; propertyAddress?: string }) => Promise<string | null>;
   onCreated: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [estimateType, setEstimateType] = useState<EstimateType>('regular');
   const [customerName, setCustomerName] = useState('');
@@ -299,7 +300,7 @@ function CreateEstimateModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-[480px]">
-        <h3 className="text-lg font-medium text-zinc-100 mb-4">New Estimate</h3>
+        <h3 className="text-lg font-medium text-zinc-100 mb-4">{t('estimates.new')}</h3>
 
         {/* Type selector */}
         <div className="flex items-center gap-2 mb-4">

@@ -212,6 +212,7 @@ export default function PropertiesPage() {
 }
 
 function PropertyCard({ property, onClick }: { property: PropertyData; onClick: () => void }) {
+  const { t } = useTranslation();
   const occupiedCount = property.unitCount;
   const vacantEstimate = 0; // Actual vacancy comes from units query; shown as placeholder
   const monthlyRent = property.mortgagePayment ?? 0;
@@ -237,21 +238,21 @@ function PropertyCard({ property, onClick }: { property: PropertyData; onClick: 
 
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-main">
         <div>
-          <p className="text-xs text-muted mb-0.5">Units</p>
+          <p className="text-xs text-muted mb-0.5">{t('properties.units')}</p>
           <p className="text-sm font-semibold text-main">{property.unitCount}</p>
         </div>
         <div>
-          <p className="text-xs text-muted mb-0.5">Year Built</p>
+          <p className="text-xs text-muted mb-0.5">{t('common.yearBuilt')}</p>
           <p className="text-sm font-semibold text-main">{property.yearBuilt ?? '--'}</p>
         </div>
         <div>
-          <p className="text-xs text-muted mb-0.5">Current Value</p>
+          <p className="text-xs text-muted mb-0.5">{t('common.currentValue')}</p>
           <p className="text-sm font-semibold text-main">
             {property.currentValue ? formatCurrency(property.currentValue) : '--'}
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted mb-0.5">Monthly Mortgage</p>
+          <p className="text-xs text-muted mb-0.5">{t('common.monthlyMortgage')}</p>
           <p className="text-sm font-semibold text-main">
             {property.mortgagePayment ? formatCurrency(property.mortgagePayment) : '--'}
           </p>

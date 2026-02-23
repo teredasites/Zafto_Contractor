@@ -898,6 +898,7 @@ function GenerateDocumentModal({
     customVariables?: Record<string, unknown>;
   }) => Promise<string>;
 }) {
+  const { t: tr } = useTranslation();
   const [templateId, setTemplateId] = useState(preselectedTemplateId || templates[0]?.id || '');
   const [title, setTitle] = useState('');
   const [entityType, setEntityType] = useState('');
@@ -938,7 +939,7 @@ function GenerateDocumentModal({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Generate Document</CardTitle>
+          <CardTitle>{tr('zdocs.generateDocument')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {templateOptions.length > 0 ? (
@@ -949,10 +950,10 @@ function GenerateDocumentModal({
               onChange={(e) => setTemplateId(e.target.value)}
             />
           ) : (
-            <p className="text-sm text-muted">No active templates. Create one first.</p>
+            <p className="text-sm text-muted">{tr('zdocs.noActiveTemplatesCreateOneFirst')}</p>
           )}
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Document Title</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{tr('zdocs.documentTitle')}</label>
             <input
               type="text"
               value={title}
@@ -970,7 +971,7 @@ function GenerateDocumentModal({
             />
             {entityType && (
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Entity ID</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{tr('zdocs.entityId')}</label>
                 <input
                   type="text"
                   value={entityId}
@@ -985,7 +986,7 @@ function GenerateDocumentModal({
           {/* Variable preview */}
           {selectedTemplate && selectedTemplate.variables.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium text-main mb-2">Template Variables</h4>
+              <h4 className="text-sm font-medium text-main mb-2">{tr('zdocs.templateVariables')}</h4>
               <div className="bg-secondary rounded-lg p-3 space-y-1.5">
                 {selectedTemplate.variables.map((v) => (
                   <div key={v.name} className="flex items-center justify-between text-sm">
@@ -996,14 +997,14 @@ function GenerateDocumentModal({
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted mt-1.5">Variables will be populated from linked entity data.</p>
+              <p className="text-xs text-muted mt-1.5">{tr('zdocs.variablesWillBePopulatedFromLinkedEntityData')}</p>
             </div>
           )}
 
           {selectedTemplate?.requiresSignature && (
             <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
               <PenTool size={14} />
-              <span>This template requires a signature after generation.</span>
+              <span>{tr('zdocs.thisTemplateRequiresASignatureAfterGeneration')}</span>
             </div>
           )}
 
@@ -1031,6 +1032,7 @@ function SendForSignatureModal({
   onClose: () => void;
   onSend: (renderId: string, signers: { name: string; email: string; role?: string }[]) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [signers, setSigners] = useState<{ name: string; email: string; role: string }[]>([
     { name: '', email: '', role: '' },
   ]);
@@ -1076,10 +1078,10 @@ function SendForSignatureModal({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Send for Signature</CardTitle>
+          <CardTitle>{t('zdocs.sendForSignature')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted">Add the people who need to sign this document.</p>
+          <p className="text-sm text-muted">{t('zdocs.addThePeopleWhoNeedToSignThisDocument')}</p>
 
           {signers.map((signer, index) => (
             <div key={index} className="bg-secondary rounded-lg p-4 space-y-3">

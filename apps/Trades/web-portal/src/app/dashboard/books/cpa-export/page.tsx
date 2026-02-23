@@ -368,7 +368,7 @@ export default function CPAExportPage() {
                     <Download size={14} />
                   </Button>
                 </div>
-                <p className="text-sm font-medium text-main">Profit & Loss</p>
+                <p className="text-sm font-medium text-main">{t('finance.profitLoss')}</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted">{t('common.revenue')}</span>
@@ -625,7 +625,7 @@ export default function CPAExportPage() {
                           </tr>
                         ))}
                         <tr className="border-b border-default font-semibold">
-                          <td className="px-3 py-1.5 text-main">Total Assets</td>
+                          <td className="px-3 py-1.5 text-main">{t('common.totalAssets')}</td>
                           <td className="px-3 py-1.5 text-right tabular-nums text-main">{formatCurrency(packageData.balanceSheet.totalAssets)}</td>
                         </tr>
                       </>

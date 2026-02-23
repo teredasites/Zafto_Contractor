@@ -85,6 +85,7 @@ function TemplateRow({
   onDelete: (id: string) => Promise<void>;
   getHistory: (id: string) => Promise<GenerationHistoryItem[]>;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [history, setHistory] = useState<GenerationHistoryItem[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -225,7 +226,7 @@ function TemplateRow({
               Loading...
             </div>
           ) : history.length === 0 ? (
-            <p className="text-xs text-muted py-2">No records generated yet.</p>
+            <p className="text-xs text-muted py-2">{t('booksRecurring.noRecordsGeneratedYet')}</p>
           ) : (
             <div className="space-y-1">
               {history.map((item) => (
@@ -429,15 +430,15 @@ function TemplateModal({
                 <option value="materials">{t('common.materials')}</option>
                 <option value="labor">{t('common.labor')}</option>
                 <option value="fuel">{t('booksRecurring.fuel')}</option>
-                <option value="tools">Tools</option>
+                <option value="tools">{t('nav.tools')}</option>
                 <option value="equipment">{t('common.equipment')}</option>
                 <option value="vehicle">{t('common.vehicle')}</option>
                 <option value="insurance">{t('common.insurance')}</option>
-                <option value="permits">Permits</option>
+                <option value="permits">{t('nav.permits')}</option>
                 <option value="advertising">{t('common.advertising')}</option>
                 <option value="office">{t('booksRecurring.office')}</option>
                 <option value="utilities">{t('common.utilities')}</option>
-                <option value="subcontractor">Subcontractor</option>
+                <option value="subcontractor">{t('common.subcontractor')}</option>
                 <option value="uncategorized">{t('booksRecurring.uncategorized')}</option>
               </select>
             </div>

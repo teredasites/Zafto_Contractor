@@ -305,17 +305,17 @@ export default function CalendarPage() {
           {/* Legend */}
           <Card>
             <CardHeader>
-              <CardTitle>Legend</CardTitle>
+              <CardTitle>{t('calendar.legend')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-3 h-3 rounded-full bg-blue-500" />
-                  <span className="text-muted">Client Jobs</span>
+                  <span className="text-muted">{t('calendar.clientJobs')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-muted">Maintenance Jobs</span>
+                  <span className="text-muted">{t('calendar.maintenanceJobs')}</span>
                 </div>
               </div>
             </CardContent>

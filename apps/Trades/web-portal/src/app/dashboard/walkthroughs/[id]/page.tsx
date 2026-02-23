@@ -388,13 +388,14 @@ function RoomsTab({
   onPhotoClick: (photo: WalkthroughPhoto) => void;
   getPhotoUrl: (path: string) => string;
 }) {
+  const { t } = useTranslation();
   if (rooms.length === 0) {
     return (
       <Card>
         <CardContent className="py-12 text-center text-muted">
           <DoorOpen size={40} className="mx-auto mb-3 opacity-50" />
-          <p className="text-lg font-medium">No rooms recorded</p>
-          <p className="text-sm mt-1">Rooms are added during the walkthrough on the mobile app</p>
+          <p className="text-lg font-medium">{t('walkthroughs.noRoomsRecorded')}</p>
+          <p className="text-sm mt-1">{t('walkthroughs.roomsAreAddedDuringTheWalkthroughOnTheMobileApp')}</p>
         </CardContent>
       </Card>
     );
@@ -524,7 +525,7 @@ function RoomsTab({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted/60">No photos for this room</p>
+                  <p className="text-sm text-muted/60">{t('walkthroughs.noPhotosForThisRoom')}</p>
                 )}
               </div>
             )}
@@ -554,13 +555,14 @@ function PhotosTab({
   onPhotoClick: (photo: WalkthroughPhoto) => void;
   getPhotoUrl: (path: string) => string;
 }) {
+  const { t } = useTranslation();
   if (photos.length === 0 && photoRoomFilter === 'all') {
     return (
       <Card>
         <CardContent className="py-12 text-center text-muted">
           <Camera size={40} className="mx-auto mb-3 opacity-50" />
-          <p className="text-lg font-medium">No photos captured</p>
-          <p className="text-sm mt-1">Photos are taken during the walkthrough on the mobile app</p>
+          <p className="text-lg font-medium">{t('walkthroughs.noPhotosCaptured')}</p>
+          <p className="text-sm mt-1">{t('walkthroughs.photosAreTakenDuringTheWalkthroughOnTheMobileApp')}</p>
         </CardContent>
       </Card>
     );
@@ -611,7 +613,7 @@ function PhotosTab({
       {/* Photo grid */}
       {photos.length === 0 ? (
         <div className="py-8 text-center text-muted">
-          <p>No photos in this filter</p>
+          <p>{t('walkthroughs.noPhotosInThisFilter')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -744,6 +746,7 @@ function PhotoLightbox({
 // ============================================================
 
 function FloorPlanTab({ floorPlans }: { floorPlans: FloorPlan[] }) {
+  const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   const activePlan = floorPlans.find((p) => p.id === selectedPlan) || floorPlans[0] || null;
@@ -753,8 +756,8 @@ function FloorPlanTab({ floorPlans }: { floorPlans: FloorPlan[] }) {
       <Card>
         <CardContent className="py-12 text-center text-muted">
           <Layers size={40} className="mx-auto mb-3 opacity-50" />
-          <p className="text-lg font-medium">No floor plan created</p>
-          <p className="text-sm mt-1">Floor plans are created on the mobile app during the walkthrough</p>
+          <p className="text-lg font-medium">{t('walkthroughs.noFloorPlanCreated')}</p>
+          <p className="text-sm mt-1">{t('walkthroughs.floorPlansAreCreatedOnTheMobileAppDuringTheWalkthr')}</p>
         </CardContent>
       </Card>
     );
@@ -803,10 +806,11 @@ function FloorPlanTab({ floorPlans }: { floorPlans: FloorPlan[] }) {
 }
 
 function FloorPlanRenderer({ planData }: { planData: FloorPlanData | null }) {
+  const { t } = useTranslation();
   if (!planData) {
     return (
       <div className="h-96 flex items-center justify-center text-muted bg-secondary rounded-xl">
-        <p>No plan data available</p>
+        <p>{t('walkthroughs.noPlanDataAvailable')}</p>
       </div>
     );
   }

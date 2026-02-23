@@ -49,14 +49,15 @@ function resultBadgeVariant(result: string | null): 'success' | 'error' | 'warni
 }
 
 function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
+  const { t } = useTranslation();
   const { inspections, loading } = usePermitInspections(jobPermitId);
 
-  if (loading) return <div className="p-4 text-center text-zinc-500 text-sm">Loading inspections...</div>;
+  if (loading) return <div className="p-4 text-center text-zinc-500 text-sm">{t('permits.loadingInspections')}</div>;
   if (!inspections.length) {
     return (
       <div className="p-6 text-center">
         <ClipboardCheck className="h-8 w-8 text-zinc-600 mx-auto mb-2" />
-        <p className="text-zinc-500 text-sm">No inspections scheduled</p>
+        <p className="text-zinc-500 text-sm">{t('permits.noInspectionsScheduled')}</p>
       </div>
     );
   }
@@ -116,7 +117,7 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
               {insp.reinspection_needed && (
                 <div className="flex items-center gap-1.5 text-blue-400 mt-1">
                   <RefreshCw className="h-3 w-3" />
-                  <span>Reinspection needed</span>
+                  <span>{t('permits.reinspectionNeeded')}</span>
                 </div>
               )}
               {insp.photos && insp.photos.length > 0 && (

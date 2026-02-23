@@ -596,6 +596,7 @@ function PipelineTab({
   onUpdateStage: (id: string, stage: ApplicantStage) => Promise<void>;
   onCreateUser?: (applicantId: string, role?: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [stageFilter, setStageFilter] = useState('all');
   const [postingFilter, setPostingFilter] = useState('all');
 
@@ -754,7 +755,7 @@ function PipelineTab({
           {filtered.length === 0 && (
             <div className="text-center py-12 text-muted">
               <Users size={40} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">No applicants found</p>
+              <p className="text-sm">{t('common.noApplicantsFound')}</p>
             </div>
           )}
         </div>

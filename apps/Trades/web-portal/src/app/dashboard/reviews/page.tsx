@@ -60,7 +60,8 @@ const channelIcon: Record<string, typeof Mail> = {
 };
 
 function StarRating({ rating }: { rating: number | null }) {
-  if (rating == null) return <span className="text-xs text-zinc-400">No rating</span>;
+  const { t } = useTranslation();
+  if (rating == null) return <span className="text-xs text-zinc-400">{t('reviews.noRating')}</span>;
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
@@ -201,7 +202,7 @@ export default function ReviewsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">Conversion Rate</p>
+                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('leadsPage.conversionRate')}</p>
                 <p className="text-2xl font-bold text-white mt-1">{stats.conversionRate > 0 ? `${stats.conversionRate.toFixed(0)}%` : '--'}</p>
               </div>
               <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">

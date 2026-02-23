@@ -293,7 +293,7 @@ export default function GanttPage() {
           <div className="flex-shrink-0 border-r border-main" style={{ width: TASK_LIST_WIDTH }}>
             {/* Task list header */}
             <div className="flex items-center px-3 text-xs font-medium text-secondary bg-surface-alt border-b border-main" style={{ height: HEADER_HEIGHT }}>
-              <span className="flex-1">Task Name</span>
+              <span className="flex-1">{t('scheduling.taskName')}</span>
               <span className="w-14 text-right">{t('scheduling.dur')}</span>
               <span className="w-14 text-right">%</span>
             </div>

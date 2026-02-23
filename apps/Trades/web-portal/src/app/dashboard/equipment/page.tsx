@@ -248,6 +248,7 @@ export default function EquipmentPage() {
 }
 
 function EquipmentCard({ equipment, onClick }: { equipment: RestorationEquipmentWithJob; onClick: () => void }) {
+  const { t } = useTranslation();
   const config = statusConfig[equipment.status as RestorationStatus] || statusConfig.deployed;
 
   return (
@@ -298,7 +299,7 @@ function EquipmentCard({ equipment, onClick }: { equipment: RestorationEquipment
             <p className="text-xs text-muted">per day</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted">Deployed</p>
+            <p className="text-xs text-muted">{t('equipment.deployed')}</p>
             <p className="text-sm text-main">{formatDate(equipment.deployedAt)}</p>
           </div>
         </div>

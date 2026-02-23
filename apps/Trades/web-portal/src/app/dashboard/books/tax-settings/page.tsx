@@ -133,6 +133,7 @@ function TaxMappingRow({
 
 // ── 1099 Vendor Row ──
 function VendorRow({ vendor }: { vendor: Vendor1099 }) {
+  const { t } = useTranslation();
   const missingTaxId = !vendor.taxId;
   const meetsThreshold = vendor.ytdPayments >= 600;
 
@@ -144,7 +145,7 @@ function VendorRow({ vendor }: { vendor: Vendor1099 }) {
       <div className="w-32 text-sm text-main tabular-nums font-mono">
         {maskTaxId(vendor.taxId)}
         {missingTaxId && (
-          <Badge variant="warning" className="ml-2">Missing</Badge>
+          <Badge variant="warning" className="ml-2">{t('booksTax.missing')}</Badge>
         )}
       </div>
       <div className="w-28 text-sm text-main tabular-nums text-right font-semibold">
@@ -153,9 +154,9 @@ function VendorRow({ vendor }: { vendor: Vendor1099 }) {
       <div className="w-28 flex justify-end">
         {meetsThreshold ? (
           missingTaxId ? (
-            <Badge variant="error" dot>Action Needed</Badge>
+            <Badge variant="error" dot>{t('booksTax.actionNeeded')}</Badge>
           ) : (
-            <Badge variant="success" dot>Ready</Badge>
+            <Badge variant="success" dot>{t('booksTax.ready')}</Badge>
           )
         ) : (
           <Badge variant="secondary">Under $600</Badge>
@@ -431,6 +432,7 @@ function TaxMappingTab({
   taxCategories: TaxCategory[];
   onUpdate: (accountId: string, taxCategoryId: string | null) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   // Filter to only Schedule C categories for the dropdown
   const scheduleCCategories = taxCategories.filter((c) => c.taxForm === 'schedule_c');
 
@@ -451,9 +453,9 @@ function TaxMappingTab({
             <div className="divide-y divide-default">
               {/* Column header */}
               <div className="flex items-center gap-4 px-4 py-2 bg-secondary/50 text-xs font-medium text-muted uppercase tracking-wider">
-                <div className="w-20">Acct #</div>
-                <div className="flex-1">Account Name</div>
-                <div className="w-64">Tax Category</div>
+                <div className="w-20">{t('booksTax.acct')}</div>
+                <div className="flex-1">{t('common.accountName')}</div>
+                <div className="w-64">{t('booksTax.taxCategory')}</div>
                 <div className="w-8" />
               </div>
               {accounts.map((account) => (
@@ -473,7 +475,7 @@ function TaxMappingTab({
         <Card>
           <CardContent className="p-12 text-center">
             <FileText size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No accounts found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('booksTax.noAccountsFound')}</h3>
             <p className="text-muted text-sm">
               Set up your Chart of Accounts first, then return here to map them to tax categories.
             </p>

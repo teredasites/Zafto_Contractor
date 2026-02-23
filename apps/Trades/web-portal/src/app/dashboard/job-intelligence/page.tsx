@@ -163,6 +163,7 @@ function OverviewTab({
   autopsies: JobCostAutopsy[];
   summary: { overBudgetCount: number; totalJobs: number };
 }) {
+  const { t } = useTranslation();
   const recent = autopsies.slice(0, 15);
   const overPct = summary.totalJobs > 0
     ? ((summary.overBudgetCount / summary.totalJobs) * 100).toFixed(0)
@@ -187,11 +188,11 @@ function OverviewTab({
 
       {/* Recent autopsies list */}
       <div>
-        <h3 className="text-sm font-medium text-zinc-300 mb-3">Recent Job Autopsies</h3>
+        <h3 className="text-sm font-medium text-zinc-300 mb-3">{t('jobIntel.recentJobAutopsies')}</h3>
         {recent.length === 0 ? (
           <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-8 text-center">
             <BarChart3 className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">No autopsies yet. Complete jobs to generate analysis.</p>
+            <p className="text-zinc-500 text-sm">{t('jobIntel.noAutopsiesYetCompleteJobsToGenerateAnalysis')}</p>
           </div>
         ) : (
           <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl divide-y divide-zinc-700/50">
@@ -321,6 +322,7 @@ function ByTypeTab({ insights }: { insights: AutopsyInsight[] }) {
 // ── By Tech Tab ──
 
 function ByTechTab({ insights }: { insights: AutopsyInsight[] }) {
+  const { t } = useTranslation();
   if (insights.length === 0) {
     return <EmptyState message="Complete more jobs to see technician insights" />;
   }
@@ -358,7 +360,7 @@ function ByTechTab({ insights }: { insights: AutopsyInsight[] }) {
               <div>
                 <div className="flex items-center gap-2">
                   <HardHat className="h-4 w-4 text-zinc-500" />
-                  <p className="text-sm font-medium text-zinc-200">Technician</p>
+                  <p className="text-sm font-medium text-zinc-200">{t('team.roles.technician')}</p>
                 </div>
                 <p className="text-xs text-zinc-600">
                   {(ins.insight_key || '').substring(0, 8)}...
@@ -391,6 +393,7 @@ function TrendsTab({
   insights: AutopsyInsight[];
   autopsies: JobCostAutopsy[];
 }) {
+  const { t: tr } = useTranslation();
   const trendInsight = insights[0];
   const trendData = trendInsight
     ? ((trendInsight.insight_data?.trend) as Array<{
@@ -429,7 +432,7 @@ function TrendsTab({
       {/* Margin trend */}
       {monthlyMargins.length > 0 && (
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">Monthly Margin Trend</h3>
+          <h3 className="text-sm font-medium text-zinc-300 mb-4">{tr('jobIntel.monthlyMarginTrend')}</h3>
           <div className="space-y-2">
             {monthlyMargins.map((m) => {
               const barWidth = Math.min(Math.max(m.avgMargin, 0), 50) * 2;
@@ -462,7 +465,7 @@ function TrendsTab({
       {/* Variance trend */}
       {trendData.length > 0 && (
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">Cost Variance Trend</h3>
+          <h3 className="text-sm font-medium text-zinc-300 mb-4">{tr('jobIntel.costVarianceTrend')}</h3>
           <div className="space-y-2">
             {trendData.map((t) => (
               <div key={t.month} className="flex items-center gap-3">

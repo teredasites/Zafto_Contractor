@@ -241,13 +241,14 @@ function KPICards({ kpis }: { kpis: KPIData }) {
 // === Revenue Trend ===
 
 function RevenueTrendChart({ chartData }: { chartData: ChartDataPoint[] }) {
+  const { t } = useTranslation();
   const maxRevenue = Math.max(...chartData.map((d) => d.revenue), 1);
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">Revenue Trend</CardTitle>
+          <CardTitle className="text-base">{t('revenueInsights.revenueTrend')}</CardTitle>
           <div className="flex items-center gap-4 text-xs">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />
@@ -300,7 +301,7 @@ function RevenueTrendChart({ chartData }: { chartData: ChartDataPoint[] }) {
             })}
           </div>
         ) : (
-          <p className="text-center text-muted py-8">No revenue data for this period</p>
+          <p className="text-center text-muted py-8">{t('revenueInsights.noRevenueDataForThisPeriod')}</p>
         )}
       </CardContent>
     </Card>
@@ -310,6 +311,7 @@ function RevenueTrendChart({ chartData }: { chartData: ChartDataPoint[] }) {
 // === AI Insights ===
 
 function AIInsightsPanel({ recommendations }: { recommendations: AIRecommendation[] }) {
+  const { t } = useTranslation();
   const typeConfig: Record<string, { icon: typeof Lightbulb; color: string; bg: string }> = {
     pricing: {
       icon: DollarSign,
@@ -348,7 +350,7 @@ function AIInsightsPanel({ recommendations }: { recommendations: AIRecommendatio
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-base">AI Insights</CardTitle>
+          <CardTitle className="text-base">{t('revenueInsights.aiInsights')}</CardTitle>
           <ZMark size={13} className="text-purple-500" />
         </div>
       </CardHeader>
@@ -392,12 +394,13 @@ function AIInsightsPanel({ recommendations }: { recommendations: AIRecommendatio
 // === Top Services ===
 
 function TopServicesCard({ services }: { services: ServiceRevenue[] }) {
+  const { t } = useTranslation();
   const maxRevenue = Math.max(...services.map((s) => s.revenue), 1);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Top Services</CardTitle>
+        <CardTitle className="text-base">{t('revenueInsights.topServices')}</CardTitle>
       </CardHeader>
       <CardContent>
         {services.length > 0 ? (
@@ -442,7 +445,7 @@ function TopServicesCard({ services }: { services: ServiceRevenue[] }) {
             })}
           </div>
         ) : (
-          <p className="text-center text-muted py-8">No service data yet. Tag your jobs to see service breakdowns.</p>
+          <p className="text-center text-muted py-8">{t('revenueInsights.noServiceDataYetTagYourJobsToSeeServiceBreakdowns')}</p>
         )}
       </CardContent>
     </Card>
@@ -452,6 +455,7 @@ function TopServicesCard({ services }: { services: ServiceRevenue[] }) {
 // === Customer Insights ===
 
 function CustomerInsightsCard({ customers }: { customers: CustomerInsight[] }) {
+  const { t } = useTranslation();
   const clvBadge = (score: number): { variant: 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string } => {
     if (score >= 80) return { variant: 'purple', label: 'Platinum' };
     if (score >= 60) return { variant: 'success', label: 'Gold' };
@@ -463,7 +467,7 @@ function CustomerInsightsCard({ customers }: { customers: CustomerInsight[] }) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">Customer Insights</CardTitle>
+          <CardTitle className="text-base">{t('revenueInsights.customerInsights')}</CardTitle>
           <span className="text-xs text-muted">by lifetime value</span>
         </div>
       </CardHeader>

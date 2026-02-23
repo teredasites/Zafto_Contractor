@@ -509,6 +509,7 @@ function TimelineItem({ label, date, completed, isLast = false }: { label: strin
 }
 
 function TasksTab({ job }: { job: Job }) {
+  const { t: tr } = useTranslation();
   const [tasks, setTasks] = useState<{ id: string; name: string; percent_complete: number; task_type: string; is_critical: boolean }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -563,7 +564,7 @@ function TasksTab({ job }: { job: Job }) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-base">Task Checklist</CardTitle>
+          <CardTitle className="text-base">{tr('common.taskChecklist')}</CardTitle>
           {tasks.length > 0 && (
             <p className="text-xs text-muted mt-1">{completedCount}/{tasks.length} complete</p>
           )}
@@ -577,8 +578,8 @@ function TasksTab({ job }: { job: Job }) {
         {tasks.length === 0 ? (
           <div className="text-center py-8">
             <CheckSquare size={32} className="mx-auto text-muted mb-2" />
-            <p className="text-sm text-muted">No tasks yet</p>
-            <p className="text-xs text-muted mt-1">Create a schedule to add tasks</p>
+            <p className="text-sm text-muted">{tr('common.noTasksYet')}</p>
+            <p className="text-xs text-muted mt-1">{tr('jobs.createScheduleToAddTasks')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -785,6 +786,7 @@ function MaterialsTab({ job }: { job: Job }) {
 }
 
 function PhotosTab({ job }: { job: Job }) {
+  const { t } = useTranslation();
   const { photos, loading: photosLoading, refresh } = usePhotos(job.id);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -874,7 +876,7 @@ function PhotosTab({ job }: { job: Job }) {
         {photos.length === 0 ? (
           <div className="py-12 text-center">
             <Camera size={48} className="mx-auto text-muted mb-4 opacity-50" />
-            <p className="text-muted">No photos uploaded yet</p>
+            <p className="text-muted">{t('common.noPhotosUploadedYet')}</p>
             <Button
               variant="secondary"
               size="sm"
@@ -910,6 +912,7 @@ function PhotosTab({ job }: { job: Job }) {
 }
 
 function TimeTab({ job }: { job: Job }) {
+  const { t } = useTranslation();
   const [entries, setEntries] = useState<{ id: string; user_name: string; clock_in: string; clock_out: string | null; hours: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -969,7 +972,7 @@ function TimeTab({ job }: { job: Job }) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-base">Time Entries</CardTitle>
+          <CardTitle className="text-base">{t('jobs.time.title')}</CardTitle>
           <p className="text-sm text-muted mt-1">
             {entries.length === 0 ? 'No time logged' : `Total: ${totalHours.toFixed(1)} hours`}
           </p>
@@ -983,8 +986,8 @@ function TimeTab({ job }: { job: Job }) {
         <CardContent>
           <div className="text-center py-8">
             <Clock size={32} className="mx-auto text-muted mb-2" />
-            <p className="text-sm text-muted">No time entries yet</p>
-            <p className="text-xs text-muted mt-1">Team members can clock in from the Time Clock page</p>
+            <p className="text-sm text-muted">{t('jobs.noTimeEntriesYet')}</p>
+            <p className="text-xs text-muted mt-1">{t('jobs.teamCanClockIn')}</p>
           </div>
         </CardContent>
       ) : (
@@ -1019,6 +1022,7 @@ function TimeTab({ job }: { job: Job }) {
 }
 
 function TypeMetadataCard({ job }: { job: Job }) {
+  const { t } = useTranslation();
   const meta = job.typeMetadata;
   const colors = JOB_TYPE_COLORS[job.jobType];
   const router = useRouter();
@@ -1051,7 +1055,7 @@ function TypeMetadataCard({ job }: { job: Job }) {
           {ins.coverageLimit != null && <MetaRow label="Coverage Limit" value={formatCurrency(ins.coverageLimit)} />}
           {ins.approvalStatus && (
             <div className="flex justify-between">
-              <span className="text-muted">Approval</span>
+              <span className="text-muted">{t('common.approval')}</span>
               <span className={cn('font-medium capitalize', approvalColors[ins.approvalStatus] || 'text-main')}>
                 {ins.approvalStatus}
               </span>
@@ -1112,6 +1116,7 @@ function MetaRow({ label, value }: { label: string; value?: string | number }) {
 }
 
 function NotesTab({ job }: { job: Job }) {
+  const { t } = useTranslation();
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -1173,7 +1178,7 @@ function NotesTab({ job }: { job: Job }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Job Notes</CardTitle>
+        <CardTitle className="text-base">{t('jobs.jobNotes')}</CardTitle>
         {saved && (
           <span className="flex items-center gap-1 text-xs text-emerald-500">
             <CheckCircle size={12} />
@@ -1285,6 +1290,7 @@ const SHAPE_LABELS: Record<string, string> = {
 };
 
 function PropertyIntelligenceCard({ job }: { job: Job }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const fullAddress = [job.address.street, job.address.city, job.address.state, job.address.zip].filter(Boolean).join(', ');
   const { scan, roof, loading, error, triggerScan } = usePropertyScan(job.id, 'job');
@@ -1370,7 +1376,7 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-accent" />
             Scanning property...
           </div>
-          <p className="text-xs text-muted">Satellite data is being processed. This usually takes a few seconds.</p>
+          <p className="text-xs text-muted">{t('jobs.satelliteDataIsBeingProcessedThisUsuallyTakesAFewS')}</p>
         </CardContent>
       </Card>
     );
@@ -1387,7 +1393,7 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-red-500">Scan failed. The address may not have satellite coverage.</p>
+          <p className="text-sm text-red-500">{t('jobs.scanFailed')}</p>
           <Button variant="secondary" size="sm" className="w-full" onClick={handleScan} disabled={scanning}>
             <Satellite size={14} />
             Retry Scan
@@ -1432,37 +1438,37 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
         {roof && (
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Roof Area</span>
+              <span className="text-muted">{t('common.roofArea')}</span>
               <span className="text-main font-medium">{roof.totalAreaSqft.toLocaleString()} sq ft ({roof.totalAreaSquares} sq)</span>
             </div>
             {roof.pitchPrimary && (
               <div className="flex justify-between">
-                <span className="text-muted">Primary Pitch</span>
+                <span className="text-muted">{t('common.primaryPitch')}</span>
                 <span className="text-main font-medium">{roof.pitchPrimary}</span>
               </div>
             )}
             {roof.predominantShape && (
               <div className="flex justify-between">
-                <span className="text-muted">Shape</span>
+                <span className="text-muted">{t('common.shape')}</span>
                 <span className="text-main font-medium">{SHAPE_LABELS[roof.predominantShape] || roof.predominantShape}</span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-muted">Facets</span>
+              <span className="text-muted">{t('common.facets')}</span>
               <span className="text-main font-medium">{roof.facetCount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Complexity</span>
+              <span className="text-muted">{t('common.complexity')}</span>
               <span className="text-main font-medium">{roof.complexityScore}/10</span>
             </div>
             {(roof.ridgeLengthFt > 0 || roof.eaveLengthFt > 0) && (
               <div className="pt-2 border-t border-main space-y-1.5">
-                <p className="text-xs font-medium text-muted uppercase tracking-wider">Edge Lengths</p>
-                {roof.ridgeLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Ridge</span><span className="text-main">{roof.ridgeLengthFt} ft</span></div>}
-                {roof.hipLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Hip</span><span className="text-main">{roof.hipLengthFt} ft</span></div>}
-                {roof.valleyLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Valley</span><span className="text-main">{roof.valleyLengthFt} ft</span></div>}
-                {roof.eaveLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Eave</span><span className="text-main">{roof.eaveLengthFt} ft</span></div>}
-                {roof.rakeLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Rake</span><span className="text-main">{roof.rakeLengthFt} ft</span></div>}
+                <p className="text-xs font-medium text-muted uppercase tracking-wider">{t('common.edgeLengths')}</p>
+                {roof.ridgeLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">{t('common.ridge')}</span><span className="text-main">{roof.ridgeLengthFt} ft</span></div>}
+                {roof.hipLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">{t('common.hip')}</span><span className="text-main">{roof.hipLengthFt} ft</span></div>}
+                {roof.valleyLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">{t('common.valley')}</span><span className="text-main">{roof.valleyLengthFt} ft</span></div>}
+                {roof.eaveLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">{t('jobs.eave')}</span><span className="text-main">{roof.eaveLengthFt} ft</span></div>}
+                {roof.rakeLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">{t('jobs.rake')}</span><span className="text-main">{roof.rakeLengthFt} ft</span></div>}
               </div>
             )}
           </div>
@@ -1472,12 +1478,12 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
         {scan.imageryDate && (
           <div className="text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Imagery Date</span>
+              <span className="text-muted">{t('jobs.imageryDate')}</span>
               <span className="text-main">{formatDate(scan.imageryDate)}</span>
             </div>
             {scan.imagerySource && (
               <div className="flex justify-between mt-1">
-                <span className="text-muted">Source</span>
+                <span className="text-muted">{t('leads.source')}</span>
                 <span className="text-main capitalize">{scan.imagerySource.replace('_', ' ')}</span>
               </div>
             )}

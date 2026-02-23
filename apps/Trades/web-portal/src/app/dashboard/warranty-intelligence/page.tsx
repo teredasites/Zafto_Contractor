@@ -427,7 +427,7 @@ function EquipmentView({
       {equipment.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
           <Shield className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">No equipment found</p>
+          <p className="text-zinc-400">{t('equipment.noEquipment')}</p>
         </div>
       ) : (
         <div className="border border-zinc-800 rounded-lg overflow-hidden">
@@ -501,6 +501,7 @@ function ClaimsView({
   claims: WarrantyClaim[];
   onUpdateStatus: (id: string, status: ClaimStatus, opts?: { resolutionNotes?: string; amountApproved?: number }) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<string>('all');
 
   const filtered = claims.filter(c => filter === 'all' || c.claimStatus === filter);
@@ -527,7 +528,7 @@ function ClaimsView({
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
           <FileText className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">No claims found</p>
+          <p className="text-zinc-400">{t('insurance.noClaims')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -650,6 +651,7 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
 // ── Recalls View ────────────────────────────────────────
 
 function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; affectedCount: number }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       {affectedCount > 0 && (
@@ -664,7 +666,7 @@ function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; aff
       {recalls.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
           <ShieldCheck className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">No active recalls</p>
+          <p className="text-zinc-400">{t('warrantyIntel.noActiveRecalls')}</p>
         </div>
       ) : (
         <div className="space-y-3">

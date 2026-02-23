@@ -252,6 +252,7 @@ function ComparisonBar({
   estimated: number;
   actual: number;
 }) {
+  const { t } = useTranslation();
   const max = Math.max(estimated, actual, 1);
   const isOver = actual > estimated;
 
@@ -265,7 +266,7 @@ function ComparisonBar({
       </div>
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-600 w-8">Est</span>
+          <span className="text-[10px] text-zinc-600 w-8">{t('jobIntel.est')}</span>
           <div className="flex-1 h-3 bg-zinc-700/30 rounded">
             <div
               className="h-full bg-blue-500/50 rounded"
@@ -275,7 +276,7 @@ function ComparisonBar({
           <span className="text-[10px] text-zinc-500 w-16 text-right">{fmtMoney(estimated)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-600 w-8">Act</span>
+          <span className="text-[10px] text-zinc-600 w-8">{t('jobIntel.act')}</span>
           <div className="flex-1 h-3 bg-zinc-700/30 rounded">
             <div
               className={`h-full rounded ${isOver ? 'bg-red-500/50' : 'bg-emerald-500/50'}`}

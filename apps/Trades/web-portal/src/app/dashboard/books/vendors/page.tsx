@@ -215,6 +215,7 @@ function VendorDetailPanel({ vendor, onClose, onEdit, onDelete }: {
   onEdit: () => void;
   onDelete: () => Promise<void>;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-surface rounded-xl shadow-2xl w-full max-w-lg border border-main max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -242,7 +243,7 @@ function VendorDetailPanel({ vendor, onClose, onEdit, onDelete }: {
           {vendor.notes && <DetailRow icon={<FileText size={14} />} label="Notes" value={vendor.notes} />}
 
           <div className="pt-3 border-t border-main">
-            <p className="text-xs text-muted uppercase tracking-wide mb-2">YTD Payments</p>
+            <p className="text-xs text-muted uppercase tracking-wide mb-2">{t('common.ytdPayments')}</p>
             <p className="text-2xl font-semibold text-main">{formatCurrency(vendor.ytdPayments || 0)}</p>
             {vendor.is1099Eligible && (vendor.ytdPayments || 0) >= 600 && (
               <p className="text-sm text-amber-600 mt-1">1099-NEC required (payments exceed $600)</p>

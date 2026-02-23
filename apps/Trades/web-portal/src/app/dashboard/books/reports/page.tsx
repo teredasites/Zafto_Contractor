@@ -833,7 +833,7 @@ export default function FinancialReportsPage() {
                           );
                         })}
                         <tr className="border-t-2 border-default font-semibold">
-                          <td className="px-3 py-2 text-main">Total Expenses</td>
+                          <td className="px-3 py-2 text-main">{t('dashboard.totalExpenses')}</td>
                           <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(prop.totalExpenses)}</td>
                         </tr>
                       </tbody>

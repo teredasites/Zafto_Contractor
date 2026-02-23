@@ -121,11 +121,12 @@ import {
 import { useTranslation } from '@/lib/translations';
 
 function CanvasLoadingPlaceholder() {
+  const { t } = useTranslation();
   return (
     <div className="flex-1 flex items-center justify-center bg-gray-50">
       <div className="text-center">
         <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
-        <p className="text-xs text-gray-400 mt-2">Loading canvas...</p>
+        <p className="text-xs text-gray-400 mt-2">{t('sketchEngine.loadingCanvas')}</p>
       </div>
     </div>
   );
@@ -277,7 +278,7 @@ function ListView({
                 <PenTool size={22} className="text-emerald-400" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight">Sketch Engine</h1>
+                <h1 className="text-2xl font-bold text-white tracking-tight">{t('sketchEngine.title')}</h1>
                 <p className="text-sm text-zinc-400 mt-1 max-w-lg">
                   Professional floor plans, trade layer overlays, 3D visualization, and auto-generated estimates — all in one canvas.
                 </p>
@@ -510,7 +511,7 @@ function ListView({
               </div>
               <div>
                 <h3 className="text-sm font-bold text-white">{t('sketchEngine.deleteFloorPlan')}</h3>
-                <p className="text-xs text-zinc-400">This action cannot be undone.</p>
+                <p className="text-xs text-zinc-400">{t('common.cannotUndo')}</p>
               </div>
             </div>
             <p className="text-sm text-zinc-300 mb-6">
@@ -678,6 +679,7 @@ function EditorView({
   planId: string;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const { plan, loading, error, saving, savePlanData, updatePlanJob } =
     useFloorPlan(planId);
 
@@ -1225,7 +1227,7 @@ function EditorView({
             {showJobPicker && (
               <div className="absolute top-full left-0 mt-1 w-64 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-xl z-50">
                 <div className="p-2 border-b border-gray-100">
-                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Select Job</span>
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t('sketchEngine.selectJob')}</span>
                 </div>
                 {plan?.jobId && (
                   <button
@@ -1237,7 +1239,7 @@ function EditorView({
                   </button>
                 )}
                 {jobs.length === 0 ? (
-                  <div className="px-3 py-4 text-xs text-gray-400 text-center">No jobs found</div>
+                  <div className="px-3 py-4 text-xs text-gray-400 text-center">{t('jobs.noJobs')}</div>
                 ) : (
                   jobs.slice(0, 20).map(job => (
                     <button
@@ -1253,7 +1255,7 @@ function EditorView({
                           <span className="text-gray-400 ml-1">— {job.address.street}</span>
                         )}
                       </div>
-                      {plan?.jobId === job.id && <span className="text-emerald-500 text-[10px]">Current</span>}
+                      {plan?.jobId === job.id && <span className="text-emerald-500 text-[10px]">{t('common.current')}</span>}
                     </button>
                   ))
                 )}
@@ -1265,13 +1267,13 @@ function EditorView({
           {saving && (
             <>
               <Loader2 className="h-3 w-3 animate-spin" />
-              <span>Saving...</span>
+              <span>{t('common.saving')}</span>
             </>
           )}
           {!saving && plan && (
             <>
               <Save className="h-3 w-3" />
-              <span>Saved</span>
+              <span>{t('sketchEngine.saved')}</span>
             </>
           )}
         </div>
@@ -1578,7 +1580,7 @@ function EditorView({
                     <div className="absolute inset-0 flex items-center justify-center z-[5] pointer-events-none">
                       <div className="pointer-events-auto bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-6 max-w-sm text-center shadow-lg">
                         <PenTool className="h-8 w-8 text-emerald-500 mx-auto mb-3" />
-                        <h3 className="font-semibold text-gray-800 mb-2">Start Drawing</h3>
+                        <h3 className="font-semibold text-gray-800 mb-2">{t('sketchEngine.startDrawing')}</h3>
                         <p className="text-sm text-gray-500 mb-4">
                           Select the Wall tool from the toolbar on the left, then click on the canvas to draw walls. Close rooms to auto-calculate measurements.
                         </p>

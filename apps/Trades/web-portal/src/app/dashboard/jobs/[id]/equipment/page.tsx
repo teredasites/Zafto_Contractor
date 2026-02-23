@@ -283,6 +283,7 @@ function DeployedTab({
   deployments: EquipmentDeploymentData[];
   onRemove: (id: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [removing, setRemoving] = useState<string | null>(null);
 
   if (deployments.length === 0) {
@@ -290,7 +291,7 @@ function DeployedTab({
       <Card>
         <CardContent className="p-12 text-center">
           <Wrench size={48} className="mx-auto text-muted mb-4" />
-          <h3 className="text-lg font-medium text-main mb-2">No equipment deployed</h3>
+          <h3 className="text-lg font-medium text-main mb-2">{t('common.noEquipmentDeployed')}</h3>
           <p className="text-muted">Deploy dehumidifiers, air movers, and other equipment to this job.</p>
         </CardContent>
       </Card>
@@ -333,7 +334,7 @@ function DeployedTab({
                           </span>
                           <Badge variant={config.variant}>{config.label}</Badge>
                           {d.calculatedByFormula && (
-                            <Badge variant="purple">IICRC</Badge>
+                            <Badge variant="purple">{t('common.iicrc')}</Badge>
                           )}
                         </div>
                         <div className="flex items-center gap-3 text-sm text-muted mt-0.5">
@@ -377,6 +378,7 @@ function DeployedTab({
 // ============================================================================
 
 function CalculatorTab({ calculations }: { calculations: EquipmentCalculationData[] }) {
+  const { t } = useTranslation();
   const [expandedRoom, setExpandedRoom] = useState<string | null>(null);
 
   if (calculations.length === 0) {
@@ -384,7 +386,7 @@ function CalculatorTab({ calculations }: { calculations: EquipmentCalculationDat
       <Card>
         <CardContent className="p-12 text-center">
           <Calculator size={48} className="mx-auto text-muted mb-4" />
-          <h3 className="text-lg font-medium text-main mb-2">No calculations yet</h3>
+          <h3 className="text-lg font-medium text-main mb-2">{t('jobs.noCalculationsYet')}</h3>
           <p className="text-muted">Run the IICRC S500 calculator to determine equipment requirements per room.</p>
         </CardContent>
       </Card>
@@ -404,19 +406,19 @@ function CalculatorTab({ calculations }: { calculations: EquipmentCalculationDat
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{totals.dehu}</p>
-          <p className="text-xs text-blue-600 dark:text-blue-400">Dehumidifiers</p>
+          <p className="text-xs text-blue-600 dark:text-blue-400">{t('moisture.dehumidifiers')}</p>
         </div>
         <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{totals.am}</p>
-          <p className="text-xs text-emerald-600 dark:text-emerald-400">Air Movers</p>
+          <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('moisture.airMovers')}</p>
         </div>
         <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{totals.scrubber}</p>
-          <p className="text-xs text-purple-600 dark:text-purple-400">Air Scrubbers</p>
+          <p className="text-xs text-purple-600 dark:text-purple-400">{t('common.airScrubbers')}</p>
         </div>
         <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-main">{totals.sqft.toFixed(0)}</p>
-          <p className="text-xs text-muted">Total Sq Ft</p>
+          <p className="text-xs text-muted">{t('common.totalSqFt')}</p>
         </div>
       </div>
 
@@ -447,37 +449,37 @@ function CalculatorTab({ calculations }: { calculations: EquipmentCalculationDat
               <div className="border-t border-main pt-4 space-y-3">
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="text-muted mb-1">Dimensions</p>
+                    <p className="text-muted mb-1">{t('common.dimensions')}</p>
                     <p className="text-main">{calc.roomLengthFt}&apos; x {calc.roomWidthFt}&apos; x {calc.roomHeightFt}&apos;</p>
                   </div>
                   <div>
-                    <p className="text-muted mb-1">Floor / Walls</p>
+                    <p className="text-muted mb-1">{t('jobs.floorWalls')}</p>
                     <p className="text-main">{calc.floorSqft.toFixed(0)} SF / {calc.wallLinearFt.toFixed(0)} LF</p>
                   </div>
                   <div>
-                    <p className="text-muted mb-1">Volume</p>
+                    <p className="text-muted mb-1">{t('common.volume')}</p>
                     <p className="text-main">{calc.cubicFt.toFixed(0)} CF</p>
                   </div>
                 </div>
 
                 {/* Actual vs Required */}
                 <div className="bg-secondary rounded-lg p-3">
-                  <p className="text-xs font-medium text-muted mb-2">ACTUAL vs REQUIRED</p>
+                  <p className="text-xs font-medium text-muted mb-2">{t('jobs.actualVsRequired')}</p>
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-muted">Dehu</p>
+                      <p className="text-muted">{t('common.dehu')}</p>
                       <p className={cn('font-medium', calc.actualDehuPlaced >= calc.dehuUnitsRequired ? 'text-emerald-600' : 'text-red-600')}>
                         {calc.actualDehuPlaced} / {calc.dehuUnitsRequired}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted">Air Movers</p>
+                      <p className="text-muted">{t('moisture.airMovers')}</p>
                       <p className={cn('font-medium', calc.actualAmPlaced >= calc.amUnitsRequired ? 'text-emerald-600' : 'text-red-600')}>
                         {calc.actualAmPlaced} / {calc.amUnitsRequired}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted">Scrubbers</p>
+                      <p className="text-muted">{t('common.scrubbers')}</p>
                       <p className={cn('font-medium', calc.actualScrubberPlaced >= calc.scrubberUnitsRequired ? 'text-emerald-600' : 'text-red-600')}>
                         {calc.actualScrubberPlaced} / {calc.scrubberUnitsRequired}
                       </p>

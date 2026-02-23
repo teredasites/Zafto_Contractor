@@ -220,6 +220,7 @@ export default function CustomersPage() {
 }
 
 function CustomerRow({ customer, onClick }: { customer: Customer; onClick: () => void }) {
+  const { t } = useTranslation();
   return (
     <div
       className="px-6 py-4 hover:bg-surface-hover cursor-pointer transition-colors"
@@ -233,7 +234,7 @@ function CustomerRow({ customer, onClick }: { customer: Customer; onClick: () =>
               {customer.firstName} {customer.lastName}
             </h4>
             {customer.tags.includes('vip') && (
-              <Badge variant="warning" size="sm">VIP</Badge>
+              <Badge variant="warning" size="sm">{t('common.vip')}</Badge>
             )}
           </div>
           <div className="flex items-center gap-4 mt-1 text-sm text-muted">
@@ -266,6 +267,7 @@ function CustomerRow({ customer, onClick }: { customer: Customer; onClick: () =>
 }
 
 function CustomerCard({ customer, onClick }: { customer: Customer; onClick: () => void }) {
+  const { t } = useTranslation();
   return (
     <Card hover onClick={onClick} className="p-6">
       <div className="flex items-start gap-4">
@@ -276,7 +278,7 @@ function CustomerCard({ customer, onClick }: { customer: Customer; onClick: () =
               {customer.firstName} {customer.lastName}
             </h4>
             {customer.tags.includes('vip') && (
-              <Badge variant="warning" size="sm">VIP</Badge>
+              <Badge variant="warning" size="sm">{t('common.vip')}</Badge>
             )}
           </div>
           <p className="text-sm text-muted truncate">{customer.email}</p>
@@ -284,11 +286,11 @@ function CustomerCard({ customer, onClick }: { customer: Customer; onClick: () =
       </div>
       <div className="mt-4 pt-4 border-t border-main">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted">Total Revenue</span>
+          <span className="text-muted">{t('customers.totalRevenue')}</span>
           <span className="font-semibold text-main">{formatCurrency(customer.totalRevenue)}</span>
         </div>
         <div className="flex items-center justify-between text-sm mt-2">
-          <span className="text-muted">Jobs</span>
+          <span className="text-muted">{t('customers.tabs.jobs')}</span>
           <span className="font-medium text-main">{customer.jobCount}</span>
         </div>
       </div>

@@ -876,6 +876,7 @@ function CampaignModal({
     recipientCount: number;
   }>) => Promise<void>;
 }) {
+  const { t: tr } = useTranslation();
   const [name, setName] = useState(campaign?.name || '');
   const [subject, setSubject] = useState(campaign?.subject || '');
   const [templateId, setTemplateId] = useState(campaign?.templateId || '');
@@ -969,7 +970,7 @@ function CampaignModal({
             onChange={(e) => setAudienceType(e.target.value as EmailCampaign['audienceType'])}
           />
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Estimated Recipients</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{tr('email.estimatedRecipients')}</label>
             <input
               type="number"
               value={recipientCount}

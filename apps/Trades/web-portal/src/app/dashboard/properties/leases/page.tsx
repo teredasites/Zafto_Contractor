@@ -150,7 +150,7 @@ export default function LeasesPage() {
         <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted">
           <div className="col-span-2">{t('common.tenant')}</div>
           <div className="col-span-3">{t('common.propertyUnit')}</div>
-          <div className="col-span-1 text-right">Rent</div>
+          <div className="col-span-1 text-right">{t('properties.rent')}</div>
           <div className="col-span-1">{t('common.start')}</div>
           <div className="col-span-1">{t('common.end')}</div>
           <div className="col-span-1">{t('common.type')}</div>

@@ -214,6 +214,7 @@ function Panel({ title, icon: Icon, color, actions, children, className, noPad }
 }
 
 function ConfidenceBadge({ score, grade }: { score: number; grade: string }) {
+  const { t } = useTranslation();
   const color = grade === 'high' ? '#10B981' : grade === 'moderate' ? '#F59E0B' : '#EF4444';
   const label = grade === 'high' ? 'High' : grade === 'moderate' ? 'Moderate' : 'Low';
   return (
@@ -230,7 +231,7 @@ function ConfidenceBadge({ score, grade }: { score: number; grade: string }) {
       </div>
       <div>
         <p className="text-xs font-bold" style={{ color }}>{label}</p>
-        <p className="text-[10px] text-muted">Confidence</p>
+        <p className="text-[10px] text-muted">{t('common.confidence')}</p>
       </div>
     </div>
   );
@@ -351,7 +352,7 @@ export default function ReconDetailPage() {
           <ArrowLeft size={18} />
         </button>
         <div className="flex items-center gap-2 text-xs text-muted">
-          <Link href="/dashboard/recon" className="hover:text-main transition-colors">Recon</Link>
+          <Link href="/dashboard/recon" className="hover:text-main transition-colors">{t('recon.title')}</Link>
           <ChevronRight size={10} />
           <span className="text-main font-medium truncate max-w-xs">{scan.address}</span>
         </div>
@@ -670,6 +671,7 @@ function formatLabel(val: string | null): string {
 function PropertyTab({ features, scan }: {
   features: PropertyFeaturesData | null; scan: PropertyScanData;
 }) {
+  const { t } = useTranslation();
   if (!features) {
     return (
       <EmptyTab
@@ -777,7 +779,7 @@ function PropertyTab({ features, scan }: {
           <Panel title="Neighborhood Demographics" icon={Users} color="#7C3AED">
             <div className="text-center py-6">
               <Users size={20} className="mx-auto mb-2 text-muted/30" />
-              <p className="text-xs text-muted">Census demographics not available for this area</p>
+              <p className="text-xs text-muted">{t('recon.censusNotAvailable')}</p>
             </div>
           </Panel>
         )}

@@ -885,6 +885,7 @@ function ReconImportPanel({
   importing: boolean;
   onClose: () => void;
 }) {
+  const { t: tr } = useTranslation();
   const [scans, setScans] = useState<Array<{ id: string; address: string; status: string; confidence_score: number }>>([]);
   const [trades, setTrades] = useState<Array<{ trade: string; material_count: number }>>([]);
   const [selectedScan, setSelectedScan] = useState<string | null>(null);
@@ -958,7 +959,7 @@ function ReconImportPanel({
         <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
           <div className="flex items-center gap-2">
             <Satellite className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm font-semibold text-zinc-100">Import from Recon</span>
+            <span className="text-sm font-semibold text-zinc-100">{tr('estimates.importFromRecon')}</span>
           </div>
           <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300">
             <X className="w-4 h-4" />
@@ -978,7 +979,7 @@ function ReconImportPanel({
             <>
               {/* Scan selector */}
               <div>
-                <label className="text-xs text-zinc-400 mb-1.5 block">Property Scan</label>
+                <label className="text-xs text-zinc-400 mb-1.5 block">{tr('estimates.propertyScan')}</label>
                 <select
                   value={selectedScan || ''}
                   onChange={e => setSelectedScan(e.target.value)}
@@ -995,7 +996,7 @@ function ReconImportPanel({
               {/* Trade buttons */}
               {trades.length > 0 ? (
                 <div>
-                  <label className="text-xs text-zinc-400 mb-1.5 block">Select trade to import materials</label>
+                  <label className="text-xs text-zinc-400 mb-1.5 block">{tr('estimates.selectTradeToImport')}</label>
                   <div className="grid grid-cols-2 gap-2">
                     {trades.map(t => (
                       <button
@@ -1744,7 +1745,7 @@ function EstimatePreview({
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-zinc-500 border-b border-zinc-800">
-                  <th className="text-left py-1.5 font-medium">Code</th>
+                  <th className="text-left py-1.5 font-medium">{t('common.code')}</th>
                   <th className="text-left py-1.5 font-medium">{t('common.description')}</th>
                   <th className="text-center py-1.5 font-medium">{t('common.action')}</th>
                   <th className="text-right py-1.5 font-medium">{t('common.qty')}</th>
@@ -1899,7 +1900,7 @@ function EstimatePreview({
 
       {/* Terms & Conditions */}
       <div className="mt-8 border-t border-zinc-700 pt-6">
-        <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Terms & Conditions</h3>
+        <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">{t('common.termsAndConditions')}</h3>
         <div className="text-[11px] text-zinc-500 space-y-1.5 leading-relaxed">
           <p>1. This estimate is valid for 30 days from the date of issue unless otherwise noted.</p>
           <p>2. Payment terms: Due upon completion unless otherwise agreed in writing.</p>
@@ -2090,7 +2091,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                         <>
                           <th className="text-right px-3 py-2 font-medium">{t('estimates.hdPrice')}</th>
                           <th className="text-right px-3 py-2 font-medium">Lowe&apos;s</th>
-                          <th className="text-right px-3 py-2 font-medium">Best</th>
+                          <th className="text-right px-3 py-2 font-medium">{t('estimates.bestTier')}</th>
                         </>
                       )}
                     </tr>
@@ -2303,7 +2304,7 @@ function TierComparisonPanel({
             {/* Cost breakdown */}
             <div className="space-y-1.5 text-[11px] border-t border-zinc-700/30 pt-3 mb-3">
               <div className="flex justify-between"><span className="text-zinc-500">{t('common.subtotal')}</span><span className="text-zinc-300">${fmtCurrency(data.subtotal)}</span></div>
-              <div className="flex justify-between"><span className="text-zinc-500">O&P</span><span className="text-zinc-300">${fmtCurrency(data.overhead + data.profit)}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">{t('common.oAndP')}</span><span className="text-zinc-300">${fmtCurrency(data.overhead + data.profit)}</span></div>
               <div className="flex justify-between"><span className="text-zinc-500">{t('common.tax')}</span><span className="text-zinc-300">${fmtCurrency(data.tax)}</span></div>
               <div className="flex justify-between font-medium border-t border-zinc-700/30 pt-1.5">
                 <span className="text-zinc-200">{t('common.total')}</span>
@@ -2376,6 +2377,7 @@ function TemplatePanel({
   onClose: () => void;
   onApplyTemplate: () => Promise<void>;
 }) {
+  const { t: tr } = useTranslation();
   const [templates, setTemplates] = useState<EstimateTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -2606,8 +2608,8 @@ function TemplatePanel({
         ) : templates.length === 0 ? (
           <div className="text-center py-8 text-zinc-500 text-xs">
             <Copy className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p>No templates saved yet</p>
-            <p className="text-[10px] mt-1">Save your current estimate as a reusable template</p>
+            <p>{tr('estimates.noTemplatesSavedYet')}</p>
+            <p className="text-[10px] mt-1">{tr('estimates.saveYourCurrentEstimateAsAReusableTemplate')}</p>
           </div>
         ) : (
           <div className="divide-y divide-zinc-800/50">

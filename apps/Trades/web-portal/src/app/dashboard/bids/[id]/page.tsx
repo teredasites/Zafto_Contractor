@@ -624,7 +624,7 @@ export default function BidDetailPage() {
               )}
               {bid.viewedAt && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Viewed</span>
+                  <span className="text-muted">{t('estimates.statusViewed')}</span>
                   <span className="text-main">{formatDate(bid.viewedAt)}</span>
                 </div>
               )}

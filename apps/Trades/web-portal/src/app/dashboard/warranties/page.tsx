@@ -475,6 +475,7 @@ const DISPATCH_STATUS_CONFIG: Record<string, { label: string; color: string; bg:
 };
 
 function DispatchInbox() {
+  const { t } = useTranslation();
   const [dispatches, setDispatches] = useState<WarrantyDispatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [companyFilter, setCompanyFilter] = useState('all');
@@ -576,8 +577,8 @@ function DispatchInbox() {
         <Card>
           <CardContent className="p-12 text-center">
             <Inbox size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No dispatches</h3>
-            <p className="text-muted">Warranty dispatches from your partner companies will appear here.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('warranties.noDispatches')}</h3>
+            <p className="text-muted">{t('warranties.warrantyDispatchesFromYourPartnerCompaniesWillAppe')}</p>
           </CardContent>
         </Card>
       ) : (

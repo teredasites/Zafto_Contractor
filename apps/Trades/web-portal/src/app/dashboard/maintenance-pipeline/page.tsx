@@ -343,6 +343,7 @@ function PredictionCard({
 // ── Timeline View ───────────────────────────────────────
 
 function TimelineView({ predictions }: { predictions: MaintenancePrediction[] }) {
+  const { t } = useTranslation();
   // Group by month
   const byMonth = predictions.reduce((acc, p) => {
     const month = p.predictedDate.slice(0, 7); // YYYY-MM
@@ -357,7 +358,7 @@ function TimelineView({ predictions }: { predictions: MaintenancePrediction[] })
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <Calendar className="w-12 h-12 text-zinc-600 mb-3" />
-        <p className="text-zinc-400">No upcoming predictions</p>
+        <p className="text-zinc-400">{t('maintenancePipeline.noUpcomingPredictions')}</p>
       </div>
     );
   }
@@ -396,6 +397,7 @@ function TimelineView({ predictions }: { predictions: MaintenancePrediction[] })
 // ── Revenue Forecast ────────────────────────────────────
 
 function RevenueView({ predictions, stats }: { predictions: MaintenancePrediction[]; stats: ReturnType<typeof useMaintenancePredictions>['stats'] }) {
+  const { t } = useTranslation();
   // Revenue by month
   const byMonth = predictions
     .filter(p => p.outreachStatus !== 'completed' && p.outreachStatus !== 'declined')
@@ -427,13 +429,13 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-green-400">{formatCurrency(stats.totalEstimatedRevenue)}</p>
-            <p className="text-sm text-zinc-400 mt-1">Pipeline Value</p>
+            <p className="text-sm text-zinc-400 mt-1">{t('common.pipelineValue')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-blue-400">{stats.total - stats.booked}</p>
-            <p className="text-sm text-zinc-400 mt-1">Open Opportunities</p>
+            <p className="text-sm text-zinc-400 mt-1">{t('maintenancePipeline.openOpportunities')}</p>
           </CardContent>
         </Card>
         <Card>
@@ -441,7 +443,7 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
             <p className="text-3xl font-bold text-emerald-400">
               {stats.total > 0 ? Math.round((stats.booked / stats.total) * 100) : 0}%
             </p>
-            <p className="text-sm text-zinc-400 mt-1">Booking Rate</p>
+            <p className="text-sm text-zinc-400 mt-1">{t('maintenancePipeline.bookingRate')}</p>
           </CardContent>
         </Card>
       </div>
@@ -449,11 +451,11 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
       {/* Monthly Forecast */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium text-zinc-300">Monthly Forecast</CardTitle>
+          <CardTitle className="text-sm font-medium text-zinc-300">{t('maintenancePipeline.monthlyForecast')}</CardTitle>
         </CardHeader>
         <CardContent>
           {months.length === 0 ? (
-            <p className="text-sm text-zinc-500 text-center py-6">No forecast data available</p>
+            <p className="text-sm text-zinc-500 text-center py-6">{t('maintenancePipeline.noForecastDataAvailable')}</p>
           ) : (
             <div className="space-y-3">
               {months.map(month => {
@@ -487,7 +489,7 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
       {/* By Type */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium text-zinc-300">By Prediction Type</CardTitle>
+          <CardTitle className="text-sm font-medium text-zinc-300">{t('maintenancePipeline.byPredictionType')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

@@ -52,6 +52,7 @@ function ReopenModal({
   onConfirm: (reason: string) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [reason, setReason] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -73,7 +74,7 @@ function ReopenModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-main">
-          <h2 className="text-lg font-semibold text-main">Reopen Period</h2>
+          <h2 className="text-lg font-semibold text-main">{t('booksPeriods.reopenPeriod')}</h2>
           <p className="text-sm text-muted mt-1">
             Reopening &quot;{periodName}&quot; allows new entries to be posted. A reason is required for the audit trail.
           </p>
@@ -117,6 +118,7 @@ function YearEndCloseModal({
   onConfirm: () => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [confirmed, setConfirmed] = useState(false);
   const [running, setRunning] = useState(false);
 
@@ -147,7 +149,7 @@ function YearEndCloseModal({
               <div className="text-sm text-amber-800 dark:text-amber-200 space-y-2">
                 <p className="font-medium">This action will:</p>
                 <ul className="list-disc list-inside space-y-1">
-                  <li>Create a closing journal entry zeroing all revenue and expense accounts</li>
+                  <li>{t('booksPeriods.createAClosingJournalEntryZeroingAllRevenueAndExpe')}</li>
                   <li>Post the net income (or loss) to Retained Earnings (3200)</li>
                   <li>Mark FY {year} as retained earnings posted</li>
                 </ul>

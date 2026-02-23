@@ -26,6 +26,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { ZConsoleProvider, ZConsole, useZConsole } from '@/components/z-console';
 import { cn } from '@/lib/utils';
 import { AxeDevTools } from '@/components/axe-dev-tools';
+import { useTranslation } from '@/lib/translations';
 
 export default function DashboardLayout({
   children,
@@ -99,6 +100,7 @@ function DashboardShell({
   user: User;
   onSignOut: () => void;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { consoleState, chatWidth, artifactWidth, setConsoleState } = useZConsole();
   const { profile } = useAuth();
@@ -168,7 +170,7 @@ function DashboardShell({
                 aria-label="Search or jump to (Ctrl+K)"
               >
                 <Search size={15} className="text-muted" />
-                <span className="text-[13px] text-muted flex-1 text-left">Search or jump to...</span>
+                <span className="text-[13px] text-muted flex-1 text-left">{t('layout.searchOrJumpTo')}</span>
                 <kbd className="hidden md:inline text-[11px] text-muted bg-main px-1.5 py-0.5 rounded border border-main">
                   ⌘K
                 </kbd>
@@ -181,7 +183,7 @@ function DashboardShell({
                 aria-label="Documents and files"
               >
                 <FolderOpen size={16} />
-                <span className="hidden sm:inline">Files</span>
+                <span className="hidden sm:inline">{t('layout.files')}</span>
               </button>
 
               {/* Z Intelligence toggle */}
@@ -227,6 +229,7 @@ function DashboardShell({
 
 // ── Notification Bell ──
 function NotificationBell() {
+  const { t } = useTranslation();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -288,7 +291,7 @@ function NotificationBell() {
         <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-main rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in" role="dialog" aria-label="Notifications" aria-modal="false">
           <div className="px-4 py-3 border-b border-main flex items-center justify-between">
             <div>
-              <h2 className="text-[13px] font-semibold text-main">Notifications</h2>
+              <h2 className="text-[13px] font-semibold text-main">{t('common.notifications')}</h2>
               <p className="text-[11px] text-muted">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
             </div>
             {unreadCount > 0 && (
@@ -306,7 +309,7 @@ function NotificationBell() {
             {notifications.length === 0 ? (
               <div className="py-10 text-center">
                 <Bell size={24} className="mx-auto mb-2 text-muted" aria-hidden="true" />
-                <p className="text-[13px] text-muted">No notifications yet</p>
+                <p className="text-[13px] text-muted">{t('layout.noNotificationsYet')}</p>
               </div>
             ) : (
               <div className="p-1.5">
@@ -349,6 +352,7 @@ function NotificationBell() {
 
 // ── Active Work dropdown ──
 function ActiveWorkDropdown() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<{ id: string; type: string; title: string; status: string; customer: string }[]>([]);
   const [loading, setLoading] = useState(false);
@@ -413,14 +417,14 @@ function ActiveWorkDropdown() {
         aria-haspopup="true"
       >
         <Briefcase size={16} />
-        <span className="hidden sm:inline">Active</span>
+        <span className="hidden sm:inline">{t('layout.active')}</span>
         <ChevronDown size={12} className={cn('transition-transform', open && 'rotate-180')} aria-hidden="true" />
       </button>
 
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-main rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
           <div className="px-4 py-3 border-b border-main">
-            <p className="text-[13px] font-semibold text-main">Active Work</p>
+            <p className="text-[13px] font-semibold text-main">{t('layout.activeWork')}</p>
             <p className="text-[11px] text-muted">In-progress bids, jobs & estimates</p>
           </div>
 
@@ -432,7 +436,7 @@ function ActiveWorkDropdown() {
             ) : items.length === 0 ? (
               <div className="py-8 text-center">
                 <Briefcase size={24} className="mx-auto mb-2 text-muted" />
-                <p className="text-[13px] text-muted">No active items</p>
+                <p className="text-[13px] text-muted">{t('layout.noActiveItems')}</p>
               </div>
             ) : (
               <div className="p-1.5">

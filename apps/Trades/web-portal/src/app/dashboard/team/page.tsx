@@ -203,7 +203,7 @@ export default function TeamPage() {
             {/* Today's Jobs */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Today's Schedule</CardTitle>
+                <CardTitle className="text-sm">{t('dashboard.todaysSchedule')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-main max-h-[300px] overflow-y-auto">
@@ -384,7 +384,7 @@ export default function TeamPage() {
                   </div>
                   <div>
                     <p className="text-2xl font-semibold text-main">{team.length}</p>
-                    <p className="text-sm text-muted">Total Members</p>
+                    <p className="text-sm text-muted">{t('teamPage.totalMembers')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -475,6 +475,7 @@ export default function TeamPage() {
 }
 
 function TeamMemberCard({ member }: { member: TeamMember }) {
+  const { t } = useTranslation();
   const isOnline =
     member.lastActive &&
     new Date().getTime() - new Date(member.lastActive).getTime() < 30 * 60 * 1000;
@@ -523,14 +524,14 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
         {member.location && isOnline && (
           <div className="flex items-center gap-2 text-sm text-muted">
             <MapPin size={14} />
-            <span>On location</span>
+            <span>{t('common.onLocation')}</span>
           </div>
         )}
       </div>
 
       <div className="mt-4 pt-4 border-t border-main">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted">Last Active</span>
+          <span className="text-muted">{t('teamPage.lastActive')}</span>
           <span className={cn('font-medium', isOnline ? 'text-emerald-600' : 'text-muted')}>
             {isOnline ? 'Online' : member.lastActive ? formatRelativeTime(member.lastActive) : 'Never'}
           </span>
@@ -596,7 +597,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
           )}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">First Name</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('customers.firstName')}</label>
               <input
                 type="text"
                 value={firstName}
@@ -687,6 +688,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
 }
 
 function MessageModal({ member, onClose }: { member: TeamMember; onClose: () => void }) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'sms' | 'push'>('push');
   const [sending, setSending] = useState(false);
@@ -763,7 +765,7 @@ function MessageModal({ member, onClose }: { member: TeamMember; onClose: () => 
 
           {/* Quick Messages */}
           <div>
-            <label className="block text-sm font-medium text-main mb-2">Quick Messages</label>
+            <label className="block text-sm font-medium text-main mb-2">{t('common.quickMessages')}</label>
             <div className="flex flex-wrap gap-2">
               {quickMessages.map((qm, idx) => (
                 <button

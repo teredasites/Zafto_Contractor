@@ -779,7 +779,7 @@ function ContentsTab({
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.qty')}</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.condition')}</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.action')}</th>
-                        <th className="text-right px-4 py-2 text-xs text-muted uppercase">Value</th>
+                        <th className="text-right px-4 py-2 text-xs text-muted uppercase">{t('common.value')}</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.status')}</th>
                       </tr>
                     </thead>

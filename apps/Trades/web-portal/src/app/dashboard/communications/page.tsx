@@ -440,7 +440,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>New Message</CardTitle>
+            <CardTitle>{t('phone.newMessage')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>

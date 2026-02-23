@@ -294,7 +294,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
               <p className="font-medium">{assessment.originRoom || 'Not specified'}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Severity</p>
+              <p className="text-xs text-muted-foreground">{tr('common.severity')}</p>
               <Badge variant={severityConfig[assessment.damageSeverity]?.variant || 'default'}>
                 {severityConfig[assessment.damageSeverity]?.label}
               </Badge>

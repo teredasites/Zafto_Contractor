@@ -224,7 +224,7 @@ export default function ServiceAgreementsPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <FileText size={40} className="mx-auto mb-3 text-muted opacity-40" />
-            <p className="text-sm font-medium text-main">No service agreements found</p>
+            <p className="text-sm font-medium text-main">{t('serviceAgreements.noAgreements')}</p>
             <p className="text-xs text-muted mt-1">{allAgreements.length === 0 ? 'Create your first service agreement to track recurring maintenance contracts' : 'Try adjusting your search or filters'}</p>
           </CardContent>
         </Card>

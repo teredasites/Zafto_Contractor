@@ -175,7 +175,7 @@ export default function SchedulingPage() {
       {showNewModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowNewModal(false)}>
           <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-primary mb-4">New Schedule</h2>
+            <h2 className="text-lg font-semibold text-primary mb-4">{t('scheduling.newSchedule')}</h2>
             <input
               type="text"
               placeholder="Schedule name"

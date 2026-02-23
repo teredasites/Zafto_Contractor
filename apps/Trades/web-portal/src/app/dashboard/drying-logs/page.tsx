@@ -106,7 +106,7 @@ export default function DryingLogsPage() {
       {/* Immutable Notice */}
       <div className="flex items-center gap-2 px-4 py-2.5 bg-amber-900/15 border border-amber-700/30 rounded-lg">
         <Lock size={14} className="text-amber-500 flex-shrink-0" />
-        <span className="text-sm text-amber-300">Drying logs are immutable legal records and cannot be edited or deleted once created.</span>
+        <span className="text-sm text-amber-300">{t('dryingLogs.immutableNotice')}</span>
       </div>
 
       {/* Stats Cards */}
@@ -345,7 +345,7 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
               <option value="adjustment">{t('dryingLogs.adjustment')}</option>
               <option value="equipment_change">{t('dryingLogs.equipmentChange')}</option>
               <option value="completion">{t('dryingLogs.completion')}</option>
-              <option value="note">Note</option>
+              <option value="note">{t('common.note')}</option>
             </select>
           </div>
           <Input label="Summary *" placeholder="Daily moisture check - Day 3" />

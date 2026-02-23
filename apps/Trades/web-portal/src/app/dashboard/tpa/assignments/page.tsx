@@ -445,7 +445,7 @@ export default function TpaAssignmentsPage() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wide">Programs</p>
+            <p className="text-xs text-muted uppercase tracking-wide">{t('nav.programs')}</p>
             <p className="text-2xl font-semibold text-main mt-1">{programs.length}</p>
           </CardContent>
         </Card>

@@ -176,7 +176,7 @@ export default function InspectionsPage() {
           <Card><CardContent className="p-12 text-center">
             <ClipboardCheck size={48} className="mx-auto text-muted mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">{t('common.noInspectionsFound')}</h3>
-            <p className="text-muted mb-4">Create inspections with configurable checklists for quality control and compliance.</p>
+            <p className="text-muted mb-4">{t('inspections.createInspectionsDesc')}</p>
             <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newInspection')}</Button>
           </CardContent></Card>
         )}
