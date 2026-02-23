@@ -96,10 +96,10 @@ export default function PropertyDetailPage() {
     return (
       <div className="text-center py-12">
         <Building2 size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Property not found</h2>
-        <p className="text-muted mt-2">The property you are looking for does not exist.</p>
+        <h2 className="text-xl font-semibold text-main">{t('properties.notFound')}</h2>
+        <p className="text-muted mt-2">{t('properties.notFoundDesc')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/properties')}>
-          Back to Properties
+          {t('common.back')}
         </Button>
       </div>
     );

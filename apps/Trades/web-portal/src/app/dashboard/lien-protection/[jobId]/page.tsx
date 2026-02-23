@@ -84,7 +84,7 @@ export default function LienDetailPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <Shield className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No lien record found for this job</p>
+            <p className="text-zinc-400">{t('lienProtection.noRecord')}</p>
             <Link href="/dashboard/lien-protection">
               <Button variant="ghost" className="mt-4"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard</Button>
             </Link>

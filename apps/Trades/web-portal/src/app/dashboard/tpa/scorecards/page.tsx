@@ -340,7 +340,7 @@ export default function ScorecardsPage() {
           <div>
             <h1 className="text-xl font-semibold text-white flex items-center gap-2">
               <Star className="h-5 w-5 text-amber-400" />
-              TPA Scorecards
+              {t('scorecards.title')}
             </h1>
             <p className="text-sm text-zinc-400 mt-0.5">
               Track and trend TPA program performance scores

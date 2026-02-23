@@ -664,7 +664,9 @@
     "maintenance": "Maintenance",
     "inspections": "Inspections",
     "assets": "Assets",
-    "unitTurns": "Unit Turns"
+    "unitTurns": "Unit Turns",
+    "notFound": "Property not found",
+    "notFoundDesc": "The property you are looking for does not exist."
   },
   "equipment": {
     "title": "Equipment",
@@ -925,7 +927,8 @@
     "noWalkthroughsDesc": "Start a property walkthrough to document conditions.",
     "rooms": "Rooms",
     "photos": "Photos",
-    "notes": "Notes"
+    "notes": "Notes",
+    "notFound": "Walkthrough not found"
   },
   "inspections": {
     "title": "Inspections",
@@ -1010,7 +1013,7 @@
     "noData": "No pricing data available"
   },
   "pricingSettings": {
-    "title": "Pricing Settings",
+    "title": "Smart Pricing Rules",
     "manageDesc": "Configure pricing rules, markups, and margins"
   },
   "jobIntelligence": {
@@ -1029,6 +1032,7 @@
   "lienProtection": {
     "title": "Lien Protection",
     "noLiens": "No lien records found",
+    "noRecord": "No lien record found for this job",
     "rules": "Rules"
   },
   "maintenancePipeline": {
@@ -1078,7 +1082,7 @@
     "noDocs": "No documents found"
   },
   "legalAcknowledgment": {
-    "title": "Legal Acknowledgment"
+    "title": "Professional-Grade Tools"
   },
   "keyboardShortcuts": {
     "title": "Keyboard Shortcuts"
@@ -1233,5 +1237,36 @@
   },
   "settingsWalkthroughWorkflows": {
     "title": "Walkthrough Workflows"
+  },
+  "tpaDashboard": {
+    "title": "TPA Dashboard"
+  },
+  "tpaAssignments": {
+    "title": "TPA Assignments"
+  },
+  "scorecards": {
+    "title": "TPA Scorecards"
+  },
+  "estimatesPricing": {
+    "title": "Pricing Database Coverage"
+  },
+  "areaScans": {
+    "title": "Area Scans",
+    "notFound": "Area scan not found"
+  },
+  "reconAreaScansNew": {
+    "title": "New Area Scan"
+  },
+  "leases": {
+    "notFound": "Lease not found",
+    "notFoundDesc": "The lease you are looking for does not exist."
+  },
+  "tenants": {
+    "notFound": "Tenant not found",
+    "notFoundDesc": "The tenant you are looking for does not exist."
+  },
+  "units": {
+    "notFound": "Unit not found",
+    "notFoundDesc": "The unit you are looking for does not exist."
   }
 }

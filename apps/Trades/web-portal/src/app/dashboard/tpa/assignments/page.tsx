@@ -412,7 +412,7 @@ export default function TpaAssignmentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-main">TPA Assignments</h1>
+          <h1 className="text-xl font-semibold text-main">{t('tpaAssignments.title')}</h1>
           <p className="text-sm text-muted mt-0.5">Track dispatched insurance restoration assignments</p>
         </div>
         <Button onClick={handleCreate}>

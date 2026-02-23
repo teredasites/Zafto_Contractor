@@ -69,10 +69,10 @@ export default function UnitDetailPage() {
     return (
       <div className="text-center py-12">
         <Home size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Unit not found</h2>
-        <p className="text-muted mt-2">The unit you are looking for does not exist.</p>
+        <h2 className="text-xl font-semibold text-main">{t('units.notFound')}</h2>
+        <p className="text-muted mt-2">{t('units.notFoundDesc')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/properties/units')}>
-          Back to Units
+          {t('common.back')}
         </Button>
       </div>
     );

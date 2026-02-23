@@ -197,12 +197,12 @@ export default function WalkthroughDetailPage() {
     return (
       <div className="text-center py-16 text-muted">
         <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <p className="text-lg font-medium">Walkthrough not found</p>
+        <p className="text-lg font-medium">{t('walkthroughs.notFound')}</p>
         <button
           onClick={() => router.push('/dashboard/walkthroughs')}
           className="text-sm text-[var(--accent)] hover:underline mt-2"
         >
-          Back to walkthroughs
+          {t('common.back')}
         </button>
       </div>
     );

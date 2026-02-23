@@ -118,7 +118,7 @@ export default function PricingSettingsPage() {
         <div>
           <h1 className="text-2xl font-semibold text-white flex items-center gap-3">
             <Settings className="h-6 w-6 text-zinc-400" />
-            Smart Pricing Rules
+            {t('pricingSettings.title')}
           </h1>
           <p className="text-sm text-zinc-500 mt-1">
             Configure automatic pricing adjustments for your estimates
