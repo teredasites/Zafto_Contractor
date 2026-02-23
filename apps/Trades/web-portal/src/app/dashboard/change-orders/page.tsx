@@ -25,6 +25,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useChangeOrders } from '@/lib/hooks/use-change-orders';
 import type { ChangeOrderData } from '@/lib/hooks/mappers';
+import { useTranslation } from '@/lib/translations';
 
 type ChangeOrderStatus = 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'voided';
 
@@ -37,6 +38,7 @@ const statusConfig: Record<ChangeOrderStatus, { label: string; color: string; bg
 };
 
 export default function ChangeOrdersPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
@@ -77,7 +79,7 @@ export default function ChangeOrdersPage() {
       <CommandPalette />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Change Orders</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('changeOrders.title')}</h1>
           <p className="text-muted mt-1">Manage scope changes, customer approvals, and cost adjustments</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Change Order</Button>

@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 type TabType = 'labor' | 'materials' | 'assemblies';
 
@@ -60,6 +61,7 @@ const materials: Material[] = [];
 const assemblies: Assembly[] = [];
 
 export default function PriceBookPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('labor');
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -83,7 +85,7 @@ export default function PriceBookPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Price Book</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('priceBook.title')}</h1>
           <p className="text-muted mt-1">Manage your labor rates, materials, and assemblies</p>
         </div>
         <div className="flex items-center gap-2">

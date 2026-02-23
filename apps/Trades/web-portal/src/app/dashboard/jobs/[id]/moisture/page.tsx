@@ -37,6 +37,7 @@ import type {
   ContentsAction,
   ContentsCondition,
 } from '@/lib/hooks/use-water-damage';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================================
 // CONSTANTS
@@ -95,6 +96,7 @@ const MATERIAL_TARGETS: Record<string, number> = {
 // ============================================================================
 
 export default function MoistureDryingMonitorPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const jobId = params.id as string;

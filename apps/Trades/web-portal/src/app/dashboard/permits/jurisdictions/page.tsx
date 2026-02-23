@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select, Input } from '@/components/ui/input';
 import { useJurisdictions, type PermitJurisdiction } from '@/lib/hooks/use-permit-intelligence';
+import { useTranslation } from '@/lib/translations';
 
 const US_STATES = [
   { value: '', label: 'All States' },
@@ -63,6 +64,7 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
 }
 
 export default function JurisdictionsPage() {
+  const { t } = useTranslation();
   const [stateFilter, setStateFilter] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);

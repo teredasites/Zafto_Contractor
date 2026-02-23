@@ -6,6 +6,7 @@ import { Shield, Search, Plus, Building2, Calendar, DollarSign, ChevronRight } f
 import { useClaims } from '@/lib/hooks/use-insurance';
 import { CLAIM_STATUS_LABELS, CLAIM_STATUS_COLORS, LOSS_TYPE_LABELS, CLAIM_CATEGORY_LABELS, CLAIM_CATEGORY_COLORS } from '@/lib/hooks/mappers';
 import type { InsuranceClaimData, ClaimStatus, ClaimCategory } from '@/types';
+import { useTranslation } from '@/lib/translations';
 
 const PIPELINE_STAGES: ClaimStatus[] = [
   'new', 'scope_requested', 'scope_submitted', 'estimate_pending', 'estimate_approved',
@@ -23,6 +24,7 @@ const FILTER_OPTIONS: { label: string; value: ClaimStatus | 'all' | 'active' }[]
 ];
 
 export default function InsurancePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { claims, loading } = useClaims();
   const [search, setSearch] = useState('');
@@ -54,7 +56,7 @@ export default function InsurancePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Insurance Claims</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('insurance.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {filtered.length} claim{filtered.length !== 1 ? 's' : ''} &middot; ${totalApproved.toLocaleString()} approved &middot; ${totalDeductibles.toLocaleString()} deductibles
           </p>

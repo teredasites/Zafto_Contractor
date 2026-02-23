@@ -22,8 +22,10 @@ import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
+import { useTranslation } from '@/lib/translations';
 
 export default function NewCustomerPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { createCustomer, customers } = useCustomers();
   const { config } = useCompanyConfig();

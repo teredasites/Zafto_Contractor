@@ -23,6 +23,7 @@ import {
   propertyTypeLabels,
 } from '@/lib/hooks/pm-mappers';
 import type { PropertyData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 const propertyStatusLabels: Record<PropertyData['status'], string> = {
   active: 'Active',
@@ -39,6 +40,7 @@ const statusVariant: Record<PropertyData['status'], 'success' | 'secondary' | 'e
 };
 
 export default function PropertiesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { properties, loading, getPropertyStats, formatPropertyAddress: fmtAddr, propertyTypeLabels: typeLabels } = useProperties();
   const [search, setSearch] = useState('');
@@ -91,7 +93,7 @@ export default function PropertiesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Properties</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('properties.title')}</h1>
           <p className="text-[13px] text-muted mt-1">Manage your property portfolio</p>
         </div>
         <Button onClick={() => router.push('/dashboard/properties/new')}>

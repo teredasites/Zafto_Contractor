@@ -14,10 +14,12 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 type ScanType = 'prospecting' | 'storm_response' | 'canvassing';
 
 export default function NewAreaScanPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [name, setName] = useState('');
   const [scanType, setScanType] = useState<ScanType>('prospecting');

@@ -36,6 +36,7 @@ import { useBanking } from '@/lib/hooks/use-banking';
 import { useFinancialStatements } from '@/lib/hooks/use-financial-statements';
 import type { AgingRow, AccountBalance } from '@/lib/hooks/use-financial-statements';
 import { useReconciliation } from '@/lib/hooks/use-reconciliation';
+import { useTranslation } from '@/lib/translations';
 
 // Expense category colors for donut chart
 const EXPENSE_COLORS = [
@@ -83,6 +84,7 @@ interface PnLData {
 }
 
 export default function BooksPage() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   // Hooks
@@ -189,7 +191,7 @@ export default function BooksPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Ledger</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('books.title')}</h1>
           <p className="text-muted mt-1">Financial dashboard</p>
         </div>
         <div className="flex items-center gap-3">

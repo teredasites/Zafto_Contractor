@@ -23,6 +23,7 @@ import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useUnitTurns } from '@/lib/hooks/use-unit-turns';
 import { turnStatusLabels } from '@/lib/hooks/pm-mappers';
 import type { UnitTurnData, UnitTurnTaskData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type TurnStatus = UnitTurnData['status'];
 
@@ -52,6 +53,7 @@ const taskTypeLabels: Record<UnitTurnTaskData['taskType'], string> = {
 const kanbanColumns: TurnStatus[] = ['pending', 'in_progress', 'ready', 'listed', 'leased'];
 
 export default function UnitTurnsPage() {
+  const { t } = useTranslation();
   const { turns, loading, error, createTurn, completeTask, updateTurnStatus } = useUnitTurns();
   const [search, setSearch] = useState('');
   const [expandedTurnId, setExpandedTurnId] = useState<string | null>(null);

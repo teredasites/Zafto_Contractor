@@ -24,6 +24,7 @@ import { useTenants } from '@/lib/hooks/use-tenants';
 import { useLeases } from '@/lib/hooks/use-leases';
 import { unitStatusLabels, leaseStatusLabels } from '@/lib/hooks/pm-mappers';
 import type { UnitData, LeaseData, TenantData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type TabType = 'info' | 'tenant' | 'history' | 'assets';
 
@@ -37,6 +38,7 @@ const unitStatusVariant: Record<UnitData['status'], 'success' | 'secondary' | 'e
 };
 
 export default function UnitDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const unitId = params.id as string;

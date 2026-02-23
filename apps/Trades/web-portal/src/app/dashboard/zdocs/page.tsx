@@ -38,6 +38,7 @@ import {
   ZDOCS_ENTITY_TYPES,
   ZDOCS_ENTITY_TYPE_LABELS,
 } from '@/lib/hooks/use-zdocs';
+import { useTranslation } from '@/lib/translations';
 
 // Sanitize HTML to prevent XSS from rendered templates
 function sanitizeHtml(html: string): string {
@@ -90,6 +91,7 @@ type TabId = 'templates' | 'documents' | 'signatures';
 // ==================== MAIN COMPONENT ====================
 
 export default function ZDocsPage() {
+  const { t } = useTranslation();
   const {
     templates,
     renders,

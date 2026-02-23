@@ -20,6 +20,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
 import { usePmInspections } from '@/lib/hooks/use-pm-inspections';
 import type { PmInspectionData, PmInspectionItemData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type InspectionType = PmInspectionData['inspectionType'];
 type InspectionStatus = PmInspectionData['status'];
@@ -50,6 +51,7 @@ const conditionConfig: Record<string, { label: string; color: string; bgColor: s
 };
 
 export default function PmInspectionsPage() {
+  const { t } = useTranslation();
   const { inspections, loading, error, createInspection } = usePmInspections();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');

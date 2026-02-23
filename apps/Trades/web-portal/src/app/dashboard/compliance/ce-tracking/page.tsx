@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput } from '@/components/ui/input';
 import { useCECredits, useLicenseRenewals, type CECreditLog } from '@/lib/hooks/use-ce-tracking';
+import { useTranslation } from '@/lib/translations';
 
 function StatCard({ label, value, icon: Icon, variant }: {
   label: string; value: string | number;
@@ -67,6 +68,7 @@ function ProgressBar({ completed, required }: { completed: number; required: num
 }
 
 export default function CETrackingPage() {
+  const { t } = useTranslation();
   const { credits, summary, loading: creditsLoading, error: creditsError } = useCECredits();
   const { renewals, renewalSummary, loading: renewalsLoading } = useLicenseRenewals();
   const [searchQuery, setSearchQuery] = useState('');

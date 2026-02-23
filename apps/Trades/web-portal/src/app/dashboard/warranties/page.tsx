@@ -33,6 +33,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { useWarranties, type WarrantyData } from '@/lib/hooks/use-warranties';
+import { useTranslation } from '@/lib/translations';
 
 type WarrantyStatus = 'active' | 'expiring_soon' | 'expired' | 'claimed';
 type WarrantyType = 'labor' | 'equipment' | 'manufacturer' | 'extended';
@@ -109,6 +110,7 @@ function toWarranty(d: WarrantyData): Warranty {
 }
 
 export default function WarrantiesPage() {
+  const { t } = useTranslation();
   const { warranties: rawWarranties, loading: warrantiesLoading } = useWarranties();
   const [activeTab, setActiveTab] = useState<TabType>('warranties');
   const [search, setSearch] = useState('');
@@ -142,7 +144,7 @@ export default function WarrantiesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Warranties</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('warranties.title')}</h1>
           <p className="text-muted mt-1">Track labor and equipment warranties across all jobs</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>

@@ -35,6 +35,7 @@ import {
   type EquipmentType,
 } from '@/lib/hooks/use-equipment-deployments';
 import { useEquipmentInventory } from '@/lib/hooks/use-equipment-inventory';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================================
 // CONSTANTS
@@ -77,6 +78,7 @@ function getEquipmentIcon(type: string, size = 16) {
 // ============================================================================
 
 export default function JobEquipmentPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const jobId = params.id as string;

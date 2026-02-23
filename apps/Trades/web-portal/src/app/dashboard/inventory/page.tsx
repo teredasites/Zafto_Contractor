@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select, Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 interface InventoryItem {
   id: string;
@@ -56,6 +57,7 @@ const inventoryItems: InventoryItem[] = [];
 const inventoryTransactions: InventoryTransaction[] = [];
 
 export default function InventoryPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [showLowStock, setShowLowStock] = useState(false);
@@ -93,7 +95,7 @@ export default function InventoryPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Inventory</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('inventory.title')}</h1>
           <p className="text-muted mt-1">Track materials and supplies</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>

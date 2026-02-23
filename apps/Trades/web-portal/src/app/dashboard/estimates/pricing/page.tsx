@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Database, BarChart3, Globe, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 interface CoverageRow {
   categoryCode: string;
@@ -27,6 +28,7 @@ const CONFIDENCE_COLORS: Record<string, string> = {
 const fmt = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function PricingCoveragePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [rows, setRows] = useState<CoverageRow[]>([]);
   const [loading, setLoading] = useState(true);

@@ -16,6 +16,7 @@ import { useUnits } from '@/lib/hooks/use-units';
 import { unitStatusLabels } from '@/lib/hooks/pm-mappers';
 import type { UnitData } from '@/lib/hooks/pm-mappers';
 import type { UnitWithProperty } from '@/lib/hooks/use-units';
+import { useTranslation } from '@/lib/translations';
 
 const unitStatusVariant: Record<UnitData['status'], 'success' | 'secondary' | 'error' | 'warning' | 'info' | 'purple'> = {
   occupied: 'success',
@@ -27,6 +28,7 @@ const unitStatusVariant: Record<UnitData['status'], 'success' | 'secondary' | 'e
 };
 
 export default function UnitsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { units, loading } = useUnits();
   const [search, setSearch] = useState('');

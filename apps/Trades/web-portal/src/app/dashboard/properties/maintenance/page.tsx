@@ -22,6 +22,7 @@ import { formatDate, cn } from '@/lib/utils';
 import { usePmMaintenance } from '@/lib/hooks/use-pm-maintenance';
 import { maintenanceStatusLabels, urgencyLabels } from '@/lib/hooks/pm-mappers';
 import type { MaintenanceRequestData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type MaintenanceStatus = MaintenanceRequestData['status'];
 type Urgency = MaintenanceRequestData['urgency'];
@@ -59,6 +60,7 @@ const categoryLabels: Record<Category, string> = {
 const kanbanColumns: MaintenanceStatus[] = ['submitted', 'reviewed', 'scheduled', 'in_progress', 'completed'];
 
 export default function MaintenancePage() {
+  const { t } = useTranslation();
   const { requests, loading, error, assignToSelf, updateRequestStatus } = usePmMaintenance();
   const [search, setSearch] = useState('');
   const [urgencyFilter, setUrgencyFilter] = useState('all');

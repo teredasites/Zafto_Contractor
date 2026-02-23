@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Keyboard, ArrowLeft } from 'lucide-react';
+import { useTranslation } from '@/lib/translations';
 
 interface ShortcutGroup {
   title: string;
@@ -52,6 +53,7 @@ const shortcutGroups: ShortcutGroup[] = [
 ];
 
 export default function KeyboardShortcutsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   useEffect(() => {

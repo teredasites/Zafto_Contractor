@@ -29,6 +29,7 @@ import {
   type MaintenancePrediction,
   type OutreachStatus,
 } from '@/lib/hooks/use-maintenance-predictions';
+import { useTranslation } from '@/lib/translations';
 
 type ViewMode = 'pipeline' | 'calendar' | 'revenue';
 
@@ -49,6 +50,7 @@ const outreachStatusConfig: Record<OutreachStatus, { label: string; bg: string; 
 };
 
 export default function MaintenancePipelinePage() {
+  const { t } = useTranslation();
   const {
     predictions,
     upcomingPredictions,
@@ -109,7 +111,7 @@ export default function MaintenancePipelinePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-100">Maintenance Pipeline</h1>
+            <h1 className="text-2xl font-semibold text-zinc-100">{t('maintenancePipeline.title')}</h1>
             <p className="text-sm text-zinc-400 mt-1">
               Predictive maintenance opportunities and revenue forecast
             </p>

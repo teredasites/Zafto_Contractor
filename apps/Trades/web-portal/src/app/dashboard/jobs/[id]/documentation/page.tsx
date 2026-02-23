@@ -27,6 +27,7 @@ import {
   type DocProgressData,
   type DocPhase,
 } from '@/lib/hooks/use-documentation-validation';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================================
 // CONSTANTS
@@ -62,6 +63,7 @@ const EVIDENCE_LABELS: Record<string, string> = {
 // ============================================================================
 
 export default function JobDocumentationPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const jobId = params.id as string;

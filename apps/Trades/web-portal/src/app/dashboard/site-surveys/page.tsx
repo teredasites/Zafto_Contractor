@@ -24,6 +24,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { useSiteSurveys, type SiteSurvey } from '@/lib/hooks/use-site-surveys';
 import { useRouter } from 'next/navigation';
 import { formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: typeof Clock }> = {
   draft: { label: 'Draft', color: 'text-zinc-400', bgColor: 'bg-zinc-800', icon: FileText },
@@ -214,6 +215,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
 }
 
 export default function SiteSurveysPage() {
+  const { t } = useTranslation();
   const { surveys, drafts, inProgress, completed, loading, error } = useSiteSurveys();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -238,7 +240,7 @@ export default function SiteSurveysPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">Site Surveys</h1>
+            <h1 className="text-2xl font-bold text-zinc-100">{t('siteSurveys.title')}</h1>
             <p className="text-sm text-zinc-500 mt-1">Property assessments, conditions, measurements, and hazard tracking</p>
           </div>
           <Button size="sm"><Plus className="h-3.5 w-3.5 mr-1" />New Survey</Button>

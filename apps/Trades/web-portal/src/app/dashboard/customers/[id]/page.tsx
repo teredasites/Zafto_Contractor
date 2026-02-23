@@ -37,6 +37,7 @@ import { Input, Select } from '@/components/ui/input';
 import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { getSupabase } from '@/lib/supabase';
 import type { Customer } from '@/types';
+import { useTranslation } from '@/lib/translations';
 
 type TabType = 'overview' | 'bids' | 'jobs' | 'invoices' | 'activity';
 
@@ -70,6 +71,7 @@ function computePaymentBehavior(invoices: { sentAt?: Date | string; paidAt?: Dat
 }
 
 export default function CustomerDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const customerId = params.id as string;

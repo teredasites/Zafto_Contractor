@@ -22,6 +22,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
 import { useInspections } from '@/lib/hooks/use-inspections';
 import type { InspectionData } from '@/lib/hooks/mappers';
+import { useTranslation } from '@/lib/translations';
 
 type InspectionStatus = 'scheduled' | 'in_progress' | 'passed' | 'failed' | 'partial';
 type InspectionType = 'quality' | 'safety' | 'punch_list' | 'pre_closeout' | 'compliance' | 'progress';
@@ -44,6 +45,7 @@ const typeConfig: Record<InspectionType, { label: string; color: string; bgColor
 };
 
 export default function InspectionsPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -86,7 +88,7 @@ export default function InspectionsPage() {
       <CommandPalette />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Inspections & Checklists</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('inspections.title')}</h1>
           <p className="text-muted mt-1">Quality control, safety compliance, and punch lists</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Inspection</Button>

@@ -22,6 +22,7 @@ import { formatCurrency, cn } from '@/lib/utils';
 import { useAccounts, ACCOUNT_TYPE_LABELS } from '@/lib/hooks/use-accounts';
 import { useAccountBalances } from '@/lib/hooks/use-zbooks';
 import type { AccountData, TaxCategoryData } from '@/lib/hooks/use-accounts';
+import { useTranslation } from '@/lib/translations';
 
 const typeOrder = ['asset', 'liability', 'equity', 'revenue', 'cogs', 'expense'];
 const typeColors: Record<string, string> = {
@@ -42,6 +43,7 @@ const typeBgColors: Record<string, string> = {
 };
 
 export default function ChartOfAccountsPage() {
+  const { t } = useTranslation();
   const { accounts, groupedAccounts, taxCategories, loading, error, createAccount, updateAccount, deactivateAccount, reactivateAccount, checkAccountHasEntries, refetch } = useAccounts();
   const { accounts: balanceData } = useAccountBalances();
   const [search, setSearch] = useState('');

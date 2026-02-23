@@ -14,6 +14,7 @@ import { useClaim, updateClaimStatus, createSupplement, updateSupplementStatus, 
 import type { SupplementReason } from '@/types';
 import { CLAIM_STATUS_LABELS, CLAIM_STATUS_COLORS, LOSS_TYPE_LABELS, EQUIPMENT_TYPE_LABELS, CLAIM_CATEGORY_LABELS, CLAIM_CATEGORY_COLORS } from '@/lib/hooks/mappers';
 import type { ClaimStatus, InsuranceClaimData, MoistureReadingData, DryingLogData, RestorationEquipmentData, TpiInspectionData, StormClaimData, ReconstructionClaimData, CommercialClaimData } from '@/types';
+import { useTranslation } from '@/lib/translations';
 
 type TabId = 'overview' | 'supplements' | 'tpi' | 'moisture' | 'drying' | 'equipment' | 'completion';
 
@@ -46,6 +47,7 @@ const STATUS_TRANSITIONS: Partial<Record<ClaimStatus, { label: string; status: C
 };
 
 export default function ClaimDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const claimId = params.id as string;

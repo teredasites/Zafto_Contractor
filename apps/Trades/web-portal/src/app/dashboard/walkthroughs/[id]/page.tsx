@@ -46,6 +46,7 @@ import {
   type FloorPlanData,
 } from '@/lib/hooks/use-walkthroughs';
 import { useEstimates } from '@/lib/hooks/use-estimates';
+import { useTranslation } from '@/lib/translations';
 
 // ── Status badges ──
 
@@ -90,6 +91,7 @@ const TABS: { key: TabKey; label: string; icon: LucideIcon }[] = [
 ];
 
 export default function WalkthroughDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const walkthroughId = params.id as string;

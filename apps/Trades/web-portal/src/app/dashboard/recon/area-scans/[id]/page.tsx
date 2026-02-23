@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useAreaScan, type LeadScoreData } from '@/lib/hooks/use-area-scan';
 import { useStormAssess, type StormPropertyResult } from '@/lib/hooks/use-storm-assess';
+import { useTranslation } from '@/lib/translations';
 
 function GradeBadge({ grade, score }: { grade: string; score: number }) {
   const config: Record<string, { icon: typeof Flame; color: string; bg: string }> = {
@@ -281,6 +282,7 @@ function StormAssessmentPanel({
 // ============================================================================
 
 export default function AreaScanDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const areaScanId = params.id as string;
   const { scan, leads, loading, error, exportCsv } = useAreaScan(areaScanId);

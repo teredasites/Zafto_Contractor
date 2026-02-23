@@ -15,6 +15,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useJobCosts } from '@/lib/hooks/use-job-costs';
 import type { JobCostData, RiskLevel } from '@/lib/hooks/use-job-costs';
+import { useTranslation } from '@/lib/translations';
 
 const riskConfig: Record<RiskLevel, { label: string; color: string; bgColor: string }> = {
   on_track: { label: 'On Track', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
@@ -24,6 +25,7 @@ const riskConfig: Record<RiskLevel, { label: string; color: string; bgColor: str
 };
 
 export default function JobCostRadarPage() {
+  const { t } = useTranslation();
   const { jobs, stats, loading, error } = useJobCosts();
   const [selectedJob, setSelectedJob] = useState<JobCostData | null>(null);
   const [riskFilter, setRiskFilter] = useState<'all' | RiskLevel>('all');

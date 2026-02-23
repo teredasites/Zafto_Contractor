@@ -33,6 +33,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 interface RoomData {
   meetingId: string;
@@ -174,6 +175,7 @@ function MeetingTimer({ startedAt }: { startedAt: string | null }) {
 }
 
 export default function MeetingRoomPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
   const roomCode = searchParams.get('code');

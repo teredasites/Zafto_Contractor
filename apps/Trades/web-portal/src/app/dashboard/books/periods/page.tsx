@@ -25,6 +25,7 @@ import {
   useFiscalPeriods,
 } from '@/lib/hooks/use-fiscal-periods';
 import type { FiscalPeriodData, AuditLogEntry } from '@/lib/hooks/use-fiscal-periods';
+import { useTranslation } from '@/lib/translations';
 
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
@@ -291,6 +292,7 @@ function PeriodRow({
 // Main Page
 // -------------------------------------------------------------------
 export default function FiscalPeriodsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     periods,

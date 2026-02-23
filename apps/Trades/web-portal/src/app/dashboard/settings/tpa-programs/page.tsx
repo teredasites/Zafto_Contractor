@@ -43,6 +43,7 @@ import {
   type TpaProgramStatus,
   type ReferralFeeType,
 } from '@/lib/hooks/use-tpa-programs';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== CONSTANTS ====================
 
@@ -176,6 +177,7 @@ function programToForm(p: TpaProgramData): ProgramFormState {
 // ==================== PAGE COMPONENT ====================
 
 export default function TpaProgramsPage() {
+  const { t } = useTranslation();
   const { programs, loading, error, refetch } = useTpaPrograms();
   const { isTpaEnabled, loading: featuresLoading } = useCompanyFeatures();
 

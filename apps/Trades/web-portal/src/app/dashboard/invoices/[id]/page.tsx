@@ -30,8 +30,10 @@ import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useInvoice, useInvoices } from '@/lib/hooks/use-invoices';
 import { getSupabase } from '@/lib/supabase';
 import type { Invoice, InvoiceLineItem } from '@/types';
+import { useTranslation } from '@/lib/translations';
 
 export default function InvoiceDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const invoiceId = params.id as string;

@@ -33,6 +33,7 @@ import type {
   TransactionType,
   Frequency,
 } from '@/lib/hooks/use-recurring';
+import { useTranslation } from '@/lib/translations';
 
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
@@ -490,6 +491,7 @@ function TemplateModal({
 // Main Page
 // -------------------------------------------------------------------
 export default function RecurringPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     templates,

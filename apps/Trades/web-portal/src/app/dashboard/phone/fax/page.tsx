@@ -25,6 +25,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { useFax } from '@/lib/hooks/use-fax';
 import type { FaxRecord } from '@/lib/hooks/use-fax';
 import { formatRelativeTime, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 type FaxTab = 'all' | 'inbox' | 'sent';
 
@@ -84,6 +85,7 @@ function FaxRow({ fax }: { fax: FaxRecord }) {
 }
 
 export default function FaxPage() {
+  const { t } = useTranslation();
   const { faxes, inbound, outbound, loading, error } = useFax();
   const [tab, setTab] = useState<FaxTab>('all');
   const [search, setSearch] = useState('');

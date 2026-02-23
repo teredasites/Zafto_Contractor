@@ -27,6 +27,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { useProcurement, type POLineItem, type ReceivingRecord } from '@/lib/hooks/use-procurement';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================
 // Types for purchase_orders table (fetched directly)
@@ -98,6 +99,7 @@ const statusOptions = [
 ];
 
 export default function PurchaseOrdersPage() {
+  const { t } = useTranslation();
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrderData[]>([]);
   const [poLoading, setPOLoading] = useState(true);
   const [poError, setPOError] = useState<string | null>(null);
@@ -180,7 +182,7 @@ export default function PurchaseOrdersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Purchase Orders</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('purchaseOrders.title')}</h1>
           <p className="text-muted mt-1">Order materials and track deliveries</p>
         </div>
         <Button onClick={() => setShowNewPOModal(true)}>

@@ -17,8 +17,10 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/translations';
 
 export default function BudgetsPage() {
+  const { t } = useTranslation();
   const { summaries, loading, error } = useBudgetVsActual();
   const [expandedJob, setExpandedJob] = useState<string | null>(null);
 

@@ -25,6 +25,7 @@ import { formatCurrency, cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { useCPAAccess } from '@/lib/hooks/use-cpa-access';
 import type { ExportPackageData } from '@/lib/hooks/use-cpa-access';
+import { useTranslation } from '@/lib/translations';
 
 // Ledger Navigation
 const zbooksNav = [
@@ -39,6 +40,7 @@ const zbooksNav = [
 ];
 
 export default function CPAExportPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { isCPA, isReadOnly, userEmail, loading: accessLoading, exportPackage, exportCSV } = useCPAAccess();
 

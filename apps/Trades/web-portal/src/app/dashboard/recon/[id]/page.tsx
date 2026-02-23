@@ -58,6 +58,7 @@ import {
   type TradeType,
 } from '@/lib/hooks/use-property-scan';
 import { useStormAssess } from '@/lib/hooks/use-storm-assess';
+import { useTranslation } from '@/lib/translations';
 
 type TabType = 'property' | 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
 
@@ -279,6 +280,7 @@ function getStreetMapUrl(lat: number, lng: number, zoom = 16, w = 400, h = 400) 
 }
 
 export default function ReconDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const scanId = params.id as string;

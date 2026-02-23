@@ -27,6 +27,7 @@ import type {
   BranchComparison,
 } from '@/lib/hooks/use-branch-financials';
 import { TierGate } from '@/components/permission-gate';
+import { useTranslation } from '@/lib/translations';
 
 // Ledger Navigation
 const zbooksNav = [
@@ -53,6 +54,7 @@ const fmt = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
 export default function BranchFinancialsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     branches,

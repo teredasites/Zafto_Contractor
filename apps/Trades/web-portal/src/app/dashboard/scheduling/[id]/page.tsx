@@ -26,6 +26,7 @@ import { useScheduleDependencies } from '@/lib/hooks/use-schedule-dependencies';
 import { useScheduleImportExport } from '@/lib/hooks/use-schedule-import-export';
 import { useScheduleCosts } from '@/lib/hooks/use-schedule-costs';
 import type { ScheduleTask, ScheduleDependency } from '@/lib/types/scheduling';
+import { useTranslation } from '@/lib/translations';
 
 type ZoomLevel = 'day' | 'week' | 'month';
 
@@ -41,6 +42,7 @@ const HEADER_HEIGHT = 36;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export default function GanttPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;

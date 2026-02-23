@@ -25,6 +25,7 @@ import { useJobs } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
+import { useTranslation } from '@/lib/translations';
 
 type PaymentSource = 'standard' | 'carrier' | 'deductible' | 'upgrade';
 
@@ -37,6 +38,7 @@ interface LineItem {
 }
 
 export default function NewInvoicePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobId = searchParams.get('jobId');

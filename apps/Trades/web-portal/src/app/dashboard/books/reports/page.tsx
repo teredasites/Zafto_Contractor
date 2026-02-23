@@ -26,6 +26,7 @@ import { useFinancialStatements } from '@/lib/hooks/use-financial-statements';
 import type { AccountBalance, AgingRow, JournalDetail } from '@/lib/hooks/use-financial-statements';
 import { useAccounts } from '@/lib/hooks/use-accounts';
 import { useProperties } from '@/lib/hooks/use-properties';
+import { useTranslation } from '@/lib/translations';
 
 // Ledger Navigation
 const zbooksNav = [
@@ -220,6 +221,7 @@ const SCHEDULE_E_CATEGORIES: { key: string; label: string }[] = [
 ];
 
 export default function FinancialReportsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     loading,

@@ -15,6 +15,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { useAreaScans, type AreaScanData } from '@/lib/hooks/use-area-scan';
+import { useTranslation } from '@/lib/translations';
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
@@ -116,6 +117,7 @@ function ScanCard({ scan }: { scan: AreaScanData }) {
 }
 
 export default function AreaScansPage() {
+  const { t } = useTranslation();
   const { scans, loading, error } = useAreaScans();
   const [search, setSearch] = useState('');
 

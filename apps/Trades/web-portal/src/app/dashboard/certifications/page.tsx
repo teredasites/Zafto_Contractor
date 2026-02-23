@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================
 // CERTIFICATION TYPES — loaded from certification_types table
@@ -55,6 +56,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof
 // ============================================================
 
 export default function CertificationsPage() {
+  const { t } = useTranslation();
   const { certifications, loading, createCertification, updateCertification, deleteCertification } = useCertifications();
   const { types: certTypes, typeMap: certTypeMap, loading: typesLoading } = useCertificationTypes();
   const { team: members } = useTeam();
@@ -114,7 +116,7 @@ export default function CertificationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-main">Certifications</h1>
+          <h1 className="text-xl font-bold text-main">{t('certifications.title')}</h1>
           <p className="text-sm text-muted mt-1">Track employee licenses, certifications, and compliance</p>
         </div>
         <PermissionGate permission={PERMISSIONS.CERTIFICATIONS_MANAGE}>

@@ -20,8 +20,10 @@ import { CommandPalette } from '@/components/command-palette';
 import { cn } from '@/lib/utils';
 import { useInspectionTemplates } from '@/lib/hooks/use-inspection-templates';
 import type { InspectionTemplateData } from '@/lib/hooks/use-inspection-templates';
+import { useTranslation } from '@/lib/translations';
 
 export default function InspectionTemplatesPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'company' | 'system'>('company');
   const [selectedTemplate, setSelectedTemplate] = useState<InspectionTemplateData | null>(null);

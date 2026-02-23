@@ -32,6 +32,7 @@ import {
   formatPercent,
   type ProgramFinancialSummary,
 } from '@/lib/hooks/use-tpa-financials';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================================
 // CONSTANTS
@@ -439,6 +440,7 @@ function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[
 // ============================================================================
 
 export default function TpaDashboardPage() {
+  const { t } = useTranslation();
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());

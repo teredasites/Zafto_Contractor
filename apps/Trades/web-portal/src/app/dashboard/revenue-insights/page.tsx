@@ -34,8 +34,10 @@ import type {
   CustomerInsight,
   AIRecommendation,
 } from '@/lib/hooks/use-revenue-insights';
+import { useTranslation } from '@/lib/translations';
 
 export default function RevenueInsightsPage() {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<Period>('month');
   const { data, loading, error, refresh } = useRevenueInsights(period);
 

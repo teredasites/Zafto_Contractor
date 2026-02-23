@@ -8,10 +8,12 @@ import {
 } from 'lucide-react';
 import { useSubcontractors, TRADE_TYPE_OPTIONS } from '@/lib/hooks/use-subcontractors';
 import type { Subcontractor, ComplianceAlert } from '@/lib/hooks/use-subcontractors';
+import { useTranslation } from '@/lib/translations';
 
 type ViewMode = 'directory' | 'compliance' | '1099';
 
 export default function SubcontractorsPage() {
+  const { t } = useTranslation();
   const {
     subs, loading, error, complianceAlerts,
     createSub, updateSub, deleteSub, export1099Data,

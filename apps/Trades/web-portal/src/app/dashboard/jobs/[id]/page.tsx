@@ -49,10 +49,12 @@ import { MiniGantt } from '@/components/scheduling/MiniGantt';
 import { usePhotos } from '@/lib/hooks/use-photos';
 import type { Job, JobType, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
 
 export default function JobDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const jobId = params.id as string;

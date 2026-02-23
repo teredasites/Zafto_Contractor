@@ -17,8 +17,10 @@ import {
   Percent,
 } from 'lucide-react';
 import { useJobIntelligence, type JobCostAutopsy, type AutopsyInsight } from '@/lib/hooks/use-job-intelligence';
+import { useTranslation } from '@/lib/translations';
 
 export default function JobIntelligencePage() {
+  const { t } = useTranslation();
   const { autopsies, insights, summary, pendingAdjustments, insightsByType, loading, error } =
     useJobIntelligence();
   const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'techs' | 'trends'>('overview');
@@ -51,7 +53,7 @@ export default function JobIntelligencePage() {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Job Intelligence</h1>
+          <h1 className="text-2xl font-semibold text-white">{t('jobIntelligence.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">
             Profitability analysis from {summary.totalJobs} completed jobs
           </p>

@@ -36,10 +36,12 @@ import {
   type ProductRecall,
   type ClaimStatus,
 } from '@/lib/hooks/use-warranty-intelligence';
+import { useTranslation } from '@/lib/translations';
 
 type ViewTab = 'dashboard' | 'equipment' | 'claims' | 'outreach' | 'recalls';
 
 export default function WarrantyIntelligencePage() {
+  const { t } = useTranslation();
   const {
     equipment,
     claims,

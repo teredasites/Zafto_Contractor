@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn, formatDate } from '@/lib/utils';
 import { useWalkthrough } from '@/lib/hooks/use-walkthroughs';
+import { useTranslation } from '@/lib/translations';
 
 // ── Bid format options ──
 
@@ -76,6 +77,7 @@ const BID_FORMATS: BidFormat[] = [
 ];
 
 export default function BidGenerationPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const walkthroughId = params.id as string;

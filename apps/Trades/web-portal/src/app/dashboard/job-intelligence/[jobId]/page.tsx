@@ -16,8 +16,10 @@ import {
   FileBarChart,
 } from 'lucide-react';
 import { useJobIntelligence } from '@/lib/hooks/use-job-intelligence';
+import { useTranslation } from '@/lib/translations';
 
 export default function JobAutopsyDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const jobId = params.jobId as string;
   const { autopsies, loading, error } = useJobIntelligence();

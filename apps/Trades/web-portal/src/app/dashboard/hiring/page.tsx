@@ -46,6 +46,7 @@ import {
   type InterviewStatus,
   type PayType,
 } from '@/lib/hooks/use-hiring';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== STATUS CONFIGS ====================
 
@@ -133,6 +134,7 @@ type TabId = 'postings' | 'pipeline' | 'interviews';
 // ==================== MAIN COMPONENT ====================
 
 export default function HiringPage() {
+  const { t } = useTranslation();
   const {
     postings,
     applicants,
@@ -185,7 +187,7 @@ export default function HiringPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Hiring</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('hiring.title')}</h1>
           <p className="text-muted mt-1">Manage job postings, applicants, and interviews</p>
         </div>
         <div className="flex items-center gap-3">
