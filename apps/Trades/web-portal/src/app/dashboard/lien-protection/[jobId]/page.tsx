@@ -33,8 +33,9 @@ function statusVariant(status: string): 'success' | 'error' | 'warning' | 'info'
   }
 }
 
-function TimelineStep({ label, date, completed, hasDoc }: {
+function TimelineStep({ label, date, completed, hasDoc, formatDate }: {
   label: string; date: string | null; completed: boolean; hasDoc?: boolean;
+  formatDate: (d: string | Date) => string;
 }) {
   return (
     <div className="flex items-center gap-3 py-2">
@@ -46,7 +47,7 @@ function TimelineStep({ label, date, completed, hasDoc }: {
       <div className="flex-1 flex items-center justify-between">
         <span className={`text-sm ${completed ? 'text-white font-medium' : 'text-zinc-500'}`}>{label}</span>
         <div className="flex items-center gap-2">
-          {date && <span className="text-xs text-zinc-400">{new Date(date).toLocaleDateString()}</span>}
+          {date && <span className="text-xs text-zinc-400">{formatDate(date)}</span>}
           {hasDoc && <FileText className="h-3.5 w-3.5 text-blue-400" />}
         </div>
       </div>
@@ -55,7 +56,7 @@ function TimelineStep({ label, date, completed, hasDoc }: {
 }
 
 export default function LienDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const params = useParams();
   const jobId = params.jobId as string;
   const { liens, loading, error, getRuleForState } = useLienProtection();
@@ -161,11 +162,11 @@ export default function LienDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
-              <TimelineStep label="First Work" date={lien.first_work_date} completed={!!lien.first_work_date} />
-              <TimelineStep label="Preliminary Notice" date={lien.preliminary_notice_date} completed={lien.preliminary_notice_sent} hasDoc={!!lien.preliminary_notice_document_path} />
-              <TimelineStep label="Last Work" date={lien.last_work_date} completed={!!lien.last_work_date} />
-              <TimelineStep label="Lien Filed" date={lien.lien_filing_date} completed={lien.lien_filed} hasDoc={!!lien.lien_filing_document_path} />
-              <TimelineStep label="Lien Released" date={lien.lien_release_date} completed={lien.lien_released} hasDoc={!!lien.lien_release_document_path} />
+              <TimelineStep label="First Work" date={lien.first_work_date} completed={!!lien.first_work_date} formatDate={formatDate} />
+              <TimelineStep label="Preliminary Notice" date={lien.preliminary_notice_date} completed={lien.preliminary_notice_sent} hasDoc={!!lien.preliminary_notice_document_path} formatDate={formatDate} />
+              <TimelineStep label="Last Work" date={lien.last_work_date} completed={!!lien.last_work_date} formatDate={formatDate} />
+              <TimelineStep label="Lien Filed" date={lien.lien_filing_date} completed={lien.lien_filed} hasDoc={!!lien.lien_filing_document_path} formatDate={formatDate} />
+              <TimelineStep label="Lien Released" date={lien.lien_release_date} completed={lien.lien_released} hasDoc={!!lien.lien_release_document_path} formatDate={formatDate} />
             </div>
           </CardContent>
         </Card>

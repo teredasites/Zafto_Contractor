@@ -33,7 +33,7 @@ import type { Invoice, InvoiceLineItem } from '@/types';
 import { useTranslation } from '@/lib/translations';
 
 export default function InvoiceDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const invoiceId = params.id as string;
@@ -147,7 +147,7 @@ export default function InvoiceDetailPage() {
                       to_email: custEmail,
                       to_name: `${invoice.customer?.firstName || ''} ${invoice.customer?.lastName || ''}`.trim(),
                       subject: `Payment Reminder: Invoice ${invoice.invoiceNumber || ''} — $${invoice.amountDue?.toFixed(2) || '0.00'} Due`,
-                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>Payment Reminder</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>$${invoice.amountDue?.toFixed(2) || '0.00'}</strong>.</p><p>Due date: ${invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
+                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>Payment Reminder</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>$${invoice.amountDue?.toFixed(2) || '0.00'}</strong>.</p><p>Due date: ${invoice.dueDate ? formatDate(invoice.dueDate) : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
                       email_type: 'invoice_reminder',
                       related_type: 'invoice',
                       related_id: invoice.id,

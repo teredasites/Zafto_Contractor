@@ -22,7 +22,7 @@ const HEALTH_CONFIG = {
 };
 
 export default function PortfolioPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
   const { portfolio, loading, error } = useSchedulePortfolio();
   const [filter, setFilter] = useState<string>('all');
@@ -258,5 +258,5 @@ export default function PortfolioPage() {
 }
 
 function formatDate(d: string): string {
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return formatDate(d);
 }

@@ -25,10 +25,8 @@ const CONFIDENCE_COLORS: Record<string, string> = {
   verified: 'text-emerald-400 bg-emerald-500/10',
 };
 
-const fmt = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
 export default function PricingCoveragePage() {
-  const { t } = useTranslation();
+  const { t, formatCurrency, formatDate } = useTranslation();
   const router = useRouter();
   const [rows, setRows] = useState<CoverageRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -159,7 +157,7 @@ export default function PricingCoveragePage() {
                   <td className="px-4 py-2.5 text-xs text-zinc-400">{row.regionCode || '—'}</td>
                   <td className="px-4 py-2.5 text-xs text-right text-zinc-200">{row.entryCount}</td>
                   <td className="px-4 py-2.5 text-xs text-right text-zinc-200">
-                    {row.avgPrice !== null ? `$${fmt(row.avgPrice)}` : '—'}
+                    {row.avgPrice !== null ? formatCurrency(row.avgPrice) : '—'}
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {row.minConfidence ? (
@@ -170,7 +168,7 @@ export default function PricingCoveragePage() {
                   </td>
                   <td className="px-4 py-2.5 text-xs text-right text-zinc-400">{row.maxSources}</td>
                   <td className="px-4 py-2.5 text-xs text-right text-zinc-500">
-                    {row.lastUpdated ? new Date(row.lastUpdated).toLocaleDateString() : '—'}
+                    {row.lastUpdated ? formatDate(row.lastUpdated) : '—'}
                   </td>
                 </tr>
               ))}

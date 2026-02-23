@@ -12,12 +12,8 @@ const TYPE_COLORS: Record<string, string> = {
   microwave: 'bg-yellow-500/15 text-yellow-400',
 };
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
 export default function ApplianceRepairPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { logs, loading } = useApplianceRepairLogs();
   const [search, setSearch] = useState('');
 

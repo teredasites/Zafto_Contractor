@@ -134,7 +134,7 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
 }
 
 export default function PermitDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const params = useParams();
   const jobId = params.jobId as string;
   const { permits, loading, error } = useJobPermitRecords(jobId);
@@ -222,19 +222,19 @@ export default function PermitDetailPage() {
                     {permit.application_date && (
                       <div className="flex items-center gap-2 text-zinc-400">
                         <Send className="h-3.5 w-3.5 text-zinc-500" />
-                        <span>Applied: {new Date(permit.application_date).toLocaleDateString()}</span>
+                        <span>Applied: {formatDate(permit.application_date)}</span>
                       </div>
                     )}
                     {permit.approval_date && (
                       <div className="flex items-center gap-2 text-emerald-400">
                         <CheckCircle className="h-3.5 w-3.5" />
-                        <span>Approved: {new Date(permit.approval_date).toLocaleDateString()}</span>
+                        <span>Approved: {formatDate(permit.approval_date)}</span>
                       </div>
                     )}
                     {permit.expiration_date && (
                       <div className="flex items-center gap-2 text-zinc-400">
                         <Clock className="h-3.5 w-3.5 text-zinc-500" />
-                        <span>Expires: {new Date(permit.expiration_date).toLocaleDateString()}</span>
+                        <span>Expires: {formatDate(permit.expiration_date)}</span>
                       </div>
                     )}
                     {permit.fee_paid != null && (

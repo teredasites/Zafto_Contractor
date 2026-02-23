@@ -110,7 +110,7 @@ function ScanCard({ scan }: { scan: AreaScanData }) {
       </div>
 
       <div className="mt-2 text-[11px] text-muted">
-        {new Date(scan.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+        {new Date(scan.createdAt).toLocaleDateString()}
       </div>
     </Link>
   );

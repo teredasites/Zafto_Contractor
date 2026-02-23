@@ -280,7 +280,7 @@ function getStreetMapUrl(lat: number, lng: number, zoom = 16, w = 400, h = 400) 
 }
 
 export default function ReconDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const scanId = params.id as string;
@@ -733,7 +733,7 @@ function PropertyTab({ features, scan }: {
           <div className="space-y-0">
             <DataRow label="Assessed Value" value={formatCurrency(features.assessedValue)} highlight />
             <DataRow label="Last Sale Price" value={formatCurrency(features.lastSalePrice)} highlight />
-            <DataRow label="Last Sale Date" value={features.lastSaleDate ? new Date(features.lastSaleDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'} />
+            <DataRow label="Last Sale Date" value={features.lastSaleDate ? formatDate(features.lastSaleDate) : '—'} />
             {features.estimatedValue != null && (
               <DataRow label="Estimated Value" value={formatCurrency(features.estimatedValue)} highlight />
             )}

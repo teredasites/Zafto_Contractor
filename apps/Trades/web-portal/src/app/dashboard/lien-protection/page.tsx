@@ -63,7 +63,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
 }
 
 export default function LienProtectionPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { activeLiens, summary, loading, error, rules, getRuleForState } = useLienProtection();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -170,7 +170,7 @@ export default function LienProtectionPage() {
                             {lien.last_work_date && (
                               <span className="flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
-                                Last: {new Date(lien.last_work_date).toLocaleDateString()}
+                                Last: {formatDate(lien.last_work_date)}
                               </span>
                             )}
                           </div>

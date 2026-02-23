@@ -22,13 +22,8 @@ const SERVICE_COLORS: Record<string, string> = {
   wildlife: 'bg-amber-500/15 text-amber-400',
 };
 
-function formatDate(iso: string | null): string {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
 export default function PestControlPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { logs, loading: logsLoading } = useTreatmentLogs();
   const { stations } = useBaitStations();
   const { reports } = useWdiReports();
@@ -168,7 +163,7 @@ export default function PestControlPage() {
                   </div>
                   <div className="text-right">
                     <p className={`text-xs font-semibold capitalize ${color}`}>{s.activity_level}</p>
-                    <p className="text-[10px] text-zinc-600">Serviced: {formatDate(s.last_serviced_at)}</p>
+                    <p className="text-[10px] text-zinc-600">Serviced: {s.last_serviced_at ? formatDate(s.last_serviced_at) : '—'}</p>
                   </div>
                 </div>
               );
@@ -197,7 +192,7 @@ export default function PestControlPage() {
                       {r.report_status.charAt(0).toUpperCase() + r.report_status.slice(1)}
                     </span>
                   </div>
-                  <span className="text-xs text-zinc-500">{formatDate(r.inspection_date)}</span>
+                  <span className="text-xs text-zinc-500">{r.inspection_date ? formatDate(r.inspection_date) : '—'}</span>
                 </div>
                 <p className="text-sm text-white font-medium">
                   {r.property_address ?? 'Address pending'} • {r.inspector_name ?? 'Inspector TBD'}

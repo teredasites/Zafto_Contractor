@@ -51,7 +51,7 @@ function getDefaultDateRange(): { start: string; end: string } {
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  n.toLocaleString();
 
 export default function BranchFinancialsPage() {
   const { t } = useTranslation();

@@ -240,13 +240,7 @@ function PeriodRow({
       {/* Closed At */}
       <td className="px-4 py-3">
         <span className="text-xs text-muted tabular-nums">
-          {period.closedAt ? new Date(period.closedAt).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-          }) : '--'}
+          {period.closedAt ? new Date(period.closedAt).toLocaleDateString() : '--'}
         </span>
       </td>
 
@@ -292,7 +286,7 @@ function PeriodRow({
 // Main Page
 // -------------------------------------------------------------------
 export default function FiscalPeriodsPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
   const {
     periods,
@@ -753,13 +747,7 @@ export default function FiscalPeriodsPage() {
                       <tr key={entry.id} className="border-b border-default last:border-b-0">
                         <td className="px-6 py-3">
                           <span className="text-xs text-muted tabular-nums">
-                            {new Date(entry.createdAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit',
-                            })}
+                            {formatDate(entry.createdAt)}
                           </span>
                         </td>
                         <td className="px-4 py-3">

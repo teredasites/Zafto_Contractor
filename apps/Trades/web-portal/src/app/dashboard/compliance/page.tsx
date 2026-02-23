@@ -83,7 +83,7 @@ function certStatusVariant(status: string): 'success' | 'error' | 'warning' | 's
 }
 
 export default function CompliancePage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { certifications, summary, loading, error } = useCompliance();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -273,7 +273,7 @@ export default function CompliancePage() {
                         {cert.expiration_date && (
                           <div className="flex items-center gap-1.5 text-zinc-400">
                             <Calendar className="h-3 w-3" />
-                            <span>Exp: {new Date(cert.expiration_date).toLocaleDateString()}</span>
+                            <span>Exp: {formatDate(cert.expiration_date)}</span>
                           </div>
                         )}
                         {cert.coverage_amount != null && cert.coverage_amount > 0 && (

@@ -49,7 +49,7 @@ interface Certification {
 }
 
 export default function CompliancePacketsPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const [packets, setPackets] = useState<CompliancePacket[]>([]);
   const [certs, setCerts] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -202,7 +202,7 @@ export default function CompliancePacketsPage() {
                       </div>
                       {cert.expiration_date && (
                         <span className="text-xs text-zinc-500">
-                          Exp: {new Date(cert.expiration_date).toLocaleDateString()}
+                          Exp: {formatDate(cert.expiration_date)}
                         </span>
                       )}
                     </div>
@@ -259,10 +259,10 @@ export default function CompliancePacketsPage() {
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
                           <span>{packetCerts.length} certification{packetCerts.length !== 1 ? 's' : ''}</span>
-                          <span>Created {new Date(packet.created_at).toLocaleDateString()}</span>
+                          <span>Created {formatDate(packet.created_at)}</span>
                           {packet.shared_at && (
                             <span className="text-blue-400">
-                              Shared {new Date(packet.shared_at).toLocaleDateString()}
+                              Shared {formatDate(packet.shared_at)}
                             </span>
                           )}
                         </div>

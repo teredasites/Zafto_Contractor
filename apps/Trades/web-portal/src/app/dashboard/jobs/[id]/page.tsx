@@ -54,7 +54,7 @@ import { useTranslation } from '@/lib/translations';
 type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
 
 export default function JobDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const jobId = params.id as string;
@@ -1470,7 +1470,7 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
           <div className="text-sm">
             <div className="flex justify-between">
               <span className="text-muted">Imagery Date</span>
-              <span className="text-main">{new Date(scan.imageryDate).toLocaleDateString()}</span>
+              <span className="text-main">{formatDate(scan.imageryDate)}</span>
             </div>
             {scan.imagerySource && (
               <div className="flex justify-between mt-1">

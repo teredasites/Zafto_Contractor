@@ -63,7 +63,7 @@ const SLA_BG: Record<string, string> = {
 // ==================== PAGE COMPONENT ====================
 
 export default function TpaAssignmentDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const assignmentId = params.id as string;
@@ -299,7 +299,7 @@ export default function TpaAssignmentDetailPage() {
                   {assignment.lossDate && (
                     <div>
                       <p className="text-xs text-muted uppercase tracking-wide">Date of Loss</p>
-                      <p className="text-sm text-main mt-0.5">{new Date(assignment.lossDate).toLocaleDateString()}</p>
+                      <p className="text-sm text-main mt-0.5">{formatDate(assignment.lossDate)}</p>
                     </div>
                   )}
                 </div>
