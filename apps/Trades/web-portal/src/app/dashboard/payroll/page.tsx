@@ -25,6 +25,7 @@ import {
   type PayStub,
   type PeriodStatus,
 } from '@/lib/hooks/use-payroll';
+import { useTranslation } from '@/lib/translations';
 
 // ────────────────────────────────────────────────────────
 // Status config
@@ -50,6 +51,7 @@ const periodTypeLabels: Record<string, string> = {
 // ────────────────────────────────────────────────────────
 
 export default function PayrollPage() {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedPeriod, setExpandedPeriod] = useState<string | null>(null);
   const [periodStubs, setPeriodStubs] = useState<Record<string, PayStub[]>>({});
@@ -133,7 +135,7 @@ export default function PayrollPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Payroll</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('payroll.title')}</h1>
           <p className="text-muted mt-1">Manage pay periods, stubs, and tax reporting</p>
         </div>
         <Button><Plus size={16} />New Pay Period</Button>
@@ -232,7 +234,7 @@ export default function PayrollPage() {
           {filteredPeriods.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <FileText size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No pay periods found</p>
+              <p>{t('payroll.noRecords')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">

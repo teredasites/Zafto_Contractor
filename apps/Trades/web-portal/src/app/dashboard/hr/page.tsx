@@ -41,6 +41,7 @@ import {
   type ReviewType,
   type ReviewStatus,
 } from '@/lib/hooks/use-hr';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== CONFIG ====================
 
@@ -105,6 +106,7 @@ const employmentTypeLabels: Record<string, string> = {
 // ==================== MAIN PAGE ====================
 
 export default function HRPage() {
+  const { t } = useTranslation();
   const {
     employees,
     onboardingChecklists,
@@ -148,7 +150,7 @@ export default function HRPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">HR Suite</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('hr.title')}</h1>
           <p className="text-muted mt-1">Employee management, onboarding, training, and performance reviews</p>
         </div>
       </div>
@@ -316,7 +318,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
         {filtered.length === 0 && (
           <div className="p-12 text-center">
             <Users size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No employees found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('hr.noRecords')}</h3>
             <p className="text-muted mb-4">Add employee records to manage your workforce.</p>
             <Button onClick={() => setShowNewModal(true)}><UserPlus size={16} />Add Employee</Button>
           </div>

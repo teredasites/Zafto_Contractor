@@ -38,6 +38,7 @@ import {
   type DocumentFolder,
   type DocumentData,
 } from '@/lib/hooks/use-documents';
+import { useTranslation } from '@/lib/translations';
 
 const typeFilterOptions = [
   { value: 'all', label: 'All Types' },
@@ -107,6 +108,7 @@ function buildFolderTree(folders: DocumentFolder[]): (DocumentFolder & { childre
 }
 
 export default function DocumentsPage() {
+  const { t } = useTranslation();
   const {
     documents,
     folders,
@@ -166,7 +168,7 @@ export default function DocumentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Documents</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('documents.title')}</h1>
           <p className="text-muted mt-1">Manage files, contracts, and attachments</p>
         </div>
         <Button onClick={() => setShowUploadModal(true)}>
@@ -324,7 +326,7 @@ export default function DocumentsPage() {
             <Card>
               <CardContent className="py-12 text-center">
                 <FileText size={40} className="mx-auto mb-2 opacity-50 text-muted" />
-                <p className="text-muted">No documents found</p>
+                <p className="text-muted">{t('documents.noRecords')}</p>
                 <Button variant="secondary" className="mt-4" onClick={() => setShowUploadModal(true)}>
                   <Upload size={16} />
                   Upload First Document

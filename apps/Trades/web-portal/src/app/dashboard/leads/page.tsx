@@ -18,6 +18,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, formatRelativeTime, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useLeads } from '@/lib/hooks/use-leads';
 import type { LeadData } from '@/lib/hooks/mappers';
 
@@ -45,6 +46,7 @@ const sourceLabels: Record<string, string> = {
 };
 
 export default function LeadsPage() {
+  const { t } = useTranslation();
   const { leads, loading, error, createLead, updateLeadStage } = useLeads();
   const [search, setSearch] = useState('');
   const [sourceFilter, setSourceFilter] = useState('all');
@@ -123,7 +125,7 @@ export default function LeadsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Lead Pipeline</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('leads.title')}</h1>
           <p className="text-muted mt-1">Track and manage your sales opportunities</p>
         </div>
         <div className="flex items-center gap-3">
@@ -290,7 +292,7 @@ export default function LeadsPage() {
               <tbody>
                 {filteredLeads.length === 0 && (
                   <tr><td colSpan={7} className="px-6 py-16 text-center">
-                    <p className="text-sm font-medium text-main">No leads found</p>
+                    <p className="text-sm font-medium text-main">{t('leads.noRecords')}</p>
                     <p className="text-xs text-muted mt-1">Add your first lead or adjust your filters</p>
                   </td></tr>
                 )}
