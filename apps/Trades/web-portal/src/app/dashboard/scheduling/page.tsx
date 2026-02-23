@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
 } from 'lucide-react';
 import { useScheduleProjects } from '@/lib/hooks/use-schedule';
+import { useTranslation } from '@/lib/translations';
 import type { ScheduleProject, ScheduleProjectStatus } from '@/lib/types/scheduling';
 
 const STATUS_CONFIG: Record<ScheduleProjectStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
@@ -28,6 +29,7 @@ const STATUS_CONFIG: Record<ScheduleProjectStatus, { label: string; color: strin
 
 export default function SchedulingPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showNewModal, setShowNewModal] = useState(false);
@@ -83,8 +85,8 @@ export default function SchedulingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">Scheduling</h1>
-          <p className="text-sm text-secondary mt-1">Gantt charts, CPM, and resource management</p>
+          <h1 className="text-xl font-semibold text-primary">{t('scheduling.title')}</h1>
+          <p className="text-sm text-secondary mt-1">{t('scheduling.manageDesc')}</p>
         </div>
         <div className="flex items-center gap-2">
           {projects.length >= 2 && (
@@ -101,17 +103,17 @@ export default function SchedulingPage() {
             className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg hover:bg-accent/90 text-sm font-medium transition-colors"
           >
             <Plus className="w-4 h-4" />
-            New Schedule
+            {t('scheduling.newSchedule')}
           </button>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard label="Total Schedules" value={stats.total} />
-        <StatCard label="Active" value={stats.active} color="text-success" />
-        <StatCard label="On Track" value={stats.onTrack} color="text-info" />
-        <StatCard label="Completed" value={stats.complete} color="text-accent" />
+        <StatCard label={t('scheduling.totalSchedules')} value={stats.total} />
+        <StatCard label={t('common.active')} value={stats.active} color="text-success" />
+        <StatCard label={t('scheduling.onTrack')} value={stats.onTrack} color="text-info" />
+        <StatCard label={t('common.completed')} value={stats.complete} color="text-accent" />
       </div>
 
       {/* Filters */}
@@ -120,7 +122,7 @@ export default function SchedulingPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
           <input
             type="text"
-            placeholder="Search schedules..."
+            placeholder={t('scheduling.searchSchedules')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-surface border border-main rounded-lg text-sm text-primary placeholder:text-quaternary focus:outline-none focus:border-accent"
@@ -147,8 +149,8 @@ export default function SchedulingPage() {
           <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
             <GanttChart className="w-8 h-8 text-secondary" />
           </div>
-          <h3 className="text-lg font-semibold text-primary mb-1">No schedules yet</h3>
-          <p className="text-sm text-secondary mb-4">Create your first project schedule to get started</p>
+          <h3 className="text-lg font-semibold text-primary mb-1">{t('scheduling.noSchedules')}</h3>
+          <p className="text-sm text-secondary mb-4">{t('scheduling.noSchedulesDesc')}</p>
           <button
             onClick={() => setShowNewModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium"

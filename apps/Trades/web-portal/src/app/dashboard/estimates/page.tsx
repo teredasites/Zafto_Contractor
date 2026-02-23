@@ -12,6 +12,7 @@ import {
   useEstimates, fmtCurrency,
   type Estimate, type EstimateStatus, type EstimateType,
 } from '@/lib/hooks/use-estimates';
+import { useTranslation } from '@/lib/translations';
 
 const STATUS_CONFIG: Record<EstimateStatus, { label: string; color: string }> = {
   draft: { label: 'Draft', color: 'bg-zinc-700/50 text-zinc-400' },
@@ -24,6 +25,7 @@ const STATUS_CONFIG: Record<EstimateStatus, { label: string; color: string }> = 
 
 export default function EstimatesPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { estimates, loading, createEstimate } = useEstimates();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<EstimateStatus | 'all'>('all');
@@ -99,8 +101,8 @@ export default function EstimatesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-100">Estimates</h1>
-          <p className="text-sm text-zinc-400 mt-1">Create and manage project estimates</p>
+          <h1 className="text-2xl font-semibold text-zinc-100">{t('estimates.title')}</h1>
+          <p className="text-sm text-zinc-400 mt-1">{t('estimates.manageDesc')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -109,14 +111,14 @@ export default function EstimatesPage() {
             className="flex items-center gap-1.5 px-4 py-2 text-sm text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 transition-colors disabled:opacity-50"
           >
             {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            {importing ? 'Importing...' : 'Import .esx'}
+            {importing ? t('estimates.importing') : t('estimates.importEsx')}
           </button>
           <button
             onClick={() => setShowCreate(true)}
             className="flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-colors"
           >
             <Plus className="w-4 h-4" />
-            New Estimate
+            {t('estimates.new')}
           </button>
         </div>
       </div>
@@ -145,7 +147,7 @@ export default function EstimatesPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search by number, title, customer, or address..."
+            placeholder={t('estimates.searchEstimates')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
@@ -189,8 +191,8 @@ export default function EstimatesPage() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-zinc-500">
           <Calculator className="w-12 h-12 mx-auto mb-3 opacity-50" />
-          <p className="text-lg font-medium">No estimates yet</p>
-          <p className="text-sm mt-1">Create your first estimate to get started</p>
+          <p className="text-lg font-medium">{t('estimates.noEstimates')}</p>
+          <p className="text-sm mt-1">{t('estimates.noEstimatesDesc')}</p>
         </div>
       ) : (
         <div className="space-y-2">

@@ -23,12 +23,14 @@ import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, getStatusLabel, cn } from '@/lib/utils';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
+import { useTranslation } from '@/lib/translations';
 import { useStats } from '@/lib/hooks/use-stats';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 import type { Job, JobType, TeamMember } from '@/types';
 
 export default function JobsPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -103,12 +105,12 @@ export default function JobsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Jobs</h1>
-          <p className="text-muted mt-1">Manage your jobs and track progress</p>
+          <h1 className="text-2xl font-semibold text-main">{t('jobs.title')}</h1>
+          <p className="text-muted mt-1">{t('jobs.manageDesc')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/jobs/new')}>
           <Plus size={16} />
-          New Job
+          {t('jobs.newJob')}
         </Button>
       </div>
 
@@ -122,7 +124,7 @@ export default function JobsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.scheduled}</p>
-                <p className="text-sm text-muted">Scheduled</p>
+                <p className="text-sm text-muted">{t('jobs.statusScheduled')}</p>
               </div>
             </div>
           </CardContent>
@@ -135,7 +137,7 @@ export default function JobsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.inProgress}</p>
-                <p className="text-sm text-muted">In Progress</p>
+                <p className="text-sm text-muted">{t('jobs.statusInProgress')}</p>
               </div>
             </div>
           </CardContent>
@@ -148,7 +150,7 @@ export default function JobsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.completed}</p>
-                <p className="text-sm text-muted">Completed</p>
+                <p className="text-sm text-muted">{t('jobs.statusComplete')}</p>
               </div>
             </div>
           </CardContent>
@@ -161,7 +163,7 @@ export default function JobsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.completedThisMonth}</p>
-                <p className="text-sm text-muted">This Month</p>
+                <p className="text-sm text-muted">{t('jobs.thisMonth')}</p>
               </div>
             </div>
           </CardContent>
@@ -173,7 +175,7 @@ export default function JobsPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search jobs..."
+          placeholder={t('jobs.searchJobs')}
           className="sm:w-80"
         />
         <Select
@@ -238,7 +240,7 @@ export default function JobsPage() {
                 : 'text-muted hover:text-main'
             )}
           >
-            List
+            {t('jobs.viewList')}
           </button>
           <button
             onClick={() => setView('board')}
@@ -249,7 +251,7 @@ export default function JobsPage() {
                 : 'text-muted hover:text-main'
             )}
           >
-            Board
+            {t('jobs.viewBoard')}
           </button>
         </div>
       </div>
@@ -261,7 +263,7 @@ export default function JobsPage() {
             {filteredJobs.length === 0 ? (
               <div className="py-12 text-center text-muted">
                 <Briefcase size={40} className="mx-auto mb-2 opacity-50" />
-                <p>No jobs found</p>
+                <p>{t('jobs.noJobs')}</p>
               </div>
             ) : (
               <div className="divide-y divide-main">

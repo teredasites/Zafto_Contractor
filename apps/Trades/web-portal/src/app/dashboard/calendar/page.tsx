@@ -17,6 +17,7 @@ import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatTime, cn } from '@/lib/utils';
 import { useSchedule, useTeam } from '@/lib/hooks/use-jobs';
+import { useTranslation } from '@/lib/translations';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
@@ -26,6 +27,7 @@ const MONTHS = [
 
 export default function CalendarPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { schedule } = useSchedule();
   const { team } = useTeam();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -84,12 +86,12 @@ export default function CalendarPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Calendar</h1>
-          <p className="text-muted mt-1">View and manage your schedule</p>
+          <h1 className="text-2xl font-semibold text-main">{t('calendar.title')}</h1>
+          <p className="text-muted mt-1">{t('calendar.manageDesc')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/jobs/new')}>
           <Plus size={16} />
-          New Job
+          {t('jobs.newJob')}
         </Button>
       </div>
 
@@ -100,7 +102,7 @@ export default function CalendarPage() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <div className="flex items-center gap-4">
                 <Button variant="secondary" size="sm" onClick={goToToday}>
-                  Today
+                  {t('scheduling.today')}
                 </Button>
                 <div className="flex items-center gap-1">
                   <button
@@ -130,7 +132,7 @@ export default function CalendarPage() {
                       : 'text-muted hover:text-main'
                   )}
                 >
-                  Month
+                  {t('scheduling.month')}
                 </button>
                 <button
                   onClick={() => setView('week')}
@@ -141,7 +143,7 @@ export default function CalendarPage() {
                       : 'text-muted hover:text-main'
                   )}
                 >
-                  Week
+                  {t('scheduling.week')}
                 </button>
               </div>
             </CardHeader>
@@ -220,7 +222,7 @@ export default function CalendarPage() {
                     })}
                   </span>
                 ) : (
-                  'Select a day'
+                  t('calendar.selectDay')
                 )}
               </CardTitle>
             </CardHeader>
@@ -228,7 +230,7 @@ export default function CalendarPage() {
               {selectedDateEvents.length === 0 ? (
                 <div className="px-6 py-8 text-center text-muted">
                   <CalendarIcon size={40} className="mx-auto mb-2 opacity-50" />
-                  <p>No events scheduled</p>
+                  <p>{t('calendar.noEvents')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-main">
@@ -274,24 +276,24 @@ export default function CalendarPage() {
           {/* Quick Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>This Week</CardTitle>
+              <CardTitle>{t('calendar.thisWeek')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Scheduled Jobs</span>
+                  <span className="text-sm text-muted">{t('calendar.scheduledJobs')}</span>
                   <span className="font-semibold text-main">
                     {schedule.filter((e) => e.type === 'job').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Appointments</span>
+                  <span className="text-sm text-muted">{t('calendar.appointments')}</span>
                   <span className="font-semibold text-main">
                     {schedule.filter((e) => e.type === 'appointment').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Team Members</span>
+                  <span className="text-sm text-muted">{t('calendar.teamMembers')}</span>
                   <span className="font-semibold text-main">
                     {team.filter((t) => t.isActive).length} active
                   </span>
