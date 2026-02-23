@@ -35,6 +35,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useAutomations, type AutomationData } from '@/lib/hooks/use-automations';
 
 type AutomationStatus = 'active' | 'paused' | 'draft';
@@ -120,6 +121,7 @@ function toAutomation(d: AutomationData): Automation {
 }
 
 export default function AutomationsPage() {
+  const { t } = useTranslation();
   const { automations: rawAutomations, loading, createAutomation, updateAutomation, deleteAutomation, toggleAutomation } = useAutomations();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -171,7 +173,7 @@ export default function AutomationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Automations</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('automations.title')}</h1>
           <p className="text-muted mt-1">Automate repetitive tasks with trigger-based workflows</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>
@@ -338,7 +340,7 @@ export default function AutomationsPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <Zap size={48} className="mx-auto text-muted mb-4" />
-              <h3 className="text-lg font-medium text-main mb-2">No automations found</h3>
+              <h3 className="text-lg font-medium text-main mb-2">{t('automations.noRecords')}</h3>
               <p className="text-muted mb-4">Create workflow automations to save time on repetitive tasks.</p>
               <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Automation</Button>
             </CardContent>

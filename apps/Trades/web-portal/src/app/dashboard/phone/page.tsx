@@ -25,6 +25,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { usePhone } from '@/lib/hooks/use-phone';
 import type { CallRecord, Voicemail as VoicemailType } from '@/lib/hooks/use-phone';
+import { useTranslation } from '@/lib/translations';
 import { formatRelativeTime, cn } from '@/lib/utils';
 
 type Tab = 'calls' | 'voicemail';
@@ -144,6 +145,7 @@ function VoicemailRow({ vm, onMarkRead }: { vm: VoicemailType; onMarkRead: (id: 
 }
 
 export default function PhonePage() {
+  const { t } = useTranslation();
   const { calls, voicemails, lines, loading, error, markVoicemailRead } = usePhone();
   const [tab, setTab] = useState<Tab>('calls');
   const [search, setSearch] = useState('');
@@ -186,7 +188,7 @@ export default function PhonePage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">Calls</h1>
+            <h1 className="text-2xl font-bold text-zinc-100">{t('phone.title')}</h1>
             <p className="text-sm text-zinc-500 mt-1">{lines.length} active lines</p>
           </div>
         </div>

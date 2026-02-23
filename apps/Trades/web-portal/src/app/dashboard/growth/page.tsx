@@ -31,6 +31,7 @@ import { formatCurrency, cn } from '@/lib/utils';
 import {
   useGrowthActions,
 } from '@/lib/hooks/use-growth-actions';
+import { useTranslation } from '@/lib/translations';
 import type {
   GrowthAction,
   ActionType,
@@ -52,6 +53,7 @@ const priorityConfig: Record<string, { label: string; variant: 'error' | 'warnin
 };
 
 export default function GrowthPage() {
+  const { t } = useTranslation();
   const { actions, summary, totalValue, loading, error, fetchActions, refresh } = useGrowthActions();
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [selectedAction, setSelectedAction] = useState<GrowthAction | null>(null);
@@ -92,7 +94,7 @@ export default function GrowthPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-main">Revenue Autopilot</h1>
+                <h1 className="text-lg font-semibold text-main">{t('growth.title')}</h1>
                 <Badge variant="purple" size="sm">Powered by Z</Badge>
               </div>
               <p className="text-sm text-muted">AI-suggested actions to grow your revenue</p>

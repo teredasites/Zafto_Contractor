@@ -34,6 +34,7 @@ import {
   type MarketplaceLead,
   type MarketplaceBid,
 } from '@/lib/hooks/use-marketplace';
+import { useTranslation } from '@/lib/translations';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -104,6 +105,7 @@ const statusFilterOptions = [
 // ---------------------------------------------------------------------------
 
 export default function MarketplacePage() {
+  const { t } = useTranslation();
   const {
     leads,
     bids,
@@ -142,7 +144,7 @@ export default function MarketplacePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Marketplace</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('marketplace.title')}</h1>
           <p className="text-muted mt-1">Find leads, place bids, and grow your business</p>
         </div>
       </div>
