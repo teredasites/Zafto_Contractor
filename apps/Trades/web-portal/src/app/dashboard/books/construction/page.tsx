@@ -423,6 +423,7 @@ function BillingTab({
   onSubmit: (id: string) => Promise<void>;
   onApprove: (id: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -459,13 +460,13 @@ function BillingTab({
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
             <div className="col-span-1">App #</div>
             <div className="col-span-2">Job</div>
-            <div className="col-span-2">Period</div>
+            <div className="col-span-2">{t('common.period')}</div>
             <div className="col-span-2 text-right">Contract</div>
-            <div className="col-span-1 text-right">Completed</div>
+            <div className="col-span-1 text-right">{t('common.completed')}</div>
             <div className="col-span-1 text-right">Retainage</div>
             <div className="col-span-1 text-right">Payment Due</div>
-            <div className="col-span-1 text-center">Status</div>
-            <div className="col-span-1 text-right">Actions</div>
+            <div className="col-span-1 text-center">{t('common.status')}</div>
+            <div className="col-span-1 text-right">{t('common.actions')}</div>
           </div>
           <div className="divide-y divide-main">
             {billings.length === 0 ? (
@@ -543,14 +544,14 @@ function BillingTab({
                             <thead>
                               <tr className="border-b border-main">
                                 <th className="text-left py-2 px-2 text-muted font-medium">Item</th>
-                                <th className="text-left py-2 px-2 text-muted font-medium">Description</th>
+                                <th className="text-left py-2 px-2 text-muted font-medium">{t('common.description')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">Scheduled</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">Prev.</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">This Period</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">Materials</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">Total</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('common.total')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">%</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">Balance</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('common.balance')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">Retainage</th>
                               </tr>
                             </thead>
@@ -606,6 +607,7 @@ function RetentionTab({
   onNew: () => void;
   onRelease: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -640,13 +642,13 @@ function RetentionTab({
         <CardContent className="p-0">
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
             <div className="col-span-2">Job</div>
-            <div className="col-span-1 text-right">Rate</div>
+            <div className="col-span-1 text-right">{t('common.rate')}</div>
             <div className="col-span-2 text-right">Total Billed</div>
             <div className="col-span-2 text-right">Total Retained</div>
             <div className="col-span-1 text-right">Released</div>
-            <div className="col-span-1 text-right">Balance</div>
-            <div className="col-span-1 text-center">Status</div>
-            <div className="col-span-2 text-right">Actions</div>
+            <div className="col-span-1 text-right">{t('common.balance')}</div>
+            <div className="col-span-1 text-center">{t('common.status')}</div>
+            <div className="col-span-2 text-right">{t('common.actions')}</div>
           </div>
           <div className="divide-y divide-main">
             {records.length === 0 ? (
@@ -702,6 +704,7 @@ function WIPTab({
   loading: boolean;
   onRefresh: () => void;
 }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -744,7 +747,7 @@ function WIPTab({
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Billings to Date</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Estimated Gross</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Over/Under</th>
-                <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Status</th>
+                <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">
@@ -781,7 +784,7 @@ function WIPTab({
                   })}
                   {/* Total row */}
                   <tr className="bg-secondary/50 font-semibold">
-                    <td className="px-6 py-3 text-main">Total</td>
+                    <td className="px-6 py-3 text-main">{t('common.total')}</td>
                     <td className="px-4 py-3 text-right text-main tabular-nums">{formatCurrency(totalCosts)}</td>
                     <td className="px-4 py-3 text-right text-main tabular-nums">{formatCurrency(totalBillings)}</td>
                     <td className="px-4 py-3 text-right text-main tabular-nums">{formatCurrency(totalEstimated)}</td>
@@ -830,6 +833,7 @@ function PayrollTab({
   loading: boolean;
   onFetch: () => void;
 }) {
+  const { t } = useTranslation();
   const totalRegHours = data.reduce((s, r) => s + r.regularHours, 0);
   const totalOTHours = data.reduce((s, r) => s + r.overtimeHours, 0);
   const totalGross = data.reduce((s, r) => s + r.grossPay, 0);
@@ -901,7 +905,7 @@ function PayrollTab({
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Classification</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">ST Hours</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">OT Hours</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Rate</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.rate')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Gross Pay</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Deductions</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Net Pay</th>
@@ -934,7 +938,7 @@ function PayrollTab({
                     })}
                     {/* Total row */}
                     <tr className="bg-secondary/50 font-semibold">
-                      <td className="px-6 py-3 text-main">Total</td>
+                      <td className="px-6 py-3 text-main">{t('common.total')}</td>
                       <td className="px-4 py-3" />
                       <td className="px-4 py-3 text-right text-main tabular-nums">{totalRegHours.toFixed(1)}</td>
                       <td className="px-4 py-3 text-right text-main tabular-nums">{totalOTHours.toFixed(1)}</td>
@@ -978,6 +982,7 @@ function NewBillingModal({
   }) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [jobId, setJobId] = useState('');
@@ -1153,14 +1158,14 @@ function NewBillingModal({
                 <thead>
                   <tr className="bg-secondary/50 border-b border-main">
                     <th className="text-left px-2 py-2 text-muted font-medium w-14">Item</th>
-                    <th className="text-left px-2 py-2 text-muted font-medium min-w-[140px]">Description</th>
+                    <th className="text-left px-2 py-2 text-muted font-medium min-w-[140px]">{t('common.description')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">Scheduled</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">Prev. Done</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">This Period</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">Materials</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">Total</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.total')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-14">%</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">Balance</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.balance')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">Retainage</th>
                     <th className="w-8" />
                   </tr>
@@ -1279,7 +1284,7 @@ function NewBillingModal({
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" onClick={onClose}>{t('common.cancel')}</Button>
             <Button variant="secondary" onClick={() => handleSubmit('draft')} disabled={saving}>
               {saving ? 'Saving...' : 'Save as Draft'}
             </Button>
@@ -1307,6 +1312,7 @@ function NewRetentionModal({
   onSave: (jobId: string, rate: number, conditions?: string) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [jobId, setJobId] = useState('');
@@ -1376,7 +1382,7 @@ function NewRetentionModal({
           </div>
           {err && <p className="text-sm text-red-600">{err}</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="secondary" onClick={onClose}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Create Record'}</Button>
           </div>
         </form>

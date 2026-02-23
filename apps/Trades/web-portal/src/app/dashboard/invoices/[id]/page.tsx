@@ -552,6 +552,7 @@ export default function InvoiceDetailPage() {
 }
 
 function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: () => void }) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState(invoice.amountDue.toString());
   const [method, setMethod] = useState('card');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -585,7 +586,7 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Amount</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.amount')}</label>
                 <div className="relative">
                   <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                   <input
@@ -615,7 +616,7 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Date</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.date')}</label>
                 <input
                   type="date"
                   value={date}

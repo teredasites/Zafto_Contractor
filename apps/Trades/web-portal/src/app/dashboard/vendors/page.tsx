@@ -90,6 +90,7 @@ export default function VendorsPage() {
 // ============================================================
 
 function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch: (v: string) => void }) {
+  const { t } = useTranslation();
   const { vendors, activeVendors, loading, error, createVendor } = useProcurement();
   const [typeFilter, setTypeFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
@@ -158,7 +159,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activeVendors.length}</p>
-                <p className="text-sm text-muted">Active</p>
+                <p className="text-sm text-muted">{t('common.active')}</p>
               </div>
             </div>
           </CardContent>
@@ -230,12 +231,12 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
               <thead>
                 <tr className="border-b border-main">
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Supplier</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Contact</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Categories</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Terms</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Rating</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -334,6 +335,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
 // ============================================================
 
 function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch: (v: string) => void }) {
+  const { t } = useTranslation();
   const { vendors, loading, error } = useVendors();
   const [typeFilter, setTypeFilter] = useState('all');
 
@@ -451,13 +453,13 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
             <table className="w-full">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Vendor</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Contact</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.vendor')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Terms</th>
                   <th className="text-right text-sm font-medium text-muted px-6 py-3">YTD Payments</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">1099</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 </tr>
               </thead>
               <tbody>

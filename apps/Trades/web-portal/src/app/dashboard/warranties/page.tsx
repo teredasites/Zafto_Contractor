@@ -340,6 +340,7 @@ export default function WarrantiesPage() {
 }
 
 function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClose: () => void }) {
+  const { t } = useTranslation();
   const sConfig = statusConfig[warranty.status];
   const tConfig = typeConfig[warranty.type];
   const daysRemaining = getDaysRemaining(warranty.endDate);
@@ -363,7 +364,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Customer</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.customer')}</p>
                 <p className="font-medium text-main">{warranty.customerName}</p>
               </div>
               <div>
@@ -379,11 +380,11 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
             </div>
             <div className="space-y-3">
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Start Date</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.startDate')}</p>
                 <p className="font-medium text-main">{formatDate(warranty.startDate)}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">End Date</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.endDate')}</p>
                 <p className="font-medium text-main">{formatDate(warranty.endDate)}</p>
               </div>
               {warranty.partsDuration && (
@@ -397,7 +398,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
 
           {warranty.equipmentName && (
             <div className="p-4 bg-secondary rounded-lg">
-              <p className="text-xs text-muted uppercase tracking-wider mb-2">Equipment</p>
+              <p className="text-xs text-muted uppercase tracking-wider mb-2">{t('common.equipment')}</p>
               <p className="font-medium text-main">{warranty.equipmentName}</p>
               <div className="flex items-center gap-4 mt-1 text-sm text-muted">
                 {warranty.manufacturer && <span>Mfr: {warranty.manufacturer}</span>}
@@ -409,7 +410,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
 
           {warranty.notes && (
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider mb-1">Notes</p>
+              <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.notes')}</p>
               <p className="text-sm text-main">{warranty.notes}</p>
             </div>
           )}
@@ -439,7 +440,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
           )}
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Close</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             <Button className="flex-1"><FileText size={16} />File Claim</Button>
           </div>
         </CardContent>
@@ -640,6 +641,7 @@ function DispatchInbox() {
 }
 
 function NewWarrantyModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -681,11 +683,11 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Start Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.startDate')}</label>
               <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">End Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.endDate')}</label>
               <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
             </div>
           </div>
@@ -714,11 +716,11 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea rows={3} placeholder="Coverage details, exclusions, etc." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Add Warranty</Button>
           </div>
         </CardContent>

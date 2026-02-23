@@ -314,6 +314,7 @@ function PORow({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   const config = statusConfig[po.status] || statusConfig.draft;
   const isOverdue =
     po.expectedDeliveryDate &&
@@ -390,11 +391,11 @@ function PORow({
                 <thead>
                   <tr className="text-left text-sm text-muted border-b border-main">
                     <th className="pb-2 font-medium">Item</th>
-                    <th className="pb-2 font-medium text-right">Qty</th>
+                    <th className="pb-2 font-medium text-right">{t('common.qty')}</th>
                     <th className="pb-2 font-medium text-right">Received</th>
                     <th className="pb-2 font-medium text-right">Unit Price</th>
-                    <th className="pb-2 font-medium text-right">Total</th>
-                    <th className="pb-2 font-medium">Status</th>
+                    <th className="pb-2 font-medium text-right">{t('common.total')}</th>
+                    <th className="pb-2 font-medium">{t('common.status')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -484,11 +485,11 @@ function PORow({
               </div>
               <div className="w-48 space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted">Subtotal</span>
+                  <span className="text-muted">{t('common.subtotal')}</span>
                   <span className="text-main">{formatCurrency(po.subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted">Tax</span>
+                  <span className="text-muted">{t('common.tax')}</span>
                   <span className="text-main">{formatCurrency(po.taxAmount)}</span>
                 </div>
                 {po.shippingAmount > 0 && (
@@ -498,7 +499,7 @@ function PORow({
                   </div>
                 )}
                 <div className="flex justify-between font-semibold pt-1 border-t border-main">
-                  <span>Total</span>
+                  <span>{t('common.total')}</span>
                   <span>{formatCurrency(po.totalAmount)}</span>
                 </div>
               </div>

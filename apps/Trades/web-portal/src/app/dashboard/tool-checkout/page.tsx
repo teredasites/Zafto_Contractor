@@ -440,6 +440,7 @@ function CheckoutList({ checkouts, items, onCheckin, overdue }: {
 // ════════════════════════════════════════════════════════════════
 
 function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [category, setCategory] = useState<EquipmentCategory>('hand_tool');
   const [serialNumber, setSerialNumber] = useState('');
@@ -546,7 +547,7 @@ function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -559,7 +560,7 @@ function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
             {error && <p className="text-sm text-red-500">{error}</p>}
 
             <div className="flex items-center gap-3 pt-2">
-              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
               <Button type="submit" className="flex-1" disabled={saving || !name.trim()}>
                 {saving ? 'Adding...' : <><Plus size={16} /> Add Tool</>}
               </Button>
@@ -578,6 +579,7 @@ function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
 function CheckoutModal({ item, onClose, onSuccess }: {
   item: EquipmentItemData; onClose: () => void; onSuccess: () => void;
 }) {
+  const { t } = useTranslation();
   const [condition, setCondition] = useState<EquipmentCondition>(item.condition);
   const [expectedReturn, setExpectedReturn] = useState('');
   const [notes, setNotes] = useState('');
@@ -655,7 +657,7 @@ function CheckoutModal({ item, onClose, onSuccess }: {
             />
 
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -668,7 +670,7 @@ function CheckoutModal({ item, onClose, onSuccess }: {
             {error && <p className="text-sm text-red-500">{error}</p>}
 
             <div className="flex items-center gap-3 pt-2">
-              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
               <Button type="submit" className="flex-1" disabled={saving}>
                 {saving ? 'Checking out...' : <><ArrowRightLeft size={16} /> Checkout</>}
               </Button>
@@ -687,6 +689,7 @@ function CheckoutModal({ item, onClose, onSuccess }: {
 function CheckinModal({ checkout, onClose, onSuccess }: {
   checkout: EquipmentCheckoutData; onClose: () => void; onSuccess: () => void;
 }) {
+  const { t } = useTranslation();
   const [condition, setCondition] = useState<EquipmentCondition>('good');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
@@ -779,7 +782,7 @@ function CheckinModal({ checkout, onClose, onSuccess }: {
             {error && <p className="text-sm text-red-500">{error}</p>}
 
             <div className="flex items-center gap-3 pt-2">
-              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
               <Button type="submit" className="flex-1" disabled={saving}>
                 {saving ? 'Returning...' : <><RotateCcw size={16} /> Confirm Return</>}
               </Button>
@@ -801,6 +804,7 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
   onClose: () => void;
   onCheckout: () => void;
 }) {
+  const { t } = useTranslation();
   const itemCheckouts = checkouts.filter((co) => co.equipmentItemId === item.id);
   const isOut = !!item.currentHolderId;
 
@@ -886,7 +890,7 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
 
           {item.notes && (
             <div>
-              <p className="text-sm text-muted mb-1">Notes</p>
+              <p className="text-sm text-muted mb-1">{t('common.notes')}</p>
               <p className="text-main">{item.notes}</p>
             </div>
           )}
@@ -917,7 +921,7 @@ function ToolDetailModal({ item, checkouts, onClose, onCheckout }: {
                 <ArrowRightLeft size={16} /> Checkout
               </Button>
             )}
-            <Button variant="ghost" onClick={onClose}>Close</Button>
+            <Button variant="ghost" onClick={onClose}>{t('common.close')}</Button>
           </div>
         </CardContent>
       </Card>

@@ -271,6 +271,7 @@ function VendorModal({ vendor, onSave, onClose }: {
   onSave: (data: Record<string, unknown>) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const isEdit = !!vendor;
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -329,7 +330,7 @@ function VendorModal({ vendor, onSave, onClose }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Type</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.type')}</label>
               <select value={vendorType} onChange={(e) => setVendorType(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
                 {VENDOR_TYPES.map((t) => <option key={t} value={t}>{VENDOR_TYPE_LABELS[t]}</option>)}
               </select>
@@ -347,7 +348,7 @@ function VendorModal({ vendor, onSave, onClose }: {
               <Input value={contactName} onChange={(e) => setContactName(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Phone</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.phone')}</label>
               <Input type="tel" placeholder="(555) 123-4567" value={phone} onChange={(e) => {
                 const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
                 const formatted = digits.length > 6 ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}` : digits.length > 3 ? `(${digits.slice(0,3)}) ${digits.slice(3)}` : digits;
@@ -356,11 +357,11 @@ function VendorModal({ vendor, onSave, onClose }: {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Email</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.email')}</label>
             <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Address</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.address')}</label>
             <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street" />
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -380,12 +381,12 @@ function VendorModal({ vendor, onSave, onClose }: {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.notes')}</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm resize-none" />
           </div>
           {err && <p className="text-sm text-red-600">{err}</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="secondary" onClick={onClose}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vendor'}</Button>
           </div>
         </form>

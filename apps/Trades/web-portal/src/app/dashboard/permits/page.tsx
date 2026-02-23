@@ -247,6 +247,7 @@ export default function PermitsPage() {
 }
 
 function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () => void }) {
+  const { t } = useTranslation();
   const sConfig = statusConfig[permit.status];
   const tConfig = typeConfig[permit.type];
 
@@ -270,11 +271,11 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
               <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{permit.jobName}</p></div>
-              <div><p className="text-xs text-muted uppercase tracking-wider">Customer</p><p className="font-medium text-main">{permit.customerName}</p></div>
+              <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.customer')}</p><p className="font-medium text-main">{permit.customerName}</p></div>
               <div><p className="text-xs text-muted uppercase tracking-wider">Jurisdiction</p><p className="font-medium text-main">{permit.jurisdiction}</p></div>
             </div>
             <div className="space-y-3">
-              <div><p className="text-xs text-muted uppercase tracking-wider">Address</p><p className="font-medium text-main">{permit.address}</p></div>
+              <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.address')}</p><p className="font-medium text-main">{permit.address}</p></div>
               <div><p className="text-xs text-muted uppercase tracking-wider">Fee</p><p className="font-medium text-main">${permit.fee}</p></div>
               {permit.expirationDate && <div><p className="text-xs text-muted uppercase tracking-wider">Expires</p><p className="font-medium text-main">{formatDate(permit.expirationDate)}</p></div>}
             </div>
@@ -330,7 +331,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
           )}
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Close</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             <Button variant="secondary" className="flex-1"><Upload size={16} />Upload Document</Button>
             <Button className="flex-1"><ClipboardCheck size={16} />Schedule Inspection</Button>
           </div>
@@ -341,6 +342,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
 }
 
 function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: Record<string, unknown>) => Promise<string> }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ permitType: 'electrical', description: '', jurisdiction: '', address: '', fee: '', appliedDate: '', notes: '' });
   const [saving, setSaving] = useState(false);
   const update = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }));
@@ -387,11 +389,11 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea rows={3} value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Additional details, special requirements..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1" disabled={saving || !form.description || !form.jurisdiction} onClick={async () => {
               setSaving(true);
               try {

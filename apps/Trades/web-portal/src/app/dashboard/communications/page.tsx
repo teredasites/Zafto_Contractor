@@ -432,6 +432,7 @@ export default function CommunicationsPage() {
 }
 
 function ComposeModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const [type, setType] = useState<'email' | 'sms'>('email');
 
   return (
@@ -491,7 +492,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Message</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.message')}</label>
             <textarea
               rows={type === 'sms' ? 3 : 6}
               placeholder={type === 'sms' ? 'Enter message (160 chars)...' : 'Enter your message...'}
@@ -508,7 +509,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
           )}
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1">
               <Send size={16} />
               Send

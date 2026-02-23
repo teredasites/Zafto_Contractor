@@ -221,6 +221,7 @@ function ListView({
 }: {
   onOpenEditor: (planId: string) => void;
 }) {
+  const { t } = useTranslation();
   const { plans, loading, error, refetch } = useFloorPlanList();
   const { createPlan, deletePlan, duplicatePlan } = useFloorPlan(null);
   const [creating, setCreating] = useState(false);
@@ -338,7 +339,7 @@ function ListView({
                     </div>
                     <div>
                       <p className="text-lg font-bold text-amber-400 leading-none">{inProgress}</p>
-                      <p className="text-[11px] text-zinc-500 mt-0.5">In Progress</p>
+                      <p className="text-[11px] text-zinc-500 mt-0.5">{t('common.inProgress')}</p>
                     </div>
                   </div>
                 </>

@@ -364,6 +364,7 @@ function PostingsTab({
   onPublish: (id: string) => Promise<void>;
   onUpdatePosting: (id: string, data: Partial<JobPosting>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -527,7 +528,7 @@ function PostingsTab({
                   <div className="px-6 pb-4 border-t border-main pt-4 space-y-3">
                     {posting.description && (
                       <div>
-                        <h4 className="text-sm font-medium text-main mb-1">Description</h4>
+                        <h4 className="text-sm font-medium text-main mb-1">{t('common.description')}</h4>
                         <p className="text-sm text-muted whitespace-pre-wrap">{posting.description}</p>
                       </div>
                     )}
@@ -873,6 +874,7 @@ function InterviewsTab({
   setSearch: (v: string) => void;
   onUpdateInterview: (id: string, data: Partial<InterviewSchedule>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const statusOptions = [
@@ -932,7 +934,7 @@ function InterviewsTab({
       {/* Upcoming Interviews */}
       {upcoming.length > 0 && (
         <div>
-          <h3 className="text-sm font-medium text-muted mb-3 uppercase tracking-wider">Upcoming</h3>
+          <h3 className="text-sm font-medium text-muted mb-3 uppercase tracking-wider">{t('common.upcoming')}</h3>
           <Card>
             <CardContent className="p-0">
               <table className="w-full">
@@ -940,10 +942,10 @@ function InterviewsTab({
                   <tr className="border-b border-main">
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Candidate</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Position</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Date & Time</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Actions</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1018,9 +1020,9 @@ function InterviewsTab({
                   <tr className="border-b border-main">
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Candidate</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Position</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Date & Time</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Recommendation</th>
                   </tr>
                 </thead>
@@ -1089,6 +1091,7 @@ function NewPostingModal({
     positionsAvailable?: number;
   }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [department, setDepartment] = useState('');
   const [employmentType, setEmploymentType] = useState<EmploymentType>('full_time');
@@ -1167,7 +1170,7 @@ function NewPostingModal({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.description')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -1206,7 +1209,7 @@ function NewPostingModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Location</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.location')}</label>
               <input
                 type="text"
                 value={location}
@@ -1261,6 +1264,7 @@ function NewApplicantModal({
     licenses?: string[];
   }) => Promise<string>;
 }) {
+  const { t: tr } = useTranslation();
   const [jobPostingId, setJobPostingId] = useState(postings[0]?.id || '');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -1345,11 +1349,11 @@ function NewApplicantModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.email')}</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@email.com" className={inputCls} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Phone</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.phone')}</label>
               <input
                 type="tel"
                 value={phone}
@@ -1403,7 +1407,7 @@ function NewApplicantModal({
                 placeholder="e.g. EPA 608, OSHA 30"
                 className={`flex-1 ${inputCls}`}
               />
-              <Button variant="secondary" onClick={addCert} disabled={!certInput.trim()}>Add</Button>
+              <Button variant="secondary" onClick={addCert} disabled={!certInput.trim()}>{tr('common.add')}</Button>
             </div>
             {certs.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">

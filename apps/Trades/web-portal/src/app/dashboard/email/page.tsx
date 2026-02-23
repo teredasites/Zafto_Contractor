@@ -377,6 +377,7 @@ function TemplatesTab({
   onEdit: (t: EmailTemplate) => void;
   onDelete: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   if (templates.length === 0) {
     return (
       <Card>
@@ -419,7 +420,7 @@ function TemplatesTab({
 
               <div className="flex items-center gap-2 mb-3">
                 <Badge variant={typeConfig.variant}>{typeConfig.label}</Badge>
-                {!tmpl.isActive && <Badge variant="warning">Inactive</Badge>}
+                {!tmpl.isActive && <Badge variant="warning">{t('common.inactive')}</Badge>}
               </div>
 
               {tmpl.triggerEvent && (
@@ -444,6 +445,7 @@ function TemplatesTab({
 // --- Sent Tab ---
 
 function SentTab({ sends }: { sends: ReturnType<typeof useEmail>['sends'] }) {
+  const { t } = useTranslation();
   if (sends.length === 0) {
     return (
       <Card>
@@ -464,8 +466,8 @@ function SentTab({ sends }: { sends: ReturnType<typeof useEmail>['sends'] }) {
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">To</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Subject</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
               </tr>
             </thead>
@@ -516,6 +518,7 @@ function CampaignsTab({
   onSchedule: (c: EmailCampaign) => void;
   onSend: (c: EmailCampaign) => void;
 }) {
+  const { t } = useTranslation();
   if (campaigns.length === 0) {
     return (
       <Card>
@@ -536,13 +539,13 @@ function CampaignsTab({
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Campaign</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Recipients</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Delivered</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Open Rate</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Click Rate</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Schedule</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.schedule')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
               </tr>
             </thead>
@@ -622,6 +625,7 @@ function CampaignsTab({
 // --- Unsubscribes Tab ---
 
 function UnsubscribesTab({ unsubscribes }: { unsubscribes: ReturnType<typeof useEmail>['unsubscribes'] }) {
+  const { t } = useTranslation();
   if (unsubscribes.length === 0) {
     return (
       <Card>
@@ -640,9 +644,9 @@ function UnsubscribesTab({ unsubscribes }: { unsubscribes: ReturnType<typeof use
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Email</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.email')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Reason</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Date</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.date')}</th>
               </tr>
             </thead>
             <tbody>
@@ -697,6 +701,7 @@ function TemplateModal({
     isActive: boolean;
   }>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState(template?.name || '');
   const [subject, setSubject] = useState(template?.subject || '');
   const [bodyHtml, setBodyHtml] = useState(template?.bodyHtml || '');
@@ -825,7 +830,7 @@ function TemplateModal({
                   onChange={(e) => setIsActive(e.target.checked)}
                   className="rounded border-main"
                 />
-                <span className="text-sm font-medium text-main">Active</span>
+                <span className="text-sm font-medium text-main">{t('common.active')}</span>
               </label>
             </div>
           </div>

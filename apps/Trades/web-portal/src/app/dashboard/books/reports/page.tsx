@@ -111,6 +111,7 @@ function AccountSection({ title, accounts, className }: {
 
 // Aging Table
 function AgingTable({ rows, entityLabel }: { rows: AgingRow[]; entityLabel: string }) {
+  const { t: tr } = useTranslation();
   const totals = rows.reduce((t, r) => ({
     current: t.current + r.current,
     days1to30: t.days1to30 + r.days1to30,
@@ -131,7 +132,7 @@ function AgingTable({ rows, entityLabel }: { rows: AgingRow[]; entityLabel: stri
             <th className="text-right px-3 py-2 text-muted font-medium">31-60</th>
             <th className="text-right px-3 py-2 text-muted font-medium">61-90</th>
             <th className="text-right px-3 py-2 text-muted font-medium">90+</th>
-            <th className="text-right px-3 py-2 text-muted font-medium">Total</th>
+            <th className="text-right px-3 py-2 text-muted font-medium">{tr('common.total')}</th>
           </tr>
         </thead>
         <tbody>
@@ -153,7 +154,7 @@ function AgingTable({ rows, entityLabel }: { rows: AgingRow[]; entityLabel: stri
                 </tr>
               ))}
               <tr className="border-t-2 border-default font-semibold">
-                <td className="px-3 py-2 text-main">Total</td>
+                <td className="px-3 py-2 text-main">{tr('common.total')}</td>
                 <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(totals.current)}</td>
                 <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(totals.days1to30)}</td>
                 <td className="px-3 py-2 text-right tabular-nums text-amber-600">{formatCurrency(totals.days31to60)}</td>

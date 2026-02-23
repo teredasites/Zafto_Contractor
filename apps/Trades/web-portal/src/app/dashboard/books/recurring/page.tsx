@@ -273,6 +273,7 @@ function TemplateModal({
   }) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -360,7 +361,7 @@ function TemplateModal({
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
                 <option value="expense">Expense</option>
-                <option value="invoice">Invoice</option>
+                <option value="invoice">{t('common.invoice')}</option>
               </select>
             </div>
             <div>
@@ -370,10 +371,10 @@ function TemplateModal({
                 onChange={(e) => setFrequency(e.target.value as Frequency)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
-                <option value="weekly">Weekly</option>
+                <option value="weekly">{t('common.weekly')}</option>
                 <option value="biweekly">Bi-Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="quarterly">Quarterly</option>
+                <option value="monthly">{t('common.monthly')}</option>
+                <option value="quarterly">{t('common.quarterly')}</option>
                 <option value="annually">Annually</option>
               </select>
             </div>
@@ -392,7 +393,7 @@ function TemplateModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">End Date</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.endDate')}</label>
               <input
                 type="date"
                 value={endDate}
@@ -419,7 +420,7 @@ function TemplateModal({
           {/* Category (expense only) */}
           {transactionType === 'expense' && (
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Category</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.category')}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -429,7 +430,7 @@ function TemplateModal({
                 <option value="labor">Labor</option>
                 <option value="fuel">Fuel</option>
                 <option value="tools">Tools</option>
-                <option value="equipment">Equipment</option>
+                <option value="equipment">{t('common.equipment')}</option>
                 <option value="vehicle">Vehicle</option>
                 <option value="insurance">Insurance</option>
                 <option value="permits">Permits</option>
@@ -445,13 +446,13 @@ function TemplateModal({
           {/* Vendor (expense only) */}
           {transactionType === 'expense' && (
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Vendor</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.vendor')}</label>
               <select
                 value={vendorId}
                 onChange={(e) => setVendorId(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
-                <option value="">None</option>
+                <option value="">{t('common.none')}</option>
                 {vendors.filter((v) => v.vendorName).map((v) => (
                   <option key={v.id} value={v.id}>{v.vendorName}</option>
                 ))}
@@ -461,7 +462,7 @@ function TemplateModal({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Description</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.description')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}

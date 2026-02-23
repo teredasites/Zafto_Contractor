@@ -248,6 +248,7 @@ function AssessmentDetail({
   assessment: MoldAssessment;
   licensing: MoldStateLicensing[];
 }) {
+  const { t } = useTranslation();
   const { samples: labSamples } = useMoldLabSamples(a.id);
   const { plans: remediationPlans } = useMoldRemediationPlans(a.id);
   const { readings: moistureReadings } = useMoldMoistureReadings(a.id);
@@ -395,7 +396,7 @@ function AssessmentDetail({
       {/* Notes */}
       {a.overallNotes && (
         <div>
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Notes</h3>
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">{t('common.notes')}</h3>
           <p className="text-sm text-zinc-400">{a.overallNotes}</p>
         </div>
       )}

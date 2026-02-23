@@ -92,6 +92,7 @@ function SurveyRow({ survey, onSelect, isSelected }: { survey: SiteSurvey; onSel
 }
 
 function SurveyDetail({ survey }: { survey: SiteSurvey }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { createEstimateFromSurvey } = useSiteSurveys();
   const [generating, setGenerating] = useState(false);
@@ -124,7 +125,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
       {/* Property overview */}
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <p className="text-xs text-zinc-500 mb-1">Property</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.property')}</p>
           <p className="text-sm text-zinc-200">{survey.propertyType ? survey.propertyType.replace('_', ' ') : '—'}</p>
           {survey.yearBuilt && <p className="text-xs text-zinc-500">Built {survey.yearBuilt}</p>}
           {survey.stories && <p className="text-xs text-zinc-500">{survey.stories} {survey.stories === 1 ? 'story' : 'stories'}</p>}
@@ -200,7 +201,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
       {/* Notes */}
       {survey.notes && (
         <div>
-          <p className="text-xs text-zinc-500 mb-1">Notes</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.notes')}</p>
           <p className="text-sm text-zinc-300 whitespace-pre-wrap">{survey.notes}</p>
         </div>
       )}

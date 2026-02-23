@@ -409,6 +409,7 @@ function NewLeadModal({ onClose, onCreate }: {
   onClose: () => void;
   onCreate: (input: { name: string; email?: string; phone?: string; companyName?: string; source?: string; value?: number; notes?: string; address?: { street: string; city: string; state: string; zip: string }; trade?: string; urgency?: string; tags?: string[]; nextFollowUp?: string }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -480,7 +481,7 @@ function NewLeadModal({ onClose, onCreate }: {
               <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="ABC Properties" className={inputCls} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.email')}</label>
               <input
                 type="email"
                 value={email}
@@ -492,7 +493,7 @@ function NewLeadModal({ onClose, onCreate }: {
               {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Phone</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.phone')}</label>
               <input
                 type="tel"
                 value={phone}
@@ -531,7 +532,7 @@ function NewLeadModal({ onClose, onCreate }: {
               <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className={inputCls}>
                 <option value="normal">Normal</option>
                 <option value="soon">Soon</option>
-                <option value="urgent">Urgent</option>
+                <option value="urgent">{t('common.urgent')}</option>
                 <option value="emergency">Emergency</option>
               </select>
             </div>
@@ -558,7 +559,7 @@ function NewLeadModal({ onClose, onCreate }: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Address</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.address')}</label>
             <div className="grid grid-cols-1 gap-2">
               <input type="text" value={street} onChange={(e) => setStreet(e.target.value)} placeholder="123 Main Street" className={inputCls} />
               <div className="grid grid-cols-6 gap-2">
@@ -575,7 +576,7 @@ function NewLeadModal({ onClose, onCreate }: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="What are they looking for?" rows={3} className={`${inputCls} resize-none`} />
           </div>
 

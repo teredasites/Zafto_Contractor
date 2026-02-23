@@ -383,6 +383,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
   onToggle: () => Promise<void>;
   onDelete: () => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const sConfig = statusConfig[automation.status];
   const tConfig = triggerConfig[automation.trigger.type];
@@ -462,7 +463,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
           </div>
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Close</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             {automation.status === 'active' ? (
               <Button variant="secondary" className="flex-1" disabled={busy} onClick={async () => { setBusy(true); await onToggle(); }}>
                 <Pause size={16} />Pause
@@ -483,6 +484,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
 }
 
 function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: Partial<AutomationData>) => Promise<void> }) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [triggerType, setTriggerType] = useState('');
@@ -530,7 +532,7 @@ function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCrea
             <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g., Job Complete -> Review Request" className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.description')}</label>
             <textarea rows={2} value={description} onChange={e => setDescription(e.target.value)} placeholder="What does this automation do?" className={cn(inputCls, 'resize-none')} />
           </div>
           <div>
@@ -573,7 +575,7 @@ function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCrea
             </select>
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1" disabled={!canCreate || busy} onClick={handleCreate}>
               <Plus size={16} />{busy ? 'Creating...' : 'Create Automation'}
             </Button>

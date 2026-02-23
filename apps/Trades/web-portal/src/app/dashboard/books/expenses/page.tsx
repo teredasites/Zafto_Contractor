@@ -244,6 +244,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
   onSave: (data: Parameters<ReturnType<typeof useExpenses>['createExpense']>[0]) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -301,9 +302,9 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
               <Input type="date" value={expenseDate} onChange={(e) => setExpenseDate(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Vendor</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.vendor')}</label>
               <select value={vendorId} onChange={(e) => setVendorId(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
-                <option value="">None</option>
+                <option value="">{t('common.none')}</option>
                 {vendors.filter((v) => v.vendorName).map((v) => <option key={v.id} value={v.id}>{v.vendorName}</option>)}
               </select>
             </div>
@@ -314,7 +315,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Property</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.property')}</label>
               <select value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
                 <option value="">None (Business)</option>
                 {properties.map((p) => <option key={p.id} value={p.id}>{p.addressLine1 || p.city}</option>)}
@@ -356,7 +357,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Category</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.category')}</label>
               <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
                 {EXPENSE_CATEGORIES.map((c) => <option key={c} value={c}>{EXPENSE_CATEGORY_LABELS[c]}</option>)}
               </select>
@@ -390,12 +391,12 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.notes')}</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm resize-none" />
           </div>
           {err && <p className="text-sm text-red-600">{err}</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="secondary" onClick={onClose}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Create Expense'}</Button>
           </div>
         </form>

@@ -189,6 +189,7 @@ export default function InspectionsPage() {
 }
 
 function InspectionDetailModal({ inspection, onClose }: { inspection: InspectionData; onClose: () => void }) {
+  const { t } = useTranslation();
   const sConfig = statusConfig[inspection.status as InspectionStatus] || statusConfig.scheduled;
   const tConfig = typeConfig[inspection.type as InspectionType] || typeConfig.quality;
   const completedItems = inspection.checklist.filter((c) => c.completed).length;
@@ -212,8 +213,8 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{inspection.jobName}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">Assigned To</p><p className="font-medium text-main">{inspection.assignedTo}</p></div>
-            <div><p className="text-xs text-muted uppercase tracking-wider">Address</p><p className="font-medium text-main">{inspection.address}</p></div>
-            <div><p className="text-xs text-muted uppercase tracking-wider">Date</p><p className="font-medium text-main">{formatDate(inspection.scheduledDate)}</p></div>
+            <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.address')}</p><p className="font-medium text-main">{inspection.address}</p></div>
+            <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.date')}</p><p className="font-medium text-main">{formatDate(inspection.scheduledDate)}</p></div>
           </div>
 
           <div className="p-4 bg-secondary rounded-lg">
@@ -227,7 +228,7 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
           </div>
 
           <div>
-            <p className="text-xs text-muted uppercase tracking-wider mb-3">Checklist</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-3">{t('common.checklist')}</p>
             <div className="space-y-2">
               {inspection.checklist.map((item) => (
                 <div key={item.id} className={cn('flex items-start gap-3 p-3 rounded-lg border', item.completed ? 'bg-emerald-50/50 dark:bg-emerald-900/5 border-emerald-200 dark:border-emerald-800/30' : 'bg-surface border-main')}>
@@ -248,10 +249,10 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
             </div>
           </div>
 
-          {inspection.notes && <div><p className="text-xs text-muted uppercase tracking-wider mb-1">Notes</p><p className="text-sm text-main">{inspection.notes}</p></div>}
+          {inspection.notes && <div><p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.notes')}</p><p className="text-sm text-main">{inspection.notes}</p></div>}
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Close</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             <Button variant="secondary" className="flex-1"><Camera size={16} />Add Photo</Button>
             {inspection.status !== 'passed' && <Button className="flex-1"><CheckCircle size={16} />Mark Passed</Button>}
           </div>
@@ -262,6 +263,7 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
 }
 
 function NewInspectionModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -312,11 +314,11 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea rows={2} placeholder="Special instructions..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Create Inspection</Button>
           </div>
         </CardContent>
