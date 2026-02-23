@@ -160,7 +160,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
             {survey.electricalService && <p>Electrical: {survey.electricalService}</p>}
             {survey.plumbingType && <p>Plumbing: {survey.plumbingType}</p>}
             {survey.hvacType && <p>HVAC: {survey.hvacType}</p>}
-            {!survey.electricalService && !survey.plumbingType && !survey.hvacType && <p className="text-zinc-600">Not recorded</p>}
+            {!survey.electricalService && !survey.plumbingType && !survey.hvacType && <p className="text-zinc-600">{t('common.notRecorded')}</p>}
           </div>
         </div>
       </div>

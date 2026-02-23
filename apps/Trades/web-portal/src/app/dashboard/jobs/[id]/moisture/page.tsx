@@ -371,7 +371,7 @@ function OverviewTab({
                       </p>
                     </>
                   ) : (
-                    <p className="text-sm text-muted">Not recorded</p>
+                    <p className="text-sm text-muted">{t('common.notRecorded')}</p>
                   )}
                 </div>
               </div>

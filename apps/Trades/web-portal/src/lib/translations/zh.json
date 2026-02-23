@@ -916,7 +916,44 @@
     "noTags": "No tags",
     "noInvoicesYet": "No invoices yet",
     "noActivityRecordedYet": "No activity recorded yet",
-    "customerValue": "Customer Value"
+    "customerValue": "Customer Value",
+    "own": "Own",
+    "airMovers": "Air Movers",
+    "dehu": "Dehu",
+    "scrubbers": "Scrubbers",
+    "volume": "Volume",
+    "floor": "Floor",
+    "walls": "Walls",
+    "ceiling": "Ceiling",
+    "notRecorded": "Not recorded",
+    "clearAll": "Clear All",
+    "annually": "Annually",
+    "firstAndLast": "First & Last",
+    "sendNow": "Send Now",
+    "sendLater": "Send Later",
+    "addNote": "Add Note",
+    "addPhoto": "Add Photo",
+    "addDocument": "Add Document",
+    "addAttachment": "Add Attachment",
+    "viewDetails": "View Details",
+    "unknown": "Unknown",
+    "renewed": "Renewed",
+    "createdDate": "Created Date",
+    "nextDue": "Next Due",
+    "help": "Help",
+    "logout": "Logout",
+    "suspend": "Suspend",
+    "resume": "Resume",
+    "accept": "Accept",
+    "decline": "Decline",
+    "star": "Star",
+    "unstar": "Unstar",
+    "flag": "Flag",
+    "unflag": "Unflag",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "block": "Block",
+    "unblock": "Unblock"
   },
   "nav": {
     "dashboard": "仪表盘",
@@ -1305,7 +1342,20 @@
     "wasteFactor": "Waste Factor",
     "overheadAndProfit": "Overhead & Profit",
     "deductibleAmount": "Deductible Amount",
-    "netToCustomer": "Net to Customer"
+    "netToCustomer": "Net to Customer",
+    "mat": "MAT:",
+    "lab": "LAB:",
+    "equ": "EQU:",
+    "customer": "Customer:",
+    "address": "Address:",
+    "cityStateZip": "City/State/Zip:",
+    "claimNumber": "Claim #:",
+    "policyNumber": "Policy #:",
+    "carrierLabel": "Carrier:",
+    "adjusterLabel": "Adjuster:",
+    "deductibleLabel": "Deductible:",
+    "claimLabel": "Claim:",
+    "policyLabel": "Policy:"
   },
   "invoices": {
     "title": "发票",
@@ -1335,7 +1385,13 @@
     "tax": "Tax",
     "total": "Total",
     "notes": "Notes",
-    "terms": "Terms"
+    "terms": "Terms",
+    "invoiceNotFound": "Invoice not found",
+    "paymentHistory": "Payment History",
+    "invoiceTotal": "Invoice Total",
+    "balanceDue": "Balance Due",
+    "amountPaid": "Amount Paid",
+    "paymentTerms": "Payment Terms"
   },
   "customers": {
     "title": "客户",
@@ -1514,7 +1570,17 @@
     "certificationDue": "Certification Due",
     "budgetAlerts": "Budget Alerts",
     "jobDeadline": "Job Deadline",
-    "materialDelivery": "Material Delivery"
+    "materialDelivery": "Material Delivery",
+    "configureNotifications": "Configure which notifications you want to receive",
+    "configureWorkflowAutomation": "Configure workflow automation for walkthroughs",
+    "enableDisableHere": "Enable/disable notification channels here",
+    "savedSuccessfully": "Saved successfully",
+    "stripeConnected": "Stripe Connected",
+    "displayName": "Display Name",
+    "aboutYourCompany": "About Your Company",
+    "storageUsed": "Storage Used",
+    "auditLogEntries": "Audit Log Entries",
+    "dataExport": "Data Export"
   },
   "errors": {
     "generic": "出了点问题，请重试。",
@@ -1589,7 +1655,13 @@
     "propertyPortalPreview": "Property Portal Preview",
     "noLogo": "No Logo",
     "preparedFor": "Prepared For",
-    "projectPhotos": "Project Photos"
+    "projectPhotos": "Project Photos",
+    "bidOverview": "Bid Overview",
+    "optimizePrice": "Optimize Price",
+    "bidNotFound": "Bid not found",
+    "winProbability": "Win Probability",
+    "competitorAnalysis": "Competitor Analysis",
+    "priceOptimization": "Price Optimization"
   },
   "scheduling": {
     "title": "Schedule",
@@ -1619,7 +1691,15 @@
     "criticalPath": "Critical Path",
     "behindSchedule": "Behind Schedule",
     "onTrack": "On Track",
-    "aheadOfSchedule": "Ahead of Schedule"
+    "aheadOfSchedule": "Ahead of Schedule",
+    "ganttChart": "Gantt Chart",
+    "addDependency": "Add Dependency",
+    "addMilestone": "Add Milestone",
+    "delayDays": "Delay Days",
+    "slackDays": "Slack Days",
+    "earlyStart": "Early Start",
+    "lateFinish": "Late Finish",
+    "noTasksScheduled": "No tasks scheduled"
   },
   "calendar": {
     "title": "Calendar",
@@ -1651,7 +1731,13 @@
     "baseQty": "Base Qty",
     "totalQty": "Total Qty",
     "estimatedStormDamage": "Estimated storm damage probability",
-    "loadingScans": "Loading scans..."
+    "loadingScans": "Loading scans...",
+    "scanDate": "Scan Date",
+    "sources": "Sources",
+    "measurements": "Measurements",
+    "scanType": "Scan Type",
+    "scanOptions": "Scan Options",
+    "addAddress": "Add Address"
   },
   "insurance": {
     "title": "Insurance Claims",
@@ -1933,7 +2019,14 @@
     "upload": "Upload Document",
     "searchDocuments": "Search documents...",
     "noDocuments": "No documents yet",
-    "noDocumentsDesc": "Upload contracts, permits, and other project documents."
+    "noDocumentsDesc": "Upload contracts, permits, and other project documents.",
+    "documentLibrary": "Document Library",
+    "allDocuments": "All Documents",
+    "sharedWithMe": "Shared with Me",
+    "noDocumentsFound": "No documents found",
+    "fileType": "File Type",
+    "fileSize": "File Size",
+    "lastModified": "Last Modified"
   },
   "reports": {
     "title": "Reports",
@@ -2028,7 +2121,21 @@
     "noEmails": "No emails yet",
     "inbox": "Inbox",
     "sent": "Sent",
-    "drafts": "Drafts"
+    "drafts": "Drafts",
+    "composeEmail": "Compose Email",
+    "allMail": "All Mail",
+    "noEmailsFound": "No emails found",
+    "manageEmailCommunications": "Manage customer email communications",
+    "from": "From",
+    "snippet": "Snippet",
+    "reply": "Reply",
+    "replyAll": "Reply All",
+    "forward": "Forward",
+    "markRead": "Mark Read",
+    "markUnread": "Mark Unread",
+    "moveToTrash": "Move to Trash",
+    "noConversationSelected": "No conversation selected",
+    "selectConversation": "Select a conversation to view"
   },
   "teamChat": {
     "title": "Team Chat",
@@ -2082,7 +2189,18 @@
     "businessInformation": "Business Information",
     "displayName": "Display Name",
     "aboutYourCompany": "About Your Company",
-    "serviceTypes": "Service Types"
+    "serviceTypes": "Service Types",
+    "locationLabel": "Location:",
+    "tradeLabel": "Trade:",
+    "serviceLabel": "Service:",
+    "urgencyLabel": "Urgency:",
+    "budgetLabel": "Budget:",
+    "descriptionLabel": "Description:",
+    "amountLabel": "Amount:",
+    "typeLabel": "Type:",
+    "timelineLabel": "Timeline:",
+    "warrantyLabel": "Warranty:",
+    "submittedLabel": "Submitted:"
   },
   "growth": {
     "title": "Growth Dashboard",
@@ -2121,7 +2239,14 @@
     "rooms": "Rooms",
     "photos": "Photos",
     "notes": "Notes",
-    "notFound": "Walkthrough not found"
+    "notFound": "Walkthrough not found",
+    "walkthroughDetails": "Walkthrough Details",
+    "scopeOfWork": "Scope of Work",
+    "measurementData": "Measurement Data",
+    "generateBid": "Generate Bid",
+    "roomList": "Room List",
+    "damageAssessment": "Damage Assessment",
+    "noWalkthroughsFound": "No walkthroughs found"
   },
   "inspections": {
     "title": "Inspections",
@@ -2176,12 +2301,23 @@
   "changeOrders": {
     "title": "Change Orders",
     "new": "New Change Order",
-    "noChangeOrders": "No change orders found"
+    "noChangeOrders": "No change orders found",
+    "changeOrderTracker": "Change Order Tracker",
+    "newChangeOrder": "New Change Order",
+    "changeOrderAmount": "Change Order Amount",
+    "approvalRequired": "Approval Required",
+    "originalAmount": "Original Amount",
+    "revisedAmount": "Revised Amount"
   },
   "serviceAgreements": {
     "title": "Service Agreements",
     "new": "New Agreement",
-    "noAgreements": "No service agreements found"
+    "noAgreements": "No service agreements found",
+    "agreementTracker": "Agreement Tracker",
+    "newAgreement": "New Agreement",
+    "renewalDate": "Renewal Date",
+    "serviceFrequency": "Service Frequency",
+    "noAgreementsFound": "No agreements found"
   },
   "warranties": {
     "title": "Warranties",
@@ -2284,7 +2420,12 @@
     "title": "Lien Protection",
     "noLiens": "No lien records found",
     "noRecord": "No lien record found for this job",
-    "rules": "Rules"
+    "rules": "Rules",
+    "lienTracker": "Lien Tracker",
+    "noticesSent": "Notices Sent",
+    "lienReleases": "Lien Releases",
+    "deadlineApproaching": "Deadline Approaching",
+    "noLienItems": "No lien items"
   },
   "maintenancePipeline": {
     "title": "Maintenance Pipeline",
@@ -2589,6 +2730,31 @@
     "prevDone": "Prev. Done",
     "totalCompletedToDate": "Total Completed to Date",
     "totalRetainage": "Total Retainage",
-    "newRetentionRecord": "New Retention Record"
+    "newRetentionRecord": "New Retention Record",
+    "accountNumber": "Account #",
+    "financialOverview": "Financial Overview",
+    "quickAccess": "Quick Access",
+    "recentTransactions": "Recent Transactions",
+    "monthlyTrend": "Monthly Trend",
+    "navigateToSection": "Navigate to any books section",
+    "cashBalance": "Cash Balance",
+    "outstandingInvoices": "Outstanding Invoices",
+    "unpaidBills": "Unpaid Bills",
+    "profitThisMonth": "Profit This Month"
+  },
+  "propertyManagement": {
+    "leaseDetails": "Lease Details",
+    "tenantInfo": "Tenant Info",
+    "unitDetails": "Unit Details",
+    "rentRoll": "Rent Roll",
+    "moveInDate": "Move-In Date",
+    "moveOutDate": "Move-Out Date",
+    "securityDeposit": "Security Deposit",
+    "monthlyRent": "Monthly Rent",
+    "leaseStart": "Lease Start",
+    "leaseEnd": "Lease End",
+    "noLeases": "No leases",
+    "noTenants": "No tenants",
+    "noUnits": "No units"
   }
 }

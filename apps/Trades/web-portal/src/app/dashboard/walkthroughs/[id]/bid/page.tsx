@@ -125,7 +125,7 @@ export default function BidGenerationPage() {
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h1 className="text-2xl font-semibold text-main">Generate Bid</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('walkthroughs.generateBid')}</h1>
           <p className="text-muted mt-1">Create a bid from walkthrough data</p>
         </div>
       </div>

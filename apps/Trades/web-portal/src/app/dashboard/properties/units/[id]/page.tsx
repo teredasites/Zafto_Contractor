@@ -135,7 +135,7 @@ export default function UnitDetailPage() {
           {/* Unit Details */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Unit Details</CardTitle>
+              <CardTitle className="text-base">{t('propertyManagement.unitDetails')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

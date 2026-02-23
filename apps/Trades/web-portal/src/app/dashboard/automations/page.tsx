@@ -231,7 +231,7 @@ export default function AutomationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{draftCount}</p>
-                <p className="text-sm text-muted">Drafts</p>
+                <p className="text-sm text-muted">{t('email.drafts')}</p>
               </div>
             </div>
           </CardContent>

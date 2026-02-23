@@ -375,7 +375,7 @@ function TemplateModal({
                 <option value="biweekly">Bi-Weekly</option>
                 <option value="monthly">{t('common.monthly')}</option>
                 <option value="quarterly">{t('common.quarterly')}</option>
-                <option value="annually">Annually</option>
+                <option value="annually">{t('common.annually')}</option>
               </select>
             </div>
           </div>
@@ -648,7 +648,7 @@ export default function RecurringPage() {
             <div className="flex-1">{t('common.name')}</div>
             <div className="w-20 text-center">{t('common.type')}</div>
             <div className="w-20 text-center">{t('common.frequency')}</div>
-            <div className="w-24 text-center">Next Due</div>
+            <div className="w-24 text-center">{t('common.nextDue')}</div>
             <div className="w-24 text-right">{t('common.amount')}</div>
             <div className="w-20 text-center">{t('common.status')}</div>
             <div className="w-32" /> {/* actions spacer */}

@@ -2023,7 +2023,7 @@ function RolesSettings() {
                           ) : level === 'partial' ? (
                             <div className="mx-auto w-3.5 h-3.5 rounded-full border-2 border-amber-400 bg-amber-400/20" />
                           ) : level === 'own' ? (
-                            <span className="text-[10px] font-medium text-amber-600">Own</span>
+                            <span className="text-[10px] font-medium text-amber-600">{t('common.own')}</span>
                           ) : (
                             <span className="text-muted/40">{'\u2014'}</span>
                           )}
@@ -2038,7 +2038,7 @@ function RolesSettings() {
           <div className="flex items-center gap-5 mt-4 pt-3 border-t border-light text-[11px] text-muted">
             <div className="flex items-center gap-1.5"><Check size={13} className="text-emerald-500" /> Full</div>
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full border-2 border-amber-400 bg-amber-400/20" /> Partial</div>
-            <div className="flex items-center gap-1.5"><span className="font-medium text-amber-600">Own</span> Own only</div>
+            <div className="flex items-center gap-1.5"><span className="font-medium text-amber-600">{t('common.own')}</span> Own only</div>
             <div className="flex items-center gap-1.5"><span className="text-muted/40">{'\u2014'}</span> None</div>
           </div>
         </CardContent>
