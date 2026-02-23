@@ -257,9 +257,9 @@
     "avgBidAmount": "Monto promedio de cotización",
     "noBidsYet": "Sin ofertas aun",
     "noLeadsFound": "No se encontraron prospectos",
-    "zipCode": "ZIP Code",
-    "placeFirstBid": "Place your first bid",
-    "browseLead": "Browse",
+    "zipCode": "Código Postal",
+    "placeFirstBid": "Presente su primera oferta",
+    "browseLead": "Explorar",
     "netIncome": "Ingreso neto",
     "grossProfit": "Ganancia bruta",
     "profitMargin": "Margen de ganancia",
@@ -302,7 +302,7 @@
     "backToJob": "Volver al trabajo",
     "preliminaryNotice": "Aviso preliminar",
     "leadSource": "Fuente del prospecto",
-    "oAndP": "O&P",
+    "oAndP": "G&A",
     "voidExpense": "Anular gasto",
     "loadingFinancialData": "Cargando datos financieros...",
     "failedToLoadEquipment": "Error al cargar equipo",
@@ -332,7 +332,7 @@
     "reference": "Referencia",
     "system": "Sistema",
     "period": "Periodo",
-    "area": "Area",
+    "area": "Área",
     "signature": "Firma",
     "lastUpdated": "Ultima actualizacion",
     "branch": "Sucursal",
@@ -469,8 +469,8 @@
     "apprentice": "Aprendiz",
     "contractor": "Contratista",
     "subcontractor": "Subcontratista",
-    "version": "Version",
-    "revision": "Revision",
+    "version": "Versión",
+    "revision": "Revisión",
     "audit": "Auditoria",
     "log": "Registro",
     "report": "Reportar",
@@ -493,7 +493,7 @@
     "header": "Encabezado",
     "footer": "Pie de pagina",
     "sidebar": "Barra lateral",
-    "menu": "Menu",
+    "menu": "Menú",
     "toolbar": "Barra de herramientas",
     "tab": "Pestana",
     "panel": "Panel",
@@ -514,7 +514,7 @@
     "language": "Idioma",
     "currency": "Moneda",
     "timezone": "Zona horaria",
-    "region": "Region",
+    "region": "Región",
     "street": "Calle",
     "costOfGoodsSold": "Costo de bienes vendidos",
     "operatingExpenses": "Gastos operativos",
@@ -953,7 +953,49 @@
     "mute": "Silenciar",
     "unmute": "Desilenciar",
     "block": "Bloquear",
-    "unblock": "Desbloquear"
+    "unblock": "Desbloquear",
+    "totalDocuments": "Total de Documentos",
+    "folders": "Carpetas",
+    "noFoldersYet": "Sin carpetas aún",
+    "size": "Tamaño",
+    "noTemplatesCreatedYet": "Sin plantillas creadas aún",
+    "dropFilesHereOrClickToBrowse": "Suelte archivos aquí o haga clic para buscar",
+    "assetTag": "Etiqueta de Activo",
+    "areaDeployed": "Área Desplegada",
+    "deployment": "Despliegue",
+    "deployedAt": "Desplegado El",
+    "removedAt": "Removido El",
+    "daysDeployed": "Días Desplegado",
+    "makeModelYear": "Marca / Modelo / Año",
+    "odometer": "Odómetro",
+    "lastGps": "Último GPS",
+    "noGpsData": "Sin datos GPS",
+    "noMaintenanceRecords": "Sin registros de mantenimiento",
+    "noFuelLogs": "Sin registros de combustible",
+    "failedSensors": "Sensores Fallidos",
+    "trackEmployeePerformanceWithPeriodicReviewsAndRati": "Rastree el rendimiento de empleados con revisiones y calificaciones periódicas.",
+    "automotive": "Automotriz",
+    "createAMeetingFromAnyJobOrCustomerPage": "Cree una reunión desde cualquier página de trabajo o cliente",
+    "selectAnAssessmentToViewDetails": "Seleccione una evaluación para ver detalles",
+    "visibleMoldTypes": "Tipos de Moho Visibles",
+    "remediationPlan": "Plan de Remediación",
+    "noneDeployed": "Ninguno desplegado",
+    "noSamplesCollected": "Sin muestras recolectadas",
+    "treatments": "Tratamientos",
+    "activeStations": "Estaciones Activas",
+    "pendingWdi": "WDI Pendiente",
+    "upcomingServices": "Servicios Próximos",
+    "noBaitStations": "Sin estaciones de cebo",
+    "noWdiReports": "Sin informes WDI",
+    "callsWillAppearHereOnceYourPhoneSystemIsActive": "Las llamadas aparecerán aquí una vez que su sistema telefónico esté activo",
+    "noVoicemails": "Sin buzones de voz",
+    "online": "En Línea",
+    "onlineNow": "En Línea Ahora",
+    "onLocation": "En ubicación",
+    "quickMessages": "Mensajes Rápidos",
+    "noMessagesYetStartTheConversation": "Sin mensajes aún. Inicie la conversación.",
+    "selectAConversationToStartChatting": "Seleccione una conversación para chatear",
+    "springJobs": "Trabajos de Primavera"
   },
   "nav": {
     "dashboard": "Tablero",
@@ -1253,7 +1295,13 @@
     "noCalculationsYet": "Sin calculos aun",
     "floorWalls": "Piso / Paredes",
     "actualVsRequired": "ACTUAL vs REQUERIDO",
-    "noRemovedEquipment": "Sin equipo removido"
+    "noRemovedEquipment": "Sin equipo removido",
+    "createANewJob": "Crear un nuevo trabajo",
+    "useCustomerAddress": "Usar dirección del cliente",
+    "satelliteDataIsBeingProcessedThisUsuallyTakesAFewS": "Los datos satelitales se están procesando. Esto generalmente toma unos segundos.",
+    "eave": "Alero",
+    "rake": "Alero inclinado",
+    "imageryDate": "Fecha de Imagen"
   },
   "estimates": {
     "title": "Titulo:",
@@ -1355,7 +1403,27 @@
     "adjusterLabel": "Ajustador:",
     "deductibleLabel": "Deducible:",
     "claimLabel": "Reclamo:",
-    "policyLabel": "Poliza:"
+    "policyLabel": "Poliza:",
+    "unit": "Unidad $",
+    "changeOrderTotal": "Total de orden de cambio",
+    "adjustedGrandTotal": "Gran Total Ajustado",
+    "materialTierOptions": "Opciones de Nivel de Material",
+    "laborRateSummary": "Resumen de Tarifas de Mano de Obra",
+    "baseRate": "Tarifa Base",
+    "burden": "Carga",
+    "burdenedRate": "Tarifa con Carga",
+    "warrantyCoverage": "Cobertura de Garantía",
+    "contractorSignature": "Firma del Contratista",
+    "customerAcceptance": "Aceptación del Cliente",
+    "materialPricing": "Precios de Material",
+    "loadingMaterialData": "Cargando datos de material...",
+    "noTradeDataFoundForThisPropertyScan": "Sin datos de oficio encontrados para este escaneo de propiedad.",
+    "runAPropertyScanWithTradeEstimationFirst": "Ejecute un escaneo de propiedad con estimación de oficio primero.",
+    "supplierPricingNotConfigured": "Precios de proveedor no configurados",
+    "wWaste": "C/ Desperdicio",
+    "hdPrice": "Precio HD",
+    "noTemplatesSavedYet": "Sin plantillas guardadas aún",
+    "saveYourCurrentEstimateAsAReusableTemplate": "Guarde su presupuesto actual como plantilla reutilizable"
   },
   "invoices": {
     "title": "Facturas",
@@ -1400,7 +1468,17 @@
     "terms": "Términos",
     "invoiceNotFound": "Factura no encontrada",
     "paymentHistory": "Historial de pagos",
-    "invoiceTotal": "Total de factura"
+    "invoiceTotal": "Total de factura",
+    "createAndTrackYourInvoices": "Cree y rastree sus facturas",
+    "createANewInvoice": "Crear una nueva factura",
+    "upgrade": "Actualizar",
+    "totalDue": "Total Pendiente",
+    "theInvoiceYoureLookingForDoesntExist": "La factura que busca no existe.",
+    "paymentReminder": "Recordatorio de Pago",
+    "invoice": "Factura #",
+    "due": "Vencido",
+    "noPaymentsRecorded": "Sin pagos registrados",
+    "relatedJob": "Trabajo Relacionado"
   },
   "customers": {
     "title": "Clientes",
@@ -1457,7 +1535,13 @@
     "outstandingBalance": "Saldo pendiente",
     "customerNotFound": "Cliente no encontrado",
     "customerDoesntExist": "El cliente que buscas no existe.",
-    "noBidsYet": "Sin ofertas aun"
+    "noBidsYet": "Sin ofertas aun",
+    "createANewCustomerRecord": "Crear un nuevo registro de cliente",
+    "accessCommunication": "Acceso y Comunicación",
+    "preferredContactMethod": "Método de Contacto Preferido",
+    "emailMarketingOptin": "Suscripción a marketing por correo",
+    "smsOptin": "Opt-in SMS",
+    "noTagsAdded": "Sin etiquetas agregadas"
   },
   "leads": {
     "title": "Prospectos",
@@ -1491,7 +1575,24 @@
       "yardSign": "Letrero en Obra",
       "facebook": "Facebook",
       "phoneCall": "Llamada Telefónica"
-    }
+    },
+    "trackAndManageYourSalesOpportunities": "Rastree y administre sus oportunidades de venta",
+    "addYourFirstLeadOrAdjustYourFilters": "Agregue su primer lead o ajuste sus filtros",
+    "addNewLead": "Agregar Nuevo Lead",
+    "selectTrade": "Seleccionar oficio",
+    "hvac": "HVAC",
+    "painting": "Pintura",
+    "carpentry": "Carpintería",
+    "flooring": "Pisos",
+    "generalContracting": "Contratación General",
+    "restoration": "Restauración",
+    "soon": "Pronto",
+    "google": "Google",
+    "yelp": "Yelp",
+    "instagram": "Instagram",
+    "nextdoor": "Nextdoor",
+    "landscaping": "Jardinería",
+    "homeadvisor": "HomeAdvisor"
   },
   "bids": {
     "title": "Licitaciones",
@@ -1525,7 +1626,16 @@
     "bidNotFound": "Oferta no encontrada",
     "winProbability": "Probabilidad de ganar",
     "competitorAnalysis": "Analisis de competencia",
-    "priceOptimization": "Optimizacion de precio"
+    "priceOptimization": "Optimizacion de precio",
+    "createAndManageYourBids": "Cree y administre sus ofertas",
+    "pricingOptions": "Opciones de Precios",
+    "optionalAddons": "Complementos Opcionales",
+    "depositRequiredToStart": "Depósito Requerido para Iniciar",
+    "customerSignature": "Firma del Cliente",
+    "signAboveToApproveThisEstimate": "Firme arriba para aprobar este presupuesto",
+    "theBidYoureLookingForDoesntExist": "La oferta que busca no existe.",
+    "depositPaid": "Depósito Pagado",
+    "addons": "Complementos"
   },
   "scheduling": {
     "title": "Programación",
@@ -1563,7 +1673,14 @@
     "slackDays": "Dias de holgura",
     "earlyStart": "Inicio temprano",
     "lateFinish": "Fin tardio",
-    "noTasksScheduled": "Sin tareas programadas"
+    "noTasksScheduled": "Sin tareas programadas",
+    "evm": "EVM",
+    "dur": "Dur",
+    "importSchedule": "Importar Cronograma",
+    "dropFileHereOrClickToBrowse": "Suelte el archivo aquí o haga clic para buscar",
+    "exportSchedule": "Exportar Cronograma",
+    "downloadInYourPreferredFormat": "Descargue en su formato preferido",
+    "exportReady": "Listo para Exportar"
   },
   "calendar": {
     "title": "Calendario",
@@ -1645,7 +1762,8 @@
     "measurements": "Mediciones",
     "scanType": "Tipo de escaneo",
     "scanOptions": "Opciones de escaneo",
-    "addAddress": "Agregar direccion"
+    "addAddress": "Agregar direccion",
+    "scanProperty": "Escanear Propiedad"
   },
   "insurance": {
     "title": "Reclamaciones de Seguro",
@@ -1799,7 +1917,79 @@
     "aboutYourCompany": "Acerca de tu empresa",
     "storageUsed": "Almacenamiento usado",
     "auditLogEntries": "Registros de auditoria",
-    "dataExport": "Exportacion de datos"
+    "dataExport": "Exportacion de datos",
+    "trigger": "Disparador",
+    "syncNow": "Sincronizar Ahora",
+    "branches": "Sucursales",
+    "lateFee": "Cargo por Mora",
+    "customStatuses": "Estados Personalizados",
+    "chooseYourPreferredLanguageTheEntireAppWillSwitchT": "Elija su idioma preferido. Toda la aplicación cambiará a su selección.",
+    "paymentPreferences": "Preferencias de Pago",
+    "configureHowYouAcceptPaymentsFromCustomers": "Configure cómo acepta pagos de clientes",
+    "processingFees": "Tarifas de Procesamiento",
+    "transparentPricingWithNoHiddenCharges": "Precios transparentes sin cargos ocultos",
+    "achBankTransfer": "Transferencia bancaria ACH",
+    "manualPaymentRecording": "Registro manual de pagos",
+    "free": "Gratis",
+    "chooseWhatEmailsYouReceive": "Elija qué correos recibe",
+    "mobileAppNotifications": "Notificaciones de app móvil",
+    "textMessageAlerts": "Alertas por mensaje de texto",
+    "automatedAlerts": "Alertas Automatizadas",
+    "configureWhichAutomatedTriggersNotifyYouAndHow": "Configure qué disparadores automáticos le notifican y cómo",
+    "inapp": "En App",
+    "chooseYourPreferredColorScheme": "Elija su esquema de colores preferido",
+    "accentColor": "Color de Acento",
+    "brandColorForButtonsAndHighlights": "Color de marca para botones y resaltados",
+    "chooseYourPreferredLanguageAffectsAllUiText": "Elija su idioma preferido. Afecta todo el texto de la interfaz.",
+    "moreTranslationsComingSoonLanguagePreferenceSavedT": "Más traducciones próximamente. Preferencia de idioma guardada en su perfil.",
+    "password": "Contraseña",
+    "updateYourPassword": "Actualice su contraseña",
+    "addAnExtraLayerOfSecurityToYourAccount": "Agregue una capa extra de seguridad a su cuenta",
+    "totpEnabled": "TOTP habilitado",
+    "authenticatorApp": "App de Autenticación",
+    "useAnAppLikeGoogleAuthenticatorOrAuthy": "Use una app como Google Authenticator o Authy",
+    "currentSession": "Sesión Actual",
+    "yourActiveSessionInformation": "Su información de sesión activa",
+    "loadingSessionInfo": "Cargando info de sesión...",
+    "signOutEverywhere": "Cerrar Sesión en Todos los Dispositivos",
+    "signOutOfAllDevicesAndSessions": "Cerrar sesión en todos los dispositivos y sesiones",
+    "twowaySyncBetweenZaftoJobsAndGoogleCalendar": "Sincronización bidireccional entre trabajos ZAFTO y Google Calendar",
+    "connectYourGoogleCalendarToSyncScheduledJobsAutoma": "Conecte su Google Calendar para sincronizar trabajos programados automáticamente.",
+    "connectedApps": "Apps Conectadas",
+    "manageThirdpartyIntegrations": "Administre integraciones de terceros",
+    "manageCompanyLocationsAndAssignTeamMembers": "Administre ubicaciones de la empresa y asigne miembros del equipo",
+    "noBranchesYetAddYourFirstLocation": "Sin sucursales aún. Agregue su primera ubicación.",
+    "defaultRolePermissions": "Permisos de Rol Predeterminados",
+    "createCustomRolesWithGranularPermissionControlBeyo": "Cree roles personalizados con control granular de permisos más allá de los predeterminados",
+    "noCustomRolesYetDefaultRolebasedPermissionsAreActi": "Sin roles personalizados aún. Los permisos basados en roles predeterminados están activos.",
+    "requireApprovalForHighvalueActionsBeforeTheyGoOut": "Requiera aprobación para acciones de alto valor antes de que se envíen",
+    "tradeModules": "Módulos de Oficio",
+    "customForms": "Formularios Personalizados",
+    "formsCreatedByYourCompany": "Formularios creados por su empresa",
+    "systemFormTemplates": "Plantillas de Formulario del Sistema",
+    "manageApiAccessForIntegrationsAndAutomations": "Administre acceso API para integraciones y automatizaciones",
+    "noApiKeysGenerateOneToEnableIntegrations": "Sin claves API. Genere una para habilitar integraciones.",
+    "revoke": "Revocar",
+    "threshold": "Umbral $",
+    "loadingTemplates": "Cargando plantillas...",
+    "noTemplatesFoundCreateOneToGetStarted": "Sin plantillas encontradas. Cree una para comenzar.",
+    "loadingCustomFields": "Cargando campos personalizados...",
+    "fieldType": "Tipo de Campo",
+    "addField": "Agregar Campo",
+    "loadingConfiguration": "Cargando configuración...",
+    "manageTaxRatesForInvoicesAndBids": "Administre tasas de impuestos para facturas y ofertas",
+    "appliesTo": "Se Aplica a",
+    "numberingFormatting": "Numeración y Formato",
+    "configureInvoicebidNumberFormatsAndBidValidity": "Configure formatos de número de factura/oferta y validez de oferta",
+    "invoiceFormat": "Formato de factura",
+    "bidFormat": "Formato de oferta",
+    "bidValidity": "Validez de oferta",
+    "defaultPaymentTerms": "Términos de Pago Predeterminados",
+    "defaultTerms": "Términos predeterminados",
+    "earlyPaymentDiscount": "Descuento por pronto pago",
+    "resetToDefaults": "Restablecer valores predeterminados",
+    "connectBankAccountDesc": "Conecte su cuenta bancaria para aceptar pagos con tarjeta y transferencias ACH de clientes",
+    "rolesPermissionsDesc": "Roles integrados con niveles de acceso predeterminados. Asigne roles a miembros del equipo para controlar lo que pueden ver y hacer."
   },
   "team": {
     "title": "Equipo",
@@ -1852,7 +2042,8 @@
     "certifications": "Certificaciones",
     "lienProtection": "Protección de Gravamen",
     "manageDesc": "Rastree licencias, certificaciones y cumplimiento normativo",
-    "noCerts": "No se encontraron registros de cumplimiento"
+    "noCerts": "No se encontraron registros de cumplimiento",
+    "failedToLoadComplianceData": "Error al cargar datos de cumplimiento"
   },
   "comms": {
     "title": "Comunicaciones",
@@ -1922,12 +2113,29 @@
     "title": "Proveedores",
     "newVendor": "Agregar Proveedor",
     "noVendors": "Aún no hay proveedores",
-    "searchVendors": "Buscar proveedores..."
+    "searchVendors": "Buscar proveedores...",
+    "supplier": "Proveedor",
+    "rating": "Calificación",
+    "manageSuppliersAndAccountingVendors": "Administre proveedores y proveedores contables",
+    "totalSuppliers": "Total de Proveedores",
+    "accountingVendors": "Proveedores Contables",
+    "na": "N/A",
+    "addSupplier": "Agregar Proveedor"
   },
   "purchaseOrders": {
     "title": "Órdenes de Compra",
     "new": "Nueva OC",
-    "noPOs": "Aún no hay órdenes de compra"
+    "noPOs": "Aún no hay órdenes de compra",
+    "orderMaterialsAndTrackDeliveries": "Ordene materiales y rastree entregas",
+    "totalPos": "Total de OCs",
+    "receivedValue": "Valor Recibido",
+    "openOrders": "Órdenes Abiertas",
+    "noPurchaseOrdersFound": "Sin órdenes de compra encontradas",
+    "noLineItemsRecorded": "Sin partidas registradas",
+    "receivingHistory": "Historial de Recepción",
+    "shipping": "Envío",
+    "newPurchaseOrder": "Nueva Orden de Compra",
+    "expectedDeliveryDate": "Fecha de Entrega Esperada"
   },
   "fleet": {
     "title": "Flotilla",
@@ -1981,14 +2189,20 @@
     "managePostingsApplicants": "Administra publicaciones de empleo, candidatos y entrevistas",
     "interviewsThisWeek": "Entrevistas esta semana",
     "noInterviewsFound": "No se encontraron entrevistas",
-    "noActivePostings": "Sin publicaciones activas. Crea una primero."
+    "noActivePostings": "Sin publicaciones activas. Crea una primero.",
+    "pastCompleted": "Pasado / Completado",
+    "portfolioWebsite": "Portafolio / Sitio Web"
   },
   "reviews": {
     "title": "Reseñas",
     "averageRating": "Calificación Promedio",
     "totalReviews": "Total de Reseñas",
     "requestReview": "Solicitar Reseña",
-    "noReviews": "Aún no hay reseñas"
+    "noReviews": "Aún no hay reseñas",
+    "noRating": "Sin calificación",
+    "requestsSent": "Solicitudes Enviadas",
+    "reviewsReceived": "Reseñas Recibidas",
+    "noReviewRequestsFound": "Sin solicitudes de reseña encontradas"
   },
   "errors": {
     "generic": "Algo salió mal. Por favor intenta de nuevo.",
@@ -2108,7 +2322,17 @@
     "revenue": "Ingresos",
     "profitMargin": "Margen de ganancia",
     "jobCompletion": "Trabajos completados",
-    "customerSatisfaction": "Satisfacción del cliente"
+    "customerSatisfaction": "Satisfacción del cliente",
+    "revenueByMonth": "Ingresos por Mes",
+    "agingReport": "Informe de Antigüedad",
+    "businessAnalyticsAndInsights": "Análisis e información del negocio",
+    "materialCosts": "Costos de Material",
+    "monthlyBreakdown": "Desglose Mensual",
+    "activeStatuses": "Estados Activos",
+    "teamMember": "Miembro del Equipo",
+    "noTeamDataAvailable": "Sin datos de equipo disponibles",
+    "outstanding": "Pendiente",
+    "teamPerformance": "Rendimiento del Equipo"
   },
   "payroll": {
     "title": "Nómina",
@@ -2117,7 +2341,15 @@
     "totalPayroll": "Total de nómina",
     "nextPayDate": "Próxima fecha de pago",
     "employees": "Empleados",
-    "hoursWorked": "Horas trabajadas"
+    "hoursWorked": "Horas trabajadas",
+    "dateRange": "Rango de Fechas",
+    "newPayPeriod": "Nuevo Período de Pago",
+    "currentPeriod": "Período Actual",
+    "totalGross": "Total Bruto",
+    "totalNet": "Total Neto",
+    "noPayStubsForThisPeriod": "Sin recibos de nómina para este período",
+    "regHrs": "Hrs Reg",
+    "otHrs": "Hrs Extra"
   },
   "hr": {
     "title": "Recursos Humanos",
@@ -2208,7 +2440,23 @@
     "markUnread": "Marcar como no leido",
     "moveToTrash": "Mover a papelera",
     "noConversationSelected": "Sin conversacion seleccionada",
-    "selectConversation": "Selecciona una conversacion para ver"
+    "selectConversation": "Selecciona una conversacion para ver",
+    "campaign": "Campaña",
+    "openRate": "Tasa de Apertura",
+    "clickRate": "Tasa de Clics",
+    "triggerEvent": "Evento Disparador",
+    "sentThisMonth": "Enviados Este Mes",
+    "deliveryRate": "Tasa de Entrega",
+    "avgOpenRate": "Tasa de Apertura Prom.",
+    "createYourFirstEmailTemplateToGetStarted": "Cree su primera plantilla de correo para comenzar",
+    "noSentEmailsFound": "Sin correos enviados encontrados",
+    "noCampaignsFound": "Sin campañas encontradas",
+    "createACampaignToSendBulkEmails": "Cree una campaña para enviar correos masivos",
+    "recipients": "Destinatarios",
+    "noUnsubscribes": "Sin bajas",
+    "htmlBody": "Cuerpo HTML",
+    "plainTextBody": "Cuerpo de Texto Plano",
+    "estimatedRecipients": "Destinatarios Estimados"
   },
   "teamChat": {
     "title": "Chat del equipo",
@@ -2273,14 +2521,37 @@
     "typeLabel": "Tipo:",
     "timelineLabel": "Plazo:",
     "warrantyLabel": "Garantia:",
-    "submittedLabel": "Enviado:"
+    "submittedLabel": "Enviado:",
+    "licenseNumber": "Número de Licencia",
+    "serviceZipCodes": "Códigos Postales de Servicio",
+    "tradesSpecializations": "Oficios y Especializaciones",
+    "specializations": "Especializaciones",
+    "credentials": "Credenciales",
+    "insuranceVerified": "Seguro Verificado",
+    "bonded": "Afianzado",
+    "marketplaceSettings": "Configuración del Marketplace",
+    "maxDailyLeads": "Leads Diarios Máx.",
+    "minimumJobValue": "Valor Mínimo del Trabajo"
   },
   "growth": {
     "title": "Panel de crecimiento",
     "manageDesc": "Rastree métricas e indicadores de crecimiento del negocio",
     "revenueGrowth": "Crecimiento de ingresos",
     "customerGrowth": "Crecimiento de clientes",
-    "jobGrowth": "Crecimiento de trabajos"
+    "jobGrowth": "Crecimiento de trabajos",
+    "aisuggestedActionsToGrowYourRevenue": "Acciones sugeridas por IA para crecer sus ingresos",
+    "analyzingYourCustomerData": "Analizando sus datos de clientes...",
+    "findingRevenueOpportunities": "Encontrando oportunidades de ingreso",
+    "errorLoadingGrowthActions": "Error al cargar acciones de crecimiento",
+    "actionsPending": "Acciones Pendientes",
+    "completedThisMonth": "Completados Este Mes",
+    "estRevenueOpportunity": "Oportunidad de Ingreso Est.",
+    "noActionsMatchThisFilter": "Sin acciones que coincidan con este filtro",
+    "suggestedDate": "Fecha Sugerida",
+    "selectAnActionToViewDetails": "Seleccione una acción para ver detalles",
+    "noGrowthActionsYet": "Sin acciones de crecimiento aún",
+    "addCustomersAndCompleteJobsToSeeAigeneratedGrowthO": "Agregue clientes y complete trabajos para ver oportunidades de crecimiento generadas por IA",
+    "aiDraftMessage": "Mensaje Borrador con IA"
   },
   "automations": {
     "title": "Automatizaciones",
@@ -2289,7 +2560,26 @@
     "noAutomationsDesc": "Configure flujos de trabajo automáticos para ahorrar tiempo.",
     "active": "Activas",
     "paused": "Pausadas",
-    "runs": "Ejecuciones"
+    "runs": "Ejecuciones",
+    "sendEmail": "Enviar Correo",
+    "sendSms": "Enviar SMS",
+    "createTask": "Crear Tarea",
+    "automateRepetitiveTasksWithTriggerbasedWorkflows": "Automatice tareas repetitivas con flujos basados en disparadores",
+    "createWorkflowAutomationsToSaveTimeOnRepetitiveTas": "Cree automatizaciones de flujos para ahorrar tiempo en tareas repetitivas.",
+    "automationDetails": "Detalles de Automatización",
+    "whenThisHappens": "Cuando esto sucede...",
+    "thenDoThis": "Entonces hacer esto...",
+    "lastRun": "Última Ejecución",
+    "selectTrigger": "Seleccionar disparador...",
+    "jobStatusChange": "Cambio de Estado del Trabajo",
+    "invoiceOverdue": "Factura Atrasada",
+    "leadIdle": "Lead Inactivo",
+    "customerEvent": "Evento del Cliente",
+    "bidEvent": "Evento de Oferta",
+    "selectAction": "Seleccionar acción...",
+    "notifyTeam": "Notificar al Equipo",
+    "updateStatus": "Actualizar Estado",
+    "createFollowup": "Crear Seguimiento"
   },
   "certifications": {
     "title": "Certificaciones",
@@ -2297,7 +2587,14 @@
     "noCerts": "No se encontraron certificaciones",
     "expiring": "Por vencer",
     "expired": "Vencidas",
-    "valid": "Vigentes"
+    "valid": "Vigentes",
+    "noExpiration": "Sin vencimiento",
+    "selectEmployee": "Seleccionar empleado...",
+    "selectType": "Seleccionar tipo...",
+    "certificateNumber": "Número de Certificado",
+    "renewalRequired": "Renovación requerida",
+    "pendingRenewal": "Renovación Pendiente",
+    "revoked": "Revocado"
   },
   "oshaStandards": {
     "title": "Normas OSHA",
@@ -2319,7 +2616,19 @@
     "generateBid": "Generar oferta",
     "roomList": "Lista de habitaciones",
     "damageAssessment": "Evaluacion de danos",
-    "noWalkthroughsFound": "No se encontraron recorridos"
+    "noWalkthroughsFound": "No se encontraron recorridos",
+    "propertyWalkthroughsAndSiteAssessments": "Recorridos de propiedad y evaluaciones del sitio",
+    "noRoomsRecorded": "Sin habitaciones registradas",
+    "roomsAreAddedDuringTheWalkthroughOnTheMobileApp": "Las habitaciones se agregan durante el recorrido en la app móvil",
+    "noPhotosForThisRoom": "Sin fotos para esta habitación",
+    "noPhotosCaptured": "Sin fotos capturadas",
+    "photosAreTakenDuringTheWalkthroughOnTheMobileApp": "Las fotos se toman durante el recorrido en la app móvil",
+    "noPhotosInThisFilter": "Sin fotos en este filtro",
+    "noFloorPlanCreated": "Sin plano de planta creado",
+    "floorPlansAreCreatedOnTheMobileAppDuringTheWalkthr": "Los planos de planta se crean en la app móvil durante el recorrido",
+    "noPlanDataAvailable": "Sin datos de plan disponibles",
+    "noNotesRecorded": "Sin notas registradas",
+    "totalPhotos": "Total de Fotos"
   },
   "inspections": {
     "title": "Inspecciones",
@@ -2332,7 +2641,13 @@
     "qualityControlSafety": "Control de calidad, seguridad y listas de pendientes",
     "preCloseout": "Pre-cierre",
     "progressCheck": "Revision de progreso",
-    "noChecklistItemsRecorded": "No se registraron elementos de lista."
+    "noChecklistItemsRecorded": "No se registraron elementos de lista.",
+    "fullHomeRewire": "Recableado Total del Hogar",
+    "hvacInstall": "Instalación HVAC",
+    "johnSmith": "Juan Pérez",
+    "mikeJohnson": "Miguel Johnson",
+    "inspectionNotFound": "Inspección no encontrada",
+    "createInspectionsDesc": "Cree inspecciones con listas de verificación configurables para control de calidad y cumplimiento."
   },
   "permits": {
     "title": "Permisos de obra",
@@ -2363,13 +2678,41 @@
     "underReview": "En revision",
     "approved": "Aprobado",
     "denied": "Denegado",
-    "revisions": "Revisiones requeridas"
+    "revisions": "Revisiones requeridas",
+    "activePermits": "Permisos Activos",
+    "upcomingInspections": "Inspecciones Próximas",
+    "failedNeedsCorrection": "Fallido / Necesita Corrección",
+    "jobCustomer": "Trabajo / Cliente",
+    "scheduleInspection": "Programar Inspección",
+    "newPermitApplication": "Nueva Solicitud de Permiso",
+    "mechanicalHvac": "Mecánico / HVAC",
+    "building": "Edificio",
+    "demolition": "Demolición",
+    "loadingInspections": "Cargando inspecciones...",
+    "noInspectionsScheduled": "Sin inspecciones programadas",
+    "reinspectionNeeded": "Reinspección necesaria",
+    "failedToLoadPermits": "Error al cargar permisos",
+    "noPermitsForThisJob": "Sin permisos para este trabajo",
+    "inspectionTimeline": "Cronología de Inspección"
   },
   "subcontractors": {
     "title": "Subcontratistas",
     "add": "Agregar subcontratista",
     "searchSubs": "Buscar subcontratistas...",
-    "noSubs": "No se encontraron subcontratistas"
+    "noSubs": "No se encontraron subcontratistas",
+    "insuranceExpiry": "Vencimiento del Seguro",
+    "manageYourSubcontractorNetwork": "Administre su red de subcontratistas",
+    "totalSubs": "Total de Subs",
+    "complianceAlerts": "Alertas de Cumplimiento",
+    "allTrades": "Todos los Oficios",
+    "suspended": "Suspendido",
+    "addYourFirstSub": "Agregue su primer subcontratista",
+    "allClear": "Todo Despejado",
+    "noComplianceIssuesFound": "Sin problemas de cumplimiento encontrados",
+    "trades": "Oficios",
+    "license": "Licencia #",
+    "licenseExpiry": "Vencimiento de Licencia",
+    "insuranceCarrier": "Aseguradora"
   },
   "changeOrders": {
     "title": "Órdenes de cambio",
@@ -2380,7 +2723,17 @@
     "changeOrderAmount": "Monto de orden de cambio",
     "approvalRequired": "Aprobacion requerida",
     "originalAmount": "Monto original",
-    "revisedAmount": "Monto revisado"
+    "revisedAmount": "Monto revisado",
+    "approvedAdditions": "Adiciones Aprobadas",
+    "pendingValue": "Valor Pendiente",
+    "totalCos": "Total de OCs",
+    "sendForApproval": "Enviar para Aprobación",
+    "markApproved": "Marcar Aprobado",
+    "customerRequest": "Solicitud del Cliente",
+    "discoveredDuringWork": "Descubierto Durante el Trabajo",
+    "codeRequirement": "Requisito de Código",
+    "designChange": "Cambio de Diseño",
+    "contractorRecommendation": "Recomendación del Contratista"
   },
   "serviceAgreements": {
     "title": "Contratos de servicio",
@@ -2390,7 +2743,18 @@
     "newAgreement": "Nuevo acuerdo",
     "renewalDate": "Fecha de renovacion",
     "serviceFrequency": "Frecuencia de servicio",
-    "noAgreementsFound": "No se encontraron acuerdos"
+    "noAgreementsFound": "No se encontraron acuerdos",
+    "manageRecurringMaintenanceContracts": "Administre contratos de mantenimiento recurrentes",
+    "activeAgreements": "Acuerdos Activos",
+    "monthlyRecurring": "Recurrente Mensual",
+    "servicesThisMonth": "Servicios Este Mes",
+    "servicesIncluded": "Servicios Incluidos",
+    "newServiceAgreement": "Nuevo Acuerdo de Servicio",
+    "selectCustomer": "Seleccionar cliente...",
+    "thompsonAutoShop": "Thompson Auto Shop",
+    "sarahMartinez": "Sara Martínez",
+    "autorenewAtEndOfTerm": "Renovación automática al fin del plazo",
+    "createAgreement": "Crear Acuerdo"
   },
   "warranties": {
     "title": "Garantías",
@@ -2422,7 +2786,14 @@
     "pendingClaims": "Reclamos pendientes",
     "jobsCovered": "Trabajos cubiertos",
     "noWarrantiesFound": "No se encontraron garantias",
-    "noDispatches": "Sin despachos"
+    "noDispatches": "Sin despachos",
+    "addWarrantiesToTrackCoverageForYourJobsAndEquipmen": "Agregue garantías para rastrear cobertura de sus trabajos y equipo.",
+    "warrantyDispatchesFromYourPartnerCompaniesWillAppe": "Los despachos de garantía de sus empresas asociadas aparecerán aquí.",
+    "robertChen": "Roberto Chen",
+    "sarahMartinez": "Sara Martínez",
+    "mikeThompson": "Miguel Thompson",
+    "fullHomeRewire": "Recableado Total del Hogar",
+    "hvacInstall": "Instalación HVAC"
   },
   "warrantyIntelligence": {
     "title": "Inteligencia de garantías",
@@ -2435,24 +2806,66 @@
     "noItems": "No se encontraron artículos de inventario",
     "totalValue": "Valor total",
     "lowStock": "Existencia baja",
-    "categories": "Categorías"
+    "categories": "Categorías",
+    "trackMaterialsAndSupplies": "Rastree materiales y suministros",
+    "showLowStockOnly": "Mostrar solo bajo en existencias",
+    "min": "Mín",
+    "addMaterialsAndSuppliesToTrackYourInventory": "Agregue materiales y suministros para rastrear su inventario",
+    "out": "Fuera",
+    "addInventoryItem": "Agregar Artículo de Inventario",
+    "adjustQuantity": "Ajustar Cantidad",
+    "selectReason": "Seleccionar razón...",
+    "restocked": "Reabastecido",
+    "damagedlost": "Dañado/Perdido",
+    "inventoryCount": "Conteo de inventario",
+    "returnedToVendor": "Devuelto al proveedor",
+    "saveAdjustment": "Guardar Ajuste",
+    "inventoryHistory": "Historial de Inventario",
+    "noHistoryAvailable": "Sin historial disponible",
+    "usedOnJob": "Usado en trabajo"
   },
   "toolCheckout": {
     "title": "Préstamo de herramientas",
     "checkOut": "Prestar herramienta",
     "noCheckouts": "No hay préstamos activos",
     "checkedOut": "Prestadas",
-    "overdue": "Vencidas"
+    "overdue": "Vencidas",
+    "barcode": "Código de Barras",
+    "noToolsFound": "Sin herramientas encontradas",
+    "addToolsAndEquipmentToTrackCheckoutreturnAcrossYou": "Agregue herramientas y equipo para rastrear asignación/devolución en su equipo.",
+    "addToolEquipment": "Agregar Herramienta / Equipo",
+    "checkoutTool": "Asignar Herramienta",
+    "conditionAtCheckout": "Condición al Asignar",
+    "returnTool": "Devolver Herramienta",
+    "conditionAtReturn": "Condición al Retorno",
+    "returnNotes": "Notas de Devolución",
+    "storageLocation": "Ubicación de Almacenamiento",
+    "purchaseCost": "Costo de Compra",
+    "nextCalibration": "Próxima Calibración",
+    "activeCheckout": "Asignación Activa"
   },
   "communications": {
     "title": "Comunicaciones",
-    "noComms": "Aún no hay comunicaciones"
+    "noComms": "Aún no hay comunicaciones",
+    "needResponse": "Necesita Respuesta",
+    "selectAMessageToView": "Seleccione un mensaje para ver"
   },
   "sketchEngine": {
     "title": "Motor de planos",
     "newSketch": "Nuevo plano",
     "noSketches": "Aún no hay planos",
-    "noSketchesDesc": "Cree planos de piso de grado CAD y dibujos de oficios."
+    "noSketchesDesc": "Cree planos de piso de grado CAD y dibujos de oficios.",
+    "loadingCanvas": "Cargando lienzo...",
+    "floorPlans": "Planos de Planta",
+    "engineCapabilities": "Capacidades del Motor",
+    "loadingFloorPlans": "Cargando planos de planta...",
+    "newFloorPlan": "Nuevo Plano de Planta",
+    "createYourFirstFloorPlan": "Cree Su Primer Plano de Planta",
+    "deleteFloorPlan": "Eliminar Plano de Planta",
+    "selectJob": "Seleccionar Trabajo",
+    "saved": "Guardado",
+    "startDrawing": "Comenzar a Dibujar",
+    "totalWalls": "Total de Paredes"
   },
   "tpa": {
     "title": "Programas (TPA)",
@@ -2461,20 +2874,39 @@
     "noPrograms": "No se encontraron programas TPA",
     "insuranceCarriersServed": "Aseguradoras atendidas por este TPA",
     "tpaPortalAccess": "Acceso al portal TPA y contactos del programa",
-    "manageTpaEnrollments": "Administra inscripciones a programas de Administradoras de Terceros"
+    "manageTpaEnrollments": "Administra inscripciones a programas de Administradoras de Terceros",
+    "program": "Programa",
+    "suppRate": "Tarifa Supl.",
+    "failedToLoadData": "Error al cargar datos"
   },
   "priceBook": {
     "title": "Libro de precios",
     "addItem": "Agregar artículo",
-    "noItems": "No se encontraron artículos en el libro de precios"
+    "noItems": "No se encontraron artículos en el libro de precios",
+    "noLaborRatesFound": "Sin tarifas de mano de obra encontradas",
+    "noMaterialsFound": "Sin materiales encontrados",
+    "noAssembliesFound": "Sin ensamblajes encontrados",
+    "assembly": "Ensamblaje"
   },
   "pricingAnalytics": {
     "title": "Analítica de precios",
-    "noData": "No hay datos de precios disponibles"
+    "noData": "No hay datos de precios disponibles",
+    "closeRateByPriceTier": "Tasa de Cierre por Nivel de Precio",
+    "noDataYet": "Sin datos aún",
+    "mostAppliedPricingFactors": "Factores de Precio Más Aplicados",
+    "noPricingFactorsAppliedYet": "Sin factores de precio aplicados aún",
+    "suggestionOutcomes": "Resultados de Sugerencias",
+    "overridden": "Anulado",
+    "jobsWon": "Trabajos Ganados",
+    "avgAdjustment": "Ajuste Prom.",
+    "recentSuggestions": "Sugerencias Recientes"
   },
   "pricingSettings": {
     "title": "Reglas de precios inteligentes",
-    "manageDesc": "Configure reglas de precios, márgenes y recargos"
+    "manageDesc": "Configure reglas de precios, márgenes y recargos",
+    "addRule": "Agregar Regla",
+    "chooseARuleType": "Elija un Tipo de Regla",
+    "noPricingRulesConfigured": "Sin reglas de precios configuradas"
   },
   "jobIntelligence": {
     "title": "Autopsia de costos de trabajo",
@@ -2483,11 +2915,29 @@
   },
   "jobCostRadar": {
     "title": "Radar de costos de trabajo",
-    "noData": "No hay datos de costos disponibles"
+    "noData": "No hay datos de costos disponibles",
+    "portfolioHealth": "Salud del Portafolio",
+    "totalBudgetVsProjected": "Presupuesto Total vs Proyectado",
+    "avgProjectedMargin": "Margen Proyectado Prom.",
+    "activeSpend": "Gasto Activo",
+    "projected": "Proyectado",
+    "budgeted": "Presupuestado",
+    "originalMargin": "Margen Original",
+    "projectedMargin": "Margen Proyectado",
+    "alerts": "Alertas",
+    "totalSpend": "Gasto Total"
   },
   "revenueInsights": {
     "title": "Inteligencia de ingresos",
-    "noData": "No hay datos de ingresos disponibles"
+    "noData": "No hay datos de ingresos disponibles",
+    "revenueTrend": "Tendencia de Ingresos",
+    "aipoweredRevenueAnalyticsAndRecommendations": "Análisis de ingresos e recomendaciones con IA",
+    "noRevenueDataAvailableYetStartCreatingJobsAndInvoi": "Sin datos de ingresos disponibles aún. Comience a crear trabajos y facturas para ver información.",
+    "noRevenueDataForThisPeriod": "Sin datos de ingresos para este período",
+    "aiInsights": "Perspectivas de IA",
+    "topServices": "Servicios Principales",
+    "noServiceDataYetTagYourJobsToSeeServiceBreakdowns": "Sin datos de servicio aún. Etiquete sus trabajos para ver desgloses de servicio.",
+    "customerInsights": "Perspectivas del Cliente"
   },
   "lienProtection": {
     "title": "Protección de gravámenes",
@@ -2498,24 +2948,72 @@
     "noticesSent": "Avisos enviados",
     "lienReleases": "Liberaciones de gravamen",
     "deadlineApproaching": "Plazo acercandose",
-    "noLienItems": "Sin elementos de gravamen"
+    "noLienItems": "Sin elementos de gravamen",
+    "noActiveLienRecords": "Sin registros de gravamen activos",
+    "lienTrackingStartsWhenJobsHaveOutstandingPayments": "El rastreo de gravámenes inicia cuando los trabajos tienen pagos pendientes",
+    "amountOwed": "Monto Adeudado",
+    "filingDeadline": "Fecha Límite de Presentación",
+    "notarizationRequired": "Notarización requerida",
+    "lienLifecycle": "Ciclo de Vida del Gravamen",
+    "notarization": "Notarización"
   },
   "maintenancePipeline": {
     "title": "Pipeline de mantenimiento",
-    "noItems": "No hay artículos de mantenimiento"
+    "noItems": "No hay artículos de mantenimiento",
+    "noPredictionsMatchFilter": "Sin predicciones que coincidan con el filtro",
+    "runTheEngineToGeneratePredictionsFromYourEquipment": "Ejecute el motor para generar predicciones de sus datos de equipo",
+    "noUpcomingPredictions": "Sin predicciones próximas",
+    "openOpportunities": "Oportunidades Abiertas",
+    "bookingRate": "Tasa de Reserva",
+    "noForecastDataAvailable": "Sin datos de pronóstico disponibles",
+    "byPredictionType": "Por Tipo de Predicción",
+    "monthlyForecast": "Pronóstico Mensual"
   },
   "siteSurveys": {
     "title": "Inspecciones de sitio",
     "new": "Nueva inspección de sitio",
-    "noSurveys": "No se encontraron inspecciones de sitio"
+    "noSurveys": "No se encontraron inspecciones de sitio",
+    "conditions": "Condiciones",
+    "accessNotes": "Notas de Acceso",
+    "totalSurveys": "Total de Inspecciones",
+    "hazardsFound": "Riesgos Encontrados",
+    "noSurveysYetCreateOneToStartDocumentingSiteConditi": "Sin inspecciones aún. Cree una para comenzar a documentar condiciones del sitio."
   },
   "moistureReadings": {
     "title": "Lecturas de humedad",
-    "noReadings": "No se encontraron lecturas de humedad"
+    "noReadings": "No se encontraron lecturas de humedad",
+    "trackAndMonitorMoistureLevelsAcrossRestorationJobs": "Rastree y monitoree los niveles de humedad en trabajos de restauración",
+    "areasAtTarget": "Áreas en Objetivo",
+    "datetime": "Fecha/Hora",
+    "addMoistureReading": "Agregar Lectura de Humedad",
+    "markAsDry": "Marcar como Seco",
+    "saveReading": "Guardar Lectura",
+    "totalReadings": "Total de Lecturas",
+    "avgReading": "Lectura Prom.",
+    "relative": "Relativo",
+    "wme": "WME",
+    "grains": "Granos",
+    "startLoggingDesc": "Comience a registrar lecturas de humedad para rastrear el progreso de secado en trabajos de restauración."
   },
   "dryingLogs": {
     "title": "Registros de secado",
-    "noLogs": "No se encontraron registros de secado"
+    "noLogs": "No se encontraron registros de secado",
+    "adjustment": "Ajuste",
+    "completion": "Finalización",
+    "documentDryingProgressAndEnvironmentalConditions": "Documente el progreso de secado y condiciones ambientales",
+    "totalEntries": "Total de Asientos",
+    "equipmentRunning": "Equipo en Operación",
+    "avgIndoorHumidity": "Humedad Interior Prom.",
+    "totalEquipment": "Total de Equipo",
+    "outdoorTemp": "Temp. Exterior",
+    "outdoorHumidity": "Humedad Exterior",
+    "indoorHumidity": "Humedad Interior",
+    "addDryingLogEntry": "Agregar Entrada de Registro de Secado",
+    "setup": "Configuración",
+    "equipmentChange": "Cambio de Equipo",
+    "saveEntry": "Guardar Asiento",
+    "immutableNotice": "Los registros de secado son registros legales inmutables y no se pueden editar ni eliminar una vez creados.",
+    "indoorTemp": "Temp. Interior"
   },
   "moldRemediation": {
     "title": "Remediación de moho",
@@ -2523,7 +3021,18 @@
   },
   "fireRestoration": {
     "title": "Restauración por incendio",
-    "noRecords": "No hay registros de restauración por incendio"
+    "noRecords": "No hay registros de restauración por incendio",
+    "assessments": "Evaluaciones",
+    "damageZones": "Zonas de Daño",
+    "waterSuppression": "Supresión de Agua",
+    "assessmentOverview": "Vista General de Evaluación",
+    "origin": "Origen",
+    "fdReport": "Reporte FD #",
+    "roof": "Techo",
+    "foundation": "Cimentación",
+    "loadbearing": "Carga Estructural",
+    "noContentItemsDocumented": "Sin artículos de contenido documentados",
+    "packed": "Empacado"
   },
   "pestControl": {
     "title": "Control de plagas",
@@ -2544,52 +3053,152 @@
   "zdocs": {
     "title": "ZForge",
     "newDoc": "Nuevo documento",
-    "noDocs": "No se encontraron documentos"
+    "noDocs": "No se encontraron documentos",
+    "signer": "Firmante",
+    "generateDocument": "Generar Documento",
+    "templateVariables": "Variables de Plantilla",
+    "documentsGenerated": "Documentos Generados",
+    "entity": "Entidad",
+    "noGeneratedDocumentsFound": "Sin documentos generados encontrados",
+    "noSignatureRequestsFound": "Sin solicitudes de firma encontradas",
+    "requiresSignature": "Requiere firma",
+    "noActiveTemplatesCreateOneFirst": "Sin plantillas activas. Cree una primero.",
+    "documentTitle": "Título del Documento",
+    "entityId": "ID de Entidad",
+    "variablesWillBePopulatedFromLinkedEntityData": "Las variables se llenarán con datos de la entidad vinculada.",
+    "thisTemplateRequiresASignatureAfterGeneration": "Esta plantilla requiere una firma después de generarse.",
+    "sendForSignature": "Enviar para Firma",
+    "addThePeopleWhoNeedToSignThisDocument": "Agregue las personas que necesitan firmar este documento."
   },
   "legalAcknowledgment": {
     "title": "Herramientas de grado profesional"
   },
   "keyboardShortcuts": {
-    "title": "Atajos de teclado"
+    "title": "Atajos de teclado",
+    "esc": "Esc"
   },
   "bidsNew": {
     "title": "Nueva cotización"
   },
   "bidsOptimize": {
-    "title": "Optimización de cotizaciones"
+    "title": "Optimización de cotizaciones",
+    "analyzingBid": "Analizando Oferta",
+    "analysisFailed": "Análisis Fallido",
+    "historicalWinRate": "Tasa Histórica de Éxito",
+    "totalPotentialValueFromSuggestions": "Valor potencial total de sugerencias"
   },
   "booksAccounts": {
-    "title": "Catálogo de cuentas"
+    "title": "Catálogo de cuentas",
+    "accountNumber": "Número de Cuenta",
+    "accountType": "Tipo de Cuenta",
+    "number": "Número",
+    "debits": "Débitos",
+    "credits": "Créditos"
   },
   "booksBanking": {
-    "title": "Banca"
+    "title": "Banca",
+    "matched": "Coincidido",
+    "connectAndManageYourBankAccounts": "Conecte y administre sus cuentas bancarias",
+    "totalBalance": "Saldo Total",
+    "connectedAccounts": "Cuentas Conectadas",
+    "needsReview": "Necesita Revisión",
+    "noBankAccountsConnected": "Sin cuentas bancarias conectadas"
   },
   "booksBranches": {
-    "title": "Finanzas por sucursal"
+    "title": "Finanzas por sucursal",
+    "multibranchPlAndPerformanceComparison": "G&P multi-sucursal y comparación de rendimiento",
+    "businessPlanFeature": "Función del Plan de Negocios",
+    "loadingBranchFinancialData": "Cargando datos financieros de sucursal...",
+    "sidebysidePlComparison": "Comparación G&P Lado a Lado",
+    "metric": "Métrica",
+    "branchPerformance": "Rendimiento de Sucursal",
+    "noBranchDataAvailable": "Sin datos de sucursal disponibles.",
+    "cogs": "CMV",
+    "noBranchesConfigured": "Sin Sucursales Configuradas"
   },
   "booksBudgets": {
-    "title": "Presupuesto vs. Real"
+    "title": "Presupuesto vs. Real",
+    "compareJobBudgetsToActualExpensesIdentifyOverrunsE": "Compare presupuestos de trabajo con gastos reales. Identifique sobrecostos temprano.",
+    "joblevelBreakdown": "Desglose por Trabajo",
+    "clickAJobToSeeCategorylevelBudgetDetails": "Haga clic en un trabajo para ver detalles de presupuesto por categoría",
+    "noJobBudgetsCreatedYet": "Sin presupuestos de trabajo creados aún.",
+    "createBudgetsFromTheJobDetailPageToStartTracking": "Cree presupuestos desde la página de detalle del trabajo para comenzar a rastrear.",
+    "usage": "Uso",
+    "joblevelBudgetingAndVarianceReporting": "Presupuesto a nivel de trabajo e informes de varianza",
+    "enterpriseFeature": "Función Empresarial"
   },
   "booksConstruction": {
-    "title": "Contabilidad de construcción"
+    "title": "Contabilidad de construcción",
+    "app": "Solicitud #",
+    "prev": "Ant."
   },
   "booksCpaExport": {
     "title": "Paquete de exportación CPA"
   },
   "booksExpenses": {
-    "title": "Gastos"
+    "title": "Gastos",
+    "depreciation": "Depreciación",
+    "allStatuses": "Todos los Estados",
+    "allCategories": "Todas las Categorías",
+    "allProperties": "Todas las Propiedades",
+    "noExpensesFound": "Sin gastos encontrados",
+    "recordYourFirstExpenseToStartTrackingCosts": "Registre su primer gasto para comenzar a rastrear costos",
+    "newExpense": "Nuevo Gasto",
+    "scheduleECategory": "Categoría Anexo E",
+    "autoAndTravel": "Auto y viajes",
+    "cleaningAndMaintenance": "Limpieza y mantenimiento",
+    "commissions": "Comisiones",
+    "legalprofessionalFees": "Honorarios legales/profesionales",
+    "managementFees": "Tarifas de administración",
+    "mortgageInterest": "Intereses hipotecarios",
+    "otherInterest": "Otros intereses",
+    "supplies": "Suministros",
+    "otherExpenses": "Otros gastos"
   },
   "booksPeriods": {
-    "title": "Períodos fiscales"
+    "title": "Períodos fiscales",
+    "reopenPeriod": "Reabrir Período",
+    "createAClosingJournalEntryZeroingAllRevenueAndExpe": "Cree un asiento de cierre que lleve a cero todas las cuentas de ingresos y gastos",
+    "manageAccountingPeriodsAndYearendClose": "Administre períodos contables y cierre de fin de año",
+    "monthlyPeriods": "Períodos Mensuales",
+    "yearendReady": "Listo para Cierre Anual",
+    "retainedEarnings": "Utilidades Retenidas",
+    "yearendCloseCompletedSuccessfully": "Cierre de fin de año completado exitosamente.",
+    "noMonthlyPeriods": "Sin períodos mensuales",
+    "requirementsChecklist": "Lista de Requisitos",
+    "periodAuditLog": "Registro de Auditoría del Período",
+    "timestamp": "Marca de Tiempo"
   },
   "booksReconciliation": {
     "title": "Conciliación bancaria"
   },
   "booksRecurring": {
-    "title": "Transacciones recurrentes"
+    "title": "Transacciones recurrentes",
+    "expense": "Gasto",
+    "noRecordsGeneratedYet": "Sin registros generados aún.",
+    "biweekly": "Quincenal",
+    "fuel": "Combustible",
+    "office": "Oficina",
+    "uncategorized": "Sin Categorizar",
+    "automateRepeatingExpensesAndInvoices": "Automatice gastos y facturas recurrentes",
+    "dueThisWeek": "Vence Esta Semana",
+    "totalGenerated": "Total Generado",
+    "noRecurringTemplates": "Sin plantillas recurrentes"
   },
   "booksReports": {
-    "title": "Reportes financieros"
+    "title": "Reportes financieros",
+    "totalRentalIncome": "Ingreso Total de Renta",
+    "netRentalIncome": "Ingreso Neto de Renta",
+    "rentsReceived": "Rentas recibidas",
+    "noPropertyIncomeOrExpensesFoundForThisPeriod": "Sin ingresos o gastos de propiedad encontrados para este período",
+    "allocateExpensesToPropertiesInLedgerExpenses": "Asigne gastos a propiedades en Gastos del Libro Mayor",
+    "totalProfit": "Ganancia Total",
+    "overallMargin": "Margen General",
+    "joblevelProfitability": "Rentabilidad por Trabajo",
+    "costs": "Costos",
+    "noJobRevenueOrCostsFoundForThisPeriod": "Sin ingresos o costos de trabajo encontrados para este período",
+    "createInvoicesAndLogExpensesAgainstJobsToSeeProfit": "Cree facturas y registre gastos contra trabajos para ver rentabilidad",
+    "totalCosts": "Costos Totales"
   },
   "booksTaxSettings": {
     "title": "Impuestos y cumplimiento 1099"
@@ -2598,19 +3207,42 @@
     "title": "Pagos a proveedores"
   },
   "booksVendors": {
-    "title": "Proveedores"
+    "title": "Proveedores",
+    "contactName": "Nombre de Contacto",
+    "activeVendors": "Proveedores Activos",
+    "noVendorsFound": "Sin proveedores encontrados",
+    "ytd": "YTD"
   },
   "complianceCeTracking": {
     "title": "Seguimiento de créditos CE"
   },
   "compliancePackets": {
-    "title": "Paquetes de cumplimiento"
+    "title": "Paquetes de cumplimiento",
+    "createCompliancePacket": "Crear Paquete de Cumplimiento",
+    "packetName": "Nombre del Paquete",
+    "noActiveCertificationsFound": "Sin certificaciones activas encontradas",
+    "noCompliancePacketsYet": "Sin paquetes de cumplimiento aún",
+    "createAPacketToBundleYourCertificationsForSharing": "Cree un paquete para agrupar sus certificaciones para compartir"
   },
   "customersNew": {
     "title": "Agregar cliente"
   },
   "estimatesImport": {
-    "title": "Importar presupuesto Xactimate"
+    "title": "Importar presupuesto Xactimate",
+    "uploadAnXactimatePdfExportToImportLineItems": "Suba un PDF de Xactimate para importar partidas",
+    "claudeIsExtractingLineItemsFromThePdf": "Claude está extrayendo partidas del PDF",
+    "uploadXactimatePdf": "Subir PDF de Xactimate",
+    "clickToSelectOrDragAPdfFile": "Haga clic para seleccionar o arrastre un archivo .pdf",
+    "extractedClaimInfo": "Info del Reclamo Extraída",
+    "parseSummary": "Resumen de Análisis",
+    "codeMatches": "Coincidencias de Código",
+    "priceDiscrepancies": "Discrepancias de Precios",
+    "xactimateTotal": "Total Xactimate",
+    "xactPrice": "Precio Xact",
+    "zaftoPrice": "Precio ZAFTO",
+    "match": "Coincidencia",
+    "importToClaim": "Importar a Reclamo",
+    "selectAClaim": "Seleccionar un reclamo..."
   },
   "inspectionsTemplates": {
     "title": "Plantillas de inspección"
@@ -2628,10 +3260,21 @@
     "title": "Cumplimiento de documentación"
   },
   "jobsEquipment": {
-    "title": "Rastreo de equipo"
+    "title": "Rastreo de equipo",
+    "equipmentRemovedFromThisJobWillAppearHereWithBilli": "El equipo removido de este trabajo aparecerá aquí con historial de facturación.",
+    "enterRoomDimensionsAndWaterClassToCalculateRequire": "Ingrese dimensiones de la habitación y clase de agua para calcular equipo requerido"
   },
   "jobsMoisture": {
-    "title": "Monitor de humedad y secado"
+    "title": "Monitor de humedad y secado",
+    "replacementValue": "Valor de Reposición",
+    "class": "Clase",
+    "readingsAreAddedFromTheMobileAppDuringOnsiteMonito": "Las lecturas se agregan desde la app móvil durante el monitoreo en sitio.",
+    "gppDiff": "Dif. GPP",
+    "addPsychrometricReading": "Agregar Lectura Psicrométrica",
+    "prelossValue": "Valor Pre-Siniestro",
+    "noContentsInventory": "Sin Inventario de Contenido",
+    "addContentsItem": "Agregar Artículo de Contenido",
+    "createAssessment": "Crear Evaluación"
   },
   "lienProtectionrules": {
     "title": "Reglas estatales de gravámenes"
@@ -2643,13 +3286,22 @@
     "title": "Tipos de cita"
   },
   "permitsJurisdictions": {
-    "title": "Jurisdicciones de permisos"
+    "title": "Jurisdicciones de permisos",
+    "failedToLoadJurisdictions": "Error al cargar jurisdicciones",
+    "addNewJurisdiction": "Agregar Nueva Jurisdicción",
+    "noJurisdictionsFound": "Sin jurisdicciones encontradas",
+    "onlinePortal": "Portal en Línea"
   },
   "phoneFax": {
-    "title": "Fax"
+    "title": "Fax",
+    "sendAndReceiveFaxes": "Enviar y recibir faxes",
+    "noFaxesYet": "Sin faxes aún"
   },
   "phoneSms": {
-    "title": "Mensajes"
+    "title": "Mensajes",
+    "smsConversationsWithCustomers": "Conversaciones SMS con clientes",
+    "selectAConversation": "Seleccionar una conversación",
+    "noConversations": "Sin conversaciones"
   },
   "propertiesAssets": {
     "title": "Panel de salud de activos"
@@ -2670,19 +3322,55 @@
     "title": "Rotación de unidades"
   },
   "schedulingPortfolio": {
-    "title": "Vista de portafolio"
+    "title": "Vista de portafolio",
+    "atRisk": "En Riesgo",
+    "behind": "Atrasado"
   },
   "schedulingBaselines": {
-    "title": "Líneas base"
+    "title": "Líneas base",
+    "varianceReport": "Informe de Varianza",
+    "baselineCaptured": "Línea base capturada",
+    "noBaselinesYet": "Sin líneas base aún",
+    "captureABaselineToSnapshotYourCurrentSchedule": "Capture una línea base para tomar una foto de su cronograma actual",
+    "tasks": "Tareas",
+    "milestones": "Hitos",
+    "taskSnapshot": "Resumen de Tareas",
+    "noMatchingTasksForComparison": "Sin tareas coincidentes para comparar.",
+    "captureBaseline": "Capturar Línea Base"
   },
   "schedulingResources": {
-    "title": "Recursos"
+    "title": "Recursos",
+    "noResources": "Sin recursos",
+    "addResource": "Agregar Recurso",
+    "linkTeamMember": "Vincular Miembro del Equipo"
   },
   "settingsImport": {
-    "title": "Importar datos"
+    "title": "Importar datos",
+    "importHistory": "Historial de Importación",
+    "noImportsYet": "Sin importaciones aún",
+    "totalRows": "Total de Filas",
+    "imported": "Importado",
+    "errors": "Errores",
+    "errorDetails": "Detalles del Error"
   },
   "settingsPhone": {
-    "title": "Configuración del sistema telefónico"
+    "title": "Configuración del sistema telefónico",
+    "ringGroup": "Grupo de Timbre",
+    "voicemail": "Buzón de Voz",
+    "aiReceptionist": "Recepcionista IA",
+    "externalNumber": "Número Externo",
+    "personalityVoice": "Personalidad y Voz",
+    "female": "Femenino",
+    "male": "Masculino",
+    "neutral": "Neutral",
+    "slow": "Lento",
+    "aiCapabilities": "Capacidades de IA",
+    "realtimeDataAccess": "Acceso a Datos en Tiempo Real",
+    "yourNumbers": "Sus Números",
+    "primary": "PRINCIPAL",
+    "integrationMethod": "Método de Integración",
+    "yourCarrier": "Su Aseguradora",
+    "ringPerson": "Timbre a Persona"
   },
   "settingsTpaPrograms": {
     "title": "Programas TPA"
@@ -2694,13 +3382,31 @@
     "title": "Panel TPA"
   },
   "tpaAssignments": {
-    "title": "Asignaciones TPA"
+    "title": "Asignaciones TPA",
+    "newTpaAssignment": "Nueva Asignación TPA",
+    "assignment": "Asignación #",
+    "lossDescription": "Descripción del Siniestro",
+    "trackDispatchedInsuranceRestorationAssignments": "Rastree asignaciones despachadas de restauración de seguros",
+    "slaViolations": "Violaciones de SLA",
+    "noAssignments": "Sin Asignaciones",
+    "assignmentNotFound": "Asignación No Encontrada",
+    "supplements": "Suplementos",
+    "policyholder": "Asegurado",
+    "noPolicyholderInfo": "Sin info del asegurado",
+    "noPropertyAddress": "Sin dirección de propiedad",
+    "emergencyAuthorization": "Autorización de Emergencia",
+    "referenceNumbers": "Números de Referencia",
+    "noAdjusterInfo": "Sin info del ajustador"
   },
   "scorecards": {
     "title": "Tarjetas de evaluación TPA"
   },
   "estimatesPricing": {
-    "title": "Cobertura de base de precios"
+    "title": "Cobertura de base de precios",
+    "crowdsourcedPricingDataByRegionAndTradeCategory": "Datos de precios por región y categoría de oficio",
+    "entries": "Asientos",
+    "avgPrice": "Precio Prom.",
+    "allRegions": "Todas las regiones"
   },
   "areaScans": {
     "title": "Escaneos de área",
@@ -2770,7 +3476,7 @@
     "moistureLocationGrid": "Cuadricula de ubicaciones de humedad",
     "noMoistureReadingsRecorded": "Sin lecturas de humedad registradas para este trabajo",
     "noMoistureReadings": "Sin lecturas de humedad",
-    "refStd": "Ref Std",
+    "refStd": "Est. Ref",
     "noPsychrometricLogs": "Sin registros psicrometricos",
     "gppIn": "GPP entrada",
     "gppOut": "GPP salida"
@@ -2813,7 +3519,25 @@
     "cashBalance": "Saldo en efectivo",
     "outstandingInvoices": "Facturas pendientes",
     "unpaidBills": "Cuentas sin pagar",
-    "profitThisMonth": "Utilidad este mes"
+    "profitThisMonth": "Utilidad este mes",
+    "accountsReceivable": "Cuentas por Cobrar",
+    "accountsPayable": "Cuentas por Pagar",
+    "financialDashboard": "Tablero financiero",
+    "cashPosition": "Posición de Efectivo",
+    "profitLossSummary": "Resumen de Ganancias y Pérdidas",
+    "currentMonthtodate": "Mes actual hasta la fecha",
+    "expensesByCategory": "Gastos por Categoría",
+    "mtdBreakdown": "Desglose del mes",
+    "alertsActionItems": "Alertas y Elementos de Acción",
+    "allClear": "Todo despejado",
+    "unreviewedTransactions": "Transacciones Sin Revisar",
+    "allReviewed": "Todo revisado",
+    "unreconciledAccounts": "Cuentas Sin Conciliar",
+    "allReconciled": "Todo conciliado",
+    "dueBills": "Facturas Pendientes",
+    "noBillsDue": "Sin facturas pendientes",
+    "quickLinks": "Accesos Rápidos",
+    "noExpensesRecordedYet": "Sin gastos registrados aún."
   },
   "propertyManagement": {
     "leaseDetails": "Detalles del contrato",
@@ -2829,5 +3553,294 @@
     "noLeases": "Sin contratos",
     "noTenants": "Sin inquilinos",
     "noUnits": "Sin unidades"
+  },
+  "booksCpa": {
+    "checkingAccess": "Verificando acceso...",
+    "generateAndDownloadFinancialReportsForYourAccounta": "Genere y descargue informes financieros para su contador",
+    "generatingExportPackage": "Generando paquete de exportación...",
+    "totalDebits": "Total de Débitos",
+    "totalCredits": "Total de Créditos",
+    "totalPayments": "Total de Pagos",
+    "scheduleE": "Anexo E",
+    "netRental": "Renta Neta",
+    "plDetail": "Detalle de G&P",
+    "balanceSheetDetail": "Detalle del Balance General"
+  },
+  "booksRecon": {
+    "startNewReconciliation": "Iniciar Nueva Conciliación",
+    "bankAccount": "Cuenta Bancaria",
+    "statementEndingBalance": "Saldo Final del Estado de Cuenta",
+    "reconciliationHistory": "Historial de Conciliación",
+    "clearedBalance": "Saldo Conciliado",
+    "deposits": "Depósitos",
+    "payments": "Pagos"
+  },
+  "booksTax": {
+    "missing": "Faltante",
+    "taxCategory": "Categoría Fiscal",
+    "actionNeeded": "Acción Requerida",
+    "ready": "Listo",
+    "taxMappings": "Mapeos Fiscales",
+    "acct": "Cta #",
+    "noAccountsFound": "Sin cuentas encontradas",
+    "loadingScheduleCData": "Cargando datos del Anexo C...",
+    "estimatedQuarterlyTaxPayments": "Pagos Trimestrales Estimados de Impuestos",
+    "estIncomeTax": "Impuesto Est. sobre Renta",
+    "quarterlyPayment": "Pago Trimestral"
+  },
+  "booksVendorPay": {
+    "paymentsCount": "Conteo de Pagos",
+    "noPaymentsFound": "Sin pagos encontrados",
+    "selectVendor": "Seleccionar proveedor...",
+    "bankTransfer": "Transferencia Bancaria",
+    "referenceMemo": "Referencia / Memo"
+  },
+  "complianceCe": {
+    "trackContinuingEducationHoursTowardLicenseRenewals": "Rastree horas de educación continua para renovaciones de licencia",
+    "creditsByCategory": "Créditos por Categoría",
+    "noCeCreditsRecordedYet": "Sin créditos CE registrados aún",
+    "creditsWillAppearHereAsCoursesAreCompleted": "Los créditos aparecerán aquí conforme se completen los cursos"
+  },
+  "inspectionEngine": {
+    "inspector": "Inspector",
+    "errorLoadingInspections": "Error al cargar inspecciones",
+    "templatebasedInspectionsWithPassfailconditionalIte": "Inspecciones basadas en plantillas con elementos de aprobado/reprobado/condicional",
+    "noActiveTemplatesFound": "Sin plantillas activas encontradas.",
+    "photoOnFail": "Foto al reprobar"
+  },
+  "inspectionTemplates": {
+    "manageChecklistsForInspectionsAcrossAllTrades": "Administre listas de verificación para inspecciones en todos los oficios",
+    "totalChecklistItems": "Total de Elementos de Lista",
+    "myTemplates": "Mis Plantillas",
+    "cloneToMyTemplates": "Clonar a Mis Plantillas"
+  },
+  "jobIntel": {
+    "failedToLoadIntelligenceData": "Error al cargar datos de inteligencia",
+    "recentJobAutopsies": "Autopsias de Trabajos Recientes",
+    "noAutopsiesYetCompleteJobsToGenerateAnalysis": "Sin autopsias aún. Complete trabajos para generar análisis.",
+    "monthlyMarginTrend": "Tendencia de Margen Mensual",
+    "costVarianceTrend": "Tendencia de Varianza de Costo",
+    "costComparison": "Comparación de Costos",
+    "varianceAnalysis": "Análisis de Varianza",
+    "actualCostBreakdown": "Desglose de Costos Reales",
+    "jobInfo": "Info del Trabajo",
+    "est": "Est",
+    "act": "Real"
+  },
+  "jobIntelAdj": {
+    "noPricingAdjustmentsYet": "Sin ajustes de precios aún"
+  },
+  "jobsDocs": {
+    "failedToLoadDocumentation": "Error al cargar documentación",
+    "tpacompliantDocumentationChecklistAndTracking": "Lista de verificación y seguimiento de documentación compatible con TPA",
+    "fullyCompliant": "Totalmente Cumplido",
+    "requiredItems": "Artículos Requeridos",
+    "allItems": "Todos los Artículos",
+    "noCocYet": "Sin COC Aún",
+    "certificate": "Certificado",
+    "overallCompliance": "Cumplimiento General",
+    "noChecklistTemplateFound": "Sin plantilla de lista encontrada",
+    "noDocumentationChecklistIsConfiguredForThisJobType": "No hay lista de verificación de documentación configurada para este tipo de trabajo."
+  },
+  "lienRules": {
+    "noticeRequired": "Aviso Requerido",
+    "noNotice": "Sin Aviso",
+    "notarize": "Notarizar",
+    "noticeOfIntentRequired": "Aviso de intención requerido",
+    "statutoryReference": "Referencia Estatutaria"
+  },
+  "meetingsAsync": {
+    "loomstyleVideoMessagesTiedToJobs": "Mensajes de video estilo Loom vinculados a trabajos",
+    "recordAVideoFromAnyJobPage": "Grabe un video desde cualquier página de trabajo"
+  },
+  "meetingsBooking": {
+    "configureMeetingTypesForClientSelfscheduling": "Configure tipos de reunión para auto-programación del cliente",
+    "noBookingTypesConfigured": "Sin tipos de reserva configurados",
+    "createBookingTypesToLetClientsScheduleMeetings": "Cree tipos de reserva para que los clientes programen reuniones"
+  },
+  "meetingsRoom": {
+    "loadingJobContext": "Cargando contexto del trabajo...",
+    "jobContext": "Contexto del Trabajo",
+    "joiningMeeting": "Uniéndose a la reunión...",
+    "unableToJoin": "No se puede unir",
+    "tryAgain": "Intentar de Nuevo"
+  },
+  "propertyAssets": {
+    "serviceHistory": "Historial de Servicio",
+    "needingService": "Necesita Servicio",
+    "underWarranty": "Bajo Garantía",
+    "averageAge": "Edad Promedio",
+    "noServiceRecords": "Sin registros de servicio",
+    "noAssetsFound": "Sin activos encontrados",
+    "addPropertyAsset": "Agregar Activo de Propiedad",
+    "unitId": "ID de Unidad",
+    "installDate": "Fecha de Instalación"
+  },
+  "propertyInspections": {
+    "movein": "Mudanza de Entrada",
+    "moveout": "Mudanza de Salida",
+    "routine": "Rutina",
+    "itemsNeedingRepair": "Artículos que Necesitan Reparación",
+    "repair": "Reparación",
+    "scheduleYourFirstPropertyInspection": "Programe su primera inspección de propiedad.",
+    "newPropertyInspection": "Nueva Inspección de Propiedad",
+    "driveby": "Recorrido en Auto"
+  },
+  "propertyLeases": {
+    "lateFee": "Cargo por Mora",
+    "activeLeases": "Contratos Activos",
+    "monthtomonth": "Mes a Mes",
+    "totalMonthlyRent": "Renta Mensual Total",
+    "noLeasesFound": "Sin contratos encontrados",
+    "createYourFirstLeaseToStartTrackingRentalAgreement": "Cree su primer contrato para comenzar a rastrear acuerdos de renta.",
+    "gracePeriod": "Período de Gracia",
+    "processingFee": "Tarifa de Procesamiento",
+    "partialPayments": "Pagos Parciales",
+    "autopayRequired": "Pago Automático Requerido",
+    "additionalTerms": "Términos Adicionales",
+    "noDocumentsAttachedToThisLease": "Sin documentos adjuntos a este contrato",
+    "paymentHistoryIsAvailableInTheRentRoll": "El historial de pagos está disponible en el Rol de Rentas",
+    "terminationReason": "Razón de Terminación"
+  },
+  "propertyMaint": {
+    "trackAndManagePropertyMaintenanceRequests": "Rastree y administre solicitudes de mantenimiento de propiedad",
+    "totalRequests": "Total de Solicitudes",
+    "noMaintenanceRequestsFound": "Sin solicitudes de mantenimiento encontradas",
+    "allCaughtUpNoOpenRequestsMatchYourFilters": "Todo al día. No hay solicitudes abiertas que coincidan con sus filtros."
+  },
+  "propertyRent": {
+    "delinquent": "Moroso",
+    "unitProperty": "Unidad / Propiedad",
+    "noRentChargesFound": "Sin cargos de renta encontrados",
+    "generateMonthlyChargesToGetStarted": "Genere cargos mensuales para comenzar.",
+    "alreadyPaid": "Ya Pagado"
+  },
+  "propertyTenants": {
+    "manageTenantsAcrossAllYourProperties": "Administre inquilinos en todas sus propiedades",
+    "totalTenants": "Total de Inquilinos",
+    "noTenantsFound": "Sin inquilinos encontrados",
+    "noLeaseHistory": "Sin historial de contrato",
+    "currentLease": "Contrato Actual",
+    "noActiveLease": "Sin contrato activo",
+    "rentChargesAndPaymentsWillAppearHere": "Los cargos y pagos de renta aparecerán aquí",
+    "poweredByTheRentLedger": "Alimentado por el libro de rentas",
+    "totalLeases": "Total de Contratos",
+    "tenantSince": "Inquilino Desde"
+  },
+  "propertyTurns": {
+    "manageTurnoverTasksFromMoveoutToRelease": "Administre tareas de renovación desde mudanza hasta nuevo contrato",
+    "activeTurns": "Renovaciones Activas",
+    "totalCost": "Costo Total",
+    "avgDaysToReady": "Días Prom. para Preparar",
+    "depositRecovered": "Depósito Recuperado",
+    "noTasksAddedYet": "Sin tareas agregadas aún",
+    "newUnitTurn": "Nueva Renovación de Unidad",
+    "targetReadyDate": "Fecha Objetivo de Preparación"
+  },
+  "propertyUnits": {
+    "occupied": "Ocupado",
+    "vacant": "Vacante",
+    "sqFt": "Pies cuadrados",
+    "amenities": "Amenidades",
+    "viewAndManageAllUnitsAcrossYourProperties": "Vea y administre todas las unidades en sus propiedades",
+    "avgRent": "Renta Prom.",
+    "noUnitsFound": "Sin unidades encontradas",
+    "bedBath": "Rec / Baño",
+    "bedrooms": "Recámaras",
+    "bathrooms": "Baños",
+    "noAmenitiesListed": "Sin amenidades listadas",
+    "thisUnitIsCurrentlyNotOccupied": "Esta unidad actualmente no está ocupada",
+    "noActiveTenantOrLeaseForThisUnit": "Sin inquilino activo o contrato para esta unidad",
+    "leaseHistory": "Historial de Contrato",
+    "noLeaseHistoryForThisUnit": "Sin historial de contrato para esta unidad",
+    "assetTrackingWillAppearHere": "El seguimiento de activos aparecerá aquí",
+    "floorLevel": "Nivel de Piso",
+    "unitAssets": "Activos de Unidad"
+  },
+  "propertyEquipment": {
+    "equipmentMemory": "Memoria del Equipo",
+    "analyzingEquipmentData": "Analizando datos del equipo...",
+    "thisMayTakeAFewSeconds": "Esto puede tomar unos segundos",
+    "errorLoadingInsights": "Error al cargar perspectivas",
+    "overallHealthScore": "Puntuación General de Salud",
+    "equipmentTracked": "Equipo Rastreado",
+    "maintenanceTimeline": "Cronología de Mantenimiento",
+    "partsToStock": "Partes a Inventariar",
+    "replacementPlanning": "Planificación de Reemplazo",
+    "estAnnualCost": "Costo Anual Est."
+  },
+  "reconScans": {
+    "stormType": "Tipo de Tormenta",
+    "hail": "Granizo",
+    "wind": "Viento",
+    "tornado": "Tornado",
+    "flood": "Inundación",
+    "stormDamageAssessment": "Evaluación de Daño por Tormenta",
+    "canvassPriorityList": "Lista de Prioridad de Canvassing",
+    "scanningInProgress": "Escaneo en progreso...",
+    "totalParcels": "Total de Parcelas",
+    "scanned": "Escaneado",
+    "hotLeads": "Leads Calientes",
+    "warmLeads": "Leads Tibios",
+    "coldLeads": "Leads Fríos",
+    "leadDistribution": "Distribución de Leads"
+  },
+  "settingsTpa": {
+    "serviceLevelAgreementDeadlinesAutocalculateFromAss": "Los plazos de SLA se calculan automáticamente desde la hora de asignación"
+  },
+  "settingsWorkflows": {
+    "noCustomTemplatesYet": "Sin plantillas personalizadas aún",
+    "noRoomsDefined": "Sin habitaciones definidas",
+    "addRoomsToStandardizeWhatYourFieldCrewCaptures": "Agregue habitaciones para estandarizar lo que su equipo de campo captura.",
+    "globalCustomFields": "Campos Personalizados Globales",
+    "noGlobalCustomFieldsTheseApplyToAllRooms": "Sin campos personalizados globales. Estos aplican a todas las habitaciones.",
+    "globalChecklist": "Lista de Verificación Global",
+    "noChecklistItemsAddItemsToEnforceCompletionStandar": "Sin elementos de lista. Agregue elementos para cumplir estándares de finalización.",
+    "aiInstructions": "Instrucciones de IA",
+    "roomType": "Tipo de Habitación",
+    "roomCustomFields": "Campos Personalizados de Habitación",
+    "noCustomFieldsForThisRoom": "Sin campos personalizados para esta habitación.",
+    "roomChecklist": "Lista de Verificación de Habitación",
+    "noChecklistItemsForThisRoom": "Sin elementos de lista para esta habitación.",
+    "dropdownOptions": "Opciones Desplegables",
+    "deleteTemplate": "Eliminar Plantilla",
+    "templateDetails": "Detalles de Plantilla"
+  },
+  "tpaScorecards": {
+    "newScorecard": "Nueva Tarjeta de Puntuación",
+    "tpaProgram": "Programa TPA",
+    "periodStart": "Inicio de Período",
+    "periodEnd": "Fin de Período",
+    "allPrograms": "Todos los Programas",
+    "scoreAlerts": "Alertas de Puntuación",
+    "loadingScorecards": "Cargando tarjetas de puntuación...",
+    "noScorecardsYet": "Sin tarjetas de puntuación aún"
+  },
+  "walkthroughsBid": {
+    "createABidFromWalkthroughData": "Cree una oferta a partir de datos del recorrido",
+    "walkthroughSummary": "Resumen del Recorrido",
+    "selectBidFormat": "Seleccionar Formato de Oferta"
+  },
+  "warrantyIntel": {
+    "recentClaims": "Reclamos Recientes",
+    "noClaimsFiled": "Sin reclamos presentados",
+    "recentOutreach": "Contacto Reciente",
+    "outreachPipeline": "Pipeline de Contacto",
+    "booked": "Reservado",
+    "estRevenue": "Ingresos Est.",
+    "recall": "RETIRO",
+    "noOutreachHistory": "Sin historial de contacto",
+    "automatedOutreachWillAppearHereWhenTheSchedulerRun": "El contacto automatizado aparecerá aquí cuando se ejecute el programador",
+    "noActiveRecalls": "Sin retiros activos",
+    "fileWarrantyClaim": "Presentar Reclamo de Garantía",
+    "noOutreachSent": "Sin contacto enviado"
+  },
+  "layout": {
+    "searchOrJumpTo": "Buscar o ir a...",
+    "files": "Archivos",
+    "noNotificationsYet": "Sin notificaciones aún",
+    "active": "Activo",
+    "activeWork": "Trabajo Activo",
+    "noActiveItems": "Sin elementos activos"
   }
 }
