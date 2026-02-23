@@ -319,7 +319,7 @@ export default function WalkthroughsPage() {
               <span>Type</span>
               <span>Address</span>
               <span className="text-center">Rooms</span>
-              <span className="text-center">Photos</span>
+              <span className="text-center">{t('common.photos')}</span>
               <span>Status</span>
               <span>Started</span>
               <span />

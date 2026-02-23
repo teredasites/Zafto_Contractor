@@ -191,8 +191,8 @@ export default function PermitsPage() {
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Permit</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Job / Customer</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Jurisdiction</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Inspections</th>

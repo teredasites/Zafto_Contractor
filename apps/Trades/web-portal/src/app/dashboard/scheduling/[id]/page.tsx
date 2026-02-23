@@ -483,7 +483,7 @@ export default function GanttPage() {
             <span className="text-tertiary">ES: {task.early_start?.slice(5, 10) || '-'}</span>
             <span className="text-tertiary">EF: {task.early_finish?.slice(5, 10) || '-'}</span>
             <span className="text-tertiary">Float: {task.total_float?.toFixed(0) ?? '-'}d</span>
-            {task.is_critical && <span className="text-error font-medium">Critical</span>}
+            {task.is_critical && <span className="text-error font-medium">{t('common.critical')}</span>}
             <div className="flex-1" />
             <button onClick={() => { updateProgress(task.id, 100); }} className="p-1 hover:bg-success/10 rounded text-success" title="Mark complete">
               <CheckCircle2 className="w-4 h-4" />

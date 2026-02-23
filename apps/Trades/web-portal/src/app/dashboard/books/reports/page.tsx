@@ -700,7 +700,7 @@ export default function FinancialReportsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-3 py-2 text-muted font-medium">Date</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.date')}</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">Reference</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">Memo</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">Debit</th>

@@ -432,7 +432,7 @@ export default function SubcontractorsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-zinc-700">
-                <th className="text-left py-2 text-zinc-500">Name</th>
+                <th className="text-left py-2 text-zinc-500">{t('common.name')}</th>
                 <th className="text-left py-2 text-zinc-500">Company</th>
                 <th className="text-right py-2 text-zinc-500">Total Paid</th>
                 <th className="text-center py-2 text-zinc-500">1099 Required</th>

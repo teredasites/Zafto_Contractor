@@ -138,7 +138,7 @@ export default function PricingCoveragePage() {
           <table className="w-full">
             <thead>
               <tr className="text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800">
-                <th className="px-4 py-2.5 text-left">Category</th>
+                <th className="px-4 py-2.5 text-left">{t('common.category')}</th>
                 <th className="px-4 py-2.5 text-left">Region</th>
                 <th className="px-4 py-2.5 text-right">Entries</th>
                 <th className="px-4 py-2.5 text-right">Avg Price</th>

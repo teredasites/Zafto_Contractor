@@ -345,8 +345,8 @@ export default function DocumentsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-main">
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Name</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Type</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.name')}</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Job</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Size</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Uploaded</th>

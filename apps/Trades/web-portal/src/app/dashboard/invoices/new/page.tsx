@@ -349,7 +349,7 @@ export default function NewInvoicePage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-main">
-                    <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Description</th>
+                    <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.description')}</th>
                     <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-24">Qty</th>
                     <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-32">Price</th>
                     {isInsuranceJob && (

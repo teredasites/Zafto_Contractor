@@ -1410,12 +1410,12 @@ Example:
               <thead>
                 <tr className="text-left text-sm text-muted border-b border-main">
                   <th className="pb-2 font-medium w-8"></th>
-                  <th className="pb-2 font-medium">Description</th>
+                  <th className="pb-2 font-medium">{t('common.description')}</th>
                   <th className="pb-2 font-medium w-20">Qty</th>
                   <th className="pb-2 font-medium w-28">Unit</th>
                   <th className="pb-2 font-medium w-28">Price</th>
                   <th className="pb-2 font-medium w-28">Total</th>
-                  <th className="pb-2 font-medium w-32">Category</th>
+                  <th className="pb-2 font-medium w-32">{t('common.category')}</th>
                   <th className="pb-2 font-medium w-16">Tax</th>
                   <th className="pb-2 font-medium w-20"></th>
                 </tr>
@@ -2171,9 +2171,9 @@ Example:
                   <table className="w-full">
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">Description</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">{t('common.description')}</th>
                         <th className="px-4 py-3 text-center text-sm font-medium text-gray-600 dark:text-gray-400 w-20">Qty</th>
-                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-600 dark:text-gray-400 w-28">Amount</th>
+                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-600 dark:text-gray-400 w-28">{t('common.amount')}</th>
                       </tr>
                     </thead>
                     <tbody>

@@ -125,7 +125,7 @@ export default function ChangeOrdersPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-mono text-muted">{co.number}</span>
                         <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
-                        {co.approvedByName && co.status === 'approved' && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Approved</span>}
+                        {co.approvedByName && co.status === 'approved' && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">{t('common.approved')}</span>}
                       </div>
                       <h3 className="font-medium text-main mb-1">{co.title}</h3>
                       <div className="flex items-center gap-4 text-sm text-muted">
