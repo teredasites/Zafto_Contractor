@@ -70,7 +70,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
   if (error || !inspection) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" onClick={() => router.back()}><ArrowLeft size={16} />Back</Button>
+        <Button variant="ghost" onClick={() => router.back()}><ArrowLeft size={16} />{t('common.back')}</Button>
         <Card><CardContent className="p-12 text-center">
           <AlertTriangle size={48} className="mx-auto text-red-500 mb-4" />
           <h3 className="text-lg font-medium text-main mb-2">Inspection not found</h3>

@@ -143,7 +143,7 @@ export default function CompliancePacketsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-4">
         <Link href="/dashboard/compliance">
-          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
+          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}</Button>
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-white">{t('compliancePackets.title')}</h1>

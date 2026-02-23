@@ -521,7 +521,7 @@ export default function TeamChatPage() {
                 ) : error ? (
                   <div className="p-4 text-center">
                     <p className="text-sm text-red-400">{error}</p>
-                    <Button variant="ghost" size="sm" onClick={refetch} className="mt-2">Retry</Button>
+                    <Button variant="ghost" size="sm" onClick={refetch} className="mt-2">{t('common.retry')}</Button>
                   </div>
                 ) : filteredConversations.length === 0 ? (
                   <div className="p-4 text-center text-zinc-500 text-sm">

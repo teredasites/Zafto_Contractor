@@ -162,11 +162,11 @@ export default function InspectionTemplatesPage() {
               ))}
 
               <div className="flex items-center gap-3 pt-4">
-                <Button variant="secondary" className="flex-1" onClick={() => setSelectedTemplate(null)}>Close</Button>
+                <Button variant="secondary" className="flex-1" onClick={() => setSelectedTemplate(null)}>{t('common.close')}</Button>
                 {!selectedTemplate.isSystem && (
                   <>
                     <Button variant="secondary" className="flex-1"><Edit size={16} />Edit</Button>
-                    <Button variant="secondary" className="flex-1"><Trash2 size={16} />Delete</Button>
+                    <Button variant="secondary" className="flex-1"><Trash2 size={16} />{t('common.delete')}</Button>
                   </>
                 )}
                 {selectedTemplate.isSystem && <Button variant="secondary" className="flex-1"><Copy size={16} />Clone to My Templates</Button>}

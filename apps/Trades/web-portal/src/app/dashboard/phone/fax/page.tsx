@@ -166,7 +166,7 @@ export default function FaxPage() {
           </CardHeader>
           <CardContent className="p-0 mt-4">
             {loading ? (
-              <div className="flex items-center justify-center py-12 text-zinc-500">Loading...</div>
+              <div className="flex items-center justify-center py-12 text-zinc-500">{t('common.loading')}</div>
             ) : error ? (
               <div className="flex items-center justify-center py-12 text-red-400">{error}</div>
             ) : filtered.length === 0 ? (

@@ -205,7 +205,7 @@ export default function DataImportPage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3">
           <h3 className="text-sm font-semibold text-white">Import History</h3>
           {loading ? (
-            <p className="text-zinc-500 text-sm">Loading...</p>
+            <p className="text-zinc-500 text-sm">{t('common.loading')}</p>
           ) : batches.length === 0 ? (
             <p className="text-zinc-500 text-sm">No imports yet</p>
           ) : (

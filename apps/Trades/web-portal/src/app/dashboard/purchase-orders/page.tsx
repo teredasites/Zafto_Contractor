@@ -269,7 +269,7 @@ export default function PurchaseOrdersPage() {
           {poError ? (
             <div className="py-12 text-center">
               <p className="text-red-500 mb-2">{poError}</p>
-              <Button variant="secondary" size="sm" onClick={fetchPurchaseOrders}>Retry</Button>
+              <Button variant="secondary" size="sm" onClick={fetchPurchaseOrders}>{t('common.retry')}</Button>
             </div>
           ) : filteredPOs.length === 0 ? (
             <div className="py-12 text-center text-muted">

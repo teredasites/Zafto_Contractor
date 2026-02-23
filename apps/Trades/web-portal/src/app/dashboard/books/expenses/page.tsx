@@ -112,7 +112,7 @@ export default function ExpensesPage() {
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-          <Input placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('common.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
           <option value="">All Statuses</option>
@@ -224,7 +224,7 @@ export default function ExpensesPage() {
             <h3 className="text-lg font-semibold text-main mb-4">Void Expense</h3>
             <textarea value={voidReason} onChange={(e) => setVoidReason(e.target.value)} placeholder="Reason for voiding..." rows={3} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm resize-none mb-4" />
             <div className="flex justify-end gap-3">
-              <Button variant="secondary" onClick={() => { setVoidId(null); setVoidReason(''); }}>Cancel</Button>
+              <Button variant="secondary" onClick={() => { setVoidId(null); setVoidReason(''); }}>{t('common.cancel')}</Button>
               <Button className="bg-red-600 hover:bg-red-700 text-white" onClick={async () => {
                 await voidExpense(voidId, voidReason || 'Voided by admin');
                 setVoidId(null);

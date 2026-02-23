@@ -57,7 +57,7 @@ export default function LienRulesPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-4">
         <Link href="/dashboard/lien-protection">
-          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
+          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}</Button>
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-white">{t('lienProtectionrules.title')}</h1>

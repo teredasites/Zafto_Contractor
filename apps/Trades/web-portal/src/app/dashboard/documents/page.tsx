@@ -156,7 +156,7 @@ export default function DocumentsPage() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button variant="secondary" onClick={() => window.location.reload()}>Retry</Button>
+        <Button variant="secondary" onClick={() => window.location.reload()}>{t('common.retry')}</Button>
       </div>
     );
   }

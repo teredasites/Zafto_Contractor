@@ -102,7 +102,7 @@ export default function LienDetailPage() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link href="/dashboard/lien-protection">
-          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
+          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}</Button>
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3">

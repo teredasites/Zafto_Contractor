@@ -140,7 +140,7 @@ export default function SmsPage() {
               </div>
               <div className="flex-1 overflow-y-auto">
                 {loading ? (
-                  <div className="flex items-center justify-center py-12 text-zinc-500">Loading...</div>
+                  <div className="flex items-center justify-center py-12 text-zinc-500">{t('common.loading')}</div>
                 ) : filteredThreads.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                     <MessageSquare className="h-8 w-8 mb-2 opacity-50" />
