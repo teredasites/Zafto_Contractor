@@ -27,6 +27,7 @@ import type {
   Vendor1099,
   ScheduleCLine,
 } from '@/lib/hooks/use-tax-compliance';
+import { useTranslation } from '@/lib/translations';
 
 // Ledger Navigation (shared across Ledger sub-pages)
 const zbooksNav = [
@@ -198,6 +199,7 @@ function ScheduleCRow({ line }: { line: ScheduleCLine }) {
 }
 
 export default function TaxSettingsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     taxCategories,

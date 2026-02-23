@@ -29,10 +29,12 @@ import {
   PAYMENT_TERMS as PROC_PAYMENT_TERMS,
   PAYMENT_TERMS_LABELS as PROC_TERMS_LABELS,
 } from '@/lib/hooks/use-procurement';
+import { useTranslation } from '@/lib/translations';
 
 type TabKey = 'accounting' | 'suppliers';
 
 export default function VendorsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabKey>('suppliers');
   const [search, setSearch] = useState('');
 
@@ -43,7 +45,7 @@ export default function VendorsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Vendors</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('vendors.title')}</h1>
           <p className="text-muted mt-1">Manage suppliers and accounting vendors</p>
         </div>
       </div>

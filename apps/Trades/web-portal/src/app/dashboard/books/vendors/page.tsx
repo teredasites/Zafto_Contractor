@@ -20,8 +20,10 @@ import {
   PAYMENT_TERMS_LABELS,
 } from '@/lib/hooks/use-vendors';
 import type { VendorData } from '@/lib/hooks/use-vendors';
+import { useTranslation } from '@/lib/translations';
 
 export default function VendorsPage() {
+  const { t } = useTranslation();
   const { vendors, loading, error, createVendor, updateVendor, deleteVendor } = useVendors();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('all');

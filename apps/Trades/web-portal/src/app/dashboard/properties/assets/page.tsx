@@ -24,6 +24,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useAssets } from '@/lib/hooks/use-assets';
 import type { PropertyAssetData, AssetServiceRecordData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type AssetType = PropertyAssetData['assetType'];
 type Condition = PropertyAssetData['condition'];
@@ -83,6 +84,7 @@ function getAssetAge(asset: PropertyAssetData): string {
 }
 
 export default function AssetsPage() {
+  const { t } = useTranslation();
   const { assets, loading, error, createAsset, getServiceRecords } = useAssets();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');

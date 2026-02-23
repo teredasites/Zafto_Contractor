@@ -25,6 +25,7 @@ import { useTenant } from '@/lib/hooks/use-tenants';
 import { useLeases } from '@/lib/hooks/use-leases';
 import { leaseStatusLabels } from '@/lib/hooks/pm-mappers';
 import type { TenantData, LeaseData, RentChargeData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 const tenantStatusLabels: Record<TenantData['status'], string> = {
   applicant: 'Applicant',
@@ -41,6 +42,7 @@ const tenantStatusVariant: Record<TenantData['status'], 'info' | 'success' | 'se
 };
 
 export default function TenantDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const tenantId = params.id as string;

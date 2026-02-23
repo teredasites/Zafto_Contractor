@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLienProtection, type LienRecord, type LienRule } from '@/lib/hooks/use-lien-protection';
+import { useTranslation } from '@/lib/translations';
 
 function statusVariant(status: string): 'success' | 'error' | 'warning' | 'info' | 'secondary' {
   switch (status) {
@@ -54,6 +55,7 @@ function TimelineStep({ label, date, completed, hasDoc }: {
 }
 
 export default function LienDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const jobId = params.jobId as string;
   const { liens, loading, error, getRuleForState } = useLienProtection();

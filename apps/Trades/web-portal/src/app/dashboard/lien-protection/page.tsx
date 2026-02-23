@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput } from '@/components/ui/input';
 import { useLienProtection, type LienRecord } from '@/lib/hooks/use-lien-protection';
+import { useTranslation } from '@/lib/translations';
 
 function statusVariant(status: string): 'success' | 'error' | 'warning' | 'info' | 'secondary' {
   switch (status) {
@@ -62,6 +63,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
 }
 
 export default function LienProtectionPage() {
+  const { t } = useTranslation();
   const { activeLiens, summary, loading, error, rules, getRuleForState } = useLienProtection();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -97,7 +99,7 @@ export default function LienProtectionPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Lien Protection</h1>
+          <h1 className="text-2xl font-bold text-white">{t('lienProtection.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">Monitor deadlines, protect your right to payment</p>
         </div>
         <Link href="/dashboard/lien-protection/rules">

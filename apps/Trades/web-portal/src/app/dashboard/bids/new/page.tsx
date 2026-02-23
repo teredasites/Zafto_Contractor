@@ -47,6 +47,7 @@ import { useBidTemplates } from '@/lib/hooks/use-bid-templates';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
 import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
+import { useTranslation } from '@/lib/translations';
 
 // Generate unique IDs
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -303,6 +304,7 @@ const defaultTerms = `1. Payment Terms: 50% deposit due upon acceptance, balance
 6. Warranty: 1 year on labor, manufacturer warranty on materials.`;
 
 export default function NewBidPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { company } = useCompany();

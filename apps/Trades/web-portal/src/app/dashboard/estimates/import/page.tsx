@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 interface ParsedItem {
   code: string;
@@ -58,6 +59,7 @@ type Step = 'upload' | 'review' | 'confirm';
 const fmt = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function ImportEstimatePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 

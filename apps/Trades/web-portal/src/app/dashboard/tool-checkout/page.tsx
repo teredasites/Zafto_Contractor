@@ -35,6 +35,7 @@ import type {
   EquipmentCategory,
   EquipmentCondition,
 } from '@/lib/hooks/use-equipment-checkout';
+import { useTranslation } from '@/lib/translations';
 
 // ════════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -86,6 +87,7 @@ function categoryIcon(cat: EquipmentCategory) {
 // ════════════════════════════════════════════════════════════════
 
 export default function ToolCheckoutPage() {
+  const { t } = useTranslation();
   const { items, loading: itemsLoading, error: itemsError, refetch: refetchItems } = useEquipmentItems();
   const { checkouts, overdueCheckouts, loading: checkoutsLoading, error: checkoutsError, refetch: refetchCheckouts } = useActiveCheckouts();
 

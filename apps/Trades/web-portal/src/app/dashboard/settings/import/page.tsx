@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useDataImport, parseCSV, parseIIF, TARGET_FIELDS } from '@/lib/hooks/use-data-import';
 import type { ImportError } from '@/lib/hooks/use-data-import';
+import { useTranslation } from '@/lib/translations';
 
 type ImportType = 'customers' | 'jobs' | 'invoices' | 'contacts' | 'estimates';
 
@@ -29,6 +30,7 @@ const IMPORT_TYPES: { key: ImportType; label: string; icon: React.ReactNode; des
 type Step = 'type' | 'upload' | 'mapping' | 'preview' | 'importing' | 'results';
 
 export default function DataImportPage() {
+  const { t } = useTranslation();
   const { batches, loading, importProgress, runImport, undoImport, getImportErrors, exportErrorsCSV } = useDataImport();
 
   const [step, setStep] = useState<Step>('type');

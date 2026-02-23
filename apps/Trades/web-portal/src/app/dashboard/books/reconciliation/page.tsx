@@ -26,6 +26,7 @@ import {
 } from '@/lib/hooks/use-reconciliation';
 import type { ReconciliationData, ReconciliationTransaction } from '@/lib/hooks/use-reconciliation';
 import type { BankAccountData } from '@/lib/hooks/use-banking';
+import { useTranslation } from '@/lib/translations';
 
 // Ledger Navigation
 const zbooksNav = [
@@ -40,6 +41,7 @@ const zbooksNav = [
 type View = 'list' | 'active';
 
 export default function ReconciliationPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { accounts, loading: accountsLoading } = useBanking();
   const {

@@ -37,6 +37,7 @@ import {
   type CustomFieldDef,
   type ChecklistItem,
 } from '@/lib/hooks/use-walkthrough-templates';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== CONSTANTS ====================
 
@@ -123,6 +124,7 @@ function emptyRoom(): TemplateRoom {
 // ==================== PAGE ====================
 
 export default function WalkthroughWorkflowsPage() {
+  const { t } = useTranslation();
   const { templates, loading, error, createTemplate, updateTemplate, deleteTemplate, cloneTemplate } =
     useWalkthroughTemplates();
 

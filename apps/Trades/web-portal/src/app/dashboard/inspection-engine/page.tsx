@@ -26,6 +26,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { cn, formatDate } from '@/lib/utils';
 import { useInspectionEngine } from '@/lib/hooks/use-inspection-engine';
 import type { InspectionResult, InspectionTemplate } from '@/lib/hooks/use-inspection-engine';
+import { useTranslation } from '@/lib/translations';
 
 type TabKey = 'all' | 'in_progress' | 'completed' | 'failed';
 
@@ -50,6 +51,7 @@ function getScoreColor(passed: number, total: number): string {
 }
 
 export default function InspectionEnginePage() {
+  const { t } = useTranslation();
   const { results, templates, inProgress, completed, failed, loading, error, refetch } = useInspectionEngine();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<TabKey>('all');
@@ -158,7 +160,7 @@ export default function InspectionEnginePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Inspection Engine</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('inspections.title')}</h1>
           <p className="text-muted mt-1">Template-based inspections with pass/fail/conditional items</p>
         </div>
         <div className="flex items-center gap-3">

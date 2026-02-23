@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 const supabase = createClient();
 
@@ -48,6 +49,7 @@ interface Certification {
 }
 
 export default function CompliancePacketsPage() {
+  const { t } = useTranslation();
   const [packets, setPackets] = useState<CompliancePacket[]>([]);
   const [certs, setCerts] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);

@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 interface BookingType {
   id: string;
@@ -78,6 +79,7 @@ function mapRow(r: Record<string, unknown>): BookingType {
 }
 
 export default function BookingTypesPage() {
+  const { t } = useTranslation();
   const [types, setTypes] = useState<BookingType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

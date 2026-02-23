@@ -22,6 +22,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { useAsyncVideos } from '@/lib/hooks/use-async-videos';
 import type { AsyncVideo } from '@/lib/hooks/use-async-videos';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 const recipientTypeLabels: Record<string, string> = {
   client: 'Client',
@@ -114,6 +115,7 @@ function VideoRow({ video }: { video: AsyncVideo }) {
 type VideoTab = 'all' | 'sent' | 'unviewed';
 
 export default function AsyncVideosPage() {
+  const { t } = useTranslation();
   const { videos, sent, unviewed, loading, error } = useAsyncVideos();
   const [tab, setTab] = useState<VideoTab>('all');
   const [search, setSearch] = useState('');

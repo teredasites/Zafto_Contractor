@@ -18,8 +18,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput } from '@/components/ui/input';
 import { useLienRules, type LienRule } from '@/lib/hooks/use-lien-protection';
+import { useTranslation } from '@/lib/translations';
 
 export default function LienRulesPage() {
+  const { t } = useTranslation();
   const { rules, loading, error } = useLienRules();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedState, setExpandedState] = useState<string | null>(null);

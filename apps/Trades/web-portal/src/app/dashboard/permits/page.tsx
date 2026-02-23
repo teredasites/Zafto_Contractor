@@ -30,6 +30,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
 import { usePermits, type PermitData } from '@/lib/hooks/use-permits';
+import { useTranslation } from '@/lib/translations';
 
 type PermitStatus = 'draft' | 'applied' | 'in_review' | 'approved' | 'inspection_scheduled' | 'passed' | 'failed' | 'expired';
 type PermitType = 'electrical' | 'plumbing' | 'mechanical' | 'building' | 'roofing' | 'solar' | 'demolition' | 'other';
@@ -110,6 +111,7 @@ function toPermit(d: PermitData): Permit {
 }
 
 export default function PermitsPage() {
+  const { t } = useTranslation();
   const { permits: rawPermits, loading, createPermit } = usePermits();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -152,7 +154,7 @@ export default function PermitsPage() {
       <CommandPalette />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Permits</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('permits.title')}</h1>
           <p className="text-muted mt-1">Track permit applications, inspections, and compliance</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Permit</Button>

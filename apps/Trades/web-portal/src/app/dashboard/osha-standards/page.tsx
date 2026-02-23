@@ -19,6 +19,7 @@ import {
   useOshaStandards,
   type ViolationResult,
 } from '@/lib/hooks/use-osha-standards';
+import { useTranslation } from '@/lib/translations';
 
 const tradeOptions = [
   { value: 'all', label: 'All Trades' },
@@ -96,6 +97,7 @@ const US_STATES = [
 ];
 
 export default function OshaStandardsPage() {
+  const { t } = useTranslation();
   const {
     filteredStandards,
     loading,
@@ -166,7 +168,7 @@ export default function OshaStandardsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">OSHA Standards</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('oshaStandards.title')}</h1>
           <p className="text-muted mt-1">
             Safety standards reference and violation lookup
           </p>

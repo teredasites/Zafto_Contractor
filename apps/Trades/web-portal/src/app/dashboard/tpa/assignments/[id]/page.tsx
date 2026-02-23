@@ -34,6 +34,7 @@ import {
   formatTimeRemaining,
   type TpaAssignmentStatus,
 } from '@/lib/hooks/use-tpa-assignments';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== CONSTANTS ====================
 
@@ -62,6 +63,7 @@ const SLA_BG: Record<string, string> = {
 // ==================== PAGE COMPONENT ====================
 
 export default function TpaAssignmentDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const assignmentId = params.id as string;

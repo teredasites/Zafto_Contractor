@@ -25,6 +25,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
 import { useWalkthroughs } from '@/lib/hooks/use-walkthroughs';
 import type { Walkthrough } from '@/lib/hooks/use-walkthroughs';
+import { useTranslation } from '@/lib/translations';
 
 // ── Status config ──
 
@@ -98,6 +99,7 @@ const FILTER_TABS = [
 ];
 
 export default function WalkthroughsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { walkthroughs, loading } = useWalkthroughs();
   const [search, setSearch] = useState('');
@@ -165,7 +167,7 @@ export default function WalkthroughsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Walkthroughs</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('walkthroughs.title')}</h1>
           <p className="text-muted mt-1">Property walkthroughs and site assessments</p>
         </div>
         <Button onClick={() => router.push('/dashboard/walkthroughs/new')}>

@@ -22,6 +22,7 @@ import {
 import { useVendors } from '@/lib/hooks/use-vendors';
 import { useProperties } from '@/lib/hooks/use-properties';
 import type { ExpenseData } from '@/lib/hooks/use-expenses';
+import { useTranslation } from '@/lib/translations';
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'error' }> = {
   draft: { label: 'Draft', variant: 'default' },
@@ -31,6 +32,7 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'succes
 };
 
 export default function ExpensesPage() {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');

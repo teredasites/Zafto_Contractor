@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useSchedulePortfolio } from '@/lib/hooks/use-schedule-portfolio';
+import { useTranslation } from '@/lib/translations';
 
 const HEALTH_CONFIG = {
   on_track: { label: 'On Track', color: 'text-success', bg: 'bg-success/10', border: 'border-success/20' },
@@ -21,6 +22,7 @@ const HEALTH_CONFIG = {
 };
 
 export default function PortfolioPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { portfolio, loading, error } = useSchedulePortfolio();
   const [filter, setFilter] = useState<string>('all');

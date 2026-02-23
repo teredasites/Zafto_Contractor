@@ -29,8 +29,10 @@ import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
 import type { JobType } from '@/types';
 import { useDraftRecovery } from '@/lib/hooks/use-draft-recovery';
+import { useTranslation } from '@/lib/translations';
 
 export default function NewJobPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const bidId = searchParams.get('bidId');

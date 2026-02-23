@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, ArrowRight } from 'lucide-react';
+import { useTranslation } from '@/lib/translations';
 
 /**
  * LEGAL-3: One-time legal acknowledgment — shown after company onboarding.
@@ -12,6 +13,7 @@ import { Shield, ArrowRight } from 'lucide-react';
  * Never shown again.
  */
 export default function LegalAcknowledgmentPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [saving, setSaving] = useState(false);
 

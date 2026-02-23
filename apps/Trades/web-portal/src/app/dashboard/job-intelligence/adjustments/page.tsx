@@ -13,8 +13,10 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useJobIntelligence } from '@/lib/hooks/use-job-intelligence';
+import { useTranslation } from '@/lib/translations';
 
 export default function AdjustmentsPage() {
+  const { t } = useTranslation();
   const { adjustments, updateAdjustmentStatus, loading, error } = useJobIntelligence();
 
   if (loading) {

@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useJobPermitRecords, usePermitInspections, type JobPermitRecord, type PermitInspectionRecord } from '@/lib/hooks/use-permit-intelligence';
+import { useTranslation } from '@/lib/translations';
 
 function statusBadgeVariant(status: string): 'success' | 'error' | 'warning' | 'info' | 'secondary' | 'default' {
   switch (status) {
@@ -133,6 +134,7 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
 }
 
 export default function PermitDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const jobId = params.jobId as string;
   const { permits, loading, error } = useJobPermitRecords(jobId);

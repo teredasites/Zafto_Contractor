@@ -26,6 +26,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, formatRelativeTime, cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 type MessageType = 'email' | 'sms' | 'call';
 type MessageDirection = 'inbound' | 'outbound';
@@ -49,6 +50,7 @@ interface Communication {
 }
 
 export default function CommunicationsPage() {
+  const { t } = useTranslation();
   const [comms, setComms] = useState<Communication[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -197,7 +199,7 @@ export default function CommunicationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Communications</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('communications.title')}</h1>
           <p className="text-muted mt-1">Email, SMS, and call history with customers</p>
         </div>
         <Button onClick={() => setShowComposeModal(true)}>

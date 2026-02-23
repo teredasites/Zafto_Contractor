@@ -28,6 +28,7 @@ import {
   type PricingAdjustment,
   type RiskFactor,
 } from '@/lib/hooks/use-bid-optimizer';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== WIN PROBABILITY CIRCLE ====================
 
@@ -344,6 +345,7 @@ function RiskFactorCard({ risk }: { risk: RiskFactor }) {
 // ==================== MAIN PAGE ====================
 
 export default function BidOptimizePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const bidId = params.id as string;

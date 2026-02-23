@@ -16,6 +16,7 @@ import { useScheduleResources, useResourceLeveling } from '@/lib/hooks/use-sched
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
 import { getSupabase } from '@/lib/supabase';
 import type { ScheduleResource, ResourceType } from '@/lib/types/scheduling';
+import { useTranslation } from '@/lib/translations';
 
 const RESOURCE_TYPE_CONFIG: Record<ResourceType, { label: string; icon: typeof HardHat; color: string; bg: string }> = {
   labor: { label: 'Labor', icon: HardHat, color: 'text-accent', bg: 'bg-accent/10' },
@@ -24,6 +25,7 @@ const RESOURCE_TYPE_CONFIG: Record<ResourceType, { label: string; icon: typeof H
 };
 
 export default function ResourcesPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;

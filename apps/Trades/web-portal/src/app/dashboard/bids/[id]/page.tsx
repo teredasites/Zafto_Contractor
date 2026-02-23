@@ -33,6 +33,7 @@ import { formatCurrency, formatDate, formatDateTime, cn, getStatusColor } from '
 import { useBid, useBids } from '@/lib/hooks/use-bids';
 import { getSupabase } from '@/lib/supabase';
 import type { Bid, BidOption } from '@/types';
+import { useTranslation } from '@/lib/translations';
 
 // Timeline event type
 interface TimelineEvent {
@@ -44,6 +45,7 @@ interface TimelineEvent {
 }
 
 export default function BidDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const bidId = params.id as string;

@@ -38,6 +38,7 @@ import type {
   WIPRow,
   CertifiedPayrollRow,
 } from '@/lib/hooks/use-construction-accounting';
+import { useTranslation } from '@/lib/translations';
 
 // ────────────────────────────────────────────
 // Ledger Navigation
@@ -94,6 +95,7 @@ const wipStatusConfig: Record<string, { label: string; variant: 'warning' | 'err
 // ────────────────────────────────────────────
 
 export default function ConstructionAccountingPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     billings,

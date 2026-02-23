@@ -13,6 +13,7 @@ import {
   Percent,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 const supabase = createClient();
 
@@ -36,6 +37,7 @@ interface PricingSuggestion {
 }
 
 export default function PricingAnalyticsPage() {
+  const { t } = useTranslation();
   const [suggestions, setSuggestions] = useState<PricingSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -161,7 +163,7 @@ export default function PricingAnalyticsPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">Pricing Analytics</h1>
+        <h1 className="text-2xl font-semibold text-white">{t('pricingAnalytics.title')}</h1>
         <p className="text-sm text-zinc-400 mt-1">
           Track how smart pricing impacts close rates and revenue
         </p>

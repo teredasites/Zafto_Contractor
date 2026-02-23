@@ -41,6 +41,7 @@ import {
   type TpaLossType,
 } from '@/lib/hooks/use-tpa-assignments';
 import { useTpaPrograms, type TpaProgramData } from '@/lib/hooks/use-tpa-programs';
+import { useTranslation } from '@/lib/translations';
 
 // ==================== CONSTANTS ====================
 
@@ -175,6 +176,7 @@ const EMPTY_FORM: AssignmentFormState = {
 // ==================== PAGE COMPONENT ====================
 
 export default function TpaAssignmentsPage() {
+  const { t } = useTranslation();
   const { assignments, loading, error, refetch } = useTpaAssignments();
   const { programs } = useTpaPrograms();
   const router = useRouter();

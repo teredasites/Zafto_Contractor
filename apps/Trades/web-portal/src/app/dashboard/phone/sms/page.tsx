@@ -21,6 +21,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { useSmsThreads } from '@/lib/hooks/use-phone';
 import type { SmsThread, SmsMessage } from '@/lib/hooks/use-phone';
 import { formatRelativeTime, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 
 function ThreadItem({ thread, isActive, onClick }: { thread: SmsThread; isActive: boolean; onClick: () => void }) {
   return (
@@ -84,6 +85,7 @@ function MessageBubble({ message }: { message: SmsMessage }) {
 }
 
 export default function SmsPage() {
+  const { t } = useTranslation();
   const { threads, loading, error, sendSms } = useSmsThreads();
   const [activeThread, setActiveThread] = useState<SmsThread | null>(null);
   const [search, setSearch] = useState('');

@@ -45,6 +45,7 @@ import {
 import { usePhoneLines } from '@/lib/hooks/use-phone-lines';
 import { useByocPhone, formatPhoneDisplay, CARRIER_FORWARDING_INSTRUCTIONS, type CompanyPhoneNumber } from '@/lib/hooks/use-byoc-phone';
 import { useRingGroups } from '@/lib/hooks/use-ring-groups';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================
 // Tab Types
@@ -98,6 +99,7 @@ const TWO_PARTY_STATES = [
 // ============================================================
 
 export default function PhoneSettingsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabId>('general');
   const {
     config,

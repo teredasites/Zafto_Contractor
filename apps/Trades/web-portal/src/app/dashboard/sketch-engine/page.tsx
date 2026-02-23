@@ -118,6 +118,7 @@ import {
   RulerCorner,
   RULER_THICKNESS,
 } from '@/components/sketch-editor/Ruler';
+import { useTranslation } from '@/lib/translations';
 
 function CanvasLoadingPlaceholder() {
   return (
@@ -180,6 +181,7 @@ const SK_FEATURES = [
 // =============================================================================
 
 export default function SketchEnginePage() {
+  const { t } = useTranslation();
   const [activeView, setActiveView] = useState<'list' | 'editor'>('list');
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);

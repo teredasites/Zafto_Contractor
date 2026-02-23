@@ -29,6 +29,7 @@ import {
   CATEGORY_LABELS,
 } from '@/lib/hooks/use-banking';
 import type { BankAccountData, BankTransactionData } from '@/lib/hooks/use-banking';
+import { useTranslation } from '@/lib/translations';
 
 // Ledger Navigation (shared across Ledger sub-pages)
 const zbooksNav = [
@@ -302,6 +303,7 @@ function TransactionRow({
 }
 
 export default function BankingPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     accounts,

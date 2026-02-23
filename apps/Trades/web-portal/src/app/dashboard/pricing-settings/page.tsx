@@ -19,6 +19,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 const supabase = createClient();
 
@@ -53,6 +54,7 @@ const RULE_TYPES = [
 ];
 
 export default function PricingSettingsPage() {
+  const { t } = useTranslation();
   const [rules, setRules] = useState<PricingRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);

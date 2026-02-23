@@ -18,6 +18,7 @@ import {
 import { useScheduleBaselines } from '@/lib/hooks/use-schedule-baselines';
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
 import type { ScheduleBaseline, ScheduleBaselineTask } from '@/lib/types/scheduling';
+import { useTranslation } from '@/lib/translations';
 
 interface VarianceRow {
   task_id: string;
@@ -32,6 +33,7 @@ interface VarianceRow {
 }
 
 export default function BaselinesPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;

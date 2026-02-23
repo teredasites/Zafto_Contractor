@@ -20,6 +20,7 @@ import { useMaterialCatalog, type MaterialTier, type MaterialCatalogItem } from 
 import { useLaborUnits } from '@/lib/hooks/use-labor-units';
 import { useEstimateVersions } from '@/lib/hooks/use-estimate-versions';
 import { useLaborRates, type LaborRateResult } from '@/lib/hooks/use-labor-rates';
+import { useTranslation } from '@/lib/translations';
 
 const ACTION_TYPES = [
   { value: 'remove', label: 'Remove' },
@@ -55,6 +56,7 @@ const GBB_TIERS: { key: 'good' | 'better' | 'best'; tiers: MaterialTier[]; label
 ];
 
 export default function EstimateEditorPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const estimateId = params.id as string;

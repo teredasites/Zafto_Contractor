@@ -19,6 +19,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useRent } from '@/lib/hooks/use-rent';
 import type { RentChargeData, RentPaymentData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type ChargeStatus = RentChargeData['status'];
 
@@ -58,6 +59,7 @@ function isOverdue(charge: RentChargeData): boolean {
 }
 
 export default function RentRollPage() {
+  const { t } = useTranslation();
   const { charges, loading, error, recordPayment, generateMonthlyCharges } = useRent();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

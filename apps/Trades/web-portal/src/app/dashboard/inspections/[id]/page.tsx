@@ -22,8 +22,10 @@ import { formatDate, cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { mapInspection } from '@/lib/hooks/mappers';
 import type { InspectionData } from '@/lib/hooks/mappers';
+import { useTranslation } from '@/lib/translations';
 
 export default function InspectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useTranslation();
   const { id } = use(params);
   const router = useRouter();
   const [inspection, setInspection] = useState<InspectionData | null>(null);

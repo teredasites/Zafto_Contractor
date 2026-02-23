@@ -31,6 +31,7 @@ import { StatusBadge } from '@/components/ui/badge';
 import { formatDate, cn } from '@/lib/utils';
 import { usePropertyScans, type ConfidenceGrade } from '@/lib/hooks/use-property-scan';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 // Mapbox Geocoding — address autocomplete
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -105,6 +106,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 };
 
 export default function ReconPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { scans, loading, error, refetch } = usePropertyScans();
   const [searchQuery, setSearchQuery] = useState('');

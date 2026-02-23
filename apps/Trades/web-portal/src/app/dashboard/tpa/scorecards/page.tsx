@@ -26,6 +26,7 @@ import {
   type CreateScorecardInput,
 } from '@/lib/hooks/use-tpa-scorecards';
 import { useTpaPrograms, type TpaProgramData } from '@/lib/hooks/use-tpa-programs';
+import { useTranslation } from '@/lib/translations';
 
 // ============================================================================
 // HELPERS
@@ -293,6 +294,7 @@ function ScorecardRow({
 // ============================================================================
 
 export default function ScorecardsPage() {
+  const { t } = useTranslation();
   const [selectedProgram, setSelectedProgram] = useState<string>('all');
   const [showNew, setShowNew] = useState(false);
 

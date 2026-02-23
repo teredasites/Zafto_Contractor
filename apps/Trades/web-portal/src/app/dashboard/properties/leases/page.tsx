@@ -19,6 +19,7 @@ import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useLeases } from '@/lib/hooks/use-leases';
 import { leaseStatusLabels } from '@/lib/hooks/pm-mappers';
 import type { LeaseData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type LeaseStatus = LeaseData['status'];
 
@@ -46,6 +47,7 @@ function isExpiringSoon(lease: LeaseData, days: number = 30): boolean {
 }
 
 export default function LeasesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { leases, loading, error } = useLeases();
   const [search, setSearch] = useState('');

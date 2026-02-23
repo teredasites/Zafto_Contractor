@@ -31,6 +31,7 @@ import type {
   ReplacementTimeline,
 } from '@/lib/hooks/use-equipment-insights';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 function healthColor(score: number): string {
   if (score >= 80) return 'text-emerald-600 dark:text-emerald-400';
@@ -72,6 +73,7 @@ function riskVariant(risk: string): 'error' | 'warning' | 'success' {
 }
 
 export default function EquipmentInsightsPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const propertyId = params.id as string;

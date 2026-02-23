@@ -17,8 +17,10 @@ import { Select } from '@/components/ui/input';
 import { useProperties } from '@/lib/hooks/use-properties';
 import { propertyTypeLabels } from '@/lib/hooks/pm-mappers';
 import type { PropertyData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 export default function NewPropertyPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { createProperty } = useProperties();
   const [saving, setSaving] = useState(false);

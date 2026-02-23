@@ -31,6 +31,7 @@ import {
 } from '@/lib/hooks/pm-mappers';
 import type { PropertyData, UnitData, LeaseData } from '@/lib/hooks/pm-mappers';
 import type { UnitWithProperty } from '@/lib/hooks/use-units';
+import { useTranslation } from '@/lib/translations';
 
 type TabType = 'overview' | 'units' | 'financials' | 'maintenance' | 'assets';
 
@@ -58,6 +59,7 @@ const unitStatusVariant: Record<UnitData['status'], 'success' | 'secondary' | 'e
 };
 
 export default function PropertyDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const propertyId = params.id as string;

@@ -35,6 +35,7 @@ import {
   type ReviewStatus,
   type ReviewPlatform,
 } from '@/lib/hooks/use-review-requests';
+import { useTranslation } from '@/lib/translations';
 
 const statusConfig: Record<ReviewStatus, { label: string; color: string; bgColor: string; icon: typeof Star }> = {
   pending: { label: 'Pending', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30', icon: Clock },
@@ -74,6 +75,7 @@ function StarRating({ rating }: { rating: number | null }) {
 }
 
 export default function ReviewsPage() {
+  const { t } = useTranslation();
   const {
     reviewRequests,
     stats,
@@ -141,7 +143,7 @@ export default function ReviewsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Reviews</h1>
+          <h1 className="text-2xl font-semibold text-white">{t('reviews.title')}</h1>
           <p className="text-sm text-zinc-400 mt-1">
             Track review requests and customer ratings
           </p>

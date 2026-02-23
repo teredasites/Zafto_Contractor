@@ -25,6 +25,7 @@ import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useLeases, useLease } from '@/lib/hooks/use-leases';
 import { leaseStatusLabels } from '@/lib/hooks/pm-mappers';
 import type { LeaseData, LeaseDocumentData } from '@/lib/hooks/pm-mappers';
+import { useTranslation } from '@/lib/translations';
 
 type LeaseStatus = LeaseData['status'];
 
@@ -59,6 +60,7 @@ const docTypeLabels: Record<LeaseDocumentData['documentType'], string> = {
 };
 
 export default function LeaseDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const leaseId = params.id as string;

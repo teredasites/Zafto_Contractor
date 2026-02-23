@@ -14,6 +14,7 @@ import { formatCurrency, cn } from '@/lib/utils';
 import { useVendors } from '@/lib/hooks/use-vendors';
 import { createVendorPaymentJournal } from '@/lib/hooks/use-zbooks-engine';
 import { getSupabase } from '@/lib/supabase';
+import { useTranslation } from '@/lib/translations';
 
 interface PaymentRecord {
   id: string;
@@ -35,6 +36,7 @@ const methodLabels: Record<string, string> = {
 };
 
 export default function VendorPaymentsPage() {
+  const { t } = useTranslation();
   const { vendors } = useVendors();
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(true);

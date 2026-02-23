@@ -24,6 +24,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useServiceAgreements, type ServiceAgreementData } from '@/lib/hooks/use-service-agreements';
+import { useTranslation } from '@/lib/translations';
 
 type AgreementStatus = 'active' | 'pending' | 'expired' | 'cancelled';
 type BillingFrequency = 'monthly' | 'quarterly' | 'semi_annual' | 'annual';
@@ -85,6 +86,7 @@ function toAgreement(d: ServiceAgreementData): ServiceAgreement {
 }
 
 export default function ServiceAgreementsPage() {
+  const { t } = useTranslation();
   const { agreements: rawAgreements, loading } = useServiceAgreements();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -136,7 +138,7 @@ export default function ServiceAgreementsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Service Agreements</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('serviceAgreements.title')}</h1>
           <p className="text-muted mt-1">Manage recurring maintenance contracts</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>
