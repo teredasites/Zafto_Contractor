@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useReports } from '@/lib/hooks/use-reports';
 import type { MonthlyRevenue, StatusCount, RevenueCategory, TeamMemberStat, InvoiceStats, JobStats } from '@/lib/hooks/use-reports';
 
@@ -25,6 +26,7 @@ type ReportType = 'revenue' | 'jobs' | 'team' | 'invoices';
 type DateRange = '7d' | '30d' | '90d' | '12m' | 'ytd' | 'custom';
 
 export default function ReportsPage() {
+  const { t } = useTranslation();
   const { data, loading, error } = useReports();
   const [activeReport, setActiveReport] = useState<ReportType>('revenue');
   const [dateRange, setDateRange] = useState<DateRange>('30d');
@@ -70,7 +72,7 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Reports</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('reports.title')}</h1>
           <p className="text-muted mt-1">Business analytics and insights</p>
         </div>
         <div className="flex items-center gap-2">

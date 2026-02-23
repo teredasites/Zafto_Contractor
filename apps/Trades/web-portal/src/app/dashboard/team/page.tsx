@@ -36,6 +36,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { TeamMap } from '@/components/ui/team-map';
 import { CommandPalette } from '@/components/command-palette';
 import { formatRelativeTime, formatCurrency, formatDate, formatTime, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
 import { getSupabase } from '@/lib/supabase';
 import type { TeamMember, UserRole, Job } from '@/types';
@@ -59,6 +60,7 @@ const roleLabels: Record<UserRole, string> = {
 type ViewMode = 'team' | 'dispatch';
 
 export default function TeamPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { team } = useTeam();
   const { jobs } = useJobs();
@@ -127,7 +129,7 @@ export default function TeamPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Team</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('team.title')}</h1>
           <p className="text-muted mt-1">
             {viewMode === 'dispatch' ? 'Live dispatch board and team locations' : 'Manage your team members and permissions'}
           </p>

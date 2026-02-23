@@ -22,12 +22,14 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useInvoices } from '@/lib/hooks/use-invoices';
 import { getSupabase } from '@/lib/supabase';
 import { useStats } from '@/lib/hooks/use-stats';
 import type { Invoice } from '@/types';
 
 export default function InvoicesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -77,7 +79,7 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Invoices</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('invoices.title')}</h1>
           <p className="text-muted mt-1">Create and track your invoices</p>
         </div>
         <Button onClick={() => router.push('/dashboard/invoices/new')}>
@@ -164,7 +166,7 @@ export default function InvoicesPage() {
           {filteredInvoices.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <Receipt size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No invoices found</p>
+              <p>{t('invoices.noRecords')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">

@@ -27,6 +27,7 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, formatRelativeTime, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { useBids } from '@/lib/hooks/use-bids';
 import { getSupabase } from '@/lib/supabase';
 import { useStats } from '@/lib/hooks/use-stats';
@@ -34,6 +35,7 @@ import { usePermissions } from '@/components/permission-gate';
 import type { Bid } from '@/types';
 
 export default function BidsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { loading: permLoading } = usePermissions();
   const [search, setSearch] = useState('');
@@ -72,7 +74,7 @@ export default function BidsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Bids</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('bids.title')}</h1>
           <p className="text-muted mt-1">Create and manage your bids</p>
         </div>
         <Button onClick={() => router.push('/dashboard/bids/new')}>
@@ -206,7 +208,7 @@ export default function BidsPage() {
           {filteredBids.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <FileText size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No bids found</p>
+              <p>{t('bids.noRecords')}</p>
             </div>
           ) : (
             <>
