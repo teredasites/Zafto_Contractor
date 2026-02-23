@@ -400,8 +400,8 @@ export default function NewInvoicePage() {
                             onChange={(e) => updateLineItem(item.id, 'paymentSource', e.target.value)}
                             className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
                           >
-                            <option value="carrier">Carrier</option>
-                            <option value="deductible">Deductible</option>
+                            <option value="carrier">{t('common.carrier')}</option>
+                            <option value="deductible">{t('common.deductible')}</option>
                             <option value="upgrade">Upgrade</option>
                             <option value="standard">{t('common.standard')}</option>
                           </select>
@@ -570,7 +570,7 @@ export default function NewInvoicePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Items</span>
+                <span className="text-muted">{t('common.items')}</span>
                 <span className="text-main">{lineItems.length}</span>
               </div>
               <div className="flex justify-between text-sm">

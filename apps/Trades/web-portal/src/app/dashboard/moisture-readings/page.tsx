@@ -206,8 +206,8 @@ export default function MoistureReadingsPage() {
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Date/Time</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.job')}</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.area')}</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Material</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Reading</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.material')}</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.reading')}</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.target')}</th>
                 <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase tracking-wider">Dry?</th>
               </tr>

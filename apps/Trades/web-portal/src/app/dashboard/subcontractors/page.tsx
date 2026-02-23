@@ -180,7 +180,7 @@ export default function SubcontractorsPage() {
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className="text-2xl font-bold text-white">${totalPaid.toLocaleString()}</div>
-          <div className="text-xs text-zinc-500">Total Paid</div>
+          <div className="text-xs text-zinc-500">{t('common.totalPaid')}</div>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className={`text-2xl font-bold ${alertCount > 0 ? 'text-amber-400' : 'text-green-400'}`}>{alertCount}</div>
@@ -303,7 +303,7 @@ export default function SubcontractorsPage() {
                   {/* Compliance */}
                   <div className="grid grid-cols-3 gap-4">
                     <div className="bg-zinc-800 rounded-lg p-3">
-                      <div className="text-xs text-zinc-500 mb-1">License</div>
+                      <div className="text-xs text-zinc-500 mb-1">{t('common.license')}</div>
                       {sub.licenseNumber ? (
                         <div className="text-sm text-white">
                           {sub.licenseNumber} ({sub.licenseState})
@@ -312,11 +312,11 @@ export default function SubcontractorsPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="text-sm text-zinc-600">Not provided</div>
+                        <div className="text-sm text-zinc-600">{t('common.notProvided')}</div>
                       )}
                     </div>
                     <div className="bg-zinc-800 rounded-lg p-3">
-                      <div className="text-xs text-zinc-500 mb-1">Insurance</div>
+                      <div className="text-xs text-zinc-500 mb-1">{t('common.insurance')}</div>
                       {sub.insuranceCarrier ? (
                         <div className="text-sm text-white">
                           {sub.insuranceCarrier}
@@ -325,7 +325,7 @@ export default function SubcontractorsPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="text-sm text-zinc-600">Not provided</div>
+                        <div className="text-sm text-zinc-600">{t('common.notProvided')}</div>
                       )}
                     </div>
                     <div className="bg-zinc-800 rounded-lg p-3">
@@ -434,7 +434,7 @@ export default function SubcontractorsPage() {
               <tr className="border-b border-zinc-700">
                 <th className="text-left py-2 text-zinc-500">{t('common.name')}</th>
                 <th className="text-left py-2 text-zinc-500">{t('common.company')}</th>
-                <th className="text-right py-2 text-zinc-500">Total Paid</th>
+                <th className="text-right py-2 text-zinc-500">{t('common.totalPaid')}</th>
                 <th className="text-center py-2 text-zinc-500">1099 Required</th>
               </tr>
             </thead>

@@ -236,7 +236,7 @@ export default function LeaseDetailPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Auto-Renew</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.autoRenew')}</p>
                   <p className={cn('text-sm font-medium', lease.autoRenew ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted')}>
                     {lease.autoRenew ? 'Yes' : 'No'}
                   </p>
@@ -377,7 +377,7 @@ export default function LeaseDetailPage() {
               </div>
               {lease.signedAt && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Signed</span>
+                  <span className="text-muted">{t('common.signed')}</span>
                   <span className="text-main">{formatDate(lease.signedAt)}</span>
                 </div>
               )}

@@ -673,7 +673,7 @@ export default function BranchFinancialsPage() {
 
                 {/* COGS */}
                 <div className="flex items-center justify-between py-2 px-3">
-                  <span className="text-sm text-muted">Cost of Goods Sold</span>
+                  <span className="text-sm text-muted">{t('common.costOfGoodsSold')}</span>
                   <span className="text-sm font-medium text-amber-600 tabular-nums">
                     ({formatCurrency(branchPnL.cogs)})
                   </span>
@@ -692,7 +692,7 @@ export default function BranchFinancialsPage() {
 
                 {/* Expenses */}
                 <div className="flex items-center justify-between py-2 px-3">
-                  <span className="text-sm text-muted">Operating Expenses</span>
+                  <span className="text-sm text-muted">{t('common.operatingExpenses')}</span>
                   <span className="text-sm font-medium text-red-600 tabular-nums">
                     ({formatCurrency(branchPnL.expenses)})
                   </span>

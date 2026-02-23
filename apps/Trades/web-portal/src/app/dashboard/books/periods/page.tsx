@@ -739,7 +739,7 @@ export default function FiscalPeriodsPage() {
                   <thead>
                     <tr className="text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-default">
                       <th className="px-6 py-3 text-left">Timestamp</th>
-                      <th className="px-4 py-3 text-left">Action</th>
+                      <th className="px-4 py-3 text-left">{t('common.action')}</th>
                       <th className="px-4 py-3 text-left">{t('common.summary')}</th>
                     </tr>
                   </thead>

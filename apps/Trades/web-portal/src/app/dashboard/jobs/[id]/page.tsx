@@ -691,7 +691,7 @@ function MaterialsTab({ job }: { job: Job }) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-base">Materials</CardTitle>
+          <CardTitle className="text-base">{t('common.materials')}</CardTitle>
           {materials.length > 0 && (
             <p className="text-xs text-muted mt-1">{materials.length} items &middot; {formatCurrency(totalCost)} total</p>
           )}
@@ -759,7 +759,7 @@ function MaterialsTab({ job }: { job: Job }) {
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Item</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.item')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.qty')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Unit Cost</th>

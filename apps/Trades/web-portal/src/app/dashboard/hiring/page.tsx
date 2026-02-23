@@ -1023,7 +1023,7 @@ function InterviewsTab({
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">Date & Time</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Recommendation</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.recommendation')}</th>
                   </tr>
                 </thead>
                 <tbody>

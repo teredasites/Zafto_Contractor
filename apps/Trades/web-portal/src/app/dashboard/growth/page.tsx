@@ -336,7 +336,7 @@ export default function GrowthPage() {
                         </Badge>
                       </div>
                       <div className="p-2 rounded-lg bg-surface-hover">
-                        <p className="text-[10px] text-muted">Confidence</p>
+                        <p className="text-[10px] text-muted">{t('common.confidence')}</p>
                         <p className={cn(
                           'text-sm font-medium mt-0.5',
                           selectedAction.confidence >= 0.8 ? 'text-emerald-600' : selectedAction.confidence >= 0.6 ? 'text-amber-600' : 'text-orange-600'

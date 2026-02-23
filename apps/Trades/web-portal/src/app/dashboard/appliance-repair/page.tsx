@@ -57,11 +57,11 @@ export default function ApplianceRepairPage() {
           <p className="text-2xl font-bold text-white">{logs.length}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Repaired</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.repaired')}</p>
           <p className="text-2xl font-bold text-green-400">{repairCount}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Replaced</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.replaced')}</p>
           <p className="text-2xl font-bold text-red-400">{replaceCount}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">

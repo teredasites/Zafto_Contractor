@@ -274,9 +274,9 @@ export default function InspectionEnginePage() {
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Inspector</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.status')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.score')}</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Result</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.result')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.date')}</th>
-                <th className="text-center px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Signed</th>
+                <th className="text-center px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.signed')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">

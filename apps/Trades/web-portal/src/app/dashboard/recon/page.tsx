@@ -286,7 +286,7 @@ export default function ReconPage() {
             </div>
             <div>
               <p className="text-lg font-bold text-main">{stats.complete}</p>
-              <p className="text-[11px] text-muted">Complete</p>
+              <p className="text-[11px] text-muted">{t('common.complete')}</p>
             </div>
           </div>
           <div className="rounded-lg border border-main bg-card px-4 py-3 flex items-center gap-3">

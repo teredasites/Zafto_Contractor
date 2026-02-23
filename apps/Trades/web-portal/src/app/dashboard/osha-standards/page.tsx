@@ -400,7 +400,7 @@ export default function OshaStandardsPage() {
                     <p className="font-semibold text-main text-sm">
                       {formatCurrency(v.penaltyAmount)}
                     </p>
-                    <p className="text-xs text-muted">Penalty</p>
+                    <p className="text-xs text-muted">{t('common.penalty')}</p>
                   </div>
                 </div>
               ))}

@@ -225,7 +225,7 @@ export default function WalkthroughsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.uploaded}</p>
-                <p className="text-sm text-muted">Uploaded</p>
+                <p className="text-sm text-muted">{t('common.uploaded')}</p>
               </div>
             </div>
           </CardContent>

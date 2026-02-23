@@ -493,8 +493,8 @@ function ReadingsTab({ readings }: { readings: ReturnType<typeof useDryingMonito
               <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.date')}</th>
               <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.area')}</th>
               <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">#</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Material</th>
-              <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Reading</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.material')}</th>
+              <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.reading')}</th>
               <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.target')}</th>
               <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Ref Std</th>
               <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.status')}</th>
@@ -775,10 +775,10 @@ function ContentsTab({
                     <thead>
                       <tr className="border-b border-main">
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">#</th>
-                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">Item</th>
+                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.item')}</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.qty')}</th>
-                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">Condition</th>
-                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">Action</th>
+                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.condition')}</th>
+                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.action')}</th>
                         <th className="text-right px-4 py-2 text-xs text-muted uppercase">Value</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.status')}</th>
                       </tr>

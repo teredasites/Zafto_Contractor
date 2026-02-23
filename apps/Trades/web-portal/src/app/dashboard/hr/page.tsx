@@ -678,9 +678,9 @@ function TrainingTab({ records, search, onSearchChange }: {
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Employee</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.date')}</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Expiration</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.expiration')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.score')}</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Result</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.result')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.status')}</th>
               </tr>
             </thead>

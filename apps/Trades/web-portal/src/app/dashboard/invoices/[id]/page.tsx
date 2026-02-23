@@ -609,8 +609,8 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
                 >
                   <option value="card">Credit Card</option>
                   <option value="ach">Bank Transfer (ACH)</option>
-                  <option value="check">Check</option>
-                  <option value="cash">Cash</option>
+                  <option value="check">{t('common.check')}</option>
+                  <option value="cash">{t('common.cash')}</option>
                   <option value="other">Other</option>
                 </select>
               </div>

@@ -426,13 +426,13 @@ function TemplateModal({
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
-                <option value="materials">Materials</option>
-                <option value="labor">Labor</option>
+                <option value="materials">{t('common.materials')}</option>
+                <option value="labor">{t('common.labor')}</option>
                 <option value="fuel">Fuel</option>
                 <option value="tools">Tools</option>
                 <option value="equipment">{t('common.equipment')}</option>
                 <option value="vehicle">Vehicle</option>
-                <option value="insurance">Insurance</option>
+                <option value="insurance">{t('common.insurance')}</option>
                 <option value="permits">Permits</option>
                 <option value="advertising">Advertising</option>
                 <option value="office">Office</option>

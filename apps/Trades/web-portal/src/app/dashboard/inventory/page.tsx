@@ -140,7 +140,7 @@ export default function InventoryPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{lowStockItems.length}</p>
-                <p className="text-sm text-muted">Low Stock</p>
+                <p className="text-sm text-muted">{t('common.lowStock')}</p>
               </div>
             </div>
           </CardContent>
@@ -153,7 +153,7 @@ export default function InventoryPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{outOfStock.length}</p>
-                <p className="text-sm text-muted">Out of Stock</p>
+                <p className="text-sm text-muted">{t('common.outOfStock')}</p>
               </div>
             </div>
           </CardContent>
@@ -191,7 +191,7 @@ export default function InventoryPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Item</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.item')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">SKU</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.category')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.location')}</th>

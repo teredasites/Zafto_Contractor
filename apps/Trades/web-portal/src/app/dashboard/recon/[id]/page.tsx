@@ -1094,7 +1094,7 @@ function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estima
                   <span className="text-muted">{tr('common.crew')}</span>
                   <span className="text-main text-right font-medium">{t.recommendedCrewSize}</span>
                   {t.estimatedLaborHours != null && <>
-                    <span className="text-muted">Labor</span>
+                    <span className="text-muted">{tr('common.labor')}</span>
                     <span className="text-main text-right font-medium">{t.estimatedLaborHours}h</span>
                   </>}
                 </div>
@@ -1167,7 +1167,7 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Item</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.item')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Base Qty</th>
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.unit')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Waste</th>
@@ -1278,7 +1278,7 @@ function SolarTab({ facets, tradeBids }: { facets: RoofFacetData[]; tradeBids: T
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Item</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{tr('common.item')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">{tr('common.qty')}</th>
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{tr('common.unit')}</th>
                 </tr>

@@ -402,15 +402,15 @@ export default function CPAExportPage() {
                 <p className="text-sm font-medium text-main">{t('common.balanceSheet')}</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Assets</span>
+                    <span className="text-muted">{t('common.assets')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.balanceSheet.totalAssets)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Liabilities</span>
+                    <span className="text-muted">{t('common.liabilities')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.balanceSheet.totalLiabilities)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">
-                    <span className="text-main">Equity</span>
+                    <span className="text-main">{t('common.equity')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.balanceSheet.totalEquity)}</span>
                   </div>
                 </div>
@@ -552,7 +552,7 @@ export default function CPAExportPage() {
                     {packageData.pnl.cogs.length > 0 && (
                       <>
                         <tr className="bg-secondary/50">
-                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">Cost of Goods Sold</td>
+                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('common.costOfGoodsSold')}</td>
                         </tr>
                         {packageData.pnl.cogs.map(a => (
                           <tr key={a.accountNumber} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -568,7 +568,7 @@ export default function CPAExportPage() {
                     {packageData.pnl.expenses.length > 0 && (
                       <>
                         <tr className="bg-secondary/50">
-                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">Operating Expenses</td>
+                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('common.operatingExpenses')}</td>
                         </tr>
                         {packageData.pnl.expenses.map(a => (
                           <tr key={a.accountNumber} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -613,7 +613,7 @@ export default function CPAExportPage() {
                     {packageData.balanceSheet.assets.length > 0 && (
                       <>
                         <tr className="bg-secondary/50">
-                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">Assets</td>
+                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('common.assets')}</td>
                         </tr>
                         {packageData.balanceSheet.assets.map(a => (
                           <tr key={a.accountNumber} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -633,7 +633,7 @@ export default function CPAExportPage() {
                     {packageData.balanceSheet.liabilities.length > 0 && (
                       <>
                         <tr className="bg-secondary/50">
-                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">Liabilities</td>
+                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('common.liabilities')}</td>
                         </tr>
                         {packageData.balanceSheet.liabilities.map(a => (
                           <tr key={a.accountNumber} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -649,7 +649,7 @@ export default function CPAExportPage() {
                     {packageData.balanceSheet.equity.length > 0 && (
                       <>
                         <tr className="bg-secondary/50">
-                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">Equity</td>
+                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('common.equity')}</td>
                         </tr>
                         {packageData.balanceSheet.equity.map(a => (
                           <tr key={a.accountNumber} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -690,7 +690,7 @@ export default function CPAExportPage() {
                     <tr className="border-b border-default">
                       <th className="text-left px-3 py-2 text-muted font-medium">Vendor Name</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">Tax ID</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">YTD Payments</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.ytdPayments')}</th>
                       <th className="text-center px-3 py-2 text-muted font-medium">1099 Required</th>
                     </tr>
                   </thead>

@@ -464,7 +464,7 @@ export default function EstimateEditorPage() {
                     {estimate.status}
                   </span>
                   {estimate.estimateType === 'insurance' && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400">Insurance</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400">{t('common.insurance')}</span>
                   )}
                 </div>
                 <p className="text-xs text-zinc-500">
@@ -1230,11 +1230,11 @@ function AreaSection({
         <div className="border-t border-zinc-700/30">
           {/* Column headers */}
           <div className="grid grid-cols-[1fr_70px_70px_80px_90px_36px] gap-2 px-4 py-2 text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800/50">
-            <span>Item</span>
+            <span>{tr('common.item')}</span>
             <span className="text-right">{tr('common.qty')}</span>
             <span className="text-right">Unit $</span>
             <span className="text-right">{tr('common.total')}</span>
-            <span className="text-center">Action</span>
+            <span className="text-center">{tr('common.action')}</span>
             <span />
           </div>
 
@@ -1557,7 +1557,7 @@ function TotalsPanel({
         {/* Overhead */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Overhead</span>
+            <span className="text-zinc-400">{tr('common.overhead')}</span>
             <input type="number" min="0" max="100" value={estimate.overheadPercent}
               onChange={(e) => onRateChange('overhead_percent', Number(e.target.value) || 0)}
               className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right" />
@@ -1746,7 +1746,7 @@ function EstimatePreview({
                 <tr className="text-zinc-500 border-b border-zinc-800">
                   <th className="text-left py-1.5 font-medium">Code</th>
                   <th className="text-left py-1.5 font-medium">{t('common.description')}</th>
-                  <th className="text-center py-1.5 font-medium">Action</th>
+                  <th className="text-center py-1.5 font-medium">{t('common.action')}</th>
                   <th className="text-right py-1.5 font-medium">{t('common.qty')}</th>
                   <th className="text-right py-1.5 font-medium">Unit $</th>
                   <th className="text-right py-1.5 font-medium">{t('common.total')}</th>
@@ -2082,7 +2082,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-zinc-800/50 text-zinc-400">
-                      <th className="text-left px-3 py-2 font-medium">Material</th>
+                      <th className="text-left px-3 py-2 font-medium">{t('common.material')}</th>
                       <th className="text-right px-3 py-2 font-medium">{t('common.qty')}</th>
                       <th className="text-right px-3 py-2 font-medium">{t('common.unit')}</th>
                       <th className="text-right px-3 py-2 font-medium">W/ Waste</th>
