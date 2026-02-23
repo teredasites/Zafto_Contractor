@@ -159,7 +159,7 @@ export default function HRPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><Users size={20} className="text-blue-600 dark:text-blue-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{employees.length}</p><p className="text-sm text-muted">Total Employees</p></div>
+          <div><p className="text-2xl font-semibold text-main">{employees.length}</p><p className="text-sm text-muted">{t('hr.totalEmployees')}</p></div>
         </div></CardContent></Card>
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
@@ -169,7 +169,7 @@ export default function HRPage() {
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><Clock size={20} className="text-amber-600 dark:text-amber-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{onLeave.length}</p><p className="text-sm text-muted">On Leave</p></div>
+          <div><p className="text-2xl font-semibold text-main">{onLeave.length}</p><p className="text-sm text-muted">{t('hr.onLeave')}</p></div>
         </div></CardContent></Card>
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
@@ -289,10 +289,10 @@ function EmployeesTab({ employees, search, onSearchChange }: {
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">Employee</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Job Title</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Department</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('hiring.department')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Hire Date</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Pay Rate</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('hr.hireDate')}</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('hr.payRate')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.status')}</th>
                 <th className="px-4 py-3 w-10" />
               </tr>
@@ -475,16 +475,16 @@ function NewEmployeeModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Pay Rate</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('hr.payRate')}</label>
               <input type="number" placeholder="0.00" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Department</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('hiring.department')}</label>
               <input type="text" placeholder="Electrical" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Hire Date</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('hr.hireDate')}</label>
             <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
           </div>
           <div className="flex items-center gap-3 pt-4">

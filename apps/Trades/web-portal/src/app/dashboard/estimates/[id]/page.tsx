@@ -535,7 +535,7 @@ export default function EstimateEditorPage() {
 
           {/* ── Tier Selector Bar ── */}
           <div className="flex items-center gap-3 px-6 py-2 border-t border-zinc-800/50">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-500">Material Tier</span>
+            <span className="text-[10px] uppercase tracking-wider text-zinc-500">{t('estimates.materialTier')}</span>
             <div className="flex items-center gap-1">
               {TIER_CONFIG.map((t) => (
                 <button
@@ -1592,7 +1592,7 @@ function TotalsPanel({
 
         {/* Grand Total */}
         <div className="flex items-center justify-between text-sm pt-2.5 border-t border-zinc-700/50">
-          <span className="text-zinc-100 font-semibold">Grand Total</span>
+          <span className="text-zinc-100 font-semibold">{tr('estimates.grandTotal')}</span>
           <span className="text-zinc-100 font-semibold text-lg">${fmtCurrency(totals.grand)}</span>
         </div>
 
@@ -1778,7 +1778,7 @@ function EstimatePreview({
           <div className="flex justify-between text-sm"><span className="text-zinc-400">Tax ({estimate.taxPercent}%)</span><span className="text-zinc-200">${fmtCurrency(totals.tax)}</span></div>
         )}
         <div className="flex justify-between text-lg font-bold pt-2 border-t border-zinc-700">
-          <span className="text-zinc-100">Grand Total</span>
+          <span className="text-zinc-100">{t('estimates.grandTotal')}</span>
           <span className="text-zinc-100">${fmtCurrency(totals.grand)}</span>
         </div>
         {estimate.estimateType === 'insurance' && estimate.deductible > 0 && (

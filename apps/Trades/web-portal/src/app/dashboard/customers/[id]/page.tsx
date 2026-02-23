@@ -336,7 +336,7 @@ export default function CustomerDetailPage() {
                 <p className="text-2xl font-semibold text-main">{formatCurrency(customer.totalRevenue)}</p>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Total Jobs</span>
+                <span className="text-muted">{t('customers.totalJobs')}</span>
                 <span className="font-medium text-main">{customer.jobCount}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -346,7 +346,7 @@ export default function CustomerDetailPage() {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Customer Since</span>
+                <span className="text-muted">{t('customers.customerSince')}</span>
                 <span className="font-medium text-main">{formatDate(customer.createdAt)}</span>
               </div>
             </CardContent>

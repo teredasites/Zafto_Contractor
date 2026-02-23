@@ -239,7 +239,7 @@ export default function JobCostRadarPage() {
               {/* Change orders + margin impact */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-lg bg-muted/40 text-center">
-                  <p className="text-xs text-muted-foreground">Change Orders</p>
+                  <p className="text-xs text-muted-foreground">{t('jobs.changeOrders')}</p>
                   <p className="text-lg font-semibold">{formatCurrency(selectedJob.changeOrdersTotal)}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 text-center">

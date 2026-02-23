@@ -139,7 +139,7 @@ export default function LienRulesPage() {
                         </div>
                       )}
                       <div>
-                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">Requirements</h4>
+                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('hiring.requirements')}</h4>
                         <div className="space-y-1 text-xs">
                           <p className="text-zinc-400">
                             Notarization: {rule.notarization_required ?

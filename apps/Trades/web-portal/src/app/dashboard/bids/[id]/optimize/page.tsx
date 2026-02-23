@@ -476,7 +476,7 @@ export default function BidOptimizePage() {
                     <div className="text-lg font-bold text-main">
                       {result.historical_stats.total_bids}
                     </div>
-                    <div className="text-xs text-muted">Total Bids</div>
+                    <div className="text-xs text-muted">{t('marketplace.totalBids')}</div>
                   </div>
                 </div>
               </CardContent>

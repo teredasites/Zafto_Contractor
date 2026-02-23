@@ -386,7 +386,7 @@ export default function CommunicationsPage() {
 
                   {selectedComm.attachments && selectedComm.attachments.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-main">
-                      <p className="text-sm text-muted mb-2">Attachments</p>
+                      <p className="text-sm text-muted mb-2">{t('permits.attachments')}</p>
                       <div className="space-y-2">
                         {selectedComm.attachments.map((att, i) => (
                           <div key={i} className="flex items-center gap-2 p-2 bg-secondary rounded-lg">

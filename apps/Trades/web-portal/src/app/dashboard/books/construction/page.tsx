@@ -1122,7 +1122,7 @@ function NewBillingModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Change Orders</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('jobs.changeOrders')}</label>
               <Input
                 type="number"
                 step="0.01"

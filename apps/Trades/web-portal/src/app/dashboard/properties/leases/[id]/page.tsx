@@ -383,7 +383,7 @@ export default function LeaseDetailPage() {
               )}
               {lease.terminatedAt && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Terminated</span>
+                  <span className="text-muted">{t('hr.terminated')}</span>
                   <span className="text-red-600">{formatDate(lease.terminatedAt)}</span>
                 </div>
               )}

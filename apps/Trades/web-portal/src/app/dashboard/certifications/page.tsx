@@ -425,7 +425,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
           {/* Issuing Authority + Number */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted mb-1.5 block">Issuing Authority</label>
+              <label className="text-xs font-medium text-muted mb-1.5 block">{tr('permits.issuingAuthority')}</label>
               <input type="text" value={authority} onChange={e => setAuthority(e.target.value)} placeholder="e.g. EPA"
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30" />
             </div>
@@ -439,12 +439,12 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
           {/* Dates */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted mb-1.5 block">Issued Date</label>
+              <label className="text-xs font-medium text-muted mb-1.5 block">{tr('permits.issuedDate')}</label>
               <input type="date" value={issuedDate} onChange={e => setIssuedDate(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30" />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted mb-1.5 block">Expiration Date</label>
+              <label className="text-xs font-medium text-muted mb-1.5 block">{tr('warranties.expirationDate')}</label>
               <input type="date" value={expirationDate} onChange={e => setExpirationDate(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30" />
             </div>

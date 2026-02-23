@@ -192,7 +192,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
           </div>
 
           <div>
-            <p className="text-xs text-muted uppercase tracking-wider mb-3">Line Items</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-3">{t('estimates.lineItems')}</p>
             <div className="border border-main rounded-lg overflow-hidden">
               <table className="w-full">
                 <thead><tr className="bg-secondary">
@@ -363,7 +363,7 @@ function NewCOModal({ onClose, onCreate }: {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-main">Line Items</label>
+              <label className="block text-sm font-medium text-main">{t('estimates.lineItems')}</label>
               <button type="button" onClick={addLineItem} className="text-xs text-accent hover:underline flex items-center gap-1">
                 <Plus size={12} /> Add Item
               </button>
