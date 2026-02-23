@@ -796,6 +796,402 @@
     "requestReview": "Request Review",
     "noReviews": "No reviews yet"
   },
+  "dispatch": {
+    "title": "Dispatch Board",
+    "unassigned": "Unassigned",
+    "dispatched": "Dispatched",
+    "availableTechs": "Available Techs",
+    "onJob": "On Job",
+    "listView": "List",
+    "mapView": "Map",
+    "unassignedJobs": "Unassigned Jobs",
+    "dispatchedJobs": "Dispatched Jobs",
+    "noUnassigned": "No unassigned jobs",
+    "noTechsAvailable": "No techs available",
+    "dropHint": "Drop on an available technician to dispatch",
+    "dropJobHere": "Drop job here",
+    "mapViewTitle": "Map View",
+    "mapViewDesc": "Interactive map showing job locations and technician positions.",
+    "jobLocations": "Job Locations",
+    "techLocations": "Tech Locations",
+    "withGPS": "with GPS",
+    "noTechsGPS": "No technicians with GPS data",
+    "technicians": "Technicians",
+    "available": "Available",
+    "onJobLabel": "On Job",
+    "offline": "Offline",
+    "clockedIn": "Clocked in",
+    "noTeamMembers": "No team members found"
+  },
+  "invoices": {
+    "title": "Invoices",
+    "new": "New Invoice",
+    "searchInvoices": "Search invoices...",
+    "noInvoices": "No invoices yet",
+    "noInvoicesDesc": "Create your first invoice to get started.",
+    "totalOutstanding": "Total Outstanding",
+    "overdueAmount": "Overdue Amount",
+    "paidThisMonth": "Paid This Month",
+    "averagePayDays": "Avg. Pay Days",
+    "statusDraft": "Draft",
+    "statusSent": "Sent",
+    "statusPaid": "Paid",
+    "statusOverdue": "Overdue",
+    "statusVoid": "Void",
+    "dueDate": "Due Date",
+    "amount": "Amount",
+    "sendInvoice": "Send Invoice",
+    "markPaid": "Mark as Paid",
+    "voidInvoice": "Void Invoice",
+    "downloadPDF": "Download PDF",
+    "paymentReceived": "Payment Received",
+    "lineItems": "Line Items",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "total": "Total",
+    "notes": "Notes",
+    "terms": "Terms"
+  },
+  "bidsPage": {
+    "title": "Bids",
+    "new": "New Bid",
+    "searchBids": "Search bids...",
+    "noBids": "No bids yet",
+    "noBidsDesc": "Create proposals and track win rates.",
+    "totalBids": "Total Bids",
+    "pendingBids": "Pending",
+    "wonBids": "Won",
+    "lostBids": "Lost",
+    "winRate": "Win Rate",
+    "bidAmount": "Bid Amount",
+    "sentDate": "Sent Date",
+    "followUp": "Follow Up"
+  },
+  "leadsPage": {
+    "title": "Leads",
+    "new": "New Lead",
+    "searchLeads": "Search leads...",
+    "noLeads": "No leads yet",
+    "noLeadsDesc": "Capture and manage inbound leads from all sources.",
+    "totalLeads": "Total Leads",
+    "newThisWeek": "New This Week",
+    "conversionRate": "Conversion Rate",
+    "avgResponseTime": "Avg. Response Time",
+    "hotLeads": "Hot",
+    "warmLeads": "Warm",
+    "coldLeads": "Cold"
+  },
+  "teamPage": {
+    "title": "Team",
+    "invite": "Invite Member",
+    "searchMembers": "Search team members...",
+    "noMembers": "No team members yet",
+    "totalMembers": "Total Members",
+    "activeToday": "Active Today",
+    "role": "Role",
+    "lastActive": "Last Active"
+  },
+  "documents": {
+    "title": "Documents",
+    "upload": "Upload Document",
+    "searchDocuments": "Search documents...",
+    "noDocuments": "No documents yet",
+    "noDocumentsDesc": "Upload contracts, permits, and other project documents."
+  },
+  "reports": {
+    "title": "Reports",
+    "generateReport": "Generate Report",
+    "noReports": "No reports generated yet",
+    "revenue": "Revenue",
+    "profitMargin": "Profit Margin",
+    "jobCompletion": "Job Completion",
+    "customerSatisfaction": "Customer Satisfaction"
+  },
+  "payroll": {
+    "title": "Payroll",
+    "runPayroll": "Run Payroll",
+    "noPayroll": "No payroll runs yet",
+    "totalPayroll": "Total Payroll",
+    "nextPayDate": "Next Pay Date",
+    "employees": "Employees",
+    "hoursWorked": "Hours Worked"
+  },
+  "hr": {
+    "title": "Human Resources",
+    "manageDesc": "Manage employees, benefits, and compliance",
+    "addEmployee": "Add Employee",
+    "searchEmployees": "Search employees...",
+    "noEmployees": "No employees found",
+    "totalEmployees": "Total Employees",
+    "departments": "Departments",
+    "openPositions": "Open Positions"
+  },
+  "phone": {
+    "title": "Phone",
+    "callLog": "Call Log",
+    "newCall": "New Call",
+    "noCallsTitle": "No calls yet",
+    "noCallsDesc": "Call logs will appear here when you make or receive calls.",
+    "totalCalls": "Total Calls",
+    "missedCalls": "Missed Calls",
+    "avgDuration": "Avg. Duration",
+    "sms": "SMS",
+    "fax": "Fax",
+    "sendFax": "Send Fax",
+    "newMessage": "New Message",
+    "noMessages": "No messages yet"
+  },
+  "meetings": {
+    "title": "Meetings",
+    "schedule": "Schedule Meeting",
+    "noMeetings": "No meetings scheduled",
+    "noMeetingsDesc": "Schedule video calls with customers and team members.",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "join": "Join",
+    "bookingTypes": "Booking Types",
+    "asyncVideos": "Async Videos",
+    "roomTitle": "Meeting Room"
+  },
+  "email": {
+    "title": "Email",
+    "compose": "Compose",
+    "noEmails": "No emails yet",
+    "inbox": "Inbox",
+    "sent": "Sent",
+    "drafts": "Drafts"
+  },
+  "teamChat": {
+    "title": "Team Chat",
+    "newChannel": "New Channel",
+    "noMessages": "No messages yet",
+    "noMessagesDesc": "Start a conversation with your team.",
+    "typeMessage": "Type a message..."
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "searchMarketplace": "Search marketplace...",
+    "noListings": "No marketplace listings",
+    "myListings": "My Listings",
+    "browse": "Browse"
+  },
+  "growth": {
+    "title": "Growth Dashboard",
+    "manageDesc": "Track business growth metrics and insights",
+    "revenueGrowth": "Revenue Growth",
+    "customerGrowth": "Customer Growth",
+    "jobGrowth": "Job Growth"
+  },
+  "automations": {
+    "title": "Automations",
+    "new": "New Automation",
+    "noAutomations": "No automations configured",
+    "noAutomationsDesc": "Set up automated workflows to save time.",
+    "active": "Active",
+    "paused": "Paused",
+    "runs": "Runs"
+  },
+  "compliance": {
+    "title": "Compliance",
+    "manageDesc": "Track licenses, certifications, and regulatory compliance",
+    "ceTracking": "CE Tracking",
+    "packets": "Compliance Packets",
+    "noCerts": "No compliance records found"
+  },
+  "certifications": {
+    "title": "Certifications",
+    "add": "Add Certification",
+    "noCerts": "No certifications found",
+    "expiring": "Expiring Soon",
+    "expired": "Expired",
+    "valid": "Valid"
+  },
+  "oshaStandards": {
+    "title": "OSHA Standards",
+    "searchStandards": "Search OSHA standards...",
+    "noStandards": "No standards found"
+  },
+  "walkthroughs": {
+    "title": "Walkthroughs",
+    "new": "New Walkthrough",
+    "noWalkthroughs": "No walkthroughs yet",
+    "noWalkthroughsDesc": "Start a property walkthrough to document conditions.",
+    "rooms": "Rooms",
+    "photos": "Photos",
+    "notes": "Notes"
+  },
+  "inspections": {
+    "title": "Inspections",
+    "new": "New Inspection",
+    "searchInspections": "Search inspections...",
+    "noInspections": "No inspections found",
+    "templates": "Templates",
+    "completed": "Completed",
+    "passRate": "Pass Rate"
+  },
+  "insurance": {
+    "title": "Insurance Claims",
+    "new": "New Claim",
+    "searchClaims": "Search claims...",
+    "noClaims": "No claims found",
+    "totalClaims": "Total Claims",
+    "pendingReview": "Pending Review",
+    "approved": "Approved",
+    "claimAmount": "Claim Amount"
+  },
+  "permits": {
+    "title": "Permits",
+    "new": "New Permit",
+    "searchPermits": "Search permits...",
+    "noPermits": "No permits found",
+    "jurisdictions": "Jurisdictions"
+  },
+  "subcontractors": {
+    "title": "Subcontractors",
+    "add": "Add Subcontractor",
+    "searchSubs": "Search subcontractors...",
+    "noSubs": "No subcontractors found"
+  },
+  "changeOrders": {
+    "title": "Change Orders",
+    "new": "New Change Order",
+    "noChangeOrders": "No change orders found"
+  },
+  "serviceAgreements": {
+    "title": "Service Agreements",
+    "new": "New Agreement",
+    "noAgreements": "No service agreements found"
+  },
+  "warranties": {
+    "title": "Warranties",
+    "new": "New Warranty",
+    "noWarranties": "No warranties found"
+  },
+  "warrantyIntelligence": {
+    "title": "Warranty Intelligence",
+    "noData": "No warranty data available"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "addItem": "Add Item",
+    "searchInventory": "Search inventory...",
+    "noItems": "No inventory items found",
+    "totalValue": "Total Value",
+    "lowStock": "Low Stock",
+    "categories": "Categories"
+  },
+  "toolCheckout": {
+    "title": "Tool Checkout",
+    "checkOut": "Check Out Tool",
+    "noCheckouts": "No active checkouts",
+    "checkedOut": "Checked Out",
+    "overdue": "Overdue"
+  },
+  "communications": {
+    "title": "Communications",
+    "noComms": "No communications yet"
+  },
+  "sketchEngine": {
+    "title": "Sketch Engine",
+    "newSketch": "New Sketch",
+    "noSketches": "No sketches yet",
+    "noSketchesDesc": "Create CAD-grade floor plans and trade drawings."
+  },
+  "recon": {
+    "title": "Recon",
+    "newScan": "New Scan",
+    "noScans": "No property scans yet",
+    "areaScans": "Area Scans"
+  },
+  "tpa": {
+    "title": "Programs (TPA)",
+    "assignments": "Assignments",
+    "scorecards": "Scorecards",
+    "noPrograms": "No TPA programs found"
+  },
+  "priceBook": {
+    "title": "Price Book",
+    "addItem": "Add Item",
+    "noItems": "No price book items found"
+  },
+  "pricingAnalytics": {
+    "title": "Pricing Analytics",
+    "noData": "No pricing data available"
+  },
+  "pricingSettings": {
+    "title": "Pricing Settings",
+    "manageDesc": "Configure pricing rules, markups, and margins"
+  },
+  "jobIntelligence": {
+    "title": "Job Intelligence",
+    "noData": "No intelligence data available",
+    "adjustments": "Adjustments"
+  },
+  "jobCostRadar": {
+    "title": "Job Cost Radar",
+    "noData": "No cost data available"
+  },
+  "revenueInsights": {
+    "title": "Revenue Insights",
+    "noData": "No revenue data available"
+  },
+  "lienProtection": {
+    "title": "Lien Protection",
+    "noLiens": "No lien records found",
+    "rules": "Rules"
+  },
+  "maintenancePipeline": {
+    "title": "Maintenance Pipeline",
+    "noItems": "No maintenance items"
+  },
+  "siteSurveys": {
+    "title": "Site Surveys",
+    "new": "New Survey",
+    "noSurveys": "No site surveys found"
+  },
+  "moistureReadings": {
+    "title": "Moisture Readings",
+    "noReadings": "No moisture readings found"
+  },
+  "dryingLogs": {
+    "title": "Drying Logs",
+    "noLogs": "No drying logs found"
+  },
+  "moldRemediation": {
+    "title": "Mold Remediation",
+    "noRecords": "No mold remediation records"
+  },
+  "fireRestoration": {
+    "title": "Fire Restoration",
+    "noRecords": "No fire restoration records"
+  },
+  "pestControl": {
+    "title": "Pest Control",
+    "noRecords": "No pest control records"
+  },
+  "locksmith": {
+    "title": "Locksmith Services",
+    "noRecords": "No locksmith records"
+  },
+  "garageDoor": {
+    "title": "Garage Door Services",
+    "noRecords": "No garage door records"
+  },
+  "applianceRepair": {
+    "title": "Appliance Repair",
+    "noRecords": "No appliance repair records"
+  },
+  "zdocs": {
+    "title": "ZDocs",
+    "newDoc": "New Document",
+    "noDocs": "No documents found"
+  },
+  "legalAcknowledgment": {
+    "title": "Legal Acknowledgment"
+  },
+  "keyboardShortcuts": {
+    "title": "Keyboard Shortcuts"
+  },
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "notFound": "Page not found",
