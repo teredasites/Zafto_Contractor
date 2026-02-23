@@ -39,6 +39,7 @@ import {
   type TeamMember,
 } from '@/lib/hooks/use-team-chat';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import { getSupabase } from '@/lib/supabase';
 
 // ════════════════════════════════════════════════════════════════
@@ -373,6 +374,7 @@ function NewConversationModal({
 // ════════════════════════════════════════════════════════════════
 
 export default function TeamChatPage() {
+  const { t } = useTranslation();
   const { conversations, totalUnread, loading, error, refetch } = useConversations();
   const { members } = useTeamMembers();
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
@@ -476,7 +478,7 @@ export default function TeamChatPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">Team Chat</h1>
+            <h1 className="text-2xl font-bold text-zinc-100">{t('teamChat.title')}</h1>
             <p className="text-sm text-zinc-500 mt-1">
               Internal messaging — direct, group, and job conversations
               {totalUnread > 0 && (

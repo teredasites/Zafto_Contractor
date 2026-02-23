@@ -29,6 +29,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatDate, formatRelativeTime, cn } from '@/lib/utils';
 import { useEmail } from '@/lib/hooks/use-email';
 import type { EmailTemplate, EmailCampaign } from '@/lib/hooks/use-email';
+import { useTranslation } from '@/lib/translations';
 
 type Tab = 'templates' | 'sent' | 'campaigns' | 'unsubscribes';
 
@@ -61,6 +62,7 @@ const TEMPLATE_TYPE_CONFIG: Record<string, { label: string; variant: 'default' |
 };
 
 export default function EmailPage() {
+  const { t } = useTranslation();
   const {
     templates,
     sends,
@@ -193,7 +195,7 @@ export default function EmailPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Email</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('email.title')}</h1>
           <p className="text-muted mt-1">Manage templates, campaigns, and email delivery</p>
         </div>
         <div className="flex items-center gap-3">

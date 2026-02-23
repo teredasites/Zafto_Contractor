@@ -26,6 +26,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { useMeetings } from '@/lib/hooks/use-meetings';
 import type { Meeting } from '@/lib/hooks/use-meetings';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/translations';
 import { formatRelativeTime, cn } from '@/lib/utils';
 
 type MeetingTab = 'upcoming' | 'active' | 'past';
@@ -135,6 +136,7 @@ function MeetingRow({ meeting, onJoin }: { meeting: Meeting; onJoin: (code: stri
 }
 
 export default function MeetingsPage() {
+  const { t } = useTranslation();
   const { meetings, upcoming, active, past, loading, error, joinMeeting } = useMeetings();
   const [tab, setTab] = useState<MeetingTab>('upcoming');
   const [search, setSearch] = useState('');
@@ -165,7 +167,7 @@ export default function MeetingsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">Meetings</h1>
+            <h1 className="text-2xl font-bold text-zinc-100">{t('meetings.title')}</h1>
             <p className="text-sm text-zinc-500 mt-1">Video meetings, site walks, and async video</p>
           </div>
           <div className="flex items-center gap-2">

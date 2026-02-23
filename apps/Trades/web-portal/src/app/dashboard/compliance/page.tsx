@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput } from '@/components/ui/input';
+import { useTranslation } from '@/lib/translations';
 import { useCompliance, type Certification, type ComplianceCategory } from '@/lib/hooks/use-compliance';
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; color: string }> = {
@@ -82,6 +83,7 @@ function certStatusVariant(status: string): 'success' | 'error' | 'warning' | 's
 }
 
 export default function CompliancePage() {
+  const { t } = useTranslation();
   const { certifications, summary, loading, error } = useCompliance();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -136,7 +138,7 @@ export default function CompliancePage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Compliance Dashboard</h1>
+        <h1 className="text-2xl font-bold text-white">{t('compliance.title')}</h1>
         <p className="text-sm text-zinc-400 mt-1">Licenses, insurance, bonds, OSHA, and regulatory compliance at a glance</p>
       </div>
 
