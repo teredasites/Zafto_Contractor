@@ -268,7 +268,7 @@ export default function WalkthroughWorkflowsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <LayoutTemplate size={18} className="text-accent" />
-            <h2 className="text-lg font-semibold text-main">Custom Templates</h2>
+            <h2 className="text-lg font-semibold text-main">{t('common.customTemplates')}</h2>
             <Badge variant="info">{companyTemplates.length}</Badge>
           </div>
 

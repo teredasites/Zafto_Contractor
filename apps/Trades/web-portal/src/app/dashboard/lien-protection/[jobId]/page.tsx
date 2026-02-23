@@ -182,7 +182,7 @@ export default function LienDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-zinc-400">Preliminary Notice</span>
+                <span className="text-zinc-400">{t('common.preliminaryNotice')}</span>
                 <span className="text-white">
                   {rule.preliminary_notice_required
                     ? `${rule.preliminary_notice_deadline_days}d from ${rule.preliminary_notice_from?.replace(/_/g, ' ')}`
@@ -190,12 +190,12 @@ export default function LienDetailPage() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-zinc-400">Lien Filing</span>
+                <span className="text-zinc-400">{t('common.lienFiling')}</span>
                 <span className="text-white">{rule.lien_filing_deadline_days}d from {rule.lien_filing_from.replace(/_/g, ' ')}</span>
               </div>
               {rule.lien_enforcement_deadline_days && (
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-400">Enforcement</span>
+                  <span className="text-zinc-400">{t('common.enforcement')}</span>
                   <span className="text-white">{rule.lien_enforcement_deadline_days}d from filing</span>
                 </div>
               )}

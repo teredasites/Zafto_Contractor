@@ -169,7 +169,7 @@ export default function CertificationsPage() {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-muted">
           <Award size={48} className="mb-4 opacity-30" />
-          <p className="text-lg font-medium text-main mb-1">No certifications found</p>
+          <p className="text-lg font-medium text-main mb-1">{t('common.noCertificationsFound')}</p>
           <p className="text-sm">{search || statusFilter !== 'all' ? 'Try adjusting your search or filters' : 'Add your first certification to start tracking compliance'}</p>
         </div>
       ) : (

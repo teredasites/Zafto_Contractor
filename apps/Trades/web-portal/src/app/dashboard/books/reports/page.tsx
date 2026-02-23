@@ -498,7 +498,7 @@ export default function FinancialReportsPage() {
                     onChange={(e) => setPeriod(e.target.value)}
                     className="px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent"
                   >
-                    <option value="this_month">This Month</option>
+                    <option value="this_month">{t('common.thisMonth')}</option>
                     <option value="last_month">Last Month</option>
                     <option value="this_quarter">This Quarter</option>
                     <option value="this_year">This Year</option>

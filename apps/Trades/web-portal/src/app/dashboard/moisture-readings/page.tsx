@@ -142,7 +142,7 @@ export default function MoistureReadingsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{uniqueJobs}</p>
-                <p className="text-sm text-muted">Active Jobs</p>
+                <p className="text-sm text-muted">{t('dashboard.activeJobs')}</p>
               </div>
             </div>
           </CardContent>

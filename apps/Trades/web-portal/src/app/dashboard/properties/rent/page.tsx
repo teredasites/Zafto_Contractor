@@ -230,7 +230,7 @@ export default function RentRollPage() {
       <div className="bg-surface border border-main rounded-xl divide-y divide-main">
         {/* Header row */}
         <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted">
-          <div className="col-span-2">Tenant</div>
+          <div className="col-span-2">{t('common.tenant')}</div>
           <div className="col-span-2">Unit / Property</div>
           <div className="col-span-1">Type</div>
           <div className="col-span-1 text-right">Amount Due</div>
@@ -324,7 +324,7 @@ export default function RentRollPage() {
             <CardContent className="space-y-4">
               <div className="p-3 bg-secondary rounded-lg">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted">Tenant</span>
+                  <span className="text-muted">{t('common.tenant')}</span>
                   <span className="font-medium text-main">{paymentTarget.tenantName || 'Unknown'}</span>
                 </div>
                 <div className="flex justify-between text-sm mb-1">

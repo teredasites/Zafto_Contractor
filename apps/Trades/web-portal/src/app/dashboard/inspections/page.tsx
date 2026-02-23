@@ -91,7 +91,7 @@ export default function InspectionsPage() {
           <h1 className="text-2xl font-semibold text-main">{t('inspections.title')}</h1>
           <p className="text-muted mt-1">Quality control, safety compliance, and punch lists</p>
         </div>
-        <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Inspection</Button>
+        <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newInspection')}</Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -175,9 +175,9 @@ export default function InspectionsPage() {
         {filteredInspections.length === 0 && (
           <Card><CardContent className="p-12 text-center">
             <ClipboardCheck size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No inspections found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('common.noInspectionsFound')}</h3>
             <p className="text-muted mb-4">Create inspections with configurable checklists for quality control and compliance.</p>
-            <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Inspection</Button>
+            <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newInspection')}</Button>
           </CardContent></Card>
         )}
       </div>

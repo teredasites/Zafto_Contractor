@@ -126,7 +126,7 @@ export default function PmInspectionsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><ClipboardCheck size={20} className="text-blue-600 dark:text-blue-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{totalCount}</p><p className="text-sm text-muted">Total Inspections</p></div>
+          <div><p className="text-2xl font-semibold text-main">{totalCount}</p><p className="text-sm text-muted">{t('common.totalInspections')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><Calendar size={20} className="text-amber-600 dark:text-amber-400" /></div>
@@ -277,7 +277,7 @@ export default function PmInspectionsPage() {
         {filteredInspections.length === 0 && (
           <div className="px-6 py-12 text-center">
             <ClipboardCheck size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No inspections found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('common.noInspectionsFound')}</h3>
             <p className="text-muted mb-4">Schedule your first property inspection.</p>
             <Button onClick={() => setShowNewModal(true)}>
               <Plus size={16} />

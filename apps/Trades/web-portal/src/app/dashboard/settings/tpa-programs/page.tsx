@@ -825,15 +825,15 @@ export default function TpaProgramsPage() {
                   {/* SLA row */}
                   <div className="grid grid-cols-3 gap-3 py-3 border-t border-main/20">
                     <div>
-                      <p className="text-[11px] text-muted uppercase tracking-wide">Contact</p>
+                      <p className="text-[11px] text-muted uppercase tracking-wide">{t('common.contact')}</p>
                       <p className="text-xs text-main mt-0.5">{formatSla(program.slaFirstContactMinutes)}</p>
                     </div>
                     <div>
-                      <p className="text-[11px] text-muted uppercase tracking-wide">Onsite</p>
+                      <p className="text-[11px] text-muted uppercase tracking-wide">{t('common.onsite')}</p>
                       <p className="text-xs text-main mt-0.5">{formatSla(program.slaOnsiteMinutes)}</p>
                     </div>
                     <div>
-                      <p className="text-[11px] text-muted uppercase tracking-wide">Estimate</p>
+                      <p className="text-[11px] text-muted uppercase tracking-wide">{t('common.estimate')}</p>
                       <p className="text-xs text-main mt-0.5">{formatSla(program.slaEstimateMinutes)}</p>
                     </div>
                   </div>

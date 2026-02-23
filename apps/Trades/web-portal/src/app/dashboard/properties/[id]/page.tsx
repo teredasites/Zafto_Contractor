@@ -298,7 +298,7 @@ export default function PropertyDetailPage() {
                           <p className="font-semibold text-main">
                             {unit.marketRent ? formatCurrency(unit.marketRent) : '--'}
                           </p>
-                          <p className="text-xs text-muted">Market Rent</p>
+                          <p className="text-xs text-muted">{t('common.marketRent')}</p>
                         </div>
                         <Badge variant={unitStatusVariant[unit.status]} size="sm">
                           {unitStatusLabels[unit.status]}

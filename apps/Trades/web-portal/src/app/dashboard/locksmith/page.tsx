@@ -65,7 +65,7 @@ export default function LocksmithPage() {
           <p className="text-2xl font-bold text-green-400">${totalRevenue.toLocaleString()}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">This Month</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.thisMonth')}</p>
           <p className="text-2xl font-bold text-purple-400">
             {logs.filter((l) => new Date(l.created_at).getMonth() === new Date().getMonth()).length}
           </p>

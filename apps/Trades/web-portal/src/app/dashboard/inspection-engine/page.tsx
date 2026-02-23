@@ -185,7 +185,7 @@ export default function InspectionEnginePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{results.length}</p>
-                <p className="text-sm text-muted">Total Inspections</p>
+                <p className="text-sm text-muted">{t('common.totalInspections')}</p>
               </div>
             </div>
           </CardContent>
@@ -339,7 +339,7 @@ export default function InspectionEnginePage() {
           {filteredResults.length === 0 && (
             <div className="px-6 py-12 text-center">
               <ClipboardCheck size={48} className="mx-auto text-muted mb-4" />
-              <h3 className="text-lg font-medium text-main mb-2">No inspections found</h3>
+              <h3 className="text-lg font-medium text-main mb-2">{t('common.noInspectionsFound')}</h3>
               <p className="text-muted mb-4">
                 {search
                   ? 'No inspections match your search. Try adjusting your filters.'

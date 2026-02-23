@@ -95,7 +95,7 @@ export default function UnitsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{units.length}</p>
-                <p className="text-sm text-muted">Total Units</p>
+                <p className="text-sm text-muted">{t('common.totalUnits')}</p>
               </div>
             </div>
           </CardContent>
@@ -171,10 +171,10 @@ export default function UnitsPage() {
           {/* Table Header */}
           <div className="px-6 py-3 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
             <div className="col-span-2">Unit</div>
-            <div className="col-span-3">Property</div>
+            <div className="col-span-3">{t('common.property')}</div>
             <div className="col-span-2">Bed / Bath</div>
             <div className="col-span-1">Sq Ft</div>
-            <div className="col-span-2 text-right">Market Rent</div>
+            <div className="col-span-2 text-right">{t('common.marketRent')}</div>
             <div className="col-span-2 text-right">Status</div>
           </div>
 

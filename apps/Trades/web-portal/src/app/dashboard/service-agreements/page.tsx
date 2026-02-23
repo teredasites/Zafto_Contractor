@@ -196,7 +196,7 @@ export default function ServiceAgreementsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{expiringCount}</p>
-                <p className="text-sm text-muted">Expiring Soon</p>
+                <p className="text-sm text-muted">{t('common.expiringSoon')}</p>
               </div>
             </div>
           </CardContent>

@@ -156,7 +156,7 @@ export default function UnitDetailPage() {
                 <div className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
                   <Maximize size={20} className="text-muted" />
                   <div>
-                    <p className="text-xs text-muted">Square Footage</p>
+                    <p className="text-xs text-muted">{t('common.squareFootage')}</p>
                     <p className="font-semibold text-main">{unit.squareFootage?.toLocaleString() ?? '--'}</p>
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export default function UnitDetailPage() {
               </div>
 
               <div className="flex items-center justify-between text-sm pt-3 border-t border-main">
-                <span className="text-muted">Market Rent</span>
+                <span className="text-muted">{t('common.marketRent')}</span>
                 <span className="font-semibold text-main">
                   {unit.marketRent ? formatCurrency(unit.marketRent) : '--'}
                 </span>
@@ -273,7 +273,7 @@ export default function UnitDetailPage() {
                     <span className="font-semibold text-main">{formatCurrency(activeLease.rentAmount)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Due Day</span>
+                    <span className="text-muted">{t('common.dueDay')}</span>
                     <span className="font-medium text-main">{activeLease.rentDueDay}th of each month</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">

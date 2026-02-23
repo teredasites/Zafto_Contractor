@@ -243,7 +243,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Square Footage</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.squareFootage')}</label>
                 <input
                   type="number"
                   value={form.squareFootage}

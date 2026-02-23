@@ -146,7 +146,7 @@ export default function ExpensesPage() {
             <div className="col-span-2">Description</div>
             <div className="col-span-2">Vendor</div>
             <div className="col-span-1">Category</div>
-            <div className="col-span-1">Property</div>
+            <div className="col-span-1">{t('common.property')}</div>
             <div className="col-span-1">Method</div>
             <div className="col-span-1 text-right">Amount</div>
             <div className="col-span-1">Status</div>
@@ -221,7 +221,7 @@ export default function ExpensesPage() {
       {voidId && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setVoidId(null)}>
           <div className="bg-surface rounded-xl shadow-2xl w-full max-w-sm border border-main p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-main mb-4">Void Expense</h3>
+            <h3 className="text-lg font-semibold text-main mb-4">{t('common.voidExpense')}</h3>
             <textarea value={voidReason} onChange={(e) => setVoidReason(e.target.value)} placeholder="Reason for voiding..." rows={3} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm resize-none mb-4" />
             <div className="flex justify-end gap-3">
               <Button variant="secondary" onClick={() => { setVoidId(null); setVoidReason(''); }}>{t('common.cancel')}</Button>
@@ -229,7 +229,7 @@ export default function ExpensesPage() {
                 await voidExpense(voidId, voidReason || 'Voided by admin');
                 setVoidId(null);
                 setVoidReason('');
-              }}>Void Expense</Button>
+              }}>{t('common.voidExpense')}</Button>
             </div>
           </div>
         </div>

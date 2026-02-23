@@ -527,7 +527,7 @@ export default function SubcontractorsPage() {
                   <input value={formInsCarrier} onChange={(e) => setFormInsCarrier(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Policy #</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.policyNumber')}</label>
                   <input value={formInsPolicy} onChange={(e) => setFormInsPolicy(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>

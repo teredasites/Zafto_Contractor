@@ -82,7 +82,7 @@ export default function ChangeOrdersPage() {
           <h1 className="text-2xl font-semibold text-main">{t('changeOrders.title')}</h1>
           <p className="text-muted mt-1">Manage scope changes, customer approvals, and cost adjustments</p>
         </div>
-        <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Change Order</Button>
+        <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newChangeOrder')}</Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -152,7 +152,7 @@ export default function ChangeOrdersPage() {
             <FileDiff size={48} className="mx-auto text-muted mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">No change orders found</h3>
             <p className="text-muted mb-4">Change orders track scope modifications, cost adjustments, and customer approvals.</p>
-            <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Change Order</Button>
+            <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newChangeOrder')}</Button>
           </CardContent></Card>
         )}
       </div>
