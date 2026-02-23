@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLienProtection, type LienRecord, type LienRule } from '@/lib/hooks/use-lien-protection';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 function statusVariant(status: string): 'success' | 'error' | 'warning' | 'info' | 'secondary' {
   switch (status) {
@@ -124,7 +125,7 @@ export default function LienDetailPage() {
           <Card>
             <CardContent className="p-4">
               <p className="text-xs text-zinc-500">{t('common.contract')}</p>
-              <p className="text-xl font-bold text-white">${lien.contract_amount.toLocaleString()}</p>
+              <p className="text-xl font-bold text-white">{formatCurrency(lien.contract_amount)}</p>
             </CardContent>
           </Card>
         )}
@@ -132,7 +133,7 @@ export default function LienDetailPage() {
           <Card>
             <CardContent className="p-4">
               <p className="text-xs text-zinc-500">{t('lienProtection.amountOwed')}</p>
-              <p className="text-xl font-bold text-amber-400">${lien.amount_owed.toLocaleString()}</p>
+              <p className="text-xl font-bold text-amber-400">{formatCurrency(lien.amount_owed)}</p>
             </CardContent>
           </Card>
         )}

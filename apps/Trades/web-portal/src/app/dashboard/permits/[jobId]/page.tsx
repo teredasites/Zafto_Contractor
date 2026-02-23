@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useJobPermitRecords, usePermitInspections, type JobPermitRecord, type PermitInspectionRecord } from '@/lib/hooks/use-permit-intelligence';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 function statusBadgeVariant(status: string): 'success' | 'error' | 'warning' | 'info' | 'secondary' | 'default' {
   switch (status) {
@@ -87,13 +88,13 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
               {insp.scheduled_date && (
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3 w-3" />
-                  <span>Scheduled: {new Date(insp.scheduled_date).toLocaleDateString()}</span>
+                  <span>Scheduled: {formatDateLocale(insp.scheduled_date)}</span>
                 </div>
               )}
               {insp.completed_date && (
                 <div className="flex items-center gap-1.5">
                   <CheckCircle className="h-3 w-3" />
-                  <span>Completed: {new Date(insp.completed_date).toLocaleDateString()}</span>
+                  <span>Completed: {formatDateLocale(insp.completed_date)}</span>
                 </div>
               )}
               {insp.inspector_name && (
@@ -109,7 +110,7 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
                   {insp.correction_deadline && (
                     <p className="text-amber-400 text-xs mt-1 flex items-center gap-1">
                       <AlertTriangle className="h-3 w-3" />
-                      Deadline: {new Date(insp.correction_deadline).toLocaleDateString()}
+                      Deadline: {formatDateLocale(insp.correction_deadline)}
                     </p>
                   )}
                 </div>
@@ -241,7 +242,7 @@ export default function PermitDetailPage() {
                     {permit.fee_paid != null && (
                       <div className="flex items-center gap-2 text-zinc-400">
                         <DollarSign className="h-3.5 w-3.5 text-zinc-500" />
-                        <span>Fee: ${permit.fee_paid.toFixed(2)}</span>
+                        <span>Fee: {formatCurrency(permit.fee_paid)}</span>
                       </div>
                     )}
                   </div>

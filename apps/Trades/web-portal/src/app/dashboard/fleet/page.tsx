@@ -18,7 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
-import { formatCurrency, formatDate, formatRelativeTime, cn } from '@/lib/utils';
+import { formatDate, formatRelativeTime, cn } from '@/lib/utils';
 import {
   useFleet,
   type Vehicle,
@@ -28,6 +28,7 @@ import {
   type MaintenanceStatus,
 } from '@/lib/hooks/use-fleet';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ────────────────────────────────────────────────────────
 // Status config
@@ -412,7 +413,7 @@ function VehicleDetail({
                 <div key={f.id} className="flex items-center justify-between p-3 bg-surface border border-main rounded-lg">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-main">
-                      {f.gallons.toFixed(1)} gal @ ${f.pricePerGallon.toFixed(2)}/gal
+                      {f.gallons.toFixed(1)} gal @ {formatCurrency(f.pricePerGallon)}/gal
                     </p>
                     <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                       <span>{formatDate(f.fuelDate)}</span>

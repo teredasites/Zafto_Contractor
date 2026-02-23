@@ -22,7 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
-import { formatCurrency, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import {
   useBanking,
   ACCOUNT_TYPE_LABELS,
@@ -30,6 +30,7 @@ import {
 } from '@/lib/hooks/use-banking';
 import type { BankAccountData, BankTransactionData } from '@/lib/hooks/use-banking';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 // Ledger Navigation (shared across Ledger sub-pages)
 const zbooksNav = [
@@ -183,7 +184,7 @@ function AccountCard({
             </Badge>
             {account.lastSyncedAt && (
               <span className="text-xs text-muted">
-                Synced {new Date(account.lastSyncedAt).toLocaleDateString()}
+                Synced {formatDateLocale(account.lastSyncedAt)}
               </span>
             )}
           </div>

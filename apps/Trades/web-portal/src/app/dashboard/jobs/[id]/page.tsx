@@ -37,7 +37,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
-import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
+import { formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useJob, useTeam } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
 import { useClaimByJob } from '@/lib/hooks/use-insurance';
@@ -50,6 +50,7 @@ import { usePhotos } from '@/lib/hooks/use-photos';
 import type { Job, JobType, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
 
@@ -1005,9 +1006,9 @@ function TimeTab({ job }: { job: Job }) {
               <div className="text-right">
                 <p className="font-medium text-main">{entry.hours.toFixed(1)} hrs</p>
                 <p className="text-sm text-muted">
-                  {new Date(entry.clock_in).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                  {formatTimeLocale(entry.clock_in)}
                   {entry.clock_out && (
-                    <> - {new Date(entry.clock_out).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</>
+                    <> - {formatTimeLocale(entry.clock_out)}</>
                   )}
                   {!entry.clock_out && ' (active)'}
                 </p>

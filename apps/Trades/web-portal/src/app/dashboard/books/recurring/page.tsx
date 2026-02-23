@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
-import { formatCurrency, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import {
   useRecurring,
   FREQUENCY_LABELS,
@@ -34,6 +34,7 @@ import type {
   Frequency,
 } from '@/lib/hooks/use-recurring';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
@@ -232,7 +233,7 @@ function TemplateRow({
               {history.map((item) => (
                 <div key={item.id} className="flex items-center gap-3 py-1.5 text-xs">
                   <span className="text-muted tabular-nums w-32">
-                    {new Date(item.createdAt).toLocaleDateString()}
+                    {formatDateLocale(item.createdAt)}
                   </span>
                   <Badge variant={item.type === 'expense' ? 'error' : 'info'} size="sm">
                     {item.type}

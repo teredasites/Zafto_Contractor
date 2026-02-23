@@ -20,6 +20,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 import { SearchInput } from '@/components/ui/input';
 import { useTranslation } from '@/lib/translations';
 import { useCompliance, type Certification, type ComplianceCategory } from '@/lib/hooks/use-compliance';
@@ -150,7 +151,7 @@ export default function CompliancePage() {
         <StatCard label={t('certifications.expiring')} value={summary.expiringSoon} icon={AlertTriangle} variant="warning" />
         <StatCard
           label="Total Coverage"
-          value={summary.totalCoverage > 0 ? `$${(summary.totalCoverage / 1000000).toFixed(1)}M` : '$0'}
+          value={summary.totalCoverage > 0 ? formatCompactCurrency(summary.totalCoverage) : '$0'}
           icon={Shield}
         />
       </div>
@@ -279,7 +280,7 @@ export default function CompliancePage() {
                         {cert.coverage_amount != null && cert.coverage_amount > 0 && (
                           <div className="flex items-center gap-1.5 text-zinc-400 mt-1">
                             <DollarSign className="h-3 w-3" />
-                            <span>${cert.coverage_amount.toLocaleString()}</span>
+                            <span>{formatCurrency(cert.coverage_amount)}</span>
                           </div>
                         )}
                         {cert.policy_number && (

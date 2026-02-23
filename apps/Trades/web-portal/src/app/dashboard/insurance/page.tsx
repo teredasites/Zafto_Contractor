@@ -7,6 +7,7 @@ import { useClaims } from '@/lib/hooks/use-insurance';
 import { CLAIM_STATUS_LABELS, CLAIM_STATUS_COLORS, LOSS_TYPE_LABELS, CLAIM_CATEGORY_LABELS, CLAIM_CATEGORY_COLORS } from '@/lib/hooks/mappers';
 import type { InsuranceClaimData, ClaimStatus, ClaimCategory } from '@/types';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 const PIPELINE_STAGES: ClaimStatus[] = [
   'new', 'scope_requested', 'scope_submitted', 'estimate_pending', 'estimate_approved',
@@ -58,7 +59,7 @@ export default function InsurancePage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t('insurance.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {filtered.length} claim{filtered.length !== 1 ? 's' : ''} &middot; ${totalApproved.toLocaleString()} approved &middot; ${totalDeductibles.toLocaleString()} deductibles
+            {filtered.length} claim{filtered.length !== 1 ? 's' : ''} &middot; {formatCurrency(totalApproved)} approved &middot; {formatCurrency(totalDeductibles)} deductibles
           </p>
         </div>
         <button
@@ -184,7 +185,7 @@ export default function InsurancePage() {
                         <p className="text-sm font-medium truncate">{claim.job?.title || 'Untitled Job'}</p>
                         <p className="text-xs text-muted-foreground truncate">{claim.insuranceCompany}</p>
                         {claim.approvedAmount != null && (
-                          <p className="text-xs font-medium text-green-600 mt-1">${claim.approvedAmount.toLocaleString()}</p>
+                          <p className="text-xs font-medium text-green-600 mt-1">{formatCurrency(claim.approvedAmount)}</p>
                         )}
                       </div>
                     ))}
@@ -228,7 +229,7 @@ function ClaimRow({ claim, onClick }: { claim: InsuranceClaimData; onClick: () =
           <span className="font-mono">{claim.claimNumber}</span>
           <span className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
-            {LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} &middot; {new Date(claim.dateOfLoss).toLocaleDateString()}
+            {LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} &middot; {formatDateLocale(claim.dateOfLoss)}
           </span>
         </div>
       </div>
@@ -240,7 +241,7 @@ function ClaimRow({ claim, onClick }: { claim: InsuranceClaimData; onClick: () =
           </p>
         )}
         <p className="text-xs text-muted-foreground">
-          Ded: ${claim.deductible.toLocaleString()}
+          Ded: {formatCurrency(claim.deductible)}
         </p>
       </div>
       <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { ZMark } from '@/components/z-console/z-mark';
-import { formatCurrency, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useRevenueInsights } from '@/lib/hooks/use-revenue-insights';
 import type {
   Period,
@@ -35,6 +35,7 @@ import type {
   AIRecommendation,
 } from '@/lib/hooks/use-revenue-insights';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 export default function RevenueInsightsPage() {
   const { t } = useTranslation();
@@ -489,7 +490,7 @@ function CustomerInsightsCard({ customers }: { customers: CustomerInsight[] }) {
                     <p className="text-xs text-muted mt-0.5">
                       {customer.jobCount} job{customer.jobCount !== 1 ? 's' : ''}
                       {customer.lastJobDate && (
-                        <span> &middot; Last: {new Date(customer.lastJobDate).toLocaleDateString()}</span>
+                        <span> &middot; Last: {formatDateLocale(customer.lastJobDate)}</span>
                       )}
                     </p>
                   </div>

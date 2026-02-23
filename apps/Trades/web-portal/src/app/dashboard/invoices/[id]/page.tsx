@@ -31,6 +31,7 @@ import { useInvoice, useInvoices } from '@/lib/hooks/use-invoices';
 import { getSupabase } from '@/lib/supabase';
 import type { Invoice, InvoiceLineItem } from '@/types';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency as fmtCurr } from '@/lib/format-locale';
 
 export default function InvoiceDetailPage() {
   const { t, formatDate } = useTranslation();
@@ -116,8 +117,8 @@ export default function InvoiceDetailPage() {
                     action: 'send',
                     to_email: custEmail,
                     to_name: `${invoice.customer?.firstName || ''} ${invoice.customer?.lastName || ''}`.trim(),
-                    subject: `Invoice ${invoice.invoiceNumber || ''} — $${invoice.total?.toFixed(2) || '0.00'} Due`,
-                    body_html: pdfHtml || `<p>Your invoice is ready. Amount due: $${invoice.amountDue?.toFixed(2) || '0.00'}</p>`,
+                    subject: `Invoice ${invoice.invoiceNumber || ''} — ${fmtCurr(invoice.total || 0)} Due`,
+                    body_html: pdfHtml || `<p>Your invoice is ready. Amount due: ${fmtCurr(invoice.amountDue || 0)}</p>`,
                     email_type: 'invoice_send',
                     related_type: 'invoice',
                     related_id: invoice.id,
@@ -146,8 +147,8 @@ export default function InvoiceDetailPage() {
                       action: 'send',
                       to_email: custEmail,
                       to_name: `${invoice.customer?.firstName || ''} ${invoice.customer?.lastName || ''}`.trim(),
-                      subject: `Payment Reminder: Invoice ${invoice.invoiceNumber || ''} — $${invoice.amountDue?.toFixed(2) || '0.00'} Due`,
-                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>{t('invoices.paymentReminder')}</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>$${invoice.amountDue?.toFixed(2) || '0.00'}</strong>.</p><p>Due date: ${invoice.dueDate ? formatDate(invoice.dueDate) : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
+                      subject: `Payment Reminder: Invoice ${invoice.invoiceNumber || ''} — ${fmtCurr(invoice.amountDue || 0)} Due`,
+                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>{t('invoices.paymentReminder')}</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>${fmtCurr(invoice.amountDue || 0)}</strong>.</p><p>Due date: ${invoice.dueDate ? formatDate(invoice.dueDate) : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
                       email_type: 'invoice_reminder',
                       related_type: 'invoice',
                       related_id: invoice.id,

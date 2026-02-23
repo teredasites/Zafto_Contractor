@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput } from '@/components/ui/input';
 import { useLienProtection, type LienRecord } from '@/lib/hooks/use-lien-protection';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 function statusVariant(status: string): 'success' | 'error' | 'warning' | 'info' | 'secondary' {
   switch (status) {
@@ -114,7 +115,7 @@ export default function LienProtectionPage() {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard label="Active Liens" value={summary.totalActive} icon={Shield} />
         <StatCard label="At Risk" value={summary.totalAtRisk} icon={AlertTriangle} variant="warning" />
-        <StatCard label="Amount Owed" value={`$${summary.totalAmountOwed.toLocaleString()}`} icon={DollarSign} variant="error" />
+        <StatCard label="Amount Owed" value={`${formatCurrency(summary.totalAmountOwed)}`} icon={DollarSign} variant="error" />
         <StatCard label={t('common.urgent')} value={summary.urgentCount} icon={Clock} variant="error" />
         <StatCard label="Liens Filed" value={summary.liensFiled} icon={FileText} />
       </div>
@@ -165,7 +166,7 @@ export default function LienProtectionPage() {
                           <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
                             <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{lien.state_code}</span>
                             {lien.amount_owed != null && lien.amount_owed > 0 && (
-                              <span className="text-amber-400 font-medium">${lien.amount_owed.toLocaleString()} owed</span>
+                              <span className="text-amber-400 font-medium">{formatCurrency(lien.amount_owed)} owed</span>
                             )}
                             {lien.last_work_date && (
                               <span className="flex items-center gap-1">

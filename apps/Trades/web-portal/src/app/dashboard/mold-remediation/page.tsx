@@ -16,6 +16,7 @@ import {
   type MoldMoistureReading,
 } from '@/lib/hooks/use-mold-remediation';
 import { SearchInput } from '@/components/ui/input';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ── IICRC S520 Level Reference ──
 
@@ -75,7 +76,7 @@ const CAUSE_LABELS: Record<string, string> = {
 function formatDate(iso: string | null | undefined): string {
   if (!iso) return '—';
   const d = new Date(iso);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return formatDateLocale(d);
 }
 
 // ── Main Page ──

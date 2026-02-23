@@ -22,6 +22,7 @@ import { useSmsThreads } from '@/lib/hooks/use-phone';
 import type { SmsThread, SmsMessage } from '@/lib/hooks/use-phone';
 import { formatRelativeTime, cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 function ThreadItem({ thread, isActive, onClick }: { thread: SmsThread; isActive: boolean; onClick: () => void }) {
   return (
@@ -74,7 +75,7 @@ function MessageBubble({ message }: { message: SmsMessage }) {
           'flex items-center gap-1 mt-1 text-xs',
           isOutbound ? 'text-emerald-200/70 justify-end' : 'text-zinc-500'
         )}>
-          <span>{new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <span>{formatTimeLocale(message.createdAt)}</span>
           {isOutbound && message.status === 'delivered' && <CheckCheck className="h-3 w-3" />}
           {isOutbound && message.status === 'failed' && <AlertCircle className="h-3 w-3 text-red-300" />}
           {message.isAutomated && <Badge className="text-[10px] px-1 py-0 bg-zinc-600">auto</Badge>}

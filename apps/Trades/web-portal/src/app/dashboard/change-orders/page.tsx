@@ -22,10 +22,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
-import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { formatDate, cn } from '@/lib/utils';
 import { useChangeOrders } from '@/lib/hooks/use-change-orders';
 import type { ChangeOrderData } from '@/lib/hooks/mappers';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type ChangeOrderStatus = 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'voided';
 
@@ -381,7 +382,7 @@ function NewCOModal({ onClose, onCreate }: {
               ))}
             </div>
             <div className="flex justify-end mt-2">
-              <span className="text-sm font-semibold text-main">Total: ${computedTotal.toFixed(2)}</span>
+              <span className="text-sm font-semibold text-main">Total: {formatCurrency(computedTotal)}</span>
             </div>
           </div>
 

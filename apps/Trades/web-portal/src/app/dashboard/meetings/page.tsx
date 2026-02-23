@@ -28,6 +28,7 @@ import type { Meeting } from '@/lib/hooks/use-meetings';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/translations';
 import { formatRelativeTime, cn } from '@/lib/utils';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type MeetingTab = 'upcoming' | 'active' | 'past';
 
@@ -86,7 +87,7 @@ function MeetingRow({ meeting, onJoin }: { meeting: Meeting; onJoin: (code: stri
           {meeting.scheduledAt && (
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {new Date(meeting.scheduledAt).toLocaleDateString()} {new Date(meeting.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {formatDateLocale(meeting.scheduledAt)} {formatTimeLocale(meeting.scheduledAt)}
             </span>
           )}
           <span className="flex items-center gap-1">

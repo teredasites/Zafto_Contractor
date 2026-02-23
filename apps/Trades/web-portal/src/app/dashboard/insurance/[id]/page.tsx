@@ -15,6 +15,7 @@ import type { SupplementReason } from '@/types';
 import { CLAIM_STATUS_LABELS, CLAIM_STATUS_COLORS, LOSS_TYPE_LABELS, EQUIPMENT_TYPE_LABELS, CLAIM_CATEGORY_LABELS, CLAIM_CATEGORY_COLORS } from '@/lib/hooks/mappers';
 import type { ClaimStatus, InsuranceClaimData, MoistureReadingData, DryingLogData, RestorationEquipmentData, TpiInspectionData, StormClaimData, ReconstructionClaimData, CommercialClaimData } from '@/types';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type TabId = 'overview' | 'supplements' | 'tpi' | 'moisture' | 'drying' | 'equipment' | 'completion';
 
@@ -229,7 +230,7 @@ export default function ClaimDetailPage() {
                   <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                     <span className="text-sm font-medium">{t('common.netPayable')}</span>
                     <span className={`text-lg font-semibold ${netPayable >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      ${netPayable.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      {formatCurrency(netPayable)}
                     </span>
                   </div>
                 </div>
@@ -344,7 +345,7 @@ export default function ClaimDetailPage() {
                         }`}>{d.logType.replace('_', ' ')}</span>
                         <span className="text-sm font-medium">{d.summary}</span>
                       </div>
-                      <span className="text-xs text-muted-foreground">{new Date(d.recordedAt).toLocaleString()}</span>
+                      <span className="text-xs text-muted-foreground">{formatDateTimeLocale(d.recordedAt)}</span>
                     </div>
                     {d.details && <p className="text-xs text-muted-foreground mb-2">{d.details}</p>}
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
@@ -376,7 +377,7 @@ export default function ClaimDetailPage() {
                             'bg-yellow-100 text-yellow-700'
                           }`}>{e.status}</span>
                         </div>
-                        <span className="text-sm font-medium">${totalCost.toLocaleString()}</span>
+                        <span className="text-sm font-medium">{formatCurrency(totalCost)}</span>
                       </div>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>Area: {e.areaDeployed}</span>
@@ -416,7 +417,7 @@ export default function ClaimDetailPage() {
               {claim.policyNumber && <DetailRow label={t('common.policyNumber')} value={claim.policyNumber} />}
               <DetailRow label={t('common.lossType')} value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
               <DetailRow label={t('estimates.dateOfLoss')} value={formatDate(claim.dateOfLoss)} />
-              {claim.coverageLimit != null && <DetailRow label="Coverage Limit" value={`$${claim.coverageLimit.toLocaleString()}`} />}
+              {claim.coverageLimit != null && <DetailRow label="Coverage Limit" value={`${formatCurrency(claim.coverageLimit)}`} />}
             </div>
           </div>
 
@@ -494,7 +495,7 @@ function FinancialCard({ label, value, negative }: { label: string; value?: numb
     <div className="p-3 rounded-lg bg-muted/50">
       <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</p>
       <p className={`text-sm font-semibold mt-0.5 ${value == null ? 'text-muted-foreground' : negative ? 'text-red-600' : ''}`}>
-        {value != null ? `${negative ? '-' : ''}$${Math.abs(value).toLocaleString()}` : '—'}
+        {value != null ? `${negative ? '-' : ''}${formatCurrency(Math.abs(value))}` : '—'}
       </p>
     </div>
   );
@@ -504,7 +505,7 @@ function TimelineRow({ label, date }: { label: string; date: string }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{new Date(date).toLocaleDateString()}</span>
+      <span className="font-medium">{formatDateLocale(date)}</span>
     </div>
   );
 }
@@ -645,9 +646,9 @@ function CommercialDetails({ data }: { data: CommercialClaimData }) {
       {data.businessName && <DetailRow label="Business" value={data.businessName} />}
       {data.tenantName && <DetailRow label="Tenant" value={data.tenantName} />}
       {data.tenantContact && <DetailRow label="Tenant Contact" value={data.tenantContact} />}
-      {data.businessIncomeLoss != null && <DetailRow label="Income Loss" value={`$${Number(data.businessIncomeLoss).toLocaleString()}`} />}
+      {data.businessIncomeLoss != null && <DetailRow label="Income Loss" value={`${formatCurrency(Number(data.businessIncomeLoss))}`} />}
       {data.businessInterruptionDays != null && <DetailRow label="Interruption" value={`${data.businessInterruptionDays} days`} />}
-      {data.emergencyAuthAmount != null && <DetailRow label="Emergency Auth" value={`$${Number(data.emergencyAuthAmount).toLocaleString()}`} />}
+      {data.emergencyAuthAmount != null && <DetailRow label="Emergency Auth" value={`${formatCurrency(Number(data.emergencyAuthAmount))}`} />}
     </>
   );
 }
@@ -750,8 +751,8 @@ function SupplementsTab({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span>{supplements.length} supplement{supplements.length !== 1 ? 's' : ''}</span>
-          {totalRequested > 0 && <span>${totalRequested.toLocaleString()} requested</span>}
-          {totalApproved > 0 && <span className="text-green-600">${totalApproved.toLocaleString()} approved</span>}
+          {totalRequested > 0 && <span>{formatCurrency(totalRequested)} requested</span>}
+          {totalApproved > 0 && <span className="text-green-600">{formatCurrency(totalApproved)} approved</span>}
           {pendingCount > 0 && <span className="text-amber-600">{pendingCount} pending</span>}
         </div>
         <button
@@ -850,17 +851,17 @@ function SupplementsTab({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span className="capitalize">{s.reason.replace('_', ' ')}</span>
-              <span className="font-medium text-foreground">${s.amount.toLocaleString()}</span>
+              <span className="font-medium text-foreground">{formatCurrency(s.amount)}</span>
               {s.approvedAmount != null && (
-                <span className="text-green-600 font-medium">Approved: ${s.approvedAmount.toLocaleString()}</span>
+                <span className="text-green-600 font-medium">Approved: {formatCurrency(s.approvedAmount)}</span>
               )}
             </div>
             {/* RCV/ACV/Depreciation */}
             {(s.rcvAmount != null || s.acvAmount != null) && (
               <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                {s.rcvAmount != null && <span>RCV: ${s.rcvAmount.toLocaleString()}</span>}
-                {s.acvAmount != null && <span>ACV: ${s.acvAmount.toLocaleString()}</span>}
-                {s.depreciationAmount > 0 && <span>Dep: ${s.depreciationAmount.toLocaleString()}</span>}
+                {s.rcvAmount != null && <span>RCV: {formatCurrency(s.rcvAmount)}</span>}
+                {s.acvAmount != null && <span>ACV: {formatCurrency(s.acvAmount)}</span>}
+                {s.depreciationAmount > 0 && <span>Dep: {formatCurrency(s.depreciationAmount)}</span>}
               </div>
             )}
           </div>
@@ -898,7 +899,7 @@ function SupplementsTab({
             )}
             {(s.status === 'approved' || s.status === 'denied' || s.status === 'partially_approved') && (
               <span className="text-xs text-muted-foreground">
-                {s.reviewedAt ? `Reviewed ${new Date(s.reviewedAt).toLocaleDateString()}` : 'Reviewed'}
+                {s.reviewedAt ? `Reviewed ${formatDateLocale(s.reviewedAt)}` : 'Reviewed'}
               </span>
             )}
           </div>
@@ -1119,7 +1120,7 @@ function CompletionTab({
           <div>
             <p className="text-sm font-semibold text-green-800 dark:text-green-300">{tr('common.claimSettled')}</p>
             <p className="text-xs text-green-700 dark:text-green-400">
-              {claim.settledAt ? `Settled on ${new Date(claim.settledAt).toLocaleDateString()}` : 'This claim has been settled'}
+              {claim.settledAt ? `Settled on ${formatDateLocale(claim.settledAt)}` : 'This claim has been settled'}
             </p>
           </div>
         </div>

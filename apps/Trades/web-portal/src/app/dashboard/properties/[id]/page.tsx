@@ -19,7 +19,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { formatDate, cn } from '@/lib/utils';
 import { useProperty } from '@/lib/hooks/use-properties';
 import { useUnits } from '@/lib/hooks/use-units';
 import { useLeases } from '@/lib/hooks/use-leases';
@@ -32,6 +32,7 @@ import {
 import type { PropertyData, UnitData, LeaseData } from '@/lib/hooks/pm-mappers';
 import type { UnitWithProperty } from '@/lib/hooks/use-units';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 type TabType = 'overview' | 'units' | 'financials' | 'maintenance' | 'assets';
 
@@ -188,7 +189,7 @@ export default function PropertyDetailPage() {
               <DetailRow label={t('common.propertyType')} value={propertyTypeLabels[property.propertyType]} />
               <DetailRow label="Unit Count" value={String(property.unitCount)} />
               <DetailRow label={t('common.yearBuilt')} value={property.yearBuilt ? String(property.yearBuilt) : '--'} />
-              <DetailRow label={t('common.squareFootage')} value={property.squareFootage ? `${property.squareFootage.toLocaleString()} sq ft` : '--'} />
+              <DetailRow label={t('common.squareFootage')} value={property.squareFootage ? `{formatCurrency(property.squareFootage)} sq ft` : '--'} />
               <DetailRow label={t('common.lotSize')} value={property.lotSize ?? '--'} />
             </CardContent>
           </Card>
@@ -290,7 +291,7 @@ export default function PropertyDetailPage() {
                         <p className="font-medium text-main">Unit {unit.unitNumber}</p>
                         <p className="text-sm text-muted">
                           {unit.bedrooms} bed / {unit.bathrooms} bath
-                          {unit.squareFootage ? ` / ${unit.squareFootage.toLocaleString()} sq ft` : ''}
+                          {unit.squareFootage ? ` / {formatCurrency(unit.squareFootage)} sq ft` : ''}
                         </p>
                       </div>
                       <div className="flex items-center gap-4">

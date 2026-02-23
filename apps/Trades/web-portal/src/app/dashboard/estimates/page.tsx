@@ -13,6 +13,7 @@ import {
   type Estimate, type EstimateStatus, type EstimateType,
 } from '@/lib/hooks/use-estimates';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
 
 const STATUS_CONFIG: Record<EstimateStatus, { label: string; color: string }> = {
   draft: { label: 'Draft', color: 'bg-zinc-700/50 text-zinc-400' },
@@ -258,7 +259,7 @@ function EstimateRow({ estimate, onClick }: { estimate: Estimate; onClick: () =>
           {fmtCurrency(estimate.grandTotal)}
         </div>
         <p className="text-xs text-zinc-500 mt-0.5">
-          {new Date(estimate.createdAt).toLocaleDateString()}
+          {formatDateLocale(estimate.createdAt)}
         </p>
       </div>
       <ChevronRight className="w-4 h-4 text-zinc-600 flex-shrink-0" />

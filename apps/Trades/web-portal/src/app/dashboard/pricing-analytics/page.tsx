@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useTranslation } from '@/lib/translations';
+import { formatCompactCurrency } from '@/lib/format-locale';
 
 const supabase = createClient();
 
@@ -361,7 +362,5 @@ function StatCard({
 }
 
 function fmtMoney(v: number): string {
-  if (Math.abs(v) >= 1000000) return `$${(v / 1000000).toFixed(1)}M`;
-  if (Math.abs(v) >= 1000) return `$${(v / 1000).toFixed(1)}K`;
-  return `$${v.toFixed(0)}`;
+  return formatCompactCurrency(v);
 }

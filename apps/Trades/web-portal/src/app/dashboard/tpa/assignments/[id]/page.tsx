@@ -35,6 +35,7 @@ import {
   type TpaAssignmentStatus,
 } from '@/lib/hooks/use-tpa-assignments';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 // ==================== CONSTANTS ====================
 
@@ -203,7 +204,7 @@ export default function TpaAssignmentDetailPage() {
               </p>
               {item.deadline && (
                 <p className="text-[11px] text-muted mt-0.5">
-                  {item.completed ? 'Completed' : `Due: ${new Date(item.deadline).toLocaleString()}`}
+                  {item.completed ? 'Completed' : `Due: ${formatDateTimeLocale(item.deadline)}`}
                 </p>
               )}
             </CardContent>
@@ -259,24 +260,24 @@ export default function TpaAssignmentDetailPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-xs text-muted uppercase tracking-wide">{t('common.estimated')}</p>
-                  <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalEstimated.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-main mt-0.5">{formatCurrency(assignment.totalEstimated)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted uppercase tracking-wide">{t('jobs.statusInvoiced')}</p>
-                  <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalInvoiced.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-main mt-0.5">{formatCurrency(assignment.totalInvoiced)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted uppercase tracking-wide">{t('common.collected')}</p>
-                  <p className="text-lg font-semibold text-emerald-400 mt-0.5">${assignment.totalCollected.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-emerald-400 mt-0.5">{formatCurrency(assignment.totalCollected)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted uppercase tracking-wide">{t('tpaAssignments.supplements')}</p>
-                  <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalSupplements.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-main mt-0.5">{formatCurrency(assignment.totalSupplements)}</p>
                 </div>
               </div>
               {assignment.referralFeeAmount != null && assignment.referralFeeAmount > 0 && (
                 <div className="mt-4 pt-4 border-t border-main/20">
-                  <p className="text-xs text-muted">Referral Fee: <span className="text-main font-medium">${assignment.referralFeeAmount.toLocaleString()}</span></p>
+                  <p className="text-xs text-muted">Referral Fee: <span className="text-main font-medium">{formatCurrency(assignment.referralFeeAmount)}</span></p>
                 </div>
               )}
             </CardContent>
@@ -388,7 +389,7 @@ export default function TpaAssignmentDetailPage() {
                     </Badge>
                   </div>
                   {assignment.esaAmount != null && (
-                    <p className="text-sm text-main">Amount: ${assignment.esaAmount.toLocaleString()}</p>
+                    <p className="text-sm text-main">Amount: {formatCurrency(assignment.esaAmount)}</p>
                   )}
                   {assignment.esaNotes && (
                     <p className="text-sm text-muted">{assignment.esaNotes}</p>

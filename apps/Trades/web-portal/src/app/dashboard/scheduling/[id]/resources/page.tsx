@@ -17,6 +17,7 @@ import { useScheduleProject } from '@/lib/hooks/use-schedule';
 import { getSupabase } from '@/lib/supabase';
 import type { ScheduleResource, ResourceType } from '@/lib/types/scheduling';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 const RESOURCE_TYPE_CONFIG: Record<ResourceType, { label: string; icon: typeof HardHat; color: string; bg: string }> = {
   labor: { label: 'Labor', icon: HardHat, color: 'text-accent', bg: 'bg-accent/10' },
@@ -205,7 +206,7 @@ export default function ResourcesPage() {
                     </div>
                     <div className="flex items-center gap-3 mt-2 text-xs text-tertiary">
                       <span>Max: {resource.max_units}x</span>
-                      <span>${resource.cost_per_hour.toFixed(2)}/hr</span>
+                      <span>{formatCurrency(resource.cost_per_hour)}/hr</span>
                       {resource.overtime_rate_multiplier > 1 && (
                         <span>OT: {resource.overtime_rate_multiplier}x</span>
                       )}

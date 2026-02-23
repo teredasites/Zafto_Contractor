@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from '@/lib/translations';
 import { useApplianceRepairLogs, APPLIANCE_TYPE_LABELS, REPAIR_VS_REPLACE_LABELS } from '@/lib/hooks/use-appliance-repair';
 import { SearchInput } from '@/components/ui/input';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 const TYPE_COLORS: Record<string, string> = {
   refrigerator: 'bg-cyan-500/15 text-cyan-400', washer: 'bg-blue-500/15 text-blue-400',
@@ -67,7 +68,7 @@ export default function ApplianceRepairPage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
           <p className="text-xs text-zinc-500 mb-1">{t('common.revenue')}</p>
           <p className="text-2xl font-bold text-purple-400">
-            ${logs.reduce((s, l) => s + (l.total_cost ?? 0), 0).toLocaleString()}
+            {formatCurrency(logs.reduce((s, l) => s + (l.total_cost ?? 0), 0))}
           </p>
         </div>
       </div>
@@ -123,7 +124,7 @@ export default function ApplianceRepairPage() {
                   </span>
                 )}
               </div>
-              {l.total_cost && <p className="text-sm font-bold text-white mt-1">${Number(l.total_cost).toLocaleString()}</p>}
+              {l.total_cost && <p className="text-sm font-bold text-white mt-1">{formatCurrency(Number(l.total_cost))}</p>}
             </div>
           ))
         )}

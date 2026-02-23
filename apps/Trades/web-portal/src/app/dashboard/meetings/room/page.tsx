@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
+import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
 interface RoomData {
   meetingId: string;
@@ -130,13 +131,13 @@ function ContextPanel({ jobId, canSeeFinancials }: { jobId: string; canSeeFinanc
           <>
             <div>
               <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.estimate')}</p>
-              <p className="text-sm text-zinc-100 mt-0.5">${job.estimateTotal.toLocaleString()}</p>
+              <p className="text-sm text-zinc-100 mt-0.5">{formatCurrency(job.estimateTotal)}</p>
             </div>
             {job.paidAmount != null && (
               <div>
                 <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.paid')}</p>
                 <p className="text-sm text-zinc-100 mt-0.5">
-                  ${job.paidAmount.toLocaleString()}
+                  {formatCurrency(job.paidAmount)}
                   {job.estimateTotal > 0 && (
                     <span className="text-zinc-500 ml-1">
                       ({Math.round((job.paidAmount / job.estimateTotal) * 100)}%)
