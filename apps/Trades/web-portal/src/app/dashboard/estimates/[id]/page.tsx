@@ -108,6 +108,7 @@ export default function EstimateEditorPage() {
   const [showMaterialOrder, setShowMaterialOrder] = useState(false);
   const [showTierComparison, setShowTierComparison] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showVersionComparison, setShowVersionComparison] = useState(false);
   const [selectedTier, setSelectedTier] = useState<MaterialTier>('standard');
   const [tierOverrides, setTierOverrides] = useState<Record<string, MaterialTier>>({});
   const [tierSwitching, setTierSwitching] = useState(false);
@@ -467,6 +468,13 @@ export default function EstimateEditorPage() {
                   {estimate.estimateType === 'insurance' && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400">{t('common.insurance')}</span>
                   )}
+                  {estimate.validUntil && (() => {
+                    const dLeft = Math.ceil((new Date(estimate.validUntil).getTime() - Date.now()) / 86400000);
+                    if (dLeft <= 0) return <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400">Expired</span>;
+                    if (dLeft <= 7) return <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400">Expires in {dLeft}d</span>;
+                    if (dLeft <= 30) return <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400">Expires in {dLeft}d</span>;
+                    return null;
+                  })()}
                 </div>
                 <p className="text-xs text-zinc-500">
                   {estimate.title} &middot; {estimate.customerName || 'No customer'}
@@ -519,6 +527,15 @@ export default function EstimateEditorPage() {
                 <Copy className="w-3.5 h-3.5" />
                 Templates
               </button>
+              {versions.length > 0 && (
+                <button
+                  onClick={() => setShowVersionComparison(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800"
+                >
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  Compare ({versions.length})
+                </button>
+              )}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className={cn(
@@ -869,6 +886,15 @@ export default function EstimateEditorPage() {
           onClose={() => setShowMaterialOrder(false)}
         />
       )}
+
+      {/* ── Version Comparison Panel ── */}
+      {showVersionComparison && (
+        <VersionComparisonPanel
+          versions={versions}
+          changeOrders={changeOrders}
+          onClose={() => setShowVersionComparison(false)}
+        />
+      )}
     </div>
   );
 }
@@ -891,6 +917,8 @@ function ReconImportPanel({
   const [trades, setTrades] = useState<Array<{ trade: string; material_count: number }>>([]);
   const [selectedScan, setSelectedScan] = useState<string | null>(null);
   const [loadingScans, setLoadingScans] = useState(true);
+  const [propertyData, setPropertyData] = useState<Record<string, unknown> | null>(null);
+  const [hazardFlags, setHazardFlags] = useState<string[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -930,11 +958,13 @@ function ReconImportPanel({
     load();
   }, [jobId]);
 
-  // Load trades when scan is selected
+  // Load trades + property intel when scan is selected
   useEffect(() => {
     if (!selectedScan) return;
     const load = async () => {
       const supabase = getSupabase();
+
+      // Load trade bid data
       const { data } = await supabase
         .from('trade_bid_data')
         .select('trade, material_list')
@@ -944,6 +974,44 @@ function ReconImportPanel({
         trade: d.trade as string,
         material_count: ((d.material_list as unknown[]) || []).length,
       })));
+
+      // Load property scan details for pre-fill data + hazard flags
+      const { data: scanDetail } = await supabase
+        .from('property_scans')
+        .select('scan_results, hazard_flags, property_type, year_built, total_sqft, stories, roof_area_sqft, lot_sqft')
+        .eq('id', selectedScan)
+        .maybeSingle();
+
+      if (scanDetail) {
+        setPropertyData(scanDetail as Record<string, unknown>);
+        // Extract hazard flags
+        const flags: string[] = [];
+        const hf = scanDetail.hazard_flags as Record<string, boolean> | null;
+        if (hf) {
+          if (hf.lead_paint) flags.push('Lead paint detected — add lead abatement line item');
+          if (hf.asbestos) flags.push('Asbestos risk — add asbestos testing/abatement');
+          if (hf.old_electrical_panel) flags.push('Old electrical panel — add panel upgrade line item');
+          if (hf.galvanized_plumbing) flags.push('Galvanized plumbing — add re-pipe line item');
+          if (hf.mold) flags.push('Mold detected — add mold remediation line item');
+          if (hf.radon) flags.push('Radon risk — add radon mitigation');
+          if (hf.structural_damage) flags.push('Structural damage — add structural repair line item');
+          if (hf.water_damage) flags.push('Water damage — add water mitigation line item');
+          if (hf.pest_damage) flags.push('Pest damage — add pest treatment line item');
+          if (hf.roof_damage) flags.push('Roof damage detected — prioritize roofing scope');
+        }
+        // Year-based hazard inference
+        const yearBuilt = scanDetail.year_built as number | null;
+        if (yearBuilt && yearBuilt < 1978 && !hf?.lead_paint) {
+          flags.push('Pre-1978 construction — lead paint testing recommended');
+        }
+        if (yearBuilt && yearBuilt < 1985 && !hf?.asbestos) {
+          flags.push('Pre-1985 construction — asbestos testing recommended');
+        }
+        setHazardFlags(flags);
+      } else {
+        setPropertyData(null);
+        setHazardFlags([]);
+      }
     };
     load();
   }, [selectedScan]);
@@ -994,6 +1062,35 @@ function ReconImportPanel({
                 </select>
               </div>
 
+              {/* Property Data Pre-fill */}
+              {propertyData && (
+                <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-lg p-3 space-y-2">
+                  <p className="text-[10px] text-zinc-400 uppercase font-semibold tracking-wider">Property Intelligence</p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                    {propertyData.total_sqft != null && <div className="flex justify-between"><span className="text-zinc-500">Total SqFt</span><span className="text-zinc-200">{formatNumber(Number(propertyData.total_sqft))}</span></div>}
+                    {propertyData.stories != null && <div className="flex justify-between"><span className="text-zinc-500">Stories</span><span className="text-zinc-200">{String(propertyData.stories)}</span></div>}
+                    {propertyData.roof_area_sqft != null && <div className="flex justify-between"><span className="text-zinc-500">Roof Area</span><span className="text-zinc-200">{formatNumber(Number(propertyData.roof_area_sqft))} sqft</span></div>}
+                    {propertyData.lot_sqft != null && <div className="flex justify-between"><span className="text-zinc-500">Lot Size</span><span className="text-zinc-200">{formatNumber(Number(propertyData.lot_sqft))} sqft</span></div>}
+                    {propertyData.year_built != null && <div className="flex justify-between"><span className="text-zinc-500">Year Built</span><span className="text-zinc-200">{String(propertyData.year_built)}</span></div>}
+                    {propertyData.property_type != null && <div className="flex justify-between"><span className="text-zinc-500">Type</span><span className="text-zinc-200 capitalize">{String(propertyData.property_type).replace(/_/g, ' ')}</span></div>}
+                  </div>
+                </div>
+              )}
+
+              {/* Hazard Flag Suggestions */}
+              {hazardFlags.length > 0 && (
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 space-y-1.5">
+                  <p className="text-[10px] text-amber-400 uppercase font-semibold tracking-wider flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> Hazard Alerts — Suggested Line Items
+                  </p>
+                  {hazardFlags.map((flag, i) => (
+                    <p key={i} className="text-xs text-amber-300/80 pl-4">
+                      &bull; {flag}
+                    </p>
+                  ))}
+                </div>
+              )}
+
               {/* Trade buttons */}
               {trades.length > 0 ? (
                 <div>
@@ -1038,9 +1135,13 @@ function EstimateHeaderForm({
   estimate,
   onUpdate,
 }: {
-  estimate: { title: string; customerName: string; customerEmail: string; customerPhone: string; propertyAddress: string; propertyCity: string; propertyState: string; propertyZip: string; notes: string };
+  estimate: { title: string; customerName: string; customerEmail: string; customerPhone: string; propertyAddress: string; propertyCity: string; propertyState: string; propertyZip: string; notes: string; validUntil: string | null };
   onUpdate: (u: Record<string, unknown>) => Promise<void>;
 }) {
+  const daysUntilExpiry = estimate.validUntil
+    ? Math.ceil((new Date(estimate.validUntil).getTime() - Date.now()) / 86400000)
+    : null;
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <input type="text" defaultValue={estimate.title} onBlur={(e) => onUpdate({ title: e.target.value })}
@@ -1060,6 +1161,48 @@ function EstimateHeaderForm({
           placeholder="State" className="w-20 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
         <input type="text" defaultValue={estimate.propertyZip} onBlur={(e) => onUpdate({ property_zip: e.target.value })}
           placeholder="ZIP" className="flex-1 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      </div>
+      {/* Estimate Expiration */}
+      <div className="col-span-2">
+        <label className="text-[10px] text-zinc-500 mb-1 block">Valid Until (Expiration Date)</label>
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            defaultValue={estimate.validUntil ? estimate.validUntil.split('T')[0] : ''}
+            onBlur={(e) => onUpdate({ valid_until: e.target.value ? new Date(e.target.value + 'T23:59:59').toISOString() : null })}
+            className="flex-1 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500"
+          />
+          {/* Quick-set buttons */}
+          <button
+            type="button"
+            onClick={() => {
+              const d = new Date(); d.setDate(d.getDate() + 30);
+              onUpdate({ valid_until: d.toISOString() });
+            }}
+            className="px-2 py-1.5 text-[10px] bg-zinc-800 border border-zinc-700 rounded text-zinc-400 hover:text-zinc-200 hover:border-zinc-600"
+          >30d</button>
+          <button
+            type="button"
+            onClick={() => {
+              const d = new Date(); d.setDate(d.getDate() + 60);
+              onUpdate({ valid_until: d.toISOString() });
+            }}
+            className="px-2 py-1.5 text-[10px] bg-zinc-800 border border-zinc-700 rounded text-zinc-400 hover:text-zinc-200 hover:border-zinc-600"
+          >60d</button>
+          <button
+            type="button"
+            onClick={() => {
+              const d = new Date(); d.setDate(d.getDate() + 90);
+              onUpdate({ valid_until: d.toISOString() });
+            }}
+            className="px-2 py-1.5 text-[10px] bg-zinc-800 border border-zinc-700 rounded text-zinc-400 hover:text-zinc-200 hover:border-zinc-600"
+          >90d</button>
+        </div>
+        {daysUntilExpiry !== null && (
+          <p className={cn('text-[10px] mt-1', daysUntilExpiry <= 0 ? 'text-red-400' : daysUntilExpiry <= 7 ? 'text-amber-400' : 'text-zinc-500')}>
+            {daysUntilExpiry <= 0 ? 'This estimate has expired' : `Expires in ${daysUntilExpiry} day${daysUntilExpiry !== 1 ? 's' : ''}`}
+          </p>
+        )}
       </div>
       <textarea defaultValue={estimate.notes} onBlur={(e) => onUpdate({ notes: e.target.value })}
         placeholder="Notes..." rows={2} className="col-span-2 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500 resize-none" />
@@ -1626,6 +1769,64 @@ function TotalsPanel({
             <span className="text-green-300 font-medium">{warrantyRange}</span>
           </div>
         )}
+
+        {/* Profit Margin Calculator */}
+        {totals.subtotal > 0 && (() => {
+          const materialTotal = panelLineItems?.reduce((sum, li) => sum + (li.materialCost * li.quantity), 0) || 0;
+          const laborTotal = panelLineItems?.reduce((sum, li) => sum + (li.laborCost * li.quantity), 0) || 0;
+          const markupPercent = totals.subtotal > 0 ? ((totals.grand - totals.subtotal) / totals.subtotal) * 100 : 0;
+          const grossMarginPct = totals.grand > 0 ? ((totals.grand - materialTotal - laborTotal) / totals.grand) * 100 : 0;
+          const netMarginPct = totals.grand > 0 ? (totals.profit / totals.grand) * 100 : 0;
+
+          // Industry average benchmarks (from BLS/IBISWorld contractor data)
+          const INDUSTRY_AVG_MARKUP = 35; // 35% average contractor markup
+          const INDUSTRY_AVG_GROSS_MARGIN = 28; // 28% average gross margin
+          const INDUSTRY_AVG_NET_MARGIN = 8; // 8% average net margin
+
+          return (
+            <div className="pt-3 mt-1 border-t border-zinc-700/50 space-y-2">
+              <p className="text-[10px] text-zinc-400 uppercase font-semibold tracking-wider flex items-center gap-1">
+                <BarChart3 className="w-3 h-3" />
+                Margin Analysis
+              </p>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Markup</span>
+                  <div className="flex items-center gap-2">
+                    <span className={cn('font-medium', markupPercent >= INDUSTRY_AVG_MARKUP ? 'text-emerald-400' : 'text-amber-400')}>
+                      {markupPercent.toFixed(1)}%
+                    </span>
+                    <span className="text-zinc-600 text-[10px]">avg {INDUSTRY_AVG_MARKUP}%</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Gross Margin</span>
+                  <div className="flex items-center gap-2">
+                    <span className={cn('font-medium', grossMarginPct >= INDUSTRY_AVG_GROSS_MARGIN ? 'text-emerald-400' : 'text-amber-400')}>
+                      {grossMarginPct.toFixed(1)}%
+                    </span>
+                    <span className="text-zinc-600 text-[10px]">avg {INDUSTRY_AVG_GROSS_MARGIN}%</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Net Margin</span>
+                  <div className="flex items-center gap-2">
+                    <span className={cn('font-medium', netMarginPct >= INDUSTRY_AVG_NET_MARGIN ? 'text-emerald-400' : netMarginPct > 0 ? 'text-amber-400' : 'text-red-400')}>
+                      {netMarginPct.toFixed(1)}%
+                    </span>
+                    <span className="text-zinc-600 text-[10px]">avg {INDUSTRY_AVG_NET_MARGIN}%</span>
+                  </div>
+                </div>
+              </div>
+              {netMarginPct < INDUSTRY_AVG_NET_MARGIN && netMarginPct >= 0 && (
+                <p className="text-[10px] text-amber-400/70 mt-1">Your net margin is below industry average. Consider adjusting profit percentage.</p>
+              )}
+              {netMarginPct < 0 && (
+                <p className="text-[10px] text-red-400/70 mt-1">This estimate is unprofitable at current rates.</p>
+              )}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
@@ -2650,6 +2851,174 @@ function TemplatePanel({
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ── Estimate Version Comparison ──
+
+function VersionComparisonPanel({
+  versions,
+  changeOrders,
+  onClose,
+}: {
+  versions: { id: string; versionNumber: number; label: string | null; snapshotData: Record<string, unknown>; createdAt: string }[];
+  changeOrders: { id: string; changeOrderNumber: number; title: string; status: string; subtotalChange: number; totalChange: number; itemsAdded: Array<Record<string, unknown>>; itemsModified: Array<Record<string, unknown>>; itemsRemoved: Array<Record<string, unknown>>; createdAt: string }[];
+  onClose: () => void;
+}) {
+  const [selectedA, setSelectedA] = useState<string>(versions.length > 1 ? versions[versions.length - 2].id : '');
+  const [selectedB, setSelectedB] = useState<string>(versions.length > 0 ? versions[versions.length - 1].id : '');
+
+  const versionA = versions.find(v => v.id === selectedA);
+  const versionB = versions.find(v => v.id === selectedB);
+
+  const getItems = (v: typeof versionA) => {
+    if (!v?.snapshotData) return [];
+    const items = v.snapshotData.lineItems as Array<{ id?: string; description: string; unitPrice: number; materialCost?: number }> | undefined;
+    return items || [];
+  };
+
+  const itemsA = getItems(versionA);
+  const itemsB = getItems(versionB);
+
+  const totalA = itemsA.reduce((s, i) => s + (i.unitPrice || 0), 0);
+  const totalB = itemsB.reduce((s, i) => s + (i.unitPrice || 0), 0);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="bg-zinc-900 border border-zinc-700 rounded-xl w-[700px] max-h-[80vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-blue-400" />
+            <span className="text-sm font-semibold text-zinc-100">Version Comparison</span>
+          </div>
+          <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {versions.length < 2 ? (
+            <p className="text-sm text-zinc-500 text-center py-8">
+              At least 2 versions needed for comparison. Versions are created when you switch tiers or make major changes.
+            </p>
+          ) : (
+            <>
+              {/* Version selectors */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] text-zinc-500 block mb-1">Version A (Before)</label>
+                  <select value={selectedA} onChange={e => setSelectedA(e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-xs text-zinc-100">
+                    {versions.map(v => (
+                      <option key={v.id} value={v.id}>
+                        v{v.versionNumber} — {v.label || new Date(v.createdAt).toLocaleDateString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-zinc-500 block mb-1">Version B (After)</label>
+                  <select value={selectedB} onChange={e => setSelectedB(e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-xs text-zinc-100">
+                    {versions.map(v => (
+                      <option key={v.id} value={v.id}>
+                        v{v.versionNumber} — {v.label || new Date(v.createdAt).toLocaleDateString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Comparison summary */}
+              {versionA && versionB && (
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="bg-zinc-800/50 rounded-lg p-3">
+                    <p className="text-[10px] text-zinc-500">Version A Items</p>
+                    <p className="text-lg font-semibold text-zinc-200">{itemsA.length}</p>
+                  </div>
+                  <div className="bg-zinc-800/50 rounded-lg p-3">
+                    <p className="text-[10px] text-zinc-500">Version B Items</p>
+                    <p className="text-lg font-semibold text-zinc-200">{itemsB.length}</p>
+                  </div>
+                  <div className="bg-zinc-800/50 rounded-lg p-3">
+                    <p className="text-[10px] text-zinc-500">Price Delta</p>
+                    <p className={cn('text-lg font-semibold', totalB - totalA > 0 ? 'text-amber-400' : totalB - totalA < 0 ? 'text-emerald-400' : 'text-zinc-400')}>
+                      {totalB - totalA > 0 ? '+' : ''}{fmtCurrency(totalB - totalA)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Item-level diff */}
+              {versionA && versionB && itemsA.length > 0 && (
+                <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
+                  <p className="text-[10px] text-zinc-400 uppercase font-semibold">Item Changes</p>
+                  {itemsA.map((itemA, idx) => {
+                    const itemBMatch = itemsB[idx];
+                    if (!itemBMatch) return (
+                      <div key={idx} className="flex items-center justify-between px-3 py-1.5 bg-red-500/5 border border-red-500/10 rounded text-xs">
+                        <span className="text-red-400 line-through">{itemA.description}</span>
+                        <span className="text-red-400">Removed</span>
+                      </div>
+                    );
+                    const priceChanged = itemA.unitPrice !== itemBMatch.unitPrice;
+                    const descChanged = itemA.description !== itemBMatch.description;
+                    if (!priceChanged && !descChanged) return null;
+                    return (
+                      <div key={idx} className="flex items-center justify-between px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded text-xs">
+                        <div>
+                          {descChanged ? (
+                            <span className="text-zinc-300">{itemA.description} <span className="text-zinc-600">&rarr;</span> <span className="text-blue-400">{itemBMatch.description}</span></span>
+                          ) : (
+                            <span className="text-zinc-300">{itemA.description}</span>
+                          )}
+                        </div>
+                        {priceChanged && (
+                          <span className={cn('font-medium', itemBMatch.unitPrice > itemA.unitPrice ? 'text-amber-400' : 'text-emerald-400')}>
+                            ${fmtCurrency(itemA.unitPrice)} &rarr; ${fmtCurrency(itemBMatch.unitPrice)}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {itemsB.slice(itemsA.length).map((item, idx) => (
+                    <div key={`new-${idx}`} className="flex items-center justify-between px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/10 rounded text-xs">
+                      <span className="text-emerald-400">{item.description}</span>
+                      <span className="text-emerald-400">Added</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Change Orders */}
+              {changeOrders.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-zinc-700/50">
+                  <p className="text-[10px] text-zinc-400 uppercase font-semibold">Change Orders</p>
+                  {changeOrders.map(co => (
+                    <div key={co.id} className="flex items-center justify-between px-3 py-2 bg-zinc-800/50 rounded-lg text-xs">
+                      <div>
+                        <span className="text-zinc-200 font-medium">CO-{co.changeOrderNumber}: {co.title}</span>
+                        <div className="text-[10px] text-zinc-500 mt-0.5">
+                          {co.itemsAdded.length} added, {co.itemsModified.length} modified, {co.itemsRemoved.length} removed
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={cn('font-medium', co.totalChange > 0 ? 'text-amber-400' : co.totalChange < 0 ? 'text-emerald-400' : 'text-zinc-400')}>
+                          {co.totalChange > 0 ? '+' : ''}${fmtCurrency(co.totalChange)}
+                        </span>
+                        <div className={cn('text-[10px] capitalize', co.status === 'approved' ? 'text-emerald-400' : co.status === 'rejected' ? 'text-red-400' : 'text-zinc-500')}>
+                          {co.status}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
