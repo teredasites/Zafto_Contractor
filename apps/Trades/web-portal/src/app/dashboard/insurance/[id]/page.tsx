@@ -303,8 +303,8 @@ export default function ClaimDetailPage() {
                       <thead>
                         <tr className="border-b border-border bg-muted/50">
                           <th className="text-left px-4 py-2 font-medium text-xs">{t('common.area')}</th>
-                          <th className="text-left px-4 py-2 font-medium text-xs">Material</th>
-                          <th className="text-right px-4 py-2 font-medium text-xs">Reading</th>
+                          <th className="text-left px-4 py-2 font-medium text-xs">{t('common.material')}</th>
+                          <th className="text-right px-4 py-2 font-medium text-xs">{t('common.reading')}</th>
                           <th className="text-right px-4 py-2 font-medium text-xs">{t('common.target')}</th>
                           <th className="text-center px-4 py-2 font-medium text-xs">{t('common.status')}</th>
                           <th className="text-right px-4 py-2 font-medium text-xs">{t('common.date')}</th>

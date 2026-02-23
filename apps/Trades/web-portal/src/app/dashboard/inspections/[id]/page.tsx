@@ -105,7 +105,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
           <div className="flex items-center gap-2"><User size={14} className="text-muted" /><span className="font-medium text-main">{inspection.assignedTo}</span></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider mb-1">Scheduled</p>
+          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.scheduled')}</p>
           <div className="flex items-center gap-2"><Calendar size={14} className="text-muted" /><span className="font-medium text-main">{formatDate(inspection.scheduledDate)}</span></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -120,7 +120,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
 
       {/* Progress */}
       <Card>
-        <CardHeader><CardTitle className="text-base">Progress</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{t('common.progress')}</CardTitle></CardHeader>
         <CardContent>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-main">{completedItems} / {totalItems} items completed</span>
@@ -166,7 +166,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
       {/* Notes */}
       {inspection.notes && (
         <Card>
-          <CardHeader><CardTitle className="text-base">Notes</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('common.notes')}</CardTitle></CardHeader>
           <CardContent><p className="text-sm text-main">{inspection.notes}</p></CardContent>
         </Card>
       )}

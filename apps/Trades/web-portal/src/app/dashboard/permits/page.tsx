@@ -190,7 +190,7 @@ export default function PermitsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Permit</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.permit')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Job / Customer</th>

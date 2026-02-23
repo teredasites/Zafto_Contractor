@@ -85,7 +85,7 @@ export default function VendorsPage() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wide">YTD Payments</p>
+            <p className="text-xs text-muted uppercase tracking-wide">{t('common.ytdPayments')}</p>
             <p className="text-2xl font-semibold text-main mt-1">{formatCurrency(totalYTD)}</p>
           </CardContent>
         </Card>

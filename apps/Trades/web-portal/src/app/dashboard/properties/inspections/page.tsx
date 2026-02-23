@@ -156,9 +156,9 @@ export default function PmInspectionsPage() {
           <div className="col-span-3">{t('common.propertyUnit')}</div>
           <div className="col-span-1">{t('common.type')}</div>
           <div className="col-span-2">{t('common.date')}</div>
-          <div className="col-span-1">Condition</div>
+          <div className="col-span-1">{t('common.condition')}</div>
           <div className="col-span-1">{t('common.status')}</div>
-          <div className="col-span-1">Items</div>
+          <div className="col-span-1">{t('common.items')}</div>
           <div className="col-span-2">Repairs</div>
         </div>
 
@@ -226,8 +226,8 @@ export default function PmInspectionsPage() {
                   <div className="ml-6 bg-secondary rounded-lg border border-main overflow-hidden">
                     <div className="grid grid-cols-12 gap-2 px-4 py-2 text-xs font-medium text-muted border-b border-main">
                       <div className="col-span-2">{t('common.area')}</div>
-                      <div className="col-span-3">Item</div>
-                      <div className="col-span-2">Condition</div>
+                      <div className="col-span-3">{t('common.item')}</div>
+                      <div className="col-span-2">{t('common.condition')}</div>
                       <div className="col-span-1">Repair</div>
                       <div className="col-span-4">{t('common.notes')}</div>
                     </div>

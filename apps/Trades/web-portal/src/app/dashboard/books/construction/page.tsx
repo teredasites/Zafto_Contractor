@@ -461,9 +461,9 @@ function BillingTab({
             <div className="col-span-1">App #</div>
             <div className="col-span-2">Job</div>
             <div className="col-span-2">{t('common.period')}</div>
-            <div className="col-span-2 text-right">Contract</div>
+            <div className="col-span-2 text-right">{t('common.contract')}</div>
             <div className="col-span-1 text-right">{t('common.completed')}</div>
-            <div className="col-span-1 text-right">Retainage</div>
+            <div className="col-span-1 text-right">{t('common.retainage')}</div>
             <div className="col-span-1 text-right">Payment Due</div>
             <div className="col-span-1 text-center">{t('common.status')}</div>
             <div className="col-span-1 text-right">{t('common.actions')}</div>
@@ -543,16 +543,16 @@ function BillingTab({
                           <table className="w-full text-xs">
                             <thead>
                               <tr className="border-b border-main">
-                                <th className="text-left py-2 px-2 text-muted font-medium">Item</th>
+                                <th className="text-left py-2 px-2 text-muted font-medium">{t('common.item')}</th>
                                 <th className="text-left py-2 px-2 text-muted font-medium">{t('common.description')}</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">Scheduled</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('common.scheduled')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">Prev.</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">This Period</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">Materials</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('common.materials')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.total')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">%</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.balance')}</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">Retainage</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('common.retainage')}</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -645,7 +645,7 @@ function RetentionTab({
             <div className="col-span-1 text-right">{t('common.rate')}</div>
             <div className="col-span-2 text-right">Total Billed</div>
             <div className="col-span-2 text-right">Total Retained</div>
-            <div className="col-span-1 text-right">Released</div>
+            <div className="col-span-1 text-right">{t('common.released')}</div>
             <div className="col-span-1 text-right">{t('common.balance')}</div>
             <div className="col-span-1 text-center">{t('common.status')}</div>
             <div className="col-span-2 text-right">{t('common.actions')}</div>
@@ -1157,16 +1157,16 @@ function NewBillingModal({
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-secondary/50 border-b border-main">
-                    <th className="text-left px-2 py-2 text-muted font-medium w-14">Item</th>
+                    <th className="text-left px-2 py-2 text-muted font-medium w-14">{t('common.item')}</th>
                     <th className="text-left px-2 py-2 text-muted font-medium min-w-[140px]">{t('common.description')}</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">Scheduled</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.scheduled')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">Prev. Done</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">This Period</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">Materials</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.materials')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.total')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-14">%</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.balance')}</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">Retainage</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.retainage')}</th>
                     <th className="w-8" />
                   </tr>
                 </thead>

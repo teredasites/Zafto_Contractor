@@ -145,7 +145,7 @@ export default function JobCostRadarPage() {
                     {/* Key metrics */}
                     <div className="grid grid-cols-3 gap-2 text-center">
                       <div className="p-2 rounded-md bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Bid</p>
+                        <p className="text-xs text-muted-foreground">{t('common.bid')}</p>
                         <p className="text-sm font-medium">{formatCurrency(job.bidAmount)}</p>
                       </div>
                       <div className="p-2 rounded-md bg-muted/40">
@@ -198,7 +198,7 @@ export default function JobCostRadarPage() {
                 <div className="p-3 rounded-lg border border-border/60">
                   <div className="flex items-center gap-2 mb-2">
                     <Package className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Materials</span>
+                    <span className="text-sm font-medium">{t('common.materials')}</span>
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">

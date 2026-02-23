@@ -194,7 +194,7 @@ export default function PayrollPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalEmployees}</p>
-                <p className="text-sm text-muted">Employees</p>
+                <p className="text-sm text-muted">{t('common.employees')}</p>
               </div>
             </div>
           </CardContent>
@@ -244,7 +244,7 @@ export default function PayrollPage() {
                 <div className="col-span-2">Date Range</div>
                 <div className="col-span-1">{t('common.type')}</div>
                 <div className="col-span-1">{t('common.status')}</div>
-                <div className="col-span-1">Employees</div>
+                <div className="col-span-1">{t('common.employees')}</div>
                 <div className="col-span-2">Gross Pay</div>
                 <div className="col-span-1">Taxes</div>
                 <div className="col-span-2">Net Pay</div>

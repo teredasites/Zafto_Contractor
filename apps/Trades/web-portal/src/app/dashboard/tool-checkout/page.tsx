@@ -524,7 +524,7 @@ function AddToolModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Condition</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.condition')}</label>
               <div className="flex flex-wrap gap-2">
                 {(Object.entries(CONDITION_LABELS) as [EquipmentCondition, string][])
                   .filter(([k]) => k !== 'retired')

@@ -390,7 +390,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(ytdTotal)}</p>
-                <p className="text-sm text-muted">YTD Payments</p>
+                <p className="text-sm text-muted">{t('common.ytdPayments')}</p>
               </div>
             </div>
           </CardContent>
@@ -457,7 +457,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">Terms</th>
-                  <th className="text-right text-sm font-medium text-muted px-6 py-3">YTD Payments</th>
+                  <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.ytdPayments')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">1099</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 </tr>

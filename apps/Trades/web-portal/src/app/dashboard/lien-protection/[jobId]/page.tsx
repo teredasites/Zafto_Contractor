@@ -123,7 +123,7 @@ export default function LienDetailPage() {
         {lien.contract_amount != null && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">Contract</p>
+              <p className="text-xs text-zinc-500">{t('common.contract')}</p>
               <p className="text-xl font-bold text-white">${lien.contract_amount.toLocaleString()}</p>
             </CardContent>
           </Card>

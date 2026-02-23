@@ -436,7 +436,7 @@ function EquipmentView({
               <tr>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Warranty</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.warranty')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.status')}</th>
                 <th className="text-right px-4 py-3 text-zinc-400 font-medium">{t('common.actions')}</th>
               </tr>
@@ -617,7 +617,7 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Sent</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Response</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.response')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">

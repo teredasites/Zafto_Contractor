@@ -155,7 +155,7 @@ export default function LeasesPage() {
           <div className="col-span-1">{t('common.end')}</div>
           <div className="col-span-1">{t('common.type')}</div>
           <div className="col-span-1">{t('common.status')}</div>
-          <div className="col-span-1">Auto-Renew</div>
+          <div className="col-span-1">{t('common.autoRenew')}</div>
           <div className="col-span-1"></div>
         </div>
 

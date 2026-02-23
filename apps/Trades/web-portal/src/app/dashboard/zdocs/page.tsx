@@ -739,7 +739,7 @@ function SignaturesTab({
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.role')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Signed</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signed')}</th>
                     </tr>
                   </thead>
                   <tbody>

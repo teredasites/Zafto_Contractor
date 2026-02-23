@@ -142,7 +142,7 @@ export default function PricingCoveragePage() {
                 <th className="px-4 py-2.5 text-left">{t('common.region')}</th>
                 <th className="px-4 py-2.5 text-right">Entries</th>
                 <th className="px-4 py-2.5 text-right">Avg Price</th>
-                <th className="px-4 py-2.5 text-center">Confidence</th>
+                <th className="px-4 py-2.5 text-center">{t('common.confidence')}</th>
                 <th className="px-4 py-2.5 text-right">Sources</th>
                 <th className="px-4 py-2.5 text-right">{t('common.lastUpdated')}</th>
               </tr>

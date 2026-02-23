@@ -349,7 +349,7 @@ export default function DocumentsPage() {
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.job')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Size</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Uploaded</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.uploaded')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signature')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
                     </tr>

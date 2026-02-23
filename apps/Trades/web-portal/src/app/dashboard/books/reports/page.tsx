@@ -704,8 +704,8 @@ export default function FinancialReportsPage() {
                       <th className="text-left px-3 py-2 text-muted font-medium">{t('common.date')}</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">{t('common.reference')}</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">Memo</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Debit</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Credit</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.debit')}</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.credit')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.balance')}</th>
                     </tr>
                   </thead>
@@ -751,8 +751,8 @@ export default function FinancialReportsPage() {
                     <tr className="border-b border-default">
                       <th className="text-left px-3 py-2 text-muted font-medium">Account #</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">Account Name</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Debit</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Credit</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.debit')}</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.credit')}</th>
                     </tr>
                   </thead>
                   <tbody>

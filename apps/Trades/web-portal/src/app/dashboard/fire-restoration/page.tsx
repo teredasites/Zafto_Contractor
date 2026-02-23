@@ -424,7 +424,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-lg font-bold">{stats.totalItems}</p>
-                <p className="text-xs text-muted-foreground">Items</p>
+                <p className="text-xs text-muted-foreground">{tr('common.items')}</p>
               </div>
               <div>
                 <p className="text-lg font-bold">{stats.packed}</p>

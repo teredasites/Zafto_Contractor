@@ -281,7 +281,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Month</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.revenue')}</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Materials</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.materials')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.profit')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.margin')}</th>
               </tr>

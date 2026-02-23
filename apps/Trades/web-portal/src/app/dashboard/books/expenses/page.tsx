@@ -103,7 +103,7 @@ export default function ExpensesPage() {
           <p className="text-xl font-semibold text-amber-600 mt-1">{expenses.filter((e) => e.status === 'draft').length}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wide">Posted</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t('common.posted')}</p>
           <p className="text-xl font-semibold text-emerald-600 mt-1">{expenses.filter((e) => e.status === 'posted').length}</p>
         </CardContent></Card>
       </div>
@@ -118,8 +118,8 @@ export default function ExpensesPage() {
           <option value="">All Statuses</option>
           <option value="draft">{t('common.draft')}</option>
           <option value="approved">{t('common.approved')}</option>
-          <option value="posted">Posted</option>
-          <option value="voided">Voided</option>
+          <option value="posted">{t('common.posted')}</option>
+          <option value="voided">{t('common.voided')}</option>
         </select>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
           <option value="">All Categories</option>
@@ -147,7 +147,7 @@ export default function ExpensesPage() {
             <div className="col-span-2">{t('common.vendor')}</div>
             <div className="col-span-1">{t('common.category')}</div>
             <div className="col-span-1">{t('common.property')}</div>
-            <div className="col-span-1">Method</div>
+            <div className="col-span-1">{t('common.method')}</div>
             <div className="col-span-1 text-right">{t('common.amount')}</div>
             <div className="col-span-1">{t('common.status')}</div>
             <div className="col-span-2 text-right">{t('common.actions')}</div>
@@ -330,7 +330,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
                   <option value="auto_and_travel">Auto and travel</option>
                   <option value="cleaning_maintenance">Cleaning and maintenance</option>
                   <option value="commissions">Commissions</option>
-                  <option value="insurance">Insurance</option>
+                  <option value="insurance">{t('common.insurance')}</option>
                   <option value="legal_professional">Legal/professional fees</option>
                   <option value="management_fees">Management fees</option>
                   <option value="mortgage_interest">Mortgage interest</option>
@@ -376,7 +376,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Receipt</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.receipt')}</label>
             <div className="flex items-center gap-3">
               <input type="file" ref={fileRef} accept="image/*,.pdf" className="hidden" onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} />
               <Button type="button" variant="secondary" size="sm" onClick={() => fileRef.current?.click()}>

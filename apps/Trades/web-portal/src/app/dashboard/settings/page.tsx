@@ -2994,8 +2994,8 @@ function BusinessConfigSettings() {
                   <label className="text-xs font-medium text-muted mb-1 block">Applies To</label>
                   <select value={newTaxApplies} onChange={(e) => setNewTaxApplies(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
                     <option value="all">{t('common.all')}</option>
-                    <option value="materials">Materials</option>
-                    <option value="labor">Labor</option>
+                    <option value="materials">{t('common.materials')}</option>
+                    <option value="labor">{t('common.labor')}</option>
                     <option value="equipment">{t('common.equipment')}</option>
                   </select>
                 </div>

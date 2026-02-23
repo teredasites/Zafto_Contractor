@@ -556,7 +556,7 @@ function Vendors1099Tab({
           <div className="flex items-center gap-4 px-4 py-2 bg-secondary/50 text-xs font-medium text-muted uppercase tracking-wider border-b border-default">
             <div className="flex-1">Vendor Name</div>
             <div className="w-32">Tax ID</div>
-            <div className="w-28 text-right">YTD Payments</div>
+            <div className="w-28 text-right">{t('common.ytdPayments')}</div>
             <div className="w-28 text-right">{t('common.status')}</div>
           </div>
           {vendors.length === 0 ? (

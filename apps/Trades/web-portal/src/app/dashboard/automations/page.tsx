@@ -205,7 +205,7 @@ export default function AutomationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{pausedCount}</p>
-                <p className="text-sm text-muted">Paused</p>
+                <p className="text-sm text-muted">{t('common.paused')}</p>
               </div>
             </div>
           </CardContent>
@@ -218,7 +218,7 @@ export default function AutomationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalExecutions}</p>
-                <p className="text-sm text-muted">Total Runs</p>
+                <p className="text-sm text-muted">{t('common.totalRuns')}</p>
               </div>
             </div>
           </CardContent>
@@ -449,7 +449,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 p-4 bg-secondary rounded-lg">
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider">Total Runs</p>
+              <p className="text-xs text-muted uppercase tracking-wider">{t('common.totalRuns')}</p>
               <p className="text-lg font-semibold text-main">{automation.runCount}</p>
             </div>
             <div>
@@ -548,7 +548,7 @@ function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCrea
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Condition</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.condition')}</label>
             <input type="text" value={condition} onChange={e => setCondition(e.target.value)} placeholder="e.g., status = complete" className={inputCls} />
           </div>
           <div>

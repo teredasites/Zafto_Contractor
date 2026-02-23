@@ -390,9 +390,9 @@ function PORow({
               <table className="w-full mb-4">
                 <thead>
                   <tr className="text-left text-sm text-muted border-b border-main">
-                    <th className="pb-2 font-medium">Item</th>
+                    <th className="pb-2 font-medium">{t('common.item')}</th>
                     <th className="pb-2 font-medium text-right">{t('common.qty')}</th>
-                    <th className="pb-2 font-medium text-right">Received</th>
+                    <th className="pb-2 font-medium text-right">{t('common.received')}</th>
                     <th className="pb-2 font-medium text-right">Unit Price</th>
                     <th className="pb-2 font-medium text-right">{t('common.total')}</th>
                     <th className="pb-2 font-medium">{t('common.status')}</th>
@@ -455,7 +455,7 @@ function PORow({
                         {rec.items.length} item{rec.items.length !== 1 ? 's' : ''} received
                       </span>
                       {rec.allItemsReceived && (
-                        <Badge variant="success" size="sm">Complete</Badge>
+                        <Badge variant="success" size="sm">{t('common.complete')}</Badge>
                       )}
                     </div>
                   ))}

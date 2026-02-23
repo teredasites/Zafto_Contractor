@@ -190,7 +190,7 @@ export default function VendorPaymentsPage() {
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
             <div className="col-span-2">{t('common.date')}</div>
             <div className="col-span-3">{t('common.vendor')}</div>
-            <div className="col-span-2">Method</div>
+            <div className="col-span-2">{t('common.method')}</div>
             <div className="col-span-2">{t('common.reference')}</div>
             <div className="col-span-2 text-right">{t('common.amount')}</div>
             <div className="col-span-1">1099</div>
@@ -308,10 +308,10 @@ function PaymentModal({ vendors, onSave, onClose }: {
           <div>
             <label className="block text-sm font-medium text-main mb-1">Payment Method</label>
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
-              <option value="check">Check</option>
+              <option value="check">{t('common.check')}</option>
               <option value="bank_transfer">Bank Transfer</option>
               <option value="credit_card">Credit Card</option>
-              <option value="cash">Cash</option>
+              <option value="cash">{t('common.cash')}</option>
             </select>
           </div>
           {paymentMethod === 'check' && (

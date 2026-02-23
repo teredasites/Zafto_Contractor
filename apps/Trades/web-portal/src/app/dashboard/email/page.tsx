@@ -542,7 +542,7 @@ function CampaignsTab({
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Recipients</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Delivered</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.delivered')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Open Rate</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Click Rate</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.schedule')}</th>

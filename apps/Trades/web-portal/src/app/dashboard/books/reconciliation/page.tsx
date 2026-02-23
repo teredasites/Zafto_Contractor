@@ -326,8 +326,8 @@ export default function ReconciliationPage() {
                     <tr className="border-b border-default">
                       <th className="text-left px-4 py-3 text-muted font-medium">{t('common.account')}</th>
                       <th className="text-left px-4 py-3 text-muted font-medium">Statement Date</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Statement Balance</th>
-                      <th className="text-right px-4 py-3 text-muted font-medium">Difference</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.statementBalance')}</th>
+                      <th className="text-right px-4 py-3 text-muted font-medium">{t('common.difference')}</th>
                       <th className="text-center px-4 py-3 text-muted font-medium">{t('common.status')}</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">{t('common.actions')}</th>
                     </tr>
@@ -402,7 +402,7 @@ export default function ReconciliationPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <DollarSign size={14} className="text-muted" />
-                  <span className="text-xs text-muted">Statement Balance</span>
+                  <span className="text-xs text-muted">{t('common.statementBalance')}</span>
                 </div>
                 <p className="text-lg font-semibold text-main">{formatCurrency(stmtBal)}</p>
               </CardContent>
@@ -423,7 +423,7 @@ export default function ReconciliationPage() {
                     ? <CheckCircle size={14} className="text-emerald-500" />
                     : <AlertCircle size={14} className="text-red-500" />
                   }
-                  <span className="text-xs text-muted">Difference</span>
+                  <span className="text-xs text-muted">{t('common.difference')}</span>
                 </div>
                 <p className={cn(
                   'text-lg font-semibold',
