@@ -217,7 +217,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
 
           <div className="p-4 bg-secondary rounded-lg">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-main">Change Order Amount</span>
+              <span className="font-medium text-main">{t('changeOrders.changeOrderAmount')}</span>
               <span className={cn('text-lg font-semibold', isIncrease ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>{isIncrease ? '+' : ''}{formatCurrency(co.amount)}</span>
             </div>
           </div>
@@ -325,7 +325,7 @@ function NewCOModal({ onClose, onCreate }: {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <CardHeader><CardTitle>New Change Order</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t('changeOrders.newChangeOrder')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Job *</label>

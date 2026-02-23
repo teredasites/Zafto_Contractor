@@ -292,7 +292,7 @@ export default function WalkthroughsPage() {
           <CardContent className="p-0">
             <div className="py-16 text-center text-muted">
               <ClipboardList size={40} className="mx-auto mb-3 opacity-50" />
-              <p className="text-lg font-medium">No walkthroughs found</p>
+              <p className="text-lg font-medium">{t('walkthroughs.noWalkthroughsFound')}</p>
               <p className="text-sm mt-1">
                 {search || statusFilter !== 'all'
                   ? 'Try adjusting your filters'

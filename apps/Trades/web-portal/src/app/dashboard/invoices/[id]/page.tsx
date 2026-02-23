@@ -56,7 +56,7 @@ export default function InvoiceDetailPage() {
     return (
       <div className="text-center py-12">
         <Receipt size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Invoice not found</h2>
+        <h2 className="text-xl font-semibold text-main">{t('invoices.invoiceNotFound')}</h2>
         <p className="text-muted mt-2">The invoice you're looking for doesn't exist.</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/invoices')}>
           Back to Invoices
@@ -424,7 +424,7 @@ export default function InvoiceDetailPage() {
                           <span>-{formatCurrency(invoice.amountPaid)}</span>
                         </div>
                         <div className="flex justify-between font-semibold text-lg">
-                          <span>Balance Due</span>
+                          <span>{t('invoices.balanceDue')}</span>
                           <span className={isOverdue ? 'text-red-600' : ''}>{formatCurrency(invoice.amountDue)}</span>
                         </div>
                       </>
@@ -492,7 +492,7 @@ export default function InvoiceDetailPage() {
           {/* Payment History */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Payment History</CardTitle>
+              <CardTitle className="text-base">{t('invoices.paymentHistory')}</CardTitle>
             </CardHeader>
             <CardContent>
               {invoice.amountPaid > 0 ? (

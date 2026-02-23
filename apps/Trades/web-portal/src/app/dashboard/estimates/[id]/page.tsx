@@ -611,10 +611,10 @@ export default function EstimateEditorPage() {
               <EstimateHeaderForm estimate={estimate} onUpdate={updateEstimate} />
             ) : (
               <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
-                <div><span className="text-zinc-500">Title:</span> <span className="text-zinc-200 ml-2">{estimate.title || '—'}</span></div>
-                <div><span className="text-zinc-500">Customer:</span> <span className="text-zinc-200 ml-2">{estimate.customerName || '—'}</span></div>
-                <div><span className="text-zinc-500">Address:</span> <span className="text-zinc-200 ml-2">{estimate.propertyAddress || '—'}</span></div>
-                <div><span className="text-zinc-500">City/State/Zip:</span> <span className="text-zinc-200 ml-2">{[estimate.propertyCity, estimate.propertyState, estimate.propertyZip].filter(Boolean).join(', ') || '—'}</span></div>
+                <div><span className="text-zinc-500">{t('estimates.title')}</span> <span className="text-zinc-200 ml-2">{estimate.title || '—'}</span></div>
+                <div><span className="text-zinc-500">{t('estimates.customer')}</span> <span className="text-zinc-200 ml-2">{estimate.customerName || '—'}</span></div>
+                <div><span className="text-zinc-500">{t('estimates.address')}</span> <span className="text-zinc-200 ml-2">{estimate.propertyAddress || '—'}</span></div>
+                <div><span className="text-zinc-500">{t('estimates.cityStateZip')}</span> <span className="text-zinc-200 ml-2">{[estimate.propertyCity, estimate.propertyState, estimate.propertyZip].filter(Boolean).join(', ') || '—'}</span></div>
               </div>
             )}
           </div>
@@ -635,11 +635,11 @@ export default function EstimateEditorPage() {
                 <InsuranceForm estimate={estimate} onUpdate={updateEstimate} />
               ) : (
                 <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
-                  <div><span className="text-zinc-500">Claim #:</span> <span className="text-zinc-200 ml-2">{estimate.claimNumber || '—'}</span></div>
-                  <div><span className="text-zinc-500">Policy #:</span> <span className="text-zinc-200 ml-2">{estimate.policyNumber || '—'}</span></div>
-                  <div><span className="text-zinc-500">Carrier:</span> <span className="text-zinc-200 ml-2">{estimate.carrierName || '—'}</span></div>
-                  <div><span className="text-zinc-500">Adjuster:</span> <span className="text-zinc-200 ml-2">{estimate.adjusterName || '—'}</span></div>
-                  <div><span className="text-zinc-500">Deductible:</span> <span className="text-zinc-200 ml-2">${fmtCurrency(estimate.deductible)}</span></div>
+                  <div><span className="text-zinc-500">{t('estimates.claimNumber')}</span> <span className="text-zinc-200 ml-2">{estimate.claimNumber || '—'}</span></div>
+                  <div><span className="text-zinc-500">{t('estimates.policyNumber')}</span> <span className="text-zinc-200 ml-2">{estimate.policyNumber || '—'}</span></div>
+                  <div><span className="text-zinc-500">{t('estimates.carrierLabel')}</span> <span className="text-zinc-200 ml-2">{estimate.carrierName || '—'}</span></div>
+                  <div><span className="text-zinc-500">{t('estimates.adjusterLabel')}</span> <span className="text-zinc-200 ml-2">{estimate.adjusterName || '—'}</span></div>
+                  <div><span className="text-zinc-500">{t('estimates.deductibleLabel')}</span> <span className="text-zinc-200 ml-2">${fmtCurrency(estimate.deductible)}</span></div>
                   <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-2">{estimate.dateOfLoss ? formatDate(estimate.dateOfLoss) : '—'}</span></div>
                 </div>
               )}
@@ -1720,11 +1720,11 @@ function EstimatePreview({
         <div className="bg-purple-500/5 border border-purple-500/10 rounded-xl p-5 mb-8">
           <h3 className="text-xs uppercase tracking-wider text-purple-400 mb-3">{t('estimates.insuranceDetails')}</h3>
           <div className="grid grid-cols-3 gap-4 text-xs">
-            <div><span className="text-zinc-500">Claim:</span> <span className="text-zinc-200 ml-1">{estimate.claimNumber || '—'}</span></div>
-            <div><span className="text-zinc-500">Policy:</span> <span className="text-zinc-200 ml-1">{estimate.policyNumber || '—'}</span></div>
-            <div><span className="text-zinc-500">Carrier:</span> <span className="text-zinc-200 ml-1">{estimate.carrierName || '—'}</span></div>
-            <div><span className="text-zinc-500">Adjuster:</span> <span className="text-zinc-200 ml-1">{estimate.adjusterName || '—'}</span></div>
-            <div><span className="text-zinc-500">Deductible:</span> <span className="text-zinc-200 ml-1">${fmtCurrency(estimate.deductible)}</span></div>
+            <div><span className="text-zinc-500">{t('estimates.claimLabel')}</span> <span className="text-zinc-200 ml-1">{estimate.claimNumber || '—'}</span></div>
+            <div><span className="text-zinc-500">{t('estimates.policyLabel')}</span> <span className="text-zinc-200 ml-1">{estimate.policyNumber || '—'}</span></div>
+            <div><span className="text-zinc-500">{t('estimates.carrierLabel')}</span> <span className="text-zinc-200 ml-1">{estimate.carrierName || '—'}</span></div>
+            <div><span className="text-zinc-500">{t('estimates.adjusterLabel')}</span> <span className="text-zinc-200 ml-1">{estimate.adjusterName || '—'}</span></div>
+            <div><span className="text-zinc-500">{t('estimates.deductibleLabel')}</span> <span className="text-zinc-200 ml-1">${fmtCurrency(estimate.deductible)}</span></div>
             <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-1">{estimate.dateOfLoss ? new Date(estimate.dateOfLoss).toLocaleDateString() : '—'}</span></div>
           </div>
         </div>

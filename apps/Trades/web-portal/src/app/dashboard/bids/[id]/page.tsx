@@ -80,7 +80,7 @@ export default function BidDetailPage() {
     return (
       <div className="text-center py-12">
         <FileText size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Bid not found</h2>
+        <h2 className="text-xl font-semibold text-main">{t('bids.bidNotFound')}</h2>
         <p className="text-muted mt-2">The bid you're looking for doesn't exist.</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/bids')}>
           Back to Bids

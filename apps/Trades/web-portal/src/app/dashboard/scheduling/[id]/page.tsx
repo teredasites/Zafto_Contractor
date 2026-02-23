@@ -237,7 +237,7 @@ export default function GanttPage() {
         <div className="flex items-center gap-6 px-4 py-2 border-b border-main bg-surface text-xs">
           <span className="text-secondary font-medium">EVM</span>
           <div className="flex items-center gap-1">
-            <span className="text-tertiary">Budget:</span>
+            <span className="text-tertiary">{t('marketplace.budgetLabel')}</span>
             <span className="font-semibold text-primary">${costs.total_budgeted.toLocaleString()}</span>
           </div>
           <div className="flex items-center gap-1">

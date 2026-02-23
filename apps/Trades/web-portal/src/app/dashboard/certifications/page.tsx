@@ -478,7 +478,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
               <select value={status} onChange={e => setStatus(e.target.value as Certification['status'])}
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30">
                 <option value="active">{tr('common.active')}</option>
-                <option value="expired">Expired</option>
+                <option value="expired">{tr('common.expired')}</option>
                 <option value="pending_renewal">Pending Renewal</option>
                 <option value="revoked">Revoked</option>
               </select>

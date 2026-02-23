@@ -749,7 +749,7 @@ export default function FinancialReportsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-3 py-2 text-muted font-medium">Account #</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('books.accountNumber')}</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">{t('common.accountName')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.debit')}</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">{t('common.credit')}</th>

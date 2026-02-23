@@ -222,7 +222,7 @@ export default function LeaseDetailPage() {
                   <p className="text-sm font-medium text-main">{lease.rentDueDay}{lease.rentDueDay === 1 ? 'st' : lease.rentDueDay === 2 ? 'nd' : lease.rentDueDay === 3 ? 'rd' : 'th'} of month</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Security Deposit</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyManagement.securityDeposit')}</p>
                   <p className="text-sm font-medium text-main">{formatCurrency(lease.depositAmount)}</p>
                 </div>
                 <div>

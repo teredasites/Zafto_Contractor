@@ -386,7 +386,7 @@ function NewTurnModal({ onClose, onCreate }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Move-Out Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('propertyManagement.moveOutDate')}</label>
               <input
                 type="date"
                 value={moveOutDate}
