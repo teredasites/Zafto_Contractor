@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/format-locale';
 import {
   useTpaPrograms,
   useTpaProgram,
@@ -802,7 +803,7 @@ export default function TpaProgramsPage() {
                         {program.referralFeeType === 'percentage' && program.referralFeePct != null
                           ? `${program.referralFeePct}%`
                           : program.referralFeeType === 'flat' && program.referralFeeFlat != null
-                            ? `$${program.referralFeeFlat}`
+                            ? formatCurrency(program.referralFeeFlat)
                             : program.referralFeeType === 'none'
                               ? 'None'
                               : 'Tiered'}

@@ -20,6 +20,7 @@ import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useRent } from '@/lib/hooks/use-rent';
 import type { RentChargeData, RentPaymentData } from '@/lib/hooks/pm-mappers';
 import { useTranslation } from '@/lib/translations';
+import { formatDateLocale } from '@/lib/format-locale';
 
 type ChargeStatus = RentChargeData['status'];
 
@@ -123,7 +124,7 @@ export default function RentRollPage() {
     { value: 'all', label: 'All Months' },
     ...uniqueMonths.map((m) => {
       const [y, mo] = m.split('-');
-      const monthName = new Date(Number(y), Number(mo) - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      const monthName = formatDateLocale(new Date(Number(y), Number(mo) - 1));
       return { value: m, label: monthName };
     }),
   ];
