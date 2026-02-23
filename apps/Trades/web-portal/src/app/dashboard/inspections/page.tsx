@@ -253,7 +253,7 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
-            <Button variant="secondary" className="flex-1"><Camera size={16} />Add Photo</Button>
+            <Button variant="secondary" className="flex-1"><Camera size={16} />{t('jobs.addPhoto')}</Button>
             {inspection.status !== 'passed' && <Button className="flex-1"><CheckCircle size={16} />Mark Passed</Button>}
           </div>
         </CardContent>

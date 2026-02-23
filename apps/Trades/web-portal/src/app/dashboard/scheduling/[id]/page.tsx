@@ -499,7 +499,7 @@ export default function GanttPage() {
       {showAddTask && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAddTask(false)}>
           <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-primary mb-4">Add Task</h2>
+            <h2 className="text-lg font-semibold text-primary mb-4">{t('jobs.addTask')}</h2>
             <input
               type="text"
               placeholder="Task name"

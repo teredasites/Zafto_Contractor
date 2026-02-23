@@ -229,7 +229,7 @@ export default function HiringPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalApplicants}</p>
-                <p className="text-sm text-muted">Total Applicants</p>
+                <p className="text-sm text-muted">{t('hiring.totalApplicants')}</p>
               </div>
             </div>
           </CardContent>
@@ -1153,7 +1153,7 @@ function NewPostingModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Department</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('hiring.department')}</label>
               <input
                 type="text"
                 value={department}
@@ -1397,7 +1397,7 @@ function NewApplicantModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Certifications</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.certifications')}</label>
             <div className="flex gap-2">
               <input
                 type="text"

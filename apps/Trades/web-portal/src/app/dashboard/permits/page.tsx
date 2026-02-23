@@ -157,7 +157,7 @@ export default function PermitsPage() {
           <h1 className="text-2xl font-semibold text-main">{t('permits.title')}</h1>
           <p className="text-muted mt-1">Track permit applications, inspections, and compliance</p>
         </div>
-        <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Permit</Button>
+        <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('permits.newPermit')}</Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -194,7 +194,7 @@ export default function PermitsPage() {
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Job / Customer</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Jurisdiction</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('permits.jurisdiction')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Inspections</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
               </tr>
@@ -255,7 +255,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Permit Details</CardTitle>
+          <CardTitle>{t('permits.permitDetails')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}><XCircle size={18} /></Button>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -272,7 +272,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
             <div className="space-y-3">
               <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{permit.jobName}</p></div>
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.customer')}</p><p className="font-medium text-main">{permit.customerName}</p></div>
-              <div><p className="text-xs text-muted uppercase tracking-wider">Jurisdiction</p><p className="font-medium text-main">{permit.jurisdiction}</p></div>
+              <div><p className="text-xs text-muted uppercase tracking-wider">{t('permits.jurisdiction')}</p><p className="font-medium text-main">{permit.jurisdiction}</p></div>
             </div>
             <div className="space-y-3">
               <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.address')}</p><p className="font-medium text-main">{permit.address}</p></div>
@@ -380,11 +380,11 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Permit Fee</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('permits.permitFee')}</label>
               <input type="number" value={form.fee} onChange={e => update('fee', e.target.value.replace(/[^0-9.]/g, ''))} min="0" step="0.01" placeholder="350" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Application Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('permits.applicationDate')}</label>
               <input type="date" value={form.appliedDate} onChange={e => update('appliedDate', e.target.value)} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
             </div>
           </div>

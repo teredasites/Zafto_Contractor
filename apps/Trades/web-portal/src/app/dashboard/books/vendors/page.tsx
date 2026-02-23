@@ -336,7 +336,7 @@ function VendorModal({ vendor, onSave, onClose }: {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Payment Terms</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('settings.paymentTerms')}</label>
               <select value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
                 {PAYMENT_TERMS.map((t) => <option key={t} value={t}>{PAYMENT_TERMS_LABELS[t]}</option>)}
               </select>

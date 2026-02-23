@@ -403,7 +403,7 @@ export default function BranchFinancialsPage() {
                         ))}
                       </tr>
                       <tr className="hover:bg-secondary/50">
-                        <td className="px-4 py-3 text-main font-medium">Profit Margin</td>
+                        <td className="px-4 py-3 text-main font-medium">{t('jobs.profitMargin')}</td>
                         {comparison.map((c) => (
                           <td key={c.branchId} className={cn(
                             'px-4 py-3 text-right tabular-nums font-semibold',

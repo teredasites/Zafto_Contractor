@@ -375,7 +375,7 @@ export default function TpaProgramsPage() {
                 <p className="text-[11px] text-muted mt-1">Insurance carriers served by this TPA</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Service Area</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('settings.serviceArea')}</label>
                 <Input
                   value={form.serviceArea}
                   onChange={e => updateField('serviceArea', e.target.value)}

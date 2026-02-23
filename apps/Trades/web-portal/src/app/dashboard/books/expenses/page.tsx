@@ -351,7 +351,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
               <Input type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))} required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Tax Amount</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('estimates.taxAmount')}</label>
               <Input type="number" step="0.01" min="0" value={taxAmount} onChange={(e) => setTaxAmount(e.target.value.replace(/[^0-9.]/g, ''))} />
             </div>
           </div>

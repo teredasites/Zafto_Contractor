@@ -290,7 +290,7 @@ export default function NewJobPage() {
 
               {/* Job Type Selector */}
               <div>
-                <label className="block text-sm font-medium text-main mb-2">Job Type</label>
+                <label className="block text-sm font-medium text-main mb-2">{t('hiring.jobType')}</label>
                 <div className="grid grid-cols-3 gap-3">
                   {([
                     { value: 'standard', label: 'Standard', icon: Briefcase, color: 'blue' },

@@ -349,7 +349,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Warranty Details</CardTitle>
+          <CardTitle>{t('warranties.warrantyDetails')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}><XCircle size={18} /></Button>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -417,7 +417,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
 
           {warranty.claimHistory.length > 0 && (
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider mb-3">Claim History</p>
+              <p className="text-xs text-muted uppercase tracking-wider mb-3">{t('warranties.claimHistory')}</p>
               <div className="space-y-2">
                 {warranty.claimHistory.map((claim, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
@@ -652,10 +652,10 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Warranty Type *</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="labor">Labor Warranty</option>
+              <option value="labor">{t('warranties.laborWarranty')}</option>
               <option value="equipment">Equipment Warranty</option>
-              <option value="manufacturer">Manufacturer Warranty</option>
-              <option value="extended">Extended Warranty</option>
+              <option value="manufacturer">{t('warranties.manufacturerWarranty')}</option>
+              <option value="extended">{t('warranties.extendedWarranty')}</option>
             </select>
           </div>
           <div>

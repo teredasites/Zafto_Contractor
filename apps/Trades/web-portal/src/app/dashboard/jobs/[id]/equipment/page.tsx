@@ -943,13 +943,13 @@ function RunCalculatorModal({ jobId, onClose }: { jobId: string; onClose: () => 
                   <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
                     {results.reduce((s, r) => s + r.dehuUnits, 0)}
                   </p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400">Dehumidifiers</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">{t('moisture.dehumidifiers')}</p>
                 </div>
                 <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 text-center">
                   <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
                     {results.reduce((s, r) => s + r.amUnits, 0)}
                   </p>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400">Air Movers</p>
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('moisture.airMovers')}</p>
                 </div>
                 <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3 text-center">
                   <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">

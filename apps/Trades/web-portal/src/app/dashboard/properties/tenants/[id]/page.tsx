@@ -129,7 +129,7 @@ export default function TenantDetailPage() {
               <DetailRow icon={<DollarSign size={16} />} label="Monthly Income" value={tenant.monthlyIncome ? formatCurrency(tenant.monthlyIncome) : '--'} />
 
               <div className="pt-3 border-t border-main">
-                <h4 className="text-sm font-medium text-main mb-2">Emergency Contact</h4>
+                <h4 className="text-sm font-medium text-main mb-2">{t('hr.emergencyContact')}</h4>
                 <div className="space-y-2">
                   <DetailRow icon={<Shield size={16} />} label="Name" value={tenant.emergencyContactName ?? '--'} />
                   <DetailRow icon={<Phone size={16} />} label="Phone" value={tenant.emergencyContactPhone ?? '--'} />

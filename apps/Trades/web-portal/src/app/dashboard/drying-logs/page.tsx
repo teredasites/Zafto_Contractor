@@ -276,11 +276,11 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
                 </div>
               )}
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider mb-1">Dehumidifiers</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('moisture.dehumidifiers')}</p>
                 <p className="font-medium text-main">{log.dehumidifiersRunning}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider mb-1">Air Movers</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('moisture.airMovers')}</p>
                 <p className="font-medium text-main">{log.airMoversRunning}</p>
               </div>
               <div>

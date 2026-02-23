@@ -297,7 +297,7 @@ export default function AssetsPage() {
                         Under Warranty
                       </span>
                     ) : asset.warrantyExpiry ? (
-                      <span className="text-[10px] text-muted">Warranty Expired</span>
+                      <span className="text-[10px] text-muted">{t('warranties.warrantyExpired')}</span>
                     ) : null}
                   </div>
                 </div>

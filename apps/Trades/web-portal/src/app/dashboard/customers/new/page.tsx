@@ -246,7 +246,7 @@ export default function NewCustomerPage() {
           {/* Customer Type */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Customer Type</CardTitle>
+              <CardTitle className="text-base">{t('customers.customerType')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex gap-3">

@@ -159,7 +159,7 @@ export default function MarketplacePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{openLeads.length}</p>
-                <p className="text-sm text-muted">Available Leads</p>
+                <p className="text-sm text-muted">{t('marketplace.availableLeads')}</p>
               </div>
             </div>
           </CardContent>
@@ -185,7 +185,7 @@ export default function MarketplacePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{wonBids.length}</p>
-                <p className="text-sm text-muted">Won Bids</p>
+                <p className="text-sm text-muted">{t('marketplace.wonBids')}</p>
               </div>
             </div>
           </CardContent>
@@ -568,7 +568,7 @@ function MyBidsTab({
           <thead>
             <tr className="border-b border-main">
               <th className="text-left text-sm font-medium text-muted px-6 py-3">Lead</th>
-              <th className="text-left text-sm font-medium text-muted px-6 py-3">Bid Amount</th>
+              <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('marketplace.bidAmount')}</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">Submitted</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
@@ -875,7 +875,7 @@ function ContractorProfileTab({
         <CardHeader>
           <div className="flex items-center gap-2">
             <MapPin size={18} className="text-muted" />
-            <CardTitle>Service Area</CardTitle>
+            <CardTitle>{tr('settings.serviceArea')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

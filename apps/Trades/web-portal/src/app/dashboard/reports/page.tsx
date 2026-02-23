@@ -198,7 +198,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted">Profit Margin</p>
+                <p className="text-sm text-muted">{t('jobs.profitMargin')}</p>
                 <p className="text-2xl font-semibold text-main">{profitMargin.toFixed(1)}%</p>
               </div>
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
@@ -420,7 +420,7 @@ function InvoicesReport({ stats }: { stats: InvoiceStats }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Total Invoiced</p>
+            <p className="text-sm text-muted">{t('customers.totalInvoiced')}</p>
             <p className="text-2xl font-semibold text-main">{formatCurrency(stats.totalInvoiced)}</p>
           </CardContent>
         </Card>

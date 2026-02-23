@@ -493,7 +493,7 @@ export default function NewInvoicePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-[13px] font-medium text-main mb-1.5">Payment Terms</label>
+                <label className="block text-[13px] font-medium text-main mb-1.5">{t('settings.paymentTerms')}</label>
                 <select
                   value={formData.paymentTerms}
                   onChange={(e) => {

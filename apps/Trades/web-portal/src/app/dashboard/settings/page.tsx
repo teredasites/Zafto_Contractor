@@ -461,7 +461,7 @@ function TeamSettings() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Team Members</CardTitle>
+            <CardTitle>{t('settings.teamMembers')}</CardTitle>
             <CardDescription>Manage who has access to your account</CardDescription>
           </div>
           <Button onClick={() => setShowInviteModal(true)}>
@@ -1553,7 +1553,7 @@ function SecuritySettings() {
       {/* Two-Factor Authentication — Real Supabase MFA TOTP */}
       <Card>
         <CardHeader>
-          <CardTitle>Two-Factor Authentication</CardTitle>
+          <CardTitle>{t('settings.twoFactorAuth')}</CardTitle>
           <CardDescription>Add an extra layer of security to your account</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -2740,7 +2740,7 @@ function CustomFieldsSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Custom Fields</CardTitle>
+              <CardTitle>{t('settings.customFields')}</CardTitle>
               <CardDescription>Add custom data fields to customers, jobs, bids, and more. Values stored in each record&apos;s metadata.</CardDescription>
             </div>
             <Button onClick={() => setShowAdd(!showAdd)}>
@@ -2960,7 +2960,7 @@ function BusinessConfigSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Tax Rates</CardTitle>
+              <CardTitle className="text-base">{t('settings.taxRates')}</CardTitle>
               <CardDescription>Manage tax rates for invoices and bids</CardDescription>
             </div>
             {editSection !== 'tax' && (
@@ -3073,7 +3073,7 @@ function BusinessConfigSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Payment Terms</CardTitle>
+              <CardTitle className="text-base">{t('settings.paymentTerms')}</CardTitle>
               <CardDescription>Default payment terms, late fees, and early payment discounts</CardDescription>
             </div>
             {editSection !== 'payment' && (
