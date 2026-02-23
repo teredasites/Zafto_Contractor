@@ -130,7 +130,7 @@ export default function EstimatesPage() {
           { label: 'Drafts', value: String(stats.drafts), icon: FileText, color: 'text-zinc-400' },
           { label: 'Sent', value: String(stats.sent), icon: DollarSign, color: 'text-blue-400' },
           { label: 'Approved', value: String(stats.approved), icon: Calculator, color: 'text-green-400' },
-          { label: 'Approved Value', value: `$${fmtCurrency(stats.approvedTotal)}`, icon: DollarSign, color: 'text-emerald-400' },
+          { label: 'Approved Value', value: fmtCurrency(stats.approvedTotal), icon: DollarSign, color: 'text-emerald-400' },
         ].map((stat) => (
           <div key={stat.label} className="bg-zinc-800/40 border border-zinc-700/30 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-1">

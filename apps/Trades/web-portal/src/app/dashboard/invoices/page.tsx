@@ -202,7 +202,7 @@ export default function InvoicesPage() {
                       onClick={() => router.push(`/dashboard/invoices/${invoice.id}`)}
                       onSendReminder={async () => { await sendInvoice(invoice.id); }}
                       onRecordPayment={async () => {
-                        const amtStr = prompt(`Record payment for ${invoice.invoiceNumber}\nAmount due: $${invoice.amountDue}\n\nEnter payment amount:`);
+                        const amtStr = prompt(`Record payment for ${invoice.invoiceNumber}\nAmount due: ${formatCurrency(invoice.amountDue || 0)}\n\nEnter payment amount:`);
                         if (!amtStr) return;
                         const amt = parseFloat(amtStr);
                         if (isNaN(amt) || amt <= 0) { alert('Invalid amount'); return; }
