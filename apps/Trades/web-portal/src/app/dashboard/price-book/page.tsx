@@ -166,6 +166,7 @@ export default function PriceBookPage() {
 }
 
 function LaborRatesTab({ rates, search, categoryFilter }: { rates: LaborRate[]; search: string; categoryFilter: string }) {
+  const { t } = useTranslation();
   const filteredRates = rates.filter((rate) => {
     const matchesSearch = rate.name.toLowerCase().includes(search.toLowerCase()) ||
       rate.description?.toLowerCase().includes(search.toLowerCase());
@@ -185,10 +186,10 @@ function LaborRatesTab({ rates, search, categoryFilter }: { rates: LaborRate[]; 
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Name</th>
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Rate</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Unit</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.name')}</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.rate')}</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.unit')}</th>
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>
@@ -222,6 +223,7 @@ function LaborRatesTab({ rates, search, categoryFilter }: { rates: LaborRate[]; 
 }
 
 function MaterialsTab({ materials, search, categoryFilter }: { materials: Material[]; search: string; categoryFilter: string }) {
+  const { t } = useTranslation();
   const filteredMaterials = materials.filter((mat) => {
     const matchesSearch = mat.name.toLowerCase().includes(search.toLowerCase()) ||
       mat.description?.toLowerCase().includes(search.toLowerCase()) ||
@@ -244,9 +246,9 @@ function MaterialsTab({ materials, search, categoryFilter }: { materials: Materi
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Item</th>
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">SKU</th>
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Cost</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.price')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Markup</th>
                 <th className="px-6 py-3"></th>
               </tr>
@@ -292,6 +294,7 @@ function MaterialsTab({ materials, search, categoryFilter }: { materials: Materi
 }
 
 function AssembliesTab({ assemblies, search, categoryFilter }: { assemblies: Assembly[]; search: string; categoryFilter: string }) {
+  const { t } = useTranslation();
   const filteredAssemblies = assemblies.filter((asm) => {
     const matchesSearch = asm.name.toLowerCase().includes(search.toLowerCase()) ||
       asm.description?.toLowerCase().includes(search.toLowerCase());
@@ -312,11 +315,11 @@ function AssembliesTab({ assemblies, search, categoryFilter }: { assemblies: Ass
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Assembly</th>
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
                 <th className="text-center text-xs font-medium text-muted uppercase px-6 py-3">Items</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Cost</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Margin</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.price')}</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.margin')}</th>
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>

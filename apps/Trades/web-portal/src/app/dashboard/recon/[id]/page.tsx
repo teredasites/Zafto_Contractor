@@ -807,6 +807,7 @@ function PropertyTab({ features, scan }: {
 function RoofTab({ roof, facets, scan }: {
   roof: RoofMeasurementData | null; facets: RoofFacetData[]; scan: PropertyScanData;
 }) {
+  const { t } = useTranslation();
   if (!roof) {
     const hasSolarSource = scan.scanSources.includes('google_solar');
     return (
@@ -860,7 +861,7 @@ function RoofTab({ roof, facets, scan }: {
               );
             })}
             <div className="pt-2 mt-1 border-t border-main flex justify-between">
-              <span className="text-xs font-semibold text-muted">Total</span>
+              <span className="text-xs font-semibold text-muted">{t('common.total')}</span>
               <span className="text-xs font-bold text-main font-mono">{totalEdge.toLocaleString()} ft</span>
             </div>
           </div>
@@ -1029,6 +1030,7 @@ function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estima
   tradeBids: TradeBidData[]; selectedTrade: TradeType | null;
   onSelectTrade: (t: TradeType | null) => void; onEstimate: () => void; estimating: boolean;
 }) {
+  const { t: tr } = useTranslation();
   const activeTrade = selectedTrade ? tradeBids.find(t => t.trade === selectedTrade) : null;
 
   if (tradeBids.length === 0) {
@@ -1089,7 +1091,7 @@ function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estima
                   <span className="text-main text-right font-medium">{t.wasteFactorPct}%</span>
                   <span className="text-muted">Complexity</span>
                   <span className="text-main text-right font-medium">{t.complexityScore}/10</span>
-                  <span className="text-muted">Crew</span>
+                  <span className="text-muted">{tr('common.crew')}</span>
                   <span className="text-main text-right font-medium">{t.recommendedCrewSize}</span>
                   {t.estimatedLaborHours != null && <>
                     <span className="text-muted">Labor</span>
@@ -1109,6 +1111,7 @@ function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estima
 }
 
 function TradeDetail({ trade }: { trade: TradeBidData }) {
+  const { t } = useTranslation();
   const color = TRADE_COLORS[trade.trade] || '#6B7280';
 
   return (
@@ -1166,7 +1169,7 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
                 <tr className="border-b border-main">
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Item</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Base Qty</th>
-                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Unit</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{t('common.unit')}</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Waste</th>
                   <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Total Qty</th>
                 </tr>
@@ -1197,7 +1200,8 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
 // ============================================================================
 
 function SolarTab({ facets, tradeBids }: { facets: RoofFacetData[]; tradeBids: TradeBidData[] }) {
-  const solarBid = tradeBids.find(t => t.trade === 'solar');
+  const { t: tr } = useTranslation();
+  const solarBid = tradeBids.find(tb => tb.trade === 'solar');
 
   if (!solarBid && facets.length === 0) {
     return (
@@ -1275,8 +1279,8 @@ function SolarTab({ facets, tradeBids }: { facets: RoofFacetData[]; tradeBids: T
               <thead>
                 <tr className="border-b border-main">
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Item</th>
-                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">Qty</th>
-                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Unit</th>
+                  <th className="px-4 py-2.5 text-right text-[10px] font-semibold text-muted uppercase tracking-wider">{tr('common.qty')}</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">{tr('common.unit')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1301,6 +1305,7 @@ function SolarTab({ facets, tradeBids }: { facets: RoofFacetData[]; tradeBids: T
 // ============================================================================
 
 function StormTab({ scanId, scanState }: { scanId: string; scanState: string | null }) {
+  const { t } = useTranslation();
   const { result, loading, error, assessProperty, reset } = useStormAssess();
   const [stormDate, setStormDate] = useState('');
   const [state, setState] = useState(scanState || '');
@@ -1339,7 +1344,7 @@ function StormTab({ scanId, scanState }: { scanId: string; scanState: string | n
               {loading ? <Loader2 size={14} className="animate-spin" /> : <ShieldAlert size={14} />}
               {loading ? 'Analyzing...' : 'Run Assessment'}
             </Button>
-            {result && <Button variant="ghost" size="sm" onClick={reset}>Clear</Button>}
+            {result && <Button variant="ghost" size="sm" onClick={reset}>{t('common.clear')}</Button>}
           </div>
           {error && (
             <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 px-3 py-2 rounded-lg">

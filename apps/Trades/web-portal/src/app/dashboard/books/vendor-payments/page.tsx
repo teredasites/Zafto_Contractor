@@ -242,6 +242,7 @@ function PaymentModal({ vendors, onSave, onClose }: {
   onSave: (data: { vendorId: string; paymentDate: string; amount: number; paymentMethod: string; checkNumber?: string; reference?: string; description?: string }) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -324,12 +325,12 @@ function PaymentModal({ vendors, onSave, onClose }: {
             <Input value={reference} onChange={(e) => setReference(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Description</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.description')}</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm resize-none" />
           </div>
           {err && <p className="text-sm text-red-600">{err}</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="secondary" onClick={onClose}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Record Payment'}</Button>
           </div>
         </form>

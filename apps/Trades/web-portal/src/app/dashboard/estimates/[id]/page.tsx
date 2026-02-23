@@ -1125,6 +1125,7 @@ function AreaSection({
   onTierOverride?: (tier: MaterialTier) => void;
   catalogMaterials?: MaterialCatalogItem[];
 }) {
+  const { t: tr } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const [showDimensions, setShowDimensions] = useState(false);
   const [showTierPicker, setShowTierPicker] = useState(false);
@@ -1230,9 +1231,9 @@ function AreaSection({
           {/* Column headers */}
           <div className="grid grid-cols-[1fr_70px_70px_80px_90px_36px] gap-2 px-4 py-2 text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800/50">
             <span>Item</span>
-            <span className="text-right">Qty</span>
+            <span className="text-right">{tr('common.qty')}</span>
             <span className="text-right">Unit $</span>
-            <span className="text-right">Total</span>
+            <span className="text-right">{tr('common.total')}</span>
             <span className="text-center">Action</span>
             <span />
           </div>
@@ -1513,6 +1514,7 @@ function TotalsPanel({
   lineItems?: EstimateLineItem[];
   changeOrderTotal?: number;
 }) {
+  const { t: tr } = useTranslation();
   // Calculate warranty range from matched materials
   const warrantyRange = useMemo(() => {
     if (!catalogMaterials || !panelLineItems) return null;
@@ -1548,7 +1550,7 @@ function TotalsPanel({
 
       <div className="space-y-2.5">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-zinc-400">Subtotal</span>
+          <span className="text-zinc-400">{tr('common.subtotal')}</span>
           <span className="text-zinc-200 font-medium">${fmtCurrency(totals.subtotal)}</span>
         </div>
 
@@ -1567,7 +1569,7 @@ function TotalsPanel({
         {/* Profit */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Profit</span>
+            <span className="text-zinc-400">{tr('common.profit')}</span>
             <input type="number" min="0" max="100" value={estimate.profitPercent}
               onChange={(e) => onRateChange('profit_percent', Number(e.target.value) || 0)}
               className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right" />
@@ -1579,7 +1581,7 @@ function TotalsPanel({
         {/* Tax */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Tax</span>
+            <span className="text-zinc-400">{tr('common.tax')}</span>
             <input type="number" min="0" max="100" step="0.01" value={estimate.taxPercent}
               onChange={(e) => onRateChange('tax_percent', Number(e.target.value) || 0)}
               className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right" />
@@ -1645,6 +1647,7 @@ function EstimatePreview({
   catalogMaterials?: Array<{ description: string | null; photoUrl: string | null; warrantyYears: number | null; brand: string | null; tier: string | null }>;
   changeOrderTotal?: number;
 }) {
+  const { t } = useTranslation();
   const handlePdf = async (template: 'standard' | 'detailed' | 'summary' | 'proposal') => {
     const supabase = getSupabase();
     const { data: { session } } = await supabase.auth.getSession();
@@ -1700,13 +1703,13 @@ function EstimatePreview({
       {/* Customer + Property */}
       <div className="grid grid-cols-2 gap-8 mb-8">
         <div>
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Customer</h3>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">{t('common.customer')}</h3>
           <p className="text-sm text-zinc-200">{estimate.customerName || '—'}</p>
           {estimate.customerEmail && <p className="text-xs text-zinc-400">{estimate.customerEmail}</p>}
           {estimate.customerPhone && <p className="text-xs text-zinc-400">{estimate.customerPhone}</p>}
         </div>
         <div>
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Property</h3>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">{t('common.property')}</h3>
           <p className="text-sm text-zinc-200">{estimate.propertyAddress || '—'}</p>
           <p className="text-xs text-zinc-400">{[estimate.propertyCity, estimate.propertyState, estimate.propertyZip].filter(Boolean).join(', ')}</p>
         </div>
@@ -1742,11 +1745,11 @@ function EstimatePreview({
               <thead>
                 <tr className="text-zinc-500 border-b border-zinc-800">
                   <th className="text-left py-1.5 font-medium">Code</th>
-                  <th className="text-left py-1.5 font-medium">Description</th>
+                  <th className="text-left py-1.5 font-medium">{t('common.description')}</th>
                   <th className="text-center py-1.5 font-medium">Action</th>
-                  <th className="text-right py-1.5 font-medium">Qty</th>
+                  <th className="text-right py-1.5 font-medium">{t('common.qty')}</th>
                   <th className="text-right py-1.5 font-medium">Unit $</th>
-                  <th className="text-right py-1.5 font-medium">Total</th>
+                  <th className="text-right py-1.5 font-medium">{t('common.total')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1768,7 +1771,7 @@ function EstimatePreview({
 
       {/* Totals */}
       <div className="border-t border-zinc-700 pt-4 mt-8 space-y-2">
-        <div className="flex justify-between text-sm"><span className="text-zinc-400">Subtotal</span><span className="text-zinc-200">${fmtCurrency(totals.subtotal)}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-zinc-400">{t('common.subtotal')}</span><span className="text-zinc-200">${fmtCurrency(totals.subtotal)}</span></div>
         <div className="flex justify-between text-sm"><span className="text-zinc-400">Overhead ({estimate.overheadPercent}%)</span><span className="text-zinc-200">${fmtCurrency(totals.overhead)}</span></div>
         <div className="flex justify-between text-sm"><span className="text-zinc-400">Profit ({estimate.profitPercent}%)</span><span className="text-zinc-200">${fmtCurrency(totals.profit)}</span></div>
         {totals.tax > 0 && (
@@ -1889,7 +1892,7 @@ function EstimatePreview({
       {/* Notes */}
       {estimate.notes && (
         <div className="mt-8">
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Notes</h3>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">{t('common.notes')}</h3>
           <p className="text-sm text-zinc-300 whitespace-pre-wrap">{estimate.notes}</p>
         </div>
       )}
@@ -1956,6 +1959,7 @@ interface PricedMaterial {
 }
 
 function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () => void }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pricingAvailable, setPricingAvailable] = useState(false);
@@ -2079,8 +2083,8 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                   <thead>
                     <tr className="bg-zinc-800/50 text-zinc-400">
                       <th className="text-left px-3 py-2 font-medium">Material</th>
-                      <th className="text-right px-3 py-2 font-medium">Qty</th>
-                      <th className="text-right px-3 py-2 font-medium">Unit</th>
+                      <th className="text-right px-3 py-2 font-medium">{t('common.qty')}</th>
+                      <th className="text-right px-3 py-2 font-medium">{t('common.unit')}</th>
                       <th className="text-right px-3 py-2 font-medium">W/ Waste</th>
                       {pricingAvailable && (
                         <>
@@ -2127,7 +2131,7 @@ function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () =
                   {pricingAvailable && currentMaterials.length > 0 && (
                     <tfoot>
                       <tr className="bg-zinc-800/30 border-t border-zinc-700/50">
-                        <td colSpan={4} className="px-3 py-2 text-right text-zinc-400 font-medium">Total</td>
+                        <td colSpan={4} className="px-3 py-2 text-right text-zinc-400 font-medium">{t('common.total')}</td>
                         <td className="px-3 py-2 text-right text-zinc-200 font-medium">
                           ${currentMaterials.reduce((sum, m) => {
                             const hd = m.suppliers.find(s => s.supplier === 'homedepot');
@@ -2243,6 +2247,7 @@ function TierComparisonPanel({
   onSelectTier: (tier: MaterialTier) => void;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const tiers = [
     { key: 'good' as const, data: comparison.good, label: 'Good', sublabel: 'Standard', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/20', btnColor: 'bg-blue-600 hover:bg-blue-500' },
     { key: 'better' as const, data: comparison.better, label: 'Better', sublabel: 'Premium', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20', btnColor: 'bg-amber-600 hover:bg-amber-500' },
@@ -2297,11 +2302,11 @@ function TierComparisonPanel({
 
             {/* Cost breakdown */}
             <div className="space-y-1.5 text-[11px] border-t border-zinc-700/30 pt-3 mb-3">
-              <div className="flex justify-between"><span className="text-zinc-500">Subtotal</span><span className="text-zinc-300">${fmtCurrency(data.subtotal)}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">{t('common.subtotal')}</span><span className="text-zinc-300">${fmtCurrency(data.subtotal)}</span></div>
               <div className="flex justify-between"><span className="text-zinc-500">O&P</span><span className="text-zinc-300">${fmtCurrency(data.overhead + data.profit)}</span></div>
-              <div className="flex justify-between"><span className="text-zinc-500">Tax</span><span className="text-zinc-300">${fmtCurrency(data.tax)}</span></div>
+              <div className="flex justify-between"><span className="text-zinc-500">{t('common.tax')}</span><span className="text-zinc-300">${fmtCurrency(data.tax)}</span></div>
               <div className="flex justify-between font-medium border-t border-zinc-700/30 pt-1.5">
-                <span className="text-zinc-200">Total</span>
+                <span className="text-zinc-200">{t('common.total')}</span>
                 <span className={color}>${fmtCurrency(data.grand)}</span>
               </div>
             </div>

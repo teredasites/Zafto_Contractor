@@ -674,6 +674,7 @@ const JOB_TYPE_REVENUE_CONFIG: Record<string, { label: string; color: string; bg
 };
 
 function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: string; estimatedValue: number }[]; invoices: { jobId?: string; total: number; status: string }[] }) {
+  const { t } = useTranslation();
   // Build job type lookup
   const jobTypeMap = new Map<string, string>();
   for (const job of jobs) {
@@ -746,7 +747,7 @@ function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: 
 
         {/* Total */}
         <div className="flex justify-between pt-2 border-t border-main text-sm font-semibold">
-          <span>Total</span>
+          <span>{t('common.total')}</span>
           <span>{formatCurrency(grandTotal)}</span>
         </div>
       </CardContent>

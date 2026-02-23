@@ -284,6 +284,7 @@ export default function InventoryPage() {
 }
 
 function AddItemModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
@@ -316,7 +317,7 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
           </div>
           <Input label="Location" placeholder="Shelf A1" />
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Add Item</Button>
           </div>
         </CardContent>
@@ -326,6 +327,7 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
 }
 
 function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: () => void }) {
+  const { t } = useTranslation();
   const [adjustType, setAdjustType] = useState<'in' | 'out' | 'set'>('in');
   const [quantity, setQuantity] = useState('');
   const [reason, setReason] = useState('');
@@ -392,7 +394,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
           </div>
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1">Save Adjustment</Button>
           </div>
         </CardContent>

@@ -194,6 +194,7 @@ function PeriodRow({
   onClose: (id: string) => Promise<void>;
   onReopen: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const [closing, setClosing] = useState(false);
   const typeCfg = periodTypeBadge[period.periodType] || periodTypeBadge.month;
 
@@ -231,9 +232,9 @@ function PeriodRow({
       {/* Status */}
       <td className="px-4 py-3">
         {period.isClosed ? (
-          <Badge variant="error" size="sm" dot>Closed</Badge>
+          <Badge variant="error" size="sm" dot>{t('common.closed')}</Badge>
         ) : (
-          <Badge variant="success" size="sm" dot>Open</Badge>
+          <Badge variant="success" size="sm" dot>{t('common.open')}</Badge>
         )}
       </td>
 

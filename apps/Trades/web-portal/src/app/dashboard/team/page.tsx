@@ -541,6 +541,7 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
 }
 
 function InviteModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -627,7 +628,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Phone</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.phone')}</label>
             <input
               type="tel"
               value={phone}

@@ -277,6 +277,7 @@ export default function FireRestorationPage() {
 // =============================================================================
 
 function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
+  const { t: tr } = useTranslation();
   const { items, stats } = useContentPackout(assessment.id);
 
   return (
@@ -303,7 +304,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
               <p className="font-medium">{assessment.fireDepartmentReportNumber || '—'}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Status</p>
+              <p className="text-xs text-muted-foreground">{tr('common.status')}</p>
               <Badge variant={statusConfig[assessment.assessmentStatus]?.variant || 'default'}>
                 {statusConfig[assessment.assessmentStatus]?.label}
               </Badge>

@@ -680,6 +680,7 @@ function SupplementsTab({
   supplements: import('@/types').ClaimSupplementData[];
   onRefresh: () => void;
 }) {
+  const { t } = useTranslation();
   const [showCreate, setShowCreate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState('');
@@ -767,7 +768,7 @@ function SupplementsTab({
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">New Supplement</span>
             <div className="flex items-center gap-2">
-              <button onClick={resetForm} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
+              <button onClick={resetForm} className="text-xs text-muted-foreground hover:text-foreground">{t('common.cancel')}</button>
               <button
                 onClick={handleCreate}
                 disabled={saving || !title.trim()}

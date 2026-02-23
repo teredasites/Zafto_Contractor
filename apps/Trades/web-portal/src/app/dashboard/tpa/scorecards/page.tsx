@@ -68,6 +68,7 @@ function NewScorecardModal({
   onSave: (input: CreateScorecardInput) => Promise<boolean>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [programId, setProgramId] = useState('');
   const [periodStart, setPeriodStart] = useState('');
   const [periodEnd, setPeriodEnd] = useState('');
@@ -162,7 +163,7 @@ function NewScorecardModal({
 
           {/* Notes */}
           <div>
-            <label className="text-xs text-zinc-400 block mb-1">Notes</label>
+            <label className="text-xs text-zinc-400 block mb-1">{t('common.notes')}</label>
             <textarea
               className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm text-white resize-none h-20"
               value={notes}
@@ -173,7 +174,7 @@ function NewScorecardModal({
         </div>
 
         <div className="flex items-center justify-end gap-2 p-4 border-t border-zinc-800">
-          <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" size="sm" onClick={onClose}>{t('common.cancel')}</Button>
           <Button
             size="sm"
             onClick={handleSave}

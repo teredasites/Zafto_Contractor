@@ -299,6 +299,7 @@ interface CertModalProps {
 }
 
 function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpdate, onDelete }: CertModalProps) {
+  const { t: tr } = useTranslation();
   const isEdit = !!cert;
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -473,10 +474,10 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
           {/* Status (edit only) */}
           {isEdit && (
             <div>
-              <label className="text-xs font-medium text-muted mb-1.5 block">Status</label>
+              <label className="text-xs font-medium text-muted mb-1.5 block">{tr('common.status')}</label>
               <select value={status} onChange={e => setStatus(e.target.value as Certification['status'])}
                 className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/30">
-                <option value="active">Active</option>
+                <option value="active">{tr('common.active')}</option>
                 <option value="expired">Expired</option>
                 <option value="pending_renewal">Pending Renewal</option>
                 <option value="revoked">Revoked</option>
@@ -486,7 +487,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
 
           {/* Notes */}
           <div>
-            <label className="text-xs font-medium text-muted mb-1.5 block">Notes</label>
+            <label className="text-xs font-medium text-muted mb-1.5 block">{tr('common.notes')}</label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Additional notes, renewal instructions, etc."
               className="w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none" />
           </div>
@@ -503,7 +504,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
             )}
           </div>
           <div className="flex gap-2">
-            <Button onClick={onClose} className="bg-surface border border-border text-muted hover:text-main">Cancel</Button>
+            <Button onClick={onClose} className="bg-surface border border-border text-muted hover:text-main">{tr('common.cancel')}</Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? 'Saving...' : isEdit ? 'Update' : 'Add Certification'}
             </Button>

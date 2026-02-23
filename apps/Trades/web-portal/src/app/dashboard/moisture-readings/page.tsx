@@ -273,6 +273,7 @@ export default function MoistureReadingsPage() {
 }
 
 function AddReadingModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -300,7 +301,7 @@ function AddReadingModal({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-2 gap-4">
             <Input label="Reading Value *" type="number" placeholder="0.0" />
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Unit</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.unit')}</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
                 <option value="percent">Percent (%)</option>
                 <option value="relative">Relative</option>
@@ -323,7 +324,7 @@ function AddReadingModal({ onClose }: { onClose: () => void }) {
             <label htmlFor="isDry" className="text-sm text-main">Mark as Dry</label>
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Save Reading</Button>
           </div>
         </CardContent>

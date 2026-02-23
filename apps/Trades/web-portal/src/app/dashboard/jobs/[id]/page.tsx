@@ -420,13 +420,14 @@ export default function JobDetailPage() {
 }
 
 function OverviewTab({ job }: { job: Job }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Description */}
       {job.description && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Description</CardTitle>
+            <CardTitle className="text-base">{t('common.description')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-main whitespace-pre-wrap">{job.description}</p>
@@ -437,7 +438,7 @@ function OverviewTab({ job }: { job: Job }) {
       {/* Timeline */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Timeline</CardTitle>
+          <CardTitle className="text-base">{t('common.timeline')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -618,6 +619,7 @@ function TasksTab({ job }: { job: Job }) {
 }
 
 function MaterialsTab({ job }: { job: Job }) {
+  const { t } = useTranslation();
   const [materials, setMaterials] = useState<{ id: string; name: string; category: string; quantity: number; unit: string; unit_cost: number; total_cost: number; is_billable: boolean }[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -739,7 +741,7 @@ function MaterialsTab({ job }: { job: Job }) {
             <Button size="sm" onClick={handleAdd} disabled={saving || !formData.name.trim()}>
               {saving ? 'Adding...' : 'Add'}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setShowForm(false)}>Cancel</Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowForm(false)}>{t('common.cancel')}</Button>
           </div>
         </CardContent>
       )}
@@ -758,10 +760,10 @@ function MaterialsTab({ job }: { job: Job }) {
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Item</th>
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Qty</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.qty')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Unit Cost</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Total</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.total')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">
@@ -1203,6 +1205,7 @@ const SOURCE_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 function UpgradeTrackingSummary({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
   const [totals, setTotals] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
@@ -1259,7 +1262,7 @@ function UpgradeTrackingSummary({ jobId }: { jobId: string }) {
           ) : null
         )}
         <div className="flex justify-between pt-2 border-t border-main font-semibold">
-          <span>Total</span>
+          <span>{t('common.total')}</span>
           <span>{formatCurrency(grandTotal)}</span>
         </div>
       </CardContent>

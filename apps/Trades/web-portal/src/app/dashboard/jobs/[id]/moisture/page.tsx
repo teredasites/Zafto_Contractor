@@ -270,6 +270,7 @@ function OverviewTab({
   psychLogs: ReturnType<typeof useDryingMonitor>['psychLogs'];
   dryingProgress: ReturnType<typeof useDryingMonitor>['dryingProgress'];
 }) {
+  const { t } = useTranslation();
   if (!assessment && readings.length === 0) {
     return (
       <Card>
@@ -296,7 +297,7 @@ function OverviewTab({
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Category</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.category')}</p>
                 <p className={cn('font-semibold', CATEGORY_LABELS[assessment.waterCategory]?.color)}>
                   {CATEGORY_LABELS[assessment.waterCategory]?.label}
                 </p>
@@ -472,6 +473,7 @@ function LocationGrid({ readings }: { readings: ReturnType<typeof useDryingMonit
 // ============================================================================
 
 function ReadingsTab({ readings }: { readings: ReturnType<typeof useDryingMonitor>['readings'] }) {
+  const { t } = useTranslation();
   if (readings.length === 0) {
     return (
       <Card><CardContent className="p-12 text-center">
@@ -488,14 +490,14 @@ function ReadingsTab({ readings }: { readings: ReturnType<typeof useDryingMonito
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-main">
-              <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Date</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Area</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.date')}</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.area')}</th>
               <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">#</th>
               <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Material</th>
               <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Reading</th>
-              <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Target</th>
+              <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.target')}</th>
               <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Ref Std</th>
-              <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">Status</th>
+              <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.status')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-main">
@@ -541,6 +543,7 @@ function PsychrometricTab({
   onAdd: ReturnType<typeof useDryingMonitor>['addPsychrometricLog'];
   jobId: string;
 }) {
+  const { t } = useTranslation();
   const [showAdd, setShowAdd] = useState(false);
 
   return (
@@ -564,14 +567,14 @@ function PsychrometricTab({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Date</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.date')}</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Room</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Indoor</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP In</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Outdoor</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Out</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Diff</th>
-                  <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">Equipment</th>
+                  <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.equipment')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-main">
@@ -616,6 +619,7 @@ function AddPsychrometricModal({
   onClose: () => void;
   onAdd: ReturnType<typeof useDryingMonitor>['addPsychrometricLog'];
 }) {
+  const { t } = useTranslation();
   const [indoorTemp, setIndoorTemp] = useState('');
   const [indoorRh, setIndoorRh] = useState('');
   const [outdoorTemp, setOutdoorTemp] = useState('');
@@ -681,7 +685,7 @@ function AddPsychrometricModal({
             <Input label="Scrubbers" type="number" value={asCount} onChange={(e) => setAsCount(e.target.value)} />
           </div>
           <div className="flex gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1" onClick={handleSave} disabled={saving || !indoorTemp || !indoorRh}>
               {saving ? 'Saving...' : 'Save Reading'}
             </Button>
@@ -707,6 +711,7 @@ function ContentsTab({
   financialSummary: ReturnType<typeof useContentsInventory>['financialSummary'];
   onAdd: ReturnType<typeof useContentsInventory>['addItem'];
 }) {
+  const { t } = useTranslation();
   const [showAdd, setShowAdd] = useState(false);
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set(Array.from(itemsByRoom.keys())));
 
@@ -771,11 +776,11 @@ function ContentsTab({
                       <tr className="border-b border-main">
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">#</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">Item</th>
-                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">Qty</th>
+                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.qty')}</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">Condition</th>
                         <th className="text-left px-4 py-2 text-xs text-muted uppercase">Action</th>
                         <th className="text-right px-4 py-2 text-xs text-muted uppercase">Value</th>
-                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">Status</th>
+                        <th className="text-left px-4 py-2 text-xs text-muted uppercase">{t('common.status')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-main">
@@ -811,6 +816,7 @@ function AddContentsModal({
   onClose: () => void;
   onAdd: ReturnType<typeof useContentsInventory>['addItem'];
 }) {
+  const { t } = useTranslation();
   const [description, setDescription] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [roomName, setRoomName] = useState('');
@@ -886,7 +892,7 @@ function AddContentsModal({
             <Input label="Destination" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder="Garage / Storage Unit #4" />
           )}
           <div className="flex gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1" onClick={handleSave} disabled={saving || !description || !roomName}>
               {saving ? 'Saving...' : 'Save Item'}
             </Button>
@@ -908,6 +914,7 @@ function CreateAssessmentButton({
   onCreate: ReturnType<typeof useWaterDamageAssessments>['createAssessment'];
   jobId: string;
 }) {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [category, setCategory] = useState<WaterCategory>(1);
   const [waterClass, setWaterClass] = useState<WaterClass>(1);
@@ -987,7 +994,7 @@ function CreateAssessmentButton({
                 <Input label="Est. Drying Days" type="number" value={dryingDays} onChange={(e) => setDryingDays(e.target.value)} placeholder="3" />
               </div>
               <div className="flex gap-3 pt-4">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowModal(false)}>Cancel</Button>
+                <Button variant="secondary" className="flex-1" onClick={() => setShowModal(false)}>{t('common.cancel')}</Button>
                 <Button className="flex-1" onClick={handleSave} disabled={saving}>
                   {saving ? 'Creating...' : 'Create Assessment'}
                 </Button>

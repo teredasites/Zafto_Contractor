@@ -257,6 +257,7 @@ export default function ServiceAgreementsPage() {
 }
 
 function AgreementCard({ agreement, onClick }: { agreement: ServiceAgreement; onClick: () => void }) {
+  const { t } = useTranslation();
   const config = statusConfig[agreement.status];
   const isExpiringSoon = agreement.status === 'active' && agreement.endDate.getTime() - Date.now() < 60 * 24 * 60 * 60 * 1000;
   const hasUpcomingService = agreement.nextServiceDate && agreement.nextServiceDate.getTime() - Date.now() < 14 * 24 * 60 * 60 * 1000;
@@ -289,7 +290,7 @@ function AgreementCard({ agreement, onClick }: { agreement: ServiceAgreement; on
 
         <div className="grid grid-cols-2 gap-4 py-3 border-t border-b border-main">
           <div>
-            <p className="text-xs text-muted">Amount</p>
+            <p className="text-xs text-muted">{t('common.amount')}</p>
             <p className="font-semibold text-main">{formatCurrency(agreement.amount)}/{frequencyLabels[agreement.billingFrequency].toLowerCase()}</p>
           </div>
           <div>
@@ -324,6 +325,7 @@ function AgreementCard({ agreement, onClick }: { agreement: ServiceAgreement; on
 }
 
 function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreement; onClose: () => void }) {
+  const { t } = useTranslation();
   const config = statusConfig[agreement.status];
 
   return (
@@ -358,11 +360,11 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
           {/* Key Dates */}
           <div className="grid grid-cols-3 gap-4">
             <div className="p-4 bg-secondary rounded-lg text-center">
-              <p className="text-sm text-muted mb-1">Start Date</p>
+              <p className="text-sm text-muted mb-1">{t('common.startDate')}</p>
               <p className="font-semibold text-main">{formatDate(agreement.startDate)}</p>
             </div>
             <div className="p-4 bg-secondary rounded-lg text-center">
-              <p className="text-sm text-muted mb-1">End Date</p>
+              <p className="text-sm text-muted mb-1">{t('common.endDate')}</p>
               <p className="font-semibold text-main">{formatDate(agreement.endDate)}</p>
             </div>
             <div className="p-4 bg-secondary rounded-lg text-center">
@@ -378,7 +380,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
             <h3 className="font-medium text-main mb-3">Billing</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-muted mb-1">Amount</p>
+                <p className="text-sm text-muted mb-1">{t('common.amount')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(agreement.amount)}</p>
                 <p className="text-sm text-muted">{frequencyLabels[agreement.billingFrequency]}</p>
               </div>
@@ -410,7 +412,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
 
           {agreement.notes && (
             <div>
-              <h3 className="font-medium text-main mb-2">Notes</h3>
+              <h3 className="font-medium text-main mb-2">{t('common.notes')}</h3>
               <p className="text-muted">{agreement.notes}</p>
             </div>
           )}
@@ -439,6 +441,7 @@ function AgreementDetailModal({ agreement, onClose }: { agreement: ServiceAgreem
 }
 
 function NewAgreementModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
@@ -484,11 +487,11 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Start Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.startDate')}</label>
               <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">End Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.endDate')}</label>
               <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
             </div>
           </div>
@@ -497,7 +500,7 @@ function NewAgreementModal({ onClose }: { onClose: () => void }) {
             <span className="text-sm text-main">Auto-renew at end of term</span>
           </label>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Create Agreement</Button>
           </div>
         </CardContent>

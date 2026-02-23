@@ -359,6 +359,7 @@ function LeadCard({
     earliestAvailable?: string;
   }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [bidAmount, setBidAmount] = useState('');
   const [bidDescription, setBidDescription] = useState('');
   const [bidTimeline, setBidTimeline] = useState('');
@@ -467,7 +468,7 @@ function LeadCard({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Description</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.description')}</label>
               <textarea
                 value={bidDescription}
                 onChange={(e) => setBidDescription(e.target.value)}
@@ -477,7 +478,7 @@ function LeadCard({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Timeline</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('common.timeline')}</label>
               <input
                 type="text"
                 value={bidTimeline}
@@ -533,6 +534,7 @@ function MyBidsTab({
   bids: MarketplaceBid[];
   onWithdraw: (bidId: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
 
@@ -567,9 +569,9 @@ function MyBidsTab({
             <tr className="border-b border-main">
               <th className="text-left text-sm font-medium text-muted px-6 py-3">Lead</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">Bid Amount</th>
-              <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+              <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
               <th className="text-left text-sm font-medium text-muted px-6 py-3">Submitted</th>
-              <th className="text-left text-sm font-medium text-muted px-6 py-3">Actions</th>
+              <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -761,6 +763,7 @@ function ContractorProfileTab({
   profile: ReturnType<typeof useMarketplace>['profile'];
   onSave: ReturnType<typeof useMarketplace>['updateContractorProfile'];
 }) {
+  const { t: tr } = useTranslation();
   const [displayName, setDisplayName] = useState(profile?.displayName || '');
   const [tagline, setTagline] = useState(profile?.tagline || '');
   const [description, setDescription] = useState(profile?.description || '');
@@ -844,7 +847,7 @@ function ContractorProfileTab({
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.description')}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

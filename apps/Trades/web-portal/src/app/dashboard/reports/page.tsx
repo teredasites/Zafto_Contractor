@@ -134,6 +134,7 @@ export default function ReportsPage() {
 }
 
 function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categories: RevenueCategory[] }) {
+  const { t } = useTranslation();
   const totals = data.reduce(
     (acc, curr) => ({
       revenue: acc.revenue + curr.revenue,
@@ -279,10 +280,10 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Month</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Revenue</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.revenue')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Materials</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Profit</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Margin</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.profit')}</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.margin')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">
@@ -371,6 +372,7 @@ function JobsReport({ statusData, stats }: { statusData: StatusCount[]; stats: J
 }
 
 function TeamReport({ team }: { team: TeamMemberStat[] }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <Card>
@@ -383,9 +385,9 @@ function TeamReport({ team }: { team: TeamMemberStat[] }) {
               <thead>
                 <tr className="border-b border-main">
                   <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Team Member</th>
-                  <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Role</th>
+                  <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.role')}</th>
                   <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Jobs</th>
-                  <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Revenue</th>
+                  <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.revenue')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-main">
@@ -411,6 +413,7 @@ function TeamReport({ team }: { team: TeamMemberStat[] }) {
 }
 
 function InvoicesReport({ stats }: { stats: InvoiceStats }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -435,7 +438,7 @@ function InvoicesReport({ stats }: { stats: InvoiceStats }) {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Overdue</p>
+            <p className="text-sm text-muted">{t('common.overdue')}</p>
             <p className="text-2xl font-semibold text-red-600">{formatCurrency(stats.overdue)}</p>
           </CardContent>
         </Card>

@@ -506,6 +506,7 @@ function Vendors1099Tab({
   onYearChange: (year: number) => void;
   onExport: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       {/* Controls */}
@@ -556,7 +557,7 @@ function Vendors1099Tab({
             <div className="flex-1">Vendor Name</div>
             <div className="w-32">Tax ID</div>
             <div className="w-28 text-right">YTD Payments</div>
-            <div className="w-28 text-right">Status</div>
+            <div className="w-28 text-right">{t('common.status')}</div>
           </div>
           {vendors.length === 0 ? (
             <div className="p-8 text-center text-muted text-sm">
@@ -609,6 +610,7 @@ function ScheduleCTab({
   yearOptions: number[];
   onYearChange: (year: number) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Year selector */}
@@ -637,7 +639,7 @@ function ScheduleCTab({
             <CardTitle>Schedule C (Form 1040) — {year}</CardTitle>
             <p className="text-xs text-muted mt-1">Profit or Loss From Business (Sole Proprietorship)</p>
           </div>
-          <Badge variant="info">Preview</Badge>
+          <Badge variant="info">{t('common.preview')}</Badge>
         </CardHeader>
         <CardContent className="p-0">
           {!data ? (

@@ -366,6 +366,7 @@ function AccountModal({
   onSave: (data: Record<string, unknown>) => Promise<void>;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const isEdit = !!account;
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -477,7 +478,7 @@ function AccountModal({
                 onChange={(e) => setParentAccountId(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
-                <option value="">None</option>
+                <option value="">{t('common.none')}</option>
                 {possibleParents.map((p) => (
                   <option key={p.id} value={p.id}>{p.accountNumber} — {p.accountName}</option>
                 ))}
@@ -492,7 +493,7 @@ function AccountModal({
               onChange={(e) => setTaxCategoryId(e.target.value)}
               className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
             >
-              <option value="">None</option>
+              <option value="">{t('common.none')}</option>
               {taxCategories.map((tc) => (
                 <option key={tc.id} value={tc.id}>
                   {tc.name}{tc.scheduleLineRef ? ` (${tc.scheduleLineRef})` : ''}
@@ -517,7 +518,7 @@ function AccountModal({
           )}
 
           <div className="flex items-center justify-end gap-3 pt-2">
-            <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="secondary" onClick={onClose}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving}>
               {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Account'}
             </Button>

@@ -357,6 +357,7 @@ function TemplateCard({
   onClone: () => void;
   cloneLoading?: boolean;
 }) {
+  const { t: tr } = useTranslation();
   const typeLabel = WALKTHROUGH_TYPES.find((t) => t.value === template.walkthroughType)?.label || template.walkthroughType;
   const propLabel = PROPERTY_TYPES.find((t) => t.value === template.propertyType)?.label || template.propertyType;
 
@@ -371,7 +372,7 @@ function TemplateCard({
             )}
           </div>
           {readOnly && (
-            <Badge variant="secondary" className="ml-2 flex-shrink-0">System</Badge>
+            <Badge variant="secondary" className="ml-2 flex-shrink-0">{tr('common.system')}</Badge>
           )}
         </div>
 
@@ -466,6 +467,7 @@ function TemplateEditor({
   onSave: () => void;
   onCancel: () => void;
 }) {
+  const { t: tr } = useTranslation();
   const rooms = template.rooms || [];
   const customFields = template.customFields || {};
   const checklist = template.checklist || [];
@@ -624,7 +626,7 @@ function TemplateEditor({
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-main">Description</label>
+            <label className="block text-sm font-medium text-main">{tr('common.description')}</label>
             <textarea
               value={template.description || ''}
               onChange={(e) => onChange({ ...template, description: e.target.value })}
@@ -1003,6 +1005,7 @@ function CustomFieldEditor({
   onUpdate: (f: CustomFieldDef) => void;
   onRemove: () => void;
 }) {
+  const { t: tr } = useTranslation();
   const [showOptions, setShowOptions] = useState(field.type === 'select');
 
   return (
@@ -1061,7 +1064,7 @@ function CustomFieldEditor({
               onChange={(e) => onUpdate({ ...field, required: e.target.checked })}
               className="rounded border-gray-300"
             />
-            <span className="text-muted text-xs">Required</span>
+            <span className="text-muted text-xs">{tr('common.required')}</span>
           </label>
         </div>
       </div>
@@ -1153,6 +1156,7 @@ function ChecklistItemEditor({
   onUpdate: (i: ChecklistItem) => void;
   onRemove: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={cn('flex items-center gap-3', compact ? 'p-1.5' : 'p-2 bg-secondary/50 rounded-lg')}>
       <input
@@ -1172,7 +1176,7 @@ function ChecklistItemEditor({
           onChange={(e) => onUpdate({ ...item, required: e.target.checked })}
           className="rounded border-gray-300"
         />
-        <span className="text-xs text-muted">Required</span>
+        <span className="text-xs text-muted">{t('common.required')}</span>
       </label>
       <button
         onClick={onRemove}

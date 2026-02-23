@@ -501,6 +501,7 @@ function CalculatorTab({ calculations }: { calculations: EquipmentCalculationDat
 // ============================================================================
 
 function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] }) {
+  const { t } = useTranslation();
   if (deployments.length === 0) {
     return (
       <Card>
@@ -519,13 +520,13 @@ function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] })
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-main">
-              <th className="text-left p-3 text-muted font-medium">Equipment</th>
-              <th className="text-left p-3 text-muted font-medium">Area</th>
+              <th className="text-left p-3 text-muted font-medium">{t('common.equipment')}</th>
+              <th className="text-left p-3 text-muted font-medium">{t('common.area')}</th>
               <th className="text-left p-3 text-muted font-medium">Deployed</th>
               <th className="text-left p-3 text-muted font-medium">Removed</th>
               <th className="text-right p-3 text-muted font-medium">Days</th>
-              <th className="text-right p-3 text-muted font-medium">Rate</th>
-              <th className="text-right p-3 text-muted font-medium">Total</th>
+              <th className="text-right p-3 text-muted font-medium">{t('common.rate')}</th>
+              <th className="text-right p-3 text-muted font-medium">{t('common.total')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-main">
@@ -587,6 +588,7 @@ function DeployEquipmentModal({
     equipmentInventoryId?: string;
   }) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [source, setSource] = useState<'manual' | 'inventory'>('manual');
   const [inventoryId, setInventoryId] = useState('');
   const [equipmentType, setEquipmentType] = useState<EquipmentType>('dehumidifier');
@@ -726,7 +728,7 @@ function DeployEquipmentModal({
           )}
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
               {submitting ? 'Deploying...' : 'Deploy'}
             </Button>
@@ -750,6 +752,7 @@ interface RoomCalcInput {
 }
 
 function RunCalculatorModal({ jobId, onClose }: { jobId: string; onClose: () => void }) {
+  const { t } = useTranslation();
   const [rooms, setRooms] = useState<RoomCalcInput[]>([
     { roomName: '', lengthFt: '', widthFt: '', heightFt: '8', waterClass: '2' },
   ]);
@@ -897,7 +900,7 @@ function RunCalculatorModal({ jobId, onClose }: { jobId: string; onClose: () => 
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-muted">Room {idx + 1}</span>
                     {rooms.length > 1 && (
-                      <button onClick={() => removeRoom(idx)} className="text-red-500 hover:text-red-700 text-sm">Remove</button>
+                      <button onClick={() => removeRoom(idx)} className="text-red-500 hover:text-red-700 text-sm">{t('common.remove')}</button>
                     )}
                   </div>
                   <Input label="Room Name" value={room.roomName} onChange={(e) => updateRoom(idx, 'roomName', e.target.value)} placeholder="Living Room" />
@@ -926,7 +929,7 @@ function RunCalculatorModal({ jobId, onClose }: { jobId: string; onClose: () => 
               )}
 
               <div className="flex items-center gap-3 pt-2">
-                <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+                <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
                 <Button className="flex-1" onClick={calculate}>
                   <Calculator size={16} />Calculate
                 </Button>

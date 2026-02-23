@@ -300,6 +300,7 @@ function ProfileSettings() {
 }
 
 function CompanySettings() {
+  const { t } = useTranslation();
   const [logo, setLogo] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('zafto_company_logo');
@@ -396,7 +397,7 @@ function CompanySettings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Address</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.address')}</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input placeholder="Street Address" defaultValue="123 Main Street" className="md:col-span-2" />
               <Input placeholder="City" defaultValue="Hartford" />
@@ -422,6 +423,7 @@ function CompanySettings() {
 }
 
 function TeamSettings() {
+  const { t } = useTranslation();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const { team: teamData } = useTeam();
 
@@ -522,11 +524,11 @@ function TeamSettings() {
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-6 gap-4 text-xs font-medium text-muted uppercase pb-2 border-b border-main">
-              <span>Role</span>
+              <span>{t('common.role')}</span>
               <span className="text-center">Bids</span>
               <span className="text-center">Jobs</span>
               <span className="text-center">Invoices</span>
-              <span className="text-center">Team</span>
+              <span className="text-center">{t('common.team')}</span>
               <span className="text-center">Billing</span>
             </div>
             <PermissionRow role="Owner" permissions={[true, true, true, true, true]} roleColors={roleColors} />
@@ -612,6 +614,7 @@ function PermissionRow({ role, permissions, roleColors }: { role: string; permis
 }
 
 function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels: Record<string, string> }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('field_tech');
   const [sending, setSending] = useState(false);
@@ -679,7 +682,7 @@ function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels:
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Role</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.role')}</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
@@ -709,6 +712,7 @@ function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels:
 }
 
 function BillingSettings() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <Card>
@@ -720,7 +724,7 @@ function BillingSettings() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-main text-lg">Pro Plan</h3>
-                <Badge variant="success">Active</Badge>
+                <Badge variant="success">{t('common.active')}</Badge>
               </div>
               <p className="text-muted mt-1">$29.99/month - billed monthly</p>
             </div>
@@ -763,7 +767,7 @@ function BillingSettings() {
                 <p className="text-sm text-muted">Expires 12/2026</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">Update</Button>
+            <Button variant="ghost" size="sm">{t('common.update')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -1094,6 +1098,7 @@ function NotificationSettings() {
 }
 
 function AutomatedTriggersCard() {
+  const { t } = useTranslation();
   const { prefs, updatePrefs } = useNotificationPreferences();
 
   const togglePref = (key: string, channel: 'in_app' | 'email' | 'sms') => {
@@ -1113,7 +1118,7 @@ function AutomatedTriggersCard() {
           <div className="grid grid-cols-4 gap-4 text-xs text-muted pb-2 border-b border-border">
             <div>Trigger</div>
             <div className="text-center">In-App</div>
-            <div className="text-center">Email</div>
+            <div className="text-center">{t('common.email')}</div>
             <div className="text-center">SMS</div>
           </div>
           {Object.entries(TRIGGER_LABELS).map(([key, label]) => {
@@ -1318,6 +1323,7 @@ function GoodBetterBestCard() {
 }
 
 function SecuritySettings() {
+  const { t } = useTranslation();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -1675,7 +1681,7 @@ function SecuritySettings() {
                   )}
                 </p>
               </div>
-              <Badge variant="success">Active</Badge>
+              <Badge variant="success">{t('common.active')}</Badge>
             </div>
           ) : (
             <p className="text-sm text-muted">Loading session info...</p>
@@ -1708,6 +1714,7 @@ function SecuritySettings() {
 }
 
 function IntegrationSettings() {
+  const { t } = useTranslation();
   const gcal = useGoogleCalendar();
 
   const integrations = [
@@ -1777,7 +1784,7 @@ function IntegrationSettings() {
                 {integration.connected ? (
                   <div className="flex items-center gap-3">
                     <Badge variant="success">Connected</Badge>
-                    <Button variant="ghost" size="sm">Manage</Button>
+                    <Button variant="ghost" size="sm">{t('common.manage')}</Button>
                   </div>
                 ) : (
                   <Button variant="secondary" size="sm">Connect</Button>
@@ -1819,6 +1826,7 @@ const AVAILABLE_TRADES = [
 ];
 
 function BranchesSettings() {
+  const { t } = useTranslation();
   const { branches, loading, createBranch, updateBranch, deleteBranch } = useBranches();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -1883,7 +1891,7 @@ function BranchesSettings() {
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleSave}>{editingId ? 'Update' : 'Create'}</Button>
-                <Button variant="ghost" onClick={() => { setShowForm(false); setEditingId(null); }}>Cancel</Button>
+                <Button variant="ghost" onClick={() => { setShowForm(false); setEditingId(null); }}>{t('common.cancel')}</Button>
               </div>
             </div>
           )}
@@ -1925,6 +1933,7 @@ function BranchesSettings() {
 }
 
 function RolesSettings() {
+  const { t } = useTranslation();
   const { roles, loading, createRole, updateRole, deleteRole } = useCustomRoles();
   const { isBusinessOrHigher, isEnterprise } = usePermissions();
   const { thresholds, createThreshold, updateThreshold } = useApprovals();
@@ -1991,7 +2000,7 @@ function RolesSettings() {
             <table className="w-full text-sm min-w-[700px]">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="text-left py-3 pl-6 pr-4 font-medium text-muted text-[11px] uppercase tracking-wider w-36">Role</th>
+                  <th className="text-left py-3 pl-6 pr-4 font-medium text-muted text-[11px] uppercase tracking-wider w-36">{t('common.role')}</th>
                   {permissionCategories.map((cat) => (
                     <th key={cat.label} className="text-center py-3 px-1 font-medium text-muted text-[11px] uppercase tracking-wider">{cat.label}</th>
                   ))}
@@ -2092,7 +2101,7 @@ function RolesSettings() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      {role.isSystemRole && <Badge variant="secondary">System</Badge>}
+                      {role.isSystemRole && <Badge variant="secondary">{t('common.system')}</Badge>}
                       <ChevronRight size={16} className={cn('text-muted transition-transform', expandedRole === role.id && 'rotate-90')} />
                       <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); deleteRole(role.id); }}>
                         <Trash2 size={14} />
@@ -2515,6 +2524,7 @@ const TEMPLATE_TYPES = [
 ];
 
 function TemplatesSettings() {
+  const { t: tr } = useTranslation();
   const { templates, loading, createTemplate, updateTemplate, deleteTemplate, duplicateTemplate } = useZDocs();
   const [filterType, setFilterType] = useState<string>('all');
   const [showCreate, setShowCreate] = useState(false);
@@ -2582,7 +2592,7 @@ function TemplatesSettings() {
               <div className="grid grid-cols-2 gap-3">
                 <Input label="Template Name" placeholder="My Custom Bid" value={newName} onChange={(e) => setNewName(e.target.value)} required />
                 <div>
-                  <label className="text-xs font-medium text-muted mb-1 block">Type</label>
+                  <label className="text-xs font-medium text-muted mb-1 block">{tr('common.type')}</label>
                   <select value={newType} onChange={(e) => setNewType(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
                     {TEMPLATE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </select>
@@ -2590,7 +2600,7 @@ function TemplatesSettings() {
               </div>
               <Input label="Description" placeholder="What this template is for..." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
               <div className="flex gap-2 justify-end">
-                <Button variant="secondary" size="sm" onClick={() => setShowCreate(false)}>Cancel</Button>
+                <Button variant="secondary" size="sm" onClick={() => setShowCreate(false)}>{tr('common.cancel')}</Button>
                 <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>Create Template</Button>
               </div>
             </div>
@@ -2624,7 +2634,7 @@ function TemplatesSettings() {
                       <p className="text-xs text-muted mt-0.5">{tmpl.description || 'No description'}</p>
                       <div className="flex gap-2 mt-2">
                         <Badge variant="default">{tmpl.templateType}</Badge>
-                        {tmpl.isSystem && <Badge variant="secondary">System</Badge>}
+                        {tmpl.isSystem && <Badge variant="secondary">{tr('common.system')}</Badge>}
                       </div>
                     </div>
                     <div className="flex gap-1">
@@ -2678,6 +2688,7 @@ const FIELD_TYPES: { value: FieldType; label: string }[] = [
 ];
 
 function CustomFieldsSettings() {
+  const { t } = useTranslation();
   const { fields, fieldsByEntity, loading, createField, updateField, deleteField } = useCustomFields();
   const [activeEntity, setActiveEntity] = useState<EntityType>('customer');
   const [showAdd, setShowAdd] = useState(false);
@@ -2779,7 +2790,7 @@ function CustomFieldsSettings() {
                 Required field
               </label>
               <div className="flex gap-2 justify-end">
-                <Button variant="secondary" size="sm" onClick={() => setShowAdd(false)}>Cancel</Button>
+                <Button variant="secondary" size="sm" onClick={() => setShowAdd(false)}>{t('common.cancel')}</Button>
                 <Button size="sm" onClick={handleAdd} disabled={!newLabel.trim()}>Add Field</Button>
               </div>
             </div>
@@ -2800,7 +2811,7 @@ function CustomFieldsSettings() {
                       <span className="text-sm font-medium text-main">{field.fieldLabel}</span>
                       <div className="flex items-center gap-2 mt-0.5">
                         <Badge variant="secondary">{FIELD_TYPES.find((ft) => ft.value === field.fieldType)?.label || field.fieldType}</Badge>
-                        {field.required && <Badge variant="default">Required</Badge>}
+                        {field.required && <Badge variant="default">{t('common.required')}</Badge>}
                         {field.options && field.options.length > 0 && (
                           <span className="text-xs text-muted">{field.options.length} options</span>
                         )}
@@ -2837,6 +2848,7 @@ function CustomFieldsSettings() {
 // BUSINESS CONFIG SETTINGS (U12d)
 // ============================================================
 function BusinessConfigSettings() {
+  const { t } = useTranslation();
   const { config, loading, saving, updateConfig, jobStatuses, leadSources, bidStatuses, invoiceStatuses, priorityLevels } = useCompanyConfig();
   const [editSection, setEditSection] = useState<string | null>(null);
 
@@ -2981,10 +2993,10 @@ function BusinessConfigSettings() {
                 <div className="w-32">
                   <label className="text-xs font-medium text-muted mb-1 block">Applies To</label>
                   <select value={newTaxApplies} onChange={(e) => setNewTaxApplies(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
-                    <option value="all">All</option>
+                    <option value="all">{t('common.all')}</option>
                     <option value="materials">Materials</option>
                     <option value="labor">Labor</option>
-                    <option value="equipment">Equipment</option>
+                    <option value="equipment">{t('common.equipment')}</option>
                   </select>
                 </div>
                 <Button variant="secondary" size="sm" onClick={handleAddTaxRate} disabled={!newTaxName.trim() || !newTaxRate}>
@@ -2992,7 +3004,7 @@ function BusinessConfigSettings() {
                 </Button>
               </div>
               <div className="flex gap-2 justify-end pt-2">
-                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
+                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>{t('common.cancel')}</Button>
                 <Button size="sm" onClick={handleSaveTaxRates} disabled={saving}>{saving ? 'Saving...' : 'Save Tax Rates'}</Button>
               </div>
             </div>
@@ -3033,7 +3045,7 @@ function BusinessConfigSettings() {
               <Input label="Bid Validity (days)" type="number" min="1" max="365" placeholder="30" value={bidValidity} onChange={(e) => setBidValidity(e.target.value.replace(/[^0-9]/g, ''))} />
               <p className="text-xs text-muted">Variables: {'{YYYY}'} = year, {'{YY}'} = 2-digit year, {'{MM}'} = month, {'{DD}'} = day, {'{NNNN}'} = sequence number, {'{NNN}'} = 3-digit sequence</p>
               <div className="flex gap-2 justify-end">
-                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
+                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>{t('common.cancel')}</Button>
                 <Button size="sm" onClick={handleSaveNumbering} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
               </div>
             </div>
@@ -3087,7 +3099,7 @@ function BusinessConfigSettings() {
               <Input label="Late Fee Rate (%/month)" type="number" step="0.1" min="0" max="100" placeholder="1.5" value={lateFee} onChange={(e) => setLateFee(e.target.value.replace(/[^0-9.]/g, ''))} />
               <Input label="Early Payment Discount (%)" type="number" step="0.1" min="0" max="100" placeholder="2" value={earlyDiscount} onChange={(e) => setEarlyDiscount(e.target.value.replace(/[^0-9.]/g, ''))} />
               <div className="flex gap-2 justify-end">
-                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
+                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>{t('common.cancel')}</Button>
                 <Button size="sm" onClick={handleSavePayment} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
               </div>
             </div>

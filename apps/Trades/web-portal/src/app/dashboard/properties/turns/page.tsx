@@ -327,6 +327,7 @@ function NewTurnModal({ onClose, onCreate }: {
     notes?: string;
   }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [propertyId, setPropertyId] = useState('');
   const [unitId, setUnitId] = useState('');
   const [moveOutDate, setMoveOutDate] = useState('');
@@ -404,7 +405,7 @@ function NewTurnModal({ onClose, onCreate }: {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

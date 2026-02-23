@@ -164,6 +164,7 @@ export default function ChangeOrdersPage() {
 }
 
 function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => void }) {
+  const { t } = useTranslation();
   const sConfig = statusConfig[co.status];
   const isIncrease = co.amount >= 0;
 
@@ -185,7 +186,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
 
           <div className="grid grid-cols-2 gap-4">
             <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{co.jobName}</p></div>
-            <div><p className="text-xs text-muted uppercase tracking-wider">Customer</p><p className="font-medium text-main">{co.customerName}</p></div>
+            <div><p className="text-xs text-muted uppercase tracking-wider">{t('common.customer')}</p><p className="font-medium text-main">{co.customerName}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">Reason</p><p className="font-medium text-main">{co.reason}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">Created</p><p className="font-medium text-main">{formatDate(co.createdAt)}</p></div>
           </div>
@@ -195,10 +196,10 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
             <div className="border border-main rounded-lg overflow-hidden">
               <table className="w-full">
                 <thead><tr className="bg-secondary">
-                  <th className="text-left text-xs font-medium text-muted px-4 py-2">Description</th>
-                  <th className="text-right text-xs font-medium text-muted px-4 py-2">Qty</th>
+                  <th className="text-left text-xs font-medium text-muted px-4 py-2">{t('common.description')}</th>
+                  <th className="text-right text-xs font-medium text-muted px-4 py-2">{t('common.qty')}</th>
                   <th className="text-right text-xs font-medium text-muted px-4 py-2">Unit Price</th>
-                  <th className="text-right text-xs font-medium text-muted px-4 py-2">Total</th>
+                  <th className="text-right text-xs font-medium text-muted px-4 py-2">{t('common.total')}</th>
                 </tr></thead>
                 <tbody>
                   {co.items.map((item, i) => (
@@ -228,10 +229,10 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
             </div>
           )}
 
-          {co.notes && <div><p className="text-xs text-muted uppercase tracking-wider mb-1">Notes</p><p className="text-sm text-main">{co.notes}</p></div>}
+          {co.notes && <div><p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.notes')}</p><p className="text-sm text-main">{co.notes}</p></div>}
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Close</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
             {co.status === 'draft' && <Button className="flex-1"><Send size={16} />Send for Approval</Button>}
             {co.status === 'pending_approval' && <Button className="flex-1"><CheckCircle size={16} />Mark Approved</Button>}
           </div>
@@ -251,6 +252,7 @@ function NewCOModal({ onClose, onCreate }: {
   onClose: () => void;
   onCreate: (input: { jobId: string; title: string; description: string; reason?: string; items?: { description: string; quantity: number; unitPrice: number; total: number }[]; amount: number; notes?: string }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [jobs, setJobs] = useState<{ id: string; title: string; customerName: string }[]>([]);
   const [jobId, setJobId] = useState('');
   const [title, setTitle] = useState('');
@@ -384,11 +386,11 @@ function NewCOModal({ onClose, onCreate }: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Internal notes..." className={`${inputCls} resize-none`} />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>{t('common.cancel')}</Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={saving || !jobId || !title.trim() || !description.trim()}>
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
               {saving ? 'Creating...' : 'Create Change Order'}

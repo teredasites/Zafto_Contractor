@@ -228,6 +228,7 @@ export default function DryingLogsPage() {
 }
 
 function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpanded: boolean; onToggle: () => void }) {
+  const { t } = useTranslation();
   const typeInfo = logTypeConfig[log.logType] || logTypeConfig.note;
   const photosArray = Array.isArray(log.photos) ? log.photos : [];
 
@@ -270,7 +271,7 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               {log.details && (
                 <div className="col-span-2 md:col-span-4">
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Details</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.details')}</p>
                   <p className="text-main">{log.details}</p>
                 </div>
               )}
@@ -323,6 +324,7 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
 }
 
 function AddDryingLogModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -339,7 +341,7 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
             <label className="block text-sm font-medium text-main mb-1.5">Log Type *</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
               <option value="setup">Setup</option>
-              <option value="daily">Daily</option>
+              <option value="daily">{t('common.daily')}</option>
               <option value="adjustment">Adjustment</option>
               <option value="equipment_change">Equipment Change</option>
               <option value="completion">Completion</option>
@@ -348,7 +350,7 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
           </div>
           <Input label="Summary *" placeholder="Daily moisture check - Day 3" />
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Details</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.details')}</label>
             <textarea
               rows={3}
               placeholder="Detailed observations..."
@@ -369,7 +371,7 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
             <Input label="Outdoor Humidity (%)" type="number" placeholder="60" />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Save Entry</Button>
           </div>
         </CardContent>

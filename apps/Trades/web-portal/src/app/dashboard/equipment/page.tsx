@@ -316,6 +316,7 @@ function EquipmentDetailModal({
   onClose: () => void;
   onUpdateStatus: (id: string, status: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const config = statusConfig[equipment.status as RestorationStatus] || statusConfig.deployed;
 
   return (
@@ -403,7 +404,7 @@ function EquipmentDetailModal({
 
           {equipment.notes && (
             <div>
-              <p className="text-sm text-muted mb-1">Notes</p>
+              <p className="text-sm text-muted mb-1">{t('common.notes')}</p>
               <p className="text-main">{equipment.notes}</p>
             </div>
           )}
@@ -441,6 +442,7 @@ function EquipmentDetailModal({
 }
 
 function AddEquipmentModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
@@ -472,7 +474,7 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
           <Input label="Area Deployed *" placeholder="Living Room - East Wall" />
           <Input label="Daily Rate ($)" type="number" placeholder="0.00" />
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea
               rows={2}
               placeholder="Additional notes..."
@@ -480,7 +482,7 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />Add Equipment</Button>
           </div>
         </CardContent>

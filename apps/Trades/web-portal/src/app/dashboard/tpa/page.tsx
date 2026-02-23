@@ -193,6 +193,7 @@ function SummaryCards({
 // ============================================================================
 
 function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
+  const { t } = useTranslation();
   const typeColor = PROGRAM_TYPE_COLORS[summary.programType] || PROGRAM_TYPE_COLORS.independent;
   const typeLabel = PROGRAM_TYPE_LABELS[summary.programType] || summary.programType;
   const marginHealthy = summary.grossMarginPercent >= 30;
@@ -218,11 +219,11 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
         {/* Revenue + Margin */}
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <span className="text-[11px] text-zinc-500">Revenue</span>
+            <span className="text-[11px] text-zinc-500">{t('common.revenue')}</span>
             <p className="text-sm font-semibold text-white">{formatCurrency(summary.totalRevenue)}</p>
           </div>
           <div>
-            <span className="text-[11px] text-zinc-500">Margin</span>
+            <span className="text-[11px] text-zinc-500">{t('common.margin')}</span>
             <div className="flex items-center gap-1">
               {marginHealthy ? (
                 <ArrowUpRight className="h-3 w-3 text-emerald-400" />
@@ -251,7 +252,7 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
             </span>
           </div>
           <div className="text-center">
-            <span className="text-[10px] text-zinc-500 block">Score</span>
+            <span className="text-[10px] text-zinc-500 block">{t('common.score')}</span>
             <span className="text-xs font-medium text-white flex items-center justify-center gap-0.5">
               {summary.avgScorecardRating != null ? (
                 <>
@@ -300,6 +301,7 @@ function PnLTable({
   totalRevenue: number;
   totalCost: number;
 }) {
+  const { t } = useTranslation();
   if (summaries.length === 0) return null;
 
   return (
@@ -316,9 +318,9 @@ function PnLTable({
             <thead>
               <tr className="border-b border-zinc-800 text-zinc-400">
                 <th className="text-left px-4 py-2 font-medium">Program</th>
-                <th className="text-right px-4 py-2 font-medium">Revenue</th>
+                <th className="text-right px-4 py-2 font-medium">{t('common.revenue')}</th>
                 <th className="text-right px-4 py-2 font-medium">Cost</th>
-                <th className="text-right px-4 py-2 font-medium">Margin</th>
+                <th className="text-right px-4 py-2 font-medium">{t('common.margin')}</th>
                 <th className="text-right px-4 py-2 font-medium">Margin %</th>
                 <th className="text-right px-4 py-2 font-medium">Referral</th>
                 <th className="text-right px-4 py-2 font-medium">Supp. Rate</th>
@@ -346,7 +348,7 @@ function PnLTable({
             </tbody>
             <tfoot>
               <tr className="border-t border-zinc-700 font-medium">
-                <td className="px-4 py-2 text-white">Total</td>
+                <td className="px-4 py-2 text-white">{t('common.total')}</td>
                 <td className="text-right px-4 py-2 text-white">{formatCurrency(totalRevenue)}</td>
                 <td className="text-right px-4 py-2 text-zinc-400">{formatCurrency(totalCost)}</td>
                 <td className={cn('text-right px-4 py-2', totalRevenue - totalCost >= 0 ? 'text-emerald-400' : 'text-red-400')}>

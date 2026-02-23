@@ -229,6 +229,7 @@ function DashboardView({
   recentOutreach: OutreachLog[];
   onViewEquipment: (eq: EquipmentWarranty) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Stat Cards */}
@@ -357,7 +358,7 @@ function DashboardView({
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center p-4 rounded-lg bg-zinc-800/50">
               <p className="text-2xl font-bold text-blue-400">{stats.outreachPendingCount}</p>
-              <p className="text-xs text-zinc-400 mt-1">Pending</p>
+              <p className="text-xs text-zinc-400 mt-1">{t('common.pending')}</p>
             </div>
             <div className="text-center p-4 rounded-lg bg-zinc-800/50">
               <p className="text-2xl font-bold text-green-400">{stats.outreachBookedCount}</p>
@@ -397,6 +398,7 @@ function EquipmentView({
   onSelectEquipment: (eq: EquipmentWarranty | null) => void;
   onFileClaim: (eq: EquipmentWarranty) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       {/* Filters */}
@@ -432,11 +434,11 @@ function EquipmentView({
           <table className="w-full text-sm">
             <thead className="bg-zinc-800/50">
               <tr>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Equipment</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Customer</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Warranty</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Status</th>
-                <th className="text-right px-4 py-3 text-zinc-400 font-medium">Actions</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.status')}</th>
+                <th className="text-right px-4 py-3 text-zinc-400 font-medium">{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">
@@ -597,6 +599,7 @@ function ClaimsView({
 // ── Outreach View ───────────────────────────────────────
 
 function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       {outreach.length === 0 ? (
@@ -610,9 +613,9 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
           <table className="w-full text-sm">
             <thead className="bg-zinc-800/50">
               <tr>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Type</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Customer</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Equipment</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.type')}</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Sent</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Response</th>
               </tr>
@@ -720,6 +723,7 @@ function ClaimModal({
   onClose: () => void;
   onSubmit: (reason: string, amount?: number) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [reason, setReason] = useState('');
   const [amount, setAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -766,7 +770,7 @@ function ClaimModal({
         </div>
 
         <div className="flex justify-end gap-2 mt-5">
-          <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" size="sm" onClick={onClose}>{t('common.cancel')}</Button>
           <Button
             size="sm"
             onClick={handleSubmit}

@@ -250,6 +250,7 @@ function EmployeesTab({ employees, search, onSearchChange }: {
   search: string;
   onSearchChange: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showNewModal, setShowNewModal] = useState(false);
@@ -289,10 +290,10 @@ function EmployeesTab({ employees, search, onSearchChange }: {
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">Employee</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Job Title</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Department</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Type</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Hire Date</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Pay Rate</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Status</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.status')}</th>
                 <th className="px-4 py-3 w-10" />
               </tr>
             </thead>
@@ -337,6 +338,7 @@ function EmployeeRow({ employee, isExpanded, statusVariant, statusLabel, onToggl
   statusLabel: string;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <>
       <tr className="hover:bg-surface-hover transition-colors cursor-pointer" onClick={onToggle}>
@@ -433,7 +435,7 @@ function EmployeeRow({ employee, isExpanded, statusVariant, statusLabel, onToggl
             </div>
             {employee.notes && (
               <div className="mt-4 pt-4 border-t border-main">
-                <p className="text-xs text-muted uppercase tracking-wider mb-1">Notes</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.notes')}</p>
                 <p className="text-sm text-main">{employee.notes}</p>
               </div>
             )}
@@ -445,6 +447,7 @@ function EmployeeRow({ employee, isExpanded, statusVariant, statusLabel, onToggl
 }
 
 function NewEmployeeModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -485,7 +488,7 @@ function NewEmployeeModal({ onClose }: { onClose: () => void }) {
             <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><UserPlus size={16} />Add Employee</Button>
           </div>
         </CardContent>
@@ -501,6 +504,7 @@ function OnboardingTab({ checklists, search, onSearchChange }: {
   search: string;
   onSearchChange: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -590,7 +594,7 @@ function OnboardingTab({ checklists, search, onSearchChange }: {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <p className="text-sm text-main">{item.title}</p>
-                            {item.required && <Badge variant="error" size="sm">Required</Badge>}
+                            {item.required && <Badge variant="error" size="sm">{t('common.required')}</Badge>}
                           </div>
                           {item.description && <p className="text-xs text-muted mt-0.5">{item.description}</p>}
                           {item.completedAt && (
@@ -627,6 +631,7 @@ function TrainingTab({ records, search, onSearchChange }: {
   search: string;
   onSearchChange: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -671,12 +676,12 @@ function TrainingTab({ records, search, onSearchChange }: {
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">Training</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Employee</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Type</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Date</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.type')}</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.date')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Expiration</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Score</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.score')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Result</th>
-                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">Status</th>
+                <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-4 py-3">{t('common.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">

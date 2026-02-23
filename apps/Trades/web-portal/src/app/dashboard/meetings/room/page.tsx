@@ -66,6 +66,7 @@ interface JobContext {
 }
 
 function ContextPanel({ jobId, canSeeFinancials }: { jobId: string; canSeeFinancials: boolean }) {
+  const { t } = useTranslation();
   const [job, setJob] = useState<JobContext | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -112,28 +113,28 @@ function ContextPanel({ jobId, canSeeFinancials }: { jobId: string; canSeeFinanc
           <p className="text-sm text-zinc-100 font-medium mt-0.5">{job.title}</p>
         </div>
         <div>
-          <p className="text-xs text-zinc-500 uppercase tracking-wide">Customer</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.customer')}</p>
           <p className="text-sm text-zinc-100 mt-0.5">{job.customerName}</p>
         </div>
         {job.address && (
           <div>
-            <p className="text-xs text-zinc-500 uppercase tracking-wide">Address</p>
+            <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.address')}</p>
             <p className="text-sm text-zinc-100 mt-0.5">{job.address}</p>
           </div>
         )}
         <div>
-          <p className="text-xs text-zinc-500 uppercase tracking-wide">Status</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.status')}</p>
           <p className="text-sm text-zinc-100 mt-0.5 capitalize">{job.status?.replace(/_/g, ' ')}</p>
         </div>
         {canSeeFinancials && job.estimateTotal != null && (
           <>
             <div>
-              <p className="text-xs text-zinc-500 uppercase tracking-wide">Estimate</p>
+              <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.estimate')}</p>
               <p className="text-sm text-zinc-100 mt-0.5">${job.estimateTotal.toLocaleString()}</p>
             </div>
             {job.paidAmount != null && (
               <div>
-                <p className="text-xs text-zinc-500 uppercase tracking-wide">Paid</p>
+                <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.paid')}</p>
                 <p className="text-sm text-zinc-100 mt-0.5">
                   ${job.paidAmount.toLocaleString()}
                   {job.estimateTotal > 0 && (

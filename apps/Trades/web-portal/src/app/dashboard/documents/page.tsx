@@ -597,6 +597,7 @@ function UploadModal({
   folders: DocumentFolder[];
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [docName, setDocName] = useState('');
   const [docType, setDocType] = useState('general');
@@ -661,7 +662,7 @@ function UploadModal({
           />
 
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1">
               <Upload size={16} />
               Upload

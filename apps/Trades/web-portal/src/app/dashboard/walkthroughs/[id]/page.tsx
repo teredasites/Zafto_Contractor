@@ -941,6 +941,7 @@ function FloorPlanRenderer({ planData }: { planData: FloorPlanData | null }) {
 // ============================================================
 
 function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: WalkthroughRoom[] }) {
+  const { t } = useTranslation();
   const roomsWithNotes = rooms.filter((r) => r.notes);
 
   return (
@@ -1061,7 +1062,7 @@ function NotesTab({ walkthrough, rooms }: { walkthrough: Walkthrough; rooms: Wal
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Completed</span>
+              <span className="text-muted">{t('common.completed')}</span>
               <span className="text-main">
                 {walkthrough.completedAt ? formatDateTime(walkthrough.completedAt) : '--'}
               </span>

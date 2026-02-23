@@ -326,6 +326,7 @@ function TemplatesTab({
   onDuplicate: (id: string) => Promise<string>;
   onGenerate: (templateId: string) => void;
 }) {
+  const { t: tr } = useTranslation();
   const [typeFilter, setTypeFilter] = useState('all');
 
   const typeOptions = [
@@ -391,7 +392,7 @@ function TemplatesTab({
                     <h3 className="text-[15px] font-semibold text-main truncate">{template.name}</h3>
                     <div className="flex items-center gap-2 mt-1.5">
                       <Badge variant={typeConf.variant}>{typeLabel}</Badge>
-                      {template.isSystem && <Badge variant="secondary">System</Badge>}
+                      {template.isSystem && <Badge variant="secondary">{tr('common.system')}</Badge>}
                     </div>
                   </div>
                   {template.requiresSignature && (
@@ -477,6 +478,7 @@ function DocumentsTab({
   onDelete: (id: string) => Promise<void>;
   onSendForSignature: (renderId: string) => void;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -529,13 +531,13 @@ function DocumentsTab({
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Title</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Template</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.title')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.template')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Entity</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Signature</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signature')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Created</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Actions</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -654,6 +656,7 @@ function SignaturesTab({
   search: string;
   setSearch: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const statusOptions = [
@@ -732,9 +735,9 @@ function SignaturesTab({
                   <thead>
                     <tr className="border-b border-main">
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Signer</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Email</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Role</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Status</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.email')}</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.role')}</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">Signed</th>
                     </tr>
@@ -791,6 +794,7 @@ function CreateTemplateModal({
     requiresSignature?: boolean;
   }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [templateType, setTemplateType] = useState('contract');
@@ -844,7 +848,7 @@ function CreateTemplateModal({
             onChange={(e) => setTemplateType(e.target.value)}
           />
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.description')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}

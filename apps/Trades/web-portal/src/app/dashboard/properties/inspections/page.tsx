@@ -308,6 +308,7 @@ function NewInspectionModal({ onClose, onCreate }: {
     notes?: string;
   }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [propertyId, setPropertyId] = useState('');
   const [unitId, setUnitId] = useState('');
   const [inspectionType, setInspectionType] = useState<PmInspectionData['inspectionType']>('routine');
@@ -355,7 +356,7 @@ function NewInspectionModal({ onClose, onCreate }: {
               <option value="move_out">Move-Out</option>
               <option value="routine">Routine</option>
               <option value="drive_by">Drive-By</option>
-              <option value="annual">Annual</option>
+              <option value="annual">{t('common.annual')}</option>
               <option value="emergency">Emergency</option>
             </select>
           </div>
@@ -389,7 +390,7 @@ function NewInspectionModal({ onClose, onCreate }: {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
