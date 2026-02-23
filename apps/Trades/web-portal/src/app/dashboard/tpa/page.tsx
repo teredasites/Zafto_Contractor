@@ -375,6 +375,7 @@ function PnLTable({
 // ============================================================================
 
 function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[] }) {
+  const { t } = useTranslation();
   const totalReceived = summaries.reduce((s, p) => s + p.assignmentsReceived, 0);
   const totalCompleted = summaries.reduce((s, p) => s + p.assignmentsCompleted, 0);
 
@@ -394,7 +395,7 @@ function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[
         <div className="flex items-center gap-4 mb-4">
           <div className="flex-1">
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-zinc-400">Completion Rate</span>
+              <span className="text-zinc-400">{t('common.completionRate')}</span>
               <span className="text-white font-medium">{completionRate}%</span>
             </div>
             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">

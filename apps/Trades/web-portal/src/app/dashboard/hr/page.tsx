@@ -757,6 +757,7 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
   search: string;
   onSearchChange: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -838,7 +839,7 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
                   <div className="mt-4 pt-4 border-t border-main space-y-4">
                     {/* Rating Breakdown */}
                     <div>
-                      <h4 className="text-xs font-medium text-muted uppercase tracking-wider mb-3">Rating Breakdown</h4>
+                      <h4 className="text-xs font-medium text-muted uppercase tracking-wider mb-3">{t('common.ratingBreakdown')}</h4>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {[
                           { label: 'Quality', value: review.qualityRating },
@@ -874,25 +875,25 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {review.strengths && (
                         <div>
-                          <p className="text-xs text-muted uppercase tracking-wider mb-1">Strengths</p>
+                          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.strengths')}</p>
                           <p className="text-sm text-main">{review.strengths}</p>
                         </div>
                       )}
                       {review.areasForImprovement && (
                         <div>
-                          <p className="text-xs text-muted uppercase tracking-wider mb-1">Areas for Improvement</p>
+                          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.areasForImprovement')}</p>
                           <p className="text-sm text-main">{review.areasForImprovement}</p>
                         </div>
                       )}
                       {review.goals && (
                         <div>
-                          <p className="text-xs text-muted uppercase tracking-wider mb-1">Goals</p>
+                          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.goals')}</p>
                           <p className="text-sm text-main">{review.goals}</p>
                         </div>
                       )}
                       {review.managerSummary && (
                         <div>
-                          <p className="text-xs text-muted uppercase tracking-wider mb-1">Manager Summary</p>
+                          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.managerSummary')}</p>
                           <p className="text-sm text-main">{review.managerSummary}</p>
                         </div>
                       )}
@@ -900,7 +901,7 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
 
                     {review.employeeComments && (
                       <div>
-                        <p className="text-xs text-muted uppercase tracking-wider mb-1">Employee Comments</p>
+                        <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.employeeComments')}</p>
                         <p className="text-sm text-main italic">{review.employeeComments}</p>
                       </div>
                     )}
@@ -914,8 +915,8 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
         {filtered.length === 0 && (
           <Card><CardContent className="p-12 text-center">
             <Star size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No performance reviews found</h3>
-            <p className="text-muted">Track employee performance with periodic reviews and ratings.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('hr.noPerformanceReviews')}</h3>
+            <p className="text-muted">{t('common.trackEmployeePerformanceWithPeriodicReviewsAndRati')}</p>
           </CardContent></Card>
         )}
       </div>

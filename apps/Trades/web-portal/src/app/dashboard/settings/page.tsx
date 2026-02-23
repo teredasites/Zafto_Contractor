@@ -593,6 +593,7 @@ function TeamMemberRow({ member, roleLabels, roleColors }: { member: any; roleLa
 }
 
 function PermissionRow({ role, permissions, roleColors }: { role: string; permissions: (boolean | string)[]; roleColors: Record<string, string> }) {
+  const { t } = useTranslation();
   const roleKey = role.toLowerCase().replace(' ', '_');
   return (
     <div className="grid grid-cols-6 gap-4 py-2">
@@ -604,7 +605,7 @@ function PermissionRow({ role, permissions, roleColors }: { role: string; permis
           {perm === true ? (
             <Check size={16} className="mx-auto text-emerald-500" />
           ) : perm === 'assigned' ? (
-            <span className="text-xs text-amber-600">Assigned only</span>
+            <span className="text-xs text-amber-600">{t('settings.assignedOnly')}</span>
           ) : (
             <span className="text-muted">-</span>
           )}
@@ -806,6 +807,7 @@ function BillingSettings() {
 }
 
 function PaymentsSettings() {
+  const { t } = useTranslation();
   const [connectStatus, setConnectStatus] = useState<{
     connected: boolean;
     status: string;
@@ -870,8 +872,8 @@ function PaymentsSettings() {
       {/* Stripe Connect */}
       <Card>
         <CardHeader>
-          <CardTitle>Accept Payments via Stripe</CardTitle>
-          <CardDescription>Connect your bank account to accept card payments and ACH transfers from customers</CardDescription>
+          <CardTitle>{t('settings.acceptPaymentsViaStripe')}</CardTitle>
+          <CardDescription>{t('settings.connectBankAccountDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {loading ? (
@@ -922,14 +924,14 @@ function PaymentsSettings() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-secondary rounded-lg">
-                      <p className="text-xs text-muted">Card Payments</p>
+                      <p className="text-xs text-muted">{t('settings.cardPayments')}</p>
                       <p className="font-medium text-main flex items-center gap-1.5 mt-0.5">
                         {connectStatus.details.chargesEnabled ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
                         {connectStatus.details.chargesEnabled ? 'Enabled' : 'Disabled'}
                       </p>
                     </div>
                     <div className="p-3 bg-secondary rounded-lg">
-                      <p className="text-xs text-muted">Payouts</p>
+                      <p className="text-xs text-muted">{t('settings.payouts')}</p>
                       <p className="font-medium text-main flex items-center gap-1.5 mt-0.5">
                         {connectStatus.details.payoutsEnabled ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
                         {connectStatus.details.payoutsEnabled ? 'Enabled' : 'Disabled'}
@@ -953,7 +955,7 @@ function PaymentsSettings() {
               {/* Outstanding Requirements */}
               {connectStatus?.details?.requirements && connectStatus.details.requirements.length > 0 && (
                 <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                  <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">Action Required</p>
+                  <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">{t('settings.actionRequired')}</p>
                   <ul className="text-xs text-amber-600 dark:text-amber-400 space-y-0.5">
                     {connectStatus.details.requirements.map((req, i) => (
                       <li key={i}>- {req.replace(/_/g, ' ')}</li>
@@ -969,8 +971,8 @@ function PaymentsSettings() {
       {/* Payment Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>Payment Preferences</CardTitle>
-          <CardDescription>Configure how you accept payments from customers</CardDescription>
+          <CardTitle>{t('settings.paymentPreferences')}</CardTitle>
+          <CardDescription>{t('settings.configureHowYouAcceptPaymentsFromCustomers')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <ToggleItem
@@ -997,22 +999,22 @@ function PaymentsSettings() {
       {/* Platform Fee Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Processing Fees</CardTitle>
-          <CardDescription>Transparent pricing with no hidden charges</CardDescription>
+          <CardTitle>{t('settings.processingFees')}</CardTitle>
+          <CardDescription>{t('settings.transparentPricingWithNoHiddenCharges')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div className="flex justify-between py-2 border-b border-light">
-              <span className="text-sm text-muted">Card payments</span>
+              <span className="text-sm text-muted">{t('settings.cardPayments')}</span>
               <span className="text-sm font-medium text-main">2.9% + 30c</span>
             </div>
             <div className="flex justify-between py-2 border-b border-light">
-              <span className="text-sm text-muted">ACH bank transfer</span>
+              <span className="text-sm text-muted">{t('settings.achBankTransfer')}</span>
               <span className="text-sm font-medium text-main">0.8% (max $5)</span>
             </div>
             <div className="flex justify-between py-2">
-              <span className="text-sm text-muted">Manual payment recording</span>
-              <span className="text-sm font-medium text-main">Free</span>
+              <span className="text-sm text-muted">{t('settings.manualPaymentRecording')}</span>
+              <span className="text-sm font-medium text-main">{t('settings.free')}</span>
             </div>
           </div>
         </CardContent>
@@ -1022,6 +1024,7 @@ function PaymentsSettings() {
 }
 
 function NotificationSettings() {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState({
     email_bids: true,
     email_invoices: true,
@@ -1038,8 +1041,8 @@ function NotificationSettings() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Email Notifications</CardTitle>
-          <CardDescription>Choose what emails you receive</CardDescription>
+          <CardTitle>{t('settings.emailNotifications')}</CardTitle>
+          <CardDescription>{t('settings.chooseWhatEmailsYouReceive')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <ToggleItem
@@ -1065,8 +1068,8 @@ function NotificationSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Push Notifications</CardTitle>
-          <CardDescription>Mobile app notifications</CardDescription>
+          <CardTitle>{t('settings.pushNotifications')}</CardTitle>
+          <CardDescription>{t('settings.mobileAppNotifications')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ToggleItem
@@ -1080,8 +1083,8 @@ function NotificationSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>SMS Notifications</CardTitle>
-          <CardDescription>Text message alerts</CardDescription>
+          <CardTitle>{t('settings.smsNotifications')}</CardTitle>
+          <CardDescription>{t('settings.textMessageAlerts')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ToggleItem
@@ -1120,7 +1123,7 @@ function AutomatedTriggersCard() {
             <div>{t('settings.trigger')}</div>
             <div className="text-center">{t('settings.inapp')}</div>
             <div className="text-center">{t('common.email')}</div>
-            <div className="text-center">SMS</div>
+            <div className="text-center">{t('phone.sms')}</div>
           </div>
           {Object.entries(TRIGGER_LABELS).map(([key, label]) => {
             const p = prefs[key as keyof NotificationPreferences];
@@ -1147,14 +1150,15 @@ function AutomatedTriggersCard() {
 }
 
 function AppearanceSettings() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState('light');
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Theme</CardTitle>
-          <CardDescription>Choose your preferred color scheme</CardDescription>
+          <CardTitle>{t('common.theme')}</CardTitle>
+          <CardDescription>{t('settings.chooseYourPreferredColorScheme')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
@@ -1183,8 +1187,8 @@ function AppearanceSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Accent Color</CardTitle>
-          <CardDescription>Brand color for buttons and highlights</CardDescription>
+          <CardTitle>{t('settings.accentColor')}</CardTitle>
+          <CardDescription>{t('settings.brandColorForButtonsAndHighlights')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-3">
@@ -1202,8 +1206,8 @@ function AppearanceSettings() {
       {/* Language Selector */}
       <Card>
         <CardHeader>
-          <CardTitle>Language</CardTitle>
-          <CardDescription>Choose your preferred language. Affects all UI text.</CardDescription>
+          <CardTitle>{t('settings.language')}</CardTitle>
+          <CardDescription>{t('settings.chooseYourPreferredLanguageAffectsAllUiText')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
@@ -1232,7 +1236,7 @@ function AppearanceSettings() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-muted mt-3">More translations coming soon. Language preference saved to your profile.</p>
+          <p className="text-xs text-muted mt-3">{t('settings.moreTranslationsComingSoonLanguagePreferenceSavedT')}</p>
         </CardContent>
       </Card>
 
@@ -1242,6 +1246,7 @@ function AppearanceSettings() {
 
 
 function GoodBetterBestCard() {
+  const { t } = useTranslation();
   const [enabled, setEnabled] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('zafto_gbb_pricing') === 'true';
@@ -1282,7 +1287,7 @@ function GoodBetterBestCard() {
               <CardTitle className="flex items-center gap-2">
                 Good / Better / Best Pricing
                 {enabled && (
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-accent text-white rounded">ON</span>
+                  <span className="px-2 py-0.5 text-[10px] font-bold bg-accent text-white rounded">{t('common.on')}</span>
                 )}
               </CardTitle>
               <CardDescription>
@@ -1744,7 +1749,7 @@ function IntegrationSettings() {
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="secondary" size="sm" onClick={() => gcal.syncNow()}>{t('settings.syncNow')}</Button>
-                <Button variant="ghost" size="sm" onClick={() => gcal.disconnect()}>Disconnect</Button>
+                <Button variant="ghost" size="sm" onClick={() => gcal.disconnect()}>{t('settings.disconnect')}</Button>
               </div>
             </>
           ) : (
@@ -1788,7 +1793,7 @@ function IntegrationSettings() {
                     <Button variant="ghost" size="sm">{t('common.manage')}</Button>
                   </div>
                 ) : (
-                  <Button variant="secondary" size="sm">Connect</Button>
+                  <Button variant="secondary" size="sm">{t('settings.connect')}</Button>
                 )}
               </div>
             ))}
@@ -1994,7 +1999,7 @@ function RolesSettings() {
       <Card>
         <CardHeader>
           <CardTitle>{t('settings.defaultRolePermissions')}</CardTitle>
-          <CardDescription>Built-in roles with default access levels. Assign roles to team members to control what they can see and do.</CardDescription>
+          <CardDescription>{t('settings.rolesPermissionsDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto -mx-6">
@@ -2182,6 +2187,7 @@ function RolesSettings() {
 }
 
 function TradeModulesSettings() {
+  const { t: tr } = useTranslation();
   const [enabledTrades, setEnabledTrades] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -2214,10 +2220,10 @@ function TradeModulesSettings() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Trade Modules</CardTitle>
+          <CardTitle>{tr('settings.tradeModules')}</CardTitle>
           <CardDescription>
             Enable trades to unlock trade-specific compliance forms, certification types, and field tools.
-            {saving && <span className="ml-2 text-accent">Saving...</span>}
+            {saving && <span className="ml-2 text-accent">{tr('common.saving')}</span>}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -2256,6 +2262,7 @@ function TradeModulesSettings() {
 }
 
 function ComplianceFormsSettings() {
+  const { t: tr } = useTranslation();
   const { templates, loading } = useFormTemplates();
 
   const systemTemplates = templates.filter((t) => t.isSystem);
@@ -2273,8 +2280,8 @@ function ComplianceFormsSettings() {
       {customTemplates.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Custom Forms</CardTitle>
-            <CardDescription>Forms created by your company</CardDescription>
+            <CardTitle>{tr('settings.customForms')}</CardTitle>
+            <CardDescription>{tr('settings.formsCreatedByYourCompany')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -2284,7 +2291,7 @@ function ComplianceFormsSettings() {
                     <p className="font-medium text-main text-sm">{template.name}</p>
                     <p className="text-xs text-muted">{template.fields.length} fields | {template.category}</p>
                   </div>
-                  <Badge variant="secondary">Custom</Badge>
+                  <Badge variant="secondary">{tr('common.custom')}</Badge>
                 </div>
               ))}
             </div>
@@ -2294,7 +2301,7 @@ function ComplianceFormsSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>System Form Templates</CardTitle>
+          <CardTitle>{tr('settings.systemFormTemplates')}</CardTitle>
           <CardDescription>
             Pre-built compliance forms organized by trade. These are read-only system templates.
           </CardDescription>
@@ -2341,6 +2348,7 @@ function ComplianceFormsSettings() {
 }
 
 function ApiKeysSettings() {
+  const { t } = useTranslation();
   const { apiKeys, loading, revokeApiKey, deleteApiKey } = useApiKeys();
 
   return (
@@ -2349,8 +2357,8 @@ function ApiKeysSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>API Keys</CardTitle>
-              <CardDescription>Manage API access for integrations and automations</CardDescription>
+              <CardTitle>{t('settings.apiKeys')}</CardTitle>
+              <CardDescription>{t('settings.manageApiAccessForIntegrationsAndAutomations')}</CardDescription>
             </div>
             <Button disabled>
               <Plus size={16} className="mr-2" />
@@ -2366,7 +2374,7 @@ function ApiKeysSettings() {
           ) : apiKeys.length === 0 ? (
             <div className="text-center py-8 text-muted">
               <Key size={32} className="mx-auto mb-2 opacity-40" />
-              <p>No API keys. Generate one to enable integrations.</p>
+              <p>{t('settings.noApiKeysGenerateOneToEnableIntegrations')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -2381,7 +2389,7 @@ function ApiKeysSettings() {
                       {key.isActive ? 'Active' : 'Revoked'}
                     </Badge>
                     {key.isActive && (
-                      <Button variant="ghost" size="sm" onClick={() => revokeApiKey(key.id)}>Revoke</Button>
+                      <Button variant="ghost" size="sm" onClick={() => revokeApiKey(key.id)}>{t('settings.revoke')}</Button>
                     )}
                     <Button variant="ghost" size="sm" onClick={() => deleteApiKey(key.id)}>
                       <Trash2 size={14} />
@@ -2447,6 +2455,7 @@ function ApprovalWorkflowToggles({
   createThreshold: (data: { entityType: string; thresholdAmount: number; requiresRole: string }) => Promise<string>;
   updateThreshold: (id: string, data: { thresholdAmount?: number; requiresRole?: string; isActive?: boolean }) => Promise<void>;
 }) {
+  const { t: tr } = useTranslation();
   const [amounts, setAmounts] = useState<Record<string, string>>({});
 
   const getThreshold = (entityType: string) =>
@@ -2485,7 +2494,7 @@ function ApprovalWorkflowToggles({
             />
             {isActive && (
               <div className="ml-0 pl-4 border-l-2 border-accent/30 flex items-center gap-3">
-                <label className="text-xs text-muted whitespace-nowrap">Threshold $</label>
+                <label className="text-xs text-muted whitespace-nowrap">{tr('settings.threshold')}</label>
                 <input
                   type="number"
                   min={0}

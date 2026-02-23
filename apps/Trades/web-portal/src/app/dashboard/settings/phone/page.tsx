@@ -755,6 +755,7 @@ function RoutingTab({
   updateGroup: ReturnType<typeof useRingGroups>['updateGroup'];
   deleteGroup: ReturnType<typeof useRingGroups>['deleteGroup'];
 }) {
+  const { t } = useTranslation();
   const [localMenu, setLocalMenu] = useState<MenuOption[]>(
     config?.menuOptions || []
   );
@@ -857,11 +858,11 @@ function RoutingTab({
                   }}
                   className="px-2 py-1 rounded border border-default bg-card text-main text-sm"
                 >
-                  <option value="ring_group">Ring Group</option>
-                  <option value="ring_user">Ring Person</option>
-                  <option value="ai_receptionist">AI Receptionist</option>
-                  <option value="voicemail">Voicemail</option>
-                  <option value="external">External Number</option>
+                  <option value="ring_group">{t('settingsPhone.ringGroup')}</option>
+                  <option value="ring_user">{t('settingsPhone.ringPerson')}</option>
+                  <option value="ai_receptionist">{t('settingsPhone.aiReceptionist')}</option>
+                  <option value="voicemail">{t('settingsPhone.voicemail')}</option>
+                  <option value="external">{t('settingsPhone.externalNumber')}</option>
                 </select>
                 <button
                   onClick={() =>
@@ -998,6 +999,7 @@ function AiTab({
   updateConfig: ReturnType<typeof usePhoneConfig>['updateConfig'];
   updateAiConfig: (c: AiReceptionistConfig) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const aiConfig = config?.aiReceptionistConfig;
   const isEnabled = config?.aiReceptionistEnabled || false;
   const [localConfig, setLocalConfig] = useState<AiReceptionistConfig>(
@@ -1101,7 +1103,7 @@ function AiTab({
           {/* Personality */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Personality & Voice</CardTitle>
+              <CardTitle className="text-base">{t('settingsPhone.personalityVoice')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -1147,9 +1149,9 @@ function AiTab({
                     }
                     className="w-full mt-1 px-3 py-2 rounded-lg border border-default bg-card text-main text-sm"
                   >
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                    <option value="neutral">Neutral</option>
+                    <option value="female">{t('settingsPhone.female')}</option>
+                    <option value="male">{t('settingsPhone.male')}</option>
+                    <option value="neutral">{t('settingsPhone.neutral')}</option>
                   </select>
                 </div>
                 <div>
@@ -1166,8 +1168,8 @@ function AiTab({
                     }
                     className="w-full mt-1 px-3 py-2 rounded-lg border border-default bg-card text-main text-sm"
                   >
-                    <option value="normal">Normal</option>
-                    <option value="slow">Slow</option>
+                    <option value="normal">{t('common.normal')}</option>
+                    <option value="slow">{t('settingsPhone.slow')}</option>
                   </select>
                 </div>
               </div>
@@ -1177,7 +1179,7 @@ function AiTab({
           {/* Capabilities */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">AI Capabilities</CardTitle>
+              <CardTitle className="text-base">{t('settingsPhone.aiCapabilities')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {capabilities.map((cap) => (
@@ -1217,7 +1219,7 @@ function AiTab({
           {/* Real-time Data Access */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Real-time Data Access</CardTitle>
+              <CardTitle className="text-base">{t('settingsPhone.realtimeDataAccess')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-xs text-muted mb-3">
@@ -1522,6 +1524,7 @@ function ByocTab({
   byoc: ReturnType<typeof useByocPhone>;
   showToast: (msg: string) => void;
 }) {
+  const { t } = useTranslation();
   const [phone, setPhone] = useState('');
   const [label, setLabel] = useState('');
   const [fwdType, setFwdType] = useState<'call_forward' | 'sip_trunk' | 'port_in'>('call_forward');
@@ -1606,7 +1609,7 @@ function ByocTab({
       {byoc.numbers.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Your Numbers</CardTitle>
+            <CardTitle className="text-base">{t('settingsPhone.yourNumbers')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {byoc.numbers.map((num) => (
@@ -1621,7 +1624,7 @@ function ByocTab({
                         {formatPhoneDisplay(num.phoneNumber)}
                       </span>
                       {num.isPrimary && (
-                        <Badge variant="secondary" className="text-xs">PRIMARY</Badge>
+                        <Badge variant="secondary" className="text-xs">{t('settingsPhone.primary')}</Badge>
                       )}
                     </div>
                     {num.displayLabel && (
@@ -1742,7 +1745,7 @@ function ByocTab({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-muted mb-1 block">Phone Number</label>
+              <label className="text-xs text-muted mb-1 block">{t('common.phoneNumber')}</label>
               <input
                 type="tel"
                 value={phone}
@@ -1765,7 +1768,7 @@ function ByocTab({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-muted mb-1 block">Integration Method</label>
+              <label className="text-xs text-muted mb-1 block">{t('settingsPhone.integrationMethod')}</label>
               <select
                 value={fwdType}
                 onChange={(e) => setFwdType(e.target.value as typeof fwdType)}
@@ -1778,7 +1781,7 @@ function ByocTab({
             </div>
             {fwdType === 'call_forward' && (
               <div>
-                <label className="text-xs text-muted mb-1 block">Your Carrier</label>
+                <label className="text-xs text-muted mb-1 block">{t('settingsPhone.yourCarrier')}</label>
                 <select
                   value={carrier}
                   onChange={(e) => setCarrier(e.target.value)}

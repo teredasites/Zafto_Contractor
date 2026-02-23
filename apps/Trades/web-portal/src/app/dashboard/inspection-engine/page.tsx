@@ -364,7 +364,7 @@ export default function InspectionEnginePage() {
         >
           <div className="flex items-center gap-2">
             <LayoutList size={18} className="text-muted" />
-            <CardTitle>Inspection Templates</CardTitle>
+            <CardTitle>{t('inspectionsTemplates.title')}</CardTitle>
             <span className="text-xs text-muted ml-1">({templates.length})</span>
           </div>
           {templatesExpanded ? (

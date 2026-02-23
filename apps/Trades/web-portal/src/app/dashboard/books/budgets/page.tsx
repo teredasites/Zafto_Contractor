@@ -271,16 +271,17 @@ function SummaryCard({
 }
 
 function UpgradePrompt() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-semibold text-main">Budget vs Actual</h1>
-        <p className="text-[13px] text-muted mt-1">Job-level budgeting and variance reporting</p>
+        <h1 className="text-2xl font-semibold text-main">{t('booksBudgets.title')}</h1>
+        <p className="text-[13px] text-muted mt-1">{t('booksBudgets.joblevelBudgetingAndVarianceReporting')}</p>
       </div>
       <Card>
         <CardContent className="text-center py-12">
           <DollarSign size={40} className="mx-auto mb-3 text-muted opacity-40" />
-          <h3 className="text-lg font-semibold text-main">Enterprise Feature</h3>
+          <h3 className="text-lg font-semibold text-main">{t('booksBudgets.enterpriseFeature')}</h3>
           <p className="text-sm text-muted mt-2 max-w-md mx-auto">
             Budget vs Actual reporting with job-level budgeting, variance tracking, and overrun alerts
             is available on the Enterprise plan.

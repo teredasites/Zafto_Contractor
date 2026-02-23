@@ -325,7 +325,7 @@ export default function ReconciliationPage() {
                   <thead>
                     <tr className="border-b border-default">
                       <th className="text-left px-4 py-3 text-muted font-medium">{t('common.account')}</th>
-                      <th className="text-left px-4 py-3 text-muted font-medium">Statement Date</th>
+                      <th className="text-left px-4 py-3 text-muted font-medium">{t('common.statementDate')}</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">{t('common.statementBalance')}</th>
                       <th className="text-right px-4 py-3 text-muted font-medium">{t('common.difference')}</th>
                       <th className="text-center px-4 py-3 text-muted font-medium">{t('common.status')}</th>

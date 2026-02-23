@@ -472,6 +472,7 @@ export default function CustomerDetailPage() {
 }
 
 function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; bids: any[]; jobs: any[]; invoices: any[] }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const recentActivity = [
     ...bids.map((b) => ({ type: 'bid', title: b.title, status: b.status, date: b.updatedAt, id: b.id })),
@@ -487,21 +488,21 @@ function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; b
           <CardContent className="p-4 text-center">
             <FileText size={24} className="mx-auto text-blue-500 mb-2" />
             <p className="text-2xl font-semibold text-main">{bids.length}</p>
-            <p className="text-sm text-muted">Bids</p>
+            <p className="text-sm text-muted">{t('bidsPage.title')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Briefcase size={24} className="mx-auto text-indigo-500 mb-2" />
             <p className="text-2xl font-semibold text-main">{jobs.length}</p>
-            <p className="text-sm text-muted">Jobs</p>
+            <p className="text-sm text-muted">{t('customers.tabs.jobs')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Receipt size={24} className="mx-auto text-emerald-500 mb-2" />
             <p className="text-2xl font-semibold text-main">{invoices.length}</p>
-            <p className="text-sm text-muted">Invoices</p>
+            <p className="text-sm text-muted">{t('customers.tabs.invoices')}</p>
           </CardContent>
         </Card>
       </div>
@@ -509,11 +510,11 @@ function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; b
       {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Recent Activity</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.recentActivity')}</CardTitle>
         </CardHeader>
         <CardContent>
           {recentActivity.length === 0 ? (
-            <p className="text-center text-muted py-4">No activity yet</p>
+            <p className="text-center text-muted py-4">{t('common.noActivityYet')}</p>
           ) : (
             <div className="space-y-3">
               {recentActivity.map((item, index) => (
@@ -546,12 +547,13 @@ function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; b
 }
 
 function BidsTab({ bids }: { bids: any[] }) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Bids</CardTitle>
+        <CardTitle className="text-base">{t('bidsPage.title')}</CardTitle>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
           New Bid
@@ -561,7 +563,7 @@ function BidsTab({ bids }: { bids: any[] }) {
         {bids.length === 0 ? (
           <div className="py-12 text-center">
             <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
-            <p className="text-muted">No bids yet</p>
+            <p className="text-muted">{t('bidsPage.noBids')}</p>
           </div>
         ) : (
           <div className="divide-y divide-main">
@@ -591,12 +593,13 @@ function BidsTab({ bids }: { bids: any[] }) {
 }
 
 function JobsTab({ jobs }: { jobs: any[] }) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Jobs</CardTitle>
+        <CardTitle className="text-base">{t('customers.tabs.jobs')}</CardTitle>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
           New Job
@@ -606,7 +609,7 @@ function JobsTab({ jobs }: { jobs: any[] }) {
         {jobs.length === 0 ? (
           <div className="py-12 text-center">
             <Briefcase size={40} className="mx-auto text-muted mb-2 opacity-50" />
-            <p className="text-muted">No jobs yet</p>
+            <p className="text-muted">{t('common.noJobsYet')}</p>
           </div>
         ) : (
           <div className="divide-y divide-main">
@@ -636,12 +639,13 @@ function JobsTab({ jobs }: { jobs: any[] }) {
 }
 
 function InvoicesTab({ invoices }: { invoices: any[] }) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Invoices</CardTitle>
+        <CardTitle className="text-base">{t('customers.tabs.invoices')}</CardTitle>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
           New Invoice
@@ -651,7 +655,7 @@ function InvoicesTab({ invoices }: { invoices: any[] }) {
         {invoices.length === 0 ? (
           <div className="py-12 text-center">
             <Receipt size={40} className="mx-auto text-muted mb-2 opacity-50" />
-            <p className="text-muted">No invoices yet</p>
+            <p className="text-muted">{t('invoices.noInvoices')}</p>
           </div>
         ) : (
           <div className="divide-y divide-main">
@@ -687,6 +691,7 @@ function ActivityTimeline({ customerId, bids, jobs, invoices }: {
   jobs: any[];
   invoices: any[];
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [commsLoading, setCommsLoading] = useState(true);
   const [comms, setComms] = useState<{ type: string; title: string; date: string; detail?: string; icon: string }[]>([]);
@@ -754,7 +759,7 @@ function ActivityTimeline({ customerId, bids, jobs, invoices }: {
         ) : timeline.length === 0 ? (
           <div className="text-center py-8">
             <MessageSquare size={32} className="mx-auto text-muted mb-3" />
-            <p className="text-sm text-muted">No activity recorded yet</p>
+            <p className="text-sm text-muted">{t('common.noActivityRecordedYet')}</p>
           </div>
         ) : (
           <div className="relative">

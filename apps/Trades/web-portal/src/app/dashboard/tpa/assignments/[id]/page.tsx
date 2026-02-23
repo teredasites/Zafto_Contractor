@@ -262,7 +262,7 @@ export default function TpaAssignmentDetailPage() {
                   <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalEstimated.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wide">Invoiced</p>
+                  <p className="text-xs text-muted uppercase tracking-wide">{t('jobs.statusInvoiced')}</p>
                   <p className="text-lg font-semibold text-main mt-0.5">${assignment.totalInvoiced.toLocaleString()}</p>
                 </div>
                 <div>

@@ -804,6 +804,7 @@ function RoomEditor({
   onMoveUp: () => void;
   onMoveDown: () => void;
 }) {
+  const { t: tr } = useTranslation();
   const [expanded, setExpanded] = useState(true);
   const roomFields = room.customFields || {};
   const roomChecklist = room.checklist || [];
@@ -908,7 +909,7 @@ function RoomEditor({
               placeholder="e.g., Master Bedroom"
             />
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-main">Room Type</label>
+              <label className="block text-sm font-medium text-main">{tr('settingsWorkflows.roomType')}</label>
               <select
                 value={room.roomType}
                 onChange={(e) => onUpdate({ roomType: e.target.value })}
@@ -932,7 +933,7 @@ function RoomEditor({
           {/* Room custom fields */}
           <div className="pt-3 border-t border-main">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-main">Room Custom Fields</p>
+              <p className="text-sm font-medium text-main">{tr('settingsWorkflows.roomCustomFields')}</p>
               <button
                 onClick={addRoomField}
                 className="text-xs text-accent hover:underline flex items-center gap-1"
@@ -942,7 +943,7 @@ function RoomEditor({
               </button>
             </div>
             {Object.keys(roomFields).length === 0 ? (
-              <p className="text-xs text-muted">No custom fields for this room.</p>
+              <p className="text-xs text-muted">{tr('settingsWorkflows.noCustomFieldsForThisRoom')}</p>
             ) : (
               <div className="space-y-2">
                 {Object.entries(roomFields).map(([key, field]) => (
@@ -961,7 +962,7 @@ function RoomEditor({
           {/* Room checklist */}
           <div className="pt-3 border-t border-main">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-main">Room Checklist</p>
+              <p className="text-sm font-medium text-main">{tr('settingsWorkflows.roomChecklist')}</p>
               <button
                 onClick={addRoomChecklistItem}
                 className="text-xs text-accent hover:underline flex items-center gap-1"
@@ -971,7 +972,7 @@ function RoomEditor({
               </button>
             </div>
             {roomChecklist.length === 0 ? (
-              <p className="text-xs text-muted">No checklist items for this room.</p>
+              <p className="text-xs text-muted">{tr('settingsWorkflows.noChecklistItemsForThisRoom')}</p>
             ) : (
               <div className="space-y-2">
                 {roomChecklist.map((item, idx) => (
@@ -1099,6 +1100,7 @@ function SelectOptionsEditor({
   options: string[];
   onChange: (opts: string[]) => void;
 }) {
+  const { t } = useTranslation();
   const addOption = () => {
     onChange([...options, '']);
   };
@@ -1115,7 +1117,7 @@ function SelectOptionsEditor({
 
   return (
     <div className="ml-4 mt-2 space-y-1.5">
-      <p className="text-xs text-muted font-medium">Dropdown Options</p>
+      <p className="text-xs text-muted font-medium">{t('settingsWorkflows.dropdownOptions')}</p>
       {options.map((opt, index) => (
         <div key={index} className="flex items-center gap-2">
           <input
@@ -1197,13 +1199,14 @@ function DeleteConfirmModal({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-50" onClick={onCancel} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm z-50">
         <Card>
           <CardHeader>
-            <CardTitle>Delete Template</CardTitle>
+            <CardTitle>{t('settingsWorkflows.deleteTemplate')}</CardTitle>
             <CardDescription>
               Are you sure you want to delete this template? This action cannot be undone.
               Existing walkthroughs using this template will not be affected.

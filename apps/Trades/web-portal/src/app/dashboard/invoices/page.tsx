@@ -124,7 +124,7 @@ export default function InvoicesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats.paidThisMonth)}</p>
-                <p className="text-sm text-muted">Paid This Month</p>
+                <p className="text-sm text-muted">{t('invoices.paidThisMonth')}</p>
               </div>
             </div>
           </CardContent>
@@ -137,7 +137,7 @@ export default function InvoicesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats.overdueAmount)}</p>
-                <p className="text-sm text-muted">Overdue Amount</p>
+                <p className="text-sm text-muted">{t('invoices.overdueAmount')}</p>
               </div>
             </div>
           </CardContent>

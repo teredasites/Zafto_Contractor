@@ -156,7 +156,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted">Total Revenue</p>
+                <p className="text-sm text-muted">{t('customers.totalRevenue')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totals.revenue)}</p>
               </div>
               <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
@@ -184,7 +184,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted">Net Profit</p>
+                <p className="text-sm text-muted">{t('dashboard.netProfit')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totals.profit)}</p>
               </div>
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -242,7 +242,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
         {/* Revenue by Category */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Revenue by Category</CardTitle>
+            <CardTitle className="text-base">{t('dashboard.revenueByCategory')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -279,7 +279,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Month</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('scheduling.month')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.revenue')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.materials')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.profit')}</th>
@@ -312,31 +312,32 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
 }
 
 function JobsReport({ statusData, stats }: { statusData: StatusCount[]; stats: JobStats }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Total Jobs</p>
+            <p className="text-sm text-muted">{t('customers.totalJobs')}</p>
             <p className="text-2xl font-semibold text-main">{stats.total}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Completion Rate</p>
+            <p className="text-sm text-muted">{t('common.completionRate')}</p>
             <p className="text-2xl font-semibold text-emerald-600">{stats.completionRate}%</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Avg. Job Value</p>
+            <p className="text-sm text-muted">{t('common.avgJobValue')}</p>
             <p className="text-2xl font-semibold text-main">{formatCurrency(stats.avgValue)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Active Statuses</p>
+            <p className="text-sm text-muted">{t('reports.activeStatuses')}</p>
             <p className="text-2xl font-semibold text-main">{statusData.length}</p>
           </CardContent>
         </Card>
@@ -345,7 +346,7 @@ function JobsReport({ statusData, stats }: { statusData: StatusCount[]; stats: J
       {/* Jobs by Status */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Jobs by Status</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.jobsByStatus')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -363,7 +364,7 @@ function JobsReport({ statusData, stats }: { statusData: StatusCount[]; stats: J
             ))}
           </div>
           {statusData.length === 0 && (
-            <p className="text-center text-muted py-8">No jobs yet</p>
+            <p className="text-center text-muted py-8">{t('common.noJobsYet')}</p>
           )}
         </CardContent>
       </Card>

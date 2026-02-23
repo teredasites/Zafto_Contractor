@@ -201,6 +201,7 @@ function NewConversationModal({
   members: TeamMember[];
   currentUserId: string;
 }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<'direct' | 'group'>('direct');
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -332,7 +333,7 @@ function NewConversationModal({
               <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
             </div>
           ) : filteredMembers.length === 0 ? (
-            <div className="text-center py-8 text-zinc-500 text-sm">No team members found</div>
+            <div className="text-center py-8 text-zinc-500 text-sm">{t('dispatch.noTeamMembers')}</div>
           ) : (
             filteredMembers.map(member => {
               const isSelected = selectedIds.has(member.id);

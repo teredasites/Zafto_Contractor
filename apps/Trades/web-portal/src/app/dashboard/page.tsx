@@ -756,6 +756,7 @@ function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: 
 }
 
 function StormDashboardWidget({ jobs, invoices }: { jobs: { id: string; jobType: string; tags: string[]; status: string; estimatedValue: number }[]; invoices: { jobId?: string; total: number; status: string }[] }) {
+  const { t: tr } = useTranslation();
   const router = useRouter();
 
   // Find storm-tagged jobs
@@ -794,32 +795,32 @@ function StormDashboardWidget({ jobs, invoices }: { jobs: { id: string; jobType:
         <div className="grid grid-cols-2 gap-3">
           <div className="p-2 bg-secondary rounded-lg text-center">
             <p className="text-lg font-semibold text-main">{stormJobs.length}</p>
-            <p className="text-[10px] text-muted">Total Jobs</p>
+            <p className="text-[10px] text-muted">{tr('customers.totalJobs')}</p>
           </div>
           <div className="p-2 bg-secondary rounded-lg text-center">
             <p className="text-lg font-semibold text-main">{events.length}</p>
-            <p className="text-[10px] text-muted">Storm Events</p>
+            <p className="text-[10px] text-muted">{tr('dashboard.stormEvents')}</p>
           </div>
         </div>
 
         <div className="space-y-1.5 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted">Pipeline</span>
+            <span className="text-muted">{tr('dashboard.pipeline')}</span>
             <span className="font-medium text-main">{formatCurrency(pipeline)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted">Collected</span>
+            <span className="text-muted">{tr('dashboard.collected')}</span>
             <span className="font-medium text-emerald-600 dark:text-emerald-400">{formatCurrency(collected)}</span>
           </div>
           {statusCounts['in_progress'] && (
             <div className="flex justify-between">
-              <span className="text-muted">In Production</span>
+              <span className="text-muted">{tr('dashboard.inProduction')}</span>
               <span className="font-medium text-blue-600 dark:text-blue-400">{statusCounts['in_progress']}</span>
             </div>
           )}
           {statusCounts['completed'] && (
             <div className="flex justify-between">
-              <span className="text-muted">Complete</span>
+              <span className="text-muted">{tr('jobs.statusComplete')}</span>
               <span className="font-medium text-emerald-600 dark:text-emerald-400">{statusCounts['completed']}</span>
             </div>
           )}
@@ -827,7 +828,7 @@ function StormDashboardWidget({ jobs, invoices }: { jobs: { id: string; jobType:
 
         {events.length > 0 && (
           <div className="pt-2 border-t border-main space-y-1">
-            <p className="text-[10px] font-medium text-muted uppercase">Active Events</p>
+            <p className="text-[10px] font-medium text-muted uppercase">{tr('dashboard.activeEvents')}</p>
             {events.slice(0, 3).map((evt) => (
               <div key={evt} className="text-xs text-main truncate">{evt}</div>
             ))}

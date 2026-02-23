@@ -283,6 +283,7 @@ function VehicleRow({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   const statusCfg = vehicleStatusConfig[vehicle.status];
 
   return (
@@ -337,7 +338,7 @@ function VehicleRow({
             <span>{formatRelativeTime(vehicle.lastGpsTimestamp)}</span>
           </div>
         ) : (
-          <span className="text-sm text-muted">No GPS data</span>
+          <span className="text-sm text-muted">{t('common.noGpsData')}</span>
         )}
       </div>
     </div>
@@ -355,6 +356,7 @@ function VehicleDetail({
   maintenance: VehicleMaintenance[];
   fuelLogs: FuelLog[];
 }) {
+  const { t } = useTranslation();
   return (
     <div className="px-6 pb-6 pt-2 bg-secondary/30 border-t border-main">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -365,7 +367,7 @@ function VehicleDetail({
             Maintenance History ({maintenance.length})
           </h4>
           {maintenance.length === 0 ? (
-            <p className="text-sm text-muted py-2">No maintenance records</p>
+            <p className="text-sm text-muted py-2">{t('common.noMaintenanceRecords')}</p>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {maintenance.slice(0, 10).map((m) => {
@@ -403,7 +405,7 @@ function VehicleDetail({
             Fuel Logs ({fuelLogs.length})
           </h4>
           {fuelLogs.length === 0 ? (
-            <p className="text-sm text-muted py-2">No fuel logs</p>
+            <p className="text-sm text-muted py-2">{t('common.noFuelLogs')}</p>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {fuelLogs.slice(0, 10).map((f) => (

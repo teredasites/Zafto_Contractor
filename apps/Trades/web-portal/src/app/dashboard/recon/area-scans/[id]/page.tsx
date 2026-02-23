@@ -130,6 +130,7 @@ function StormAssessmentPanel({
   scanState: string | null;
   stormDate: string | null;
 }) {
+  const { t } = useTranslation();
   const { result, loading, error, assessArea, reset } = useStormAssess();
   const [stormDate, setStormDate] = useState(defaultStormDate || '');
   const [state, setState] = useState(scanState || '');
@@ -150,7 +151,7 @@ function StormAssessmentPanel({
       {/* Storm panel header */}
       <div className="px-4 py-3 border-b border-purple-500/20 flex items-center gap-2">
         <CloudLightning size={16} className="text-purple-400" />
-        <span className="text-sm font-semibold text-purple-400">Storm Damage Assessment</span>
+        <span className="text-sm font-semibold text-purple-400">{t('reconScans.stormDamageAssessment')}</span>
         <span className="text-[10px] text-muted ml-auto">NOAA + SPC data</span>
       </div>
 
@@ -158,7 +159,7 @@ function StormAssessmentPanel({
       <div className="p-4 space-y-3">
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="text-[10px] uppercase tracking-wider text-muted block mb-1">Storm Date</label>
+            <label className="text-[10px] uppercase tracking-wider text-muted block mb-1">{t('common.stormDate')}</label>
             <input
               type="date"
               value={stormDate}
@@ -167,7 +168,7 @@ function StormAssessmentPanel({
             />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wider text-muted block mb-1">State</label>
+            <label className="text-[10px] uppercase tracking-wider text-muted block mb-1">{t('common.state')}</label>
             <input
               type="text"
               value={state}
@@ -223,7 +224,7 @@ function StormAssessmentPanel({
           <div className="grid grid-cols-4 gap-3 p-4">
             <div className="text-center">
               <p className="text-lg font-semibold text-main">{result.storm_events_found}</p>
-              <p className="text-[10px] text-muted uppercase tracking-wider">Storm Events</p>
+              <p className="text-[10px] text-muted uppercase tracking-wider">{t('dashboard.stormEvents')}</p>
             </div>
             <div className="text-center">
               <p className="text-lg font-semibold text-red-400">{result.high_probability || 0}</p>
@@ -244,7 +245,7 @@ function StormAssessmentPanel({
             <div className="border-t border-purple-500/20">
               <div className="px-4 py-2 flex items-center gap-2">
                 <Navigation size={14} className="text-purple-400" />
-                <span className="text-xs font-medium text-purple-400">Canvass Priority List</span>
+                <span className="text-xs font-medium text-purple-400">{t('reconScans.canvassPriorityList')}</span>
                 <span className="text-[10px] text-muted ml-auto">
                   {result.results.length} properties ranked by damage probability
                 </span>

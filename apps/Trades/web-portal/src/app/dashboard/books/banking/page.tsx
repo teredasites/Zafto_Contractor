@@ -209,6 +209,7 @@ function TransactionRow({
   onCategorize: (id: string, category: string) => void;
   onReview: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
 
   return (
@@ -275,7 +276,7 @@ function TransactionRow({
 
       {/* Matched */}
       {txn.matchedInvoiceId && (
-        <Badge variant="success" className="text-xs">Matched</Badge>
+        <Badge variant="success" className="text-xs">{t('booksBanking.matched')}</Badge>
       )}
 
       {/* Review status */}

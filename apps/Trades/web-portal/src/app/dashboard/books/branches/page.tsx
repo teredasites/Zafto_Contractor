@@ -196,7 +196,7 @@ export default function BranchFinancialsPage() {
             <ArrowLeft size={18} className="text-muted" />
           </button>
           <div>
-            <h1 className="text-2xl font-semibold text-main">Branch Financials</h1>
+            <h1 className="text-2xl font-semibold text-main">{t('booksBranches.title')}</h1>
             <p className="text-muted mt-0.5">
               {selectedBranch
                 ? `P&L for ${selectedBranch.name}`

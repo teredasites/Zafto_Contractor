@@ -512,6 +512,7 @@ function PORow({
 }
 
 function NewPOModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const { vendors } = useProcurement();
   const [vendorId, setVendorId] = useState('');
   const [jobId, setJobId] = useState('');
@@ -549,7 +550,7 @@ function NewPOModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>New Purchase Order</CardTitle>
+            <CardTitle>{t('purchaseOrders.newPurchaseOrder')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -569,7 +570,7 @@ function NewPOModal({ onClose }: { onClose: () => void }) {
             onChange={(e) => setJobId(e.target.value)}
           />
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Expected Delivery Date</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('purchaseOrders.expectedDeliveryDate')}</label>
             <input
               type="date"
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"

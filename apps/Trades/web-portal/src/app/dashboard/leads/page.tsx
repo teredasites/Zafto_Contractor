@@ -166,7 +166,7 @@ export default function LeadsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{newCount}</p>
-                <p className="text-sm text-muted">New Leads</p>
+                <p className="text-sm text-muted">{t('common.newLeads')}</p>
               </div>
             </div>
           </CardContent>
@@ -179,7 +179,7 @@ export default function LeadsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{qualifiedCount}</p>
-                <p className="text-sm text-muted">Qualified</p>
+                <p className="text-sm text-muted">{t('leads.statusQualified')}</p>
               </div>
             </div>
           </CardContent>
@@ -205,7 +205,7 @@ export default function LeadsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(wonValue)}</p>
-                <p className="text-sm text-muted">Won This Month</p>
+                <p className="text-sm text-muted">{t('common.wonThisMonth')}</p>
               </div>
             </div>
           </CardContent>
@@ -477,7 +477,7 @@ function NewLeadModal({ onClose, onCreate }: {
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Smith" className={inputCls} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Company</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('settings.company')}</label>
               <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="ABC Properties" className={inputCls} />
             </div>
             <div>
@@ -543,17 +543,17 @@ function NewLeadModal({ onClose, onCreate }: {
                 <option value="referral">{t('common.referral')}</option>
                 <option value="google">{t('leads.google')}</option>
                 <option value="yelp">{t('leads.yelp')}</option>
-                <option value="facebook">Facebook</option>
+                <option value="facebook">{t('leads.sources.facebook')}</option>
                 <option value="instagram">{t('leads.instagram')}</option>
                 <option value="nextdoor">{t('leads.nextdoor')}</option>
                 <option value="homeadvisor">{t('leads.homeadvisor')}</option>
-                <option value="thumbtack">Thumbtack</option>
-                <option value="angi">Angi</option>
+                <option value="thumbtack">{t('leads.sources.thumbtack')}</option>
+                <option value="angi">{t('leads.sources.angi')}</option>
                 <option value="other">{t('common.other')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Estimated Value</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.estimatedValue')}</label>
               <input type="number" value={value} onChange={(e) => setValue(e.target.value)} placeholder="5000" className={inputCls} />
             </div>
           </div>
@@ -571,7 +571,7 @@ function NewLeadModal({ onClose, onCreate }: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Follow Up Date</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.followUpDate')}</label>
             <input type="date" value={nextFollowUp} onChange={(e) => setNextFollowUp(e.target.value)} className={inputCls} />
           </div>
 

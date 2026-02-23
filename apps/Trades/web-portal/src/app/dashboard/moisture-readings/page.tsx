@@ -259,7 +259,7 @@ export default function MoistureReadingsPage() {
           <CardContent className="p-12 text-center">
             <Droplets size={48} className="mx-auto text-muted mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">{t('moistureReadings.noRecords')}</h3>
-            <p className="text-muted mb-4">Start logging moisture readings to track drying progress across restoration jobs.</p>
+            <p className="text-muted mb-4">{t('moistureReadings.startLoggingDesc')}</p>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus size={16} />Add Reading
             </Button>

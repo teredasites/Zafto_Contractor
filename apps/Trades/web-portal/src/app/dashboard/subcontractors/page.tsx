@@ -246,7 +246,7 @@ export default function SubcontractorsPage() {
           {filtered.length === 0 ? (
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
               <HardHat size={40} className="text-zinc-700 mx-auto mb-3" />
-              <p className="text-zinc-500">No subcontractors found</p>
+              <p className="text-zinc-500">{t('subcontractors.noSubs')}</p>
               <button onClick={() => setShowAdd(true)} className="text-blue-400 text-sm mt-2 hover:text-blue-300">{t('subcontractors.addYourFirstSub')}</button>
             </div>
           ) : filtered.map((sub) => (
@@ -465,7 +465,7 @@ export default function SubcontractorsPage() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={() => setShowAdd(false)}>
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-semibold text-lg">Add Subcontractor</h3>
+              <h3 className="text-white font-semibold text-lg">{t('subcontractors.add')}</h3>
               <button onClick={() => setShowAdd(false)} className="text-zinc-500 hover:text-white"><X size={18} /></button>
             </div>
 
@@ -475,7 +475,7 @@ export default function SubcontractorsPage() {
                 <input value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
               </div>
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">Company Name</label>
+                <label className="text-xs text-zinc-500 mb-1 block">{t('settings.companyName')}</label>
                 <input value={formCompany} onChange={(e) => setFormCompany(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
               </div>
               <div className="grid grid-cols-2 gap-3">

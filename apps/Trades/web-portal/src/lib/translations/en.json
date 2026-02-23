@@ -211,7 +211,7 @@
     "to": "to",
     "by": "by",
     "at": "at",
-    "on": "on",
+    "on": "ON",
     "for": "for",
     "with": "with",
     "items": "items",
@@ -1709,7 +1709,9 @@
     "measurements": "Measurements",
     "scanType": "Scan Type",
     "scanOptions": "Scan Options",
-    "addAddress": "Add Address"
+    "addAddress": "Add Address",
+    "scanning": "Scanning...",
+    "scanProperty": "Scan Property"
   },
   "insurance": {
     "title": "Insurance Claims",
@@ -1925,7 +1927,9 @@
     "lateFee": "Late fee",
     "earlyPaymentDiscount": "Early payment discount",
     "customStatuses": "Custom Statuses",
-    "resetToDefaults": "Reset to defaults"
+    "resetToDefaults": "Reset to defaults",
+    "connectBankAccountDesc": "Connect your bank account to accept card payments and ACH transfers from customers",
+    "rolesPermissionsDesc": "Built-in roles with default access levels. Assign roles to team members to control what they can see and do."
   },
   "team": {
     "title": "Team",
@@ -2557,7 +2561,8 @@
     "hvacInstall": "HVAC Install",
     "johnSmith": "John Smith",
     "mikeJohnson": "Mike Johnson",
-    "inspectionNotFound": "Inspection not found"
+    "inspectionNotFound": "Inspection not found",
+    "createInspectionsDesc": "Create inspections with configurable checklists for quality control and compliance."
   },
   "permits": {
     "title": "Job Permits",
@@ -2902,7 +2907,8 @@
     "wme": "WME",
     "grains": "Grains",
     "markAsDry": "Mark as Dry",
-    "saveReading": "Save Reading"
+    "saveReading": "Save Reading",
+    "startLoggingDesc": "Start logging moisture readings to track drying progress across restoration jobs."
   },
   "dryingLogs": {
     "title": "Drying Logs",
@@ -2921,7 +2927,8 @@
     "adjustment": "Adjustment",
     "equipmentChange": "Equipment Change",
     "completion": "Completion",
-    "saveEntry": "Save Entry"
+    "saveEntry": "Save Entry",
+    "immutableNotice": "Drying logs are immutable legal records and cannot be edited or deleted once created."
   },
   "moldRemediation": {
     "title": "Mold Remediation",
@@ -3755,5 +3762,13 @@
     "automatedOutreachWillAppearHereWhenTheSchedulerRun": "Automated outreach will appear here when the scheduler runs",
     "noActiveRecalls": "No active recalls",
     "fileWarrantyClaim": "File Warranty Claim"
+  },
+  "layout": {
+    "searchOrJumpTo": "Search or jump to...",
+    "files": "Files",
+    "noNotificationsYet": "No notifications yet",
+    "active": "Active",
+    "activeWork": "Active Work",
+    "noActiveItems": "No active items"
   }
 }

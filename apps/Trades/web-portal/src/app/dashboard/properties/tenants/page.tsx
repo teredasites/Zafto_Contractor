@@ -136,7 +136,7 @@ export default function TenantsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{pastCount}</p>
-                <p className="text-sm text-muted">Past</p>
+                <p className="text-sm text-muted">{t('meetings.past')}</p>
               </div>
             </div>
           </CardContent>
@@ -149,7 +149,7 @@ export default function TenantsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{applicantCount}</p>
-                <p className="text-sm text-muted">Applicants</p>
+                <p className="text-sm text-muted">{t('hiring.applicants')}</p>
               </div>
             </div>
           </CardContent>

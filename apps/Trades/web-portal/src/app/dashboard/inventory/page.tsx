@@ -205,7 +205,7 @@ export default function InventoryPage() {
             <tbody>
               {filteredItems.length === 0 && (
                 <tr><td colSpan={7} className="px-6 py-16 text-center">
-                  <p className="text-sm font-medium text-main">No inventory items found</p>
+                  <p className="text-sm font-medium text-main">{t('inventory.noItems')}</p>
                   <p className="text-xs text-muted mt-1">{t('inventory.addMaterialsAndSuppliesToTrackYourInventory')}</p>
                 </td></tr>
               )}
@@ -404,6 +404,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
 }
 
 function HistoryModal({ item, onClose }: { item: InventoryItem; onClose: () => void }) {
+  const { t: tr } = useTranslation();
   const itemTransactions = inventoryTransactions.filter((t) => t.itemId === item.id);
 
   return (
@@ -412,7 +413,7 @@ function HistoryModal({ item, onClose }: { item: InventoryItem; onClose: () => v
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Inventory History</CardTitle>
+              <CardTitle>{tr('inventory.inventoryHistory')}</CardTitle>
               <p className="text-sm text-muted mt-1">{item.name}</p>
             </div>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
@@ -422,7 +423,7 @@ function HistoryModal({ item, onClose }: { item: InventoryItem; onClose: () => v
         </CardHeader>
         <CardContent>
           {itemTransactions.length === 0 ? (
-            <p className="text-center text-muted py-8">No history available</p>
+            <p className="text-center text-muted py-8">{tr('inventory.noHistoryAvailable')}</p>
           ) : (
             <div className="space-y-3">
               {itemTransactions.map((tx) => (

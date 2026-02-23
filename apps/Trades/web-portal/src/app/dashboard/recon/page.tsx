@@ -257,9 +257,9 @@ export default function ReconPage() {
           </div>
           <Button onClick={() => handleScan()} disabled={!autocomplete.query.trim() || scanning} className="px-6 shrink-0">
             {scanning ? (
-              <><Loader2 size={16} className="animate-spin mr-2" />Scanning...</>
+              <><Loader2 size={16} className="animate-spin mr-2" />{t('recon.scanning')}</>
             ) : (
-              <><Satellite size={16} className="mr-2" />Scan Property</>
+              <><Satellite size={16} className="mr-2" />{t('recon.scanProperty')}</>
             )}
           </Button>
         </div>

@@ -596,11 +596,12 @@ const RECON_STAGES = [
 ] as const;
 
 function ReconDetails({ data }: { data: ReconstructionClaimData }) {
+  const { t } = useTranslation();
   const currentIdx = RECON_STAGES.findIndex(s => s.key === (data.currentPhase || 'scope_review'));
   return (
     <>
       <div className="col-span-2 mb-1">
-        <p className="text-[11px] text-muted-foreground mb-2 font-medium">Workflow</p>
+        <p className="text-[11px] text-muted-foreground mb-2 font-medium">{t('common.workflow')}</p>
         <div className="flex items-start gap-0 overflow-x-auto pb-1">
           {RECON_STAGES.map((stage, i) => {
             const isComplete = currentIdx >= 0 && i < currentIdx;
@@ -935,6 +936,7 @@ function CompletionTab({
   onTransition: (status: ClaimStatus) => Promise<void>;
   transitioning: boolean;
 }) {
+  const { t: tr } = useTranslation();
   // Compute completion checks from existing data
   const moistureAllDry = moistureReadings.length > 0 && moistureReadings.every(r => r.isDry);
   const stillDeployed = equipment.filter(e => e.status === 'deployed' || e.status === 'maintenance');
@@ -1008,7 +1010,7 @@ function CompletionTab({
       <div className="rounded-xl border border-border bg-card p-5">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-[15px] font-semibold">Certificate of Completion</h3>
+            <h3 className="text-[15px] font-semibold">{tr('common.certificateOfCompletion')}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               {isSettled
                 ? 'Claim has been settled'
@@ -1115,7 +1117,7 @@ function CompletionTab({
         <div className="rounded-xl border border-green-200 dark:border-green-900/40 bg-green-50 dark:bg-green-950/20 p-5 flex items-center gap-3">
           <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-green-800 dark:text-green-300">Claim Settled</p>
+            <p className="text-sm font-semibold text-green-800 dark:text-green-300">{tr('common.claimSettled')}</p>
             <p className="text-xs text-green-700 dark:text-green-400">
               {claim.settledAt ? `Settled on ${new Date(claim.settledAt).toLocaleDateString()}` : 'This claim has been settled'}
             </p>

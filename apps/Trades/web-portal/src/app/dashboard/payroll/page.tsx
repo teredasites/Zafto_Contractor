@@ -374,6 +374,7 @@ function PayPeriodDetail({
   stubs: PayStub[];
   loading: boolean;
 }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="px-6 pb-6 pt-2 bg-secondary/30 border-t border-main">
@@ -397,18 +398,18 @@ function PayPeriodDetail({
       </h4>
 
       {stubs.length === 0 ? (
-        <p className="text-sm text-muted py-2">No pay stubs for this period</p>
+        <p className="text-sm text-muted py-2">{t('payroll.noPayStubsForThisPeriod')}</p>
       ) : (
         <div className="space-y-2">
           {/* Stub Header */}
           <div className="grid grid-cols-12 gap-3 px-3 py-2 text-xs font-medium text-muted uppercase tracking-wider">
-            <div className="col-span-2">Employee</div>
-            <div className="col-span-1">Reg Hrs</div>
-            <div className="col-span-1">OT Hrs</div>
-            <div className="col-span-2">Gross Pay</div>
-            <div className="col-span-2">Taxes</div>
-            <div className="col-span-2">Deductions</div>
-            <div className="col-span-2">Net Pay</div>
+            <div className="col-span-2">{t('common.employee')}</div>
+            <div className="col-span-1">{t('payroll.regHrs')}</div>
+            <div className="col-span-1">{t('payroll.otHrs')}</div>
+            <div className="col-span-2">{t('common.grossPay')}</div>
+            <div className="col-span-2">{t('common.taxes')}</div>
+            <div className="col-span-2">{t('common.deductions')}</div>
+            <div className="col-span-2">{t('common.netPay')}</div>
           </div>
 
           {stubs.map((stub) => {

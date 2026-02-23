@@ -444,7 +444,7 @@ export default function DataImportPage() {
       {step === 'importing' && importProgress && (
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 text-center space-y-4">
           <Loader2 size={40} className="text-blue-400 animate-spin mx-auto" />
-          <h3 className="text-white font-medium">Importing...</h3>
+          <h3 className="text-white font-medium">{t('estimates.importing')}</h3>
           <div className="w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
             <div
               className="bg-blue-500 h-3 rounded-full transition-all"

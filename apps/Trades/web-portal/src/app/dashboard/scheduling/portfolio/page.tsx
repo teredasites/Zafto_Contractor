@@ -71,7 +71,7 @@ export default function PortfolioPage() {
         </div>
         <div className="bg-success/5 border border-success/20 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-success">{summary.on_track}</p>
-          <p className="text-[10px] text-tertiary">On Track</p>
+          <p className="text-[10px] text-tertiary">{t('scheduling.onTrack')}</p>
         </div>
         <div className="bg-warning/5 border border-warning/20 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-warning">{summary.at_risk}</p>

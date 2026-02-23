@@ -33,6 +33,7 @@ import { useTranslation } from '@/lib/translations';
 // ==================== WIN PROBABILITY CIRCLE ====================
 
 function WinProbabilityCircle({ probability }: { probability: number }) {
+  const { t } = useTranslation();
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (probability / 100) * circumference;
@@ -75,7 +76,7 @@ function WinProbabilityCircle({ probability }: { probability: number }) {
           <span className={cn('text-4xl font-bold', color.text)}>
             {probability}%
           </span>
-          <span className="text-sm text-muted mt-0.5">Win Rate</span>
+          <span className="text-sm text-muted mt-0.5">{t('marketplace.winRate')}</span>
         </div>
       </div>
       <Badge variant={probability < 30 ? 'error' : probability < 60 ? 'warning' : 'success'} size="md">

@@ -233,7 +233,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('vendors.supplier')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.contact')}</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Categories</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('inventory.categories')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.terms')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('vendors.rating')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
@@ -546,6 +546,7 @@ function NewSupplierModal({
     notes?: string;
   }) => Promise<string>;
 }) {
+  const { t: tr } = useTranslation();
   const [name, setName] = useState('');
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
@@ -589,7 +590,7 @@ function NewSupplierModal({
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Supplier</CardTitle>
+            <CardTitle>{tr('vendors.addSupplier')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>

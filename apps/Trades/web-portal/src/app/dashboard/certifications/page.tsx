@@ -459,7 +459,7 @@ function CertificationModal({ cert, members, certTypes, onClose, onCreate, onUpd
             </label>
             {renewalRequired && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted">Remind</span>
+                <span className="text-xs text-muted">{tr('common.remind')}</span>
                 <select value={renewalDays} onChange={e => setRenewalDays(Number(e.target.value))}
                   className="px-2 py-1 rounded border border-border bg-surface text-sm text-main">
                   <option value={30}>30</option>

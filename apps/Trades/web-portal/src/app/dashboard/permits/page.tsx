@@ -203,7 +203,7 @@ export default function PermitsPage() {
               {filteredPermits.length === 0 && (
                 <tr><td colSpan={7} className="px-6 py-12 text-center">
                   <FileCheck size={40} className="mx-auto mb-3 text-muted opacity-40" />
-                  <p className="text-sm font-medium text-main">No permits found</p>
+                  <p className="text-sm font-medium text-main">{t('permits.noPermits')}</p>
                   <p className="text-xs text-muted mt-1">{allPermits.length === 0 ? 'Create your first permit to start tracking applications and inspections' : 'Try adjusting your search or filters'}</p>
                 </td></tr>
               )}
@@ -318,7 +318,7 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
 
           {permit.documents.length > 0 && (
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider mb-3">Documents</p>
+              <p className="text-xs text-muted uppercase tracking-wider mb-3">{t('documents.title')}</p>
               <div className="space-y-1">
                 {permit.documents.map((doc, i) => (
                   <div key={i} className="flex items-center justify-between p-2 hover:bg-surface-hover rounded">

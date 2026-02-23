@@ -258,6 +258,7 @@ function AvailableLeadsTab({
     earliestAvailable?: string;
   }) => Promise<string>;
 }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [tradeFilter, setTradeFilter] = useState('all');
   const [urgencyFilter, setUrgencyFilter] = useState('all');
@@ -311,8 +312,8 @@ function AvailableLeadsTab({
         <Card>
           <CardContent className="py-12 text-center">
             <Store size={40} className="mx-auto text-muted mb-3" />
-            <p className="text-main font-medium">No leads found</p>
-            <p className="text-muted text-sm mt-1">Try adjusting your filters</p>
+            <p className="text-main font-medium">{t('marketplace.noLeadsFound')}</p>
+            <p className="text-muted text-sm mt-1">{t('marketplace.tryAdjustingFilters')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -621,6 +622,7 @@ function BidRow({
   onToggle: () => void;
   onWithdraw: () => void;
 }) {
+  const { t } = useTranslation();
   const leadSummary = lead
     ? [lead.tradeCategory, lead.serviceType, lead.propertyCity].filter(Boolean).join(' / ')
     : 'Lead details unavailable';
@@ -665,7 +667,7 @@ function BidRow({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Lead Details */}
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-main">Lead Details</h4>
+                <h4 className="text-sm font-semibold text-main">{t('marketplace.leadDetails')}</h4>
                 {lead ? (
                   <div className="space-y-1.5 text-sm">
                     <div className="flex gap-2">
@@ -702,13 +704,13 @@ function BidRow({
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted">No lead details available</p>
+                  <p className="text-sm text-muted">{t('marketplace.noLeadDetailsAvailable')}</p>
                 )}
               </div>
 
               {/* Bid Details */}
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-main">Bid Details</h4>
+                <h4 className="text-sm font-semibold text-main">{t('marketplace.bidDetails')}</h4>
                 <div className="space-y-1.5 text-sm">
                   <div className="flex gap-2">
                     <span className="text-muted w-24 shrink-0">Amount:</span>
@@ -837,7 +839,7 @@ function ContractorProfileTab({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Tagline</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.tagline')}</label>
               <input
                 type="text"
                 value={tagline}
@@ -857,7 +859,7 @@ function ContractorProfileTab({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Years in Business</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.yearsInBusiness')}</label>
               <input
                 type="number"
                 value={yearsInBusiness}
