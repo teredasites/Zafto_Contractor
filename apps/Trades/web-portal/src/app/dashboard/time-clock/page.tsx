@@ -274,7 +274,7 @@ export default function TimeClockPage() {
                         </th>
                       );
                     })}
-                    <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-24">Total</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-24">{t('common.total')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-main">

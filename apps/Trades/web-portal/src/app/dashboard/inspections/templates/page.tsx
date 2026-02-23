@@ -134,7 +134,7 @@ export default function InspectionTemplatesPage() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  {selectedTemplate.isSystem && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">System</span>}
+                  {selectedTemplate.isSystem && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">{t('common.system')}</span>}
                   {selectedTemplate.trade && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted">{selectedTemplate.trade}</span>}
                 </div>
                 <CardTitle className="text-lg">{selectedTemplate.name}</CardTitle>

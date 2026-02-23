@@ -153,7 +153,7 @@ export default function BudgetsPage() {
                     {expandedJob === summary.jobId && (
                       <div className="border-t border-main p-4">
                         <div className="grid grid-cols-5 gap-2 text-[11px] font-medium text-muted uppercase tracking-wider pb-2 border-b border-light">
-                          <span>Category</span>
+                          <span>{t('common.category')}</span>
                           <span className="text-right">{t('common.budget')}</span>
                           <span className="text-right">{t('common.actual')}</span>
                           <span className="text-right">{t('common.variance')}</span>

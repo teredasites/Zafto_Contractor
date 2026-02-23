@@ -176,7 +176,7 @@ export default function SubcontractorsPage() {
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className="text-2xl font-bold text-green-400">{activeSubs}</div>
-          <div className="text-xs text-zinc-500">Active</div>
+          <div className="text-xs text-zinc-500">{t('common.active')}</div>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
           <div className="text-2xl font-bold text-white">${totalPaid.toLocaleString()}</div>
@@ -232,8 +232,8 @@ export default function SubcontractorsPage() {
               className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
             >
               <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="active">{t('common.active')}</option>
+              <option value="inactive">{t('common.inactive')}</option>
               <option value="suspended">Suspended</option>
             </select>
           </div>
@@ -433,7 +433,7 @@ export default function SubcontractorsPage() {
             <thead>
               <tr className="border-b border-zinc-700">
                 <th className="text-left py-2 text-zinc-500">{t('common.name')}</th>
-                <th className="text-left py-2 text-zinc-500">Company</th>
+                <th className="text-left py-2 text-zinc-500">{t('common.company')}</th>
                 <th className="text-right py-2 text-zinc-500">Total Paid</th>
                 <th className="text-center py-2 text-zinc-500">1099 Required</th>
               </tr>

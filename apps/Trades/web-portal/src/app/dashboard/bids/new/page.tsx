@@ -992,7 +992,7 @@ export default function NewBidPage() {
                     </button>
                   ))}
                   {filteredCustomers.length === 0 && customerSearch && (
-                    <div className="px-4 py-3 text-muted text-sm">No customers found</div>
+                    <div className="px-4 py-3 text-muted text-sm">{t('common.noCustomersFound')}</div>
                   )}
                 </div>
               )}
@@ -1295,7 +1295,7 @@ Example:
                       >
                         <option value="site">Site Photo</option>
                         <option value="plan">Plan/Drawing</option>
-                        <option value="reference">Reference</option>
+                        <option value="reference">{t('common.reference')}</option>
                       </select>
                     </div>
                   ))}
@@ -1411,12 +1411,12 @@ Example:
                 <tr className="text-left text-sm text-muted border-b border-main">
                   <th className="pb-2 font-medium w-8"></th>
                   <th className="pb-2 font-medium">{t('common.description')}</th>
-                  <th className="pb-2 font-medium w-20">Qty</th>
-                  <th className="pb-2 font-medium w-28">Unit</th>
-                  <th className="pb-2 font-medium w-28">Price</th>
-                  <th className="pb-2 font-medium w-28">Total</th>
+                  <th className="pb-2 font-medium w-20">{t('common.qty')}</th>
+                  <th className="pb-2 font-medium w-28">{t('common.unit')}</th>
+                  <th className="pb-2 font-medium w-28">{t('common.price')}</th>
+                  <th className="pb-2 font-medium w-28">{t('common.total')}</th>
                   <th className="pb-2 font-medium w-32">{t('common.category')}</th>
-                  <th className="pb-2 font-medium w-16">Tax</th>
+                  <th className="pb-2 font-medium w-16">{t('common.tax')}</th>
                   <th className="pb-2 font-medium w-20"></th>
                 </tr>
               </thead>
@@ -1752,7 +1752,7 @@ Example:
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Settings size={18} className="text-muted" />
-              <CardTitle className="text-base">Settings</CardTitle>
+              <CardTitle className="text-base">{t('common.settings')}</CardTitle>
             </div>
             {expandedSections.settings ? (
               <ChevronUp size={18} className="text-muted" />
@@ -1937,7 +1937,7 @@ Example:
                             <Badge variant="secondary" size="sm">Good/Better/Best</Badge>
                           )}
                           {tmpl.isSystem && (
-                            <Badge variant="secondary" size="sm">System</Badge>
+                            <Badge variant="secondary" size="sm">{t('common.system')}</Badge>
                           )}
                         </div>
                       </button>
@@ -2172,7 +2172,7 @@ Example:
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">{t('common.description')}</th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-600 dark:text-gray-400 w-20">Qty</th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-600 dark:text-gray-400 w-20">{t('common.qty')}</th>
                         <th className="px-4 py-3 text-right text-sm font-medium text-gray-600 dark:text-gray-400 w-28">{t('common.amount')}</th>
                       </tr>
                     </thead>
@@ -2195,7 +2195,7 @@ Example:
                     </tbody>
                     <tfoot className="bg-gray-50 dark:bg-gray-800">
                       <tr className="border-t border-gray-200 dark:border-gray-700">
-                        <td colSpan={2} className="px-4 py-2 text-right text-gray-600 dark:text-gray-400">Subtotal</td>
+                        <td colSpan={2} className="px-4 py-2 text-right text-gray-600 dark:text-gray-400">{t('common.subtotal')}</td>
                         <td className="px-4 py-2 text-right text-gray-900 dark:text-white">{formatCurrency(activeOption.subtotal)}</td>
                       </tr>
                       <tr>
@@ -2203,7 +2203,7 @@ Example:
                         <td className="px-4 py-2 text-right text-gray-900 dark:text-white">{formatCurrency(activeOption.taxAmount)}</td>
                       </tr>
                       <tr className="border-t-2 border-gray-300 dark:border-gray-600">
-                        <td colSpan={2} className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">Total</td>
+                        <td colSpan={2} className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">{t('common.total')}</td>
                         <td className="px-4 py-3 text-right font-bold text-xl text-gray-900 dark:text-white">{formatCurrency(grandTotal)}</td>
                       </tr>
                     </tfoot>

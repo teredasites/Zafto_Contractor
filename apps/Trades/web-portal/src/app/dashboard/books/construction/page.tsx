@@ -232,7 +232,7 @@ export default function ConstructionAccountingPage() {
           <div className="p-2.5 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
             <HardHat size={20} className="text-amber-600 dark:text-amber-400" />
           </div>
-          <Badge variant="warning" size="md">Enterprise</Badge>
+          <Badge variant="warning" size="md">{t('common.enterprise')}</Badge>
         </div>
       </div>
 

@@ -139,12 +139,12 @@ export default function PricingCoveragePage() {
             <thead>
               <tr className="text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800">
                 <th className="px-4 py-2.5 text-left">{t('common.category')}</th>
-                <th className="px-4 py-2.5 text-left">Region</th>
+                <th className="px-4 py-2.5 text-left">{t('common.region')}</th>
                 <th className="px-4 py-2.5 text-right">Entries</th>
                 <th className="px-4 py-2.5 text-right">Avg Price</th>
                 <th className="px-4 py-2.5 text-center">Confidence</th>
                 <th className="px-4 py-2.5 text-right">Sources</th>
-                <th className="px-4 py-2.5 text-right">Last Updated</th>
+                <th className="px-4 py-2.5 text-right">{t('common.lastUpdated')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/50">

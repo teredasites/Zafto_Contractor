@@ -233,10 +233,10 @@ export default function FleetPage() {
               <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
                 <div className="col-span-1" />
                 <div className="col-span-2">Vehicle</div>
-                <div className="col-span-1">Type</div>
+                <div className="col-span-1">{t('common.type')}</div>
                 <div className="col-span-2">Make / Model / Year</div>
                 <div className="col-span-2">Assigned To</div>
-                <div className="col-span-1">Status</div>
+                <div className="col-span-1">{t('common.status')}</div>
                 <div className="col-span-1">Odometer</div>
                 <div className="col-span-2">Last GPS</div>
               </div>

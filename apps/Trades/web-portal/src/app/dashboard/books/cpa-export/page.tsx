@@ -528,15 +528,15 @@ export default function CPAExportPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-3 py-2 text-muted font-medium">Account</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Balance</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.account')}</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.balance')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {packageData.pnl.revenue.length > 0 && (
                       <>
                         <tr className="bg-secondary/50">
-                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">Revenue</td>
+                          <td colSpan={2} className="px-3 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('common.revenue')}</td>
                         </tr>
                         {packageData.pnl.revenue.map(a => (
                           <tr key={a.accountNumber} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
@@ -582,7 +582,7 @@ export default function CPAExportPage() {
                       </>
                     )}
                     <tr className="border-t-2 border-default font-bold">
-                      <td className="px-3 py-2 text-main">Net Income</td>
+                      <td className="px-3 py-2 text-main">{t('common.netIncome')}</td>
                       <td className={cn('px-3 py-2 text-right tabular-nums', packageData.pnl.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                         {formatCurrency(packageData.pnl.netIncome)}
                       </td>
@@ -605,8 +605,8 @@ export default function CPAExportPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-default">
-                      <th className="text-left px-3 py-2 text-muted font-medium">Account</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Balance</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.account')}</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.balance')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -702,9 +702,9 @@ export default function CPAExportPage() {
                         <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(v.ytdPayments)}</td>
                         <td className="px-3 py-2 text-center">
                           {v.is1099Required ? (
-                            <Badge variant="warning">Required</Badge>
+                            <Badge variant="warning">{t('common.required')}</Badge>
                           ) : (
-                            <Badge variant="secondary">No</Badge>
+                            <Badge variant="secondary">{t('common.no')}</Badge>
                           )}
                         </td>
                       </tr>

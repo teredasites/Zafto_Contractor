@@ -232,12 +232,12 @@ export default function RentRollPage() {
         <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted">
           <div className="col-span-2">{t('common.tenant')}</div>
           <div className="col-span-2">Unit / Property</div>
-          <div className="col-span-1">Type</div>
+          <div className="col-span-1">{t('common.type')}</div>
           <div className="col-span-1 text-right">Amount Due</div>
-          <div className="col-span-1 text-right">Paid</div>
-          <div className="col-span-1">Due Date</div>
-          <div className="col-span-1">Status</div>
-          <div className="col-span-3 text-right">Actions</div>
+          <div className="col-span-1 text-right">{t('common.paid')}</div>
+          <div className="col-span-1">{t('common.dueDate')}</div>
+          <div className="col-span-1">{t('common.status')}</div>
+          <div className="col-span-3 text-right">{t('common.actions')}</div>
         </div>
 
         {filteredCharges.map((charge) => {

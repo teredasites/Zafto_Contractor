@@ -315,7 +315,7 @@ export default function WalkthroughsPage() {
           <CardContent className="p-0">
             {/* Table header */}
             <div className="hidden lg:grid grid-cols-[1fr_120px_1fr_80px_80px_110px_110px_40px] gap-4 px-6 py-3 border-b border-main text-xs font-medium uppercase tracking-wider text-muted">
-              <span>Name</span>
+              <span>{t('common.name')}</span>
               <span>{t('common.type')}</span>
               <span>{t('common.address')}</span>
               <span className="text-center">Rooms</span>

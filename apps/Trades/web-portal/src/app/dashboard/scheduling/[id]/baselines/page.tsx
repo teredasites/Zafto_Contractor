@@ -267,7 +267,7 @@ export default function BaselinesPage() {
                           ? `${Math.round((new Date(baseline.planned_finish).getTime() - new Date(baseline.planned_start).getTime()) / (1000 * 60 * 60 * 24))}d`
                           : '—'}
                       </p>
-                      <p className="text-[10px] text-tertiary">Duration</p>
+                      <p className="text-[10px] text-tertiary">{t('common.duration')}</p>
                     </div>
                   </div>
                 </button>

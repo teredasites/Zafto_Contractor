@@ -118,7 +118,7 @@ export default function EquipmentInsightsPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold text-main">Equipment Memory</h1>
-                <Badge variant="purple" size="sm">Powered by Z</Badge>
+                <Badge variant="purple" size="sm">{t('common.poweredByZ')}</Badge>
               </div>
               {propertyName && (
                 <p className="text-sm text-muted">{propertyName}</p>

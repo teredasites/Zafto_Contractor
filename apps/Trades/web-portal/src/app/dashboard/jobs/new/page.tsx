@@ -514,7 +514,7 @@ export default function NewJobPage() {
                       <div className="fixed inset-0 z-40" onClick={() => setShowCustomerSearch(false)} />
                       <div className="absolute top-full left-0 right-0 mt-2 bg-surface border border-main rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
                         {filteredCustomers.length === 0 ? (
-                          <div className="p-4 text-center text-muted">No customers found</div>
+                          <div className="p-4 text-center text-muted">{t('common.noCustomersFound')}</div>
                         ) : (
                           filteredCustomers.map((customer) => (
                             <button
@@ -689,7 +689,7 @@ export default function NewJobPage() {
                       <p className="text-xs text-muted capitalize">{member.role.replace('_', ' ')}</p>
                     </div>
                     {assignedMembers.includes(member.id) && (
-                      <Badge variant="success" size="sm">Assigned</Badge>
+                      <Badge variant="success" size="sm">{t('common.assigned')}</Badge>
                     )}
                   </button>
                 ))}

@@ -415,9 +415,9 @@ export default function BidDetailPage() {
                     <thead>
                       <tr className="text-left text-sm text-muted border-b border-main">
                         <th className="pb-2 font-medium">{t('common.description')}</th>
-                        <th className="pb-2 font-medium text-right">Qty</th>
-                        <th className="pb-2 font-medium text-right">Price</th>
-                        <th className="pb-2 font-medium text-right">Total</th>
+                        <th className="pb-2 font-medium text-right">{t('common.qty')}</th>
+                        <th className="pb-2 font-medium text-right">{t('common.price')}</th>
+                        <th className="pb-2 font-medium text-right">{t('common.total')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -583,7 +583,7 @@ export default function BidDetailPage() {
           {bid.signatureData && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Signature</CardTitle>
+                <CardTitle className="text-base">{t('common.signature')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="bg-secondary rounded-lg p-4">
@@ -613,7 +613,7 @@ export default function BidDetailPage() {
                 <span className="text-main">{formatDate(bid.createdAt)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Last Updated</span>
+                <span className="text-muted">{t('common.lastUpdated')}</span>
                 <span className="text-main">{formatDate(bid.updatedAt)}</span>
               </div>
               {bid.sentAt && (

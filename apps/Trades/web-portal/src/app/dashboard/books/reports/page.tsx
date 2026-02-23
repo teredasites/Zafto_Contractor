@@ -492,7 +492,7 @@ export default function FinancialReportsPage() {
             {needsDateRange && (
               <>
                 <div>
-                  <label className="text-xs text-muted block mb-1">Period</label>
+                  <label className="text-xs text-muted block mb-1">{t('common.period')}</label>
                   <select
                     value={period}
                     onChange={(e) => setPeriod(e.target.value)}
@@ -501,20 +501,20 @@ export default function FinancialReportsPage() {
                     <option value="this_month">{t('common.thisMonth')}</option>
                     <option value="last_month">Last Month</option>
                     <option value="this_quarter">This Quarter</option>
-                    <option value="this_year">This Year</option>
-                    <option value="last_year">Last Year</option>
-                    <option value="custom">Custom</option>
+                    <option value="this_year">{t('common.thisYear')}</option>
+                    <option value="last_year">{t('common.lastYear')}</option>
+                    <option value="custom">{t('common.custom')}</option>
                   </select>
                 </div>
                 {period === 'custom' && (
                   <>
                     <div>
-                      <label className="text-xs text-muted block mb-1">Start</label>
+                      <label className="text-xs text-muted block mb-1">{t('common.start')}</label>
                       <input type="date" value={customStart} onChange={(e) => setCustomStart(e.target.value)}
                         className="px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent" />
                     </div>
                     <div>
-                      <label className="text-xs text-muted block mb-1">End</label>
+                      <label className="text-xs text-muted block mb-1">{t('common.end')}</label>
                       <input type="date" value={customEnd} onChange={(e) => setCustomEnd(e.target.value)}
                         className="px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main focus:outline-none focus:ring-1 focus:ring-accent" />
                     </div>
@@ -531,7 +531,7 @@ export default function FinancialReportsPage() {
             )}
             {needsAccountSelect && (
               <div className="flex-1">
-                <label className="text-xs text-muted block mb-1">Account</label>
+                <label className="text-xs text-muted block mb-1">{t('common.account')}</label>
                 <select
                   value={selectedAccountId}
                   onChange={(e) => setSelectedAccountId(e.target.value)}
@@ -701,11 +701,11 @@ export default function FinancialReportsPage() {
                   <thead>
                     <tr className="border-b border-default">
                       <th className="text-left px-3 py-2 text-muted font-medium">{t('common.date')}</th>
-                      <th className="text-left px-3 py-2 text-muted font-medium">Reference</th>
+                      <th className="text-left px-3 py-2 text-muted font-medium">{t('common.reference')}</th>
                       <th className="text-left px-3 py-2 text-muted font-medium">Memo</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">Debit</th>
                       <th className="text-right px-3 py-2 text-muted font-medium">Credit</th>
-                      <th className="text-right px-3 py-2 text-muted font-medium">Balance</th>
+                      <th className="text-right px-3 py-2 text-muted font-medium">{t('common.balance')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -819,7 +819,7 @@ export default function FinancialReportsPage() {
                           <td className="px-3 py-1.5 text-right tabular-nums text-main">{formatCurrency(prop.income)}</td>
                         </tr>
                         <tr className="bg-secondary/50">
-                          <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>Expenses</td>
+                          <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>{t('common.expenses')}</td>
                         </tr>
                         {SCHEDULE_E_CATEGORIES.map(cat => {
                           const amount = prop.expenses[cat.key] || 0;
@@ -890,10 +890,10 @@ export default function FinancialReportsPage() {
                     <thead>
                       <tr className="border-b border-default">
                         <th className="text-left px-3 py-2 text-muted font-medium">{t('common.job')}</th>
-                        <th className="text-right px-3 py-2 text-muted font-medium">Revenue</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">{t('common.revenue')}</th>
                         <th className="text-right px-3 py-2 text-muted font-medium">Costs</th>
-                        <th className="text-right px-3 py-2 text-muted font-medium">Profit</th>
-                        <th className="text-right px-3 py-2 text-muted font-medium">Margin</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">{t('common.profit')}</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">{t('common.margin')}</th>
                       </tr>
                     </thead>
                     <tbody>

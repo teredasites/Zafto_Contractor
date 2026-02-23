@@ -188,11 +188,11 @@ export default function VendorPaymentsPage() {
       <Card>
         <CardContent className="p-0">
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
-            <div className="col-span-2">Date</div>
-            <div className="col-span-3">Vendor</div>
+            <div className="col-span-2">{t('common.date')}</div>
+            <div className="col-span-3">{t('common.vendor')}</div>
             <div className="col-span-2">Method</div>
-            <div className="col-span-2">Reference</div>
-            <div className="col-span-2 text-right">Amount</div>
+            <div className="col-span-2">{t('common.reference')}</div>
+            <div className="col-span-2 text-right">{t('common.amount')}</div>
             <div className="col-span-1">1099</div>
           </div>
           <div className="divide-y divide-main">

@@ -282,7 +282,7 @@ export default function ImportEstimatePage() {
               <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Extracted Claim Info</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.claimNumber')}</span><span className="text-zinc-200">{claimInfo.claimNumber || 'N/A'}</span></div>
-                <div className="flex justify-between"><span className="text-zinc-500">Customer</span><span className="text-zinc-200">{claimInfo.customerName || 'N/A'}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('common.customer')}</span><span className="text-zinc-200">{claimInfo.customerName || 'N/A'}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.address')}</span><span className="text-zinc-200">{claimInfo.propertyAddress || 'N/A'}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.lossType')}</span><span className="text-zinc-200">{claimInfo.lossType || 'N/A'}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.carrier')}</span><span className="text-zinc-200">{claimInfo.carrier || 'N/A'}</span></div>
@@ -306,8 +306,8 @@ export default function ImportEstimatePage() {
           {/* Select/deselect all */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button onClick={() => toggleAll(true)} className="text-xs text-blue-400 hover:underline">Select All</button>
-              <button onClick={() => toggleAll(false)} className="text-xs text-zinc-500 hover:underline">Deselect All</button>
+              <button onClick={() => toggleAll(true)} className="text-xs text-blue-400 hover:underline">{t('common.selectAll')}</button>
+              <button onClick={() => toggleAll(false)} className="text-xs text-zinc-500 hover:underline">{t('common.deselectAll')}</button>
               <span className="text-xs text-zinc-500">{items.filter(i => i.selected).length} of {items.length} selected</span>
             </div>
           </div>
@@ -318,13 +318,13 @@ export default function ImportEstimatePage() {
               <thead>
                 <tr className="text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800">
                   <th className="px-3 py-2 text-left w-8" />
-                  <th className="px-3 py-2 text-left w-20">Code</th>
+                  <th className="px-3 py-2 text-left w-20">{t('common.code')}</th>
                   <th className="px-3 py-2 text-left">{t('common.description')}</th>
                   <th className="px-3 py-2 text-left w-16">Room</th>
-                  <th className="px-3 py-2 text-right w-12">Qty</th>
+                  <th className="px-3 py-2 text-right w-12">{t('common.qty')}</th>
                   <th className="px-3 py-2 text-right w-20">Xact Price</th>
                   <th className="px-3 py-2 text-right w-20">ZAFTO Price</th>
-                  <th className="px-3 py-2 text-right w-20">Total</th>
+                  <th className="px-3 py-2 text-right w-20">{t('common.total')}</th>
                   <th className="px-3 py-2 text-center w-16">Match</th>
                 </tr>
               </thead>

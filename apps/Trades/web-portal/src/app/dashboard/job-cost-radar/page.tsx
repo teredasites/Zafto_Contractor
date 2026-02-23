@@ -153,7 +153,7 @@ export default function JobCostRadarPage() {
                         <p className={cn('text-sm font-medium', budgetOverrun > 0 ? 'text-red-500' : 'text-emerald-500')}>{formatCurrency(job.projectedTotal)}</p>
                       </div>
                       <div className="p-2 rounded-md bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Margin</p>
+                        <p className="text-xs text-muted-foreground">{t('common.margin')}</p>
                         <p className={cn('text-sm font-medium', job.projectedMargin < 0 ? 'text-red-500' : job.projectedMargin < 10 ? 'text-amber-500' : 'text-emerald-500')}>{job.projectedMargin}%</p>
                       </div>
                     </div>
