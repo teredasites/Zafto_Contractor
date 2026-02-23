@@ -442,7 +442,7 @@ function BillingTab({
           onChange={(e) => setJobFilter(e.target.value)}
           className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
         >
-          <option value="">All Jobs</option>
+          <option value="">{t('common.allJobs')}</option>
           {jobs.map((j) => (
             <option key={j.id} value={j.id}>{j.title}</option>
           ))}
@@ -459,7 +459,7 @@ function BillingTab({
           {/* Header */}
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
             <div className="col-span-1">App #</div>
-            <div className="col-span-2">Job</div>
+            <div className="col-span-2">{t('common.job')}</div>
             <div className="col-span-2">{t('common.period')}</div>
             <div className="col-span-2 text-right">{t('common.contract')}</div>
             <div className="col-span-1 text-right">{t('common.completed')}</div>
@@ -547,7 +547,7 @@ function BillingTab({
                                 <th className="text-left py-2 px-2 text-muted font-medium">{t('common.description')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.scheduled')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">Prev.</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">This Period</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('common.thisPeriod')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.materials')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.total')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">%</th>
@@ -626,7 +626,7 @@ function RetentionTab({
           onChange={(e) => setJobFilter(e.target.value)}
           className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
         >
-          <option value="">All Jobs</option>
+          <option value="">{t('common.allJobs')}</option>
           {jobs.map((j) => (
             <option key={j.id} value={j.id}>{j.title}</option>
           ))}
@@ -641,7 +641,7 @@ function RetentionTab({
       <Card>
         <CardContent className="p-0">
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
-            <div className="col-span-2">Job</div>
+            <div className="col-span-2">{t('common.job')}</div>
             <div className="col-span-1 text-right">{t('common.rate')}</div>
             <div className="col-span-2 text-right">Total Billed</div>
             <div className="col-span-2 text-right">Total Retained</div>
@@ -742,7 +742,7 @@ function WIPTab({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-main bg-secondary/50">
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide">Job</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.job')}</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Costs Incurred</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Billings to Date</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Estimated Gross</th>
@@ -847,14 +847,14 @@ function PayrollTab({
         <CardContent className="p-4">
           <div className="flex items-end gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px]">
-              <label className="text-xs text-muted block mb-1">Job</label>
+              <label className="text-xs text-muted block mb-1">{t('common.job')}</label>
               <select
                 value={payrollJobId}
                 onChange={(e) => setPayrollJobId(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
                 disabled={jobsLoading}
               >
-                <option value="">Select job...</option>
+                <option value="">{t('common.selectJob')}</option>
                 {jobs.map((j) => (
                   <option key={j.id} value={j.id}>{j.title}</option>
                 ))}
@@ -901,14 +901,14 @@ function PayrollTab({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-main bg-secondary/50">
-                  <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide">Employee</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Classification</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.employee')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.classification')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">ST Hours</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">OT Hours</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.rate')}</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Gross Pay</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Deductions</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">Net Pay</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.grossPay')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.deductions')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase tracking-wide">{t('common.netPay')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-main">
@@ -1092,7 +1092,7 @@ function NewBillingModal({
                 onChange={(e) => setJobId(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               >
-                <option value="">Select job...</option>
+                <option value="">{t('common.selectJob')}</option>
                 {jobs.map((j) => (
                   <option key={j.id} value={j.id}>{j.title}</option>
                 ))}
@@ -1161,7 +1161,7 @@ function NewBillingModal({
                     <th className="text-left px-2 py-2 text-muted font-medium min-w-[140px]">{t('common.description')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.scheduled')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">Prev. Done</th>
-                    <th className="text-right px-2 py-2 text-muted font-medium w-24">This Period</th>
+                    <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.thisPeriod')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.materials')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-24">{t('common.total')}</th>
                     <th className="text-right px-2 py-2 text-muted font-medium w-14">%</th>
@@ -1353,7 +1353,7 @@ function NewRetentionModal({
               onChange={(e) => setJobId(e.target.value)}
               className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
             >
-              <option value="">Select job...</option>
+              <option value="">{t('common.selectJob')}</option>
               {jobs.map((j) => (
                 <option key={j.id} value={j.id}>{j.title}</option>
               ))}

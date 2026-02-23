@@ -383,7 +383,7 @@ function TemplatesTab({
       <Card>
         <CardContent className="py-16 text-center">
           <FileText size={48} className="mx-auto mb-3 text-muted opacity-50" />
-          <p className="text-muted">No templates found</p>
+          <p className="text-muted">{t('common.noTemplatesFound')}</p>
           <p className="text-sm text-muted mt-1">Create your first email template to get started</p>
         </CardContent>
       </Card>
@@ -464,11 +464,11 @@ function SentTab({ sends }: { sends: ReturnType<typeof useEmail>['sends'] }) {
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">To</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Subject</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.to')}</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.subject')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.sent')}</th>
               </tr>
             </thead>
             <tbody>
@@ -541,7 +541,7 @@ function CampaignsTab({
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Campaign</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Recipients</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.sent')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.delivered')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Open Rate</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Click Rate</th>
@@ -645,7 +645,7 @@ function UnsubscribesTab({ unsubscribes }: { unsubscribes: ReturnType<typeof use
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.email')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Reason</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.reason')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.date')}</th>
               </tr>
             </thead>

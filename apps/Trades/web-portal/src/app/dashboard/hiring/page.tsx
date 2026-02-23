@@ -940,10 +940,10 @@ function InterviewsTab({
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-main">
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Candidate</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Position</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.candidate')}</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.position')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Date & Time</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.dateTime')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
                   </tr>
@@ -1018,10 +1018,10 @@ function InterviewsTab({
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-main">
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Candidate</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Position</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.candidate')}</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.position')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
-                    <th className="text-left text-sm font-medium text-muted px-6 py-3">Date & Time</th>
+                    <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.dateTime')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                     <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.recommendation')}</th>
                   </tr>
@@ -1343,7 +1343,7 @@ function NewApplicantModal({
               <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John" className={inputCls} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Last Name</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('common.lastName')}</label>
               <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Smith" className={inputCls} />
             </div>
           </div>

@@ -192,7 +192,7 @@ export default function LeadsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totalValue)}</p>
-                <p className="text-sm text-muted">Pipeline Value</p>
+                <p className="text-sm text-muted">{t('common.pipelineValue')}</p>
               </div>
             </div>
           </CardContent>
@@ -510,37 +510,37 @@ function NewLeadModal({ onClose, onCreate }: {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Trade</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.trade')}</label>
               <select value={trade} onChange={(e) => setTrade(e.target.value)} className={inputCls}>
                 <option value="">Select trade</option>
-                <option value="electrical">Electrical</option>
-                <option value="plumbing">Plumbing</option>
+                <option value="electrical">{t('common.electrical')}</option>
+                <option value="plumbing">{t('common.plumbing')}</option>
                 <option value="hvac">HVAC</option>
-                <option value="roofing">Roofing</option>
+                <option value="roofing">{t('common.roofing')}</option>
                 <option value="painting">Painting</option>
                 <option value="carpentry">Carpentry</option>
                 <option value="flooring">Flooring</option>
                 <option value="landscaping">Landscaping</option>
                 <option value="general">General Contracting</option>
-                <option value="solar">Solar</option>
+                <option value="solar">{t('common.solar')}</option>
                 <option value="restoration">Restoration</option>
-                <option value="other">Other</option>
+                <option value="other">{t('common.other')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Urgency</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.urgency')}</label>
               <select value={urgency} onChange={(e) => setUrgency(e.target.value)} className={inputCls}>
-                <option value="normal">Normal</option>
+                <option value="normal">{t('common.normal')}</option>
                 <option value="soon">Soon</option>
                 <option value="urgent">{t('common.urgent')}</option>
-                <option value="emergency">Emergency</option>
+                <option value="emergency">{t('common.emergency')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Source</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.source')}</label>
               <select value={source} onChange={(e) => setSource(e.target.value)} className={inputCls}>
-                <option value="website">Website</option>
-                <option value="referral">Referral</option>
+                <option value="website">{t('common.website')}</option>
+                <option value="referral">{t('common.referral')}</option>
                 <option value="google">Google</option>
                 <option value="yelp">Yelp</option>
                 <option value="facebook">Facebook</option>
@@ -549,7 +549,7 @@ function NewLeadModal({ onClose, onCreate }: {
                 <option value="homeadvisor">HomeAdvisor</option>
                 <option value="thumbtack">Thumbtack</option>
                 <option value="angi">Angi</option>
-                <option value="other">Other</option>
+                <option value="other">{t('common.other')}</option>
               </select>
             </div>
             <div>

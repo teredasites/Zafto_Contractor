@@ -240,13 +240,13 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-2 pt-3 border-t border-zinc-800">
           <div className="text-center">
-            <span className="text-[10px] text-zinc-500 block">Jobs</span>
+            <span className="text-[10px] text-zinc-500 block">{t('common.jobs')}</span>
             <span className="text-xs font-medium text-white">
               {summary.assignmentsCompleted}/{summary.assignmentsReceived}
             </span>
           </div>
           <div className="text-center">
-            <span className="text-[10px] text-zinc-500 block">Referral</span>
+            <span className="text-[10px] text-zinc-500 block">{t('common.referral')}</span>
             <span className="text-xs font-medium text-amber-400">
               {formatCurrency(summary.referralFeesPaid)}
             </span>
@@ -319,10 +319,10 @@ function PnLTable({
               <tr className="border-b border-zinc-800 text-zinc-400">
                 <th className="text-left px-4 py-2 font-medium">Program</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.revenue')}</th>
-                <th className="text-right px-4 py-2 font-medium">Cost</th>
+                <th className="text-right px-4 py-2 font-medium">{t('common.cost')}</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.margin')}</th>
                 <th className="text-right px-4 py-2 font-medium">Margin %</th>
-                <th className="text-right px-4 py-2 font-medium">Referral</th>
+                <th className="text-right px-4 py-2 font-medium">{t('common.referral')}</th>
                 <th className="text-right px-4 py-2 font-medium">Supp. Rate</th>
               </tr>
             </thead>

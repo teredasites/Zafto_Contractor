@@ -114,7 +114,7 @@ export default function InventoryPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalItems}</p>
-                <p className="text-sm text-muted">Total Items</p>
+                <p className="text-sm text-muted">{t('common.totalItems')}</p>
               </div>
             </div>
           </CardContent>
@@ -192,12 +192,12 @@ export default function InventoryPage() {
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.item')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">SKU</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.sku')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.category')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.location')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.qty')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">Min</th>
-                <th className="text-right text-sm font-medium text-muted px-6 py-3">Unit Cost</th>
+                <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.unitCost')}</th>
                 <th className="text-right text-sm font-medium text-muted px-6 py-3">{t('common.value')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
               </tr>
@@ -318,7 +318,7 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
           <Input label="Location" placeholder="Shelf A1" />
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Add Item</Button>
+            <Button className="flex-1"><Plus size={16} />{t('common.addItem')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -377,7 +377,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
           />
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Reason</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.reason')}</label>
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -389,7 +389,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
               <option value="damaged">Damaged/Lost</option>
               <option value="count">Inventory count</option>
               <option value="return">Returned to vendor</option>
-              <option value="other">Other</option>
+              <option value="other">{t('common.other')}</option>
             </select>
           </div>
 

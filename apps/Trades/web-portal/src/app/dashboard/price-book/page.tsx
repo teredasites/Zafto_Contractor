@@ -245,9 +245,9 @@ function MaterialsTab({ materials, search, categoryFilter }: { materials: Materi
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.item')}</th>
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">SKU</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.sku')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Cost</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.cost')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.price')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.markup')}</th>
                 <th className="px-6 py-3"></th>
@@ -317,7 +317,7 @@ function AssembliesTab({ assemblies, search, categoryFilter }: { assemblies: Ass
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Assembly</th>
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
                 <th className="text-center text-xs font-medium text-muted uppercase px-6 py-3">{t('common.items')}</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Cost</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.cost')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.price')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.margin')}</th>
                 <th className="px-6 py-3"></th>

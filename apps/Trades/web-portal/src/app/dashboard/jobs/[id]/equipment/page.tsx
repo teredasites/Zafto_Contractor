@@ -194,7 +194,7 @@ export default function JobEquipmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(summary.dailyRateTotal)}</p>
-                <p className="text-sm text-muted">Daily Rate</p>
+                <p className="text-sm text-muted">{t('common.dailyRate')}</p>
               </div>
             </div>
           </CardContent>
@@ -522,7 +522,7 @@ function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] })
             <tr className="border-b border-main">
               <th className="text-left p-3 text-muted font-medium">{t('common.equipment')}</th>
               <th className="text-left p-3 text-muted font-medium">{t('common.area')}</th>
-              <th className="text-left p-3 text-muted font-medium">Deployed</th>
+              <th className="text-left p-3 text-muted font-medium">{t('common.deployed')}</th>
               <th className="text-left p-3 text-muted font-medium">Removed</th>
               <th className="text-right p-3 text-muted font-medium">Days</th>
               <th className="text-right p-3 text-muted font-medium">{t('common.rate')}</th>
@@ -550,7 +550,7 @@ function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] })
           </tbody>
           <tfoot>
             <tr className="border-t-2 border-main font-medium">
-              <td colSpan={4} className="p-3 text-main">Totals</td>
+              <td colSpan={4} className="p-3 text-main">{t('common.totals')}</td>
               <td className="p-3 text-right text-main">{deployments.reduce((s, d) => s + d.billableDays, 0)}</td>
               <td className="p-3 text-right"></td>
               <td className="p-3 text-right text-main">{formatCurrency(deployments.reduce((s, d) => s + d.billableAmount, 0))}</td>
@@ -955,7 +955,7 @@ function RunCalculatorModal({ jobId, onClose }: { jobId: string; onClose: () => 
                   <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
                     {results.reduce((s, r) => s + r.scrubberUnits, 0)}
                   </p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400">Air Scrubbers</p>
+                  <p className="text-xs text-purple-600 dark:text-purple-400">{t('common.airScrubbers')}</p>
                 </div>
               </div>
 

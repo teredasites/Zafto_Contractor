@@ -342,7 +342,7 @@ export default function AutomationsPage() {
               <Zap size={48} className="mx-auto text-muted mb-4" />
               <h3 className="text-lg font-medium text-main mb-2">{t('automations.noRecords')}</h3>
               <p className="text-muted mb-4">Create workflow automations to save time on repetitive tasks.</p>
-              <Button onClick={() => setShowNewModal(true)}><Plus size={16} />New Automation</Button>
+              <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newAutomation')}</Button>
             </CardContent>
           </Card>
         )}
@@ -457,7 +457,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
               <p className="text-sm font-medium text-main">{automation.lastRun ? formatDate(automation.lastRun) : 'Never'}</p>
             </div>
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider">Created</p>
+              <p className="text-xs text-muted uppercase tracking-wider">{t('common.created')}</p>
               <p className="text-sm font-medium text-main">{formatDate(automation.createdAt)}</p>
             </div>
           </div>
@@ -524,7 +524,7 @@ function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCrea
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>New Automation</CardTitle>
+          <CardTitle>{t('common.newAutomation')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>

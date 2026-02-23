@@ -231,7 +231,7 @@ export default function SubcontractorsPage() {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
             >
-              <option value="">All Status</option>
+              <option value="">{t('common.allStatus')}</option>
               <option value="active">{t('common.active')}</option>
               <option value="inactive">{t('common.inactive')}</option>
               <option value="suspended">Suspended</option>
@@ -512,7 +512,7 @@ export default function SubcontractorsPage() {
                   <input value={formLicenseNum} onChange={(e) => setFormLicenseNum(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">License State</label>
+                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.licenseState')}</label>
                   <input value={formLicenseState} onChange={(e) => setFormLicenseState(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>

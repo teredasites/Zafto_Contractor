@@ -616,7 +616,7 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.type')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Sent</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.sent')}</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.response')}</th>
               </tr>
             </thead>

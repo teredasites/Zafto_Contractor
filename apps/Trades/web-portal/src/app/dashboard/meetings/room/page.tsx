@@ -109,7 +109,7 @@ function ContextPanel({ jobId, canSeeFinancials }: { jobId: string; canSeeFinanc
       </div>
       <div className="p-4 space-y-4">
         <div>
-          <p className="text-xs text-zinc-500 uppercase tracking-wide">Job</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.job')}</p>
           <p className="text-sm text-zinc-100 font-medium mt-0.5">{job.title}</p>
         </div>
         <div>

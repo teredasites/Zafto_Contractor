@@ -346,7 +346,7 @@ export default function GrowthPage() {
                       </div>
                       {selectedAction.estimated_value != null && selectedAction.estimated_value > 0 && (
                         <div className="p-2 rounded-lg bg-surface-hover">
-                          <p className="text-[10px] text-muted">Est. Value</p>
+                          <p className="text-[10px] text-muted">{t('common.estValue')}</p>
                           <p className="text-sm font-bold text-emerald-600 mt-0.5">
                             {formatCurrency(selectedAction.estimated_value)}
                           </p>

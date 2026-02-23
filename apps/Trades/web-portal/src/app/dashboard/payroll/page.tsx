@@ -245,9 +245,9 @@ export default function PayrollPage() {
                 <div className="col-span-1">{t('common.type')}</div>
                 <div className="col-span-1">{t('common.status')}</div>
                 <div className="col-span-1">{t('common.employees')}</div>
-                <div className="col-span-2">Gross Pay</div>
-                <div className="col-span-1">Taxes</div>
-                <div className="col-span-2">Net Pay</div>
+                <div className="col-span-2">{t('common.grossPay')}</div>
+                <div className="col-span-1">{t('common.taxes')}</div>
+                <div className="col-span-2">{t('common.netPay')}</div>
                 <div className="col-span-1">{t('common.actions')}</div>
               </div>
 

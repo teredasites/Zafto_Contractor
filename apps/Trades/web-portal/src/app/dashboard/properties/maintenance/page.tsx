@@ -316,7 +316,7 @@ export default function MaintenancePage() {
             <div className="col-span-2">{t('common.propertyUnit')}</div>
             <div className="col-span-1">{t('common.tenant')}</div>
             <div className="col-span-1">{t('common.category')}</div>
-            <div className="col-span-1">Urgency</div>
+            <div className="col-span-1">{t('common.urgency')}</div>
             <div className="col-span-1">{t('common.status')}</div>
             <div className="col-span-1">{t('common.createdAt')}</div>
             <div className="col-span-2 text-right">{t('common.actions')}</div>

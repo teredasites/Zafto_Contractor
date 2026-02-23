@@ -340,7 +340,7 @@ export default function CustomerDetailPage() {
                 <span className="font-medium text-main">{customer.jobCount}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Avg. Job Value</span>
+                <span className="text-muted">{t('common.avgJobValue')}</span>
                 <span className="font-medium text-main">
                   {customer.jobCount > 0 ? formatCurrency(customer.totalRevenue / customer.jobCount) : '$0'}
                 </span>
@@ -424,7 +424,7 @@ export default function CustomerDetailPage() {
           {/* Tags */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-base">Tags</CardTitle>
+              <CardTitle className="text-base">{t('common.tags')}</CardTitle>
               <Button variant="ghost" size="sm">
                 <Plus size={14} />
                 Add

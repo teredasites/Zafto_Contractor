@@ -347,7 +347,7 @@ function EquipmentDetailModal({
           <div className="grid grid-cols-2 gap-4">
             {equipment.serialNumber && (
               <div>
-                <p className="text-sm text-muted mb-1">Serial Number</p>
+                <p className="text-sm text-muted mb-1">{t('common.serialNumber')}</p>
                 <p className="font-mono text-main">{equipment.serialNumber}</p>
               </div>
             )}
@@ -359,7 +359,7 @@ function EquipmentDetailModal({
             )}
             {equipment.jobName && (
               <div>
-                <p className="text-sm text-muted mb-1">Job</p>
+                <p className="text-sm text-muted mb-1">{t('common.job')}</p>
                 <p className="text-main">{equipment.jobName}</p>
               </div>
             )}
@@ -392,7 +392,7 @@ function EquipmentDetailModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 bg-secondary rounded-lg">
               <p className="text-2xl font-semibold text-main">{formatCurrency(equipment.dailyRate)}</p>
-              <p className="text-sm text-muted">Daily Rate</p>
+              <p className="text-sm text-muted">{t('common.dailyRate')}</p>
             </div>
             <div className="text-center p-4 bg-secondary rounded-lg">
               <p className="text-2xl font-semibold text-main">
@@ -448,7 +448,7 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Equipment</CardTitle>
+            <CardTitle>{t('common.addEquipment')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -483,7 +483,7 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Add Equipment</Button>
+            <Button className="flex-1"><Plus size={16} />{t('common.addEquipment')}</Button>
           </div>
         </CardContent>
       </Card>

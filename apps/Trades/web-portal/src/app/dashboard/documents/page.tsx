@@ -375,7 +375,7 @@ export default function DocumentsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <LayoutTemplate size={18} className="text-muted" />
-              <CardTitle>Document Templates</CardTitle>
+              <CardTitle>{t('common.documentTemplates')}</CardTitle>
               <Badge variant="secondary" size="sm">{templates.length}</Badge>
             </div>
             {showTemplates ? <ChevronDown size={18} className="text-muted" /> : <ChevronRight size={18} className="text-muted" />}
@@ -618,7 +618,7 @@ function UploadModal({
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Upload Document</CardTitle>
+            <CardTitle>{t('common.uploadDocument')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>

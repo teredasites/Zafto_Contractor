@@ -554,8 +554,8 @@ function Vendors1099Tab({
         <CardContent className="p-0">
           {/* Column header */}
           <div className="flex items-center gap-4 px-4 py-2 bg-secondary/50 text-xs font-medium text-muted uppercase tracking-wider border-b border-default">
-            <div className="flex-1">Vendor Name</div>
-            <div className="w-32">Tax ID</div>
+            <div className="flex-1">{t('common.vendorName')}</div>
+            <div className="w-32">{t('common.taxId')}</div>
             <div className="w-28 text-right">{t('common.ytdPayments')}</div>
             <div className="w-28 text-right">{t('common.status')}</div>
           </div>

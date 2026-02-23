@@ -508,7 +508,7 @@ export default function NewInvoicePage() {
                   }}
                   className="w-full px-3 py-2.5 bg-secondary border border-main rounded-lg text-main text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
                 >
-                  <option value="due_on_receipt">Due on Receipt</option>
+                  <option value="due_on_receipt">{t('common.dueOnReceipt')}</option>
                   <option value="net_15">Net 15</option>
                   <option value="net_30">Net 30</option>
                   <option value="net_45">Net 45</option>

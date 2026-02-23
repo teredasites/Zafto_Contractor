@@ -596,7 +596,7 @@ function TemplateEditor({
               placeholder="e.g., Residential Insurance Restoration"
             />
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-main">Walkthrough Type</label>
+              <label className="block text-sm font-medium text-main">{tr('common.walkthroughType')}</label>
               <select
                 value={template.walkthroughType || 'general'}
                 onChange={(e) => onChange({ ...template, walkthroughType: e.target.value })}
@@ -611,7 +611,7 @@ function TemplateEditor({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-main">Property Type</label>
+              <label className="block text-sm font-medium text-main">{tr('common.propertyType')}</label>
               <select
                 value={template.propertyType || 'residential'}
                 onChange={(e) => onChange({ ...template, propertyType: e.target.value })}
@@ -642,7 +642,7 @@ function TemplateEditor({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Rooms</CardTitle>
+            <CardTitle>{tr('common.rooms')}</CardTitle>
             <CardDescription>
               Define the rooms that should be captured during the walkthrough.
             </CardDescription>

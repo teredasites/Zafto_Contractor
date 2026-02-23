@@ -191,7 +191,7 @@ export default function NewAreaScanPage() {
                   onChange={e => setStormType(e.target.value)}
                   className="w-full px-2 py-1.5 border border-main rounded-md bg-surface text-main text-sm focus:outline-none focus:ring-1 focus:ring-accent"
                 >
-                  <option value="">Select...</option>
+                  <option value="">{t('common.selectEllipsis')}</option>
                   <option value="hail">Hail</option>
                   <option value="wind">Wind</option>
                   <option value="tornado">Tornado</option>
@@ -199,7 +199,7 @@ export default function NewAreaScanPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-muted mb-1">Storm Date</label>
+                <label className="block text-[11px] text-muted mb-1">{t('common.stormDate')}</label>
                 <input
                   type="date"
                   value={stormDate}

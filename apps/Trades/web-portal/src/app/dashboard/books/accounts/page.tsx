@@ -461,7 +461,7 @@ function AccountModal({
           )}
 
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Account Name</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('common.accountName')}</label>
             <Input
               value={accountName}
               onChange={(e) => setAccountName(e.target.value)}

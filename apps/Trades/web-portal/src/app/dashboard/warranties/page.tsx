@@ -324,7 +324,7 @@ export default function WarrantiesPage() {
               <Shield size={48} className="mx-auto text-muted mb-4" />
               <h3 className="text-lg font-medium text-main mb-2">No warranties found</h3>
               <p className="text-muted mb-4">Add warranties to track coverage for your jobs and equipment.</p>
-              <Button onClick={() => setShowNewModal(true)}><Plus size={16} />Add Warranty</Button>
+              <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.addWarranty')}</Button>
             </CardContent>
           </Card>
         )}
@@ -368,7 +368,7 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
                 <p className="font-medium text-main">{warranty.customerName}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Job</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.job')}</p>
                 <p className="font-medium text-main">{warranty.jobName}</p>
               </div>
               {warranty.laborDuration && (
@@ -646,7 +646,7 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Add Warranty</CardTitle>
+          <CardTitle>{t('common.addWarranty')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -675,7 +675,7 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
               <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">Select job</option>
+                <option value="">{t('common.selectJob')}</option>
                 <option value="j1">Full Home Rewire</option>
                 <option value="j2">HVAC Install</option>
               </select>
@@ -707,11 +707,11 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Manufacturer</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.manufacturer')}</label>
               <input type="text" placeholder="Carrier, Rheem, etc." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Serial Number</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.serialNumber')}</label>
               <input type="text" placeholder="SN-123456" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
           </div>
@@ -721,7 +721,7 @@ function NewWarrantyModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Add Warranty</Button>
+            <Button className="flex-1"><Plus size={16} />{t('common.addWarranty')}</Button>
           </div>
         </CardContent>
       </Card>

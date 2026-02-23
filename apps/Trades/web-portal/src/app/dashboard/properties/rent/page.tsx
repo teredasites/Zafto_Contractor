@@ -207,7 +207,7 @@ export default function RentRollPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(totalCollected)}</p><p className="text-sm text-muted">Total Collected</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(totalCollected)}</p><p className="text-sm text-muted">{t('common.totalCollected')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><Clock size={20} className="text-amber-600 dark:text-amber-400" /></div>
@@ -316,7 +316,7 @@ export default function RentRollPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Record Payment</CardTitle>
+              <CardTitle>{t('common.recordPayment')}</CardTitle>
               <Button variant="ghost" size="sm" onClick={() => setPaymentChargeId(null)}>
                 <XCircle size={18} />
               </Button>
@@ -350,7 +350,7 @@ export default function RentRollPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Payment Method</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.paymentMethod')}</label>
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value as RentPaymentData['paymentMethod'])}

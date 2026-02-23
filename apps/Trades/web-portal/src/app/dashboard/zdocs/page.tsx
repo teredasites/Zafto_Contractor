@@ -456,7 +456,7 @@ function TemplatesTab({
       {filtered.length === 0 && (
         <div className="text-center py-12 text-muted">
           <Layout size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">No templates found</p>
+          <p className="text-sm">{tr('common.noTemplatesFound')}</p>
         </div>
       )}
     </div>
@@ -536,7 +536,7 @@ function DocumentsTab({
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">Entity</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signature')}</th>
-                <th className="text-left text-sm font-medium text-muted px-6 py-3">Created</th>
+                <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.created')}</th>
                 <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
               </tr>
             </thead>
@@ -738,7 +738,7 @@ function SignaturesTab({
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.email')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.role')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Sent</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.sent')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signed')}</th>
                     </tr>
                   </thead>
@@ -828,7 +828,7 @@ function CreateTemplateModal({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Create Template</CardTitle>
+          <CardTitle>{t('common.createTemplate')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>

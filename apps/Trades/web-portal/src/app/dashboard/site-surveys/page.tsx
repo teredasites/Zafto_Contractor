@@ -155,7 +155,7 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
           </div>
         </div>
         <div>
-          <p className="text-xs text-zinc-500 mb-1">Utilities</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.utilities')}</p>
           <div className="space-y-0.5 text-xs text-zinc-400">
             {survey.electricalService && <p>Electrical: {survey.electricalService}</p>}
             {survey.plumbingType && <p>Plumbing: {survey.plumbingType}</p>}

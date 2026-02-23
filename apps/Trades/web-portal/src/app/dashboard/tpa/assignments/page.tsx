@@ -285,7 +285,7 @@ export default function TpaAssignmentsPage() {
                   onChange={e => updateField('tpaProgramId', e.target.value)}
                   className="mt-1 w-full rounded-md border border-main/50 bg-transparent px-3 py-2 text-sm text-main focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                 >
-                  <option value="">Select program...</option>
+                  <option value="">{t('common.selectProgram')}</option>
                   {programs.map(p => (
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}

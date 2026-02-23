@@ -147,7 +147,7 @@ export default function LienDetailPage() {
         )}
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-zinc-500">State</p>
+            <p className="text-xs text-zinc-500">{t('common.state')}</p>
             <p className="text-xl font-bold text-white">{lien.state_code}</p>
             {rule?.notarization_required && <p className="text-xs text-amber-400">Notarization required</p>}
           </CardContent>

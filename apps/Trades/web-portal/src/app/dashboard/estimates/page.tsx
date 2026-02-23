@@ -158,7 +158,7 @@ export default function EstimatesPage() {
           onChange={(e) => setStatusFilter(e.target.value as EstimateStatus | 'all')}
           className="px-3 py-2 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-sm text-zinc-200"
         >
-          <option value="all">All Status</option>
+          <option value="all">{t('common.allStatus')}</option>
           {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
             <option key={key} value={key}>{cfg.label}</option>
           ))}

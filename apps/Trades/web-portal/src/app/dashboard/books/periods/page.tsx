@@ -565,7 +565,7 @@ export default function FiscalPeriodsPage() {
                     <th className="px-4 py-3 text-left">{t('common.start')}</th>
                     <th className="px-4 py-3 text-left">{t('common.end')}</th>
                     <th className="px-4 py-3 text-left">{t('common.status')}</th>
-                    <th className="px-4 py-3 text-left">Closed At</th>
+                    <th className="px-4 py-3 text-left">{t('common.closedAt')}</th>
                     <th className="px-4 py-3 text-right">{t('common.actions')}</th>
                   </tr>
                 </thead>
@@ -603,7 +603,7 @@ export default function FiscalPeriodsPage() {
                     <th className="px-4 py-3 text-left">{t('common.start')}</th>
                     <th className="px-4 py-3 text-left">{t('common.end')}</th>
                     <th className="px-4 py-3 text-left">{t('common.status')}</th>
-                    <th className="px-4 py-3 text-left">Closed At</th>
+                    <th className="px-4 py-3 text-left">{t('common.closedAt')}</th>
                     <th className="px-4 py-3 text-right">{t('common.actions')}</th>
                   </tr>
                 </thead>

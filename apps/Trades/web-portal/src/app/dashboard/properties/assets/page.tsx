@@ -485,7 +485,7 @@ function NewAssetModal({ onClose, onCreate }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Manufacturer</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.manufacturer')}</label>
               <input
                 type="text"
                 value={manufacturer}
@@ -495,7 +495,7 @@ function NewAssetModal({ onClose, onCreate }: {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Model</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.model')}</label>
               <input
                 type="text"
                 value={model}
@@ -506,7 +506,7 @@ function NewAssetModal({ onClose, onCreate }: {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Serial Number</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.serialNumber')}</label>
             <input
               type="text"
               value={serialNumber}
@@ -526,7 +526,7 @@ function NewAssetModal({ onClose, onCreate }: {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Purchase Price</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.purchasePrice')}</label>
               <input
                 type="number"
                 value={purchasePrice}
@@ -538,7 +538,7 @@ function NewAssetModal({ onClose, onCreate }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Warranty Expiry</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.warrantyExpiry')}</label>
               <input
                 type="date"
                 value={warrantyExpiry}

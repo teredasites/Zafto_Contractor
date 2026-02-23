@@ -588,7 +588,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Invite Team Member</CardTitle>
+          <CardTitle>{t('common.inviteTeamMember')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
@@ -606,7 +606,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Last Name</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.lastName')}</label>
               <input
                 type="text"
                 value={lastName}
@@ -617,7 +617,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Email Address</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.emailAddress')}</label>
             <input
               type="email"
               value={email}

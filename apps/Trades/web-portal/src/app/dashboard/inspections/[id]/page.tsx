@@ -101,7 +101,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
       {/* Info grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider mb-1">Assigned To</p>
+          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.assignedTo')}</p>
           <div className="flex items-center gap-2"><User size={14} className="text-muted" /><span className="font-medium text-main">{inspection.assignedTo}</span></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -113,7 +113,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
           <div className="flex items-center gap-2"><BarChart3 size={14} className="text-muted" /><span className="font-medium text-main">{inspection.overallScore !== undefined ? `${inspection.overallScore}%` : '—'}</span></div>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider mb-1">Photos</p>
+          <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.photos')}</p>
           <div className="flex items-center gap-2"><Camera size={14} className="text-muted" /><span className="font-medium text-main">{inspection.photos}</span></div>
         </CardContent></Card>
       </div>
@@ -174,7 +174,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
       {/* Actions */}
       <div className="flex items-center gap-3">
         <Button variant="secondary"><FileText size={16} />Generate Report</Button>
-        {inspection.status !== 'passed' && <Button><CheckCircle size={16} />Mark Passed</Button>}
+        {inspection.status !== 'passed' && <Button><CheckCircle size={16} />{t('common.markPassed')}</Button>}
       </div>
     </div>
   );

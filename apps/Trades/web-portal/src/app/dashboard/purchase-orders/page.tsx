@@ -393,7 +393,7 @@ function PORow({
                     <th className="pb-2 font-medium">{t('common.item')}</th>
                     <th className="pb-2 font-medium text-right">{t('common.qty')}</th>
                     <th className="pb-2 font-medium text-right">{t('common.received')}</th>
-                    <th className="pb-2 font-medium text-right">Unit Price</th>
+                    <th className="pb-2 font-medium text-right">{t('common.unitPrice')}</th>
                     <th className="pb-2 font-medium text-right">{t('common.total')}</th>
                     <th className="pb-2 font-medium">{t('common.status')}</th>
                   </tr>

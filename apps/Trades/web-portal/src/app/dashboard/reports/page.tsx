@@ -386,7 +386,7 @@ function TeamReport({ team }: { team: TeamMemberStat[] }) {
                 <tr className="border-b border-main">
                   <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Team Member</th>
                   <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.role')}</th>
-                  <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Jobs</th>
+                  <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.jobs')}</th>
                   <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.revenue')}</th>
                 </tr>
               </thead>
@@ -426,7 +426,7 @@ function InvoicesReport({ stats }: { stats: InvoiceStats }) {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Total Collected</p>
+            <p className="text-sm text-muted">{t('common.totalCollected')}</p>
             <p className="text-2xl font-semibold text-emerald-600">{formatCurrency(stats.totalCollected)}</p>
           </CardContent>
         </Card>

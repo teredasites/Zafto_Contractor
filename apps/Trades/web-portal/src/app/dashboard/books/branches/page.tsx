@@ -178,7 +178,7 @@ export default function BranchFinancialsPage() {
             <p className="text-sm text-muted mt-2 max-w-md mx-auto">
               Multi-branch financial reporting with consolidated P&L, performance comparison, and branch benchmarking is available on the Business plan ($249.99/mo).
             </p>
-            <Button variant="secondary" className="mt-6">Upgrade Plan</Button>
+            <Button variant="secondary" className="mt-6">{t('common.upgradePlan')}</Button>
           </CardContent>
         </Card>
       </div>

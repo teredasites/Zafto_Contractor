@@ -233,7 +233,7 @@ export default function NewPropertyPage() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Year Built</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.yearBuilt')}</label>
                 <input
                   type="number"
                   value={form.yearBuilt}
@@ -286,7 +286,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Purchase Price</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.purchasePrice')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -297,7 +297,7 @@ export default function NewPropertyPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Current Value</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.currentValue')}</label>
                 <input
                   type="number"
                   step="0.01"
