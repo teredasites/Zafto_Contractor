@@ -1316,63 +1316,389 @@ function GoodBetterBestCard() {
 }
 
 function SecuritySettings() {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // MFA state
+  const [mfaFactors, setMfaFactors] = useState<{ id: string; type: string; status: string; friendly_name?: string }[]>([]);
+  const [mfaLoading, setMfaLoading] = useState(true);
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollData, setEnrollData] = useState<{ id: string; qr: string; secret: string; uri: string } | null>(null);
+  const [verifyCode, setVerifyCode] = useState('');
+  const [mfaMsg, setMfaMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Session state
+  const [sessionInfo, setSessionInfo] = useState<{ provider: string; lastSignIn: string; email: string } | null>(null);
+
+  // Load MFA factors and session info
+  useEffect(() => {
+    const load = async () => {
+      const supabase = getSupabase();
+      try {
+        const { data, error } = await supabase.auth.mfa.listFactors();
+        if (!error && data) {
+          setMfaFactors(data.totp.map((f: { id: string; factor_type: string; status: string; friendly_name?: string }) => ({
+            id: f.id,
+            type: f.factor_type,
+            status: f.status,
+            friendly_name: f.friendly_name,
+          })));
+        }
+      } catch {
+        // MFA might not be enabled on this Supabase project
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const provider = session.user?.app_metadata?.provider || 'email';
+        setSessionInfo({
+          provider,
+          lastSignIn: session.user?.last_sign_in_at || '',
+          email: session.user?.email || '',
+        });
+      }
+      setMfaLoading(false);
+    };
+    load();
+  }, []);
+
+  const handlePasswordUpdate = async () => {
+    setPasswordMsg(null);
+    if (!newPassword || newPassword.length < 8) {
+      setPasswordMsg({ type: 'error', text: 'New password must be at least 8 characters' });
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordMsg({ type: 'error', text: 'Passwords do not match' });
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      const supabase = getSupabase();
+      // Supabase updateUser uses the current session to change password
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        if (error.message.includes('same as')) {
+          setPasswordMsg({ type: 'error', text: 'New password must be different from your current password' });
+        } else {
+          setPasswordMsg({ type: 'error', text: error.message });
+        }
+      } else {
+        setPasswordMsg({ type: 'success', text: 'Password updated successfully' });
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+      }
+    } catch {
+      setPasswordMsg({ type: 'error', text: 'Failed to update password' });
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleMfaEnroll = async () => {
+    setMfaMsg(null);
+    setEnrolling(true);
+    try {
+      const supabase = getSupabase();
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: 'totp',
+        friendlyName: 'Authenticator App',
+      });
+      if (error) {
+        setMfaMsg({ type: 'error', text: error.message });
+        setEnrolling(false);
+        return;
+      }
+      if (data) {
+        setEnrollData({
+          id: data.id,
+          qr: data.totp.qr_code,
+          secret: data.totp.secret,
+          uri: data.totp.uri,
+        });
+      }
+    } catch {
+      setMfaMsg({ type: 'error', text: 'Failed to start MFA enrollment' });
+      setEnrolling(false);
+    }
+  };
+
+  const handleMfaVerify = async () => {
+    if (!enrollData || verifyCode.length !== 6) return;
+    setMfaMsg(null);
+    try {
+      const supabase = getSupabase();
+      const { data: challenge, error: challengeErr } = await supabase.auth.mfa.challenge({
+        factorId: enrollData.id,
+      });
+      if (challengeErr) {
+        setMfaMsg({ type: 'error', text: challengeErr.message });
+        return;
+      }
+      const { error: verifyErr } = await supabase.auth.mfa.verify({
+        factorId: enrollData.id,
+        challengeId: challenge.id,
+        code: verifyCode,
+      });
+      if (verifyErr) {
+        setMfaMsg({ type: 'error', text: 'Invalid code. Please try again.' });
+        return;
+      }
+      // Success — refresh factors
+      setMfaMsg({ type: 'success', text: '2FA enabled successfully' });
+      setEnrollData(null);
+      setEnrolling(false);
+      setVerifyCode('');
+      const { data } = await supabase.auth.mfa.listFactors();
+      if (data) {
+        setMfaFactors(data.totp.map((f: { id: string; factor_type: string; status: string; friendly_name?: string }) => ({
+          id: f.id,
+          type: f.factor_type,
+          status: f.status,
+          friendly_name: f.friendly_name,
+        })));
+      }
+    } catch {
+      setMfaMsg({ type: 'error', text: 'Verification failed' });
+    }
+  };
+
+  const handleMfaUnenroll = async (factorId: string) => {
+    setMfaMsg(null);
+    try {
+      const supabase = getSupabase();
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      if (error) {
+        setMfaMsg({ type: 'error', text: error.message });
+        return;
+      }
+      setMfaFactors((prev) => prev.filter((f) => f.id !== factorId));
+      setMfaMsg({ type: 'success', text: '2FA has been disabled' });
+    } catch {
+      setMfaMsg({ type: 'error', text: 'Failed to disable 2FA' });
+    }
+  };
+
+  const verifiedFactors = mfaFactors.filter((f) => f.status === 'verified');
+  const hasActiveMfa = verifiedFactors.length > 0;
+
   return (
     <div className="space-y-6">
+      {/* Password Change — Real */}
       <Card>
         <CardHeader>
           <CardTitle>Password</CardTitle>
           <CardDescription>Update your password</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Input label="Current Password" type="password" />
-          <Input label="New Password" type="password" />
-          <Input label="Confirm New Password" type="password" />
-          <Button>Update Password</Button>
+          {passwordMsg && (
+            <div className={cn(
+              'px-3 py-2.5 rounded-lg flex items-center gap-2 text-sm',
+              passwordMsg.type === 'success'
+                ? 'bg-emerald-500/10 text-emerald-400'
+                : 'bg-red-500/10 text-red-400'
+            )}>
+              {passwordMsg.type === 'success' ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
+              {passwordMsg.text}
+            </div>
+          )}
+          <Input
+            label="Current Password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+          <Input
+            label="New Password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="Min 8 characters"
+            autoComplete="new-password"
+          />
+          <Input
+            label="Confirm New Password"
+            type="password"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          <Button
+            onClick={handlePasswordUpdate}
+            disabled={passwordLoading || !newPassword || newPassword.length < 8 || newPassword !== confirmNewPassword}
+          >
+            {passwordLoading ? (
+              <span className="flex items-center gap-2">
+                <RefreshCw size={14} className="animate-spin" />
+                Updating...
+              </span>
+            ) : 'Update Password'}
+          </Button>
         </CardContent>
       </Card>
 
+      {/* Two-Factor Authentication — Real Supabase MFA TOTP */}
       <Card>
         <CardHeader>
           <CardTitle>Two-Factor Authentication</CardTitle>
-          <CardDescription>Add an extra layer of security</CardDescription>
+          <CardDescription>Add an extra layer of security to your account</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-main">Authenticator App</p>
-              <p className="text-sm text-muted">Use an app like Google Authenticator or Authy</p>
+        <CardContent className="space-y-4">
+          {mfaMsg && (
+            <div className={cn(
+              'px-3 py-2.5 rounded-lg flex items-center gap-2 text-sm',
+              mfaMsg.type === 'success'
+                ? 'bg-emerald-500/10 text-emerald-400'
+                : 'bg-red-500/10 text-red-400'
+            )}>
+              {mfaMsg.type === 'success' ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
+              {mfaMsg.text}
             </div>
-            <Button variant="secondary">Enable</Button>
-          </div>
+          )}
+
+          {mfaLoading ? (
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <RefreshCw size={14} className="animate-spin" />
+              Loading...
+            </div>
+          ) : enrollData ? (
+            /* Enrollment flow — show QR + verify */
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
+                <Info size={16} className="text-muted mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-muted">
+                  Scan this QR code with your authenticator app (Google Authenticator, Authy, 1Password, etc.), then enter the 6-digit code below to verify.
+                </p>
+              </div>
+              <div className="flex justify-center p-4 bg-white rounded-lg w-fit mx-auto">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={enrollData.qr} alt="QR Code for authenticator app" width={200} height={200} />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-muted">Can&apos;t scan? Enter this key manually:</p>
+                <code className="block text-xs bg-secondary/50 p-2 rounded font-mono break-all select-all">{enrollData.secret}</code>
+              </div>
+              <div className="flex items-end gap-3">
+                <Input
+                  label="Verification Code"
+                  value={verifyCode}
+                  onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="font-mono tracking-widest"
+                  maxLength={6}
+                />
+                <Button
+                  onClick={handleMfaVerify}
+                  disabled={verifyCode.length !== 6}
+                >
+                  Verify
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setEnrollData(null);
+                    setEnrolling(false);
+                    setVerifyCode('');
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : hasActiveMfa ? (
+            /* Already enrolled — show status + disable option */
+            <div className="space-y-3">
+              {verifiedFactors.map((factor) => (
+                <div key={factor.id} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                      <Shield size={16} className="text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-main text-sm">{factor.friendly_name || 'Authenticator App'}</p>
+                      <p className="text-xs text-muted">TOTP enabled</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-500 hover:text-red-400"
+                    onClick={() => handleMfaUnenroll(factor.id)}
+                  >
+                    Disable
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Not enrolled — show enable button */
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-main">Authenticator App</p>
+                <p className="text-sm text-muted">Use an app like Google Authenticator or Authy</p>
+              </div>
+              <Button variant="secondary" onClick={handleMfaEnroll} disabled={enrolling}>
+                {enrolling ? (
+                  <span className="flex items-center gap-2">
+                    <RefreshCw size={14} className="animate-spin" />
+                    Setting up...
+                  </span>
+                ) : 'Enable'}
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
+      {/* Current Session — Real */}
       <Card>
         <CardHeader>
-          <CardTitle>Sessions</CardTitle>
-          <CardDescription>Manage your active sessions</CardDescription>
+          <CardTitle>Current Session</CardTitle>
+          <CardDescription>Your active session information</CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="divide-y divide-main">
-            {[
-              { device: 'Chrome on Windows', location: 'Hartford, CT', current: true },
-              { device: 'Zafto iOS App', location: 'Hartford, CT', current: false },
-            ].map((session, i) => (
-              <div key={i} className="flex items-center justify-between px-6 py-4">
-                <div>
-                  <p className="font-medium text-main">{session.device}</p>
-                  <p className="text-sm text-muted">{session.location}</p>
-                </div>
-                {session.current ? (
-                  <Badge variant="success">Current</Badge>
-                ) : (
-                  <Button variant="ghost" size="sm" className="text-red-600">
-                    Revoke
-                  </Button>
-                )}
+        <CardContent>
+          {sessionInfo ? (
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="font-medium text-main text-sm">{sessionInfo.email}</p>
+                <p className="text-xs text-muted">
+                  Signed in via {sessionInfo.provider}
+                  {sessionInfo.lastSignIn && (
+                    <> &middot; Last sign in {formatRelativeTime(sessionInfo.lastSignIn)}</>
+                  )}
+                </p>
               </div>
-            ))}
-          </div>
+              <Badge variant="success">Active</Badge>
+            </div>
+          ) : (
+            <p className="text-sm text-muted">Loading session info...</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Sign out all devices */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Sign Out Everywhere</CardTitle>
+          <CardDescription>Sign out of all devices and sessions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            variant="secondary"
+            className="text-red-500"
+            onClick={async () => {
+              const supabase = getSupabase();
+              await supabase.auth.signOut({ scope: 'global' });
+              window.location.href = '/';
+            }}
+          >
+            Sign Out All Devices
+          </Button>
         </CardContent>
       </Card>
     </div>
@@ -1384,9 +1710,9 @@ function IntegrationSettings() {
 
   const integrations = [
     { name: 'QuickBooks', description: 'Sync invoices and payments', connected: false },
-    { name: 'Stripe', description: 'Accept card payments', connected: true },
-    { name: 'Twilio', description: 'Send SMS notifications', connected: true },
-    { name: 'Plaid', description: 'Connect bank accounts', connected: true },
+    { name: 'Stripe', description: 'Accept card payments', connected: false },
+    { name: 'Square', description: 'Accept card & tap payments', connected: false },
+    { name: 'PayPal', description: 'Accept PayPal payments', connected: false },
   ];
 
   return (
