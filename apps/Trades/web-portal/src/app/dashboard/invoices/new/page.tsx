@@ -353,7 +353,7 @@ export default function NewInvoicePage() {
                     <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-24">Qty</th>
                     <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-32">Price</th>
                     {isInsuranceJob && (
-                      <th className="text-left text-xs font-medium text-muted uppercase px-4 py-3 w-40">Source</th>
+                      <th className="text-left text-xs font-medium text-muted uppercase px-4 py-3 w-40">{t('common.source')}</th>
                     )}
                     <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3 w-32">Total</th>
                     <th className="w-12"></th>

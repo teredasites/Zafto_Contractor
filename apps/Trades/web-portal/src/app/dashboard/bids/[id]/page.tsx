@@ -323,7 +323,7 @@ export default function BidDetailPage() {
                   <p className="text-sm text-muted">Valid Until</p>
                   <p className="text-main font-medium">{formatDate(bid.validUntil)}</p>
                   {new Date(bid.validUntil) < new Date() && bid.status !== 'accepted' && (
-                    <Badge variant="warning" className="mt-1">Expired</Badge>
+                    <Badge variant="warning" className="mt-1">{t('common.expired')}</Badge>
                   )}
                 </div>
               </div>

@@ -280,12 +280,12 @@ export default function LeadsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Lead</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Source</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Stage</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Value</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Last Contact</th>
-                  <th className="text-left text-sm font-medium text-muted px-6 py-3">Next Follow-up</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.lead')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.source')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.stage')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.value')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.lastContact')}</th>
+                  <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.nextFollowUp')}</th>
                   <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
                 </tr>
               </thead>

@@ -270,7 +270,7 @@ export default function InspectionEnginePage() {
             <thead>
               <tr className="border-b border-main">
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Title</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Job</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.job')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Inspector</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">{t('common.status')}</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase tracking-wider">Score</th>

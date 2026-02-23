@@ -363,7 +363,7 @@ export default function RentRollPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
                 <input
                   type="text"
                   value={paymentNote}
