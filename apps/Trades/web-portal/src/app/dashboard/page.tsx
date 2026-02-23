@@ -52,9 +52,11 @@ import { useUnits } from '@/lib/hooks/use-units';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 import { useZConsole } from '@/components/z-console';
 import { ZMark } from '@/components/z-console/z-mark';
+import { useTranslation } from '@/lib/translations';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { companyId, loading: permLoading } = usePermissions();
 
   const { stats, loading: statsLoading } = useStats();
@@ -139,19 +141,19 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('dashboard.title')}</h1>
           <p className="text-[13px] text-muted mt-1">
-            Welcome back. Here's what's happening today.
+            {t('dashboard.welcomeSubtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="secondary" onClick={() => router.push('/dashboard/calendar')}>
             <Calendar size={16} />
-            View Calendar
+            {t('dashboard.viewCalendar')}
           </Button>
           <Button onClick={() => router.push('/dashboard/bids/new')}>
             <Plus size={16} />
-            New Bid
+            {t('dashboard.newBid')}
           </Button>
         </div>
       </div>
@@ -170,27 +172,27 @@ export default function DashboardPage() {
       ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate-stagger">
         <StatsCard
-          title="Revenue This Month"
+          title={t('dashboard.revenueThisMonth')}
           value={formatCurrency(stats.revenue.thisMonth)}
           change={stats.revenue.monthOverMonthChange}
           icon={<DollarSign size={20} />}
         />
         <StatsCard
-          title="Active Bids"
+          title={t('dashboard.activeBids')}
           value={stats.bids.sent}
-          changeLabel={`${stats.bids.conversionRate}% win rate`}
+          changeLabel={`${stats.bids.conversionRate}% ${t('dashboard.winRate')}`}
           icon={<FileText size={20} />}
           trend="up"
         />
         <StatsCard
-          title="Jobs In Progress"
+          title={t('dashboard.jobsInProgress')}
           value={stats.jobs.inProgress}
-          changeLabel={`${stats.jobs.scheduled} scheduled`}
+          changeLabel={`${stats.jobs.scheduled} ${t('dashboard.scheduled')}`}
           icon={<Briefcase size={20} />}
           trend="neutral"
         />
         <StatsCard
-          title="Overdue Invoices"
+          title={t('dashboard.overdueInvoices')}
           value={stats.invoices.overdue}
           changeLabel={formatCurrency(stats.invoices.overdueAmount)}
           icon={<AlertCircle size={20} />}
