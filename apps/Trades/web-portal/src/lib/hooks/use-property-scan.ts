@@ -124,6 +124,41 @@ export interface TradeBidData {
   dataSources: string[];
 }
 
+export interface PropertyFeaturesData {
+  id: string;
+  scanId: string;
+  yearBuilt: number | null;
+  stories: number | null;
+  livingSqft: number | null;
+  lotSqft: number | null;
+  beds: number | null;
+  bathsFull: number | null;
+  bathsHalf: number | null;
+  constructionType: string | null;
+  wallType: string | null;
+  roofTypeRecord: string | null;
+  heatingType: string | null;
+  coolingType: string | null;
+  poolType: string | null;
+  garageSpaces: number;
+  assessedValue: number | null;
+  lastSalePrice: number | null;
+  lastSaleDate: string | null;
+  elevationFt: number | null;
+  terrainSlopePct: number | null;
+  treeCoveragePct: number | null;
+  buildingHeightFt: number | null;
+  dataSources: string[];
+  basementType: string | null;
+  foundationType: string | null;
+  exteriorMaterial: string | null;
+  roofMaterial: string | null;
+  lotDescription: string | null;
+  neighborhoodType: string | null;
+  estimatedValue: number | null;
+  censusData: Record<string, unknown>;
+}
+
 // ============================================================================
 // MAPPERS
 // ============================================================================
@@ -227,12 +262,50 @@ function mapTradeBid(row: Record<string, unknown>): TradeBidData {
   };
 }
 
+function mapPropertyFeatures(row: Record<string, unknown>): PropertyFeaturesData {
+  return {
+    id: row.id as string,
+    scanId: row.scan_id as string,
+    yearBuilt: row.year_built != null ? Number(row.year_built) : null,
+    stories: row.stories != null ? Number(row.stories) : null,
+    livingSqft: row.living_sqft != null ? Number(row.living_sqft) : null,
+    lotSqft: row.lot_sqft != null ? Number(row.lot_sqft) : null,
+    beds: row.beds != null ? Number(row.beds) : null,
+    bathsFull: row.baths_full != null ? Number(row.baths_full) : null,
+    bathsHalf: row.baths_half != null ? Number(row.baths_half) : null,
+    constructionType: row.construction_type as string | null,
+    wallType: row.wall_type as string | null,
+    roofTypeRecord: row.roof_type_record as string | null,
+    heatingType: row.heating_type as string | null,
+    coolingType: row.cooling_type as string | null,
+    poolType: row.pool_type as string | null,
+    garageSpaces: Number(row.garage_spaces) || 0,
+    assessedValue: row.assessed_value != null ? Number(row.assessed_value) : null,
+    lastSalePrice: row.last_sale_price != null ? Number(row.last_sale_price) : null,
+    lastSaleDate: row.last_sale_date as string | null,
+    elevationFt: row.elevation_ft != null ? Number(row.elevation_ft) : null,
+    terrainSlopePct: row.terrain_slope_pct != null ? Number(row.terrain_slope_pct) : null,
+    treeCoveragePct: row.tree_coverage_pct != null ? Number(row.tree_coverage_pct) : null,
+    buildingHeightFt: row.building_height_ft != null ? Number(row.building_height_ft) : null,
+    dataSources: (row.data_sources as string[]) || [],
+    basementType: row.basement_type as string | null,
+    foundationType: row.foundation_type as string | null,
+    exteriorMaterial: row.exterior_material as string | null,
+    roofMaterial: row.roof_material as string | null,
+    lotDescription: row.lot_description as string | null,
+    neighborhoodType: row.neighborhood_type as string | null,
+    estimatedValue: row.estimated_value != null ? Number(row.estimated_value) : null,
+    censusData: (row.census_data as Record<string, unknown>) || {},
+  };
+}
+
 // ============================================================================
 // HOOK: usePropertyScan
 // ============================================================================
 
 export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'job') {
   const [scan, setScan] = useState<PropertyScanData | null>(null);
+  const [features, setFeatures] = useState<PropertyFeaturesData | null>(null);
   const [roof, setRoof] = useState<RoofMeasurementData | null>(null);
   const [facets, setFacets] = useState<RoofFacetData[]>([]);
   const [walls, setWalls] = useState<WallMeasurementData | null>(null);
@@ -271,6 +344,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
 
       if (!scanRow) {
         setScan(null);
+        setFeatures(null);
         setRoof(null);
         setFacets([]);
         setWalls(null);
@@ -280,6 +354,16 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
 
       const scanId = scanRow.id as string;
       setScan(mapScan(scanRow));
+
+      // Get property features (ATTOM data, census, etc.)
+      const { data: featRow } = await supabase
+        .from('property_features')
+        .select('*')
+        .eq('scan_id', scanId)
+        .limit(1)
+        .maybeSingle();
+
+      setFeatures(featRow ? mapPropertyFeatures(featRow) : null);
 
       // Get roof measurement
       const { data: roofRow } = await supabase
@@ -470,6 +554,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
 
   return {
     scan,
+    features,
     roof,
     facets,
     walls,
