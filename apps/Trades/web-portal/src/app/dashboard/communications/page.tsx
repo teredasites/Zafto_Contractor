@@ -231,7 +231,7 @@ export default function CommunicationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{unreadCount}</p>
-                <p className="text-sm text-muted">Need Response</p>
+                <p className="text-sm text-muted">{t('communications.needResponse')}</p>
               </div>
             </div>
           </CardContent>
@@ -416,7 +416,7 @@ export default function CommunicationsPage() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-muted">
                 <Mail size={48} className="mb-2 opacity-50" />
-                <p>Select a message to view</p>
+                <p>{t('communications.selectAMessageToView')}</p>
               </div>
             )}
           </CardContent>

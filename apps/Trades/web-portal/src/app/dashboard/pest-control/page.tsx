@@ -65,19 +65,19 @@ export default function PestControlPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Treatments</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.treatments')}</p>
           <p className="text-2xl font-bold text-white">{totalTreatments}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Active Stations</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.activeStations')}</p>
           <p className="text-2xl font-bold text-yellow-400">{activeStations}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Pending WDI</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.pendingWdi')}</p>
           <p className="text-2xl font-bold text-purple-400">{pendingWdi}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Upcoming Services</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.upcomingServices')}</p>
           <p className="text-2xl font-bold text-blue-400">{upcoming}</p>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function PestControlPage() {
       {tab === 'stations' && (
         <div className="space-y-3">
           {stations.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500"><p>No bait stations</p></div>
+            <div className="text-center py-12 text-zinc-500"><p>{t('common.noBaitStations')}</p></div>
           ) : (
             stations.map((s) => {
               const color = s.activity_level === 'critical' ? 'text-red-400' :
@@ -175,7 +175,7 @@ export default function PestControlPage() {
       {tab === 'wdi' && (
         <div className="space-y-3">
           {reports.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500"><p>No WDI reports</p></div>
+            <div className="text-center py-12 text-zinc-500"><p>{t('common.noWdiReports')}</p></div>
           ) : (
             reports.map((r) => (
               <div key={r.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">

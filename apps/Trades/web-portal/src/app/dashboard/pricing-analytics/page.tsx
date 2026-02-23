@@ -195,9 +195,9 @@ export default function PricingAnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Close Rate by Price Tier */}
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">Close Rate by Price Tier</h3>
+          <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingAnalytics.closeRateByPriceTier')}</h3>
           {closeRateByTier.length === 0 ? (
-            <p className="text-zinc-600 text-sm">No data yet</p>
+            <p className="text-zinc-600 text-sm">{t('pricingAnalytics.noDataYet')}</p>
           ) : (
             <div className="space-y-3">
               {closeRateByTier.map((tier) => (
@@ -225,9 +225,9 @@ export default function PricingAnalyticsPage() {
 
         {/* Factor Breakdown */}
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">Most Applied Pricing Factors</h3>
+          <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingAnalytics.mostAppliedPricingFactors')}</h3>
           {factorBreakdown.length === 0 ? (
-            <p className="text-zinc-600 text-sm">No pricing factors applied yet</p>
+            <p className="text-zinc-600 text-sm">{t('pricingAnalytics.noPricingFactorsAppliedYet')}</p>
           ) : (
             <div className="space-y-3">
               {factorBreakdown.map((f) => (
@@ -253,7 +253,7 @@ export default function PricingAnalyticsPage() {
 
       {/* Acceptance/Decline */}
       <div className="mt-6 bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">Suggestion Outcomes</h3>
+        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingAnalytics.suggestionOutcomes')}</h3>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-emerald-400" />
@@ -266,21 +266,21 @@ export default function PricingAnalyticsPage() {
             <XCircle className="h-5 w-5 text-red-400" />
             <div>
               <p className="text-lg font-bold text-red-400">{stats.declined}</p>
-              <p className="text-xs text-zinc-500">Overridden</p>
+              <p className="text-xs text-zinc-500">{t('pricingAnalytics.overridden')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Target className="h-5 w-5 text-blue-400" />
             <div>
               <p className="text-lg font-bold text-blue-400">{stats.jobsWon}</p>
-              <p className="text-xs text-zinc-500">Jobs Won</p>
+              <p className="text-xs text-zinc-500">{t('pricingAnalytics.jobsWon')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-zinc-400" />
             <div>
               <p className="text-lg font-bold text-zinc-300">{stats.avgAdjustmentPct.toFixed(1)}%</p>
-              <p className="text-xs text-zinc-500">Avg Adjustment</p>
+              <p className="text-xs text-zinc-500">{t('pricingAnalytics.avgAdjustment')}</p>
             </div>
           </div>
         </div>
@@ -290,7 +290,7 @@ export default function PricingAnalyticsPage() {
       {suggestions.length > 0 && (
         <div className="mt-6 bg-zinc-800/50 border border-zinc-700/50 rounded-xl">
           <div className="p-4 border-b border-zinc-700/50">
-            <h3 className="text-sm font-medium text-zinc-300">Recent Suggestions</h3>
+            <h3 className="text-sm font-medium text-zinc-300">{t('pricingAnalytics.recentSuggestions')}</h3>
           </div>
           <div className="divide-y divide-zinc-700/30">
             {suggestions.slice(0, 20).map((s) => {

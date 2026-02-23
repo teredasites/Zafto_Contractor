@@ -110,7 +110,7 @@ export default function JobAutopsyDetailPage() {
 
       {/* Cost Comparison */}
       <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5 mb-6">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">Cost Comparison</h3>
+        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('jobIntel.costComparison')}</h3>
         <div className="space-y-6">
           <ComparisonBar
             label={t('estimates.labor')}
@@ -132,7 +132,7 @@ export default function JobAutopsyDetailPage() {
 
       {/* Variance Callouts */}
       <div className="space-y-3 mb-6">
-        <h3 className="text-sm font-medium text-zinc-300">Variance Analysis</h3>
+        <h3 className="text-sm font-medium text-zinc-300">{t('jobIntel.varianceAnalysis')}</h3>
 
         {isOverBudget ? (
           <Callout
@@ -190,7 +190,7 @@ export default function JobAutopsyDetailPage() {
 
       {/* Cost Breakdown */}
       <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5 mb-6">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">Actual Cost Breakdown</h3>
+        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('jobIntel.actualCostBreakdown')}</h3>
         <div className="space-y-3">
           {[
             { label: 'Labor', value: autopsy.actual_labor_cost || 0 },
@@ -219,7 +219,7 @@ export default function JobAutopsyDetailPage() {
 
       {/* Metadata */}
       <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">Job Info</h3>
+        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('jobIntel.jobInfo')}</h3>
         <div className="grid grid-cols-2 gap-4">
           <MetaRow label={t('hiring.jobType')} value={(autopsy.job_type || 'N/A').replace(/_/g, ' ')} />
           <MetaRow label={t('common.trade')} value={autopsy.trade_type || 'N/A'} />

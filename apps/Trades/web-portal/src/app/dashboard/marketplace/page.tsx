@@ -891,7 +891,7 @@ function ContractorProfileTab({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Service Zip Codes</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.serviceZipCodes')}</label>
               <input
                 type="text"
                 value={zipCodes}
@@ -910,7 +910,7 @@ function ContractorProfileTab({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Wrench size={18} className="text-muted" />
-            <CardTitle>Trades & Specializations</CardTitle>
+            <CardTitle>{tr('marketplace.tradesSpecializations')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -927,7 +927,7 @@ function ContractorProfileTab({
               <p className="text-xs text-muted mt-1">{tr('common.commaSeparatedList')}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Specializations</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.specializations')}</label>
               <input
                 type="text"
                 value={specializations}
@@ -946,13 +946,13 @@ function ContractorProfileTab({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Shield size={18} className="text-muted" />
-            <CardTitle>Credentials</CardTitle>
+            <CardTitle>{tr('marketplace.credentials')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">License Number</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.licenseNumber')}</label>
               <input
                 type="text"
                 value={licenseNumber}
@@ -980,7 +980,7 @@ function ContractorProfileTab({
                 onChange={(e) => setInsuranceVerified(e.target.checked)}
                 className="w-4 h-4 rounded border-main text-[var(--accent)] focus:ring-[var(--accent)]"
               />
-              <span className="text-sm text-main">Insurance Verified</span>
+              <span className="text-sm text-main">{tr('marketplace.insuranceVerified')}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -989,7 +989,7 @@ function ContractorProfileTab({
                 onChange={(e) => setBonded(e.target.checked)}
                 className="w-4 h-4 rounded border-main text-[var(--accent)] focus:ring-[var(--accent)]"
               />
-              <span className="text-sm text-main">Bonded</span>
+              <span className="text-sm text-main">{tr('marketplace.bonded')}</span>
             </label>
           </div>
         </CardContent>
@@ -1000,13 +1000,13 @@ function ContractorProfileTab({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Settings size={18} className="text-muted" />
-            <CardTitle>Marketplace Settings</CardTitle>
+            <CardTitle>{tr('marketplace.marketplaceSettings')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Max Daily Leads</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.maxDailyLeads')}</label>
               <input
                 type="number"
                 value={maxDailyLeads}
@@ -1016,7 +1016,7 @@ function ContractorProfileTab({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Minimum Job Value</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{tr('marketplace.minimumJobValue')}</label>
               <input
                 type="number"
                 value={minJobValue}

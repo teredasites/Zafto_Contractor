@@ -383,7 +383,7 @@ export default function BankingPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('booksBanking.title')}</h1>
-          <p className="text-muted mt-1">Connect and manage your bank accounts</p>
+          <p className="text-muted mt-1">{t('booksBanking.connectAndManageYourBankAccounts')}</p>
         </div>
         <PlaidLinkButton onSuccess={handlePlaidSuccess} />
       </div>
@@ -415,7 +415,7 @@ export default function BankingPage() {
                 <Building size={20} className="text-emerald-500" />
               </div>
               <div>
-                <p className="text-muted text-xs">Total Balance</p>
+                <p className="text-muted text-xs">{t('booksBanking.totalBalance')}</p>
                 <p className="text-xl font-bold text-main">{formatCurrency(totalBalance)}</p>
               </div>
             </div>
@@ -428,7 +428,7 @@ export default function BankingPage() {
                 <Landmark size={20} className="text-accent" />
               </div>
               <div>
-                <p className="text-muted text-xs">Connected Accounts</p>
+                <p className="text-muted text-xs">{t('booksBanking.connectedAccounts')}</p>
                 <p className="text-xl font-bold text-main">{accounts.length}</p>
               </div>
             </div>
@@ -441,7 +441,7 @@ export default function BankingPage() {
                 <AlertCircle size={20} className="text-amber-500" />
               </div>
               <div>
-                <p className="text-muted text-xs">Needs Review</p>
+                <p className="text-muted text-xs">{t('booksBanking.needsReview')}</p>
                 <p className="text-xl font-bold text-main">{unreviewedCount}</p>
               </div>
             </div>
@@ -454,7 +454,7 @@ export default function BankingPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Building size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No bank accounts connected</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('booksBanking.noBankAccountsConnected')}</h3>
             <p className="text-muted text-sm mb-6">
               Connect your business bank account to automatically import transactions and reconcile your books.
             </p>

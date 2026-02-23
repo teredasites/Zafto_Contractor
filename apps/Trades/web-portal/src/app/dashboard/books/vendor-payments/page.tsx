@@ -169,7 +169,7 @@ export default function VendorPaymentsPage() {
           <p className="text-2xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(totalPaid)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wide">Payments Count</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t('booksVendorPay.paymentsCount')}</p>
           <p className="text-2xl font-semibold text-main mt-1">{payments.length}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -197,7 +197,7 @@ export default function VendorPaymentsPage() {
           </div>
           <div className="divide-y divide-main">
             {filtered.length === 0 && (
-              <div className="px-6 py-12 text-center text-sm text-muted">No payments found</div>
+              <div className="px-6 py-12 text-center text-sm text-muted">{t('booksVendorPay.noPaymentsFound')}</div>
             )}
             {filtered.map((payment) => (
               <div key={payment.id} className="grid grid-cols-12 gap-2 px-6 py-3 items-center hover:bg-surface-hover transition-colors">
@@ -288,7 +288,7 @@ function PaymentModal({ vendors, onSave, onClose }: {
           <div>
             <label className="block text-sm font-medium text-main mb-1">Vendor *</label>
             <select value={vendorId} onChange={(e) => setVendorId(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm" required>
-              <option value="">Select vendor...</option>
+              <option value="">{t('booksVendorPay.selectVendor')}</option>
               {vendors.filter((v) => v.vendorName).map((v) => <option key={v.id} value={v.id}>{v.vendorName}</option>)}
             </select>
             {selectedVendor?.is1099Eligible && (
@@ -309,7 +309,7 @@ function PaymentModal({ vendors, onSave, onClose }: {
             <label className="block text-sm font-medium text-main mb-1">{t('common.paymentMethod')}</label>
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
               <option value="check">{t('common.check')}</option>
-              <option value="bank_transfer">Bank Transfer</option>
+              <option value="bank_transfer">{t('booksVendorPay.bankTransfer')}</option>
               <option value="credit_card">{t('common.creditCard')}</option>
               <option value="cash">{t('common.cash')}</option>
             </select>
@@ -321,7 +321,7 @@ function PaymentModal({ vendors, onSave, onClose }: {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-main mb-1">Reference / Memo</label>
+            <label className="block text-sm font-medium text-main mb-1">{t('booksVendorPay.referenceMemo')}</label>
             <Input value={reference} onChange={(e) => setReference(e.target.value)} />
           </div>
           <div>

@@ -180,7 +180,7 @@ function LaborRatesTab({ rates, search, categoryFilter }: { rates: LaborRate[]; 
         {filteredRates.length === 0 ? (
           <div className="py-12 text-center text-muted">
             <Clock size={40} className="mx-auto mb-2 opacity-50" />
-            <p>No labor rates found</p>
+            <p>{t('priceBook.noLaborRatesFound')}</p>
           </div>
         ) : (
           <table className="w-full">
@@ -238,7 +238,7 @@ function MaterialsTab({ materials, search, categoryFilter }: { materials: Materi
         {filteredMaterials.length === 0 ? (
           <div className="py-12 text-center text-muted">
             <Package size={40} className="mx-auto mb-2 opacity-50" />
-            <p>No materials found</p>
+            <p>{t('priceBook.noMaterialsFound')}</p>
           </div>
         ) : (
           <table className="w-full">
@@ -308,13 +308,13 @@ function AssembliesTab({ assemblies, search, categoryFilter }: { assemblies: Ass
         {filteredAssemblies.length === 0 ? (
           <div className="py-12 text-center text-muted">
             <Wrench size={40} className="mx-auto mb-2 opacity-50" />
-            <p>No assemblies found</p>
+            <p>{t('priceBook.noAssembliesFound')}</p>
           </div>
         ) : (
           <table className="w-full">
             <thead>
               <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Assembly</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('priceBook.assembly')}</th>
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.category')}</th>
                 <th className="text-center text-xs font-medium text-muted uppercase px-6 py-3">{t('common.items')}</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.cost')}</th>

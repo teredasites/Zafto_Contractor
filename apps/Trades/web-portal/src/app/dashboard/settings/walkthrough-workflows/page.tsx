@@ -276,7 +276,7 @@ export default function WalkthroughWorkflowsPage() {
             <Card>
               <CardContent className="py-12 text-center">
                 <LayoutTemplate size={40} className="mx-auto text-muted/40 mb-3" />
-                <p className="text-muted font-medium">No custom templates yet</p>
+                <p className="text-muted font-medium">{t('settingsWorkflows.noCustomTemplatesYet')}</p>
                 <p className="text-sm text-muted mt-1 mb-4">
                   Create your own template or clone a system template to get started.
                 </p>
@@ -584,7 +584,7 @@ function TemplateEditor({
       {/* Basic Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Template Details</CardTitle>
+          <CardTitle>{tr('settingsWorkflows.templateDetails')}</CardTitle>
           <CardDescription>Set the name, type, and description for this walkthrough template.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -656,8 +656,8 @@ function TemplateEditor({
           {rooms.length === 0 ? (
             <div className="text-center py-8 text-muted">
               <Home size={32} className="mx-auto mb-2 opacity-40" />
-              <p className="font-medium">No rooms defined</p>
-              <p className="text-sm mt-1">Add rooms to standardize what your field crew captures.</p>
+              <p className="font-medium">{tr('settingsWorkflows.noRoomsDefined')}</p>
+              <p className="text-sm mt-1">{tr('settingsWorkflows.addRoomsToStandardizeWhatYourFieldCrewCaptures')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -682,7 +682,7 @@ function TemplateEditor({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Global Custom Fields</CardTitle>
+            <CardTitle>{tr('settingsWorkflows.globalCustomFields')}</CardTitle>
             <CardDescription>
               Fields that appear on every room in this template (e.g., Moisture Reading, Thermal Image Required).
             </CardDescription>
@@ -696,7 +696,7 @@ function TemplateEditor({
           {Object.keys(customFields).length === 0 ? (
             <div className="text-center py-6 text-muted">
               <ListChecks size={28} className="mx-auto mb-2 opacity-40" />
-              <p className="text-sm">No global custom fields. These apply to all rooms.</p>
+              <p className="text-sm">{tr('settingsWorkflows.noGlobalCustomFieldsTheseApplyToAllRooms')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -717,7 +717,7 @@ function TemplateEditor({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Global Checklist</CardTitle>
+            <CardTitle>{tr('settingsWorkflows.globalChecklist')}</CardTitle>
             <CardDescription>
               Items that must be completed for the entire walkthrough (e.g., All rooms photographed, Customer signature obtained).
             </CardDescription>
@@ -731,7 +731,7 @@ function TemplateEditor({
           {checklist.length === 0 ? (
             <div className="text-center py-6 text-muted">
               <CheckSquare size={28} className="mx-auto mb-2 opacity-40" />
-              <p className="text-sm">No checklist items. Add items to enforce completion standards.</p>
+              <p className="text-sm">{tr('settingsWorkflows.noChecklistItemsAddItemsToEnforceCompletionStandar')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -753,7 +753,7 @@ function TemplateEditor({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles size={18} className="text-accent" />
-            <CardTitle>AI Instructions</CardTitle>
+            <CardTitle>{tr('settingsWorkflows.aiInstructions')}</CardTitle>
           </div>
           <CardDescription>
             Custom instructions for AI bid generation. When a walkthrough using this template is sent to Z Intelligence,

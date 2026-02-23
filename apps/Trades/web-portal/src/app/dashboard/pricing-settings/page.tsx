@@ -130,7 +130,7 @@ export default function PricingSettingsPage() {
             className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-500/20 transition-colors"
           >
             <Plus className="h-4 w-4" />
-            <span className="text-sm font-medium">Add Rule</span>
+            <span className="text-sm font-medium">{t('pricingSettings.addRule')}</span>
           </button>
         )}
       </div>
@@ -138,7 +138,7 @@ export default function PricingSettingsPage() {
       {/* Add Rule Panel */}
       {showAdd && (
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5 mb-6">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">Choose a Rule Type</h3>
+          <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingSettings.chooseARuleType')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {availableTypes.map((rt) => {
               const Icon = rt.icon;
@@ -164,7 +164,7 @@ export default function PricingSettingsPage() {
       {rules.length === 0 ? (
         <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-12 text-center">
           <AlertTriangle className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
-          <p className="text-zinc-400">No pricing rules configured</p>
+          <p className="text-zinc-400">{t('pricingSettings.noPricingRulesConfigured')}</p>
           <p className="text-zinc-600 text-sm mt-2">
             Add rules to automatically suggest optimized pricing on estimates
           </p>

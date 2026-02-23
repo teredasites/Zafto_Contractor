@@ -95,7 +95,7 @@ export default function DryingLogsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('dryingLogs.title')}</h1>
-          <p className="text-muted mt-1">Document drying progress and environmental conditions</p>
+          <p className="text-muted mt-1">{t('dryingLogs.documentDryingProgressAndEnvironmentalConditions')}</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
@@ -119,7 +119,7 @@ export default function DryingLogsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.totalLogs}</p>
-                <p className="text-sm text-muted">Total Entries</p>
+                <p className="text-sm text-muted">{t('dryingLogs.totalEntries')}</p>
               </div>
             </div>
           </CardContent>
@@ -145,7 +145,7 @@ export default function DryingLogsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalEquipmentRunning}</p>
-                <p className="text-sm text-muted">Equipment Running</p>
+                <p className="text-sm text-muted">{t('dryingLogs.equipmentRunning')}</p>
               </div>
             </div>
           </CardContent>
@@ -158,7 +158,7 @@ export default function DryingLogsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{avgIndoorHumidity}</p>
-                <p className="text-sm text-muted">Avg Indoor Humidity</p>
+                <p className="text-sm text-muted">{t('dryingLogs.avgIndoorHumidity')}</p>
               </div>
             </div>
           </CardContent>
@@ -288,30 +288,30 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
                 <p className="font-medium text-main">{log.airScrubbersRunning}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider mb-1">Total Equipment</p>
+                <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('dryingLogs.totalEquipment')}</p>
                 <p className="font-medium text-main">{log.equipmentCount}</p>
               </div>
               {log.outdoorTempF != null && (
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Outdoor Temp</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('dryingLogs.outdoorTemp')}</p>
                   <p className="font-medium text-main">{log.outdoorTempF}°F</p>
                 </div>
               )}
               {log.outdoorHumidity != null && (
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Outdoor Humidity</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('dryingLogs.outdoorHumidity')}</p>
                   <p className="font-medium text-main">{log.outdoorHumidity}%</p>
                 </div>
               )}
               {log.indoorTempF != null && (
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Indoor Temp</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('dryingLogs.indoorTemp')}</p>
                   <p className="font-medium text-main">{log.indoorTempF}°F</p>
                 </div>
               )}
               {log.indoorHumidity != null && (
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Indoor Humidity</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('dryingLogs.indoorHumidity')}</p>
                   <p className="font-medium text-main">{log.indoorHumidity}%</p>
                 </div>
               )}
@@ -330,7 +330,7 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Drying Log Entry</CardTitle>
+            <CardTitle>{t('dryingLogs.addDryingLogEntry')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -340,11 +340,11 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Log Type *</label>
             <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="setup">Setup</option>
+              <option value="setup">{t('dryingLogs.setup')}</option>
               <option value="daily">{t('common.daily')}</option>
-              <option value="adjustment">Adjustment</option>
-              <option value="equipment_change">Equipment Change</option>
-              <option value="completion">Completion</option>
+              <option value="adjustment">{t('dryingLogs.adjustment')}</option>
+              <option value="equipment_change">{t('dryingLogs.equipmentChange')}</option>
+              <option value="completion">{t('dryingLogs.completion')}</option>
               <option value="note">Note</option>
             </select>
           </div>
@@ -372,7 +372,7 @@ function AddDryingLogModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />Save Entry</Button>
+            <Button className="flex-1"><Plus size={16} />{t('dryingLogs.saveEntry')}</Button>
           </div>
         </CardContent>
       </Card>

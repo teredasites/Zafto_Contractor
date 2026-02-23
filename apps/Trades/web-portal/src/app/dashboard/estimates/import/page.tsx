@@ -209,7 +209,7 @@ export default function ImportEstimatePage() {
         </button>
         <div>
           <h1 className="text-xl font-semibold text-zinc-100">{t('estimatesImport.title')}</h1>
-          <p className="text-sm text-zinc-500">Upload an Xactimate PDF export to import line items</p>
+          <p className="text-sm text-zinc-500">{t('estimatesImport.uploadAnXactimatePdfExportToImportLineItems')}</p>
         </div>
       </div>
 
@@ -256,7 +256,7 @@ export default function ImportEstimatePage() {
             <div className="text-center">
               <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
               <p className="text-sm text-zinc-300">Analyzing {fileName}...</p>
-              <p className="text-xs text-zinc-500 mt-1">Claude is extracting line items from the PDF</p>
+              <p className="text-xs text-zinc-500 mt-1">{t('estimatesImport.claudeIsExtractingLineItemsFromThePdf')}</p>
             </div>
           ) : (
             <button
@@ -265,8 +265,8 @@ export default function ImportEstimatePage() {
             >
               <Upload className="w-12 h-12 text-zinc-500" />
               <div className="text-center">
-                <p className="text-sm font-medium text-zinc-200">Upload Xactimate PDF</p>
-                <p className="text-xs text-zinc-500 mt-1">Click to select or drag a .pdf file</p>
+                <p className="text-sm font-medium text-zinc-200">{t('estimatesImport.uploadXactimatePdf')}</p>
+                <p className="text-xs text-zinc-500 mt-1">{t('estimatesImport.clickToSelectOrDragAPdfFile')}</p>
               </div>
             </button>
           )}
@@ -279,7 +279,7 @@ export default function ImportEstimatePage() {
           {/* Parsed claim info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-zinc-800/40 border border-zinc-700/30 rounded-lg p-4">
-              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Extracted Claim Info</h3>
+              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">{t('estimatesImport.extractedClaimInfo')}</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.claimNumber')}</span><span className="text-zinc-200">{claimInfo.claimNumber || 'N/A'}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.customer')}</span><span className="text-zinc-200">{claimInfo.customerName || 'N/A'}</span></div>
@@ -289,15 +289,15 @@ export default function ImportEstimatePage() {
               </div>
             </div>
             <div className="bg-zinc-800/40 border border-zinc-700/30 rounded-lg p-4">
-              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Parse Summary</h3>
+              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">{t('estimatesImport.parseSummary')}</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.lineItems')}</span><span className="text-zinc-200">{summary.lineCount}</span></div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Code Matches</span>
+                  <span className="text-zinc-500">{t('estimatesImport.codeMatches')}</span>
                   <span className="text-green-400">{summary.matchedCodes} matched / {summary.unmatchedCodes} unmatched</span>
                 </div>
-                <div className="flex justify-between"><span className="text-zinc-500">Price Discrepancies</span><span className="text-amber-400">{summary.itemsWithDiscrepancy}</span></div>
-                <div className="flex justify-between"><span className="text-zinc-500">Xactimate Total</span><span className="text-zinc-200 font-medium">${fmt(summary.rawTotal)}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('estimatesImport.priceDiscrepancies')}</span><span className="text-amber-400">{summary.itemsWithDiscrepancy}</span></div>
+                <div className="flex justify-between"><span className="text-zinc-500">{t('estimatesImport.xactimateTotal')}</span><span className="text-zinc-200 font-medium">${fmt(summary.rawTotal)}</span></div>
                 <div className="flex justify-between"><span className="text-zinc-500">{t('common.oAndP')}</span><span className="text-zinc-200">${fmt(summary.rawOverhead)} + ${fmt(summary.rawProfit)}</span></div>
               </div>
             </div>
@@ -322,10 +322,10 @@ export default function ImportEstimatePage() {
                   <th className="px-3 py-2 text-left">{t('common.description')}</th>
                   <th className="px-3 py-2 text-left w-16">{t('common.room')}</th>
                   <th className="px-3 py-2 text-right w-12">{t('common.qty')}</th>
-                  <th className="px-3 py-2 text-right w-20">Xact Price</th>
-                  <th className="px-3 py-2 text-right w-20">ZAFTO Price</th>
+                  <th className="px-3 py-2 text-right w-20">{t('estimatesImport.xactPrice')}</th>
+                  <th className="px-3 py-2 text-right w-20">{t('estimatesImport.zaftoPrice')}</th>
                   <th className="px-3 py-2 text-right w-20">{t('common.total')}</th>
-                  <th className="px-3 py-2 text-center w-16">Match</th>
+                  <th className="px-3 py-2 text-center w-16">{t('estimatesImport.match')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/50">
@@ -378,13 +378,13 @@ export default function ImportEstimatePage() {
 
           {/* Target claim selection */}
           <div className="bg-zinc-800/40 border border-zinc-700/30 rounded-lg p-4">
-            <h3 className="text-xs font-medium text-zinc-400 mb-3">Import to Claim</h3>
+            <h3 className="text-xs font-medium text-zinc-400 mb-3">{t('estimatesImport.importToClaim')}</h3>
             <select
               value={targetClaimId}
               onChange={(e) => setTargetClaimId(e.target.value)}
               className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-200"
             >
-              <option value="">Select a claim...</option>
+              <option value="">{t('estimatesImport.selectAClaim')}</option>
               {existingClaims.map(c => (
                 <option key={c.id} value={c.id}>
                   {c.claim_number || 'No #'} — {c.customer_name || 'Unknown'}

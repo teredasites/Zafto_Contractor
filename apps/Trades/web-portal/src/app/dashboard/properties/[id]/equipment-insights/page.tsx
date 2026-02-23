@@ -117,7 +117,7 @@ export default function EquipmentInsightsPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-main">Equipment Memory</h1>
+                <h1 className="text-lg font-semibold text-main">{t('propertyEquipment.equipmentMemory')}</h1>
                 <Badge variant="purple" size="sm">{t('common.poweredByZ')}</Badge>
               </div>
               {propertyName && (
@@ -142,8 +142,8 @@ export default function EquipmentInsightsPage() {
         {loading && !insights && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-muted animate-spin mb-3" />
-            <p className="text-sm text-muted">Analyzing equipment data...</p>
-            <p className="text-xs text-muted mt-1">This may take a few seconds</p>
+            <p className="text-sm text-muted">{t('propertyEquipment.analyzingEquipmentData')}</p>
+            <p className="text-xs text-muted mt-1">{t('propertyEquipment.thisMayTakeAFewSeconds')}</p>
           </div>
         )}
 
@@ -152,7 +152,7 @@ export default function EquipmentInsightsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertTriangle className="w-4 h-4" />
-                <p className="text-sm font-medium">Error loading insights</p>
+                <p className="text-sm font-medium">{t('propertyEquipment.errorLoadingInsights')}</p>
               </div>
               <p className="text-xs text-muted mt-1">{error}</p>
               <Button variant="outline" size="sm" className="mt-3" onClick={() => fetchInsights()}>
@@ -176,7 +176,7 @@ export default function EquipmentInsightsPage() {
                   <p className={cn('text-sm font-medium', healthColor(insights.equipment_health))}>
                     {healthLabel(insights.equipment_health)}
                   </p>
-                  <p className="text-xs text-muted mt-1">Overall Health Score</p>
+                  <p className="text-xs text-muted mt-1">{t('propertyEquipment.overallHealthScore')}</p>
                 </CardContent>
               </Card>
 
@@ -196,7 +196,7 @@ export default function EquipmentInsightsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Package className="w-4 h-4 text-muted" />
-                    <p className="text-xs text-muted">Equipment Tracked</p>
+                    <p className="text-xs text-muted">{t('propertyEquipment.equipmentTracked')}</p>
                   </div>
                   <p className="text-lg font-semibold text-main">{insights.equipment_count}</p>
                 </CardContent>
@@ -206,7 +206,7 @@ export default function EquipmentInsightsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <DollarSign className="w-4 h-4 text-muted" />
-                    <p className="text-xs text-muted">Est. Annual Cost</p>
+                    <p className="text-xs text-muted">{t('propertyEquipment.estAnnualCost')}</p>
                   </div>
                   <p className="text-lg font-semibold text-main">
                     {formatCurrency(insights.estimated_annual_cost)}
@@ -233,7 +233,7 @@ export default function EquipmentInsightsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Wrench className="w-4 h-4 text-muted" />
-                    <CardTitle>Maintenance Timeline</CardTitle>
+                    <CardTitle>{t('propertyEquipment.maintenanceTimeline')}</CardTitle>
                   </div>
                   <Badge variant="secondary" size="sm">
                     {insights.maintenance_schedule.length} upcoming
@@ -290,7 +290,7 @@ export default function EquipmentInsightsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Package className="w-4 h-4 text-muted" />
-                    <CardTitle>Parts to Stock</CardTitle>
+                    <CardTitle>{t('propertyEquipment.partsToStock')}</CardTitle>
                   </div>
                   <Badge variant="secondary" size="sm">
                     {insights.parts_to_stock.length} suggested
@@ -336,7 +336,7 @@ export default function EquipmentInsightsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-muted" />
-                    <CardTitle>Replacement Planning</CardTitle>
+                    <CardTitle>{t('propertyEquipment.replacementPlanning')}</CardTitle>
                   </div>
                   <Badge variant="secondary" size="sm">
                     {insights.replacement_timeline.length} items

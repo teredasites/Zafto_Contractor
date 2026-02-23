@@ -91,7 +91,7 @@ export default function RevenueInsightsPage() {
         <div className="flex items-center gap-3">
           <div>
             <h1 className="text-2xl font-semibold text-main">{t('revenueInsights.title')}</h1>
-            <p className="text-muted mt-1">AI-powered revenue analytics and recommendations</p>
+            <p className="text-muted mt-1">{t('revenueInsights.aipoweredRevenueAnalyticsAndRecommendations')}</p>
           </div>
           <Badge variant="purple" size="md" className="self-start mt-1">
             <ZMark size={12} className="text-purple-700 dark:text-purple-300" />
@@ -146,7 +146,7 @@ export default function RevenueInsightsPage() {
       {!data && !loading && !error && (
         <div className="text-center py-16">
           <BarChart3 size={40} className="mx-auto text-muted mb-4" />
-          <p className="text-muted">No revenue data available yet. Start creating jobs and invoices to see insights.</p>
+          <p className="text-muted">{t('revenueInsights.noRevenueDataAvailableYetStartCreatingJobsAndInvoi')}</p>
         </div>
       )}
     </div>

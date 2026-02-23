@@ -125,7 +125,7 @@ export default function UnitTurnsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('propertiesTurns.title')}</h1>
-          <p className="text-muted mt-1">Manage turnover tasks from move-out to re-lease</p>
+          <p className="text-muted mt-1">{t('propertyTurns.manageTurnoverTasksFromMoveoutToRelease')}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>
           <Plus size={16} />
@@ -137,19 +137,19 @@ export default function UnitTurnsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><RefreshCcw size={20} className="text-blue-600 dark:text-blue-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{activeTurns.length}</p><p className="text-sm text-muted">Active Turns</p></div>
+          <div><p className="text-2xl font-semibold text-main">{activeTurns.length}</p><p className="text-sm text-muted">{t('propertyTurns.activeTurns')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><DollarSign size={20} className="text-amber-600 dark:text-amber-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(totalCost)}</p><p className="text-sm text-muted">Total Cost</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(totalCost)}</p><p className="text-sm text-muted">{t('propertyTurns.totalCost')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Clock size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{avgDays}</p><p className="text-sm text-muted">Avg Days to Ready</p></div>
+          <div><p className="text-2xl font-semibold text-main">{avgDays}</p><p className="text-sm text-muted">{t('propertyTurns.avgDaysToReady')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(depositRecovered)}</p><p className="text-sm text-muted">Deposit Recovered</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(depositRecovered)}</p><p className="text-sm text-muted">{t('propertyTurns.depositRecovered')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -289,7 +289,7 @@ export default function UnitTurnsPage() {
 
                       {isExpanded && tasks.length === 0 && (
                         <div className="mt-3 pt-2 border-t border-main text-center">
-                          <p className="text-xs text-muted py-2">No tasks added yet</p>
+                          <p className="text-xs text-muted py-2">{t('propertyTurns.noTasksAddedYet')}</p>
                         </div>
                       )}
                     </div>
@@ -358,7 +358,7 @@ function NewTurnModal({ onClose, onCreate }: {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>New Unit Turn</CardTitle>
+          <CardTitle>{t('propertyTurns.newUnitTurn')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <XCircle size={18} />
           </Button>
@@ -395,7 +395,7 @@ function NewTurnModal({ onClose, onCreate }: {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Target Ready Date</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('propertyTurns.targetReadyDate')}</label>
               <input
                 type="date"
                 value={targetReadyDate}

@@ -80,7 +80,7 @@ export default function InvoicesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('invoices.title')}</h1>
-          <p className="text-muted mt-1">Create and track your invoices</p>
+          <p className="text-muted mt-1">{t('invoices.createAndTrackYourInvoices')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/invoices/new')}>
           <Plus size={16} />

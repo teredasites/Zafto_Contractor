@@ -353,7 +353,7 @@ function EquipmentDetailModal({
             )}
             {equipment.assetTag && (
               <div>
-                <p className="text-sm text-muted mb-1">Asset Tag</p>
+                <p className="text-sm text-muted mb-1">{t('common.assetTag')}</p>
                 <p className="font-mono text-main">{equipment.assetTag}</p>
               </div>
             )}
@@ -365,7 +365,7 @@ function EquipmentDetailModal({
             )}
             {equipment.areaDeployed && (
               <div>
-                <p className="text-sm text-muted mb-1">Area Deployed</p>
+                <p className="text-sm text-muted mb-1">{t('common.areaDeployed')}</p>
                 <p className="text-main">{equipment.areaDeployed}</p>
               </div>
             )}
@@ -373,14 +373,14 @@ function EquipmentDetailModal({
 
           {/* Deployment Info */}
           <div className="p-4 bg-secondary rounded-lg">
-            <h3 className="font-medium text-main mb-3">Deployment</h3>
+            <h3 className="font-medium text-main mb-3">{t('common.deployment')}</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-muted mb-1">Deployed At</p>
+                <p className="text-sm text-muted mb-1">{t('common.deployedAt')}</p>
                 <p className="text-main">{formatDateTime(equipment.deployedAt)}</p>
               </div>
               <div>
-                <p className="text-sm text-muted mb-1">Removed At</p>
+                <p className="text-sm text-muted mb-1">{t('common.removedAt')}</p>
                 <p className={cn(equipment.removedAt ? 'text-main' : 'text-muted')}>
                   {equipment.removedAt ? formatDateTime(equipment.removedAt) : 'Still deployed'}
                 </p>
@@ -398,7 +398,7 @@ function EquipmentDetailModal({
               <p className="text-2xl font-semibold text-main">
                 {equipment.totalDays != null ? equipment.totalDays : '--'}
               </p>
-              <p className="text-sm text-muted">Days Deployed</p>
+              <p className="text-sm text-muted">{t('common.daysDeployed')}</p>
             </div>
           </div>
 

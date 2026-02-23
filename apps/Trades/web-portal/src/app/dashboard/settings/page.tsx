@@ -272,7 +272,7 @@ function ProfileSettings() {
       <Card>
         <CardHeader>
           <CardTitle>{t('common.language')}</CardTitle>
-          <CardDescription>Choose your preferred language. The entire app will switch to your selection.</CardDescription>
+          <CardDescription>{t('settings.chooseYourPreferredLanguageTheEntireAppWillSwitchT')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
@@ -1111,14 +1111,14 @@ function AutomatedTriggersCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Automated Alerts</CardTitle>
-        <CardDescription>Configure which automated triggers notify you and how</CardDescription>
+        <CardTitle>{t('settings.automatedAlerts')}</CardTitle>
+        <CardDescription>{t('settings.configureWhichAutomatedTriggersNotifyYouAndHow')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           <div className="grid grid-cols-4 gap-4 text-xs text-muted pb-2 border-b border-border">
-            <div>Trigger</div>
-            <div className="text-center">In-App</div>
+            <div>{t('settings.trigger')}</div>
+            <div className="text-center">{t('settings.inapp')}</div>
             <div className="text-center">{t('common.email')}</div>
             <div className="text-center">SMS</div>
           </div>
@@ -1500,8 +1500,8 @@ function SecuritySettings() {
       {/* Password Change — Real */}
       <Card>
         <CardHeader>
-          <CardTitle>Password</CardTitle>
-          <CardDescription>Update your password</CardDescription>
+          <CardTitle>{t('settings.password')}</CardTitle>
+          <CardDescription>{t('settings.updateYourPassword')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {passwordMsg && (
@@ -1555,7 +1555,7 @@ function SecuritySettings() {
       <Card>
         <CardHeader>
           <CardTitle>{t('settings.twoFactorAuth')}</CardTitle>
-          <CardDescription>Add an extra layer of security to your account</CardDescription>
+          <CardDescription>{t('settings.addAnExtraLayerOfSecurityToYourAccount')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {mfaMsg && (
@@ -1630,7 +1630,7 @@ function SecuritySettings() {
                     </div>
                     <div>
                       <p className="font-medium text-main text-sm">{factor.friendly_name || 'Authenticator App'}</p>
-                      <p className="text-xs text-muted">TOTP enabled</p>
+                      <p className="text-xs text-muted">{t('settings.totpEnabled')}</p>
                     </div>
                   </div>
                   <Button
@@ -1648,8 +1648,8 @@ function SecuritySettings() {
             /* Not enrolled — show enable button */
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-main">Authenticator App</p>
-                <p className="text-sm text-muted">Use an app like Google Authenticator or Authy</p>
+                <p className="font-medium text-main">{t('settings.authenticatorApp')}</p>
+                <p className="text-sm text-muted">{t('settings.useAnAppLikeGoogleAuthenticatorOrAuthy')}</p>
               </div>
               <Button variant="secondary" onClick={handleMfaEnroll} disabled={enrolling}>
                 {enrolling ? (
@@ -1667,8 +1667,8 @@ function SecuritySettings() {
       {/* Current Session — Real */}
       <Card>
         <CardHeader>
-          <CardTitle>Current Session</CardTitle>
-          <CardDescription>Your active session information</CardDescription>
+          <CardTitle>{t('settings.currentSession')}</CardTitle>
+          <CardDescription>{t('settings.yourActiveSessionInformation')}</CardDescription>
         </CardHeader>
         <CardContent>
           {sessionInfo ? (
@@ -1685,7 +1685,7 @@ function SecuritySettings() {
               <Badge variant="success">{t('common.active')}</Badge>
             </div>
           ) : (
-            <p className="text-sm text-muted">Loading session info...</p>
+            <p className="text-sm text-muted">{t('settings.loadingSessionInfo')}</p>
           )}
         </CardContent>
       </Card>
@@ -1693,8 +1693,8 @@ function SecuritySettings() {
       {/* Sign out all devices */}
       <Card>
         <CardHeader>
-          <CardTitle>Sign Out Everywhere</CardTitle>
-          <CardDescription>Sign out of all devices and sessions</CardDescription>
+          <CardTitle>{t('settings.signOutEverywhere')}</CardTitle>
+          <CardDescription>{t('settings.signOutOfAllDevicesAndSessions')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button
@@ -1733,7 +1733,7 @@ function IntegrationSettings() {
           <CardTitle className="flex items-center gap-2">
             <Calendar size={18} /> Google Calendar
           </CardTitle>
-          <CardDescription>Two-way sync between ZAFTO jobs and Google Calendar</CardDescription>
+          <CardDescription>{t('settings.twowaySyncBetweenZaftoJobsAndGoogleCalendar')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {gcal.connected ? (
@@ -1743,13 +1743,13 @@ function IntegrationSettings() {
                 {gcal.email && <span className="text-sm text-muted">{gcal.email}</span>}
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="secondary" size="sm" onClick={() => gcal.syncNow()}>Sync Now</Button>
+                <Button variant="secondary" size="sm" onClick={() => gcal.syncNow()}>{t('settings.syncNow')}</Button>
                 <Button variant="ghost" size="sm" onClick={() => gcal.disconnect()}>Disconnect</Button>
               </div>
             </>
           ) : (
             <div>
-              <p className="text-sm text-muted mb-3">Connect your Google Calendar to sync scheduled jobs automatically.</p>
+              <p className="text-sm text-muted mb-3">{t('settings.connectYourGoogleCalendarToSyncScheduledJobsAutoma')}</p>
               <Button
                 variant="secondary"
                 size="sm"
@@ -1771,8 +1771,8 @@ function IntegrationSettings() {
       {/* Other integrations */}
       <Card>
         <CardHeader>
-          <CardTitle>Connected Apps</CardTitle>
-          <CardDescription>Manage third-party integrations</CardDescription>
+          <CardTitle>{t('settings.connectedApps')}</CardTitle>
+          <CardDescription>{t('settings.manageThirdpartyIntegrations')}</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y divide-main">
@@ -1869,8 +1869,8 @@ function BranchesSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Branches</CardTitle>
-              <CardDescription>Manage company locations and assign team members</CardDescription>
+              <CardTitle>{t('settings.branches')}</CardTitle>
+              <CardDescription>{t('settings.manageCompanyLocationsAndAssignTeamMembers')}</CardDescription>
             </div>
             <Button onClick={() => { setShowForm(true); setEditingId(null); setFormData({ name: '', address: '', city: '', state: '', zipCode: '', phone: '', email: '', timezone: 'America/New_York' }); }}>
               <Plus size={16} className="mr-2" />
@@ -1904,7 +1904,7 @@ function BranchesSettings() {
           ) : branches.length === 0 ? (
             <div className="text-center py-8 text-muted">
               <GitBranch size={32} className="mx-auto mb-2 opacity-40" />
-              <p>No branches yet. Add your first location.</p>
+              <p>{t('settings.noBranchesYetAddYourFirstLocation')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -1993,7 +1993,7 @@ function RolesSettings() {
       {/* Default Role Permissions Matrix */}
       <Card>
         <CardHeader>
-          <CardTitle>Default Role Permissions</CardTitle>
+          <CardTitle>{t('settings.defaultRolePermissions')}</CardTitle>
           <CardDescription>Built-in roles with default access levels. Assign roles to team members to control what they can see and do.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -2058,7 +2058,7 @@ function RolesSettings() {
                   </span>
                 )}
               </div>
-              <CardDescription>Create custom roles with granular permission control beyond the defaults</CardDescription>
+              <CardDescription>{t('settings.createCustomRolesWithGranularPermissionControlBeyo')}</CardDescription>
             </div>
             {isBusinessOrHigher && (
               <Button onClick={() => createRole({ name: 'New Role', baseRole: 'technician', permissions: {} })}>
@@ -2085,7 +2085,7 @@ function RolesSettings() {
           ) : roles.length === 0 ? (
             <div className="text-center py-8 text-muted">
               <UserCog size={32} className="mx-auto mb-2 opacity-40" />
-              <p>No custom roles yet. Default role-based permissions are active.</p>
+              <p>{t('settings.noCustomRolesYetDefaultRolebasedPermissionsAreActi')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -2156,7 +2156,7 @@ function RolesSettings() {
               </span>
             )}
           </div>
-          <CardDescription>Require approval for high-value actions before they go out</CardDescription>
+          <CardDescription>{t('settings.requireApprovalForHighvalueActionsBeforeTheyGoOut')}</CardDescription>
         </CardHeader>
         <CardContent>
           {!isEnterprise ? (
@@ -2565,7 +2565,7 @@ function TemplatesSettings() {
         <CardContent className="py-12">
           <div className="flex items-center justify-center gap-2 text-muted">
             <RefreshCw size={16} className="animate-spin" />
-            <span>Loading templates...</span>
+            <span>{tr('settings.loadingTemplates')}</span>
           </div>
         </CardContent>
       </Card>
@@ -2624,7 +2624,7 @@ function TemplatesSettings() {
 
           {/* Template list */}
           {filtered.length === 0 ? (
-            <div className="py-8 text-center text-muted text-sm">No templates found. Create one to get started.</div>
+            <div className="py-8 text-center text-muted text-sm">{tr('settings.noTemplatesFoundCreateOneToGetStarted')}</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {filtered.map((tmpl: ZDocsTemplate) => (
@@ -2728,7 +2728,7 @@ function CustomFieldsSettings() {
         <CardContent className="py-12">
           <div className="flex items-center justify-center gap-2 text-muted">
             <RefreshCw size={16} className="animate-spin" />
-            <span>Loading custom fields...</span>
+            <span>{t('settings.loadingCustomFields')}</span>
           </div>
         </CardContent>
       </Card>
@@ -2777,7 +2777,7 @@ function CustomFieldsSettings() {
               <div className="grid grid-cols-2 gap-3">
                 <Input label="Field Label" placeholder="e.g. License Number" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} required />
                 <div>
-                  <label className="text-xs font-medium text-muted mb-1 block">Field Type</label>
+                  <label className="text-xs font-medium text-muted mb-1 block">{t('settings.fieldType')}</label>
                   <select value={newType} onChange={(e) => setNewType(e.target.value as FieldType)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
                     {FIELD_TYPES.map((ft) => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
                   </select>
@@ -2792,7 +2792,7 @@ function CustomFieldsSettings() {
               </label>
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setShowAdd(false)}>{t('common.cancel')}</Button>
-                <Button size="sm" onClick={handleAdd} disabled={!newLabel.trim()}>Add Field</Button>
+                <Button size="sm" onClick={handleAdd} disabled={!newLabel.trim()}>{t('settings.addField')}</Button>
               </div>
             </div>
           )}
@@ -2947,7 +2947,7 @@ function BusinessConfigSettings() {
         <CardContent className="py-12">
           <div className="flex items-center justify-center gap-2 text-muted">
             <RefreshCw size={16} className="animate-spin" />
-            <span>Loading configuration...</span>
+            <span>{t('settings.loadingConfiguration')}</span>
           </div>
         </CardContent>
       </Card>
@@ -2962,7 +2962,7 @@ function BusinessConfigSettings() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base">{t('settings.taxRates')}</CardTitle>
-              <CardDescription>Manage tax rates for invoices and bids</CardDescription>
+              <CardDescription>{t('settings.manageTaxRatesForInvoicesAndBids')}</CardDescription>
             </div>
             {editSection !== 'tax' && (
               <Button variant="secondary" size="sm" onClick={() => setEditSection('tax')}>
@@ -2992,7 +2992,7 @@ function BusinessConfigSettings() {
                   <Input label="Rate %" type="number" step="0.01" min="0" max="100" placeholder="6.35" value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value.replace(/[^0-9.]/g, ''))} />
                 </div>
                 <div className="w-32">
-                  <label className="text-xs font-medium text-muted mb-1 block">Applies To</label>
+                  <label className="text-xs font-medium text-muted mb-1 block">{t('settings.appliesTo')}</label>
                   <select value={newTaxApplies} onChange={(e) => setNewTaxApplies(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
                     <option value="all">{t('common.all')}</option>
                     <option value="materials">{t('common.materials')}</option>
@@ -3028,8 +3028,8 @@ function BusinessConfigSettings() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Numbering & Formatting</CardTitle>
-              <CardDescription>Configure invoice/bid number formats and bid validity</CardDescription>
+              <CardTitle className="text-base">{t('settings.numberingFormatting')}</CardTitle>
+              <CardDescription>{t('settings.configureInvoicebidNumberFormatsAndBidValidity')}</CardDescription>
             </div>
             {editSection !== 'numbering' && (
               <Button variant="secondary" size="sm" onClick={() => setEditSection('numbering')}>
@@ -3053,15 +3053,15 @@ function BusinessConfigSettings() {
           ) : (
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Invoice format</span>
+                <span className="text-muted">{t('settings.invoiceFormat')}</span>
                 <span className="text-main font-mono">{config.invoiceNumberFormat}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Bid format</span>
+                <span className="text-muted">{t('settings.bidFormat')}</span>
                 <span className="text-main font-mono">{config.bidNumberFormat}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Bid validity</span>
+                <span className="text-muted">{t('settings.bidValidity')}</span>
                 <span className="text-main">{config.bidValidityDays} days</span>
               </div>
             </div>
@@ -3088,7 +3088,7 @@ function BusinessConfigSettings() {
           {editSection === 'payment' ? (
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-muted mb-1 block">Default Payment Terms</label>
+                <label className="text-xs font-medium text-muted mb-1 block">{t('settings.defaultPaymentTerms')}</label>
                 <select value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
                   <option value="due_on_receipt">{t('common.dueOnReceipt')}</option>
                   <option value="net_15">Net 15</option>
@@ -3107,15 +3107,15 @@ function BusinessConfigSettings() {
           ) : (
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Default terms</span>
+                <span className="text-muted">{t('settings.defaultTerms')}</span>
                 <span className="text-main">{config.defaultPaymentTerms.replace('_', ' ')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Late fee</span>
+                <span className="text-muted">{t('settings.lateFee')}</span>
                 <span className="text-main">{config.lateFeeRate}% / month</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Early payment discount</span>
+                <span className="text-muted">{t('settings.earlyPaymentDiscount')}</span>
                 <span className="text-main">{config.earlyPaymentDiscount}%</span>
               </div>
             </div>
@@ -3126,7 +3126,7 @@ function BusinessConfigSettings() {
       {/* Configurable Statuses */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Custom Statuses</CardTitle>
+          <CardTitle className="text-base">{t('settings.customStatuses')}</CardTitle>
           <CardDescription>Customize statuses for jobs, bids, invoices, leads, and priorities. Null/empty = use system defaults.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -3173,7 +3173,7 @@ function BusinessConfigSettings() {
                     </Button>
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <button onClick={() => setStatusEdit({ ...statusEdit, values: section.defaults })} className="text-xs text-muted hover:text-main">Reset to defaults</button>
+                    <button onClick={() => setStatusEdit({ ...statusEdit, values: section.defaults })} className="text-xs text-muted hover:text-main">{t('settings.resetToDefaults')}</button>
                     <Button size="sm" onClick={handleSaveStatuses} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
                   </div>
                 </div>

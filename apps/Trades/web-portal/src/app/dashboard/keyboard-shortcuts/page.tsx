@@ -84,7 +84,7 @@ export default function KeyboardShortcutsPage() {
 
       <p className="text-sm text-muted mb-6">
         Press <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-main rounded">?</kbd> anywhere to open this page.
-        Press <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-main rounded">Esc</kbd> to go back.
+        Press <kbd className="px-1.5 py-0.5 text-xs bg-secondary border border-main rounded">{t('keyboardShortcuts.esc')}</kbd> to go back.
       </p>
 
       <div className="space-y-8">

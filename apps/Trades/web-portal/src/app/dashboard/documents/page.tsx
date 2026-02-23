@@ -187,7 +187,7 @@ export default function DocumentsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalDocuments}</p>
-                <p className="text-sm text-muted">Total Documents</p>
+                <p className="text-sm text-muted">{t('common.totalDocuments')}</p>
               </div>
             </div>
           </CardContent>
@@ -288,7 +288,7 @@ export default function DocumentsPage() {
           <div className="w-64 flex-shrink-0">
             <Card>
               <CardHeader>
-                <CardTitle>Folders</CardTitle>
+                <CardTitle>{t('common.folders')}</CardTitle>
               </CardHeader>
               <CardContent className="p-2">
                 <button
@@ -313,7 +313,7 @@ export default function DocumentsPage() {
                   />
                 ))}
                 {folders.length === 0 && (
-                  <p className="text-xs text-muted px-3 py-4 text-center">No folders yet</p>
+                  <p className="text-xs text-muted px-3 py-4 text-center">{t('common.noFoldersYet')}</p>
                 )}
               </CardContent>
             </Card>
@@ -348,7 +348,7 @@ export default function DocumentsPage() {
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.name')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.type')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.job')}</th>
-                      <th className="text-left text-sm font-medium text-muted px-6 py-3">Size</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.size')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.uploaded')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signature')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3"></th>
@@ -384,7 +384,7 @@ export default function DocumentsPage() {
         {showTemplates && (
           <CardContent>
             {templates.length === 0 ? (
-              <p className="text-muted text-sm text-center py-4">No templates created yet</p>
+              <p className="text-muted text-sm text-center py-4">{t('common.noTemplatesCreatedYet')}</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {templates.map((tmpl) => (
@@ -636,7 +636,7 @@ function UploadModal({
             )}
           >
             <Upload size={40} className={cn('mx-auto mb-3', isDragging ? 'text-accent' : 'text-muted')} />
-            <p className="font-medium text-main mb-1">Drop files here or click to browse</p>
+            <p className="font-medium text-main mb-1">{t('common.dropFilesHereOrClickToBrowse')}</p>
             <p className="text-sm text-muted">PDF, Images, Documents up to 25MB</p>
           </div>
 

@@ -166,7 +166,7 @@ export default function JurisdictionsPage() {
       <div className="p-6">
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-red-400 mb-2">Failed to load jurisdictions</p>
+            <p className="text-red-400 mb-2">{t('permitsJurisdictions.failedToLoadJurisdictions')}</p>
             <p className="text-sm text-zinc-500">{error}</p>
           </CardContent>
         </Card>
@@ -219,7 +219,7 @@ export default function JurisdictionsPage() {
         <Card className="border-blue-500/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Add New Jurisdiction</CardTitle>
+              <CardTitle className="text-lg">{t('permitsJurisdictions.addNewJurisdiction')}</CardTitle>
               <Button variant="ghost" size="sm" onClick={() => setShowAddForm(false)}>
                 <X className="h-4 w-4" />
               </Button>
@@ -304,7 +304,7 @@ export default function JurisdictionsPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <MapPin className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No jurisdictions found</p>
+            <p className="text-zinc-400">{t('permitsJurisdictions.noJurisdictionsFound')}</p>
             <p className="text-sm text-zinc-500 mt-1">
               {searchQuery ? 'Try adjusting your search' : 'Select a state or add a new jurisdiction'}
             </p>
@@ -410,7 +410,7 @@ export default function JurisdictionsPage() {
                             className="flex items-center gap-2 text-green-400 hover:text-green-300"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
-                            <span>Online Portal</span>
+                            <span>{t('permitsJurisdictions.onlinePortal')}</span>
                           </a>
                         )}
                         {j.avg_turnaround_days != null && (

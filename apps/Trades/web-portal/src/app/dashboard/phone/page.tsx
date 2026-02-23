@@ -296,7 +296,7 @@ export default function PhonePage() {
                 <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                   <Phone className="h-8 w-8 mb-2 opacity-50" />
                   <p>No calls yet</p>
-                  <p className="text-xs mt-1">Calls will appear here once your phone system is active</p>
+                  <p className="text-xs mt-1">{t('common.callsWillAppearHereOnceYourPhoneSystemIsActive')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-zinc-800">
@@ -309,7 +309,7 @@ export default function PhonePage() {
               filteredVm.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                   <Voicemail className="h-8 w-8 mb-2 opacity-50" />
-                  <p>No voicemails</p>
+                  <p>{t('common.noVoicemails')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-zinc-800">

@@ -203,11 +203,11 @@ export default function DataImportPage() {
       {/* Import History */}
       {showHistory && (
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-white">Import History</h3>
+          <h3 className="text-sm font-semibold text-white">{t('settingsImport.importHistory')}</h3>
           {loading ? (
             <p className="text-zinc-500 text-sm">{t('common.loading')}</p>
           ) : batches.length === 0 ? (
-            <p className="text-zinc-500 text-sm">No imports yet</p>
+            <p className="text-zinc-500 text-sm">{t('settingsImport.noImportsYet')}</p>
           ) : (
             <div className="space-y-2">
               {batches.map((b) => (
@@ -476,15 +476,15 @@ export default function DataImportPage() {
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-zinc-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-white">{parsedFile?.rows.length || 0}</div>
-              <div className="text-xs text-zinc-500">Total Rows</div>
+              <div className="text-xs text-zinc-500">{t('settingsImport.totalRows')}</div>
             </div>
             <div className="bg-zinc-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-green-400">{importResult.successCount}</div>
-              <div className="text-xs text-zinc-500">Imported</div>
+              <div className="text-xs text-zinc-500">{t('settingsImport.imported')}</div>
             </div>
             <div className="bg-zinc-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-400">{importResult.errorCount}</div>
-              <div className="text-xs text-zinc-500">Errors</div>
+              <div className="text-xs text-zinc-500">{t('settingsImport.errors')}</div>
             </div>
           </div>
 
@@ -492,7 +492,7 @@ export default function DataImportPage() {
           {importErrors.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-white">Error Details</h4>
+                <h4 className="text-sm font-medium text-white">{t('settingsImport.errorDetails')}</h4>
                 <button
                   onClick={() => handleDownloadErrors(importResult.batchId)}
                   className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"

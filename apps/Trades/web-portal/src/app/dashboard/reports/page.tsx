@@ -73,7 +73,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('reports.title')}</h1>
-          <p className="text-muted mt-1">Business analytics and insights</p>
+          <p className="text-muted mt-1">{t('reports.businessAnalyticsAndInsights')}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -170,7 +170,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted">Material Costs</p>
+                <p className="text-sm text-muted">{t('reports.materialCosts')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totals.expenses)}</p>
               </div>
               <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
@@ -217,7 +217,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
         {/* Revenue by Month */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Revenue by Month</CardTitle>
+            <CardTitle className="text-base">{t('reports.revenueByMonth')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -273,7 +273,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
       {/* Monthly Breakdown Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Monthly Breakdown</CardTitle>
+          <CardTitle className="text-base">{t('reports.monthlyBreakdown')}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <table className="w-full">
@@ -377,14 +377,14 @@ function TeamReport({ team }: { team: TeamMemberStat[] }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Team Performance</CardTitle>
+          <CardTitle className="text-base">{t('reports.teamPerformance')}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {team.length > 0 ? (
             <table className="w-full">
               <thead>
                 <tr className="border-b border-main">
-                  <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Team Member</th>
+                  <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('reports.teamMember')}</th>
                   <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">{t('common.role')}</th>
                   <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.jobs')}</th>
                   <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">{t('common.revenue')}</th>
@@ -404,7 +404,7 @@ function TeamReport({ team }: { team: TeamMemberStat[] }) {
               </tbody>
             </table>
           ) : (
-            <div className="p-8 text-center text-muted">No team data available</div>
+            <div className="p-8 text-center text-muted">{t('reports.noTeamDataAvailable')}</div>
           )}
         </CardContent>
       </Card>
@@ -432,7 +432,7 @@ function InvoicesReport({ stats }: { stats: InvoiceStats }) {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Outstanding</p>
+            <p className="text-sm text-muted">{t('reports.outstanding')}</p>
             <p className="text-2xl font-semibold text-amber-600">{formatCurrency(stats.outstanding)}</p>
           </CardContent>
         </Card>
@@ -447,7 +447,7 @@ function InvoicesReport({ stats }: { stats: InvoiceStats }) {
       {/* Aging Report */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Aging Report</CardTitle>
+          <CardTitle className="text-base">{t('reports.agingReport')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

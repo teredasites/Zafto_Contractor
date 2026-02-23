@@ -304,7 +304,7 @@ function OverviewTab({
                 <p className="text-xs text-muted mt-0.5">{CATEGORY_LABELS[assessment.waterCategory]?.description}</p>
               </div>
               <div>
-                <p className="text-xs text-muted uppercase tracking-wider">Class</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('jobsMoisture.class')}</p>
                 <p className="font-semibold text-main">{CLASS_LABELS[assessment.waterClass]?.label}</p>
                 <p className="text-xs text-muted mt-0.5">{CLASS_LABELS[assessment.waterClass]?.description}</p>
               </div>
@@ -479,7 +479,7 @@ function ReadingsTab({ readings }: { readings: ReturnType<typeof useDryingMonito
       <Card><CardContent className="p-12 text-center">
         <Droplets size={48} className="mx-auto text-muted mb-4" />
         <h3 className="text-lg font-medium text-main mb-2">{t('moisture.noMoistureReadings')}</h3>
-        <p className="text-muted">Readings are added from the mobile app during on-site monitoring.</p>
+        <p className="text-muted">{t('jobsMoisture.readingsAreAddedFromTheMobileAppDuringOnsiteMonito')}</p>
       </CardContent></Card>
     );
   }
@@ -573,7 +573,7 @@ function PsychrometricTab({
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('moisture.gppIn')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.outdoor')}</th>
                   <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('moisture.gppOut')}</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">GPP Diff</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('jobsMoisture.gppDiff')}</th>
                   <th className="text-center px-4 py-3 text-xs font-medium text-muted uppercase">{t('common.equipment')}</th>
                 </tr>
               </thead>
@@ -660,7 +660,7 @@ function AddPsychrometricModal({
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Psychrometric Reading</CardTitle>
+            <CardTitle>{t('jobsMoisture.addPsychrometricReading')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg"><X size={18} className="text-muted" /></button>
           </div>
         </CardHeader>
@@ -731,11 +731,11 @@ function ContentsTab({
             <p className="text-xl font-bold text-main">{financialSummary.totalItems}</p>
           </CardContent></Card>
           <Card><CardContent className="p-4">
-            <p className="text-xs text-muted uppercase">Pre-Loss Value</p>
+            <p className="text-xs text-muted uppercase">{t('jobsMoisture.prelossValue')}</p>
             <p className="text-xl font-bold text-main">{formatCurrency(financialSummary.totalPreLoss)}</p>
           </CardContent></Card>
           <Card><CardContent className="p-4">
-            <p className="text-xs text-muted uppercase">Replacement Value</p>
+            <p className="text-xs text-muted uppercase">{t('jobsMoisture.replacementValue')}</p>
             <p className="text-xl font-bold text-main">{formatCurrency(financialSummary.totalReplacement)}</p>
           </CardContent></Card>
           <Card><CardContent className="p-4">
@@ -752,7 +752,7 @@ function ContentsTab({
       {items.length === 0 ? (
         <Card><CardContent className="p-12 text-center">
           <Package size={48} className="mx-auto text-muted mb-4" />
-          <h3 className="text-lg font-medium text-main mb-2">No Contents Inventory</h3>
+          <h3 className="text-lg font-medium text-main mb-2">{t('jobsMoisture.noContentsInventory')}</h3>
           <p className="text-muted">Track affected contents room-by-room: move, block, pack-out, or dispose.</p>
         </CardContent></Card>
       ) : (
@@ -855,7 +855,7 @@ function AddContentsModal({
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Add Contents Item</CardTitle>
+            <CardTitle>{t('jobsMoisture.addContentsItem')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg"><X size={18} className="text-muted" /></button>
           </div>
         </CardHeader>
@@ -947,7 +947,7 @@ function CreateAssessmentButton({
 
   return (
     <>
-      <Button onClick={() => setShowModal(true)}><Plus size={16} />Create Assessment</Button>
+      <Button onClick={() => setShowModal(true)}><Plus size={16} />{t('jobsMoisture.createAssessment')}</Button>
       {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">

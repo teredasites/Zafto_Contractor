@@ -174,7 +174,7 @@ export default function AutomationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('automations.title')}</h1>
-          <p className="text-muted mt-1">Automate repetitive tasks with trigger-based workflows</p>
+          <p className="text-muted mt-1">{t('automations.automateRepetitiveTasksWithTriggerbasedWorkflows')}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}>
           <Plus size={16} />
@@ -341,7 +341,7 @@ export default function AutomationsPage() {
             <CardContent className="p-12 text-center">
               <Zap size={48} className="mx-auto text-muted mb-4" />
               <h3 className="text-lg font-medium text-main mb-2">{t('automations.noRecords')}</h3>
-              <p className="text-muted mb-4">Create workflow automations to save time on repetitive tasks.</p>
+              <p className="text-muted mb-4">{t('automations.createWorkflowAutomationsToSaveTimeOnRepetitiveTas')}</p>
               <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('common.newAutomation')}</Button>
             </CardContent>
           </Card>
@@ -393,7 +393,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Automation Details</CardTitle>
+          <CardTitle>{t('automations.automationDetails')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}><ZapOff size={18} /></Button>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -409,7 +409,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
 
           {/* Trigger */}
           <div className="p-4 bg-secondary rounded-lg">
-            <p className="text-xs text-muted uppercase tracking-wider mb-2">When this happens...</p>
+            <p className="text-xs text-muted uppercase tracking-wider mb-2">{t('automations.whenThisHappens')}</p>
             <div className="flex items-center gap-2">
               <TriggerIcon size={18} className={tConfig.color} />
               <span className="font-medium text-main">{automation.trigger.label}</span>
@@ -428,7 +428,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
 
           {/* Actions */}
           <div className="space-y-2">
-            <p className="text-xs text-muted uppercase tracking-wider">Then do this...</p>
+            <p className="text-xs text-muted uppercase tracking-wider">{t('automations.thenDoThis')}</p>
             {automation.actions.map((action, i) => {
               const aConfig = actionConfig[action.type];
               const ActionIcon = aConfig.icon;
@@ -453,7 +453,7 @@ function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
               <p className="text-lg font-semibold text-main">{automation.runCount}</p>
             </div>
             <div>
-              <p className="text-xs text-muted uppercase tracking-wider">Last Run</p>
+              <p className="text-xs text-muted uppercase tracking-wider">{t('automations.lastRun')}</p>
               <p className="text-sm font-medium text-main">{automation.lastRun ? formatDate(automation.lastRun) : 'Never'}</p>
             </div>
             <div>
@@ -538,13 +538,13 @@ function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCrea
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Trigger *</label>
             <select value={triggerType} onChange={e => setTriggerType(e.target.value)} className={inputCls}>
-              <option value="">Select trigger...</option>
-              <option value="job_status">Job Status Change</option>
-              <option value="invoice_overdue">Invoice Overdue</option>
-              <option value="lead_idle">Lead Idle</option>
+              <option value="">{t('automations.selectTrigger')}</option>
+              <option value="job_status">{t('automations.jobStatusChange')}</option>
+              <option value="invoice_overdue">{t('automations.invoiceOverdue')}</option>
+              <option value="lead_idle">{t('automations.leadIdle')}</option>
               <option value="time_based">Scheduled (Time-Based)</option>
-              <option value="customer_event">Customer Event</option>
-              <option value="bid_event">Bid Event</option>
+              <option value="customer_event">{t('automations.customerEvent')}</option>
+              <option value="bid_event">{t('automations.bidEvent')}</option>
             </select>
           </div>
           <div>
@@ -565,13 +565,13 @@ function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCrea
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Action *</label>
             <select value={actionType} onChange={e => setActionType(e.target.value)} className={inputCls}>
-              <option value="">Select action...</option>
-              <option value="send_email">Send Email</option>
-              <option value="send_sms">Send SMS</option>
-              <option value="create_task">Create Task</option>
-              <option value="notify_team">Notify Team</option>
-              <option value="update_status">Update Status</option>
-              <option value="create_followup">Create Follow-up</option>
+              <option value="">{t('automations.selectAction')}</option>
+              <option value="send_email">{t('automations.sendEmail')}</option>
+              <option value="send_sms">{t('automations.sendSms')}</option>
+              <option value="create_task">{t('automations.createTask')}</option>
+              <option value="notify_team">{t('automations.notifyTeam')}</option>
+              <option value="update_status">{t('automations.updateStatus')}</option>
+              <option value="create_followup">{t('automations.createFollowup')}</option>
             </select>
           </div>
           <div className="flex items-center gap-3 pt-4">

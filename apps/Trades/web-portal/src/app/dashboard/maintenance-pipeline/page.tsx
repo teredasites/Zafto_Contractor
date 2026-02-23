@@ -193,8 +193,8 @@ export default function MaintenancePipelinePage() {
             {filteredPredictions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <Wrench className="w-12 h-12 text-zinc-600 mb-3" />
-                <p className="text-zinc-400">No predictions match filter</p>
-                <p className="text-xs text-zinc-500 mt-1">Run the engine to generate predictions from your equipment data</p>
+                <p className="text-zinc-400">{t('maintenancePipeline.noPredictionsMatchFilter')}</p>
+                <p className="text-xs text-zinc-500 mt-1">{t('maintenancePipeline.runTheEngineToGeneratePredictionsFromYourEquipment')}</p>
               </div>
             ) : (
               <div className="space-y-2">

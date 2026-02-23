@@ -234,11 +234,11 @@ export default function FleetPage() {
                 <div className="col-span-1" />
                 <div className="col-span-2">{t('common.vehicle')}</div>
                 <div className="col-span-1">{t('common.type')}</div>
-                <div className="col-span-2">Make / Model / Year</div>
+                <div className="col-span-2">{t('common.makeModelYear')}</div>
                 <div className="col-span-2">{t('common.assignedTo')}</div>
                 <div className="col-span-1">{t('common.status')}</div>
-                <div className="col-span-1">Odometer</div>
-                <div className="col-span-2">Last GPS</div>
+                <div className="col-span-1">{t('common.odometer')}</div>
+                <div className="col-span-2">{t('common.lastGps')}</div>
               </div>
 
               {filteredVehicles.map((vehicle) => {

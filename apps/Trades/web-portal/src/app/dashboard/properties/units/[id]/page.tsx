@@ -142,14 +142,14 @@ export default function UnitDetailPage() {
                 <div className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
                   <Bed size={20} className="text-muted" />
                   <div>
-                    <p className="text-xs text-muted">Bedrooms</p>
+                    <p className="text-xs text-muted">{t('propertyUnits.bedrooms')}</p>
                     <p className="font-semibold text-main">{unit.bedrooms}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
                   <Bath size={20} className="text-muted" />
                   <div>
-                    <p className="text-xs text-muted">Bathrooms</p>
+                    <p className="text-xs text-muted">{t('propertyUnits.bathrooms')}</p>
                     <p className="font-semibold text-main">{unit.bathrooms}</p>
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default function UnitDetailPage() {
                 <div className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
                   <Layers size={20} className="text-muted" />
                   <div>
-                    <p className="text-xs text-muted">Floor Level</p>
+                    <p className="text-xs text-muted">{t('propertyUnits.floorLevel')}</p>
                     <p className="font-semibold text-main">{unit.floorLevel ?? '--'}</p>
                   </div>
                 </div>
@@ -181,11 +181,11 @@ export default function UnitDetailPage() {
           {/* Amenities */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Amenities</CardTitle>
+              <CardTitle className="text-base">{t('propertyUnits.amenities')}</CardTitle>
             </CardHeader>
             <CardContent>
               {unit.amenities.length === 0 ? (
-                <p className="text-sm text-muted">No amenities listed</p>
+                <p className="text-sm text-muted">{t('propertyUnits.noAmenitiesListed')}</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {unit.amenities.map((amenity, idx) => (
@@ -287,8 +287,8 @@ export default function UnitDetailPage() {
             <Card>
               <CardContent className="py-12 text-center">
                 <User size={40} className="mx-auto text-muted mb-3 opacity-50" />
-                <p className="text-muted">This unit is currently not occupied</p>
-                <p className="text-xs text-muted mt-1">No active tenant or lease for this unit</p>
+                <p className="text-muted">{t('propertyUnits.thisUnitIsCurrentlyNotOccupied')}</p>
+                <p className="text-xs text-muted mt-1">{t('propertyUnits.noActiveTenantOrLeaseForThisUnit')}</p>
               </CardContent>
             </Card>
           )}
@@ -299,13 +299,13 @@ export default function UnitDetailPage() {
       {activeTab === 'history' && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Lease History</CardTitle>
+            <CardTitle className="text-base">{t('propertyUnits.leaseHistory')}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {unitLeases.length === 0 ? (
               <div className="py-12 text-center">
                 <History size={40} className="mx-auto text-muted mb-2 opacity-50" />
-                <p className="text-muted">No lease history for this unit</p>
+                <p className="text-muted">{t('propertyUnits.noLeaseHistoryForThisUnit')}</p>
               </div>
             ) : (
               <div className="divide-y divide-main">
@@ -340,13 +340,13 @@ export default function UnitDetailPage() {
       {activeTab === 'assets' && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Unit Assets</CardTitle>
+            <CardTitle className="text-base">{t('propertyUnits.unitAssets')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="py-8 text-center">
               <Package size={40} className="mx-auto text-muted mb-2 opacity-50" />
               <p className="text-muted">Track appliances, fixtures, and equipment in this unit</p>
-              <p className="text-xs text-muted mt-1">Asset tracking will appear here</p>
+              <p className="text-xs text-muted mt-1">{t('propertyUnits.assetTrackingWillAppearHere')}</p>
             </div>
           </CardContent>
         </Card>

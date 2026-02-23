@@ -226,11 +226,11 @@ export default function LeaseDetailPage() {
                   <p className="text-sm font-medium text-main">{formatCurrency(lease.depositAmount)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Grace Period</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyLeases.gracePeriod')}</p>
                   <p className="text-sm font-medium text-main">{lease.gracePeriodDays} days</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Late Fee</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyLeases.lateFee')}</p>
                   <p className="text-sm font-medium text-main">
                     {lease.lateFeeType === 'none' ? 'None' : `${formatCurrency(lease.lateFeeAmount)} (${lateFeeTypeLabels[lease.lateFeeType]})`}
                   </p>
@@ -242,17 +242,17 @@ export default function LeaseDetailPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Processing Fee</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyLeases.processingFee')}</p>
                   <p className="text-sm font-medium text-main">{processorFeeLabels[lease.paymentProcessorFee]}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Partial Payments</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyLeases.partialPayments')}</p>
                   <p className={cn('text-sm font-medium', lease.partialPaymentsAllowed ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
                     {lease.partialPaymentsAllowed ? 'Allowed' : 'Not Allowed'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Auto-Pay Required</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyLeases.autopayRequired')}</p>
                   <p className={cn('text-sm font-medium', lease.autoPayRequired ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted')}>
                     {lease.autoPayRequired ? 'Required' : 'Optional'}
                   </p>
@@ -261,7 +261,7 @@ export default function LeaseDetailPage() {
 
               {lease.termsNotes && (
                 <div className="mt-6 pt-4 border-t border-main">
-                  <p className="text-xs text-muted uppercase tracking-wider mb-2">Additional Terms</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-2">{t('propertyLeases.additionalTerms')}</p>
                   <p className="text-sm text-main whitespace-pre-wrap">{lease.termsNotes}</p>
                 </div>
               )}
@@ -284,7 +284,7 @@ export default function LeaseDetailPage() {
               ) : documents.length === 0 ? (
                 <div className="text-center py-8">
                   <FileText size={36} className="mx-auto text-muted mb-3 opacity-50" />
-                  <p className="text-sm text-muted">No documents attached to this lease</p>
+                  <p className="text-sm text-muted">{t('propertyLeases.noDocumentsAttachedToThisLease')}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -333,7 +333,7 @@ export default function LeaseDetailPage() {
             <CardContent>
               <div className="text-center py-8">
                 <DollarSign size={36} className="mx-auto text-muted mb-3 opacity-50" />
-                <p className="text-sm text-muted">Payment history is available in the Rent Roll</p>
+                <p className="text-sm text-muted">{t('propertyLeases.paymentHistoryIsAvailableInTheRentRoll')}</p>
                 <Button
                   variant="secondary"
                   size="sm"
@@ -389,7 +389,7 @@ export default function LeaseDetailPage() {
               )}
               {lease.terminationReason && (
                 <div className="pt-2 border-t border-main">
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Termination Reason</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('propertyLeases.terminationReason')}</p>
                   <p className="text-sm text-main">{lease.terminationReason}</p>
                 </div>
               )}

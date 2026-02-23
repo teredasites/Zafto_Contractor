@@ -92,15 +92,15 @@ export default function ChangeOrdersPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><ArrowUpRight size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(approvedTotal)}</p><p className="text-sm text-muted">Approved Additions</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(approvedTotal)}</p><p className="text-sm text-muted">{t('changeOrders.approvedAdditions')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg"><DollarSign size={20} className="text-cyan-600 dark:text-cyan-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(pendingTotal)}</p><p className="text-sm text-muted">Pending Value</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(pendingTotal)}</p><p className="text-sm text-muted">{t('changeOrders.pendingValue')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Calendar size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{totalCOs}</p><p className="text-sm text-muted">Total COs</p></div>
+          <div><p className="text-2xl font-semibold text-main">{totalCOs}</p><p className="text-sm text-muted">{t('changeOrders.totalCos')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -233,8 +233,8 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
-            {co.status === 'draft' && <Button className="flex-1"><Send size={16} />Send for Approval</Button>}
-            {co.status === 'pending_approval' && <Button className="flex-1"><CheckCircle size={16} />Mark Approved</Button>}
+            {co.status === 'draft' && <Button className="flex-1"><Send size={16} />{t('changeOrders.sendForApproval')}</Button>}
+            {co.status === 'pending_approval' && <Button className="flex-1"><CheckCircle size={16} />{t('changeOrders.markApproved')}</Button>}
           </div>
         </CardContent>
       </Card>
@@ -348,11 +348,11 @@ function NewCOModal({ onClose, onCreate }: {
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{t('common.reason')}</label>
               <select value={reason} onChange={(e) => setReason(e.target.value)} className={inputCls}>
-                <option value="customer_request">Customer Request</option>
-                <option value="discovered_during_work">Discovered During Work</option>
-                <option value="code_requirement">Code Requirement</option>
-                <option value="design_change">Design Change</option>
-                <option value="contractor_recommendation">Contractor Recommendation</option>
+                <option value="customer_request">{t('changeOrders.customerRequest')}</option>
+                <option value="discovered_during_work">{t('changeOrders.discoveredDuringWork')}</option>
+                <option value="code_requirement">{t('changeOrders.codeRequirement')}</option>
+                <option value="design_change">{t('changeOrders.designChange')}</option>
+                <option value="contractor_recommendation">{t('changeOrders.contractorRecommendation')}</option>
               </select>
             </div>
             <div>

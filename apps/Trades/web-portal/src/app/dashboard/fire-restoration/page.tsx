@@ -116,7 +116,7 @@ export default function FireRestorationPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{totalAssessments}</p>
-                  <p className="text-xs text-muted-foreground">Assessments</p>
+                  <p className="text-xs text-muted-foreground">{t('fireRestoration.assessments')}</p>
                 </div>
               </div>
             </CardContent>
@@ -129,7 +129,7 @@ export default function FireRestorationPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{totalZones}</p>
-                  <p className="text-xs text-muted-foreground">Damage Zones</p>
+                  <p className="text-xs text-muted-foreground">{t('fireRestoration.damageZones')}</p>
                 </div>
               </div>
             </CardContent>
@@ -155,7 +155,7 @@ export default function FireRestorationPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{waterSuppression}</p>
-                  <p className="text-xs text-muted-foreground">Water Suppression</p>
+                  <p className="text-xs text-muted-foreground">{t('fireRestoration.waterSuppression')}</p>
                 </div>
               </div>
             </CardContent>
@@ -285,12 +285,12 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
       {/* Overview */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Assessment Overview</CardTitle>
+          <CardTitle className="text-base">{tr('fireRestoration.assessmentOverview')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-xs text-muted-foreground">Origin</p>
+              <p className="text-xs text-muted-foreground">{tr('fireRestoration.origin')}</p>
               <p className="font-medium">{assessment.originRoom || 'Not specified'}</p>
             </div>
             <div>
@@ -300,7 +300,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
               </Badge>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">FD Report #</p>
+              <p className="text-xs text-muted-foreground">{tr('fireRestoration.fdReport')}</p>
               <p className="font-medium">{assessment.fireDepartmentReportNumber || '—'}</p>
             </div>
             <div>
@@ -321,9 +321,9 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
               </div>
               <div className="mt-1 flex flex-wrap gap-1">
                 {assessment.structuralCompromise && <Badge variant="error">{tr('common.structural')}</Badge>}
-                {assessment.roofDamage && <Badge variant="error">Roof</Badge>}
-                {assessment.foundationDamage && <Badge variant="error">Foundation</Badge>}
-                {assessment.loadBearingAffected && <Badge variant="error">Load-Bearing</Badge>}
+                {assessment.roofDamage && <Badge variant="error">{tr('fireRestoration.roof')}</Badge>}
+                {assessment.foundationDamage && <Badge variant="error">{tr('fireRestoration.foundation')}</Badge>}
+                {assessment.loadBearingAffected && <Badge variant="error">{tr('fireRestoration.loadbearing')}</Badge>}
               </div>
             </div>
           )}
@@ -419,7 +419,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
         </CardHeader>
         <CardContent>
           {items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No content items documented</p>
+            <p className="text-sm text-muted-foreground">{tr('fireRestoration.noContentItemsDocumented')}</p>
           ) : (
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
@@ -428,7 +428,7 @@ function AssessmentDetail({ assessment }: { assessment: FireAssessment }) {
               </div>
               <div>
                 <p className="text-lg font-bold">{stats.packed}</p>
-                <p className="text-xs text-muted-foreground">Packed</p>
+                <p className="text-xs text-muted-foreground">{tr('fireRestoration.packed')}</p>
               </div>
               <div>
                 <p className="text-lg font-bold">

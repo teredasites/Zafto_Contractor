@@ -62,7 +62,7 @@ export default function InspectionTemplatesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('inspectionsTemplates.title')}</h1>
-          <p className="text-muted mt-1">Manage checklists for inspections across all trades</p>
+          <p className="text-muted mt-1">{t('inspectionTemplates.manageChecklistsForInspectionsAcrossAllTrades')}</p>
         </div>
         <Button><Plus size={16} />{t('common.newTemplate')}</Button>
       </div>
@@ -79,14 +79,14 @@ export default function InspectionTemplatesPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><FileCheck size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{templates.reduce((s, t) => s + totalItems(t), 0)}</p><p className="text-sm text-muted">Total Checklist Items</p></div>
+          <div><p className="text-2xl font-semibold text-main">{templates.reduce((s, t) => s + totalItems(t), 0)}</p><p className="text-sm text-muted">{t('inspectionTemplates.totalChecklistItems')}</p></div>
         </div></CardContent></Card>
       </div>
 
       {/* Tabs + Search */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex gap-1 p-1 bg-secondary rounded-lg">
-          <button onClick={() => setTab('company')} className={cn('px-4 py-2 rounded-md text-sm font-medium transition-colors', tab === 'company' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}>My Templates</button>
+          <button onClick={() => setTab('company')} className={cn('px-4 py-2 rounded-md text-sm font-medium transition-colors', tab === 'company' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}>{t('inspectionTemplates.myTemplates')}</button>
           <button onClick={() => setTab('system')} className={cn('px-4 py-2 rounded-md text-sm font-medium transition-colors', tab === 'system' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}>{t('common.systemTemplates')}</button>
         </div>
         <SearchInput value={search} onChange={setSearch} placeholder="Search templates..." className="sm:w-80" />
@@ -169,7 +169,7 @@ export default function InspectionTemplatesPage() {
                     <Button variant="secondary" className="flex-1"><Trash2 size={16} />{t('common.delete')}</Button>
                   </>
                 )}
-                {selectedTemplate.isSystem && <Button variant="secondary" className="flex-1"><Copy size={16} />Clone to My Templates</Button>}
+                {selectedTemplate.isSystem && <Button variant="secondary" className="flex-1"><Copy size={16} />{t('inspectionTemplates.cloneToMyTemplates')}</Button>}
               </div>
             </CardContent>
           </div>

@@ -785,7 +785,7 @@ export default function FinancialReportsPage() {
               {/* Summary */}
               <div className="grid grid-cols-3 gap-4">
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Total Rental Income</p>
+                  <p className="text-xs text-muted uppercase">{t('booksReports.totalRentalIncome')}</p>
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(scheduleEData.totalIncome)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
@@ -793,7 +793,7 @@ export default function FinancialReportsPage() {
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(scheduleEData.totalExpenses)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Net Rental Income</p>
+                  <p className="text-xs text-muted uppercase">{t('booksReports.netRentalIncome')}</p>
                   <p className={cn('text-xl font-semibold mt-1 tabular-nums', scheduleEData.totalNet >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                     {formatCurrency(scheduleEData.totalNet)}
                   </p>
@@ -816,7 +816,7 @@ export default function FinancialReportsPage() {
                           <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>{t('common.rentalIncome')}</td>
                         </tr>
                         <tr className="border-b border-default">
-                          <td className="px-3 py-1.5 text-muted pl-6">Rents received</td>
+                          <td className="px-3 py-1.5 text-muted pl-6">{t('booksReports.rentsReceived')}</td>
                           <td className="px-3 py-1.5 text-right tabular-nums text-main">{formatCurrency(prop.income)}</td>
                         </tr>
                         <tr className="bg-secondary/50">
@@ -846,8 +846,8 @@ export default function FinancialReportsPage() {
                 <Card>
                   <CardContent className="p-12 text-center text-muted">
                     <Building size={40} className="mx-auto mb-2 opacity-50" />
-                    <p>No property income or expenses found for this period</p>
-                    <p className="text-xs mt-1">Allocate expenses to properties in Ledger Expenses</p>
+                    <p>{t('booksReports.noPropertyIncomeOrExpensesFoundForThisPeriod')}</p>
+                    <p className="text-xs mt-1">{t('booksReports.allocateExpensesToPropertiesInLedgerExpenses')}</p>
                   </CardContent>
                 </Card>
               )}
@@ -864,17 +864,17 @@ export default function FinancialReportsPage() {
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(jobCostingData.totalRevenue)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Total Costs</p>
+                  <p className="text-xs text-muted uppercase">{t('booksReports.totalCosts')}</p>
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(jobCostingData.totalCosts)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Total Profit</p>
+                  <p className="text-xs text-muted uppercase">{t('booksReports.totalProfit')}</p>
                   <p className={cn('text-xl font-semibold mt-1 tabular-nums', jobCostingData.totalProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                     {formatCurrency(jobCostingData.totalProfit)}
                   </p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Overall Margin</p>
+                  <p className="text-xs text-muted uppercase">{t('booksReports.overallMargin')}</p>
                   <p className={cn('text-xl font-semibold mt-1 tabular-nums', jobCostingData.overallMargin >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                     {jobCostingData.overallMargin.toFixed(1)}%
                   </p>
@@ -884,7 +884,7 @@ export default function FinancialReportsPage() {
               {/* Per-Job Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Job-Level Profitability</CardTitle>
+                  <CardTitle className="text-base">{t('booksReports.joblevelProfitability')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <table className="w-full text-sm">
@@ -892,7 +892,7 @@ export default function FinancialReportsPage() {
                       <tr className="border-b border-default">
                         <th className="text-left px-3 py-2 text-muted font-medium">{t('common.job')}</th>
                         <th className="text-right px-3 py-2 text-muted font-medium">{t('common.revenue')}</th>
-                        <th className="text-right px-3 py-2 text-muted font-medium">Costs</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">{t('booksReports.costs')}</th>
                         <th className="text-right px-3 py-2 text-muted font-medium">{t('common.profit')}</th>
                         <th className="text-right px-3 py-2 text-muted font-medium">{t('common.margin')}</th>
                       </tr>
@@ -902,8 +902,8 @@ export default function FinancialReportsPage() {
                         <tr>
                           <td colSpan={5} className="px-3 py-8 text-center text-muted">
                             <Briefcase size={32} className="mx-auto mb-2 opacity-50" />
-                            <p>No job revenue or costs found for this period</p>
-                            <p className="text-xs mt-1">Create invoices and log expenses against jobs to see profitability</p>
+                            <p>{t('booksReports.noJobRevenueOrCostsFoundForThisPeriod')}</p>
+                            <p className="text-xs mt-1">{t('booksReports.createInvoicesAndLogExpensesAgainstJobsToSeeProfit')}</p>
                           </td>
                         </tr>
                       ) : (

@@ -231,7 +231,7 @@ export default function CPAExportPage() {
     return (
       <div className="p-8 flex items-center justify-center min-h-[400px]">
         <Loader2 size={24} className="animate-spin text-muted" />
-        <span className="ml-3 text-muted text-sm">Checking access...</span>
+        <span className="ml-3 text-muted text-sm">{t('booksCpa.checkingAccess')}</span>
       </div>
     );
   }
@@ -244,7 +244,7 @@ export default function CPAExportPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('booksCpaExport.title')}</h1>
-          <p className="text-muted mt-1">Generate and download financial reports for your accountant</p>
+          <p className="text-muted mt-1">{t('booksCpa.generateAndDownloadFinancialReportsForYourAccounta')}</p>
         </div>
         <div className="flex items-center gap-3">
           {isCPA && (
@@ -348,7 +348,7 @@ export default function CPAExportPage() {
       {generating && (
         <div className="flex items-center justify-center py-12">
           <Loader2 size={24} className="animate-spin text-muted" />
-          <span className="ml-3 text-muted text-sm">Generating export package...</span>
+          <span className="ml-3 text-muted text-sm">{t('booksCpa.generatingExportPackage')}</span>
         </div>
       )}
 
@@ -431,11 +431,11 @@ export default function CPAExportPage() {
                 <p className="text-sm font-medium text-main">{t('common.trialBalance')}</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Total Debits</span>
+                    <span className="text-muted">{t('booksCpa.totalDebits')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.trialBalance.debitTotal)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Total Credits</span>
+                    <span className="text-muted">{t('booksCpa.totalCredits')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.trialBalance.creditTotal)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm pt-1.5 border-t border-default">
@@ -474,7 +474,7 @@ export default function CPAExportPage() {
                     <span className="tabular-nums text-main">{packageData.vendors1099.vendorCount}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">
-                    <span className="text-main">Total Payments</span>
+                    <span className="text-main">{t('booksCpa.totalPayments')}</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.vendors1099.totalPayments)}</span>
                   </div>
                 </div>
@@ -492,7 +492,7 @@ export default function CPAExportPage() {
                     <Download size={14} />
                   </Button>
                 </div>
-                <p className="text-sm font-medium text-main">Schedule E</p>
+                <p className="text-sm font-medium text-main">{t('booksCpa.scheduleE')}</p>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted">{t('common.rentalIncome')}</span>
@@ -503,7 +503,7 @@ export default function CPAExportPage() {
                     <span className="tabular-nums text-main">{formatCurrency(packageData?.scheduleE?.totalExpenses || 0)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">
-                    <span className="text-main">Net Rental</span>
+                    <span className="text-main">{t('booksCpa.netRental')}</span>
                     <span className={cn('tabular-nums', (packageData?.scheduleE?.totalNet || 0) >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                       {formatCurrency(packageData?.scheduleE?.totalNet || 0)}
                     </span>
@@ -518,7 +518,7 @@ export default function CPAExportPage() {
             {/* P&L Detail */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-base">P&L Detail</CardTitle>
+                <CardTitle className="text-base">{t('booksCpa.plDetail')}</CardTitle>
                 <Button variant="ghost" size="sm" onClick={downloadPnLCSV}>
                   <FileText size={14} />
                   CSV
@@ -595,7 +595,7 @@ export default function CPAExportPage() {
             {/* Balance Sheet Detail */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-base">Balance Sheet Detail</CardTitle>
+                <CardTitle className="text-base">{t('booksCpa.balanceSheetDetail')}</CardTitle>
                 <Button variant="ghost" size="sm" onClick={downloadBalanceSheetCSV}>
                   <FileText size={14} />
                   CSV

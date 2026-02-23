@@ -169,12 +169,12 @@ export default function BranchFinancialsPage() {
       <div className="space-y-8 animate-fade-in">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('booksBranches.title')}</h1>
-          <p className="text-[13px] text-muted mt-1">Multi-branch P&L and performance comparison</p>
+          <p className="text-[13px] text-muted mt-1">{t('booksBranches.multibranchPlAndPerformanceComparison')}</p>
         </div>
         <Card>
           <CardContent className="text-center py-12">
             <Building2 size={40} className="mx-auto mb-3 text-muted opacity-40" />
-            <h3 className="text-lg font-semibold text-main">Business Plan Feature</h3>
+            <h3 className="text-lg font-semibold text-main">{t('booksBranches.businessPlanFeature')}</h3>
             <p className="text-sm text-muted mt-2 max-w-md mx-auto">
               Multi-branch financial reporting with consolidated P&L, performance comparison, and branch benchmarking is available on the Business plan ($249.99/mo).
             </p>
@@ -310,7 +310,7 @@ export default function BranchFinancialsPage() {
       {(branchesLoading || dataLoading) && (
         <div className="flex items-center justify-center py-12">
           <Loader2 size={24} className="animate-spin text-muted" />
-          <span className="ml-3 text-muted text-sm">Loading branch financial data...</span>
+          <span className="ml-3 text-muted text-sm">{t('booksBranches.loadingBranchFinancialData')}</span>
         </div>
       )}
 
@@ -359,14 +359,14 @@ export default function BranchFinancialsPage() {
           {comparison.length >= 2 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Side-by-Side P&L Comparison</CardTitle>
+                <CardTitle className="text-base">{t('booksBranches.sidebysidePlComparison')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-default">
-                        <th className="text-left px-4 py-3 text-muted font-medium">Metric</th>
+                        <th className="text-left px-4 py-3 text-muted font-medium">{t('booksBranches.metric')}</th>
                         {comparison.map((c) => (
                           <th key={c.branchId} className="text-right px-4 py-3 text-muted font-medium">
                             {c.branchName}
@@ -501,7 +501,7 @@ export default function BranchFinancialsPage() {
           {/* Branch Performance Table */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Branch Performance</CardTitle>
+              <CardTitle className="text-base">{t('booksBranches.branchPerformance')}</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -520,7 +520,7 @@ export default function BranchFinancialsPage() {
                       <tr>
                         <td colSpan={5} className="px-4 py-12 text-center text-muted">
                           <Building2 size={32} className="mx-auto mb-3 text-muted" />
-                          <p className="text-sm">No branch data available.</p>
+                          <p className="text-sm">{t('booksBranches.noBranchDataAvailable')}</p>
                           <p className="text-xs text-muted mt-1">
                             Create branches in Enterprise settings and assign journal entries to branches.
                           </p>
@@ -609,7 +609,7 @@ export default function BranchFinancialsPage() {
             </Card>
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-muted uppercase tracking-wide">COGS</p>
+                <p className="text-xs text-muted uppercase tracking-wide">{t('booksBranches.cogs')}</p>
                 <p className="text-lg font-semibold text-amber-600 mt-1 tabular-nums">
                   {formatCurrency(branchPnL.cogs)}
                 </p>
@@ -732,7 +732,7 @@ export default function BranchFinancialsPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Building2 size={48} className="mx-auto text-muted mb-4" />
-            <h2 className="text-lg font-semibold text-main mb-2">No Branches Configured</h2>
+            <h2 className="text-lg font-semibold text-main mb-2">{t('booksBranches.noBranchesConfigured')}</h2>
             <p className="text-sm text-muted max-w-md mx-auto">
               Branch financials require the Enterprise tier with multi-branch support enabled.
               Set up branches in your Enterprise settings to see branch-level P&L and comparisons.

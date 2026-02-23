@@ -97,7 +97,7 @@ export default function GrowthPage() {
                 <h1 className="text-lg font-semibold text-main">{t('growth.title')}</h1>
                 <Badge variant="purple" size="sm">{t('common.poweredByZ')}</Badge>
               </div>
-              <p className="text-sm text-muted">AI-suggested actions to grow your revenue</p>
+              <p className="text-sm text-muted">{t('growth.aisuggestedActionsToGrowYourRevenue')}</p>
             </div>
           </div>
           <Button
@@ -118,8 +118,8 @@ export default function GrowthPage() {
         {loading && actions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-muted animate-spin mb-3" />
-            <p className="text-sm text-muted">Analyzing your customer data...</p>
-            <p className="text-xs text-muted mt-1">Finding revenue opportunities</p>
+            <p className="text-sm text-muted">{t('growth.analyzingYourCustomerData')}</p>
+            <p className="text-xs text-muted mt-1">{t('growth.findingRevenueOpportunities')}</p>
           </div>
         )}
 
@@ -129,7 +129,7 @@ export default function GrowthPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertTriangle className="w-4 h-4" />
-                <p className="text-sm font-medium">Error loading growth actions</p>
+                <p className="text-sm font-medium">{t('growth.errorLoadingGrowthActions')}</p>
               </div>
               <p className="text-xs text-muted mt-1">{error}</p>
               <Button variant="outline" size="sm" className="mt-3" onClick={() => refresh()}>
@@ -146,7 +146,7 @@ export default function GrowthPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-muted">Actions Pending</p>
+                    <p className="text-xs text-muted">{t('growth.actionsPending')}</p>
                     <p className="text-2xl font-semibold mt-1">{actions.length}</p>
                   </div>
                   <Target className="w-5 h-5 text-muted" />
@@ -157,7 +157,7 @@ export default function GrowthPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-muted">Completed This Month</p>
+                    <p className="text-xs text-muted">{t('growth.completedThisMonth')}</p>
                     <p className="text-2xl font-semibold mt-1">{completedCount}</p>
                   </div>
                   <CheckCircle className="w-5 h-5 text-emerald-500" />
@@ -168,7 +168,7 @@ export default function GrowthPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-muted">Est. Revenue Opportunity</p>
+                    <p className="text-xs text-muted">{t('growth.estRevenueOpportunity')}</p>
                     <p className="text-2xl font-bold text-emerald-600 mt-1">
                       {formatCurrency(totalValue)}
                     </p>
@@ -287,7 +287,7 @@ export default function GrowthPage() {
                 <Card>
                   <CardContent className="p-12 text-center">
                     <Filter className="w-8 h-8 text-muted mx-auto mb-2" />
-                    <p className="text-sm text-muted">No actions match this filter</p>
+                    <p className="text-sm text-muted">{t('growth.noActionsMatchThisFilter')}</p>
                   </CardContent>
                 </Card>
               )}
@@ -354,7 +354,7 @@ export default function GrowthPage() {
                       )}
                       {selectedAction.suggested_date && (
                         <div className="p-2 rounded-lg bg-surface-hover">
-                          <p className="text-[10px] text-muted">Suggested Date</p>
+                          <p className="text-[10px] text-muted">{t('growth.suggestedDate')}</p>
                           <p className="text-sm font-medium mt-0.5">{selectedAction.suggested_date}</p>
                         </div>
                       )}
@@ -363,7 +363,7 @@ export default function GrowthPage() {
                     {/* Draft message */}
                     {selectedAction.draft_message && (
                       <div>
-                        <p className="text-xs font-medium text-main mb-1.5">AI Draft Message</p>
+                        <p className="text-xs font-medium text-main mb-1.5">{t('growth.aiDraftMessage')}</p>
                         <div className="p-3 rounded-lg bg-surface-hover border border-main text-xs leading-relaxed text-muted">
                           {selectedAction.draft_message}
                         </div>
@@ -385,7 +385,7 @@ export default function GrowthPage() {
                 <Card>
                   <CardContent className="p-12 text-center">
                     <Rocket className="w-8 h-8 text-muted mx-auto mb-2" />
-                    <p className="text-sm text-muted">Select an action to view details</p>
+                    <p className="text-sm text-muted">{t('growth.selectAnActionToViewDetails')}</p>
                   </CardContent>
                 </Card>
               )}
@@ -397,8 +397,8 @@ export default function GrowthPage() {
         {!loading && !error && actions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20">
             <Rocket className="w-12 h-12 text-muted mb-3" />
-            <p className="text-lg font-medium text-main">No growth actions yet</p>
-            <p className="text-sm text-muted mt-1">Add customers and complete jobs to see AI-generated growth opportunities</p>
+            <p className="text-lg font-medium text-main">{t('growth.noGrowthActionsYet')}</p>
+            <p className="text-sm text-muted mt-1">{t('growth.addCustomersAndCompleteJobsToSeeAigeneratedGrowthO')}</p>
             <Button variant="outline" size="sm" className="mt-4" onClick={() => refresh()}>
               <RefreshCcw className="w-3.5 h-3.5 mr-1.5" /> Check Again
             </Button>

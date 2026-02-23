@@ -215,7 +215,7 @@ export default function RentRollPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><AlertCircle size={20} className="text-red-600 dark:text-red-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{delinquentCount}</p><p className="text-sm text-muted">Delinquent</p></div>
+          <div><p className="text-2xl font-semibold text-main">{delinquentCount}</p><p className="text-sm text-muted">{t('propertyRent.delinquent')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -231,7 +231,7 @@ export default function RentRollPage() {
         {/* Header row */}
         <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted">
           <div className="col-span-2">{t('common.tenant')}</div>
-          <div className="col-span-2">Unit / Property</div>
+          <div className="col-span-2">{t('propertyRent.unitProperty')}</div>
           <div className="col-span-1">{t('common.type')}</div>
           <div className="col-span-1 text-right">Amount Due</div>
           <div className="col-span-1 text-right">{t('common.paid')}</div>
@@ -305,8 +305,8 @@ export default function RentRollPage() {
         {filteredCharges.length === 0 && (
           <div className="px-6 py-12 text-center">
             <DollarSign size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No rent charges found</h3>
-            <p className="text-muted mb-4">Generate monthly charges to get started.</p>
+            <h3 className="text-lg font-medium text-main mb-2">{t('propertyRent.noRentChargesFound')}</h3>
+            <p className="text-muted mb-4">{t('propertyRent.generateMonthlyChargesToGetStarted')}</p>
           </div>
         )}
       </div>
@@ -332,7 +332,7 @@ export default function RentRollPage() {
                   <span className="font-medium text-main">{formatCurrency(paymentTarget.amount)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Already Paid</span>
+                  <span className="text-muted">{t('propertyRent.alreadyPaid')}</span>
                   <span className="font-medium text-emerald-600">{formatCurrency(paymentTarget.paidAmount)}</span>
                 </div>
               </div>

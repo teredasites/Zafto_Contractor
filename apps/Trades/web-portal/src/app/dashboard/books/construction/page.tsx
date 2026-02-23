@@ -458,7 +458,7 @@ function BillingTab({
         <CardContent className="p-0">
           {/* Header */}
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
-            <div className="col-span-1">App #</div>
+            <div className="col-span-1">{t('booksConstruction.app')}</div>
             <div className="col-span-2">{t('common.job')}</div>
             <div className="col-span-2">{t('common.period')}</div>
             <div className="col-span-2 text-right">{t('common.contract')}</div>
@@ -546,7 +546,7 @@ function BillingTab({
                                 <th className="text-left py-2 px-2 text-muted font-medium">{t('common.item')}</th>
                                 <th className="text-left py-2 px-2 text-muted font-medium">{t('common.description')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.scheduled')}</th>
-                                <th className="text-right py-2 px-2 text-muted font-medium">Prev.</th>
+                                <th className="text-right py-2 px-2 text-muted font-medium">{t('booksConstruction.prev')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.thisPeriod')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.materials')}</th>
                                 <th className="text-right py-2 px-2 text-muted font-medium">{t('common.total')}</th>

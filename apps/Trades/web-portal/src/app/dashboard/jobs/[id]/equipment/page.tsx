@@ -508,7 +508,7 @@ function HistoryTab({ deployments }: { deployments: EquipmentDeploymentData[] })
         <CardContent className="p-12 text-center">
           <Package size={48} className="mx-auto text-muted mb-4" />
           <h3 className="text-lg font-medium text-main mb-2">{t('jobs.noRemovedEquipment')}</h3>
-          <p className="text-muted">Equipment removed from this job will appear here with billing history.</p>
+          <p className="text-muted">{t('jobsEquipment.equipmentRemovedFromThisJobWillAppearHereWithBilli')}</p>
         </CardContent>
       </Card>
     );
@@ -885,7 +885,7 @@ function RunCalculatorModal({ jobId, onClose }: { jobId: string; onClose: () => 
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>IICRC S500 Equipment Calculator</CardTitle>
-              <p className="text-sm text-muted mt-1">Enter room dimensions and water class to calculate required equipment</p>
+              <p className="text-sm text-muted mt-1">{t('jobsEquipment.enterRoomDimensionsAndWaterClassToCalculateRequire')}</p>
             </div>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />

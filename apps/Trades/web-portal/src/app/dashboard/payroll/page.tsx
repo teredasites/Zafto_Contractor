@@ -138,7 +138,7 @@ export default function PayrollPage() {
           <h1 className="text-2xl font-semibold text-main">{t('payroll.title')}</h1>
           <p className="text-muted mt-1">Manage pay periods, stubs, and tax reporting</p>
         </div>
-        <Button><Plus size={16} />New Pay Period</Button>
+        <Button><Plus size={16} />{t('payroll.newPayPeriod')}</Button>
       </div>
 
       {/* Stats */}
@@ -155,7 +155,7 @@ export default function PayrollPage() {
                     ? `${formatDate(currentPeriod.startDate).split(',')[0]} - ${formatDate(currentPeriod.endDate).split(',')[0]}`
                     : 'None'}
                 </p>
-                <p className="text-sm text-muted">Current Period</p>
+                <p className="text-sm text-muted">{t('payroll.currentPeriod')}</p>
               </div>
             </div>
           </CardContent>
@@ -168,7 +168,7 @@ export default function PayrollPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totalPayroll)}</p>
-                <p className="text-sm text-muted">Total Gross</p>
+                <p className="text-sm text-muted">{t('payroll.totalGross')}</p>
               </div>
             </div>
           </CardContent>
@@ -181,7 +181,7 @@ export default function PayrollPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(currentNet)}</p>
-                <p className="text-sm text-muted">Total Net</p>
+                <p className="text-sm text-muted">{t('payroll.totalNet')}</p>
               </div>
             </div>
           </CardContent>
@@ -241,7 +241,7 @@ export default function PayrollPage() {
               {/* Table Header */}
               <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
                 <div className="col-span-1" />
-                <div className="col-span-2">Date Range</div>
+                <div className="col-span-2">{t('payroll.dateRange')}</div>
                 <div className="col-span-1">{t('common.type')}</div>
                 <div className="col-span-1">{t('common.status')}</div>
                 <div className="col-span-1">{t('common.employees')}</div>

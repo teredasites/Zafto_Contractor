@@ -57,7 +57,7 @@ export default function InvoiceDetailPage() {
       <div className="text-center py-12">
         <Receipt size={48} className="mx-auto text-muted mb-4" />
         <h2 className="text-xl font-semibold text-main">{t('invoices.invoiceNotFound')}</h2>
-        <p className="text-muted mt-2">The invoice you're looking for doesn't exist.</p>
+        <p className="text-muted mt-2">{t('invoices.theInvoiceYoureLookingForDoesntExist')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/invoices')}>
           Back to Invoices
         </Button>
@@ -147,7 +147,7 @@ export default function InvoiceDetailPage() {
                       to_email: custEmail,
                       to_name: `${invoice.customer?.firstName || ''} ${invoice.customer?.lastName || ''}`.trim(),
                       subject: `Payment Reminder: Invoice ${invoice.invoiceNumber || ''} — $${invoice.amountDue?.toFixed(2) || '0.00'} Due`,
-                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>Payment Reminder</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>$${invoice.amountDue?.toFixed(2) || '0.00'}</strong>.</p><p>Due date: ${invoice.dueDate ? formatDate(invoice.dueDate) : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
+                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>{t('invoices.paymentReminder')}</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>$${invoice.amountDue?.toFixed(2) || '0.00'}</strong>.</p><p>Due date: ${invoice.dueDate ? formatDate(invoice.dueDate) : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
                       email_type: 'invoice_reminder',
                       related_type: 'invoice',
                       related_id: invoice.id,
@@ -461,7 +461,7 @@ export default function InvoiceDetailPage() {
                 <StatusBadge status={invoice.status} />
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Invoice #</span>
+                <span className="text-muted">{t('invoices.invoice')}</span>
                 <span className="text-main font-mono">{invoice.invoiceNumber}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -475,7 +475,7 @@ export default function InvoiceDetailPage() {
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Due</span>
+                <span className="text-muted">{t('invoices.due')}</span>
                 <span className={cn('font-medium', isOverdue ? 'text-red-600' : 'text-main')}>
                   {formatDate(invoice.dueDate)}
                 </span>
@@ -515,7 +515,7 @@ export default function InvoiceDetailPage() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted text-center py-4">No payments recorded</p>
+                <p className="text-sm text-muted text-center py-4">{t('invoices.noPaymentsRecorded')}</p>
               )}
             </CardContent>
           </Card>
@@ -524,7 +524,7 @@ export default function InvoiceDetailPage() {
           {invoice.jobId && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Related Job</CardTitle>
+                <CardTitle className="text-base">{t('invoices.relatedJob')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Button

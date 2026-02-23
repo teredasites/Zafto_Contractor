@@ -156,7 +156,7 @@ export default function ReviewsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">Requests Sent</p>
+                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('reviews.requestsSent')}</p>
                 <p className="text-2xl font-bold text-white mt-1">{stats.totalSent}</p>
               </div>
               <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -170,7 +170,7 @@ export default function ReviewsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">Reviews Received</p>
+                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('reviews.reviewsReceived')}</p>
                 <p className="text-2xl font-bold text-white mt-1">{stats.totalCompleted}</p>
               </div>
               <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -260,7 +260,7 @@ export default function ReviewsPage() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent className="flex flex-col items-center justify-center py-16 gap-3">
             <Inbox className="h-12 w-12 text-zinc-600" />
-            <p className="text-zinc-400">No review requests found</p>
+            <p className="text-zinc-400">{t('reviews.noReviewRequestsFound')}</p>
             <p className="text-xs text-zinc-500">
               Review requests are created when jobs are marked complete
             </p>

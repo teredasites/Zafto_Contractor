@@ -138,7 +138,7 @@ export default function PmInspectionsPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><Wrench size={20} className="text-red-600 dark:text-red-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{needsRepairCount}</p><p className="text-sm text-muted">Items Needing Repair</p></div>
+          <div><p className="text-2xl font-semibold text-main">{needsRepairCount}</p><p className="text-sm text-muted">{t('propertyInspections.itemsNeedingRepair')}</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -228,7 +228,7 @@ export default function PmInspectionsPage() {
                       <div className="col-span-2">{t('common.area')}</div>
                       <div className="col-span-3">{t('common.item')}</div>
                       <div className="col-span-2">{t('common.condition')}</div>
-                      <div className="col-span-1">Repair</div>
+                      <div className="col-span-1">{t('propertyInspections.repair')}</div>
                       <div className="col-span-4">{t('common.notes')}</div>
                     </div>
                     {(ins.items || []).map((item) => {
@@ -278,7 +278,7 @@ export default function PmInspectionsPage() {
           <div className="px-6 py-12 text-center">
             <ClipboardCheck size={48} className="mx-auto text-muted mb-4" />
             <h3 className="text-lg font-medium text-main mb-2">{t('common.noInspectionsFound')}</h3>
-            <p className="text-muted mb-4">Schedule your first property inspection.</p>
+            <p className="text-muted mb-4">{t('propertyInspections.scheduleYourFirstPropertyInspection')}</p>
             <Button onClick={() => setShowNewModal(true)}>
               <Plus size={16} />
               New Inspection
@@ -339,7 +339,7 @@ function NewInspectionModal({ onClose, onCreate }: {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>New Property Inspection</CardTitle>
+          <CardTitle>{t('propertyInspections.newPropertyInspection')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <XCircle size={18} />
           </Button>
@@ -352,10 +352,10 @@ function NewInspectionModal({ onClose, onCreate }: {
               onChange={(e) => setInspectionType(e.target.value as PmInspectionData['inspectionType'])}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
             >
-              <option value="move_in">Move-In</option>
-              <option value="move_out">Move-Out</option>
-              <option value="routine">Routine</option>
-              <option value="drive_by">Drive-By</option>
+              <option value="move_in">{t('propertyInspections.movein')}</option>
+              <option value="move_out">{t('propertyInspections.moveout')}</option>
+              <option value="routine">{t('propertyInspections.routine')}</option>
+              <option value="drive_by">{t('propertyInspections.driveby')}</option>
               <option value="annual">{t('common.annual')}</option>
               <option value="emergency">{t('common.emergency')}</option>
             </select>

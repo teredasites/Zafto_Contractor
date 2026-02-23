@@ -221,7 +221,7 @@ export default function MoldRemediationPage() {
             <AssessmentDetail assessment={selected} licensing={licensing} />
           ) : (
             <div className="flex items-center justify-center h-96 rounded-xl bg-zinc-900 border border-zinc-800">
-              <p className="text-sm text-zinc-500">Select an assessment to view details</p>
+              <p className="text-sm text-zinc-500">{t('common.selectAnAssessmentToViewDetails')}</p>
             </div>
           )}
         </div>
@@ -286,7 +286,7 @@ function AssessmentDetail({
       {/* Visible Mold Types */}
       {Array.isArray(a.visibleMoldType) && a.visibleMoldType.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Visible Mold Types</h3>
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">{t('common.visibleMoldTypes')}</h3>
           <div className="flex flex-wrap gap-2">
             {a.visibleMoldType.map((mt, i) => (
               <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded">{String(mt)}</span>
@@ -329,7 +329,7 @@ function AssessmentDetail({
       {/* Remediation Plan */}
       {activePlan && (
         <div>
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Remediation Plan</h3>
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">{t('common.remediationPlan')}</h3>
           <div className="bg-zinc-800/50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className={`text-xs font-medium px-2 py-0.5 rounded border ${STATUS_COLORS[activePlan.status] ?? ''}`}>
@@ -353,7 +353,7 @@ function AssessmentDetail({
             Equipment ({equipment.length})
           </h3>
           {equipment.length === 0 ? (
-            <p className="text-xs text-zinc-600">None deployed</p>
+            <p className="text-xs text-zinc-600">{t('common.noneDeployed')}</p>
           ) : (
             <div className="space-y-1">
               {equipment.map((eq: MoldEquipmentDeployment) => (
@@ -370,7 +370,7 @@ function AssessmentDetail({
             Lab Samples ({labSamples.length})
           </h3>
           {labSamples.length === 0 ? (
-            <p className="text-xs text-zinc-600">No samples collected</p>
+            <p className="text-xs text-zinc-600">{t('common.noSamplesCollected')}</p>
           ) : (
             <div className="space-y-1">
               {labSamples.map((s: MoldLabSample) => (

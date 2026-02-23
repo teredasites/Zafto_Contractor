@@ -131,8 +131,8 @@ export default function LienProtectionPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <Shield className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No active lien records</p>
-            <p className="text-sm text-zinc-500 mt-1">Lien tracking starts when jobs have outstanding payments</p>
+            <p className="text-zinc-400">{t('lienProtection.noActiveLienRecords')}</p>
+            <p className="text-sm text-zinc-500 mt-1">{t('lienProtection.lienTrackingStartsWhenJobsHaveOutstandingPayments')}</p>
           </CardContent>
         </Card>
       ) : (

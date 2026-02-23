@@ -307,7 +307,7 @@ function ListView({
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white leading-none">{plans.length}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Floor Plans</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">{t('sketchEngine.floorPlans')}</p>
                 </div>
               </div>
               <div className="w-px h-8 bg-white/[0.06]" />
@@ -317,7 +317,7 @@ function ListView({
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white leading-none">{totalWalls}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Total Walls</p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">{t('sketchEngine.totalWalls')}</p>
                 </div>
               </div>
               <div className="w-px h-8 bg-white/[0.06]" />
@@ -371,7 +371,7 @@ function ListView({
         >
           <div className="flex items-center gap-2.5">
             <Sparkles size={14} className="text-emerald-400" />
-            <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Engine Capabilities</span>
+            <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">{t('sketchEngine.engineCapabilities')}</span>
             <span className="text-[10px] text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">{SK_FEATURES.length} tools</span>
           </div>
           <ChevronRight
@@ -413,7 +413,7 @@ function ListView({
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-3">
             <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
-            <span className="text-sm text-zinc-400">Loading floor plans...</span>
+            <span className="text-sm text-zinc-400">{t('sketchEngine.loadingFloorPlans')}</span>
           </div>
         </div>
       )}
@@ -454,7 +454,7 @@ function ListView({
                   <Plus size={20} className="text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                 )}
               </div>
-              <p className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300 transition-colors">New Floor Plan</p>
+              <p className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300 transition-colors">{t('sketchEngine.newFloorPlan')}</p>
             </button>
           </div>
         </div>
@@ -467,7 +467,7 @@ function ListView({
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-5">
               <PenTool size={28} className="text-emerald-400" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Create Your First Floor Plan</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t('sketchEngine.createYourFirstFloorPlan')}</h3>
             <p className="text-sm text-zinc-400 leading-relaxed mb-6">
               Draw walls, place doors and windows, define rooms with auto-measurements,
               add trade layers, and generate estimates — all from one canvas.
@@ -509,7 +509,7 @@ function ListView({
                 <Trash2 size={18} className="text-red-400" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">Delete Floor Plan</h3>
+                <h3 className="text-sm font-bold text-white">{t('sketchEngine.deleteFloorPlan')}</h3>
                 <p className="text-xs text-zinc-400">This action cannot be undone.</p>
               </div>
             </div>

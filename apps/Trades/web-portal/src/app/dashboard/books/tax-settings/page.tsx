@@ -327,7 +327,7 @@ export default function TaxSettingsPage() {
                 <FileText size={20} className="text-accent" />
               </div>
               <div>
-                <p className="text-muted text-xs">Tax Mappings</p>
+                <p className="text-muted text-xs">{t('booksTax.taxMappings')}</p>
                 <p className="text-xl font-bold text-main">{mappedAccounts} / {totalAccounts}</p>
               </div>
             </div>
@@ -645,7 +645,7 @@ function ScheduleCTab({
           {!data ? (
             <div className="p-8 text-center">
               <RefreshCw size={24} className="mx-auto animate-spin text-muted mb-3" />
-              <p className="text-sm text-muted">Loading Schedule C data...</p>
+              <p className="text-sm text-muted">{t('booksTax.loadingScheduleCData')}</p>
             </div>
           ) : data.lines.length <= 5 && data.netProfit === 0 ? (
             <div className="p-8 text-center">
@@ -669,7 +669,7 @@ function ScheduleCTab({
       {data && data.netProfit !== 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Estimated Quarterly Tax Payments</CardTitle>
+            <CardTitle>{t('booksTax.estimatedQuarterlyTaxPayments')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -681,14 +681,14 @@ function ScheduleCTab({
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-muted uppercase tracking-wider">Est. Income Tax</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('booksTax.estIncomeTax')}</p>
                 <p className="text-xl font-bold text-main tabular-nums">
                   {formatCurrency(Math.max(0, (data.seTax + data.estimatedQuarterlyTax * 4 - data.seTax)))}
                 </p>
                 <p className="text-xs text-muted">Based on federal brackets (single filer)</p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-muted uppercase tracking-wider">Quarterly Payment</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('booksTax.quarterlyPayment')}</p>
                 <p className={cn(
                   'text-2xl font-bold tabular-nums',
                   data.estimatedQuarterlyTax > 0 ? 'text-accent' : 'text-main'

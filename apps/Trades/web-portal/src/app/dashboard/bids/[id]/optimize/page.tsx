@@ -417,7 +417,7 @@ export default function BidOptimizePage() {
                 <Brain size={24} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[var(--accent)]" />
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-semibold text-main">Analyzing Bid</h3>
+                <h3 className="text-lg font-semibold text-main">{t('bidsOptimize.analyzingBid')}</h3>
                 <p className="text-sm text-muted mt-1">
                   Reviewing historical data, pricing patterns, and competitive factors...
                 </p>
@@ -434,7 +434,7 @@ export default function BidOptimizePage() {
             <div className="flex flex-col items-center gap-4">
               <ShieldAlert size={48} className="text-red-500" />
               <div className="text-center">
-                <h3 className="text-lg font-semibold text-main">Analysis Failed</h3>
+                <h3 className="text-lg font-semibold text-main">{t('bidsOptimize.analysisFailed')}</h3>
                 <p className="text-sm text-muted mt-1">{error}</p>
               </div>
               <Button variant="primary" onClick={() => optimize(bidId)}>
@@ -470,7 +470,7 @@ export default function BidOptimizePage() {
                     <div className="text-lg font-bold text-main">
                       {result.historical_stats.win_rate}%
                     </div>
-                    <div className="text-xs text-muted">Historical Win Rate</div>
+                    <div className="text-xs text-muted">{t('bidsOptimize.historicalWinRate')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-lg font-bold text-main">
@@ -546,7 +546,7 @@ export default function BidOptimizePage() {
                 </div>
                 {/* Total potential value */}
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-main">
-                  <span className="text-sm text-muted">Total potential value from suggestions</span>
+                  <span className="text-sm text-muted">{t('bidsOptimize.totalPotentialValueFromSuggestions')}</span>
                   <span className="text-lg font-bold text-emerald-500">
                     +{formatCurrency(
                       result.scope_suggestions.reduce((sum, s) => sum + s.estimated_value, 0)

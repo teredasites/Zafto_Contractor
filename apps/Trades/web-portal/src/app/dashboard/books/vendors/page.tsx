@@ -79,7 +79,7 @@ export default function VendorsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wide">Active Vendors</p>
+            <p className="text-xs text-muted uppercase tracking-wide">{t('booksVendors.activeVendors')}</p>
             <p className="text-2xl font-semibold text-main mt-1">{vendors.filter((v) => v.isActive).length}</p>
           </CardContent>
         </Card>
@@ -136,7 +136,7 @@ export default function VendorsPage() {
         <CardContent className="p-0">
           <div className="divide-y divide-main">
             {filtered.length === 0 && (
-              <div className="px-6 py-12 text-center text-sm text-muted">No vendors found</div>
+              <div className="px-6 py-12 text-center text-sm text-muted">{t('booksVendors.noVendorsFound')}</div>
             )}
             {filtered.map((vendor) => (
               <div
@@ -163,7 +163,7 @@ export default function VendorsPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-main tabular-nums">{formatCurrency(vendor.ytdPayments || 0)}</p>
-                  <p className="text-xs text-muted">YTD</p>
+                  <p className="text-xs text-muted">{t('booksVendors.ytd')}</p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -344,7 +344,7 @@ function VendorModal({ vendor, onSave, onClose }: {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1">Contact Name</label>
+              <label className="block text-sm font-medium text-main mb-1">{t('booksVendors.contactName')}</label>
               <Input value={contactName} onChange={(e) => setContactName(e.target.value)} />
             </div>
             <div>

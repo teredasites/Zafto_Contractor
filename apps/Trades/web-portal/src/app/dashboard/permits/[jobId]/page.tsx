@@ -153,7 +153,7 @@ export default function PermitDetailPage() {
       <div className="p-6">
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-red-400 mb-2">Failed to load permits</p>
+            <p className="text-red-400 mb-2">{t('permits.failedToLoadPermits')}</p>
             <p className="text-sm text-zinc-500">{error}</p>
           </CardContent>
         </Card>
@@ -180,7 +180,7 @@ export default function PermitDetailPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <FileCheck className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">No permits for this job</p>
+            <p className="text-zinc-400">{t('permits.noPermitsForThisJob')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -254,7 +254,7 @@ export default function PermitDetailPage() {
                 {isExpanded && (
                   <div className="border-t border-zinc-800">
                     <div className="px-4 pt-3 pb-1">
-                      <h4 className="text-sm font-medium text-zinc-300">Inspection Timeline</h4>
+                      <h4 className="text-sm font-medium text-zinc-300">{t('permits.inspectionTimeline')}</h4>
                     </div>
                     <InspectionTimeline jobPermitId={permit.id} />
                   </div>

@@ -115,20 +115,20 @@ export default function ExpensesPage() {
           <Input placeholder={t('common.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
-          <option value="">All Statuses</option>
+          <option value="">{t('booksExpenses.allStatuses')}</option>
           <option value="draft">{t('common.draft')}</option>
           <option value="approved">{t('common.approved')}</option>
           <option value="posted">{t('common.posted')}</option>
           <option value="voided">{t('common.voided')}</option>
         </select>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
-          <option value="">All Categories</option>
+          <option value="">{t('booksExpenses.allCategories')}</option>
           {EXPENSE_CATEGORIES.map((c) => <option key={c} value={c}>{EXPENSE_CATEGORY_LABELS[c]}</option>)}
         </select>
         <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36" placeholder={t('email.from')} />
         <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36" placeholder="To" />
         <select value={propertyFilter} onChange={(e) => setPropertyFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
-          <option value="">All Properties</option>
+          <option value="">{t('booksExpenses.allProperties')}</option>
           {properties.map((p) => <option key={p.id} value={p.id}>{p.addressLine1 || p.city}</option>)}
         </select>
       </div>
@@ -156,8 +156,8 @@ export default function ExpensesPage() {
             {filtered.length === 0 && (
               <div className="px-6 py-16 text-center">
                 <Receipt size={40} className="mx-auto mb-3 text-muted opacity-50" />
-                <p className="text-sm font-medium text-main">No expenses found</p>
-                <p className="text-xs text-muted mt-1">Record your first expense to start tracking costs</p>
+                <p className="text-sm font-medium text-main">{t('booksExpenses.noExpensesFound')}</p>
+                <p className="text-xs text-muted mt-1">{t('booksExpenses.recordYourFirstExpenseToStartTrackingCosts')}</p>
               </div>
             )}
             {filtered.map((expense) => {
@@ -293,7 +293,7 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-surface rounded-xl shadow-2xl w-full max-w-lg border border-main max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="px-6 py-4 border-b border-main">
-          <h2 className="text-lg font-semibold text-main">New Expense</h2>
+          <h2 className="text-lg font-semibold text-main">{t('booksExpenses.newExpense')}</h2>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -323,24 +323,24 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
             </div>
             {propertyId && (
               <div>
-                <label className="block text-sm font-medium text-main mb-1">Schedule E Category</label>
+                <label className="block text-sm font-medium text-main mb-1">{t('booksExpenses.scheduleECategory')}</label>
                 <select value={scheduleECategory} onChange={(e) => setScheduleECategory(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
                   <option value="">{t('common.selectEllipsis')}</option>
                   <option value="advertising">{t('common.advertising')}</option>
-                  <option value="auto_and_travel">Auto and travel</option>
-                  <option value="cleaning_maintenance">Cleaning and maintenance</option>
-                  <option value="commissions">Commissions</option>
+                  <option value="auto_and_travel">{t('booksExpenses.autoAndTravel')}</option>
+                  <option value="cleaning_maintenance">{t('booksExpenses.cleaningAndMaintenance')}</option>
+                  <option value="commissions">{t('booksExpenses.commissions')}</option>
                   <option value="insurance">{t('common.insurance')}</option>
-                  <option value="legal_professional">Legal/professional fees</option>
-                  <option value="management_fees">Management fees</option>
-                  <option value="mortgage_interest">Mortgage interest</option>
-                  <option value="other_interest">Other interest</option>
+                  <option value="legal_professional">{t('booksExpenses.legalprofessionalFees')}</option>
+                  <option value="management_fees">{t('booksExpenses.managementFees')}</option>
+                  <option value="mortgage_interest">{t('booksExpenses.mortgageInterest')}</option>
+                  <option value="other_interest">{t('booksExpenses.otherInterest')}</option>
                   <option value="repairs">{t('common.repairs')}</option>
-                  <option value="supplies">Supplies</option>
+                  <option value="supplies">{t('booksExpenses.supplies')}</option>
                   <option value="taxes">{t('common.taxes')}</option>
                   <option value="utilities">{t('common.utilities')}</option>
-                  <option value="depreciation">Depreciation</option>
-                  <option value="other">Other expenses</option>
+                  <option value="depreciation">{t('booksExpenses.depreciation')}</option>
+                  <option value="other">{t('booksExpenses.otherExpenses')}</option>
                 </select>
               </div>
             )}

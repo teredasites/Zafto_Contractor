@@ -168,7 +168,7 @@ export default function WalkthroughsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('walkthroughs.title')}</h1>
-          <p className="text-muted mt-1">Property walkthroughs and site assessments</p>
+          <p className="text-muted mt-1">{t('walkthroughs.propertyWalkthroughsAndSiteAssessments')}</p>
         </div>
         <Button onClick={() => router.push('/dashboard/walkthroughs/new')}>
           <Plus size={16} />

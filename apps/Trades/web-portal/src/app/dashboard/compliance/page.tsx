@@ -126,7 +126,7 @@ export default function CompliancePage() {
       <div className="p-6">
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-red-400 mb-2">Failed to load compliance data</p>
+            <p className="text-red-400 mb-2">{t('compliance.failedToLoadComplianceData')}</p>
             <p className="text-sm text-zinc-500">{error}</p>
           </CardContent>
         </Card>

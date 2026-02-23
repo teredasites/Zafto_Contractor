@@ -81,7 +81,7 @@ export default function BidDetailPage() {
       <div className="text-center py-12">
         <FileText size={48} className="mx-auto text-muted mb-4" />
         <h2 className="text-xl font-semibold text-main">{t('bids.bidNotFound')}</h2>
-        <p className="text-muted mt-2">The bid you're looking for doesn't exist.</p>
+        <p className="text-muted mt-2">{t('bids.theBidYoureLookingForDoesntExist')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/bids')}>
           Back to Bids
         </Button>
@@ -151,7 +151,7 @@ export default function BidDetailPage() {
               <h1 className="text-2xl font-semibold text-main">{bid.title}</h1>
               <StatusBadge status={bid.status} />
               {bid.depositPaid && (
-                <Badge variant="success" size="sm">Deposit Paid</Badge>
+                <Badge variant="success" size="sm">{t('bids.depositPaid')}</Badge>
               )}
             </div>
             <p className="text-muted mt-1">
@@ -450,7 +450,7 @@ export default function BidDetailPage() {
                         </div>
                         {selectedAddOns.length > 0 && (
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted">Add-ons</span>
+                            <span className="text-muted">{t('bids.addons')}</span>
                             <span className="text-main">{formatCurrency(addOnsTotal)}</span>
                           </div>
                         )}
@@ -474,7 +474,7 @@ export default function BidDetailPage() {
           {bid.addOns.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Add-Ons</CardTitle>
+                <CardTitle className="text-base">{t('bids.addons')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">

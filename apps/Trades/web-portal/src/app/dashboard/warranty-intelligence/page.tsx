@@ -303,11 +303,11 @@ function DashboardView({
         {/* Recent Claims */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-zinc-300">Recent Claims</CardTitle>
+            <CardTitle className="text-sm font-medium text-zinc-300">{t('warrantyIntel.recentClaims')}</CardTitle>
           </CardHeader>
           <CardContent>
             {recentClaims.length === 0 ? (
-              <p className="text-sm text-zinc-500 text-center py-4">No claims filed</p>
+              <p className="text-sm text-zinc-500 text-center py-4">{t('warrantyIntel.noClaimsFiled')}</p>
             ) : (
               <div className="space-y-2">
                 {recentClaims.map(claim => (
@@ -327,11 +327,11 @@ function DashboardView({
         {/* Recent Outreach */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-zinc-300">Recent Outreach</CardTitle>
+            <CardTitle className="text-sm font-medium text-zinc-300">{t('warrantyIntel.recentOutreach')}</CardTitle>
           </CardHeader>
           <CardContent>
             {recentOutreach.length === 0 ? (
-              <p className="text-sm text-zinc-500 text-center py-4">No outreach sent</p>
+              <p className="text-sm text-zinc-500 text-center py-4">{t('warrantyIntel.noOutreachSent')}</p>
             ) : (
               <div className="space-y-2">
                 {recentOutreach.map(log => (
@@ -352,7 +352,7 @@ function DashboardView({
       {/* Outreach Pipeline Stats */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-300">Outreach Pipeline</CardTitle>
+          <CardTitle className="text-sm font-medium text-zinc-300">{t('warrantyIntel.outreachPipeline')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
@@ -362,13 +362,13 @@ function DashboardView({
             </div>
             <div className="text-center p-4 rounded-lg bg-zinc-800/50">
               <p className="text-2xl font-bold text-green-400">{stats.outreachBookedCount}</p>
-              <p className="text-xs text-zinc-400 mt-1">Booked</p>
+              <p className="text-xs text-zinc-400 mt-1">{t('warrantyIntel.booked')}</p>
             </div>
             <div className="text-center p-4 rounded-lg bg-zinc-800/50">
               <p className="text-2xl font-bold text-emerald-400">
                 {formatCurrency(stats.outreachBookedCount * 350)}
               </p>
-              <p className="text-xs text-zinc-400 mt-1">Est. Revenue</p>
+              <p className="text-xs text-zinc-400 mt-1">{t('warrantyIntel.estRevenue')}</p>
             </div>
           </div>
         </CardContent>
@@ -469,7 +469,7 @@ function EquipmentView({
                   <td className="px-4 py-3">
                     <WarrantyStatusBadge status={eq.warrantyStatus} daysRemaining={eq.daysRemaining} />
                     {eq.recallStatus === 'active' && (
-                      <Badge className="ml-1 bg-red-500/20 text-red-400 text-[10px]">RECALL</Badge>
+                      <Badge className="ml-1 bg-red-500/20 text-red-400 text-[10px]">{t('warrantyIntel.recall')}</Badge>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -605,8 +605,8 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
       {outreach.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
           <Send className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">No outreach history</p>
-          <p className="text-xs text-zinc-500 mt-1">Automated outreach will appear here when the scheduler runs</p>
+          <p className="text-zinc-400">{t('warrantyIntel.noOutreachHistory')}</p>
+          <p className="text-xs text-zinc-500 mt-1">{t('warrantyIntel.automatedOutreachWillAppearHereWhenTheSchedulerRun')}</p>
         </div>
       ) : (
         <div className="border border-zinc-800 rounded-lg overflow-hidden">
@@ -741,7 +741,7 @@ function ClaimModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
-        <h2 className="text-lg font-semibold text-zinc-100 mb-1">File Warranty Claim</h2>
+        <h2 className="text-lg font-semibold text-zinc-100 mb-1">{t('warrantyIntel.fileWarrantyClaim')}</h2>
         <p className="text-sm text-zinc-400 mb-4">{equipment.name} — {equipment.manufacturer}</p>
 
         <div className="space-y-3">

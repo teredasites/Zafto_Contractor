@@ -131,7 +131,7 @@ export default function LienDetailPage() {
         {lien.amount_owed != null && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">Amount Owed</p>
+              <p className="text-xs text-zinc-500">{t('lienProtection.amountOwed')}</p>
               <p className="text-xl font-bold text-amber-400">${lien.amount_owed.toLocaleString()}</p>
             </CardContent>
           </Card>
@@ -139,7 +139,7 @@ export default function LienDetailPage() {
         {rule && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">Filing Deadline</p>
+              <p className="text-xs text-zinc-500">{t('lienProtection.filingDeadline')}</p>
               <p className="text-xl font-bold text-white">{rule.lien_filing_deadline_days} days</p>
               <p className="text-xs text-zinc-500">from {rule.lien_filing_from.replace(/_/g, ' ')}</p>
             </CardContent>
@@ -149,7 +149,7 @@ export default function LienDetailPage() {
           <CardContent className="p-4">
             <p className="text-xs text-zinc-500">{t('common.state')}</p>
             <p className="text-xl font-bold text-white">{lien.state_code}</p>
-            {rule?.notarization_required && <p className="text-xs text-amber-400">Notarization required</p>}
+            {rule?.notarization_required && <p className="text-xs text-amber-400">{t('lienProtection.notarizationRequired')}</p>}
           </CardContent>
         </Card>
       </div>
@@ -158,7 +158,7 @@ export default function LienDetailPage() {
         {/* Lifecycle Timeline */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Lien Lifecycle</CardTitle>
+            <CardTitle className="text-base">{t('lienProtection.lienLifecycle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
@@ -200,7 +200,7 @@ export default function LienDetailPage() {
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-400">Notarization</span>
+                <span className="text-zinc-400">{t('lienProtection.notarization')}</span>
                 <span className={rule.notarization_required ? 'text-amber-400' : 'text-zinc-500'}>
                   {rule.notarization_required ? 'Required' : 'Not required'}
                 </span>

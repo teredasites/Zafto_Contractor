@@ -75,11 +75,11 @@ export default function PortfolioPage() {
         </div>
         <div className="bg-warning/5 border border-warning/20 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-warning">{summary.at_risk}</p>
-          <p className="text-[10px] text-tertiary">At Risk</p>
+          <p className="text-[10px] text-tertiary">{t('schedulingPortfolio.atRisk')}</p>
         </div>
         <div className="bg-error/5 border border-error/20 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-error">{summary.behind}</p>
-          <p className="text-[10px] text-tertiary">Behind</p>
+          <p className="text-[10px] text-tertiary">{t('schedulingPortfolio.behind')}</p>
         </div>
         <div className="bg-surface border border-main rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-accent">{summary.upcoming_milestones}</p>

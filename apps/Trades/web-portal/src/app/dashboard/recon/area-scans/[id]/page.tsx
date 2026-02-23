@@ -378,7 +378,7 @@ export default function AreaScanDetailPage() {
       {isScanning && (
         <div className="mb-6 p-4 border border-blue-500/20 rounded-lg bg-blue-500/5">
           <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-blue-400 font-medium">Scanning in progress...</span>
+            <span className="text-blue-400 font-medium">{t('reconScans.scanningInProgress')}</span>
             <span className="text-muted">{scan.scannedParcels} / {scan.totalParcels}</span>
           </div>
           <div className="h-2 bg-surface rounded-full overflow-hidden">
@@ -395,27 +395,27 @@ export default function AreaScanDetailPage() {
         <div className="border border-main rounded-lg p-3 text-center">
           <MapPin size={16} className="mx-auto text-muted mb-1" />
           <p className="text-xl font-semibold text-main">{scan.totalParcels}</p>
-          <p className="text-[10px] text-muted uppercase tracking-wider">Total Parcels</p>
+          <p className="text-[10px] text-muted uppercase tracking-wider">{t('reconScans.totalParcels')}</p>
         </div>
         <div className="border border-main rounded-lg p-3 text-center">
           <Target size={16} className="mx-auto text-muted mb-1" />
           <p className="text-xl font-semibold text-main">{scan.scannedParcels}</p>
-          <p className="text-[10px] text-muted uppercase tracking-wider">Scanned</p>
+          <p className="text-[10px] text-muted uppercase tracking-wider">{t('reconScans.scanned')}</p>
         </div>
         <div className="border border-main rounded-lg p-3 text-center">
           <Flame size={16} className="mx-auto text-red-400 mb-1" />
           <p className="text-xl font-semibold text-red-400">{scan.hotLeads}</p>
-          <p className="text-[10px] text-muted uppercase tracking-wider">Hot Leads</p>
+          <p className="text-[10px] text-muted uppercase tracking-wider">{t('reconScans.hotLeads')}</p>
         </div>
         <div className="border border-main rounded-lg p-3 text-center">
           <Thermometer size={16} className="mx-auto text-orange-400 mb-1" />
           <p className="text-xl font-semibold text-orange-400">{scan.warmLeads}</p>
-          <p className="text-[10px] text-muted uppercase tracking-wider">Warm Leads</p>
+          <p className="text-[10px] text-muted uppercase tracking-wider">{t('reconScans.warmLeads')}</p>
         </div>
         <div className="border border-main rounded-lg p-3 text-center">
           <Snowflake size={16} className="mx-auto text-blue-400 mb-1" />
           <p className="text-xl font-semibold text-blue-400">{scan.coldLeads}</p>
-          <p className="text-[10px] text-muted uppercase tracking-wider">Cold Leads</p>
+          <p className="text-[10px] text-muted uppercase tracking-wider">{t('reconScans.coldLeads')}</p>
         </div>
       </div>
 
@@ -424,7 +424,7 @@ export default function AreaScanDetailPage() {
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
             <BarChart3 size={14} className="text-muted" />
-            <span className="text-xs font-medium text-muted">Lead Distribution</span>
+            <span className="text-xs font-medium text-muted">{t('reconScans.leadDistribution')}</span>
           </div>
           <div className="h-3 bg-surface rounded-full overflow-hidden flex">
             {scan.hotLeads > 0 && (

@@ -105,7 +105,7 @@ export default function FaxPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-zinc-100">{t('phoneFax.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">Send and receive faxes</p>
+            <p className="text-sm text-zinc-500 mt-1">{t('phoneFax.sendAndReceiveFaxes')}</p>
           </div>
         </div>
 
@@ -172,7 +172,7 @@ export default function FaxPage() {
             ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                 <Printer className="h-8 w-8 mb-2 opacity-50" />
-                <p>No faxes yet</p>
+                <p>{t('phoneFax.noFaxesYet')}</p>
                 <p className="text-xs mt-1">Send a fax from any estimate, invoice, or document</p>
               </div>
             ) : (

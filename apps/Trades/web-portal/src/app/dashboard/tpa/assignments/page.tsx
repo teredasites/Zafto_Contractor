@@ -259,7 +259,7 @@ export default function TpaAssignmentsPage() {
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-main">New TPA Assignment</h1>
+            <h1 className="text-xl font-semibold text-main">{t('tpaAssignments.newTpaAssignment')}</h1>
             <p className="text-sm text-muted mt-0.5">Enter assignment details from TPA portal (manual entry only)</p>
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function TpaAssignmentsPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted uppercase tracking-wide">Assignment #</label>
+                  <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('tpaAssignments.assignment')}</label>
                   <Input value={form.assignmentNumber} onChange={e => updateField('assignmentNumber', e.target.value)} placeholder="TPA-assigned ID" className="mt-1" />
                 </div>
                 <div>
@@ -337,7 +337,7 @@ export default function TpaAssignmentsPage() {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Loss Description</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('tpaAssignments.lossDescription')}</label>
                 <textarea
                   value={form.lossDescription}
                   onChange={e => updateField('lossDescription', e.target.value)}
@@ -413,7 +413,7 @@ export default function TpaAssignmentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-main">{t('tpaAssignments.title')}</h1>
-          <p className="text-sm text-muted mt-0.5">Track dispatched insurance restoration assignments</p>
+          <p className="text-sm text-muted mt-0.5">{t('tpaAssignments.trackDispatchedInsuranceRestorationAssignments')}</p>
         </div>
         <Button onClick={handleCreate}>
           <Plus size={16} className="mr-2" />
@@ -431,7 +431,7 @@ export default function TpaAssignmentsPage() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wide">SLA Violations</p>
+            <p className="text-xs text-muted uppercase tracking-wide">{t('tpaAssignments.slaViolations')}</p>
             <p className={cn('text-2xl font-semibold mt-1', activeSlaViolations > 0 ? 'text-red-400' : 'text-main')}>
               {activeSlaViolations}
             </p>
@@ -497,7 +497,7 @@ export default function TpaAssignmentsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <ClipboardList size={48} className="text-muted/30 mb-4" />
-            <h3 className="text-lg font-semibold text-main mb-1">No Assignments</h3>
+            <h3 className="text-lg font-semibold text-main mb-1">{t('tpaAssignments.noAssignments')}</h3>
             <p className="text-sm text-muted mb-6 max-w-md">
               {statusFilter ? 'No assignments match the selected filter.' : 'Enter your first TPA assignment from the TPA portal.'}
             </p>

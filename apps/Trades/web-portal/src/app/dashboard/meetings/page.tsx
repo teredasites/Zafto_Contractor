@@ -265,7 +265,7 @@ export default function MeetingsPage() {
               <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                 <Video className="h-8 w-8 mb-2 opacity-50" />
                 <p>No {tab} meetings</p>
-                <p className="text-xs mt-1">Create a meeting from any job or customer page</p>
+                <p className="text-xs mt-1">{t('common.createAMeetingFromAnyJobOrCustomerPage')}</p>
               </div>
             ) : (
               <div>
