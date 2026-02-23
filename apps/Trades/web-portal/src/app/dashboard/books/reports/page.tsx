@@ -571,14 +571,14 @@ export default function FinancialReportsPage() {
                 <AccountSection title="Revenue" accounts={pnlData.revenue} />
                 <AccountSection title="Cost of Goods Sold" accounts={pnlData.cogs} />
                 <div className="flex items-center justify-between py-3 px-2 bg-secondary/50 rounded-lg font-semibold text-sm">
-                  <span className="text-main">Gross Profit</span>
+                  <span className="text-main">{t('common.grossProfit')}</span>
                   <span className={cn('tabular-nums', pnlData.grossProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                     {formatCurrency(pnlData.grossProfit)}
                   </span>
                 </div>
                 <AccountSection title="Operating Expenses" accounts={pnlData.expenses} />
                 <div className="flex items-center justify-between py-4 px-3 bg-accent/10 rounded-lg font-bold text-base border border-accent/20">
-                  <span className="text-main">Net Income</span>
+                  <span className="text-main">{t('common.netIncome')}</span>
                   <span className={cn('tabular-nums', pnlData.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                     {formatCurrency(pnlData.netIncome)}
                   </span>
@@ -592,7 +592,7 @@ export default function FinancialReportsPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Balance Sheet</CardTitle>
+                  <CardTitle className="text-base">{t('common.balanceSheet')}</CardTitle>
                   <Badge variant={bsData.isBalanced ? 'success' : 'error'}>
                     {bsData.isBalanced ? 'Balanced' : 'Out of Balance'}
                   </Badge>
@@ -601,7 +601,7 @@ export default function FinancialReportsPage() {
               <CardContent className="space-y-6">
                 <AccountSection title="Assets" accounts={bsData.assets} />
                 <div className="flex items-center justify-between py-3 px-2 bg-secondary/50 rounded-lg font-semibold text-sm">
-                  <span className="text-main">Total Assets</span>
+                  <span className="text-main">{t('common.totalAssets')}</span>
                   <span className="tabular-nums text-main">{formatCurrency(bsData.totalAssets)}</span>
                 </div>
 
@@ -634,7 +634,7 @@ export default function FinancialReportsPage() {
                   <div>
                     <h3 className="text-sm font-semibold text-main mb-2">Operating Activities</h3>
                     <div className="space-y-1 text-sm">
-                      <div className="flex justify-between px-2 py-1"><span className="text-muted">Net Income</span><span className="tabular-nums text-main">{formatCurrency(cfData.netIncome)}</span></div>
+                      <div className="flex justify-between px-2 py-1"><span className="text-muted">{t('common.netIncome')}</span><span className="tabular-nums text-main">{formatCurrency(cfData.netIncome)}</span></div>
                       <div className="flex justify-between px-2 py-1"><span className="text-muted">AR Change</span><span className="tabular-nums text-main">{formatCurrency(-cfData.arChange)}</span></div>
                       <div className="flex justify-between px-2 py-1"><span className="text-muted">AP Change</span><span className="tabular-nums text-main">{formatCurrency(cfData.apChange)}</span></div>
                       <div className="flex justify-between px-2 py-2 border-t border-default font-semibold"><span className="text-main">Net Operating</span><span className="tabular-nums text-main">{formatCurrency(cfData.operatingActivities)}</span></div>
@@ -734,7 +734,7 @@ export default function FinancialReportsPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Trial Balance</CardTitle>
+                  <CardTitle className="text-base">{t('common.trialBalance')}</CardTitle>
                   <div className="flex items-center gap-2">
                     {tbData.isBalanced ? (
                       <Badge variant="success"><CheckCircle size={12} className="mr-1" />Balanced</Badge>
@@ -788,7 +788,7 @@ export default function FinancialReportsPage() {
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(scheduleEData.totalIncome)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Total Expenses</p>
+                  <p className="text-xs text-muted uppercase">{t('common.expenses')}</p>
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(scheduleEData.totalExpenses)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">
@@ -859,7 +859,7 @@ export default function FinancialReportsPage() {
               {/* Summary Cards */}
               <div className="grid grid-cols-4 gap-4">
                 <Card><CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted uppercase">Total Revenue</p>
+                  <p className="text-xs text-muted uppercase">{t('common.revenue')}</p>
                   <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(jobCostingData.totalRevenue)}</p>
                 </CardContent></Card>
                 <Card><CardContent className="p-4 text-center">

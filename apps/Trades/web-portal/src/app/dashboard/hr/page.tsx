@@ -164,7 +164,7 @@ export default function HRPage() {
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{activeEmployees.length}</p><p className="text-sm text-muted">Active</p></div>
+          <div><p className="text-2xl font-semibold text-main">{activeEmployees.length}</p><p className="text-sm text-muted">{t('common.active')}</p></div>
         </div></CardContent></Card>
 
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">

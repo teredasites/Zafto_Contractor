@@ -308,19 +308,19 @@ export default function BidDetailPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted">Total</p>
+                  <p className="text-sm text-muted">{t('common.total')}</p>
                   <p className="text-3xl font-semibold text-main">{formatCurrency(bid.total)}</p>
                   {bid.depositAmount > 0 && (
                     <p className="text-sm text-muted mt-1">
                       Deposit: {formatCurrency(bid.depositAmount)}
                       {bid.depositPaid && (
-                        <span className="text-emerald-600 ml-2">Paid</span>
+                        <span className="text-emerald-600 ml-2">{t('common.paid')}</span>
                       )}
                     </p>
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted">Valid Until</p>
+                  <p className="text-sm text-muted">{t('common.validUntil')}</p>
                   <p className="text-main font-medium">{formatDate(bid.validUntil)}</p>
                   {new Date(bid.validUntil) < new Date() && bid.status !== 'accepted' && (
                     <Badge variant="warning" className="mt-1">{t('common.expired')}</Badge>
@@ -445,7 +445,7 @@ export default function BidDetailPage() {
                     <div className="flex justify-end">
                       <div className="w-64 space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted">Subtotal</span>
+                          <span className="text-muted">{t('common.subtotal')}</span>
                           <span className="text-main">{formatCurrency(activeOption.subtotal)}</span>
                         </div>
                         {selectedAddOns.length > 0 && (
@@ -455,11 +455,11 @@ export default function BidDetailPage() {
                           </div>
                         )}
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted">Tax</span>
+                          <span className="text-muted">{t('common.tax')}</span>
                           <span className="text-main">{formatCurrency(bid.tax)}</span>
                         </div>
                         <div className="flex justify-between font-semibold text-lg pt-2 border-t border-main">
-                          <span>Total</span>
+                          <span>{t('common.total')}</span>
                           <span>{formatCurrency(bid.total)}</span>
                         </div>
                       </div>
@@ -516,7 +516,7 @@ export default function BidDetailPage() {
           {bid.description && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Scope of Work</CardTitle>
+                <CardTitle className="text-base">{t('common.scopeOfWork')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-main whitespace-pre-wrap">{bid.description}</p>
@@ -530,7 +530,7 @@ export default function BidDetailPage() {
           {/* Timeline */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Timeline</CardTitle>
+              <CardTitle className="text-base">{t('common.timeline')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -605,11 +605,11 @@ export default function BidDetailPage() {
           {/* Quick Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Details</CardTitle>
+              <CardTitle className="text-base">{t('common.details')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Created</span>
+                <span className="text-muted">{t('common.createdAt')}</span>
                 <span className="text-main">{formatDate(bid.createdAt)}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -618,7 +618,7 @@ export default function BidDetailPage() {
               </div>
               {bid.sentAt && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Sent</span>
+                  <span className="text-muted">{t('common.sent')}</span>
                   <span className="text-main">{formatDate(bid.sentAt)}</span>
                 </div>
               )}
@@ -629,7 +629,7 @@ export default function BidDetailPage() {
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Valid Until</span>
+                <span className="text-muted">{t('common.validUntil')}</span>
                 <span className="text-main">{formatDate(bid.validUntil)}</span>
               </div>
             </CardContent>

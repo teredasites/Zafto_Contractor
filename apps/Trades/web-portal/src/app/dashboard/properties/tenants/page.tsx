@@ -123,7 +123,7 @@ export default function TenantsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{activeCount}</p>
-                <p className="text-sm text-muted">Active</p>
+                <p className="text-sm text-muted">{t('common.active')}</p>
               </div>
             </div>
           </CardContent>

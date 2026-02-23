@@ -193,7 +193,7 @@ export default function TeamPage() {
                     </div>
                     <div>
                       <p className="text-lg font-semibold text-main">{todayJobs.length}</p>
-                      <p className="text-xs text-muted">Today</p>
+                      <p className="text-xs text-muted">{t('common.today')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -423,7 +423,7 @@ export default function TeamPage() {
                   </div>
                   <div>
                     <p className="text-2xl font-semibold text-main">{activeCount}</p>
-                    <p className="text-sm text-muted">Active</p>
+                    <p className="text-sm text-muted">{t('common.active')}</p>
                   </div>
                 </div>
               </CardContent>

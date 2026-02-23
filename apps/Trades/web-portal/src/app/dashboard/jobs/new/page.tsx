@@ -555,7 +555,7 @@ export default function NewJobPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Scope of Work</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('common.scopeOfWork')}</label>
                 <textarea
                   value={formData.scopeOfWork}
                   onChange={(e) => setFormData({ ...formData, scopeOfWork: e.target.value })}

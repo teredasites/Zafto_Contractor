@@ -165,7 +165,7 @@ export default function VendorPaymentsPage() {
       {/* Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wide">Total Paid</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t('common.totalPaid')}</p>
           <p className="text-2xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(totalPaid)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">

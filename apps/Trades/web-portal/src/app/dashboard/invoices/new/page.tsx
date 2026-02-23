@@ -436,11 +436,11 @@ export default function NewInvoicePage() {
                 <div className="flex justify-end">
                   <div className="w-64 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted">Subtotal</span>
+                      <span className="text-muted">{t('common.subtotal')}</span>
                       <span className="text-main">{formatCurrency(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm items-center">
-                      <span className="text-muted">Tax</span>
+                      <span className="text-muted">{t('common.tax')}</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
@@ -455,7 +455,7 @@ export default function NewInvoicePage() {
                       </div>
                     </div>
                     <div className="flex justify-between font-semibold text-lg pt-2 border-t border-main">
-                      <span>Total</span>
+                      <span>{t('common.total')}</span>
                       <span>{formatCurrency(total)}</span>
                     </div>
                   </div>
@@ -467,7 +467,7 @@ export default function NewInvoicePage() {
           {/* Notes */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Notes</CardTitle>
+              <CardTitle className="text-base">{t('common.notes')}</CardTitle>
             </CardHeader>
             <CardContent>
               <textarea
@@ -566,7 +566,7 @@ export default function NewInvoicePage() {
           {/* Summary */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Summary</CardTitle>
+              <CardTitle className="text-base">{t('common.summary')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
@@ -574,12 +574,12 @@ export default function NewInvoicePage() {
                 <span className="text-main">{lineItems.length}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Subtotal</span>
+                <span className="text-muted">{t('common.subtotal')}</span>
                 <span className="text-main">{formatCurrency(subtotal)}</span>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Discount</span>
+                  <span className="text-muted">{t('common.discount')}</span>
                   <span className="text-green-500">-{formatCurrency(discountAmount)}</span>
                 </div>
               )}

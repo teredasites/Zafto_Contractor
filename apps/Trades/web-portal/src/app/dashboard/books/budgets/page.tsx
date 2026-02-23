@@ -117,19 +117,19 @@ export default function BudgetsPage() {
                       </div>
                       <div className="flex items-center gap-6 text-sm">
                         <div className="text-right hidden sm:block">
-                          <p className="text-muted text-xs">Budget</p>
+                          <p className="text-muted text-xs">{t('common.budget')}</p>
                           <p className="font-medium text-main">
                             ${summary.totalBudget.toLocaleString()}
                           </p>
                         </div>
                         <div className="text-right hidden sm:block">
-                          <p className="text-muted text-xs">Actual</p>
+                          <p className="text-muted text-xs">{t('common.actual')}</p>
                           <p className="font-medium text-main">
                             ${summary.totalActual.toLocaleString()}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-muted text-xs">Variance</p>
+                          <p className="text-muted text-xs">{t('common.variance')}</p>
                           <p
                             className={cn(
                               'font-medium',
@@ -154,9 +154,9 @@ export default function BudgetsPage() {
                       <div className="border-t border-main p-4">
                         <div className="grid grid-cols-5 gap-2 text-[11px] font-medium text-muted uppercase tracking-wider pb-2 border-b border-light">
                           <span>Category</span>
-                          <span className="text-right">Budget</span>
-                          <span className="text-right">Actual</span>
-                          <span className="text-right">Variance</span>
+                          <span className="text-right">{t('common.budget')}</span>
+                          <span className="text-right">{t('common.actual')}</span>
+                          <span className="text-right">{t('common.variance')}</span>
                           <span className="text-right">Usage</span>
                         </div>
                         {summary.categories.map((cat) => {

@@ -91,7 +91,7 @@ export default function ExpensesPage() {
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wide">Total</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t('common.total')}</p>
           <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(grandTotal)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -99,7 +99,7 @@ export default function ExpensesPage() {
           <p className="text-xl font-semibold text-main mt-1">{expenses.filter((e) => e.status === 'draft').length}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wide">Pending Approval</p>
+          <p className="text-xs text-muted uppercase tracking-wide">{t('common.pendingApproval')}</p>
           <p className="text-xl font-semibold text-amber-600 mt-1">{expenses.filter((e) => e.status === 'draft').length}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">

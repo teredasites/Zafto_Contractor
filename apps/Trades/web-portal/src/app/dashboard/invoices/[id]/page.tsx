@@ -269,7 +269,7 @@ export default function InvoiceDetailPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted">Amount Due</p>
+                  <p className="text-sm text-muted">{t('common.amountDue')}</p>
                   <p className={cn(
                     'text-3xl font-semibold',
                     isPaid ? 'text-emerald-600' : isOverdue ? 'text-red-600' : 'text-main'
@@ -406,7 +406,7 @@ export default function InvoiceDetailPage() {
                 <div className="flex justify-end">
                   <div className="w-64 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted">Subtotal</span>
+                      <span className="text-muted">{t('common.subtotal')}</span>
                       <span className="text-main">{formatCurrency(invoice.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -414,13 +414,13 @@ export default function InvoiceDetailPage() {
                       <span className="text-main">{formatCurrency(invoice.tax)}</span>
                     </div>
                     <div className="flex justify-between font-semibold text-lg pt-2 border-t border-main">
-                      <span>Total</span>
+                      <span>{t('common.total')}</span>
                       <span>{formatCurrency(invoice.total)}</span>
                     </div>
                     {invoice.amountPaid > 0 && (
                       <>
                         <div className="flex justify-between text-sm text-emerald-600">
-                          <span>Paid</span>
+                          <span>{t('common.paid')}</span>
                           <span>-{formatCurrency(invoice.amountPaid)}</span>
                         </div>
                         <div className="flex justify-between font-semibold text-lg">
@@ -439,7 +439,7 @@ export default function InvoiceDetailPage() {
           {invoice.notes && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Notes</CardTitle>
+                <CardTitle className="text-base">{t('common.notes')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-main whitespace-pre-wrap">{invoice.notes}</p>
@@ -453,11 +453,11 @@ export default function InvoiceDetailPage() {
           {/* Status */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Details</CardTitle>
+              <CardTitle className="text-base">{t('common.details')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Status</span>
+                <span className="text-muted">{t('common.status')}</span>
                 <StatusBadge status={invoice.status} />
               </div>
               <div className="flex justify-between text-sm">
@@ -465,12 +465,12 @@ export default function InvoiceDetailPage() {
                 <span className="text-main font-mono">{invoice.invoiceNumber}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Created</span>
+                <span className="text-muted">{t('common.createdAt')}</span>
                 <span className="text-main">{formatDate(invoice.createdAt)}</span>
               </div>
               {invoice.sentAt && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Sent</span>
+                  <span className="text-muted">{t('common.sent')}</span>
                   <span className="text-main">{formatDate(invoice.sentAt)}</span>
                 </div>
               )}
@@ -482,7 +482,7 @@ export default function InvoiceDetailPage() {
               </div>
               {invoice.paidAt && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Paid</span>
+                  <span className="text-muted">{t('common.paid')}</span>
                   <span className="text-emerald-600">{formatDate(invoice.paidAt)}</span>
                 </div>
               )}

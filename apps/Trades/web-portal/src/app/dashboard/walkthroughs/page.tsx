@@ -186,7 +186,7 @@ export default function WalkthroughsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.total}</p>
-                <p className="text-sm text-muted">Total</p>
+                <p className="text-sm text-muted">{t('common.total')}</p>
               </div>
             </div>
           </CardContent>
@@ -199,7 +199,7 @@ export default function WalkthroughsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.inProgress}</p>
-                <p className="text-sm text-muted">In Progress</p>
+                <p className="text-sm text-muted">{t('common.inProgress')}</p>
               </div>
             </div>
           </CardContent>
@@ -212,7 +212,7 @@ export default function WalkthroughsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.completed}</p>
-                <p className="text-sm text-muted">Completed</p>
+                <p className="text-sm text-muted">{t('common.completed')}</p>
               </div>
             </div>
           </CardContent>
@@ -316,11 +316,11 @@ export default function WalkthroughsPage() {
             {/* Table header */}
             <div className="hidden lg:grid grid-cols-[1fr_120px_1fr_80px_80px_110px_110px_40px] gap-4 px-6 py-3 border-b border-main text-xs font-medium uppercase tracking-wider text-muted">
               <span>Name</span>
-              <span>Type</span>
-              <span>Address</span>
+              <span>{t('common.type')}</span>
+              <span>{t('common.address')}</span>
               <span className="text-center">Rooms</span>
               <span className="text-center">{t('common.photos')}</span>
-              <span>Status</span>
+              <span>{t('common.status')}</span>
               <span>Started</span>
               <span />
             </div>

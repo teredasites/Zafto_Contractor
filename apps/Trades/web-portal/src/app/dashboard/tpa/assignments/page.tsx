@@ -307,12 +307,12 @@ export default function TpaAssignmentsPage() {
                   <Input value={form.policyNumber} onChange={e => updateField('policyNumber', e.target.value)} placeholder="Policy number" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted uppercase tracking-wide">Carrier</label>
+                  <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.carrier')}</label>
                   <Input value={form.carrierName} onChange={e => updateField('carrierName', e.target.value)} placeholder="Insurance carrier" className="mt-1" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted uppercase tracking-wide">Loss Type</label>
+                <label className="text-xs font-medium text-muted uppercase tracking-wide">{t('common.lossType')}</label>
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {LOSS_TYPES.map(lt => (
                     <button
@@ -425,7 +425,7 @@ export default function TpaAssignmentsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wide">Active</p>
+            <p className="text-xs text-muted uppercase tracking-wide">{t('common.active')}</p>
             <p className="text-2xl font-semibold text-main mt-1">{activeCount}</p>
           </CardContent>
         </Card>
@@ -439,7 +439,7 @@ export default function TpaAssignmentsPage() {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wide">Total</p>
+            <p className="text-xs text-muted uppercase tracking-wide">{t('common.total')}</p>
             <p className="text-2xl font-semibold text-main mt-1">{assignments.length}</p>
           </CardContent>
         </Card>

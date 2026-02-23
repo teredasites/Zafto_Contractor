@@ -53,7 +53,7 @@ export default function ApplianceRepairPage() {
 
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Total Services</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.totalServices')}</p>
           <p className="text-2xl font-bold text-white">{logs.length}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
@@ -65,7 +65,7 @@ export default function ApplianceRepairPage() {
           <p className="text-2xl font-bold text-red-400">{replaceCount}</p>
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">Revenue</p>
+          <p className="text-xs text-zinc-500 mb-1">{t('common.revenue')}</p>
           <p className="text-2xl font-bold text-purple-400">
             ${logs.reduce((s, l) => s + (l.total_cost ?? 0), 0).toLocaleString()}
           </p>

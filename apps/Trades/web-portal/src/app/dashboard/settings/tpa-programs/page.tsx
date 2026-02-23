@@ -809,7 +809,7 @@ export default function TpaProgramsPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] text-muted uppercase tracking-wide">O&P</p>
+                      <p className="text-[11px] text-muted uppercase tracking-wide">{t('common.oAndP')}</p>
                       <p className="text-sm font-medium text-main mt-0.5">
                         {program.overheadPct}/{program.profitPct}
                       </p>

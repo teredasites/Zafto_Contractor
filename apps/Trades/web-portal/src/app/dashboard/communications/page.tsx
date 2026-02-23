@@ -218,7 +218,7 @@ export default function CommunicationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{todayCount}</p>
-                <p className="text-sm text-muted">Today</p>
+                <p className="text-sm text-muted">{t('common.today')}</p>
               </div>
             </div>
           </CardContent>
@@ -244,7 +244,7 @@ export default function CommunicationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{sentCount}</p>
-                <p className="text-sm text-muted">Sent</p>
+                <p className="text-sm text-muted">{t('common.sent')}</p>
               </div>
             </div>
           </CardContent>
@@ -257,7 +257,7 @@ export default function CommunicationsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{comms.length}</p>
-                <p className="text-sm text-muted">Total</p>
+                <p className="text-sm text-muted">{t('common.total')}</p>
               </div>
             </div>
           </CardContent>

@@ -214,7 +214,7 @@ export default function PurchaseOrdersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{pendingPOs.length}</p>
-                <p className="text-sm text-muted">Pending</p>
+                <p className="text-sm text-muted">{t('common.pending')}</p>
               </div>
             </div>
           </CardContent>

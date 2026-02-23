@@ -248,7 +248,7 @@ export default function ClaimDetailPage() {
                 {/* Notes */}
                 {claim.notes && (
                   <div className="rounded-xl border border-border bg-card p-5">
-                    <h3 className="text-[15px] font-semibold mb-2">Notes</h3>
+                    <h3 className="text-[15px] font-semibold mb-2">{t('common.notes')}</h3>
                     <p className="text-sm text-muted-foreground whitespace-pre-wrap">{claim.notes}</p>
                   </div>
                 )}
@@ -423,7 +423,7 @@ export default function ClaimDetailPage() {
           {/* Adjuster */}
           {claim.adjusterName && (
             <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="text-[15px] font-semibold mb-3">Adjuster</h3>
+              <h3 className="text-[15px] font-semibold mb-3">{t('common.adjuster')}</h3>
               <div className="space-y-2.5 text-sm">
                 <div className="flex items-center gap-2">
                   <User className="w-3.5 h-3.5 text-muted-foreground" />
@@ -453,7 +453,7 @@ export default function ClaimDetailPage() {
 
           {/* Timeline */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-[15px] font-semibold mb-3">Timeline</h3>
+            <h3 className="text-[15px] font-semibold mb-3">{t('common.timeline')}</h3>
             <div className="space-y-2 text-xs">
               <TimelineRow label="Created" date={claim.createdAt} />
               {claim.scopeSubmittedAt && <TimelineRow label="Scope Submitted" date={claim.scopeSubmittedAt} />}
@@ -466,7 +466,7 @@ export default function ClaimDetailPage() {
 
           {/* Quick Stats */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-[15px] font-semibold mb-3">Summary</h3>
+            <h3 className="text-[15px] font-semibold mb-3">{t('common.summary')}</h3>
             <div className="grid grid-cols-2 gap-3">
               <StatCard label="Supplements" value={supplements.length.toString()} />
               <StatCard label="Inspections" value={tpiInspections.length.toString()} />

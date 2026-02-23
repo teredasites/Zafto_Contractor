@@ -98,7 +98,7 @@ export default function InvoicesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.sent}</p>
-                <p className="text-sm text-muted">Outstanding</p>
+                <p className="text-sm text-muted">{t('common.overdue')}</p>
               </div>
             </div>
           </CardContent>
@@ -111,7 +111,7 @@ export default function InvoicesPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.overdue}</p>
-                <p className="text-sm text-muted">Overdue</p>
+                <p className="text-sm text-muted">{t('common.overdue')}</p>
               </div>
             </div>
           </CardContent>

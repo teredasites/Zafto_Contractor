@@ -206,7 +206,7 @@ export default function JobCostRadarPage() {
                       <span>{formatCurrency(selectedJob.bidAmount * 0.4)}</span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Actual</span>
+                      <span className="text-muted-foreground">{t('common.actual')}</span>
                       <span>{formatCurrency(selectedJob.materialsActual)}</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-muted overflow-hidden mt-2">
@@ -222,11 +222,11 @@ export default function JobCostRadarPage() {
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Budget</span>
+                      <span className="text-muted-foreground">{t('common.budget')}</span>
                       <span>{formatCurrency(selectedJob.bidAmount)}</span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Actual</span>
+                      <span className="text-muted-foreground">{t('common.actual')}</span>
                       <span className={selectedJob.actualSpend > selectedJob.bidAmount ? 'text-red-500 font-medium' : ''}>{formatCurrency(selectedJob.actualSpend)}</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-muted overflow-hidden mt-2">

@@ -1119,7 +1119,7 @@ export default function NewBidPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-muted" />
-              <CardTitle className="text-base">Project Details</CardTitle>
+              <CardTitle className="text-base">{t('common.projectDetails')}</CardTitle>
             </div>
             {expandedSections.project ? (
               <ChevronUp size={18} className="text-muted" />
@@ -1145,7 +1145,7 @@ export default function NewBidPage() {
                 onChange={(e) => setTrade(e.target.value)}
               />
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-main">Valid Until</label>
+                <label className="block text-sm font-medium text-main">{t('common.validUntil')}</label>
                 <div className="relative">
                   <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                   <input
@@ -1322,7 +1322,7 @@ Example:
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <DollarSign size={18} className="text-muted" />
-              <CardTitle className="text-base">Line Items</CardTitle>
+              <CardTitle className="text-base">{t('common.lineItems')}</CardTitle>
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -1580,7 +1580,7 @@ Example:
             <div className="flex justify-end">
               <div className="w-64 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Subtotal</span>
+                  <span className="text-muted">{t('common.subtotal')}</span>
                   <span className="text-main">{formatCurrency(activeOption.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -1713,7 +1713,7 @@ Example:
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-muted" />
-              <CardTitle className="text-base">Terms & Conditions</CardTitle>
+              <CardTitle className="text-base">{t('common.termsAndConditions')}</CardTitle>
             </div>
             {expandedSections.terms ? (
               <ChevronUp size={18} className="text-muted" />
@@ -1804,7 +1804,7 @@ Example:
 
             {/* Discount */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-main">Discount</label>
+              <label className="block text-sm font-medium text-main">{t('common.discount')}</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <select
                   value={discountType}
@@ -1835,7 +1835,7 @@ Example:
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-main">Internal Notes</label>
+              <label className="block text-sm font-medium text-main">{t('common.internalNotes')}</label>
               <textarea
                 value={internalNotes}
                 onChange={(e) => setInternalNotes(e.target.value)}
@@ -1898,7 +1898,7 @@ Example:
           <div className="bg-surface border border-main rounded-xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-main">
               <div>
-                <h2 className="text-lg font-semibold text-main">Templates</h2>
+                <h2 className="text-lg font-semibold text-main">{t('common.templates')}</h2>
                 <p className="text-sm text-muted">Start from a template with pre-built line items, scope, and terms</p>
               </div>
               <button
@@ -2102,7 +2102,7 @@ Example:
                     )}
                   </div>
                   <div className="text-right">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Project Details</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('common.projectDetails')}</h3>
                     <div className="text-gray-900 dark:text-white font-medium">{title || 'Project Title'}</div>
                     {trade && (
                       <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -2135,7 +2135,7 @@ Example:
                 {/* Scope of Work */}
                 {scopeOfWork && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Scope of Work</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('common.scopeOfWork')}</h3>
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                       <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-sm">{scopeOfWork}</p>
                     </div>
@@ -2246,7 +2246,7 @@ Example:
 
                 {/* Terms */}
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Terms & Conditions</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('common.termsAndConditions')}</h3>
                   <div className="text-xs text-gray-500 dark:text-gray-500 whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     {termsAndConditions}
                   </div>

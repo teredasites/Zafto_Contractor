@@ -71,7 +71,7 @@ export default function InspectionTemplatesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg"><Layers size={20} className="text-blue-600 dark:text-blue-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{systemTemplates.length}</p><p className="text-sm text-muted">System Templates</p></div>
+          <div><p className="text-2xl font-semibold text-main">{systemTemplates.length}</p><p className="text-sm text-muted">{t('common.systemTemplates')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><FileCheck size={20} className="text-emerald-600 dark:text-emerald-400" /></div>
@@ -87,7 +87,7 @@ export default function InspectionTemplatesPage() {
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex gap-1 p-1 bg-secondary rounded-lg">
           <button onClick={() => setTab('company')} className={cn('px-4 py-2 rounded-md text-sm font-medium transition-colors', tab === 'company' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}>My Templates</button>
-          <button onClick={() => setTab('system')} className={cn('px-4 py-2 rounded-md text-sm font-medium transition-colors', tab === 'system' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}>System Templates</button>
+          <button onClick={() => setTab('system')} className={cn('px-4 py-2 rounded-md text-sm font-medium transition-colors', tab === 'system' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}>{t('common.systemTemplates')}</button>
         </div>
         <SearchInput value={search} onChange={setSearch} placeholder="Search templates..." className="sm:w-80" />
       </div>

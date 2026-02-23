@@ -200,21 +200,21 @@ export default function LeaseDetailPage() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Lease Type</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.leaseType')}</p>
                   <p className="text-sm font-medium text-main">
                     {lease.leaseType === 'fixed' ? 'Fixed Term' : lease.leaseType === 'month_to_month' ? 'Month-to-Month' : 'Week-to-Week'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Start Date</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.startDate')}</p>
                   <p className="text-sm font-medium text-main">{formatDate(lease.startDate)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">End Date</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.endDate')}</p>
                   <p className="text-sm font-medium text-main">{lease.endDate ? formatDate(lease.endDate) : 'Open-ended'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted uppercase tracking-wider mb-1">Monthly Rent</p>
+                  <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.monthlyRent')}</p>
                   <p className="text-sm font-semibold text-main">{formatCurrency(lease.rentAmount)}</p>
                 </div>
                 <div>
@@ -356,17 +356,17 @@ export default function LeaseDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Status</span>
+                <span className="text-muted">{t('common.status')}</span>
                 <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>
                   {sConfig.label}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Monthly Rent</span>
+                <span className="text-muted">{t('common.monthlyRent')}</span>
                 <span className="font-semibold text-main">{formatCurrency(lease.rentAmount)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Deposit</span>
+                <span className="text-muted">{t('common.deposit')}</span>
                 <span className="text-main">{formatCurrency(lease.depositAmount)}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -394,7 +394,7 @@ export default function LeaseDetailPage() {
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Created</span>
+                <span className="text-muted">{t('common.createdAt')}</span>
                 <span className="text-main">{formatDate(lease.createdAt)}</span>
               </div>
             </CardContent>

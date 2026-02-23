@@ -93,7 +93,7 @@ export default function BidsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.pending}</p>
-                <p className="text-sm text-muted">Pending</p>
+                <p className="text-sm text-muted">{t('common.pending')}</p>
               </div>
             </div>
           </CardContent>
@@ -106,7 +106,7 @@ export default function BidsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.sent}</p>
-                <p className="text-sm text-muted">Sent</p>
+                <p className="text-sm text-muted">{t('common.sent')}</p>
               </div>
             </div>
           </CardContent>
@@ -119,7 +119,7 @@ export default function BidsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.accepted}</p>
-                <p className="text-sm text-muted">Accepted</p>
+                <p className="text-sm text-muted">{t('common.accepted')}</p>
               </div>
             </div>
           </CardContent>
@@ -132,7 +132,7 @@ export default function BidsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats.totalValue)}</p>
-                <p className="text-sm text-muted">Total Value</p>
+                <p className="text-sm text-muted">{t('common.totalValue')}</p>
               </div>
             </div>
           </CardContent>

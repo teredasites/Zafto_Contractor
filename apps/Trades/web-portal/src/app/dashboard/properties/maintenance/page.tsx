@@ -190,7 +190,7 @@ export default function MaintenancePage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Clock size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{inProgressCount}</p><p className="text-sm text-muted">In Progress</p></div>
+          <div><p className="text-2xl font-semibold text-main">{inProgressCount}</p><p className="text-sm text-muted">{t('common.inProgress')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg"><CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" /></div>

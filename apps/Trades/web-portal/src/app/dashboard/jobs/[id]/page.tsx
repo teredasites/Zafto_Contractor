@@ -243,7 +243,7 @@ export default function JobDetailPage() {
           {/* Job Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Details</CardTitle>
+              <CardTitle className="text-base">{t('common.details')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -251,17 +251,17 @@ export default function JobDetailPage() {
                 <p className="text-2xl font-semibold text-main">{formatCurrency(job.estimatedValue)}</p>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Type</span>
+                <span className="text-muted">{t('common.type')}</span>
                 <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full', JOB_TYPE_COLORS[job.jobType].bg, JOB_TYPE_COLORS[job.jobType].text)}>
                   {JOB_TYPE_LABELS[job.jobType]}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Status</span>
+                <span className="text-muted">{t('common.status')}</span>
                 <StatusBadge status={job.status} />
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Priority</span>
+                <span className="text-muted">{t('common.priority')}</span>
                 <Badge variant={job.priority === 'urgent' ? 'error' : job.priority === 'high' ? 'warning' : 'default'}>
                   {job.priority.charAt(0).toUpperCase() + job.priority.slice(1)}
                 </Badge>
@@ -273,7 +273,7 @@ export default function JobDetailPage() {
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Created</span>
+                <span className="text-muted">{t('common.createdAt')}</span>
                 <span className="text-main">{formatDate(job.createdAt)}</span>
               </div>
             </CardContent>

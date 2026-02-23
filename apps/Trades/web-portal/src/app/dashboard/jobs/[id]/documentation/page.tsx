@@ -99,7 +99,7 @@ export default function JobDocumentationPage() {
     return (
       <div className="space-y-6">
         <button onClick={() => router.back()} className="flex items-center gap-2 text-muted hover:text-main">
-          <ArrowLeft size={18} /><span>Back to Job</span>
+          <ArrowLeft size={18} /><span>{t('common.backToJob')}</span>
         </button>
         <Card>
           <CardContent className="p-12 text-center">

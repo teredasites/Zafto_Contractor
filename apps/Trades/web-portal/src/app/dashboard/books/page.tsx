@@ -324,7 +324,7 @@ export default function BooksPage() {
                     <PiggyBank size={20} className="text-indigo-600 dark:text-indigo-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Profit Margin</p>
+                <p className="text-sm text-muted">{t('common.profitMargin')}</p>
                 <p className={cn(
                   'text-2xl font-bold mt-1',
                   profitMargin >= 0 ? 'text-emerald-600' : 'text-red-600'

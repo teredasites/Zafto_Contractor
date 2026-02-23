@@ -198,7 +198,7 @@ export default function InspectionEnginePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{inProgress.length}</p>
-                <p className="text-sm text-muted">In Progress</p>
+                <p className="text-sm text-muted">{t('common.inProgress')}</p>
               </div>
             </div>
           </CardContent>
@@ -211,7 +211,7 @@ export default function InspectionEnginePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{completed.length}</p>
-                <p className="text-sm text-muted">Completed</p>
+                <p className="text-sm text-muted">{t('common.completed')}</p>
               </div>
             </div>
           </CardContent>
@@ -224,7 +224,7 @@ export default function InspectionEnginePage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{failed.length}</p>
-                <p className="text-sm text-muted">Failed</p>
+                <p className="text-sm text-muted">{t('common.failed')}</p>
               </div>
             </div>
           </CardContent>

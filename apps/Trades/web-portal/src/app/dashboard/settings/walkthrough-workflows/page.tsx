@@ -308,7 +308,7 @@ export default function WalkthroughWorkflowsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Settings2 size={18} className="text-muted" />
-            <h2 className="text-lg font-semibold text-main">System Templates</h2>
+            <h2 className="text-lg font-semibold text-main">{t('common.systemTemplates')}</h2>
             <Badge variant="secondary">{systemTemplates.length}</Badge>
           </div>
           <p className="text-sm text-muted mb-4">

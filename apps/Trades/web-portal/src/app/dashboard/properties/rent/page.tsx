@@ -211,7 +211,7 @@ export default function RentRollPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg"><Clock size={20} className="text-amber-600 dark:text-amber-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{formatCurrency(outstanding)}</p><p className="text-sm text-muted">Outstanding</p></div>
+          <div><p className="text-2xl font-semibold text-main">{formatCurrency(outstanding)}</p><p className="text-sm text-muted">{t('common.overdue')}</p></div>
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg"><AlertCircle size={20} className="text-red-600 dark:text-red-400" /></div>
@@ -328,7 +328,7 @@ export default function RentRollPage() {
                   <span className="font-medium text-main">{paymentTarget.tenantName || 'Unknown'}</span>
                 </div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted">Amount Due</span>
+                  <span className="text-muted">{t('common.amountDue')}</span>
                   <span className="font-medium text-main">{formatCurrency(paymentTarget.amount)}</span>
                 </div>
                 <div className="flex justify-between text-sm">

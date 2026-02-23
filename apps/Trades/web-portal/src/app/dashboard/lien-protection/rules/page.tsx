@@ -111,7 +111,7 @@ export default function LienRulesPage() {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="h-3.5 w-3.5 text-amber-400" />
-                              <span className="text-white">Required</span>
+                              <span className="text-white">{t('common.required')}</span>
                             </div>
                             <p className="text-zinc-400 text-xs">
                               {rule.preliminary_notice_deadline_days} days from {rule.preliminary_notice_from?.replace(/_/g, ' ')}
@@ -143,7 +143,7 @@ export default function LienRulesPage() {
                         <div className="space-y-1 text-xs">
                           <p className="text-zinc-400">
                             Notarization: {rule.notarization_required ?
-                              <span className="text-amber-400">Required</span> :
+                              <span className="text-amber-400">{t('common.required')}</span> :
                               <span className="text-zinc-500">Not required</span>
                             }
                           </p>

@@ -67,7 +67,7 @@ export default function PortfolioPage() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="bg-surface border border-main rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-primary">{summary.total_projects}</p>
-          <p className="text-[10px] text-tertiary">Total</p>
+          <p className="text-[10px] text-tertiary">{t('common.total')}</p>
         </div>
         <div className="bg-success/5 border border-success/20 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-success">{summary.on_track}</p>
@@ -218,7 +218,7 @@ export default function PortfolioPage() {
                     {m.planned_date ? formatDate(m.planned_date) : '—'}
                   </p>
                   {m.is_overdue && (
-                    <p className="text-[10px] text-error">Overdue</p>
+                    <p className="text-[10px] text-error">{t('common.overdue')}</p>
                   )}
                 </div>
               </div>

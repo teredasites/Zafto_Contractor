@@ -363,7 +363,7 @@ export default function CustomerDetailPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Status</span>
+                  <span className="text-sm text-muted">{t('common.status')}</span>
                   <Badge variant={paymentStats.label === 'Slow Payer' ? 'warning' : paymentStats.label === 'Reliable' ? 'success' : 'default'}>
                     {paymentStats.label === 'Slow Payer' && <AlertTriangle size={10} className="mr-1" />}
                     {paymentStats.label}
@@ -382,7 +382,7 @@ export default function CustomerDetailPage() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Total Paid</span>
+                  <span className="text-muted">{t('common.totalPaid')}</span>
                   <span className="font-medium text-main">{formatCurrency(paymentStats.totalLifetimeSpend)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -446,7 +446,7 @@ export default function CustomerDetailPage() {
           {customer.notes && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Notes</CardTitle>
+                <CardTitle className="text-base">{t('common.notes')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-main">{customer.notes}</p>
@@ -458,7 +458,7 @@ export default function CustomerDetailPage() {
           {customer.source && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Lead Source</CardTitle>
+                <CardTitle className="text-base">{t('common.leadSource')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Badge variant="default" className="capitalize">{customer.source}</Badge>

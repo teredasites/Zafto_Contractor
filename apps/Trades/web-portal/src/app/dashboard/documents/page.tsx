@@ -200,7 +200,7 @@ export default function DocumentsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{pendingSignatures.length}</p>
-                <p className="text-sm text-muted">Pending Signatures</p>
+                <p className="text-sm text-muted">{t('common.pendingSignatures')}</p>
               </div>
             </div>
           </CardContent>
@@ -226,7 +226,7 @@ export default function DocumentsPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{templates.length}</p>
-                <p className="text-sm text-muted">Templates</p>
+                <p className="text-sm text-muted">{t('common.templates')}</p>
               </div>
             </div>
           </CardContent>

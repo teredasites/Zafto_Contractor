@@ -292,7 +292,7 @@ export default function TpaAssignmentDetailPage() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {assignment.lossType && (
                     <div>
-                      <p className="text-xs text-muted uppercase tracking-wide">Type</p>
+                      <p className="text-xs text-muted uppercase tracking-wide">{t('common.type')}</p>
                       <p className="text-sm text-main mt-0.5 capitalize">{assignment.lossType}</p>
                     </div>
                   )}
@@ -337,7 +337,7 @@ export default function TpaAssignmentDetailPage() {
           {/* Adjuster */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Adjuster</CardTitle>
+              <CardTitle className="text-base">{t('common.adjuster')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {assignment.adjusterName && (
@@ -422,7 +422,7 @@ export default function TpaAssignmentDetailPage() {
           {assignment.internalNotes && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Internal Notes</CardTitle>
+                <CardTitle className="text-base">{t('common.internalNotes')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted whitespace-pre-wrap">{assignment.internalNotes}</p>
