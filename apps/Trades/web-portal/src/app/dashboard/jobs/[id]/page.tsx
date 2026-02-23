@@ -47,12 +47,17 @@ import { useJobSchedule } from '@/lib/hooks/use-job-schedule';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 import { MiniGantt } from '@/components/scheduling/MiniGantt';
 import { usePhotos } from '@/lib/hooks/use-photos';
+import { useEstimates } from '@/lib/hooks/use-estimates';
+import { useDocuments } from '@/lib/hooks/use-documents';
+import { useChangeOrders } from '@/lib/hooks/use-change-orders';
+import { usePermits } from '@/lib/hooks/use-permits';
+import { useDailyLogs } from '@/lib/hooks/use-daily-logs';
 import type { Job, JobType, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
-type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
+type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes' | 'estimates' | 'invoices' | 'documents' | 'changes' | 'permits' | 'logs';
 
 export default function JobDetailPage() {
   const { t, formatDate } = useTranslation();
@@ -119,12 +124,18 @@ export default function JobDetailPage() {
   const assignedMembers = job.assignedTo.map((id) => team.find((t) => t.id === id)).filter(Boolean);
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
-    { id: 'overview', label: 'Overview', icon: <Briefcase size={16} /> },
-    { id: 'tasks', label: 'Tasks', icon: <CheckSquare size={16} /> },
-    { id: 'materials', label: 'Materials', icon: <Package size={16} /> },
-    { id: 'photos', label: 'Photos', icon: <Camera size={16} /> },
-    { id: 'time', label: 'Time', icon: <Clock size={16} /> },
-    { id: 'notes', label: 'Notes', icon: <MessageSquare size={16} /> },
+    { id: 'overview', label: t('common.overview'), icon: <Briefcase size={16} /> },
+    { id: 'tasks', label: t('common.tasks'), icon: <CheckSquare size={16} /> },
+    { id: 'estimates', label: t('estimates.title'), icon: <FileText size={16} /> },
+    { id: 'invoices', label: t('invoices.title'), icon: <Receipt size={16} /> },
+    { id: 'materials', label: t('common.materials'), icon: <Package size={16} /> },
+    { id: 'documents', label: t('common.documents'), icon: <FileText size={16} /> },
+    { id: 'changes', label: t('changeOrders.title'), icon: <Edit size={16} /> },
+    { id: 'permits', label: t('permits.title'), icon: <Shield size={16} /> },
+    { id: 'photos', label: t('common.photos'), icon: <Camera size={16} /> },
+    { id: 'time', label: t('common.time'), icon: <Clock size={16} /> },
+    { id: 'logs', label: t('common.dailyLogs'), icon: <Calendar size={16} /> },
+    { id: 'notes', label: t('common.notes'), icon: <MessageSquare size={16} /> },
   ];
 
   return (
@@ -233,9 +244,15 @@ export default function JobDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {activeTab === 'overview' && <OverviewTab job={job} />}
           {activeTab === 'tasks' && <TasksTab job={job} />}
+          {activeTab === 'estimates' && <EstimatesTab jobId={job.id} />}
+          {activeTab === 'invoices' && <InvoicesTab jobId={job.id} />}
           {activeTab === 'materials' && <MaterialsTab job={job} />}
+          {activeTab === 'documents' && <DocumentsTab jobId={job.id} />}
+          {activeTab === 'changes' && <ChangeOrdersTab jobId={job.id} />}
+          {activeTab === 'permits' && <PermitsTab jobId={job.id} />}
           {activeTab === 'photos' && <PhotosTab job={job} />}
           {activeTab === 'time' && <TimeTab job={job} />}
+          {activeTab === 'logs' && <DailyLogsTab jobId={job.id} />}
           {activeTab === 'notes' && <NotesTab job={job} />}
         </div>
 
@@ -1198,6 +1215,447 @@ function NotesTab({ job }: { job: Job }) {
         <Button onClick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save Notes'}
         </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Estimates Tab ──
+function EstimatesTab({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { estimates, loading } = useEstimates();
+  const jobEstimates = estimates.filter(e => e.jobId === jobId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const STATUS_COLORS: Record<string, string> = {
+    draft: 'bg-zinc-500/10 text-zinc-400',
+    sent: 'bg-blue-500/10 text-blue-400',
+    approved: 'bg-emerald-500/10 text-emerald-400',
+    declined: 'bg-red-500/10 text-red-400',
+    revised: 'bg-amber-500/10 text-amber-400',
+    completed: 'bg-emerald-500/10 text-emerald-400',
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">{t('estimates.title')}</CardTitle>
+          {jobEstimates.length > 0 && (
+            <p className="text-xs text-muted mt-1">
+              {jobEstimates.length} {t('estimates.title').toLowerCase()} &middot; {formatCurrency(jobEstimates.reduce((s, e) => s + e.grandTotal, 0))} {t('common.total').toLowerCase()}
+            </p>
+          )}
+        </div>
+        <Button variant="secondary" size="sm" onClick={() => router.push('/dashboard/estimates')}>
+          <Plus size={14} />
+          {t('estimates.new')}
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {jobEstimates.length === 0 ? (
+          <div className="text-center py-8">
+            <FileText size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">{t('estimates.noEstimates')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {jobEstimates.map(est => (
+              <button
+                key={est.id}
+                onClick={() => router.push(`/dashboard/estimates/${est.id}`)}
+                className="w-full flex items-center gap-4 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors text-left"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-main truncate">{est.estimateNumber}</span>
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', STATUS_COLORS[est.status] || 'bg-zinc-500/10 text-zinc-400')}>
+                      {est.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted mt-0.5 truncate">{est.title || est.customerName}</p>
+                </div>
+                <span className="text-sm font-medium text-main">{formatCurrency(est.grandTotal)}</span>
+                <ChevronRight size={14} className="text-muted" />
+              </button>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Invoices Tab ──
+function InvoicesTab({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { invoices, loading } = useInvoices();
+  const jobInvoices = invoices.filter(inv => inv.jobId === jobId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">{t('invoices.title')}</CardTitle>
+          {jobInvoices.length > 0 && (
+            <p className="text-xs text-muted mt-1">
+              {jobInvoices.length} {t('invoices.title').toLowerCase()} &middot; {formatCurrency(jobInvoices.reduce((s, inv) => s + inv.total, 0))} {t('common.total').toLowerCase()}
+            </p>
+          )}
+        </div>
+        <Button variant="secondary" size="sm" onClick={() => router.push('/dashboard/invoices/new')}>
+          <Plus size={14} />
+          {t('invoices.title')}
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {jobInvoices.length === 0 ? (
+          <div className="text-center py-8">
+            <Receipt size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">{t('invoices.noRecords')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {jobInvoices.map(inv => (
+              <button
+                key={inv.id}
+                onClick={() => router.push(`/dashboard/invoices/${inv.id}`)}
+                className="w-full flex items-center gap-4 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors text-left"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-main">{inv.invoiceNumber}</span>
+                    <StatusBadge status={inv.status} />
+                  </div>
+                  <p className="text-xs text-muted mt-0.5">
+                    {t('common.dueDate')}: {formatDateLocale(inv.dueDate)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-main">{formatCurrency(inv.total)}</p>
+                  {inv.amountDue > 0 && (
+                    <p className="text-xs text-amber-500">{t('invoices.overdueAmount')}: {formatCurrency(inv.amountDue)}</p>
+                  )}
+                </div>
+                <ChevronRight size={14} className="text-muted" />
+              </button>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Documents Tab ──
+function DocumentsTab({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
+  const { documents, loading } = useDocuments();
+  const jobDocs = documents.filter(d => d.jobId === jobId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">{t('common.documents')}</CardTitle>
+          {jobDocs.length > 0 && (
+            <p className="text-xs text-muted mt-1">{jobDocs.length} {t('common.documents').toLowerCase()}</p>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {jobDocs.length === 0 ? (
+          <div className="text-center py-8">
+            <FileText size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">{t('documents.noDocuments')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {jobDocs.map(doc => (
+              <div
+                key={doc.id}
+                className="flex items-center gap-3 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors"
+              >
+                <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                  <FileText size={16} className="text-blue-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-main truncate">{doc.name}</p>
+                  <p className="text-xs text-muted">
+                    {doc.documentType} &middot; {formatFileSize(doc.fileSizeBytes)} &middot; {formatDateLocale(doc.createdAt)}
+                  </p>
+                </div>
+                {doc.requiresSignature && (
+                  <span className={cn(
+                    'text-[10px] px-1.5 py-0.5 rounded-full',
+                    doc.signatureStatus === 'signed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                  )}>
+                    {doc.signatureStatus === 'signed' ? 'Signed' : 'Needs Signature'}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Change Orders Tab ──
+function ChangeOrdersTab({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
+  const { changeOrders, loading } = useChangeOrders();
+  const jobCOs = changeOrders.filter(co => co.jobId === jobId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const CO_STATUS_COLORS: Record<string, string> = {
+    draft: 'bg-zinc-500/10 text-zinc-400',
+    pending_approval: 'bg-amber-500/10 text-amber-400',
+    approved: 'bg-emerald-500/10 text-emerald-400',
+    rejected: 'bg-red-500/10 text-red-400',
+    voided: 'bg-zinc-500/10 text-zinc-500',
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">{t('changeOrders.title')}</CardTitle>
+          {jobCOs.length > 0 && (
+            <p className="text-xs text-muted mt-1">
+              {jobCOs.length} {t('changeOrders.title').toLowerCase()} &middot; {formatCurrency(jobCOs.filter(co => co.status === 'approved').reduce((s, co) => s + co.amount, 0))} {t('changeOrders.approved')}
+            </p>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {jobCOs.length === 0 ? (
+          <div className="text-center py-8">
+            <Edit size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">{t('changeOrders.noChangeOrders')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {jobCOs.map(co => (
+              <div
+                key={co.id}
+                className="flex items-center gap-4 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-main">{co.number || 'CO'}</span>
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', CO_STATUS_COLORS[co.status] || 'bg-zinc-500/10 text-zinc-400')}>
+                      {co.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted mt-0.5 truncate">{co.title} &middot; {co.reason}</p>
+                </div>
+                <span className={cn(
+                  'text-sm font-medium',
+                  co.amount >= 0 ? 'text-emerald-500' : 'text-red-500'
+                )}>
+                  {co.amount >= 0 ? '+' : ''}{formatCurrency(co.amount)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Permits Tab ──
+function PermitsTab({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
+  const { permits, loading } = usePermits();
+  const jobPermits = permits.filter(p => p.jobId === jobId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const PERMIT_STATUS_COLORS: Record<string, string> = {
+    draft: 'bg-zinc-500/10 text-zinc-400',
+    applied: 'bg-blue-500/10 text-blue-400',
+    approved: 'bg-emerald-500/10 text-emerald-400',
+    rejected: 'bg-red-500/10 text-red-400',
+    expired: 'bg-amber-500/10 text-amber-400',
+    closed: 'bg-zinc-500/10 text-zinc-500',
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">{t('permits.title')}</CardTitle>
+          {jobPermits.length > 0 && (
+            <p className="text-xs text-muted mt-1">{jobPermits.length} {t('permits.title').toLowerCase()}</p>
+          )}
+        </div>
+        <Button variant="secondary" size="sm" onClick={() => window.location.href = `/dashboard/permits/${jobId}`}>
+          <Plus size={14} />
+          {t('permits.title')}
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {jobPermits.length === 0 ? (
+          <div className="text-center py-8">
+            <Shield size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">{t('permits.noPermits')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {jobPermits.map(permit => (
+              <div
+                key={permit.id}
+                className="flex items-center gap-4 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors"
+              >
+                <div className="w-8 h-8 rounded bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                  <Shield size={16} className="text-purple-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-main">{permit.permitNumber || permit.permitType}</span>
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', PERMIT_STATUS_COLORS[permit.status] || 'bg-zinc-500/10 text-zinc-400')}>
+                      {permit.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted mt-0.5 truncate">
+                    {permit.description || permit.jurisdiction || 'No description'}
+                    {permit.fee > 0 && ` · ${formatCurrency(permit.fee)}`}
+                  </p>
+                </div>
+                {permit.expirationDate && (
+                  <span className="text-xs text-muted">{t('permits.expires')}: {formatDateLocale(permit.expirationDate)}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Daily Logs Tab ──
+function DailyLogsTab({ jobId }: { jobId: string }) {
+  const { t } = useTranslation();
+  const { logs, loading } = useDailyLogs(jobId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-base">{t('common.dailyLogs')}</CardTitle>
+          {logs.length > 0 && (
+            <p className="text-xs text-muted mt-1">{logs.length} {t('common.dailyLogs').toLowerCase()}</p>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {logs.length === 0 ? (
+          <div className="text-center py-8">
+            <Calendar size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">{t('common.noResults')}</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {logs.map(log => (
+              <div
+                key={log.id}
+                className="p-4 rounded-lg border border-main hover:bg-surface-hover transition-colors"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={14} className="text-accent" />
+                    <span className="text-sm font-medium text-main">{formatDateLocale(log.logDate)}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-muted">
+                    {log.crewCount > 0 && <span>{log.crewCount} crew</span>}
+                    {log.hoursWorked > 0 && <span>{log.hoursWorked}h</span>}
+                    {log.weather && <span>{log.weather}{log.temperatureF ? ` ${log.temperatureF}°F` : ''}</span>}
+                  </div>
+                </div>
+                {log.summary && (
+                  <p className="text-sm text-main mb-1">{log.summary}</p>
+                )}
+                {log.workPerformed && (
+                  <p className="text-xs text-muted">{log.workPerformed}</p>
+                )}
+                {log.issues && (
+                  <div className="mt-2 flex items-start gap-1.5 text-xs text-amber-500">
+                    <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
+                    <span>{log.issues}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
