@@ -453,37 +453,11 @@ function OverviewTab({ job }: { job: Job }) {
         </Card>
       )}
 
-      {/* Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('common.timeline')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <TimelineItem
-              label={t('common.createdAt')}
-              date={job.createdAt}
-              completed={true}
-            />
-            <TimelineItem
-              label={t('jobs.statusScheduled')}
-              date={job.scheduledStart}
-              completed={!!job.scheduledStart}
-            />
-            <TimelineItem
-              label={t('common.started')}
-              date={job.actualStart}
-              completed={!!job.actualStart}
-            />
-            <TimelineItem
-              label={t('inspections.completed')}
-              date={job.actualEnd}
-              completed={job.status === 'completed' || job.status === 'invoiced' || job.status === 'paid'}
-              isLast
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Job Status Pipeline */}
+      <JobStatusPipeline job={job} />
+
+      {/* Activity Timeline */}
+      <ActivityTimeline jobId={job.id} job={job} />
 
       {/* Tags */}
       {job.tags.length > 0 && (
@@ -501,6 +475,279 @@ function OverviewTab({ job }: { job: Job }) {
         </Card>
       )}
     </div>
+  );
+}
+
+// ── Job Status Pipeline ──
+const PIPELINE_STAGES = [
+  { key: 'lead', label: 'Lead' },
+  { key: 'estimate', label: 'Estimate' },
+  { key: 'scheduled', label: 'Scheduled' },
+  { key: 'in_progress', label: 'In Progress' },
+  { key: 'punch_list', label: 'Punch List' },
+  { key: 'completed', label: 'Complete' },
+  { key: 'invoiced', label: 'Invoiced' },
+  { key: 'paid', label: 'Paid' },
+] as const;
+
+const STATUS_TO_STAGE: Record<string, number> = {
+  lead: 0, new: 0,
+  estimate: 1, estimating: 1,
+  scheduled: 2,
+  in_progress: 3, active: 3,
+  punch_list: 4, review: 4,
+  completed: 5, complete: 5,
+  invoiced: 6,
+  paid: 7,
+  cancelled: -1, on_hold: -1,
+};
+
+function JobStatusPipeline({ job }: { job: Job }) {
+  const { t } = useTranslation();
+  const currentStage = STATUS_TO_STAGE[job.status] ?? 0;
+
+  if (currentStage < 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t('common.status')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 text-amber-500">
+            <AlertTriangle size={16} />
+            <span className="text-sm font-medium capitalize">{job.status.replace('_', ' ')}</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t('common.status')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center gap-1">
+          {PIPELINE_STAGES.map((stage, idx) => {
+            const isComplete = idx < currentStage;
+            const isCurrent = idx === currentStage;
+            return (
+              <div key={stage.key} className="flex-1 flex flex-col items-center gap-1.5">
+                <div className={cn(
+                  'w-full h-2 rounded-full transition-colors',
+                  isComplete ? 'bg-emerald-500' : isCurrent ? 'bg-accent' : 'bg-secondary'
+                )} />
+                <span className={cn(
+                  'text-[10px] font-medium',
+                  isComplete ? 'text-emerald-500' : isCurrent ? 'text-accent' : 'text-muted'
+                )}>
+                  {stage.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Activity Timeline ──
+interface TimelineEvent {
+  id: string;
+  type: 'status' | 'estimate' | 'invoice' | 'document' | 'photo' | 'change_order' | 'permit' | 'log' | 'note';
+  title: string;
+  description?: string;
+  timestamp: Date;
+  icon: React.ReactNode;
+  color: string;
+}
+
+function ActivityTimeline({ jobId, job }: { jobId: string; job: Job }) {
+  const { t } = useTranslation();
+  const { estimates } = useEstimates();
+  const { invoices } = useInvoices();
+  const { documents } = useDocuments();
+  const { changeOrders } = useChangeOrders();
+  const { permits } = usePermits();
+  const { logs } = useDailyLogs(jobId);
+  const { photos } = usePhotos(jobId);
+
+  const events: TimelineEvent[] = [];
+
+  // Job lifecycle events
+  events.push({
+    id: 'created',
+    type: 'status',
+    title: t('common.createdAt'),
+    timestamp: new Date(job.createdAt),
+    icon: <Briefcase size={14} />,
+    color: 'text-blue-400',
+  });
+  if (job.scheduledStart) {
+    events.push({
+      id: 'scheduled',
+      type: 'status',
+      title: t('jobs.statusScheduled'),
+      timestamp: new Date(job.scheduledStart),
+      icon: <Calendar size={14} />,
+      color: 'text-blue-400',
+    });
+  }
+  if (job.actualStart) {
+    events.push({
+      id: 'started',
+      type: 'status',
+      title: t('common.started'),
+      timestamp: new Date(job.actualStart),
+      icon: <PlayCircle size={14} />,
+      color: 'text-emerald-400',
+    });
+  }
+  if (job.actualEnd) {
+    events.push({
+      id: 'completed',
+      type: 'status',
+      title: t('inspections.completed'),
+      timestamp: new Date(job.actualEnd),
+      icon: <CheckCircle size={14} />,
+      color: 'text-emerald-400',
+    });
+  }
+
+  // Linked estimates
+  estimates.filter(e => e.jobId === jobId).forEach(est => {
+    events.push({
+      id: `est-${est.id}`,
+      type: 'estimate',
+      title: `${t('estimates.title')}: ${est.estimateNumber}`,
+      description: `${est.status} — ${formatCurrency(est.grandTotal)}`,
+      timestamp: new Date(est.createdAt),
+      icon: <FileText size={14} />,
+      color: 'text-purple-400',
+    });
+  });
+
+  // Linked invoices
+  invoices.filter(inv => inv.jobId === jobId).forEach(inv => {
+    events.push({
+      id: `inv-${inv.id}`,
+      type: 'invoice',
+      title: `${t('invoices.title')}: ${inv.invoiceNumber}`,
+      description: `${inv.status} — ${formatCurrency(inv.total)}`,
+      timestamp: new Date(inv.createdAt),
+      icon: <Receipt size={14} />,
+      color: 'text-green-400',
+    });
+  });
+
+  // Linked documents
+  documents.filter(d => d.jobId === jobId).forEach(doc => {
+    events.push({
+      id: `doc-${doc.id}`,
+      type: 'document',
+      title: `${t('common.documents')}: ${doc.name}`,
+      description: doc.documentType,
+      timestamp: new Date(doc.createdAt),
+      icon: <FileText size={14} />,
+      color: 'text-blue-400',
+    });
+  });
+
+  // Linked change orders
+  changeOrders.filter(co => co.jobId === jobId).forEach(co => {
+    events.push({
+      id: `co-${co.id}`,
+      type: 'change_order',
+      title: `${t('changeOrders.title')}: ${co.number || co.title}`,
+      description: `${co.status.replace('_', ' ')} — ${formatCurrency(co.amount)}`,
+      timestamp: co.createdAt,
+      icon: <Edit size={14} />,
+      color: 'text-amber-400',
+    });
+  });
+
+  // Linked permits
+  permits.filter(p => p.jobId === jobId).forEach(permit => {
+    events.push({
+      id: `permit-${permit.id}`,
+      type: 'permit',
+      title: `${t('permits.title')}: ${permit.permitNumber || permit.permitType}`,
+      description: permit.status,
+      timestamp: new Date(permit.createdAt),
+      icon: <Shield size={14} />,
+      color: 'text-purple-400',
+    });
+  });
+
+  // Daily logs
+  logs.forEach(log => {
+    events.push({
+      id: `log-${log.id}`,
+      type: 'log',
+      title: t('common.dailyLogs'),
+      description: log.summary || log.workPerformed || undefined,
+      timestamp: new Date(log.logDate),
+      icon: <Calendar size={14} />,
+      color: 'text-cyan-400',
+    });
+  });
+
+  // Photos
+  if (photos && photos.length > 0) {
+    // Group photos by date to avoid spamming
+    const photoDates = new Map<string, number>();
+    photos.forEach((p) => {
+      const dateStr = (p.createdAt || '').split('T')[0];
+      photoDates.set(dateStr, (photoDates.get(dateStr) || 0) + 1);
+    });
+    photoDates.forEach((count, dateStr) => {
+      events.push({
+        id: `photos-${dateStr}`,
+        type: 'photo',
+        title: `${count} ${t('common.photos').toLowerCase()} uploaded`,
+        timestamp: new Date(dateStr),
+        icon: <Camera size={14} />,
+        color: 'text-pink-400',
+      });
+    });
+  }
+
+  // Sort by timestamp descending (newest first)
+  events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t('common.timeline')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {events.length === 0 ? (
+          <p className="text-sm text-muted text-center py-4">{t('common.noResults')}</p>
+        ) : (
+          <div className="space-y-0">
+            {events.map((event, idx) => (
+              <div key={event.id} className="flex gap-3">
+                <div className="flex flex-col items-center">
+                  <div className={cn('w-7 h-7 rounded-full bg-secondary flex items-center justify-center flex-shrink-0', event.color)}>
+                    {event.icon}
+                  </div>
+                  {idx < events.length - 1 && <div className="w-0.5 flex-1 bg-main min-h-[20px]" />}
+                </div>
+                <div className="flex-1 pb-4 min-w-0">
+                  <p className="text-sm font-medium text-main">{event.title}</p>
+                  {event.description && (
+                    <p className="text-xs text-muted truncate">{event.description}</p>
+                  )}
+                  <p className="text-[10px] text-muted mt-0.5">{formatDateTimeLocale(event.timestamp)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
