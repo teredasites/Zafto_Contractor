@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""5-language batch 27: remaining C (Candidate-Customer Request) + D values"""
+import json, subprocess, os
+
+LOCALES = ['ht', 'ru', 'ko', 'vi', 'tl']
+dicts = {}
+for loc in LOCALES:
+    f = f"_{loc}_dict.json"
+    if os.path.exists(f):
+        with open(f, "r", encoding="utf-8") as fh: dicts[loc] = json.load(fh)
+    else: dicts[loc] = {}
+
+def t(en, ht_v, ru_v, ko_v, vi_v, tl_v):
+    dicts['ht'][en]=ht_v; dicts['ru'][en]=ru_v; dicts['ko'][en]=ko_v; dicts['vi'][en]=vi_v; dicts['tl'][en]=tl_v
+
+# C continued
+t("Candidate", "Kandida", "Кандидат", "지원자", "Ứng viên", "Kandidato")
+t("Canvass Priority List", "Lis Priyorite Kanvas", "Приоритетный список обхода", "캔버스 우선순위 목록", "Danh sách ưu tiên tiếp cận", "Canvass Priority List")
+t("Capture Baseline", "Kaptire Liy Baz", "Захватить базовый план", "기준선 캡처", "Chụp đường cơ sở", "I-capture ang Baseline")
+t("Capture a baseline to snapshot your current schedule", "Kaptire yon liy baz pou fè yon enstantane orè ou aktyèl", "Сохраните базовый план текущего расписания", "현재 일정의 스냅샷을 위해 기준선을 캡처하세요", "Chụp đường cơ sở để lưu ảnh lịch trình hiện tại", "I-capture ang baseline para mag-snapshot ng kasalukuyang schedule mo")
+t("Carpentry", "Ebenis", "Столярные работы", "목공", "Mộc", "Karpinteriya")
+t("Carrier Names", "Non Transpòtè", "Названия перевозчиков", "보험사 이름", "Tên nhà vận chuyển", "Mga Pangalan ng Carrier")
+t("Cash Balance", "Balans Lajan Kach", "Денежный баланс", "현금 잔액", "Số dư tiền mặt", "Cash Balance")
+t("Cash Position", "Pozisyon Lajan Kach", "Денежная позиция", "현금 포지션", "Vị thế tiền mặt", "Cash Position")
+t("Category of Water", "Kategori Dlo", "Категория воды", "수질 분류", "Phân loại nước", "Kategorya ng Tubig")
+t("Ceiling", "Plafon", "Потолок", "천장", "Trần", "Kisame")
+t("Census demographics not available for this area", "Done demografik sansman pa disponib pou zòn sa a", "Данные переписи недоступны для этого района", "이 지역의 인구 조사 데이터를 사용할 수 없습니다", "Dữ liệu nhân khẩu học không có cho khu vực này", "Hindi available ang census demographics para sa area na ito")
+t("Certificate Number", "Nimewo Sètifika", "Номер сертификата", "인증서 번호", "Số chứng chỉ", "Certificate Number")
+t("Certification", "Sètifikasyon", "Сертификация", "자격증", "Chứng chỉ", "Sertipikasyon")
+t("Certification Due", "Sètifikasyon Dwe", "Сертификация к продлению", "자격증 만료 예정", "Chứng chỉ sắp hết hạn", "Sertipikasyon na Dapat")
+t("Certification Expiry", "Ekspirasyon Sètifikasyon", "Срок действия сертификата", "자격증 만료", "Hết hạn chứng chỉ", "Pag-expire ng Sertipikasyon")
+t("Certified Payroll", "Pewòl Sètifye", "Заверенная ведомость", "인증 급여", "Bảng lương chứng nhận", "Certified Payroll")
+t("Change Order Amount", "Montan Lòd Chanjman", "Сумма ордера изменений", "변경 주문 금액", "Số tiền lệnh thay đổi", "Halaga ng Change Order")
+t("Change Order Tracker", "Swivi Lòd Chanjman", "Отслеживание ордеров изменений", "변경 주문 추적", "Theo dõi lệnh thay đổi", "Change Order Tracker")
+t("Change Password", "Chanje Modpas", "Изменить пароль", "비밀번호 변경", "Đổi mật khẩu", "Palitan ang Password")
+t("Change Plan", "Chanje Plan", "Изменить план", "요금제 변경", "Thay đổi gói", "Palitan ang Plan")
+t("Change order total", "Total lòd chanjman", "Итого ордеров изменений", "변경 주문 합계", "Tổng lệnh thay đổi", "Kabuuang change order")
+t("Check Out Tool", "Prete Zouti", "Выдать инструмент", "도구 대출", "Mượn dụng cụ", "Mag-check Out ng Tool")
+t("Checked Out", "Prete", "Выдано", "대출됨", "Đã mượn", "Naka-check Out")
+t("Checking access...", "Verifye aksè...", "Проверка доступа...", "접근 확인 중...", "Đang kiểm tra quyền truy cập...", "Tinitingnan ang access...")
+t("Checklist Items", "Eleman Lis Tchèk", "Пункты чек-листа", "체크리스트 항목", "Mục danh sách kiểm tra", "Mga Checklist Item")
+t("Checklist Template", "Modèl Lis Tchèk", "Шаблон чек-листа", "체크리스트 템플릿", "Mẫu danh sách kiểm tra", "Checklist Template")
+t("Checkout Tool", "Prete Zouti", "Выдача инструмента", "도구 대출", "Mượn dụng cụ", "Checkout Tool")
+t("Choose a Rule Type", "Chwazi yon Tip Règ", "Выберите тип правила", "규칙 유형 선택", "Chọn loại quy tắc", "Pumili ng Uri ng Rule")
+t("Choose what emails you receive", "Chwazi ki imèl ou resevwa", "Выберите какие письма получать", "수신할 이메일을 선택하세요", "Chọn email bạn muốn nhận", "Piliin kung anong mga email ang matatanggap mo")
+t("Choose your preferred color scheme", "Chwazi plan koulè ou prefere", "Выберите цветовую схему", "선호하는 색상 구성을 선택하세요", "Chọn bảng màu ưa thích", "Piliin ang gusto mong color scheme")
+t("Choose your preferred language. Affects all UI text.", "Chwazi lang ou prefere. Sa afekte tout tèks entèfas.", "Выберите язык. Влияет на весь текст интерфейса.", "선호하는 언어를 선택하세요. 모든 UI 텍스트에 적용됩니다.", "Chọn ngôn ngữ ưa thích. Ảnh hưởng đến tất cả văn bản giao diện.", "Piliin ang gusto mong wika. Nakakaapekto sa lahat ng UI text.")
+t("Choose your preferred language. The entire app will switch to your selection.", "Chwazi lang ou prefere. Tout aplikasyon an ap chanje nan seleksyon ou.", "Выберите язык. Всё приложение переключится на выбранный.", "선호하는 언어를 선택하세요. 전체 앱이 선택한 언어로 전환됩니다.", "Chọn ngôn ngữ ưa thích. Toàn bộ ứng dụng sẽ chuyển sang lựa chọn của bạn.", "Piliin ang gusto mong wika. Ang buong app ay lilipat sa napili mo.")
+t("Citation", "Sitasyon", "Цитата", "인용", "Trích dẫn", "Citation")
+t("City/State/Zip:", "Vil/Eta/Kòd Postal:", "Город/Штат/Индекс:", "시/주/우편번호:", "Thành phố/Tiểu bang/Mã bưu chính:", "Lungsod/Estado/Zip:")
+t("Claim #:", "Reklamasyon #:", "Заявка #:", "청구 #:", "Yêu cầu bồi thường #:", "Claim #:")
+t("Claim Amount", "Montan Reklamasyon", "Сумма заявки", "청구 금액", "Số tiền yêu cầu bồi thường", "Halaga ng Claim")
+t("Claim Approved", "Reklamasyon Apwouve", "Заявка утверждена", "청구 승인됨", "Yêu cầu bồi thường đã phê duyệt", "Naaprubahan ang Claim")
+t("Claim Denied", "Reklamasyon Refize", "Заявка отклонена", "청구 거부됨", "Yêu cầu bồi thường bị từ chối", "Tinanggihan ang Claim")
+t("Claim History", "Istwa Reklamasyon", "История заявки", "청구 이력", "Lịch sử yêu cầu bồi thường", "Kasaysayan ng Claim")
+t("Claim Info", "Enfòmasyon Reklamasyon", "Информация о заявке", "청구 정보", "Thông tin yêu cầu bồi thường", "Impormasyon ng Claim")
+t("Claim Settled", "Reklamasyon Regle", "Заявка урегулирована", "청구 정산됨", "Yêu cầu bồi thường đã giải quyết", "Naresolba ang Claim")
+t("Claim Submitted", "Reklamasyon Soumèt", "Заявка подана", "청구 제출됨", "Yêu cầu bồi thường đã nộp", "Nai-submit ang Claim")
+t("Claim not found", "Reklamasyon pa jwenn", "Заявка не найдена", "청구를 찾을 수 없음", "Không tìm thấy yêu cầu bồi thường", "Hindi nahanap ang claim")
+t("Claim:", "Reklamasyon:", "Заявка:", "청구:", "Yêu cầu bồi thường:", "Claim:")
+t("Claimant", "Reklamant", "Заявитель", "청구인", "Người yêu cầu bồi thường", "Claimant")
+t("Class of Water", "Klas Dlo", "Класс воды", "수질 등급", "Hạng nước", "Klase ng Tubig")
+t("Classification", "Klasifikasyon", "Классификация", "분류", "Phân loại", "Klasipikasyon")
+t("Claude is extracting line items from the PDF", "Claude ap ekstrè eleman liy nan PDF la", "Claude извлекает позиции из PDF", "Claude가 PDF에서 항목을 추출하고 있습니다", "Claude đang trích xuất các mục từ PDF", "Kine-extract ni Claude ang mga line item mula sa PDF")
+t("Cleaning and maintenance", "Netwayaj ak antretyen", "Уборка и обслуживание", "청소 및 유지보수", "Vệ sinh và bảo trì", "Paglilinis at maintenance")
+t("Cleared Balance", "Balans Konpanse", "Сверенный баланс", "정산된 잔액", "Số dư đã quyết toán", "Cleared Balance")
+t("Click Rate", "To Klike", "Процент кликов", "클릭률", "Tỷ lệ nhấp", "Click Rate")
+t("Click a job to see category-level budget details", "Klike sou yon travay pou wè detay bidjè nivo kategori", "Нажмите на заказ для просмотра бюджета по категориям", "작업을 클릭하여 카테고리별 예산 상세를 확인하세요", "Nhấp vào công việc để xem chi tiết ngân sách theo danh mục", "Mag-click ng trabaho para makita ang category-level budget details")
+t("Click to select or drag a .pdf file", "Klike pou chwazi oswa trennen yon fichye .pdf", "Нажмите для выбора или перетащите .pdf файл", ".pdf 파일을 선택하거나 드래그하세요", "Nhấp để chọn hoặc kéo thả tệp .pdf", "Mag-click para pumili o mag-drag ng .pdf file")
+t("Client Jobs", "Travay Kliyan", "Заказы клиента", "고객 작업", "Công việc khách hàng", "Mga Client Job")
+t("Clocked in", "Antre", "На работе", "출근 기록됨", "Đã chấm công", "Naka-clock in")
+t("Clone Job", "Klone Travay", "Клонировать заказ", "작업 복제", "Nhân bản công việc", "I-clone ang Trabaho")
+t("Clone to My Templates", "Klone nan Modèl Mwen", "Клонировать в мои шаблоны", "내 템플릿으로 복제", "Nhân bản vào Mẫu của tôi", "I-clone sa Aking Mga Template")
+t("Close Rate by Price Tier", "To Fèmti pa Nivo Pri", "Процент закрытия по ценовым категориям", "가격 등급별 종결률", "Tỷ lệ chốt theo hạng giá", "Close Rate ayon sa Price Tier")
+t("Closed At", "Fèmen Nan", "Закрыто", "종결 일시", "Đã đóng lúc", "Naisara Noong")
+t("Closeout", "Kloti", "Закрытие", "종결", "Hoàn tất", "Closeout")
+t("Code Matches", "Matche Kòd", "Совпадения кодов", "코드 일치", "Kết quả khớp mã", "Mga Code Match")
+t("Code Requirement", "Egzijans Kòd", "Требование кода", "코드 요구사항", "Yêu cầu quy phạm", "Code Requirement")
+t("Cold Leads", "Pwopriyetè Frèt", "Холодные лиды", "콜드 리드", "Khách hàng tiềm năng lạnh", "Mga Cold Lead")
+t("Collapse All", "Ratresi Tout", "Свернуть все", "모두 접기", "Thu gọn tất cả", "I-collapse Lahat")
+t("Comms", "Kominikasyon", "Сообщения", "커뮤니케이션", "Liên lạc", "Mga Komunikasyon")
+t("Communication Log", "Jounal Kominikasyon", "Журнал коммуникаций", "커뮤니케이션 로그", "Nhật ký liên lạc", "Communication Log")
+t("Completed This Month", "Konplete Mwa Sa a", "Завершено в этом месяце", "이번 달 완료", "Hoàn thành tháng này", "Nakumpleto Ngayong Buwan")
+t("Compliance Alerts", "Alèt Konformite", "Оповещения о соответствии", "규정 준수 알림", "Cảnh báo tuân thủ", "Mga Compliance Alert")
+t("Condition", "Kondisyon", "Состояние", "상태", "Tình trạng", "Kondisyon")
+t("Condition at Checkout", "Kondisyon nan Prete", "Состояние при выдаче", "대출 시 상태", "Tình trạng khi mượn", "Kondisyon sa Checkout")
+t("Condition at Return", "Kondisyon nan Retounen", "Состояние при возврате", "반납 시 상태", "Tình trạng khi trả", "Kondisyon sa Return")
+t("Conditions", "Kondisyon", "Условия", "조건", "Điều kiện", "Mga Kondisyon")
+t("Connected Accounts", "Kont Konekte", "Подключённые аккаунты", "연결된 계정", "Tài khoản đã kết nối", "Mga Nakakonektang Account")
+t("Connected Apps", "Aplikasyon Konekte", "Подключённые приложения", "연결된 앱", "Ứng dụng đã kết nối", "Mga Nakakonektang App")
+t("Connection", "Koneksyon", "Соединение", "연결", "Kết nối", "Koneksyon")
+t("Contact Name", "Non Kontak", "Имя контакта", "연락처 이름", "Tên liên hệ", "Pangalan ng Contact")
+t("Contents", "Kontni", "Содержимое", "내용", "Nội dung", "Mga Nilalaman")
+t("Contract Amount", "Montan Kontra", "Сумма контракта", "계약 금액", "Số tiền hợp đồng", "Halaga ng Kontrata")
+t("Contractor Recommendation", "Rekòmandasyon Kontraktè", "Рекомендация подрядчика", "시공업체 추천", "Đề xuất nhà thầu", "Rekomendasyon ng Contractor")
+t("Contractor Signature", "Siyati Kontraktè", "Подпись подрядчика", "시공업체 서명", "Chữ ký nhà thầu", "Lagda ng Contractor")
+t("Conversion Rate", "To Konvèsyon", "Коэффициент конверсии", "전환율", "Tỷ lệ chuyển đổi", "Conversion Rate")
+t("Copied to clipboard", "Kopye nan klipbòd", "Скопировано в буфер", "클립보드에 복사됨", "Đã sao chép vào bộ nhớ tạm", "Nakopya sa clipboard")
+
+# Save and apply
+for loc in LOCALES:
+    f = f"_{loc}_dict.json"
+    with open(f, "w", encoding="utf-8") as fh:
+        json.dump(dicts[loc], fh, ensure_ascii=False, indent=2)
+    print(f"{loc} dict: {len(dicts[loc])} entries")
+    subprocess.run(["python", "_all_langs_apply.py", loc, f])
