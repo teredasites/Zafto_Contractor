@@ -68,7 +68,39 @@
     "areYouSure": "确定吗？",
     "cannotUndo": "此操作无法撤销。",
     "signOut": "退出登录",
-    "upgradePlan": "升级套餐"
+    "upgradePlan": "升级套餐",
+    "more": "More",
+    "less": "Less",
+    "ok": "OK",
+    "none": "None",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "archived": "Archived",
+    "discount": "Discount",
+    "unit": "Unit",
+    "time": "Time",
+    "type": "Type",
+    "tags": "Tags",
+    "city": "City",
+    "state": "State",
+    "zip": "ZIP",
+    "country": "Country",
+    "actions": "Actions",
+    "optional": "Optional",
+    "copied": "Copied to clipboard",
+    "updated": "Successfully updated",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "sortBy": "Sort by",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "showing": "Showing",
+    "of": "of",
+    "results": "results",
+    "page": "Page",
+    "perPage": "per page",
+    "previous": "Previous",
+    "comingSoon": "Coming Soon"
   },
   "nav": {
     "dashboard": "仪表盘",
@@ -91,7 +123,79 @@
     "schedule": "排程",
     "equipment": "设备",
     "vendors": "供应商",
-    "documents": "文档"
+    "documents": "文档",
+    "tpa": "TPA Programs",
+    "sidebar": "Sidebar",
+    "sidebarControl": "Sidebar control",
+    "expanded": "Expanded",
+    "collapsed": "Collapsed",
+    "expandOnHover": "Expand on hover",
+    "bids": "Bids",
+    "changeOrders": "Change Orders",
+    "serviceAgreements": "Service Agreements",
+    "warranties": "Warranties",
+    "warrantyIntel": "Warranty Intel",
+    "reviews": "Reviews",
+    "ledger": "Ledger",
+    "reports": "Reports",
+    "revenue": "Revenue",
+    "payroll": "Payroll",
+    "jobIntelligence": "Job Intelligence",
+    "jobCostRadar": "Job Cost Radar",
+    "pricingRules": "Pricing Rules",
+    "pricingAnalytics": "Pricing Analytics",
+    "dispatch": "Dispatch",
+    "subcontractors": "Subcontractors",
+    "meetings": "Meetings",
+    "timeClock": "Time Clock",
+    "inspections": "Inspections",
+    "inspectionEngine": "Inspection Engine",
+    "oshaStandards": "OSHA Standards",
+    "permits": "Permits",
+    "jurisdictions": "Jurisdictions",
+    "compliance": "Compliance",
+    "ceTracking": "CE Tracking",
+    "compliancePackets": "Compliance Packets",
+    "lienProtection": "Lien Protection",
+    "maintenancePipeline": "Maintenance Pipeline",
+    "communications": "Communications",
+    "teamChat": "Team Chat",
+    "calls": "Calls",
+    "messages": "Messages",
+    "fax": "Fax",
+    "emailNav": "Email",
+    "claims": "Claims",
+    "moistureReadings": "Moisture Readings",
+    "dryingLogs": "Drying Logs",
+    "siteSurveys": "Site Surveys",
+    "sketchEngine": "Sketch Engine",
+    "tpaDashboard": "TPA Dashboard",
+    "programs": "Programs",
+    "assignments": "Assignments",
+    "scorecards": "Scorecards",
+    "propertyScans": "Property Scans",
+    "areaScans": "Area Scans",
+    "teamMembers": "Team",
+    "certifications": "Certifications",
+    "toolCheckout": "Tool Checkout",
+    "purchaseOrders": "Purchase Orders",
+    "fleet": "Fleet",
+    "hr": "HR",
+    "hiring": "Hiring",
+    "marketplace": "Marketplace",
+    "walkthroughs": "Walkthroughs",
+    "zforge": "ZForge",
+    "automations": "Automations",
+    "growth": "Growth",
+    "portfolio": "Portfolio",
+    "units": "Units",
+    "tenants": "Tenants",
+    "leases": "Leases",
+    "rent": "Rent",
+    "maintenance": "Maintenance",
+    "assets": "Assets",
+    "unitTurns": "Unit Turns",
+    "overview": "Overview"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -102,14 +206,122 @@
     "newJob": "新工程",
     "newEstimate": "新报价",
     "newInvoice": "新发票",
-    "newCustomer": "新客户"
+    "newCustomer": "新客户",
+    "recentJobs": "Recent Jobs",
+    "recentEstimates": "Recent Estimates",
+    "recentInvoices": "Recent Invoices",
+    "upcomingSchedule": "Upcoming Schedule",
+    "pendingLeads": "Pending Leads",
+    "revenue": "Revenue",
+    "outstandingInvoices": "Outstanding Invoices",
+    "overdueInvoices": "Overdue Invoices",
+    "todaysSchedule": "Today's Schedule",
+    "newLead": "New Lead",
+    "welcomeSubtitle": "Welcome back. Here's what's happening today.",
+    "viewCalendar": "View Calendar",
+    "newBid": "New Bid",
+    "revenueThisMonth": "Revenue This Month",
+    "activeBids": "Active Bids",
+    "winRate": "win rate",
+    "jobsInProgress": "Jobs In Progress",
+    "scheduled": "scheduled",
+    "revenueOverview": "Revenue Overview",
+    "monthlyRevenue": "Monthly revenue for the past year",
+    "totalRevenue": "Total Revenue",
+    "totalExpenses": "Total Expenses",
+    "netProfit": "Net Profit",
+    "jobsByStatus": "Jobs by Status",
+    "revenueByCategory": "Revenue by Category",
+    "noJobsToday": "No jobs scheduled for today",
+    "viewAll": "View All",
+    "propertyRecon": "Property Recon",
+    "propertyReconDesc": "Scan any address for instant roof, wall, and trade measurements",
+    "sketchEngine": "Sketch Engine",
+    "sketchEngineDesc": "CAD floor plans with trade layers, 3D view, and auto-generated estimates"
   },
   "jobs": {
     "title": "工程",
     "newJob": "新工程",
     "noJobs": "未找到工程",
     "createJob": "创建工程",
-    "searchJobs": "搜索工程..."
+    "searchJobs": "搜索工程...",
+    "editJob": "Edit Job",
+    "jobDetail": "Job Details",
+    "jobNumber": "Job #",
+    "jobName": "Job Name",
+    "jobType": "Job Type",
+    "jobStatus": "Job Status",
+    "customer": "Customer",
+    "property": "Property",
+    "assignedTo": "Assigned To",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "estimatedCost": "Estimated Cost",
+    "actualCost": "Actual Cost",
+    "margin": "Margin",
+    "profit": "Profit",
+    "manageDesc": "Manage your jobs and track progress",
+    "thisMonth": "This Month",
+    "viewList": "List",
+    "viewBoard": "Board",
+    "noJobsDesc": "Create your first job to get started.",
+    "cloneJob": "Clone Job",
+    "deleteJob": "Delete Job",
+    "statusLead": "Lead",
+    "statusEstimate": "Estimate",
+    "statusScheduled": "Scheduled",
+    "statusInProgress": "In Progress",
+    "statusPunchList": "Punch List",
+    "statusComplete": "Complete",
+    "statusInvoiced": "Invoiced",
+    "statusPaid": "Paid",
+    "tabs": {
+      "overview": "Overview",
+      "timeline": "Timeline",
+      "estimates": "Estimates",
+      "invoices": "Invoices",
+      "documents": "Documents",
+      "photos": "Photos",
+      "notes": "Notes",
+      "schedule": "Schedule",
+      "team": "Team",
+      "materials": "Materials",
+      "time": "Time",
+      "changeOrders": "Change Orders",
+      "equipment": "Equipment",
+      "moisture": "Moisture"
+    },
+    "photos": {
+      "title": "Photos",
+      "upload": "Upload Photos",
+      "noPhotos": "No photos yet",
+      "noPhotosDesc": "Upload photos to document this job.",
+      "before": "Before",
+      "during": "During",
+      "after": "After"
+    },
+    "notes": {
+      "title": "Internal Notes",
+      "add": "Add Note",
+      "placeholder": "Add a note about this job...",
+      "noNotes": "No notes yet"
+    },
+    "materials": {
+      "title": "Materials",
+      "add": "Add Material",
+      "name": "Material Name",
+      "noMaterials": "No materials tracked yet",
+      "unitCost": "Unit Cost"
+    },
+    "time": {
+      "title": "Time Entries",
+      "clockIn": "Clock In",
+      "clockOut": "Clock Out",
+      "noEntries": "No time entries yet",
+      "noEntriesDesc": "Time entries will appear here when team members clock in to this job.",
+      "totalHours": "Total Hours",
+      "laborCost": "Labor Cost"
+    }
   },
   "estimates": {
     "title": "报价",
@@ -117,26 +329,945 @@
     "noEstimates": "未找到报价",
     "createEstimate": "创建报价",
     "material": "材料",
-    "labor": "人工"
+    "labor": "人工",
+    "edit": "Edit Estimate",
+    "detail": "Estimate Details",
+    "number": "Estimate #",
+    "manageDesc": "Create and manage project estimates",
+    "importing": "Importing...",
+    "importEsx": "Import .esx",
+    "noEstimatesDesc": "Create your first estimate to get started.",
+    "searchEstimates": "Search estimates...",
+    "sendToCustomer": "Send to Customer",
+    "convertToInvoice": "Convert to Invoice",
+    "convertToJob": "Convert to Job",
+    "duplicate": "Duplicate Estimate",
+    "goodTier": "Good",
+    "betterTier": "Better",
+    "bestTier": "Best",
+    "addRoom": "Add Room",
+    "addLineItem": "Add Line Item",
+    "addSection": "Add Section",
+    "laborHours": "Labor Hours",
+    "wastePercent": "Waste %",
+    "markup": "Markup",
+    "grossMargin": "Gross Margin",
+    "netMargin": "Net Margin",
+    "expiresOn": "Expires On",
+    "approvedOn": "Approved On",
+    "statusDraft": "Draft",
+    "statusSent": "Sent",
+    "statusViewed": "Viewed",
+    "statusApproved": "Approved",
+    "statusRejected": "Rejected",
+    "statusExpired": "Expired"
   },
   "invoices": {
     "title": "发票",
     "new": "新发票",
     "noInvoices": "未找到发票",
-    "createInvoice": "创建发票"
+    "createInvoice": "创建发票",
+    "searchInvoices": "Search invoices...",
+    "noInvoicesDesc": "Create your first invoice to get started.",
+    "totalOutstanding": "Total Outstanding",
+    "overdueAmount": "Overdue Amount",
+    "paidThisMonth": "Paid This Month",
+    "averagePayDays": "Avg. Pay Days",
+    "statusDraft": "Draft",
+    "statusSent": "Sent",
+    "statusPaid": "Paid",
+    "statusOverdue": "Overdue",
+    "statusVoid": "Void",
+    "dueDate": "Due Date",
+    "amount": "Amount",
+    "sendInvoice": "Send Invoice",
+    "markPaid": "Mark as Paid",
+    "voidInvoice": "Void Invoice",
+    "downloadPDF": "Download PDF",
+    "paymentReceived": "Payment Received",
+    "lineItems": "Line Items",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "total": "Total",
+    "notes": "Notes",
+    "terms": "Terms"
   },
   "customers": {
     "title": "客户",
     "noCustomers": "未找到客户",
-    "addCustomer": "添加客户"
+    "addCustomer": "添加客户",
+    "new": "New Customer",
+    "edit": "Edit Customer",
+    "detail": "Customer Details",
+    "manageDesc": "Manage your customer relationships",
+    "totalCustomers": "Total Customers",
+    "totalJobs": "Total Jobs",
+    "avgRevenue": "Avg. Revenue",
+    "noCustomersDesc": "Add your first customer to get started.",
+    "searchCustomers": "Search customers...",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "company": "Company",
+    "primaryPhone": "Primary Phone",
+    "primaryEmail": "Primary Email",
+    "billingAddress": "Billing Address",
+    "serviceAddress": "Service Address",
+    "customerSince": "Customer Since",
+    "totalRevenue": "Total Revenue",
+    "openBalance": "Open Balance",
+    "lastJob": "Last Job",
+    "tabs": {
+      "overview": "Overview",
+      "jobs": "Jobs",
+      "estimates": "Estimates",
+      "invoices": "Invoices",
+      "documents": "Documents",
+      "communications": "Communications",
+      "properties": "Properties",
+      "notes": "Notes",
+      "photos": "Photos"
+    }
   },
   "settings": {
     "title": "设置",
     "language": "语言",
-    "languageDesc": "选择您的首选语言。所有页面将立即更新。"
+    "languageDesc": "选择您的首选语言。所有页面将立即更新。",
+    "profile": "Profile",
+    "company": "Company",
+    "security": "Security",
+    "billing": "Billing",
+    "integrations": "Integrations",
+    "notifications": "Notifications",
+    "appearance": "Appearance",
+    "teamMembers": "Team Members",
+    "roles": "Roles & Permissions",
+    "customFields": "Custom Fields",
+    "templates": "Templates",
+    "apiKeys": "API Keys",
+    "twoFactor": "Two-Factor Authentication",
+    "enable2fa": "Enable 2FA",
+    "disable2fa": "Disable 2FA",
+    "scanQrCode": "Scan this QR code with your authenticator app",
+    "enterCode": "Enter the 6-digit code from your authenticator app",
+    "verify": "Verify",
+    "sessions": "Active Sessions",
+    "signOutAll": "Sign Out All Devices",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordChanged": "Password changed successfully",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "systemTheme": "System",
+    "companyName": "Company Name",
+    "companyPhone": "Company Phone",
+    "companyEmail": "Company Email",
+    "companyAddress": "Company Address",
+    "companyLogo": "Company Logo",
+    "timeZone": "Time Zone",
+    "currency": "Currency",
+    "dateFormat": "Date Format",
+    "connected": "Connected",
+    "notConnected": "Not Connected",
+    "connect": "Connect",
+    "disconnect": "Disconnect"
   },
   "errors": {
     "generic": "出了点问题，请重试。",
-    "notFound": "页面未找到"
+    "notFound": "页面未找到",
+    "unauthorized": "You don't have permission to view this.",
+    "networkError": "Network error. Check your connection.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "saveFailed": "Failed to save. Please try again.",
+    "deleteFailed": "Failed to delete. Please try again.",
+    "loadFailed": "Failed to load data. Please try again.",
+    "uploadFailed": "Upload failed. Please try again.",
+    "fileTooLarge": "File is too large. Maximum size is {maxSize}.",
+    "invalidFormat": "Invalid file format."
+  },
+  "leads": {
+    "title": "Leads",
+    "new": "New Lead",
+    "edit": "Edit Lead",
+    "noLeads": "No leads found",
+    "noLeadsDesc": "Add your first lead or connect a lead source.",
+    "addLead": "Add Lead",
+    "searchLeads": "Search leads...",
+    "source": "Source",
+    "convertToJob": "Convert to Job",
+    "followUp": "Follow Up",
+    "followUpDate": "Follow-up Date",
+    "leadScore": "Lead Score",
+    "responseTime": "Response Time",
+    "statusNew": "New",
+    "statusContacted": "Contacted",
+    "statusQualified": "Qualified",
+    "statusProposal": "Proposal Sent",
+    "statusWon": "Won",
+    "statusLost": "Lost",
+    "lostReason": "Lost Reason",
+    "sources": {
+      "website": "Website",
+      "google": "Google LSA",
+      "angi": "Angi",
+      "thumbtack": "Thumbtack",
+      "referral": "Referral",
+      "doorKnock": "Door Knock",
+      "stormChase": "Storm Chase",
+      "yardSign": "Yard Sign",
+      "facebook": "Facebook",
+      "phoneCall": "Phone Call"
+    }
+  },
+  "bids": {
+    "title": "Bids",
+    "new": "New Bid",
+    "edit": "Edit Bid",
+    "noBids": "No bids found",
+    "noBidsDesc": "Create a bid to track your proposals.",
+    "searchBids": "Search bids...",
+    "winRate": "Win Rate",
+    "avgBidSize": "Avg Bid Size",
+    "statusDraft": "Draft",
+    "statusSubmitted": "Submitted",
+    "statusUnderReview": "Under Review",
+    "statusShortlisted": "Shortlisted",
+    "statusAwarded": "Awarded",
+    "statusLost": "Lost"
+  },
+  "scheduling": {
+    "title": "Schedule",
+    "manageDesc": "Gantt charts, CPM, and resource management",
+    "newSchedule": "New Schedule",
+    "totalSchedules": "Total Schedules",
+    "searchSchedules": "Search schedules...",
+    "noSchedules": "No schedules yet",
+    "noSchedulesDesc": "Create your first project schedule to get started",
+    "newTask": "New Task",
+    "noTasks": "No tasks scheduled",
+    "noTasksDesc": "Create tasks and assign them to your team.",
+    "gantt": "Gantt",
+    "calendar": "Calendar",
+    "list": "List",
+    "team": "Team",
+    "today": "Today",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "dragToReschedule": "Drag to reschedule",
+    "taskName": "Task Name",
+    "assignee": "Assignee",
+    "duration": "Duration",
+    "dependencies": "Dependencies",
+    "milestone": "Milestone",
+    "criticalPath": "Critical Path",
+    "behindSchedule": "Behind Schedule",
+    "onTrack": "On Track",
+    "aheadOfSchedule": "Ahead of Schedule"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "manageDesc": "View and manage your schedule",
+    "selectDay": "Select a day",
+    "newEvent": "New Event",
+    "noEvents": "No events scheduled",
+    "allDay": "All Day",
+    "thisWeek": "This Week",
+    "scheduledJobs": "Scheduled Jobs",
+    "appointments": "Appointments",
+    "teamMembers": "Team Members",
+    "legend": "Legend",
+    "clientJobs": "Client Jobs",
+    "maintenanceJobs": "Maintenance Jobs"
+  },
+  "recon": {
+    "title": "Recon",
+    "newScan": "New Scan",
+    "noScans": "No property scans yet",
+    "areaScans": "Area Scans"
+  },
+  "insurance": {
+    "title": "Insurance Claims",
+    "new": "New Claim",
+    "searchClaims": "Search claims...",
+    "noClaims": "No claims found",
+    "totalClaims": "Total Claims",
+    "pendingReview": "Pending Review",
+    "approved": "Approved",
+    "claimAmount": "Claim Amount"
+  },
+  "team": {
+    "title": "Team",
+    "addMember": "Add Team Member",
+    "noMembers": "No team members yet",
+    "role": "Role",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "officeManager": "Office Manager",
+      "technician": "Technician",
+      "apprentice": "Apprentice",
+      "cpa": "CPA"
+    },
+    "invite": "Invite",
+    "inviteSent": "Invitation sent",
+    "removeFromTeam": "Remove from Team"
+  },
+  "finance": {
+    "ledger": "Ledger",
+    "reports": "Reports",
+    "revenue": "Revenue Insights",
+    "payroll": "Payroll",
+    "income": "Income",
+    "expenses": "Expenses",
+    "netIncome": "Net Income",
+    "profitLoss": "Profit & Loss",
+    "balanceSheet": "Balance Sheet",
+    "cashFlow": "Cash Flow",
+    "accounts": "Chart of Accounts",
+    "transactions": "Transactions",
+    "newTransaction": "New Transaction",
+    "reconciliation": "Reconciliation",
+    "taxSettings": "Tax Settings",
+    "branchFinancials": "Branch Financials",
+    "budgets": "Budgets",
+    "constructionAccounting": "Construction Accounting",
+    "aiaProgress": "AIA Progress Billing",
+    "retainage": "Retainage",
+    "wip": "WIP Report",
+    "certifiedPayroll": "Certified Payroll"
+  },
+  "compliance": {
+    "title": "Compliance",
+    "manageDesc": "Track licenses, certifications, and regulatory compliance",
+    "ceTracking": "CE Tracking",
+    "packets": "Compliance Packets",
+    "noCerts": "No compliance records found"
+  },
+  "comms": {
+    "title": "Communications",
+    "send": "Send",
+    "reply": "Reply",
+    "forward": "Forward",
+    "compose": "Compose",
+    "inbox": "Inbox",
+    "outbox": "Sent",
+    "noMessages": "No messages",
+    "teamChat": "Team Chat",
+    "typeMessage": "Type a message..."
+  },
+  "tools": {
+    "walkthroughs": "Walkthroughs",
+    "newWalkthrough": "New Walkthrough",
+    "zforge": "ZForge",
+    "documents": "Documents",
+    "automations": "Automations",
+    "growth": "Growth"
+  },
+  "properties": {
+    "title": "Properties",
+    "newProperty": "New Property",
+    "noProperties": "No properties found",
+    "noPropertiesDesc": "Add your first property to get started.",
+    "portfolio": "Portfolio",
+    "units": "Units",
+    "tenants": "Tenants",
+    "leases": "Leases",
+    "rent": "Rent",
+    "maintenance": "Maintenance",
+    "inspections": "Inspections",
+    "assets": "Assets",
+    "unitTurns": "Unit Turns",
+    "notFound": "Property not found",
+    "notFoundDesc": "The property you are looking for does not exist."
+  },
+  "equipment": {
+    "title": "Equipment",
+    "manageDesc": "Manage restoration equipment deployments and tracking",
+    "addEquipment": "Add Equipment",
+    "searchEquipment": "Search equipment...",
+    "noEquipment": "No equipment found",
+    "noEquipmentDesc": "Track dehumidifiers, air movers, and other restoration equipment deployed to job sites.",
+    "totalItems": "Total Items",
+    "deployed": "Deployed",
+    "maintenance": "Maintenance",
+    "dailyRate": "Daily Rate"
+  },
+  "vendors": {
+    "title": "Vendors",
+    "newVendor": "Add Vendor",
+    "noVendors": "No vendors yet",
+    "searchVendors": "Search vendors..."
+  },
+  "purchaseOrders": {
+    "title": "Purchase Orders",
+    "new": "New PO",
+    "noPOs": "No purchase orders yet"
+  },
+  "fleet": {
+    "title": "Fleet Management",
+    "manageDesc": "Track vehicles, maintenance, and fuel costs",
+    "newVehicle": "Add Vehicle",
+    "noVehicles": "No vehicles found",
+    "searchVehicles": "Search vehicles...",
+    "totalVehicles": "Total Vehicles",
+    "inMaintenance": "In Maintenance",
+    "fuelSpendMTD": "Fuel Spend (MTD)",
+    "logFuel": "Log Fuel",
+    "scheduleMaintenance": "Schedule Maintenance",
+    "make": "Make",
+    "model": "Model",
+    "year": "Year",
+    "vin": "VIN",
+    "mileage": "Mileage",
+    "licensePlate": "License Plate"
+  },
+  "timeClock": {
+    "title": "Time Clock",
+    "manageDesc": "Manage employee timesheets and approvals",
+    "onTheClockNow": "On The Clock Now",
+    "activeEmployees": "Active employees",
+    "totalHoursThisWeek": "Total Hours This Week",
+    "pendingApproval": "Pending Approval",
+    "entriesToReview": "entries to review",
+    "overtimeHours": "Overtime Hours",
+    "allEmployees": "All Employees",
+    "noEntries": "No time entries for this week",
+    "noEntriesDesc": "Time entries will appear here when employees clock in",
+    "entriesPendingApproval": "entries pending approval",
+    "reviewAndApprove": "Review and approve employee time entries",
+    "reviewAll": "Review All",
+    "approveAll": "Approve All",
+    "approveAllConfirm": "Approve all pending time entries?"
+  },
+  "hiring": {
+    "title": "Hiring",
+    "newPosting": "New Job Posting",
+    "noPostings": "No active job postings",
+    "applicants": "Applicants",
+    "searchApplicants": "Search applicants..."
+  },
+  "reviews": {
+    "title": "Reviews",
+    "averageRating": "Average Rating",
+    "totalReviews": "Total Reviews",
+    "requestReview": "Request Review",
+    "noReviews": "No reviews yet"
+  },
+  "dispatch": {
+    "title": "Dispatch Board",
+    "unassigned": "Unassigned",
+    "dispatched": "Dispatched",
+    "availableTechs": "Available Techs",
+    "onJob": "On Job",
+    "listView": "List",
+    "mapView": "Map",
+    "unassignedJobs": "Unassigned Jobs",
+    "dispatchedJobs": "Dispatched Jobs",
+    "noUnassigned": "No unassigned jobs",
+    "noTechsAvailable": "No techs available",
+    "dropHint": "Drop on an available technician to dispatch",
+    "dropJobHere": "Drop job here",
+    "mapViewTitle": "Map View",
+    "mapViewDesc": "Interactive map showing job locations and technician positions.",
+    "jobLocations": "Job Locations",
+    "techLocations": "Tech Locations",
+    "withGPS": "with GPS",
+    "noTechsGPS": "No technicians with GPS data",
+    "technicians": "Technicians",
+    "available": "Available",
+    "onJobLabel": "On Job",
+    "offline": "Offline",
+    "clockedIn": "Clocked in",
+    "noTeamMembers": "No team members found"
+  },
+  "bidsPage": {
+    "title": "Bids",
+    "new": "New Bid",
+    "searchBids": "Search bids...",
+    "noBids": "No bids yet",
+    "noBidsDesc": "Create proposals and track win rates.",
+    "totalBids": "Total Bids",
+    "pendingBids": "Pending",
+    "wonBids": "Won",
+    "lostBids": "Lost",
+    "winRate": "Win Rate",
+    "bidAmount": "Bid Amount",
+    "sentDate": "Sent Date",
+    "followUp": "Follow Up"
+  },
+  "leadsPage": {
+    "title": "Leads",
+    "new": "New Lead",
+    "searchLeads": "Search leads...",
+    "noLeads": "No leads yet",
+    "noLeadsDesc": "Capture and manage inbound leads from all sources.",
+    "totalLeads": "Total Leads",
+    "newThisWeek": "New This Week",
+    "conversionRate": "Conversion Rate",
+    "avgResponseTime": "Avg. Response Time",
+    "hotLeads": "Hot",
+    "warmLeads": "Warm",
+    "coldLeads": "Cold"
+  },
+  "teamPage": {
+    "title": "Team",
+    "invite": "Invite Member",
+    "searchMembers": "Search team members...",
+    "noMembers": "No team members yet",
+    "totalMembers": "Total Members",
+    "activeToday": "Active Today",
+    "role": "Role",
+    "lastActive": "Last Active"
+  },
+  "documents": {
+    "title": "Documents",
+    "upload": "Upload Document",
+    "searchDocuments": "Search documents...",
+    "noDocuments": "No documents yet",
+    "noDocumentsDesc": "Upload contracts, permits, and other project documents."
+  },
+  "reports": {
+    "title": "Reports",
+    "generateReport": "Generate Report",
+    "noReports": "No reports generated yet",
+    "revenue": "Revenue",
+    "profitMargin": "Profit Margin",
+    "jobCompletion": "Job Completion",
+    "customerSatisfaction": "Customer Satisfaction"
+  },
+  "payroll": {
+    "title": "Payroll",
+    "runPayroll": "Run Payroll",
+    "noPayroll": "No payroll runs yet",
+    "totalPayroll": "Total Payroll",
+    "nextPayDate": "Next Pay Date",
+    "employees": "Employees",
+    "hoursWorked": "Hours Worked"
+  },
+  "hr": {
+    "title": "Human Resources",
+    "manageDesc": "Manage employees, benefits, and compliance",
+    "addEmployee": "Add Employee",
+    "searchEmployees": "Search employees...",
+    "noEmployees": "No employees found",
+    "totalEmployees": "Total Employees",
+    "departments": "Departments",
+    "openPositions": "Open Positions"
+  },
+  "phone": {
+    "title": "Phone",
+    "callLog": "Call Log",
+    "newCall": "New Call",
+    "noCallsTitle": "No calls yet",
+    "noCallsDesc": "Call logs will appear here when you make or receive calls.",
+    "totalCalls": "Total Calls",
+    "missedCalls": "Missed Calls",
+    "avgDuration": "Avg. Duration",
+    "sms": "SMS",
+    "fax": "Fax",
+    "sendFax": "Send Fax",
+    "newMessage": "New Message",
+    "noMessages": "No messages yet"
+  },
+  "meetings": {
+    "title": "Meetings",
+    "schedule": "Schedule Meeting",
+    "noMeetings": "No meetings scheduled",
+    "noMeetingsDesc": "Schedule video calls with customers and team members.",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "join": "Join",
+    "bookingTypes": "Booking Types",
+    "asyncVideos": "Async Videos",
+    "roomTitle": "Meeting Room"
+  },
+  "email": {
+    "title": "Email",
+    "compose": "Compose",
+    "noEmails": "No emails yet",
+    "inbox": "Inbox",
+    "sent": "Sent",
+    "drafts": "Drafts"
+  },
+  "teamChat": {
+    "title": "Team Chat",
+    "newChannel": "New Channel",
+    "noMessages": "No messages yet",
+    "noMessagesDesc": "Start a conversation with your team.",
+    "typeMessage": "Type a message..."
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "searchMarketplace": "Search marketplace...",
+    "noListings": "No marketplace listings",
+    "myListings": "My Listings",
+    "browse": "Browse"
+  },
+  "growth": {
+    "title": "Growth Dashboard",
+    "manageDesc": "Track business growth metrics and insights",
+    "revenueGrowth": "Revenue Growth",
+    "customerGrowth": "Customer Growth",
+    "jobGrowth": "Job Growth"
+  },
+  "automations": {
+    "title": "Automations",
+    "new": "New Automation",
+    "noAutomations": "No automations configured",
+    "noAutomationsDesc": "Set up automated workflows to save time.",
+    "active": "Active",
+    "paused": "Paused",
+    "runs": "Runs"
+  },
+  "certifications": {
+    "title": "Certifications",
+    "add": "Add Certification",
+    "noCerts": "No certifications found",
+    "expiring": "Expiring Soon",
+    "expired": "Expired",
+    "valid": "Valid"
+  },
+  "oshaStandards": {
+    "title": "OSHA Standards",
+    "searchStandards": "Search OSHA standards...",
+    "noStandards": "No standards found"
+  },
+  "walkthroughs": {
+    "title": "Walkthroughs",
+    "new": "New Walkthrough",
+    "noWalkthroughs": "No walkthroughs yet",
+    "noWalkthroughsDesc": "Start a property walkthrough to document conditions.",
+    "rooms": "Rooms",
+    "photos": "Photos",
+    "notes": "Notes",
+    "notFound": "Walkthrough not found"
+  },
+  "inspections": {
+    "title": "Inspections",
+    "new": "New Inspection",
+    "searchInspections": "Search inspections...",
+    "noInspections": "No inspections found",
+    "templates": "Templates",
+    "completed": "Completed",
+    "passRate": "Pass Rate"
+  },
+  "permits": {
+    "title": "Job Permits",
+    "new": "New Permit",
+    "searchPermits": "Search permits...",
+    "noPermits": "No permits found",
+    "jurisdictions": "Jurisdictions"
+  },
+  "subcontractors": {
+    "title": "Subcontractors",
+    "add": "Add Subcontractor",
+    "searchSubs": "Search subcontractors...",
+    "noSubs": "No subcontractors found"
+  },
+  "changeOrders": {
+    "title": "Change Orders",
+    "new": "New Change Order",
+    "noChangeOrders": "No change orders found"
+  },
+  "serviceAgreements": {
+    "title": "Service Agreements",
+    "new": "New Agreement",
+    "noAgreements": "No service agreements found"
+  },
+  "warranties": {
+    "title": "Warranties",
+    "new": "New Warranty",
+    "noWarranties": "No warranties found"
+  },
+  "warrantyIntelligence": {
+    "title": "Warranty Intelligence",
+    "noData": "No warranty data available"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "addItem": "Add Item",
+    "searchInventory": "Search inventory...",
+    "noItems": "No inventory items found",
+    "totalValue": "Total Value",
+    "lowStock": "Low Stock",
+    "categories": "Categories"
+  },
+  "toolCheckout": {
+    "title": "Tool Checkout",
+    "checkOut": "Check Out Tool",
+    "noCheckouts": "No active checkouts",
+    "checkedOut": "Checked Out",
+    "overdue": "Overdue"
+  },
+  "communications": {
+    "title": "Communications",
+    "noComms": "No communications yet"
+  },
+  "sketchEngine": {
+    "title": "Sketch Engine",
+    "newSketch": "New Sketch",
+    "noSketches": "No sketches yet",
+    "noSketchesDesc": "Create CAD-grade floor plans and trade drawings."
+  },
+  "tpa": {
+    "title": "Programs (TPA)",
+    "assignments": "Assignments",
+    "scorecards": "Scorecards",
+    "noPrograms": "No TPA programs found"
+  },
+  "priceBook": {
+    "title": "Price Book",
+    "addItem": "Add Item",
+    "noItems": "No price book items found"
+  },
+  "pricingAnalytics": {
+    "title": "Pricing Analytics",
+    "noData": "No pricing data available"
+  },
+  "pricingSettings": {
+    "title": "Smart Pricing Rules",
+    "manageDesc": "Configure pricing rules, markups, and margins"
+  },
+  "jobIntelligence": {
+    "title": "Job Cost Autopsy",
+    "noData": "No intelligence data available",
+    "adjustments": "Adjustments"
+  },
+  "jobCostRadar": {
+    "title": "Job Cost Radar",
+    "noData": "No cost data available"
+  },
+  "revenueInsights": {
+    "title": "Revenue Intelligence",
+    "noData": "No revenue data available"
+  },
+  "lienProtection": {
+    "title": "Lien Protection",
+    "noLiens": "No lien records found",
+    "noRecord": "No lien record found for this job",
+    "rules": "Rules"
+  },
+  "maintenancePipeline": {
+    "title": "Maintenance Pipeline",
+    "noItems": "No maintenance items"
+  },
+  "siteSurveys": {
+    "title": "Site Surveys",
+    "new": "New Survey",
+    "noSurveys": "No site surveys found"
+  },
+  "moistureReadings": {
+    "title": "Moisture Readings",
+    "noReadings": "No moisture readings found"
+  },
+  "dryingLogs": {
+    "title": "Drying Logs",
+    "noLogs": "No drying logs found"
+  },
+  "moldRemediation": {
+    "title": "Mold Remediation",
+    "noRecords": "No mold remediation records"
+  },
+  "fireRestoration": {
+    "title": "Fire Restoration",
+    "noRecords": "No fire restoration records"
+  },
+  "pestControl": {
+    "title": "Pest Control",
+    "noRecords": "No pest control records"
+  },
+  "locksmith": {
+    "title": "Locksmith Services",
+    "noRecords": "No locksmith records"
+  },
+  "garageDoor": {
+    "title": "Garage Door Services",
+    "noRecords": "No garage door records"
+  },
+  "applianceRepair": {
+    "title": "Appliance Repair",
+    "noRecords": "No appliance repair records"
+  },
+  "zdocs": {
+    "title": "ZForge",
+    "newDoc": "New Document",
+    "noDocs": "No documents found"
+  },
+  "legalAcknowledgment": {
+    "title": "Professional-Grade Tools"
+  },
+  "keyboardShortcuts": {
+    "title": "Keyboard Shortcuts"
+  },
+  "bidsNew": {
+    "title": "New Bid"
+  },
+  "bidsOptimize": {
+    "title": "Bid Brain"
+  },
+  "booksAccounts": {
+    "title": "Chart of Accounts"
+  },
+  "booksBanking": {
+    "title": "Banking"
+  },
+  "booksBranches": {
+    "title": "Branch Financials"
+  },
+  "booksBudgets": {
+    "title": "Budget vs Actual"
+  },
+  "booksConstruction": {
+    "title": "Construction Accounting"
+  },
+  "booksCpaExport": {
+    "title": "CPA Export Package"
+  },
+  "booksExpenses": {
+    "title": "Expenses"
+  },
+  "booksPeriods": {
+    "title": "Fiscal Periods"
+  },
+  "booksReconciliation": {
+    "title": "Bank Reconciliation"
+  },
+  "booksRecurring": {
+    "title": "Recurring Transactions"
+  },
+  "booksReports": {
+    "title": "Financial Reports"
+  },
+  "booksTaxSettings": {
+    "title": "Tax & 1099 Compliance"
+  },
+  "booksVendorPayments": {
+    "title": "Vendor Payments"
+  },
+  "booksVendors": {
+    "title": "Vendors"
+  },
+  "complianceCeTracking": {
+    "title": "CE Credit Tracking"
+  },
+  "compliancePackets": {
+    "title": "Compliance Packets"
+  },
+  "customersNew": {
+    "title": "Add Customer"
+  },
+  "estimatesImport": {
+    "title": "Import Xactimate Estimate"
+  },
+  "inspectionsTemplates": {
+    "title": "Inspection Templates"
+  },
+  "invoicesNew": {
+    "title": "New Invoice"
+  },
+  "jobIntelligenceadjustments": {
+    "title": "Pricing Adjustments"
+  },
+  "jobsNew": {
+    "title": "New Job"
+  },
+  "jobsDocumentation": {
+    "title": "Documentation Compliance"
+  },
+  "jobsEquipment": {
+    "title": "Equipment Tracking"
+  },
+  "jobsMoisture": {
+    "title": "Moisture & Drying Monitor"
+  },
+  "lienProtectionrules": {
+    "title": "State Lien Rules"
+  },
+  "meetingsAsyncVideos": {
+    "title": "Async Videos"
+  },
+  "meetingsBookingTypes": {
+    "title": "Booking Types"
+  },
+  "permitsJurisdictions": {
+    "title": "Permit Jurisdictions"
+  },
+  "phoneFax": {
+    "title": "Fax"
+  },
+  "phoneSms": {
+    "title": "Messages"
+  },
+  "propertiesAssets": {
+    "title": "Asset Health Dashboard"
+  },
+  "propertiesInspections": {
+    "title": "Property Inspections"
+  },
+  "propertiesMaintenance": {
+    "title": "Maintenance Pipeline"
+  },
+  "propertiesNew": {
+    "title": "Add Property"
+  },
+  "propertiesRent": {
+    "title": "Rent Roll"
+  },
+  "propertiesTurns": {
+    "title": "Unit Turns"
+  },
+  "schedulingPortfolio": {
+    "title": "Portfolio View"
+  },
+  "schedulingBaselines": {
+    "title": "Baselines"
+  },
+  "schedulingResources": {
+    "title": "Resources"
+  },
+  "settingsImport": {
+    "title": "Data Import"
+  },
+  "settingsPhone": {
+    "title": "Phone System Configuration"
+  },
+  "settingsTpaPrograms": {
+    "title": "TPA Programs"
+  },
+  "settingsWalkthroughWorkflows": {
+    "title": "Walkthrough Workflows"
+  },
+  "tpaDashboard": {
+    "title": "TPA Dashboard"
+  },
+  "tpaAssignments": {
+    "title": "TPA Assignments"
+  },
+  "scorecards": {
+    "title": "TPA Scorecards"
+  },
+  "estimatesPricing": {
+    "title": "Pricing Database Coverage"
+  },
+  "areaScans": {
+    "title": "Area Scans",
+    "notFound": "Area scan not found"
+  },
+  "reconAreaScansNew": {
+    "title": "New Area Scan"
+  },
+  "leases": {
+    "notFound": "Lease not found",
+    "notFoundDesc": "The lease you are looking for does not exist."
+  },
+  "tenants": {
+    "notFound": "Tenant not found",
+    "notFoundDesc": "The tenant you are looking for does not exist."
+  },
+  "units": {
+    "notFound": "Unit not found",
+    "notFoundDesc": "The unit you are looking for does not exist."
   }
 }
