@@ -12,12 +12,8 @@ const SERVICE_COLORS: Record<string, string> = {
   access_control: 'bg-cyan-500/15 text-cyan-400',
 };
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
 export default function LocksmithPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { logs, loading } = useLocksmithLogs();
   const [search, setSearch] = useState('');
 

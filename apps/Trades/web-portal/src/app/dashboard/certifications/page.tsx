@@ -56,7 +56,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof
 // ============================================================
 
 export default function CertificationsPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { certifications, loading, createCertification, updateCertification, deleteCertification } = useCertifications();
   const { types: certTypes, typeMap: certTypeMap, loading: typesLoading } = useCertificationTypes();
   const { team: members } = useTeam();
@@ -231,7 +231,7 @@ export default function CertificationsPage() {
                         <div className={cn('text-right text-xs', days <= 0 ? 'text-red-500' : days <= 30 ? 'text-amber-500' : 'text-muted')}>
                           <div className="font-semibold">{days <= 0 ? `${Math.abs(days)}d overdue` : `${days}d left`}</div>
                           <div className="opacity-70">
-                            {cert.expirationDate ? new Date(cert.expirationDate).toLocaleDateString() : ''}
+                            {cert.expirationDate ? formatDate(cert.expirationDate) : ''}
                           </div>
                         </div>
                       )}

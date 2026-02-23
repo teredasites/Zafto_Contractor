@@ -43,7 +43,7 @@ const formatWeekRange = (start: Date, end: Date) => {
 };
 
 export default function TimeClockPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { team } = useTeam();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -89,7 +89,7 @@ export default function TimeClockPage() {
     const headers = ['Employee', 'Date', 'Clock In', 'Clock Out', 'Hours', 'Break (min)', 'Status', 'Job', 'Notes'];
     const rows = weekEntries.map(e => [
       e.userName,
-      new Date(e.clockIn).toLocaleDateString(),
+      formatDate(e.clockIn),
       formatTime(e.clockIn),
       e.clockOut ? formatTime(e.clockOut) : '-',
       e.totalMinutes ? (e.totalMinutes / 60).toFixed(2) : '-',
@@ -342,7 +342,7 @@ export default function TimeClockPage() {
                       </span>
                     </div>
                     <p className="text-sm text-muted">
-                      {new Date(entry.clockIn).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                      {formatDate(entry.clockIn)}
                     </p>
                     {entry.jobTitle && (
                       <p className="text-sm text-muted flex items-center gap-1 mt-0.5">

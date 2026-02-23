@@ -50,7 +50,7 @@ const outreachStatusConfig: Record<OutreachStatus, { label: string; bg: string; 
 };
 
 export default function MaintenancePipelinePage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const {
     predictions,
     upcomingPredictions,
@@ -366,7 +366,7 @@ function TimelineView({ predictions }: { predictions: MaintenancePrediction[] })
     <div className="space-y-6">
       {months.map(month => {
         const items = byMonth[month];
-        const label = new Date(month + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        const label = formatDate(month + '-01');
         return (
           <div key={month}>
             <h3 className="text-sm font-medium text-zinc-300 mb-3 flex items-center gap-2">
@@ -458,7 +458,7 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
             <div className="space-y-3">
               {months.map(month => {
                 const data = byMonth[month];
-                const label = new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                const label = formatDate(month + '-01');
                 const maxRevenue = Math.max(...months.map(m => byMonth[m].revenue), 1);
                 const barWidth = data.revenue > 0 ? Math.max((data.revenue / maxRevenue) * 100, 5) : 5;
 

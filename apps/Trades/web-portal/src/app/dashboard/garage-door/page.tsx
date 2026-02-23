@@ -14,10 +14,6 @@ const SERVICE_COLORS: Record<string, string> = {
   annual_maintenance: 'bg-purple-500/15 text-purple-400',
 };
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
 function statusBadge(status: string | null) {
   if (!status) return null;
   const color = status === 'pass' ? 'bg-green-500/15 text-green-400' : status === 'fail' ? 'bg-red-500/15 text-red-400' : 'bg-zinc-700 text-zinc-400';
@@ -25,7 +21,7 @@ function statusBadge(status: string | null) {
 }
 
 export default function GarageDoorPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { logs, loading } = useGarageDoorLogs();
   const [search, setSearch] = useState('');
 

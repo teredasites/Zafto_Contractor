@@ -100,7 +100,39 @@ export function useTranslation() {
     [dict, enDict]
   );
 
-  return useMemo(() => ({ t, locale, ready }), [t, locale, ready]);
+  // ── Intl formatters (locale-aware) ──
+  const formatNumber = useCallback(
+    (n: number, opts?: Intl.NumberFormatOptions): string =>
+      new Intl.NumberFormat(locale, opts).format(n),
+    [locale]
+  );
+
+  const formatCurrency = useCallback(
+    (n: number, currency = 'USD'): string =>
+      new Intl.NumberFormat(locale, { style: 'currency', currency }).format(n),
+    [locale]
+  );
+
+  const formatDate = useCallback(
+    (d: string | Date, opts?: Intl.DateTimeFormatOptions): string => {
+      const date = typeof d === 'string' ? new Date(d) : d;
+      return new Intl.DateTimeFormat(locale, opts ?? { dateStyle: 'medium' }).format(date);
+    },
+    [locale]
+  );
+
+  const formatTime = useCallback(
+    (d: string | Date, opts?: Intl.DateTimeFormatOptions): string => {
+      const date = typeof d === 'string' ? new Date(d) : d;
+      return new Intl.DateTimeFormat(locale, opts ?? { timeStyle: 'short' }).format(date);
+    },
+    [locale]
+  );
+
+  return useMemo(
+    () => ({ t, locale, ready, formatNumber, formatCurrency, formatDate, formatTime }),
+    [t, locale, ready, formatNumber, formatCurrency, formatDate, formatTime]
+  );
 }
 
 // ── Set locale (for settings page) ──

@@ -485,7 +485,7 @@ function CustomerInsightsCard({ customers }: { customers: CustomerInsight[] }) {
                     <p className="text-xs text-muted mt-0.5">
                       {customer.jobCount} job{customer.jobCount !== 1 ? 's' : ''}
                       {customer.lastJobDate && (
-                        <span> &middot; Last: {new Date(customer.lastJobDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        <span> &middot; Last: {new Date(customer.lastJobDate).toLocaleDateString()}</span>
                       )}
                     </p>
                   </div>

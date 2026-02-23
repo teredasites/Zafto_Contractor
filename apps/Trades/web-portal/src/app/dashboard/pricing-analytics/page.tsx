@@ -37,7 +37,7 @@ interface PricingSuggestion {
 }
 
 export default function PricingAnalyticsPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const [suggestions, setSuggestions] = useState<PricingSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -320,7 +320,7 @@ export default function PricingAnalyticsPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-zinc-500">
-                      {new Date(s.created_at).toLocaleDateString()}
+                      {formatDate(s.created_at)}
                     </p>
                     {s.job_won !== null && (
                       <p className={`text-xs ${s.job_won ? 'text-emerald-400' : 'text-red-400'}`}>

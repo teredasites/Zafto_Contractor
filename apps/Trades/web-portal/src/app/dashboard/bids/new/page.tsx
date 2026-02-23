@@ -304,7 +304,7 @@ const defaultTerms = `1. Payment Terms: 50% deposit due upon acceptance, balance
 6. Warranty: 1 year on labor, manufacturer warranty on materials.`;
 
 export default function NewBidPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { company } = useCompany();
@@ -2110,7 +2110,7 @@ Example:
                       </div>
                     )}
                     <div className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                      Valid until {new Date(validUntil).toLocaleDateString()}
+                      Valid until {formatDate(validUntil)}
                     </div>
                   </div>
                 </div>

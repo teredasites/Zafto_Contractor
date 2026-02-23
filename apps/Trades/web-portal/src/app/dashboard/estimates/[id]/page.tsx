@@ -56,7 +56,7 @@ const GBB_TIERS: { key: 'good' | 'better' | 'best'; tiers: MaterialTier[]; label
 ];
 
 export default function EstimateEditorPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const estimateId = params.id as string;
@@ -640,7 +640,7 @@ export default function EstimateEditorPage() {
                   <div><span className="text-zinc-500">Carrier:</span> <span className="text-zinc-200 ml-2">{estimate.carrierName || '—'}</span></div>
                   <div><span className="text-zinc-500">Adjuster:</span> <span className="text-zinc-200 ml-2">{estimate.adjusterName || '—'}</span></div>
                   <div><span className="text-zinc-500">Deductible:</span> <span className="text-zinc-200 ml-2">${fmtCurrency(estimate.deductible)}</span></div>
-                  <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-2">{estimate.dateOfLoss ? new Date(estimate.dateOfLoss).toLocaleDateString() : '—'}</span></div>
+                  <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-2">{estimate.dateOfLoss ? formatDate(estimate.dateOfLoss) : '—'}</span></div>
                 </div>
               )}
             </div>

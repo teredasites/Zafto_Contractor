@@ -47,7 +47,7 @@ const STATUS_TRANSITIONS: Partial<Record<ClaimStatus, { label: string; status: C
 };
 
 export default function ClaimDetailPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const claimId = params.id as string;
@@ -205,7 +205,7 @@ export default function ClaimDetailPage() {
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <DetailRow label="Category" value={CLAIM_CATEGORY_LABELS[claim.claimCategory]} />
                     <DetailRow label="Loss Type" value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
-                    <DetailRow label="Date of Loss" value={new Date(claim.dateOfLoss).toLocaleDateString()} />
+                    <DetailRow label="Date of Loss" value={formatDate(claim.dateOfLoss)} />
                     {claim.lossDescription && <DetailRow label="Description" value={claim.lossDescription} className="col-span-2" />}
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export default function ClaimDetailPage() {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       {t.inspectorName && <span>{t.inspectorName}</span>}
                       {t.inspectorCompany && <span>{t.inspectorCompany}</span>}
-                      {t.scheduledDate && <span>Scheduled: {new Date(t.scheduledDate).toLocaleDateString()}</span>}
+                      {t.scheduledDate && <span>Scheduled: {formatDate(t.scheduledDate)}</span>}
                     </div>
                     {t.findings && <p className="text-xs text-muted-foreground mt-2">{t.findings}</p>}
                   </div>
@@ -320,7 +320,7 @@ export default function ClaimDetailPage() {
                             <td className="px-4 py-2 text-center">
                               <span className={`inline-block w-2 h-2 rounded-full ${r.isDry ? 'bg-green-500' : 'bg-red-500'}`} />
                             </td>
-                            <td className="px-4 py-2 text-right text-muted-foreground">{new Date(r.recordedAt).toLocaleDateString()}</td>
+                            <td className="px-4 py-2 text-right text-muted-foreground">{formatDate(r.recordedAt)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -382,8 +382,8 @@ export default function ClaimDetailPage() {
                         <span>Area: {e.areaDeployed}</span>
                         {e.make && <span>{e.make} {e.model || ''}</span>}
                         <span>${e.dailyRate}/day &times; {days} days</span>
-                        <span>Deployed: {new Date(e.deployedAt).toLocaleDateString()}</span>
-                        {e.removedAt && <span>Removed: {new Date(e.removedAt).toLocaleDateString()}</span>}
+                        <span>Deployed: {formatDate(e.deployedAt)}</span>
+                        {e.removedAt && <span>Removed: {formatDate(e.removedAt)}</span>}
                       </div>
                     </div>
                   );
@@ -415,7 +415,7 @@ export default function ClaimDetailPage() {
               <DetailRow label="Carrier" value={claim.insuranceCompany} />
               {claim.policyNumber && <DetailRow label="Policy #" value={claim.policyNumber} />}
               <DetailRow label="Loss Type" value={LOSS_TYPE_LABELS[claim.lossType] || claim.lossType} />
-              <DetailRow label="Date of Loss" value={new Date(claim.dateOfLoss).toLocaleDateString()} />
+              <DetailRow label="Date of Loss" value={formatDate(claim.dateOfLoss)} />
               {claim.coverageLimit != null && <DetailRow label="Coverage Limit" value={`$${claim.coverageLimit.toLocaleString()}`} />}
             </div>
           </div>

@@ -68,7 +68,7 @@ function ProgressBar({ completed, required }: { completed: number; required: num
 }
 
 export default function CETrackingPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { credits, summary, loading: creditsLoading, error: creditsError } = useCECredits();
   const { renewals, renewalSummary, loading: renewalsLoading } = useLicenseRenewals();
   const [searchQuery, setSearchQuery] = useState('');
@@ -220,7 +220,7 @@ export default function CETrackingPage() {
                         {credit.ce_category && (
                           <Badge variant="secondary" size="sm">{credit.ce_category}</Badge>
                         )}
-                        <span>{new Date(credit.completion_date).toLocaleDateString()}</span>
+                        <span>{formatDate(credit.completion_date)}</span>
                       </div>
                     </div>
                   </div>

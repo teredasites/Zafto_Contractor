@@ -30,7 +30,7 @@ const IMPORT_TYPES: { key: ImportType; label: string; icon: React.ReactNode; des
 type Step = 'type' | 'upload' | 'mapping' | 'preview' | 'importing' | 'results';
 
 export default function DataImportPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const { batches, loading, importProgress, runImport, undoImport, getImportErrors, exportErrorsCSV } = useDataImport();
 
   const [step, setStep] = useState<Step>('type');
@@ -231,7 +231,7 @@ export default function DataImportPage() {
                       )}
                       <span className="text-xs text-zinc-500">
                         <Clock size={12} className="inline mr-1" />
-                        {new Date(b.createdAt).toLocaleDateString()}
+                        {formatDate(b.createdAt)}
                       </span>
                       {b.status === 'completed' && (
                         <button onClick={() => handleUndo(b.id)} className="text-xs text-orange-400 hover:text-orange-300 flex items-center gap-1">

@@ -56,7 +56,7 @@ interface ParseSummary {
 
 type Step = 'upload' | 'review' | 'confirm';
 
-const fmt = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: number) => n.toLocaleString();
 
 export default function ImportEstimatePage() {
   const { t } = useTranslation();
