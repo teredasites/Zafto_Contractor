@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Plus,
   FileText,
@@ -20,12 +20,19 @@ import {
   Clock,
   LayoutTemplate,
   Variable,
+  Edit3,
+  ArrowLeft,
+  Save,
+  ToggleLeft,
+  ToggleRight,
+  CheckCircle,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
+import { TemplateEditor } from '@/components/template-editor';
 import DOMPurify from 'dompurify';
 import { formatDate, cn } from '@/lib/utils';
 import {
@@ -99,6 +106,7 @@ export default function ZDocsPage() {
     loading,
     error,
     createTemplate,
+    updateTemplate,
     deleteTemplate,
     duplicateTemplate,
     renderDocument,
@@ -116,6 +124,7 @@ export default function ZDocsPage() {
   const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState<string | null>(null);
   const [preselectedTemplateId, setPreselectedTemplateId] = useState<string | null>(null);
+  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
 
   const tabs: { id: TabId; label: string; count?: number }[] = [
     { id: 'templates', label: 'Templates', count: activeTemplates.length },
@@ -128,11 +137,25 @@ export default function ZDocsPage() {
     setShowGenerateModal(true);
   };
 
+  const editingTemplate = editingTemplateId ? templates.find(t => t.id === editingTemplateId) : null;
+
   if (loading && templates.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-muted" />
       </div>
+    );
+  }
+
+  // Full-page template editor view
+  if (editingTemplate) {
+    return (
+      <TemplateEditorView
+        template={editingTemplate}
+        onBack={() => setEditingTemplateId(null)}
+        onSave={updateTemplate}
+        onGenerate={handleUseTemplate}
+      />
     );
   }
 
@@ -260,6 +283,7 @@ export default function ZDocsPage() {
           onDelete={deleteTemplate}
           onDuplicate={duplicateTemplate}
           onGenerate={handleUseTemplate}
+          onEdit={setEditingTemplateId}
         />
       )}
       {activeTab === 'documents' && (
@@ -284,7 +308,11 @@ export default function ZDocsPage() {
       {showCreateTemplateModal && (
         <CreateTemplateModal
           onClose={() => setShowCreateTemplateModal(false)}
-          onCreate={createTemplate}
+          onCreate={async (data) => {
+            const id = await createTemplate(data);
+            setEditingTemplateId(id);
+            return id;
+          }}
         />
       )}
       {showGenerateModal && (
@@ -309,6 +337,212 @@ export default function ZDocsPage() {
   );
 }
 
+// ==================== TEMPLATE EDITOR VIEW ====================
+
+function TemplateEditorView({
+  template,
+  onBack,
+  onSave,
+  onGenerate,
+}: {
+  template: ZDocsTemplate;
+  onBack: () => void;
+  onSave: (id: string, data: Partial<{
+    name: string;
+    description: string | null;
+    templateType: string;
+    contentHtml: string | null;
+    isActive: boolean;
+    requiresSignature: boolean;
+  }>) => Promise<void>;
+  onGenerate: (templateId: string) => void;
+}) {
+  const [name, setName] = useState(template.name);
+  const [description, setDescription] = useState(template.description || '');
+  const [templateType, setTemplateType] = useState(template.templateType);
+  const [requiresSignature, setRequiresSignature] = useState(template.requiresSignature);
+  const [isActive, setIsActive] = useState(template.isActive);
+  const [content, setContent] = useState(template.contentHtml || '');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [showMetadata, setShowMetadata] = useState(false);
+
+  const hasChanges = useMemo(() => {
+    return (
+      name !== template.name ||
+      description !== (template.description || '') ||
+      templateType !== template.templateType ||
+      requiresSignature !== template.requiresSignature ||
+      isActive !== template.isActive ||
+      content !== (template.contentHtml || '')
+    );
+  }, [name, description, templateType, requiresSignature, isActive, content, template]);
+
+  const handleSave = useCallback(async () => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      await onSave(template.id, {
+        name: name.trim(),
+        description: description.trim() || null,
+        templateType,
+        contentHtml: content || null,
+        isActive,
+        requiresSignature,
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to save template');
+    } finally {
+      setSaving(false);
+    }
+  }, [onSave, template.id, name, description, templateType, content, isActive, requiresSignature]);
+
+  const typeOptions = ZDOCS_TEMPLATE_TYPES.map((t) => ({
+    value: t,
+    label: ZDOCS_TEMPLATE_TYPE_LABELS[t] || t,
+  }));
+
+  const typeLabel = ZDOCS_TEMPLATE_TYPE_LABELS[templateType] || templateType;
+  const typeConf = templateTypeConfig[templateType] || templateTypeConfig.other;
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Top bar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft size={16} />
+            Back
+          </Button>
+          <div className="w-px h-6 bg-main/20" />
+          <div className="flex items-center gap-2">
+            <Badge variant={typeConf.variant}>{typeLabel}</Badge>
+            {template.isSystem && <Badge variant="secondary">System</Badge>}
+            {requiresSignature && (
+              <span className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+                <PenTool size={12} />
+                Signature Required
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {saved && (
+            <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in">
+              <CheckCircle size={14} />
+              Saved
+            </span>
+          )}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setShowMetadata(!showMetadata)}
+          >
+            Settings
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => onGenerate(template.id)}
+          >
+            <FileText size={14} />
+            Generate Document
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleSave}
+            disabled={saving || !hasChanges}
+          >
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+            {saving ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Template name (inline editable) */}
+      <div>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="text-2xl font-semibold text-main bg-transparent border-none focus:outline-none focus:ring-0 w-full placeholder:text-muted"
+          placeholder="Template name..."
+        />
+        {description && !showMetadata && (
+          <p className="text-sm text-muted mt-1">{description}</p>
+        )}
+      </div>
+
+      {/* Metadata panel (collapsible) */}
+      {showMetadata && (
+        <Card>
+          <CardContent className="p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Template Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+                />
+              </div>
+              <Select
+                label="Template Type"
+                options={typeOptions}
+                value={templateType}
+                onChange={(e) => setTemplateType(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description of this template..."
+                rows={2}
+                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] resize-none"
+              />
+            </div>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={requiresSignature}
+                  onChange={(e) => setRequiresSignature(e.target.checked)}
+                  className="w-4 h-4 rounded border-main text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-main">Requires Signature</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsActive(!isActive)}
+                className="flex items-center gap-2 text-sm text-main"
+              >
+                {isActive ? <ToggleRight size={20} className="text-emerald-500" /> : <ToggleLeft size={20} className="text-muted" />}
+                {isActive ? 'Active' : 'Inactive'}
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* TipTap Editor */}
+      <TemplateEditor
+        content={content}
+        onChange={setContent}
+      />
+
+      {/* Keyboard shortcut hint */}
+      <div className="text-center text-xs text-muted">
+        Click &quot;Insert Variable&quot; in the toolbar to add merge tags like {'{{customer_name}}'}
+      </div>
+    </div>
+  );
+}
+
 // ==================== TEMPLATES TAB ====================
 
 function TemplatesTab({
@@ -318,6 +552,7 @@ function TemplatesTab({
   onDelete,
   onDuplicate,
   onGenerate,
+  onEdit,
 }: {
   templates: ZDocsTemplate[];
   search: string;
@@ -325,6 +560,7 @@ function TemplatesTab({
   onDelete: (id: string) => Promise<void>;
   onDuplicate: (id: string) => Promise<string>;
   onGenerate: (templateId: string) => void;
+  onEdit: (templateId: string) => void;
 }) {
   const { t: tr } = useTranslation();
   const [typeFilter, setTypeFilter] = useState('all');
@@ -385,7 +621,7 @@ function TemplatesTab({
           const varCount = template.variables.length;
 
           return (
-            <Card key={template.id} className="group">
+            <Card key={template.id} className="group cursor-pointer hover:border-accent/40 transition-colors" onClick={() => onEdit(template.id)}>
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0">
@@ -393,6 +629,11 @@ function TemplatesTab({
                     <div className="flex items-center gap-2 mt-1.5">
                       <Badge variant={typeConf.variant}>{typeLabel}</Badge>
                       {template.isSystem && <Badge variant="secondary">{tr('common.system')}</Badge>}
+                      {template.contentHtml ? (
+                        <Badge variant="success">Has Content</Badge>
+                      ) : (
+                        <Badge variant="warning">No Content</Badge>
+                      )}
                     </div>
                   </div>
                   {template.requiresSignature && (
@@ -419,14 +660,22 @@ function TemplatesTab({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
                   <Button
                     variant="primary"
+                    size="sm"
+                    onClick={() => onEdit(template.id)}
+                  >
+                    <Edit3 size={14} />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="secondary"
                     size="sm"
                     onClick={() => onGenerate(template.id)}
                   >
                     <FileText size={14} />
-                    Use Template
+                    Use
                   </Button>
                   <Button
                     variant="outline"
