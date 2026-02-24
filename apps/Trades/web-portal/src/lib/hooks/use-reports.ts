@@ -93,7 +93,7 @@ export function useReports() {
       const [invoicesRes, jobsRes, usersRes, materialsRes] = await Promise.all([
         supabase.from('invoices').select('id, status, total, amount_paid, amount_due, due_date, paid_at, created_at').is('deleted_at', null),
         supabase.from('jobs').select('id, status, estimated_amount, actual_amount, assigned_user_ids, tags, completed_at, created_at').is('deleted_at', null),
-        supabase.from('users').select('id, full_name, role'),
+        supabase.from('users').select('id, full_name, role').is('deleted_at', null),
         supabase.from('job_materials').select('id, job_id, total_cost, created_at').is('deleted_at', null),
       ]);
 

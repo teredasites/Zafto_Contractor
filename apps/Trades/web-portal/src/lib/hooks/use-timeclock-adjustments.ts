@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 // ── Types ──
 
 type AdjustmentType = 'manual' | 'correction' | 'missed_punch' | 'break_adjustment' | 'job_reassignment';
@@ -92,6 +90,7 @@ export function useTimeclockAdjustments(timeEntryId: string | null) {
     try {
       setLoading(true);
       setError(null);
+      const supabase = getSupabase();
 
       const { data, error: err } = await supabase
         .from('timeclock_adjustments')
@@ -150,6 +149,7 @@ export function useEmployeeAdjustmentHistory(employeeId: string | null, opts?: {
     try {
       setLoading(true);
       setError(null);
+      const supabase = getSupabase();
 
       let query = supabase
         .from('timeclock_adjustments')
@@ -172,7 +172,7 @@ export function useEmployeeAdjustmentHistory(employeeId: string | null, opts?: {
 
       const nameMap = new Map<string, string>();
       if (userIds.length > 0) {
-        const { data: profiles } = await supabase
+        const { data: profiles } = await getSupabase()
           .from('profiles')
           .select('id, full_name')
           .in('id', userIds);
@@ -204,6 +204,7 @@ export function useAdjustTimeClock() {
     try {
       setSubmitting(true);
       setError(null);
+      const supabase = getSupabase();
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
