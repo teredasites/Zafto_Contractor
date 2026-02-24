@@ -237,6 +237,7 @@ export function useBids() {
       .from('estimates')
       .select('*')
       .eq('id', estimateId)
+      .is('deleted_at', null)
       .single();
     if (estErr || !estimate) throw new Error('Estimate not found');
 
@@ -439,7 +440,7 @@ export function useBid(id: string | undefined) {
         setLoading(true);
         setError(null);
         const supabase = getSupabase();
-        const { data, error: err } = await supabase.from('bids').select('*').eq('id', id).single();
+        const { data, error: err } = await supabase.from('bids').select('*').eq('id', id).is('deleted_at', null).single();
 
         if (ignore) return;
         if (err) throw err;

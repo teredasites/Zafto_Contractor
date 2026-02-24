@@ -312,6 +312,10 @@ export function useKioskConfig() {
     if (err) throw err;
   };
 
+  // Physical delete is acceptable here: employee_kiosk_pins is a junction table
+  // with UNIQUE(company_id, user_id) and no deleted_at column. The upsert in
+  // setEmployeePin relies on re-inserting after removal. Soft delete would
+  // break the unique constraint on re-creation.
   const removeEmployeePin = async (userId: string): Promise<void> => {
     const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();

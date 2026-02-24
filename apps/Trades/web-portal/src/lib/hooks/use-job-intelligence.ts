@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 export interface JobCostAutopsy {
   id: string;
   company_id: string;
@@ -73,6 +71,7 @@ interface ProfitabilitySummary {
 }
 
 export function useJobIntelligence() {
+  const supabase = getSupabase();
   const [autopsies, setAutopsies] = useState<JobCostAutopsy[]>([]);
   const [insights, setInsights] = useState<AutopsyInsight[]>([]);
   const [adjustments, setAdjustments] = useState<EstimateAdjustment[]>([]);

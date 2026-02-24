@@ -94,6 +94,7 @@ export function useVendors() {
       const { data: paymentData } = await supabase
         .from('vendor_payments')
         .select('vendor_id, amount')
+        .is('deleted_at', null)
         .gte('payment_date', startOfYear);
 
       const ytdMap = new Map<string, number>();

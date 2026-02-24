@@ -5,11 +5,10 @@ import { getSupabase } from '@/lib/supabase';
 import { mapInsuranceClaim, mapClaimSupplement, mapTpiInspection, mapMoistureReading, mapDryingLog, mapRestorationEquipment } from './mappers';
 import type { InsuranceClaimData, ClaimSupplementData, TpiInspectionData, MoistureReadingData, DryingLogData, RestorationEquipmentData, ClaimStatus, ClaimCategory, LossType, SupplementReason, SupplementStatus } from '@/types';
 
-const supabase = getSupabase();
-
 // ==================== CLAIMS LIST ====================
 
 export function useClaims() {
+  const supabase = getSupabase();
   const [claims, setClaims] = useState<InsuranceClaimData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +51,7 @@ export function useClaims() {
 // ==================== SINGLE CLAIM ====================
 
 export function useClaim(claimId: string | null) {
+  const supabase = getSupabase();
   const [claim, setClaim] = useState<InsuranceClaimData | null>(null);
   const [supplements, setSupplements] = useState<ClaimSupplementData[]>([]);
   const [tpiInspections, setTpiInspections] = useState<TpiInspectionData[]>([]);
@@ -111,6 +111,7 @@ export function useClaim(claimId: string | null) {
 // ==================== CLAIM BY JOB ====================
 
 export function useClaimByJob(jobId: string | null) {
+  const supabase = getSupabase();
   const [claim, setClaim] = useState<InsuranceClaimData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -151,6 +152,7 @@ export async function createClaim(input: {
   coverageLimit?: number;
   notes?: string;
 }): Promise<string> {
+  const supabase = getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const companyId = user.app_metadata?.company_id;
@@ -185,6 +187,7 @@ export async function createClaim(input: {
 }
 
 export async function updateClaimStatus(claimId: string, status: ClaimStatus): Promise<void> {
+  const supabase = getSupabase();
   const updateData: Record<string, unknown> = { claim_status: status };
   const now = new Date().toISOString();
 
@@ -201,11 +204,13 @@ export async function updateClaimStatus(claimId: string, status: ClaimStatus): P
 }
 
 export async function updateClaim(claimId: string, updates: Record<string, unknown>): Promise<void> {
+  const supabase = getSupabase();
   const { error } = await supabase.from('insurance_claims').update(updates).eq('id', claimId);
   if (error) throw error;
 }
 
 export async function deleteClaim(claimId: string): Promise<void> {
+  const supabase = getSupabase();
   const { error } = await supabase
     .from('insurance_claims')
     .update({ deleted_at: new Date().toISOString() })
@@ -226,6 +231,7 @@ export async function createSupplement(input: {
   depreciationAmount?: number;
   lineItems?: Record<string, unknown>[];
 }): Promise<string> {
+  const supabase = getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const companyId = user.app_metadata?.company_id;
@@ -275,6 +281,7 @@ export async function updateSupplement(supplementId: string, updates: {
   lineItems?: Record<string, unknown>[];
   reviewerNotes?: string;
 }): Promise<void> {
+  const supabase = getSupabase();
   const updateData: Record<string, unknown> = {};
   if (updates.title !== undefined) updateData.title = updates.title;
   if (updates.description !== undefined) updateData.description = updates.description;
@@ -292,6 +299,7 @@ export async function updateSupplement(supplementId: string, updates: {
 }
 
 export async function updateSupplementStatus(supplementId: string, status: SupplementStatus): Promise<void> {
+  const supabase = getSupabase();
   const updateData: Record<string, unknown> = { status };
   const now = new Date().toISOString();
 
@@ -303,6 +311,7 @@ export async function updateSupplementStatus(supplementId: string, status: Suppl
 }
 
 export async function deleteSupplement(supplementId: string): Promise<void> {
+  const supabase = getSupabase();
   const { error } = await supabase.from('claim_supplements').update({ deleted_at: new Date().toISOString() }).eq('id', supplementId);
   if (error) throw error;
 }

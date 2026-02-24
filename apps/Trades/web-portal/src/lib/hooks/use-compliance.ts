@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 export interface Certification {
   id: string;
   company_id: string;
@@ -76,6 +74,7 @@ export interface ComplianceSummary {
 }
 
 export function useCompliance() {
+  const supabase = getSupabase();
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [requirements, setRequirements] = useState<ComplianceRequirement[]>([]);
   const [packets, setPackets] = useState<CompliancePacket[]>([]);

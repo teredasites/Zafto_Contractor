@@ -171,9 +171,8 @@ function mapTpaAssignment(row: Record<string, unknown>): TpaAssignmentData {
 
 // ==================== ASSIGNMENTS LIST ====================
 
-const supabase = getSupabase();
-
 export function useTpaAssignments(filters?: { status?: TpaAssignmentStatus; programId?: string }) {
+  const supabase = getSupabase();
   const [assignments, setAssignments] = useState<TpaAssignmentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -224,6 +223,7 @@ export function useTpaAssignments(filters?: { status?: TpaAssignmentStatus; prog
 // ==================== SINGLE ASSIGNMENT ====================
 
 export function useTpaAssignment(assignmentId: string | null) {
+  const supabase = getSupabase();
   const [assignment, setAssignment] = useState<TpaAssignmentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -290,6 +290,7 @@ export async function createTpaAssignment(input: {
   jobId?: string;
   internalNotes?: string;
 }): Promise<string> {
+  const supabase = getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const companyId = user.app_metadata?.company_id;
@@ -360,11 +361,13 @@ export async function createTpaAssignment(input: {
 }
 
 export async function updateTpaAssignment(assignmentId: string, updates: Record<string, unknown>): Promise<void> {
+  const supabase = getSupabase();
   const { error } = await supabase.from('tpa_assignments').update(updates).eq('id', assignmentId);
   if (error) throw error;
 }
 
 export async function updateAssignmentStatus(assignmentId: string, status: TpaAssignmentStatus): Promise<void> {
+  const supabase = getSupabase();
   const updateData: Record<string, unknown> = { status };
   const now = new Date().toISOString();
 
@@ -382,6 +385,7 @@ export async function updateAssignmentStatus(assignmentId: string, status: TpaAs
 }
 
 export async function deleteTpaAssignment(assignmentId: string): Promise<void> {
+  const supabase = getSupabase();
   const { error } = await supabase
     .from('tpa_assignments')
     .update({ deleted_at: new Date().toISOString() })
@@ -392,6 +396,7 @@ export async function deleteTpaAssignment(assignmentId: string): Promise<void> {
 // ==================== JOB INTEGRATION ====================
 
 export async function createJobFromAssignment(assignmentId: string): Promise<string> {
+  const supabase = getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const companyId = user.app_metadata?.company_id;

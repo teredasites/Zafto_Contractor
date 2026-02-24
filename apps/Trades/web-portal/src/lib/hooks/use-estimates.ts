@@ -420,6 +420,7 @@ export function useEstimates() {
       .from('walkthrough_rooms')
       .select('*')
       .eq('walkthrough_id', walkthroughId)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
 
     // Create estimate

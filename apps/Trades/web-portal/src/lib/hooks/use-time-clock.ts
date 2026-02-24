@@ -57,6 +57,7 @@ export function useTimeClock(weekStart: Date) {
           total_minutes, overtime_minutes, hourly_rate, labor_cost,
           status, notes, created_at
         `)
+        .is('deleted_at', null)
         .gte('clock_in', weekStart.toISOString())
         .lt('clock_in', weekEnd.toISOString())
         .order('clock_in', { ascending: false });

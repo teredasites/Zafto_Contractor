@@ -7,8 +7,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '../supabase';
 
-const supabase = getSupabase();
-
 // ── Interfaces ──────────────────────────────────────────
 
 export interface PermitJurisdiction {
@@ -112,6 +110,7 @@ export interface PermitLookupResult {
 // ── Jurisdictions Hook ──────────────────────────────────
 
 export function useJurisdictions(stateCode?: string) {
+  const supabase = getSupabase();
   const [jurisdictions, setJurisdictions] = useState<PermitJurisdiction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -163,6 +162,7 @@ export function useJurisdictions(stateCode?: string) {
 // ── Job Permits Hook (real-time) ────────────────────────
 
 export function useJobPermitRecords(jobId?: string) {
+  const supabase = getSupabase();
   const [permits, setPermits] = useState<JobPermitRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -225,6 +225,7 @@ export function useJobPermitRecords(jobId?: string) {
 // ── Permit Lookup Hook ──────────────────────────────────
 
 export function usePermitLookup() {
+  const supabase = getSupabase();
   const [result, setResult] = useState<PermitLookupResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -263,6 +264,7 @@ export function usePermitLookup() {
 // ── Inspections Hook ────────────────────────────────────
 
 export function usePermitInspections(jobPermitId: string) {
+  const supabase = getSupabase();
   const [inspections, setInspections] = useState<PermitInspectionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
