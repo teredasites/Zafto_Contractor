@@ -32,6 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import {
   usePpWorkOrders,
   usePpWinterization,
@@ -153,6 +154,7 @@ export default function WorkOrderDetailPage() {
   const router = useRouter();
   const params = useParams();
   const workOrderId = params.id as string;
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<TabKey>('details');
 
@@ -231,10 +233,10 @@ export default function WorkOrderDetailPage() {
     return (
       <div className="text-center py-12">
         <Home size={48} className="mx-auto text-muted mb-4" />
-        <h2 className="text-xl font-semibold text-main">Work Order Not Found</h2>
-        <p className="text-muted mt-2">This work order may have been deleted.</p>
+        <h2 className="text-xl font-semibold text-main">{t('property_preservation.work_order_not_found')}</h2>
+        <p className="text-muted mt-2">{t('property_preservation.work_order_deleted')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/property-preservation')}>
-          Back to PP Dashboard
+          {t('property_preservation.back_to_dashboard')}
         </Button>
       </div>
     );
@@ -245,10 +247,10 @@ export default function WorkOrderDetailPage() {
   const category = woType?.category || 'other';
 
   const tabs: { key: TabKey; label: string; icon: LucideIcon }[] = [
-    { key: 'details', label: 'Details', icon: FileText },
-    { key: 'category', label: CATEGORY_LABELS[category] || 'Category', icon: CatIcon },
-    { key: 'photos', label: 'Photos', icon: Camera },
-    { key: 'chargeback', label: 'Protection', icon: Shield },
+    { key: 'details', label: t('property_preservation.details'), icon: FileText },
+    { key: 'category', label: CATEGORY_LABELS[category] || t('property_preservation.category'), icon: CatIcon },
+    { key: 'photos', label: t('property_preservation.photos'), icon: Camera },
+    { key: 'chargeback', label: t('property_preservation.protection'), icon: Shield },
   ];
 
   return (
@@ -261,7 +263,7 @@ export default function WorkOrderDetailPage() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3">
             <CatIcon size={22} className="text-muted" />
-            <h1 className="text-xl font-bold text-main">{woType?.name || 'Work Order'}</h1>
+            <h1 className="text-xl font-bold text-main">{woType?.name || t('property_preservation.work_order')}</h1>
             <Badge className={cn('text-xs', statusConf.color, statusConf.bg)}>
               {statusConf.label}
             </Badge>
@@ -278,13 +280,16 @@ export default function WorkOrderDetailPage() {
             )}
             <span className="flex items-center gap-1">
               <Calendar size={12} />
-              Created {formatDate(workOrder.createdAt)}
+              {t('property_preservation.created')} {formatDate(workOrder.createdAt)}
             </span>
           </div>
         </div>
         {NEXT_STATUS[workOrder.status] && (
           <Button onClick={handleAdvanceStatus}>
-            {NEXT_STATUS_LABEL[workOrder.status]}
+            {workOrder.status === 'assigned' ? t('property_preservation.start_work')
+              : workOrder.status === 'in_progress' ? t('property_preservation.mark_completed')
+              : workOrder.status === 'completed' ? t('property_preservation.submit_to_national')
+              : NEXT_STATUS_LABEL[workOrder.status]}
           </Button>
         )}
       </div>
@@ -312,25 +317,25 @@ export default function WorkOrderDetailPage() {
       {/* Quick Stats Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card className="p-3">
-          <div className="text-xs text-muted mb-0.5">Bid Amount</div>
+          <div className="text-xs text-muted mb-0.5">{t('property_preservation.bid_amount')}</div>
           <p className="text-lg font-bold text-main">
             {workOrder.bidAmount != null ? formatCurrency(workOrder.bidAmount) : '--'}
           </p>
         </Card>
         <Card className="p-3">
-          <div className="text-xs text-muted mb-0.5">Approved</div>
+          <div className="text-xs text-muted mb-0.5">{t('property_preservation.approved')}</div>
           <p className="text-lg font-bold text-emerald-400">
             {workOrder.approvedAmount != null ? formatCurrency(workOrder.approvedAmount) : '--'}
           </p>
         </Card>
         <Card className="p-3">
-          <div className="text-xs text-muted mb-0.5">Due Date</div>
+          <div className="text-xs text-muted mb-0.5">{t('property_preservation.due_date')}</div>
           <p className={cn('text-lg font-bold', workOrder.dueDate ? 'text-main' : 'text-muted')}>
-            {workOrder.dueDate ? formatDate(workOrder.dueDate) : 'Not set'}
+            {workOrder.dueDate ? formatDate(workOrder.dueDate) : t('property_preservation.not_set')}
           </p>
         </Card>
         <Card className="p-3">
-          <div className="text-xs text-muted mb-0.5">Protection Score</div>
+          <div className="text-xs text-muted mb-0.5">{t('property_preservation.protection_score')}</div>
           <p className={cn(
             'text-lg font-bold',
             chargebackScore >= 80 ? 'text-emerald-400' :
@@ -401,42 +406,42 @@ export default function WorkOrderDetailPage() {
           {/* Work Order Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Work Order Info</CardTitle>
+              <CardTitle className="text-sm">{t('property_preservation.work_order_info')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted">Status</span>
+                <span className="text-muted">{t('property_preservation.status')}</span>
                 <Badge className={cn('text-xs', statusConf.color, statusConf.bg)}>{statusConf.label}</Badge>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted">Category</span>
+                <span className="text-muted">{t('property_preservation.category')}</span>
                 <span className="text-main">{CATEGORY_LABELS[category] || category}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted">Photo Mode</span>
+                <span className="text-muted">{t('property_preservation.photo_mode')}</span>
                 <span className="text-main capitalize">{workOrder.photoMode.replace('_', ' ')}</span>
               </div>
               {workOrder.assignedTo && (
                 <div className="flex justify-between">
-                  <span className="text-muted">Assigned To</span>
+                  <span className="text-muted">{t('property_preservation.assigned_to')}</span>
                   <span className="text-main">{workOrder.assignedTo}</span>
                 </div>
               )}
               {workOrder.startedAt && (
                 <div className="flex justify-between">
-                  <span className="text-muted">Started</span>
+                  <span className="text-muted">{t('property_preservation.started')}</span>
                   <span className="text-main">{formatDate(workOrder.startedAt)}</span>
                 </div>
               )}
               {workOrder.completedAt && (
                 <div className="flex justify-between">
-                  <span className="text-muted">Completed</span>
+                  <span className="text-muted">{t('property_preservation.completed')}</span>
                   <span className="text-main">{formatDate(workOrder.completedAt)}</span>
                 </div>
               )}
               {workOrder.submittedAt && (
                 <div className="flex justify-between">
-                  <span className="text-muted">Submitted</span>
+                  <span className="text-muted">{t('property_preservation.submitted')}</span>
                   <span className="text-main">{formatDate(workOrder.submittedAt)}</span>
                 </div>
               )}
@@ -455,19 +460,19 @@ export default function WorkOrderDetailPage() {
               <CardContent className="space-y-2 text-sm">
                 {national.submissionDeadlineHours > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-muted">Deadline</span>
+                    <span className="text-muted">{t('property_preservation.deadline')}</span>
                     <span className="text-main">{national.submissionDeadlineHours}h</span>
                   </div>
                 )}
                 {national.paySchedule && (
                   <div className="flex justify-between">
-                    <span className="text-muted">Pay</span>
+                    <span className="text-muted">{t('property_preservation.pay')}</span>
                     <span className="text-main capitalize">{national.paySchedule}</span>
                   </div>
                 )}
                 {national.phone && (
                   <div className="flex justify-between">
-                    <span className="text-muted">Phone</span>
+                    <span className="text-muted">{t('property_preservation.phone')}</span>
                     <span className="text-main">{national.phone}</span>
                   </div>
                 )}
@@ -479,7 +484,7 @@ export default function WorkOrderDetailPage() {
           {workOrder.notes && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Notes</CardTitle>
+                <CardTitle className="text-sm">{t('property_preservation.notes')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-main whitespace-pre-wrap">{workOrder.notes}</p>
@@ -499,6 +504,7 @@ function DetailsPanel({ workOrder, woType, national }: {
   woType: { name: string; category: string; description: string | null; estimatedHours: number | null; defaultChecklist: unknown[]; requiredPhotos: unknown[] } | null;
   national: { name: string; submissionDeadlineHours: number; phone: string | null; email: string | null; portalUrl: string | null } | null;
 }) {
+  const { t } = useTranslation();
   const checklist = workOrder.checklistProgress || {};
   const checklistKeys = Object.keys(checklist);
   const completedCount = Object.values(checklist).filter(v => v === true).length;
@@ -509,12 +515,12 @@ function DetailsPanel({ workOrder, woType, national }: {
       {woType?.description && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Work Order Type</CardTitle>
+            <CardTitle className="text-base">{t('property_preservation.work_order_type')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-main">{woType.description}</p>
             {woType.estimatedHours && (
-              <p className="text-xs text-muted mt-2">Estimated: {woType.estimatedHours} hours</p>
+              <p className="text-xs text-muted mt-2">{t('property_preservation.estimated')}: {woType.estimatedHours} {t('property_preservation.hours')}</p>
             )}
           </CardContent>
         </Card>
@@ -524,15 +530,15 @@ function DetailsPanel({ workOrder, woType, national }: {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Checklist</CardTitle>
+            <CardTitle className="text-base">{t('property_preservation.checklist')}</CardTitle>
             {checklistKeys.length > 0 && (
-              <span className="text-xs text-muted">{completedCount}/{checklistKeys.length} complete</span>
+              <span className="text-xs text-muted">{completedCount}/{checklistKeys.length} {t('property_preservation.complete')}</span>
             )}
           </div>
         </CardHeader>
         <CardContent>
           {checklistKeys.length === 0 ? (
-            <p className="text-sm text-muted text-center py-4">No checklist items configured for this work order type</p>
+            <p className="text-sm text-muted text-center py-4">{t('property_preservation.no_checklist_items')}</p>
           ) : (
             <div className="space-y-2">
               {/* Progress bar */}
@@ -563,24 +569,24 @@ function DetailsPanel({ workOrder, woType, national }: {
       {/* Timeline */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Timeline</CardTitle>
+          <CardTitle className="text-base">{t('property_preservation.timeline')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {workOrder.assignedAt && (
-              <TimelineItem date={workOrder.assignedAt} label="Assigned" color="text-blue-400" />
+              <TimelineItem date={workOrder.assignedAt} label={t('property_preservation.assigned')} color="text-blue-400" />
             )}
             {workOrder.startedAt && (
-              <TimelineItem date={workOrder.startedAt} label="Work Started" color="text-yellow-400" />
+              <TimelineItem date={workOrder.startedAt} label={t('property_preservation.work_started')} color="text-yellow-400" />
             )}
             {workOrder.completedAt && (
-              <TimelineItem date={workOrder.completedAt} label="Completed" color="text-emerald-400" />
+              <TimelineItem date={workOrder.completedAt} label={t('property_preservation.completed')} color="text-emerald-400" />
             )}
             {workOrder.submittedAt && (
-              <TimelineItem date={workOrder.submittedAt} label="Submitted to National" color="text-purple-400" />
+              <TimelineItem date={workOrder.submittedAt} label={t('property_preservation.submitted_to_national')} color="text-purple-400" />
             )}
             {!workOrder.assignedAt && !workOrder.startedAt && (
-              <p className="text-sm text-muted text-center py-4">No timeline events yet</p>
+              <p className="text-sm text-muted text-center py-4">{t('property_preservation.no_timeline_events')}</p>
             )}
           </div>
         </CardContent>
@@ -628,17 +634,17 @@ function CategoryPanel({ workOrder, category, winterRecords, debrisEstimates, ut
   }
 
   // Generic panel for lawn_snow, inspection, repair, specialty
+  const { t } = useTranslation();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
-          {CATEGORY_LABELS[category] || category} Details
+          {CATEGORY_LABELS[category] || category} {t('property_preservation.details_suffix')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted">
-          Use the checklist on the Details tab to track completion of {CATEGORY_LABELS[category]?.toLowerCase() || category} tasks.
-          Document everything with photos on the Photos tab.
+          {t('property_preservation.category_guidance', { category: CATEGORY_LABELS[category]?.toLowerCase() || category })}
         </p>
       </CardContent>
     </Card>
@@ -652,6 +658,7 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
   records: PpWinterizationRecord[];
   onCreate: (rec: Omit<PpWinterizationRecord, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(records.length === 0);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -706,12 +713,12 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Snowflake size={16} className="text-blue-400" />
-              Winterization Record
+              {t('property_preservation.winterization_record')}
               {rec.pressureTestPassed === true && (
-                <Badge variant="success" className="text-xs">Test Passed</Badge>
+                <Badge variant="success" className="text-xs">{t('property_preservation.test_passed')}</Badge>
               )}
               {rec.pressureTestPassed === false && (
-                <Badge variant="error" className="text-xs">Test Failed</Badge>
+                <Badge variant="error" className="text-xs">{t('property_preservation.test_failed')}</Badge>
               )}
             </CardTitle>
           </CardHeader>
@@ -719,43 +726,43 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
               {rec.heatType && (
                 <div>
-                  <span className="text-xs text-muted block">Heat Type</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.heat_type')}</span>
                   <span className="text-main capitalize">{rec.heatType}</span>
                 </div>
               )}
               {rec.pressureTestStartPsi != null && (
                 <div>
-                  <span className="text-xs text-muted block">Pressure Start</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.pressure_start')}</span>
                   <span className="text-main">{rec.pressureTestStartPsi} PSI</span>
                 </div>
               )}
               {rec.pressureTestEndPsi != null && (
                 <div>
-                  <span className="text-xs text-muted block">Pressure End</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.pressure_end')}</span>
                   <span className="text-main">{rec.pressureTestEndPsi} PSI</span>
                 </div>
               )}
               <div>
-                <span className="text-xs text-muted block">Duration</span>
+                <span className="text-xs text-muted block">{t('property_preservation.duration')}</span>
                 <span className="text-main">{rec.pressureTestDurationMin} min</span>
               </div>
               {rec.antifreezeGallons != null && (
                 <div>
-                  <span className="text-xs text-muted block">Antifreeze</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.antifreeze')}</span>
                   <span className="text-main">{rec.antifreezeGallons} gal</span>
                 </div>
               )}
               {rec.fixtureCount != null && (
                 <div>
-                  <span className="text-xs text-muted block">Fixtures</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.fixtures')}</span>
                   <span className="text-main">{rec.fixtureCount}</span>
                 </div>
               )}
             </div>
             <div className="flex gap-4 mt-3 text-xs text-muted">
-              {rec.hasWell && <span>Has Well</span>}
-              {rec.hasSeptic && <span>Has Septic</span>}
-              {rec.hasSprinkler && <span>Has Sprinkler</span>}
+              {rec.hasWell && <span>{t('property_preservation.has_well')}</span>}
+              {rec.hasSeptic && <span>{t('property_preservation.has_septic')}</span>}
+              {rec.hasSprinkler && <span>{t('property_preservation.has_sprinkler')}</span>}
             </div>
           </CardContent>
         </Card>
@@ -765,33 +772,33 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
       {showForm && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">New Winterization Record</CardTitle>
+            <CardTitle className="text-base">{t('property_preservation.new_winterization_record')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Heat Type */}
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">Heating System Type</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.heating_system_type')}</label>
               <select
                 className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
                 value={form.heatType}
                 onChange={e => setForm(f => ({ ...f, heatType: e.target.value }))}
               >
-                <option value="gas">Gas (Dry Heat)</option>
-                <option value="electric">Electric</option>
-                <option value="oil">Oil</option>
-                <option value="propane">Propane</option>
-                <option value="radiant">Wet/Radiant Heat</option>
-                <option value="steam">Steam</option>
-                <option value="none">No Heating System</option>
+                <option value="gas">{t('property_preservation.gas_dry_heat')}</option>
+                <option value="electric">{t('property_preservation.electric')}</option>
+                <option value="oil">{t('property_preservation.oil')}</option>
+                <option value="propane">{t('property_preservation.propane')}</option>
+                <option value="radiant">{t('property_preservation.wet_radiant_heat')}</option>
+                <option value="steam">{t('property_preservation.steam')}</option>
+                <option value="none">{t('property_preservation.no_heating_system')}</option>
               </select>
               {form.heatType === 'gas' && (
-                <p className="text-xs text-blue-400 mt-1">Dry heat: 35 PSI, hold 30 min</p>
+                <p className="text-xs text-blue-400 mt-1">{t('property_preservation.dry_heat_hint')}</p>
               )}
               {form.heatType === 'radiant' && (
-                <p className="text-xs text-blue-400 mt-1">Wet/Radiant: 53 PSI heating system, antifreeze all lines</p>
+                <p className="text-xs text-blue-400 mt-1">{t('property_preservation.radiant_hint')}</p>
               )}
               {form.heatType === 'steam' && (
-                <p className="text-xs text-blue-400 mt-1">Steam: Close valves at BOTTOM of radiators</p>
+                <p className="text-xs text-blue-400 mt-1">{t('property_preservation.steam_hint')}</p>
               )}
             </div>
 
@@ -799,22 +806,22 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
             <div className="flex gap-4">
               <label className="flex items-center gap-2 text-sm text-main">
                 <input type="checkbox" checked={form.hasWell} onChange={e => setForm(f => ({ ...f, hasWell: e.target.checked }))} />
-                Has Well
+                {t('property_preservation.has_well')}
               </label>
               <label className="flex items-center gap-2 text-sm text-main">
                 <input type="checkbox" checked={form.hasSeptic} onChange={e => setForm(f => ({ ...f, hasSeptic: e.target.checked }))} />
-                Has Septic
+                {t('property_preservation.has_septic')}
               </label>
               <label className="flex items-center gap-2 text-sm text-main">
                 <input type="checkbox" checked={form.hasSprinkler} onChange={e => setForm(f => ({ ...f, hasSprinkler: e.target.checked }))} />
-                Has Sprinkler
+                {t('property_preservation.has_sprinkler')}
               </label>
             </div>
 
             {/* Pressure Test */}
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Start PSI</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.start_psi')}</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
@@ -823,7 +830,7 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">End PSI</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.end_psi')}</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
@@ -832,7 +839,7 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Duration (min)</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.duration_min')}</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
@@ -845,17 +852,17 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
             {/* Antifreeze */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Antifreeze (gallons)</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.antifreeze_gallons')}</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
                   value={form.antifreezeGallons}
                   onChange={e => setForm(f => ({ ...f, antifreezeGallons: e.target.value }))}
                 />
-                <p className="text-xs text-muted mt-1">Pink RV propylene glycol ONLY</p>
+                <p className="text-xs text-muted mt-1">{t('property_preservation.antifreeze_hint')}</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Fixture Count</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.fixture_count')}</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
@@ -867,7 +874,7 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
 
             {/* Winterization Checklist */}
             <div>
-              <label className="block text-xs font-medium text-muted mb-2">Winterization Checklist</label>
+              <label className="block text-xs font-medium text-muted mb-2">{t('property_preservation.winterization_checklist')}</label>
               <div className="grid grid-cols-2 gap-2">
                 {WINTERIZATION_CHECKLIST.map(item => (
                   <label key={item} className="flex items-center gap-2 text-sm text-main">
@@ -887,7 +894,7 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
 
             {/* Notes */}
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">Notes</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.notes')}</label>
               <textarea
                 className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm h-20 resize-none"
                 value={form.notes}
@@ -896,9 +903,9 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
             </div>
 
             <div className="flex justify-end gap-3">
-              <Button variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => setShowForm(false)}>{t('common.cancel')}</Button>
               <Button onClick={handleSave} disabled={saving}>
-                {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : <><Save size={14} /> Save Record</>}
+                {saving ? <><Loader2 size={14} className="animate-spin" /> {t('common.saving')}</> : <><Save size={14} /> {t('property_preservation.save_record')}</>}
               </Button>
             </div>
           </CardContent>
@@ -908,7 +915,7 @@ function WinterizationPanel({ workOrder, records, onCreate }: {
       {!showForm && (
         <Button variant="secondary" onClick={() => setShowForm(true)}>
           <Plus size={14} />
-          Add Winterization Record
+          {t('property_preservation.add_winterization_record')}
         </Button>
       )}
     </div>
@@ -937,6 +944,7 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
   estimates: PpDebrisEstimate[];
   onCreate: (est: Omit<PpDebrisEstimate, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [showCalc, setShowCalc] = useState(estimates.length === 0);
   const [saving, setSaving] = useState(false);
   const [sqft, setSqft] = useState('');
@@ -990,38 +998,38 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Trash2 size={16} className="text-orange-400" />
-              Debris Estimate
+              {t('property_preservation.debris_estimate')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
               <div>
-                <span className="text-xs text-muted block">Total CY</span>
+                <span className="text-xs text-muted block">{t('property_preservation.total_cy')}</span>
                 <span className="text-main text-lg font-bold">{est.totalCubicYards ?? '--'}</span>
               </div>
               <div>
-                <span className="text-xs text-muted block">Est. Weight</span>
+                <span className="text-xs text-muted block">{t('property_preservation.est_weight')}</span>
                 <span className="text-main">{est.estimatedWeightLbs ? `${est.estimatedWeightLbs.toLocaleString()} lbs` : '--'}</span>
               </div>
               <div>
-                <span className="text-xs text-muted block">Dumpster</span>
+                <span className="text-xs text-muted block">{t('property_preservation.dumpster')}</span>
                 <span className="text-main">{est.recommendedDumpsterSize ? `${est.recommendedDumpsterSize}-yd` : '--'}</span>
               </div>
               {est.hudRatePerCy != null && (
                 <div>
-                  <span className="text-xs text-muted block">HUD Rate</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.hud_rate')}</span>
                   <span className="text-main">{formatCurrency(est.hudRatePerCy)}/CY</span>
                 </div>
               )}
               {est.estimatedRevenue != null && (
                 <div>
-                  <span className="text-xs text-muted block">Est. Revenue</span>
+                  <span className="text-xs text-muted block">{t('property_preservation.est_revenue')}</span>
                   <span className="text-emerald-400 font-bold">{formatCurrency(est.estimatedRevenue)}</span>
                 </div>
               )}
               {(est.totalCubicYards ?? 0) > 12 && (
                 <div>
-                  <Badge variant="warning" className="text-xs">Pre-approval Required ({'>'} 12 CY)</Badge>
+                  <Badge variant="warning" className="text-xs">{t('property_preservation.pre_approval_required')}</Badge>
                 </div>
               )}
             </div>
@@ -1033,12 +1041,12 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
       {showCalc && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Debris Estimation Calculator</CardTitle>
+            <CardTitle className="text-base">{t('property_preservation.debris_estimation_calculator')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Property Sq Ft</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.property_sq_ft')}</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
@@ -1048,22 +1056,22 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Cleanout Level</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.cleanout_level')}</label>
                 <select
                   className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
                   value={level}
                   onChange={e => setLevel(e.target.value)}
                 >
-                  <option value="broom_clean">Broom Clean (0.5-1.0 CY/100sf)</option>
-                  <option value="normal">Normal (1.5-3.0 CY/100sf)</option>
-                  <option value="heavy">Heavy (3.0-5.0 CY/100sf)</option>
-                  <option value="hoarder">Hoarder (5.0-10.0 CY/100sf)</option>
+                  <option value="broom_clean">{t('property_preservation.broom_clean')}</option>
+                  <option value="normal">{t('property_preservation.normal')}</option>
+                  <option value="heavy">{t('property_preservation.heavy')}</option>
+                  <option value="hoarder">{t('property_preservation.hoarder')}</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">HUD Rate ($/CY)</label>
+              <label className="block text-xs font-medium text-muted mb-1">{t('property_preservation.hud_rate_per_cy')}</label>
               <input
                 type="number"
                 className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm max-w-xs"
@@ -1075,34 +1083,34 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
             {Number(sqft) > 0 && (
               <div className="p-4 bg-secondary rounded-lg space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Estimated CY</span>
+                  <span className="text-muted">{t('property_preservation.estimated_cy')}</span>
                   <span className="text-main font-bold">{calcResults.minCy.toFixed(1)} - {calcResults.maxCy.toFixed(1)} CY</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Average</span>
+                  <span className="text-muted">{t('property_preservation.average')}</span>
                   <span className="text-main font-bold">{calcResults.avgCy.toFixed(1)} CY</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Recommended</span>
+                  <span className="text-muted">{t('property_preservation.recommended')}</span>
                   <span className="text-main">{calcResults.dumpster.label} ({calcResults.dumpster.cost})</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Est. Revenue</span>
+                  <span className="text-muted">{t('property_preservation.est_revenue')}</span>
                   <span className="text-emerald-400 font-bold">{formatCurrency(calcResults.hudRevenue)}</span>
                 </div>
                 {calcResults.preApproval && (
                   <div className="flex items-center gap-2 text-xs text-orange-400 mt-2">
                     <AlertTriangle size={12} />
-                    Exceeds 12 CY — pre-approval required from national
+                    {t('property_preservation.exceeds_12_cy')}
                   </div>
                 )}
               </div>
             )}
 
             <div className="flex justify-end gap-3">
-              <Button variant="secondary" onClick={() => setShowCalc(false)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => setShowCalc(false)}>{t('common.cancel')}</Button>
               <Button onClick={handleSaveEstimate} disabled={saving || !sqft}>
-                {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : <><Save size={14} /> Save Estimate</>}
+                {saving ? <><Loader2 size={14} className="animate-spin" /> {t('common.saving')}</> : <><Save size={14} /> {t('property_preservation.save_estimate')}</>}
               </Button>
             </div>
           </CardContent>
@@ -1112,7 +1120,7 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
       {!showCalc && (
         <Button variant="secondary" onClick={() => setShowCalc(true)}>
           <Plus size={14} />
-          New Debris Estimate
+          {t('property_preservation.new_debris_estimate')}
         </Button>
       )}
     </div>
@@ -1122,6 +1130,7 @@ function DebrisPanel({ workOrder, estimates, onCreate }: {
 // ── Securing Panel ──
 
 function SecuringPanel({ workOrder }: { workOrder: PpWorkOrder }) {
+  const { t } = useTranslation();
   const checklist = workOrder.checklistProgress || {};
 
   return (
@@ -1130,7 +1139,7 @@ function SecuringPanel({ workOrder }: { workOrder: PpWorkOrder }) {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Shield size={16} className="text-blue-400" />
-            Securing Checklist
+            {t('property_preservation.securing_checklist')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -1155,7 +1164,7 @@ function SecuringPanel({ workOrder }: { workOrder: PpWorkOrder }) {
       {/* Lock Code Reference */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Common Bank Key Codes</CardTitle>
+          <CardTitle className="text-sm">{t('property_preservation.common_bank_key_codes')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-5 gap-2">
@@ -1165,7 +1174,7 @@ function SecuringPanel({ workOrder }: { workOrder: PpWorkOrder }) {
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted mt-2">Standard KW-1 bank lock codes. Verify with national for property-specific codes.</p>
+          <p className="text-xs text-muted mt-2">{t('property_preservation.bank_key_codes_hint')}</p>
         </CardContent>
       </Card>
     </div>
@@ -1180,6 +1189,7 @@ function UtilityPanel({ workOrder, utilities, onCreate, onUpdate }: {
   onCreate: (u: Omit<PpUtilityTracking, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   onUpdate: (id: string, updatedAt: string, patch: Partial<PpUtilityTracking>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const utilityTypes = ['electric', 'gas', 'water', 'oil', 'propane'] as const;
 
   return (
@@ -1188,7 +1198,7 @@ function UtilityPanel({ workOrder, utilities, onCreate, onUpdate }: {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Zap size={16} className="text-yellow-400" />
-            Utility Status
+            {t('property_preservation.utility_status')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -1222,7 +1232,7 @@ function UtilityPanel({ workOrder, utilities, onCreate, onUpdate }: {
                       )}
                     </div>
                   ) : (
-                    <span className="text-xs text-muted">Not tracked</span>
+                    <span className="text-xs text-muted">{t('property_preservation.not_tracked')}</span>
                   )}
                 </div>
               );
@@ -1241,6 +1251,7 @@ function PhotosPanel({ category, workOrder, national }: {
   workOrder: PpWorkOrder;
   national: { name: string; photoNaming: string | null; requiredShots: Record<string, unknown> } | null;
 }) {
+  const { t } = useTranslation();
   const requiredPhotos = REQUIRED_PHOTOS[category] || [];
 
   return (
@@ -1249,14 +1260,13 @@ function PhotosPanel({ category, workOrder, national }: {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Camera size={16} className="text-blue-400" />
-            Photo Documentation
+            {t('property_preservation.photo_documentation')}
             <Badge variant="default" className="text-xs ml-auto capitalize">{workOrder.photoMode.replace('_', ' ')}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted mb-4">
-            Required photos for {CATEGORY_LABELS[category]?.toLowerCase() || category} work orders.
-            GPS-stamped photos are mandatory for chargeback protection.
+            {t('property_preservation.required_photos_description', { category: CATEGORY_LABELS[category]?.toLowerCase() || category })}
           </p>
 
           {/* Required shots checklist */}
@@ -1273,7 +1283,7 @@ function PhotosPanel({ category, workOrder, national }: {
 
           {national?.photoNaming && (
             <div className="mt-4 p-3 bg-secondary rounded-lg">
-              <p className="text-xs font-medium text-muted mb-1">National Photo Naming Convention</p>
+              <p className="text-xs font-medium text-muted mb-1">{t('property_preservation.national_photo_naming')}</p>
               <p className="text-sm text-main">{national.photoNaming}</p>
             </div>
           )}
@@ -1283,8 +1293,8 @@ function PhotosPanel({ category, workOrder, national }: {
       <Card>
         <CardContent className="p-6 text-center">
           <Camera size={32} className="mx-auto text-muted mb-2 opacity-30" />
-          <p className="text-sm text-muted">Photo upload coming soon</p>
-          <p className="text-xs text-muted mt-1">Use the Zafto mobile app to capture GPS-stamped photos in the field</p>
+          <p className="text-sm text-muted">{t('property_preservation.photo_upload_coming_soon')}</p>
+          <p className="text-xs text-muted mt-1">{t('property_preservation.photo_upload_mobile_hint')}</p>
         </CardContent>
       </Card>
     </div>
@@ -1300,17 +1310,18 @@ function ChargebackPanel({ workOrder, chargebacks, score, winterRecordCount, deb
   winterRecordCount: number;
   debrisEstimateCount: number;
 }) {
+  const { t } = useTranslation();
   const checklist = workOrder.checklistProgress || {};
   const checklistItems = Object.keys(checklist).length;
   const checklistComplete = Object.values(checklist).filter(v => v === true).length;
 
   const protectionItems = [
-    { label: 'External Order ID', done: !!workOrder.externalOrderId, weight: 'Ties to national' },
-    { label: 'Bid Amount Set', done: workOrder.bidAmount != null && workOrder.bidAmount > 0, weight: 'Revenue tracking' },
-    { label: 'Notes Documented', done: !!workOrder.notes, weight: 'Written record' },
-    { label: 'Checklist Progress', done: checklistItems > 0 && checklistComplete >= checklistItems * 0.5, weight: `${checklistComplete}/${checklistItems}` },
-    { label: 'Category Records', done: winterRecordCount > 0 || debrisEstimateCount > 0, weight: 'Detailed work data' },
-    { label: 'Status Advanced', done: ['completed', 'submitted', 'approved'].includes(workOrder.status), weight: 'Workflow tracked' },
+    { label: t('property_preservation.external_order_id'), done: !!workOrder.externalOrderId, weight: t('property_preservation.ties_to_national') },
+    { label: t('property_preservation.bid_amount_set'), done: workOrder.bidAmount != null && workOrder.bidAmount > 0, weight: t('property_preservation.revenue_tracking') },
+    { label: t('property_preservation.notes_documented'), done: !!workOrder.notes, weight: t('property_preservation.written_record') },
+    { label: t('property_preservation.checklist_progress'), done: checklistItems > 0 && checklistComplete >= checklistItems * 0.5, weight: `${checklistComplete}/${checklistItems}` },
+    { label: t('property_preservation.category_records'), done: winterRecordCount > 0 || debrisEstimateCount > 0, weight: t('property_preservation.detailed_work_data') },
+    { label: t('property_preservation.status_advanced'), done: ['completed', 'submitted', 'approved'].includes(workOrder.status), weight: t('property_preservation.workflow_tracked') },
   ];
 
   return (
@@ -1320,7 +1331,7 @@ function ChargebackPanel({ workOrder, chargebacks, score, winterRecordCount, deb
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Shield size={16} className="text-blue-400" />
-            Chargeback Protection Score
+            {t('property_preservation.chargeback_protection_score')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -1336,9 +1347,9 @@ function ChargebackPanel({ workOrder, chargebacks, score, winterRecordCount, deb
                 'text-sm font-medium',
                 score >= 80 ? 'text-emerald-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'
               )}>
-                {score >= 80 ? 'Strong Protection' : score >= 50 ? 'Moderate Protection' : 'Weak Protection'}
+                {score >= 80 ? t('property_preservation.strong_protection') : score >= 50 ? t('property_preservation.moderate_protection') : t('property_preservation.weak_protection')}
               </p>
-              <p className="text-xs text-muted">Document everything to protect against chargebacks</p>
+              <p className="text-xs text-muted">{t('property_preservation.document_everything')}</p>
             </div>
           </div>
 
@@ -1381,7 +1392,7 @@ function ChargebackPanel({ workOrder, chargebacks, score, winterRecordCount, deb
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <AlertTriangle size={16} className="text-red-400" />
-              Chargebacks ({chargebacks.length})
+              {t('property_preservation.chargebacks')} ({chargebacks.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
