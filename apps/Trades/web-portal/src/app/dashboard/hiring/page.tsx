@@ -821,7 +821,7 @@ function ApplicantCard({
                 <Star
                   key={i}
                   size={12}
-                  className={i < applicant.rating ? 'fill-amber-500' : 'fill-none text-zinc-600'}
+                  className={i < applicant.rating ? 'fill-amber-500' : 'fill-none text-muted'}
                 />
               ))}
             </span>

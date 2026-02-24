@@ -687,7 +687,7 @@ function AnalyticsTab() {
                     <span className="text-sm font-medium text-main">{formatCurrency(r.totalAmount)}</span>
                   </div>
                 </div>
-                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-2 bg-secondary rounded-full overflow-hidden">
                   <div
                     className="h-full bg-accent rounded-full"
                     style={{ width: `${(r.totalAmount / maxReasonAmount) * 100}%` }}

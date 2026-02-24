@@ -302,7 +302,7 @@ export default function WorkOrderDetailPage() {
             <div key={key} className="flex items-center gap-1 flex-1">
               <div className={cn(
                 'flex-1 h-1.5 rounded-full transition-colors',
-                isPast || isCurrent ? (isCurrent ? conf.bg.replace('/10', '/40') : 'bg-emerald-500/40') : 'bg-zinc-800'
+                isPast || isCurrent ? (isCurrent ? conf.bg.replace('/10', '/40') : 'bg-emerald-500/40') : 'bg-secondary'
               )} />
             </div>
           );
@@ -536,7 +536,7 @@ function DetailsPanel({ workOrder, woType, national }: {
           ) : (
             <div className="space-y-2">
               {/* Progress bar */}
-              <div className="w-full bg-zinc-800 rounded-full h-2 mb-4">
+              <div className="w-full bg-secondary rounded-full h-2 mb-4">
                 <div
                   className="bg-emerald-500 h-2 rounded-full transition-all"
                   style={{ width: `${checklistKeys.length > 0 ? (completedCount / checklistKeys.length) * 100 : 0}%` }}
@@ -546,7 +546,7 @@ function DetailsPanel({ workOrder, woType, national }: {
                 <div key={key} className="flex items-center gap-3 py-1">
                   <div className={cn(
                     'w-5 h-5 rounded border-2 flex items-center justify-center',
-                    checklist[key] === true ? 'bg-emerald-500/20 border-emerald-500' : 'border-zinc-600'
+                    checklist[key] === true ? 'bg-emerald-500/20 border-emerald-500' : 'border-muted'
                   )}>
                     {checklist[key] === true && <CheckCircle size={12} className="text-emerald-400" />}
                   </div>
@@ -1139,7 +1139,7 @@ function SecuringPanel({ workOrder }: { workOrder: PpWorkOrder }) {
               <div key={item} className="flex items-center gap-3 py-1">
                 <div className={cn(
                   'w-5 h-5 rounded border-2 flex items-center justify-center',
-                  checklist[item] === true ? 'bg-emerald-500/20 border-emerald-500' : 'border-zinc-600'
+                  checklist[item] === true ? 'bg-emerald-500/20 border-emerald-500' : 'border-muted'
                 )}>
                   {checklist[item] === true && <CheckCircle size={12} className="text-emerald-400" />}
                 </div>
@@ -1263,7 +1263,7 @@ function PhotosPanel({ category, workOrder, national }: {
           <div className="space-y-2">
             {requiredPhotos.map(photo => (
               <div key={photo} className="flex items-center gap-3 py-1">
-                <div className="w-5 h-5 rounded border-2 border-zinc-600 flex items-center justify-center">
+                <div className="w-5 h-5 rounded border-2 border-muted flex items-center justify-center">
                   <Camera size={10} className="text-muted" />
                 </div>
                 <span className="text-sm text-main">{photo}</span>
@@ -1343,7 +1343,7 @@ function ChargebackPanel({ workOrder, chargebacks, score, winterRecordCount, deb
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-zinc-800 rounded-full h-3 mb-4">
+          <div className="w-full bg-secondary rounded-full h-3 mb-4">
             <div
               className={cn(
                 'h-3 rounded-full transition-all',
@@ -1359,7 +1359,7 @@ function ChargebackPanel({ workOrder, chargebacks, score, winterRecordCount, deb
               <div key={item.label} className="flex items-center gap-3 py-1">
                 <div className={cn(
                   'w-5 h-5 rounded-full flex items-center justify-center',
-                  item.done ? 'bg-emerald-500/20' : 'bg-zinc-800'
+                  item.done ? 'bg-emerald-500/20' : 'bg-secondary'
                 )}>
                   {item.done ? (
                     <CheckCircle size={12} className="text-emerald-400" />

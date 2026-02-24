@@ -417,7 +417,7 @@ export default function DailyLogsPage() {
             {filteredLogs.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center text-muted-foreground">
-                  <FileText className="w-8 h-8 mx-auto mb-2 text-zinc-400" />
+                  <FileText className="w-8 h-8 mx-auto mb-2 text-muted" />
                   <p className="text-sm">No logs for this view</p>
                 </CardContent>
               </Card>

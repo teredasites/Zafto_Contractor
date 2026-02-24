@@ -37,7 +37,7 @@ export default function AdjustmentsPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <Link
         href="/dashboard/job-intelligence"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-200 mb-6"
+        className="inline-flex items-center gap-2 text-sm text-muted hover:text-main mb-6"
       >
         <ArrowLeft className="h-4 w-4" /> Back to Intelligence
       </Link>
@@ -46,7 +46,7 @@ export default function AdjustmentsPage() {
         <Lightbulb className="h-6 w-6 text-amber-400" />
         <div>
           <h1 className="text-2xl font-semibold text-white">{t('jobIntelligenceadjustments.title')}</h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted">
             Smart suggestions based on job cost analysis
           </p>
         </div>
@@ -60,10 +60,10 @@ export default function AdjustmentsPage() {
       )}
 
       {adjustments.length === 0 ? (
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-12 text-center">
-          <TrendingUp className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
-          <p className="text-zinc-400">{t('jobIntelAdj.noPricingAdjustmentsYet')}</p>
-          <p className="text-zinc-600 text-sm mt-2">
+        <div className="bg-secondary border border-main rounded-xl p-12 text-center">
+          <TrendingUp className="h-12 w-12 text-muted mx-auto mb-4" />
+          <p className="text-muted">{t('jobIntelAdj.noPricingAdjustmentsYet')}</p>
+          <p className="text-muted text-sm mt-2">
             Complete 5+ jobs of the same type with consistent variance to trigger suggestions
           </p>
         </div>
@@ -121,7 +121,7 @@ export default function AdjustmentsPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="text-sm font-medium text-zinc-400 mb-3">{title}</h3>
+      <h3 className="text-sm font-medium text-muted mb-3">{title}</h3>
       <div className="space-y-3">{children}</div>
     </div>
   );
@@ -158,7 +158,7 @@ function AdjustmentCard({
     pending: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
     accepted: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
     applied: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-    dismissed: 'bg-zinc-700/50 text-zinc-500 border-zinc-600/30',
+    dismissed: 'bg-secondary text-muted border-muted',
   };
 
   const typeLabels: Record<string, string> = {
@@ -183,16 +183,16 @@ function AdjustmentCard({
 
   return (
     <div
-      className={`rounded-xl p-5 border ${statusColors[adjustment.status] || 'border-zinc-700/50 bg-zinc-800/50'}`}
+      className={`rounded-xl p-5 border ${statusColors[adjustment.status] || 'border-main bg-secondary'}`}
       style={{ backgroundColor: 'rgb(24 24 27 / 0.5)' }}
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="text-sm font-semibold text-zinc-200 uppercase tracking-wide">
+          <p className="text-sm font-semibold text-main uppercase tracking-wide">
             {adjustment.job_type.replace(/_/g, ' ')}
           </p>
           {adjustment.trade_type && (
-            <p className="text-xs text-zinc-500 mt-0.5">{adjustment.trade_type}</p>
+            <p className="text-xs text-muted mt-0.5">{adjustment.trade_type}</p>
           )}
         </div>
         <span
@@ -206,7 +206,7 @@ function AdjustmentCard({
 
       <p className="text-base font-medium text-white mb-2">{description}</p>
 
-      <div className="flex items-center gap-4 text-xs text-zinc-500 mb-4">
+      <div className="flex items-center gap-4 text-xs text-muted mb-4">
         <span>Based on {adjustment.based_on_jobs} jobs</span>
         {adjustment.avg_variance_pct != null && (
           <span>Avg variance: {adjustment.avg_variance_pct.toFixed(1)}%</span>
@@ -229,7 +229,7 @@ function AdjustmentCard({
           {showActions && onDismiss && (
             <button
               onClick={onDismiss}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-700/30 border border-zinc-600/30 rounded-lg text-sm text-zinc-400 hover:bg-zinc-700/50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary border border-muted rounded-lg text-sm text-muted hover:bg-surface-hover transition-colors"
             >
               <X className="h-3.5 w-3.5" /> Dismiss
             </button>
@@ -246,7 +246,7 @@ function AdjustmentCard({
       )}
 
       {adjustment.applied_at && (
-        <p className="text-xs text-zinc-600 mt-2">
+        <p className="text-xs text-muted mt-2">
           Applied on {formatDateLocale(adjustment.applied_at)}
         </p>
       )}

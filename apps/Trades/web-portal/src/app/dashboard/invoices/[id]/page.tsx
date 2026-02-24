@@ -47,7 +47,7 @@ import { EntityDocumentsPanel } from '@/components/entity-documents-panel';
 
 // ── Invoice Status Pipeline ──
 const PIPELINE_STAGES: { key: InvoiceStatus; label: string; color: string; bgActive: string }[] = [
-  { key: 'draft', label: 'Draft', color: 'text-zinc-400', bgActive: 'bg-zinc-500' },
+  { key: 'draft', label: 'Draft', color: 'text-muted', bgActive: 'bg-muted' },
   { key: 'sent', label: 'Sent', color: 'text-blue-400', bgActive: 'bg-blue-500' },
   { key: 'viewed', label: 'Viewed', color: 'text-purple-400', bgActive: 'bg-purple-500' },
   { key: 'partial', label: 'Partial', color: 'text-amber-400', bgActive: 'bg-amber-500' },
@@ -85,7 +85,7 @@ function InvoicePipeline({ status }: { status: InvoiceStatus }) {
               {idx > 0 && (
                 <div className={cn(
                   'flex-1 h-0.5 rounded',
-                  isPast || isActive ? (isOverdue && idx <= activeIdx ? 'bg-red-500' : stage.bgActive) : 'bg-zinc-800'
+                  isPast || isActive ? (isOverdue && idx <= activeIdx ? 'bg-red-500' : stage.bgActive) : 'bg-secondary'
                 )} />
               )}
               <div className="flex flex-col items-center gap-1">
@@ -93,14 +93,14 @@ function InvoicePipeline({ status }: { status: InvoiceStatus }) {
                   'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all',
                   isActive ? `${isOverdue ? 'bg-red-500/20 border-red-500 text-red-400' : `${stage.bgActive}/20 border-current ${stage.color}`}` :
                   isPast ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' :
-                  'bg-zinc-900 border-zinc-700 text-zinc-600'
+                  'bg-surface border-main text-muted'
                 )}>
                   {isPast ? <CheckCircle className="w-3.5 h-3.5" /> : (idx + 1)}
                 </div>
                 <span className={cn(
                   'text-[10px] font-medium whitespace-nowrap',
                   isActive ? (isOverdue ? 'text-red-400' : stage.color) :
-                  isPast ? 'text-emerald-400' : 'text-zinc-600'
+                  isPast ? 'text-emerald-400' : 'text-muted'
                 )}>
                   {isActive && isOverdue ? 'Overdue' : stage.label}
                 </span>
@@ -693,7 +693,7 @@ export default function InvoiceDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
                   <div
                     className="h-full bg-emerald-500 rounded-full transition-all"
                     style={{ width: `${Math.min(100, (invoice.amountPaid / invoice.total) * 100)}%` }}
@@ -722,7 +722,7 @@ export default function InvoiceDetailPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden">
+                  <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
                     <div
                       className="h-full bg-emerald-500 rounded-full transition-all"
                       style={{ width: `${totalContract > 0 ? Math.min(100, (totalPaid / totalContract) * 100) : 0}%` }}
@@ -746,7 +746,7 @@ export default function InvoiceDetailPage() {
                           {mi.status === 'paid' ? (
                             <CheckCircle size={14} className="text-emerald-500" />
                           ) : (
-                            <div className="w-3.5 h-3.5 rounded-full border-2 border-zinc-600" />
+                            <div className="w-3.5 h-3.5 rounded-full border-2 border-muted" />
                           )}
                           <span className="text-main">{mi.milestoneName || mi.invoiceNumber}</span>
                           <span className="text-muted">({mi.milestonePercent}%)</span>

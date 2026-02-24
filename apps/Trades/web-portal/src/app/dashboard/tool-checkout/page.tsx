@@ -59,7 +59,7 @@ function conditionColor(c: EquipmentCondition): string {
     case 'new': case 'good': return 'text-emerald-600 dark:text-emerald-400';
     case 'fair': return 'text-amber-600 dark:text-amber-400';
     case 'poor': case 'damaged': return 'text-red-600 dark:text-red-400';
-    case 'retired': return 'text-zinc-500';
+    case 'retired': return 'text-muted';
   }
 }
 
@@ -68,7 +68,7 @@ function conditionBg(c: EquipmentCondition): string {
     case 'new': case 'good': return 'bg-emerald-100 dark:bg-emerald-900/30';
     case 'fair': return 'bg-amber-100 dark:bg-amber-900/30';
     case 'poor': case 'damaged': return 'bg-red-100 dark:bg-red-900/30';
-    case 'retired': return 'bg-zinc-100 dark:bg-zinc-800/30';
+    case 'retired': return 'bg-surface/30';
   }
 }
 

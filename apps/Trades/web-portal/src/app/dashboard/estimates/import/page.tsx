@@ -226,7 +226,7 @@ export default function ImportEstimatePage() {
               {['upload', 'review', 'confirm'].indexOf(step) > i ? <Check className="w-3 h-3" /> : i + 1}
             </div>
             <span className={cn('capitalize', step === s ? 'text-main' : 'text-muted')}>{s}</span>
-            {i < 2 && <ArrowRight className="w-3 h-3 text-zinc-700" />}
+            {i < 2 && <ArrowRight className="w-3 h-3 text-muted" />}
           </div>
         ))}
       </div>

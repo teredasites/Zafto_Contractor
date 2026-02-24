@@ -77,7 +77,7 @@ const LOSS_TYPES: { value: string; label: string }[] = [
 
 const STATUS_CONFIG: Record<TpaProgramStatus, { label: string; variant: string; icon: typeof CheckCircle2 }> = {
   active: { label: 'Active', variant: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', icon: CheckCircle2 },
-  inactive: { label: 'Inactive', variant: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20', icon: Pause },
+  inactive: { label: 'Inactive', variant: 'bg-muted/10 text-muted border-muted/20', icon: Pause },
   suspended: { label: 'Suspended', variant: 'bg-red-500/10 text-red-400 border-red-500/20', icon: AlertCircle },
   pending_approval: { label: 'Pending', variant: 'bg-amber-500/10 text-amber-400 border-amber-500/20', icon: Clock },
 };

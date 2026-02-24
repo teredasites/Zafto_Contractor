@@ -521,7 +521,7 @@ export default function JobCostRadarPage() {
                       <div className="flex items-center gap-2">
                         {item.trend === 'over' ? <ArrowUpRight className="w-4 h-4 text-red-500" /> :
                          item.trend === 'under' ? <ArrowDownRight className="w-4 h-4 text-emerald-500" /> :
-                         <Minus className="w-4 h-4 text-zinc-400" />}
+                         <Minus className="w-4 h-4 text-muted" />}
                         <div>
                           <p className="text-sm font-medium">{item.category}</p>
                           <p className="text-xs text-muted-foreground">{item.sampleSize} jobs sampled</p>
@@ -744,7 +744,7 @@ export default function JobCostRadarPage() {
                     <div className="flex items-center gap-3">
                       {fb.direction === 'up' ? <ArrowUpRight className="w-4 h-4 text-red-500" /> :
                        fb.direction === 'down' ? <ArrowDownRight className="w-4 h-4 text-emerald-500" /> :
-                       <Minus className="w-4 h-4 text-zinc-400" />}
+                       <Minus className="w-4 h-4 text-muted" />}
                       <div>
                         <p className="text-sm font-medium">{fb.category}</p>
                         <p className="text-xs text-muted-foreground">{fb.reason}</p>

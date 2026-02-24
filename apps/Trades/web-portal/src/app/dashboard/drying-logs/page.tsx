@@ -335,7 +335,7 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
               {gpp != null && <span className="text-xs text-blue-400 ml-1">({gpp.toFixed(0)} GPP)</span>}
             </div>
           ) : (
-            <span className="text-zinc-500">--</span>
+            <span className="text-muted">--</span>
           )}
         </td>
         <td className="px-4 py-3 text-center">
@@ -344,7 +344,7 @@ function LogRow({ log, isExpanded, onToggle }: { log: DryingLogWithJob; isExpand
               <Image size={14} />{photosArray.length}
             </span>
           ) : (
-            <span className="text-zinc-500">--</span>
+            <span className="text-muted">--</span>
           )}
         </td>
       </tr>
@@ -659,7 +659,7 @@ function PsychrometricTab({ dryingLogs }: { dryingLogs: DryingLogWithJob[] }) {
   return (
     <div className="space-y-6">
       {/* Reference Guide */}
-      <div className="bg-zinc-800/50 border border-zinc-700/30 rounded-xl p-4">
+      <div className="bg-secondary/50 border border-main/30 rounded-xl p-4">
         <h3 className="text-sm font-semibold text-main mb-2">Psychrometric Quick Reference</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
           <div>
@@ -868,7 +868,7 @@ function CompletionTab({ dryingLogs, readings }: { dryingLogs: DryingLogWithJob[
                       <Badge variant="error">Drying ({job.percentDry}%)</Badge>
                     )}
                   </div>
-                  <div className="w-full bg-zinc-800 rounded-full h-2.5">
+                  <div className="w-full bg-secondary rounded-full h-2.5">
                     <div
                       className={cn('h-2.5 rounded-full transition-all',
                         job.allDry ? 'bg-emerald-500' : job.percentDry >= 75 ? 'bg-amber-500' : 'bg-red-500'
@@ -895,7 +895,7 @@ function CompletionTab({ dryingLogs, readings }: { dryingLogs: DryingLogWithJob[
                           {criterion.met ? (
                             <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
                           ) : (
-                            <div className="w-3.5 h-3.5 rounded-full border-2 border-zinc-600 flex-shrink-0" />
+                            <div className="w-3.5 h-3.5 rounded-full border-2 border-muted flex-shrink-0" />
                           )}
                           <span className={criterion.met ? 'text-main' : 'text-muted'}>{criterion.label}</span>
                         </div>

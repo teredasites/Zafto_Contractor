@@ -553,7 +553,7 @@ function ActiveInspectionsTab({
                         <span className="text-xs text-muted">items</span>
                       </div>
                       <div className="w-24 h-2 bg-secondary rounded-full overflow-hidden">
-                        <div className={cn('h-full rounded-full', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-zinc-600')} style={{ width: `${progress}%` }} />
+                        <div className={cn('h-full rounded-full', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-muted')} style={{ width: `${progress}%` }} />
                       </div>
                       {ins.overallScore !== undefined && (
                         <div className="flex items-center gap-1 mt-1 justify-end">
@@ -992,7 +992,7 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
               <span className="text-sm font-medium text-main">{progress}%</span>
             </div>
             <div className="w-full h-3 bg-main rounded-full overflow-hidden">
-              <div className={cn('h-full rounded-full', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-zinc-600')} style={{ width: `${progress}%` }} />
+              <div className={cn('h-full rounded-full', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-muted')} style={{ width: `${progress}%` }} />
             </div>
           </div>
 

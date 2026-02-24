@@ -1795,7 +1795,7 @@ function EstimatesTab({ jobId }: { jobId: string }) {
   }
 
   const STATUS_COLORS: Record<string, string> = {
-    draft: 'bg-zinc-500/10 text-zinc-400',
+    draft: 'bg-muted/10 text-muted',
     sent: 'bg-blue-500/10 text-blue-400',
     approved: 'bg-emerald-500/10 text-emerald-400',
     declined: 'bg-red-500/10 text-red-400',
@@ -1836,7 +1836,7 @@ function EstimatesTab({ jobId }: { jobId: string }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-main truncate">{est.estimateNumber}</span>
-                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', STATUS_COLORS[est.status] || 'bg-zinc-500/10 text-zinc-400')}>
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', STATUS_COLORS[est.status] || 'bg-muted/10 text-muted')}>
                       {est.status}
                     </span>
                   </div>
@@ -2024,11 +2024,11 @@ function ChangeOrdersTab({ jobId }: { jobId: string }) {
   }
 
   const CO_STATUS_COLORS: Record<string, string> = {
-    draft: 'bg-zinc-500/10 text-zinc-400',
+    draft: 'bg-muted/10 text-muted',
     pending_approval: 'bg-amber-500/10 text-amber-400',
     approved: 'bg-emerald-500/10 text-emerald-400',
     rejected: 'bg-red-500/10 text-red-400',
-    voided: 'bg-zinc-500/10 text-zinc-500',
+    voided: 'bg-muted/10 text-muted',
   };
 
   return (
@@ -2059,7 +2059,7 @@ function ChangeOrdersTab({ jobId }: { jobId: string }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-main">{co.number || 'CO'}</span>
-                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', CO_STATUS_COLORS[co.status] || 'bg-zinc-500/10 text-zinc-400')}>
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', CO_STATUS_COLORS[co.status] || 'bg-muted/10 text-muted')}>
                       {co.status.replace('_', ' ')}
                     </span>
                   </div>
@@ -2097,12 +2097,12 @@ function PermitsTab({ jobId }: { jobId: string }) {
   }
 
   const PERMIT_STATUS_COLORS: Record<string, string> = {
-    draft: 'bg-zinc-500/10 text-zinc-400',
+    draft: 'bg-muted/10 text-muted',
     applied: 'bg-blue-500/10 text-blue-400',
     approved: 'bg-emerald-500/10 text-emerald-400',
     rejected: 'bg-red-500/10 text-red-400',
     expired: 'bg-amber-500/10 text-amber-400',
-    closed: 'bg-zinc-500/10 text-zinc-500',
+    closed: 'bg-muted/10 text-muted',
   };
 
   return (
@@ -2138,7 +2138,7 @@ function PermitsTab({ jobId }: { jobId: string }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-main">{permit.permitNumber || permit.permitType}</span>
-                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', PERMIT_STATUS_COLORS[permit.status] || 'bg-zinc-500/10 text-zinc-400')}>
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', PERMIT_STATUS_COLORS[permit.status] || 'bg-muted/10 text-muted')}>
                       {permit.status}
                     </span>
                   </div>
@@ -2778,10 +2778,10 @@ const WEATHER_CODE_MAP: Record<number, { label: string; icon: 'sun' | 'cloud' | 
 
 const WEATHER_ICONS = {
   sun: <Sun size={16} className="text-yellow-400" />,
-  cloud: <Cloud size={16} className="text-zinc-400" />,
+  cloud: <Cloud size={16} className="text-muted" />,
   rain: <CloudRain size={16} className="text-blue-400" />,
   snow: <CloudSnow size={16} className="text-blue-200" />,
-  wind: <Wind size={16} className="text-zinc-400" />,
+  wind: <Wind size={16} className="text-muted" />,
 };
 
 interface TradeWeatherRule {
@@ -3023,7 +3023,7 @@ function JobCompletionChecklist({ jobId, job }: { jobId: string; job: Job }) {
                 type="checkbox"
                 checked={item.checked}
                 onChange={() => toggleItem(item.id)}
-                className="w-4 h-4 rounded border-zinc-600 text-accent focus:ring-accent"
+                className="w-4 h-4 rounded border-muted text-accent focus:ring-accent"
               />
               <span className={cn('text-sm', item.checked ? 'line-through text-muted' : 'text-main')}>
                 {item.label}

@@ -45,7 +45,7 @@ export default function LocksmithPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">{t('locksmith.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">Service logs, master key systems, automotive</p>
+          <p className="text-sm text-muted mt-1">Service logs, master key systems, automotive</p>
         </div>
         <div className="max-w-xs">
           <SearchInput placeholder="Search services..." value={search} onChange={(v) => setSearch(v)} />
@@ -53,20 +53,20 @@ export default function LocksmithPage() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.totalServices')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.totalServices')}</p>
           <p className="text-2xl font-bold text-white">{logs.length}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.automotive')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.automotive')}</p>
           <p className="text-2xl font-bold text-blue-400">{automotiveCount}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.revenue')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.revenue')}</p>
           <p className="text-2xl font-bold text-green-400">{formatCurrency(totalRevenue)}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.thisMonth')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.thisMonth')}</p>
           <p className="text-2xl font-bold text-purple-400">
             {logs.filter((l) => new Date(l.created_at).getMonth() === new Date().getMonth()).length}
           </p>
@@ -75,31 +75,31 @@ export default function LocksmithPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500"><p>{t('locksmith.noRecords')}</p></div>
+          <div className="text-center py-12 text-muted"><p>{t('locksmith.noRecords')}</p></div>
         ) : (
           filtered.map((l) => (
-            <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <div key={l.id} className="bg-surface border border-main rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${SERVICE_COLORS[l.service_type] ?? 'bg-zinc-700 text-zinc-300'}`}>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${SERVICE_COLORS[l.service_type] ?? 'bg-secondary text-main'}`}>
                     {LOCKSMITH_SERVICE_LABELS[l.service_type] ?? l.service_type}
                   </span>
                   {l.lock_type && (
-                    <span className="text-xs text-zinc-500">{LOCK_TYPE_LABELS[l.lock_type] ?? l.lock_type}</span>
+                    <span className="text-xs text-muted">{LOCK_TYPE_LABELS[l.lock_type] ?? l.lock_type}</span>
                   )}
                 </div>
-                <span className="text-xs text-zinc-500">{formatDate(l.created_at)}</span>
+                <span className="text-xs text-muted">{formatDate(l.created_at)}</span>
               </div>
               {l.lock_brand && <p className="text-sm text-white font-medium">{l.lock_brand}</p>}
               {(l.service_type === 'automotive_lockout' || l.service_type === 'transponder_key') && l.vehicle_make && (
                 <p className="text-sm text-blue-400">{[l.vehicle_year, l.vehicle_make, l.vehicle_model].filter(Boolean).join(' ')}</p>
               )}
-              <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+              <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                 {l.pins && <span>{l.pins} pins</span>}
                 {l.keyway && <span>Keyway: {l.keyway}</span>}
                 {l.bitting_code && <span>Bitting: {l.bitting_code}</span>}
               </div>
-              {l.diagnosis && <p className="text-xs text-zinc-400 mt-1">{l.diagnosis}</p>}
+              {l.diagnosis && <p className="text-xs text-muted mt-1">{l.diagnosis}</p>}
               {l.total_cost && (
                 <p className="text-sm font-bold text-white mt-1">{formatCurrency(Number(l.total_cost))}</p>
               )}

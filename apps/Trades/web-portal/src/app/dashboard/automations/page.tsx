@@ -68,7 +68,7 @@ interface Automation {
 const statusConfig: Record<AutomationStatus, { label: string; color: string; bgColor: string; icon: typeof Zap }> = {
   active: { label: 'Active', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30', icon: Zap },
   paused: { label: 'Paused', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30', icon: Pause },
-  draft: { label: 'Draft', color: 'text-zinc-700 dark:text-zinc-300', bgColor: 'bg-zinc-100 dark:bg-zinc-900/30', icon: FileText },
+  draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-surface/30', icon: FileText },
 };
 
 const triggerConfig: Record<TriggerType, { label: string; icon: typeof Briefcase; color: string }> = {
@@ -226,8 +226,8 @@ export default function AutomationsPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-zinc-100 dark:bg-zinc-900/30 rounded-lg">
-                <FileText size={20} className="text-zinc-600 dark:text-zinc-400" />
+              <div className="p-2 bg-surface/30 rounded-lg">
+                <FileText size={20} className="text-muted" />
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{draftCount}</p>

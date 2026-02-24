@@ -205,7 +205,7 @@ function PunchListTab() {
 
       {/* Progress Bar */}
       {items.length > 0 && (
-        <div className="w-full bg-zinc-800 rounded-full h-3 flex overflow-hidden">
+        <div className="w-full bg-secondary rounded-full h-3 flex overflow-hidden">
           {stats.verified > 0 && <div className="bg-emerald-500 h-3" style={{ width: `${(stats.verified / stats.total) * 100}%` }} />}
           {stats.completed > 0 && <div className="bg-blue-500 h-3" style={{ width: `${(stats.completed / stats.total) * 100}%` }} />}
           {stats.inProgress > 0 && <div className="bg-amber-500 h-3" style={{ width: `${(stats.inProgress / stats.total) * 100}%` }} />}

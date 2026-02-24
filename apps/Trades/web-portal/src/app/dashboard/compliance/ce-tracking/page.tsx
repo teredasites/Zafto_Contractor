@@ -30,7 +30,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
     success: { text: 'text-emerald-400', bg: 'bg-emerald-500/10' },
     warning: { text: 'text-amber-400', bg: 'bg-amber-500/10' },
     error: { text: 'text-red-400', bg: 'bg-red-500/10' },
-    default: { text: 'text-zinc-400', bg: 'bg-zinc-800' },
+    default: { text: 'text-muted', bg: 'bg-secondary' },
   }[variant || 'default'];
 
   return (
@@ -42,7 +42,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
           </div>
           <div>
             <p className={`text-2xl font-bold ${colors.text}`}>{value}</p>
-            <p className="text-xs text-zinc-500">{label}</p>
+            <p className="text-xs text-muted">{label}</p>
           </div>
         </div>
       </CardContent>
@@ -57,10 +57,10 @@ function ProgressBar({ completed, required }: { completed: number; required: num
   return (
     <div className="w-full">
       <div className="flex items-center justify-between text-xs mb-1">
-        <span className="text-zinc-400">{completed} / {required} credits</span>
-        <span className="text-zinc-500">{Math.round(pct)}%</span>
+        <span className="text-muted">{completed} / {required} credits</span>
+        <span className="text-muted">{Math.round(pct)}%</span>
       </div>
-      <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+      <div className="h-2 bg-secondary rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -109,7 +109,7 @@ export default function CETrackingPage() {
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-white">{t('complianceCeTracking.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">{t('complianceCe.trackContinuingEducationHoursTowardLicenseRenewals')}</p>
+          <p className="text-sm text-muted mt-1">{t('complianceCe.trackContinuingEducationHoursTowardLicenseRenewals')}</p>
         </div>
       </div>
 
@@ -171,8 +171,8 @@ export default function CETrackingPage() {
           <CardContent>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {summary.categoryBreakdown.map(({ category, hours }) => (
-                <div key={category} className="p-3 bg-zinc-800/50 rounded-lg">
-                  <p className="text-xs text-zinc-500">{category}</p>
+                <div key={category} className="p-3 bg-secondary rounded-lg">
+                  <p className="text-xs text-muted">{category}</p>
                   <p className="text-lg font-bold text-white">{hours} hrs</p>
                 </div>
               ))}
@@ -191,22 +191,22 @@ export default function CETrackingPage() {
       {filtered.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center">
-            <GraduationCap className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">{t('complianceCe.noCeCreditsRecordedYet')}</p>
-            <p className="text-sm text-zinc-500 mt-1">{t('complianceCe.creditsWillAppearHereAsCoursesAreCompleted')}</p>
+            <GraduationCap className="h-12 w-12 text-muted mx-auto mb-3" />
+            <p className="text-muted">{t('complianceCe.noCeCreditsRecordedYet')}</p>
+            <p className="text-sm text-muted mt-1">{t('complianceCe.creditsWillAppearHereAsCoursesAreCompleted')}</p>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-2">
           {filtered.map((credit: CECreditLog) => (
-            <Card key={credit.id} className="hover:border-zinc-600 transition-colors">
+            <Card key={credit.id} className="hover:border-muted transition-colors">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${credit.verified ? 'bg-emerald-500/10' : 'bg-zinc-800'}`}>
+                    <div className={`p-2 rounded-lg ${credit.verified ? 'bg-emerald-500/10' : 'bg-secondary'}`}>
                       {credit.verified
                         ? <CheckCircle className="h-4 w-4 text-emerald-400" />
-                        : <Clock className="h-4 w-4 text-zinc-400" />}
+                        : <Clock className="h-4 w-4 text-muted" />}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -215,7 +215,7 @@ export default function CETrackingPage() {
                           {credit.verified ? 'Verified' : 'Pending'}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                      <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                         {credit.provider && <span>{credit.provider}</span>}
                         {credit.ce_category && (
                           <Badge variant="secondary" size="sm">{credit.ce_category}</Badge>
@@ -227,7 +227,7 @@ export default function CETrackingPage() {
                   <div className="flex items-center gap-3">
                     <div className="text-right">
                       <p className="text-lg font-bold text-white">{credit.credit_hours}</p>
-                      <p className="text-xs text-zinc-500">hours</p>
+                      <p className="text-xs text-muted">hours</p>
                     </div>
                     {credit.certificate_document_path && (
                       <FileText className="h-4 w-4 text-blue-400" />

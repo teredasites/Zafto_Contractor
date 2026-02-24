@@ -901,7 +901,7 @@ export default function CustomerDetailPage() {
                   {health.label}
                 </span>
               </div>
-              <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                 <div
                   className={cn('h-full rounded-full transition-all', health.bgColor)}
                   style={{ width: `${healthScore}%` }}

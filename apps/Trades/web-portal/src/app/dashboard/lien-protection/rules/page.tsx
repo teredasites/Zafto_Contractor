@@ -61,7 +61,7 @@ export default function LienRulesPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-white">{t('lienProtectionrules.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted mt-1">
             {rules.length} states/territories. {noticeRequired} require preliminary notice.
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function LienRulesPage() {
         {filtered.map((rule: LienRule) => {
           const isExpanded = expandedState === rule.state_code;
           return (
-            <Card key={rule.state_code} className="hover:border-zinc-600 transition-colors">
+            <Card key={rule.state_code} className="hover:border-muted transition-colors">
               <CardContent className="p-0">
                 <button
                   onClick={() => setExpandedState(isExpanded ? null : rule.state_code)}
@@ -94,7 +94,7 @@ export default function LienRulesPage() {
                       ) : (
                         <Badge variant="secondary" size="sm">{t('lienRules.noNotice')}</Badge>
                       )}
-                      <span className="text-zinc-400">{rule.lien_filing_deadline_days}d to file</span>
+                      <span className="text-muted">{rule.lien_filing_deadline_days}d to file</span>
                       {rule.notarization_required && (
                         <Badge variant="error" size="sm">{t('lienRules.notarize')}</Badge>
                       )}
@@ -103,29 +103,29 @@ export default function LienRulesPage() {
                 </button>
 
                 {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-zinc-800 pt-3">
+                  <div className="px-4 pb-4 border-t border-main pt-3">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('common.preliminaryNotice')}</h4>
+                        <h4 className="text-xs font-semibold text-muted mb-2 uppercase">{t('common.preliminaryNotice')}</h4>
                         {rule.preliminary_notice_required ? (
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="h-3.5 w-3.5 text-amber-400" />
                               <span className="text-white">{t('common.required')}</span>
                             </div>
-                            <p className="text-zinc-400 text-xs">
+                            <p className="text-muted text-xs">
                               {rule.preliminary_notice_deadline_days} days from {rule.preliminary_notice_from?.replace(/_/g, ' ')}
                             </p>
                           </div>
                         ) : (
                           <div className="flex items-center gap-2">
-                            <XCircle className="h-3.5 w-3.5 text-zinc-500" />
-                            <span className="text-zinc-400">{t('common.notRequired')}</span>
+                            <XCircle className="h-3.5 w-3.5 text-muted" />
+                            <span className="text-muted">{t('common.notRequired')}</span>
                           </div>
                         )}
                       </div>
                       <div>
-                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('common.lienFiling')}</h4>
+                        <h4 className="text-xs font-semibold text-muted mb-2 uppercase">{t('common.lienFiling')}</h4>
                         <div className="space-y-1">
                           <p className="text-white">
                             <span className="font-medium">{rule.lien_filing_deadline_days}</span> days from {rule.lien_filing_from.replace(/_/g, ' ')}
@@ -134,17 +134,17 @@ export default function LienRulesPage() {
                       </div>
                       {rule.lien_enforcement_deadline_days && (
                         <div>
-                          <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('common.enforcement')}</h4>
+                          <h4 className="text-xs font-semibold text-muted mb-2 uppercase">{t('common.enforcement')}</h4>
                           <p className="text-white">{rule.lien_enforcement_deadline_days} days from filing</p>
                         </div>
                       )}
                       <div>
-                        <h4 className="text-xs font-semibold text-zinc-400 mb-2 uppercase">{t('hiring.requirements')}</h4>
+                        <h4 className="text-xs font-semibold text-muted mb-2 uppercase">{t('hiring.requirements')}</h4>
                         <div className="space-y-1 text-xs">
-                          <p className="text-zinc-400">
+                          <p className="text-muted">
                             Notarization: {rule.notarization_required ?
                               <span className="text-amber-400">{t('common.required')}</span> :
-                              <span className="text-zinc-500">{t('common.notRequired')}</span>
+                              <span className="text-muted">{t('common.notRequired')}</span>
                             }
                           </p>
                           {rule.notice_of_intent_required && (
@@ -154,8 +154,8 @@ export default function LienRulesPage() {
                       </div>
                       {rule.statutory_reference && (
                         <div className="col-span-2">
-                          <h4 className="text-xs font-semibold text-zinc-400 mb-1 uppercase">{t('lienRules.statutoryReference')}</h4>
-                          <p className="text-zinc-300 text-xs">{rule.statutory_reference}</p>
+                          <h4 className="text-xs font-semibold text-muted mb-1 uppercase">{t('lienRules.statutoryReference')}</h4>
+                          <p className="text-main text-xs">{rule.statutory_reference}</p>
                         </div>
                       )}
                     </div>
@@ -167,7 +167,7 @@ export default function LienRulesPage() {
         })}
       </div>
 
-      <p className="text-xs text-zinc-600 text-center">
+      <p className="text-xs text-muted text-center">
         Rules derived from publicly available state statutes. Verify with legal counsel for specific situations.
       </p>
     </div>
