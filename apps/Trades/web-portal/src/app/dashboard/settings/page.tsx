@@ -83,28 +83,28 @@ import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDa
 
 type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys' | 'templates' | 'custom_fields' | 'business' | 'kiosk';
 
-const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
-  { id: 'profile', label: 'Profile', icon: <User size={18} /> },
-  { id: 'company', label: 'Company', icon: <Building size={18} /> },
-  { id: 'team', label: 'Team', icon: <Users size={18} /> },
-  { id: 'billing', label: 'Billing', icon: <CreditCard size={18} /> },
-  { id: 'payments', label: 'Payments', icon: <Shield size={18} /> },
-  { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
-  { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
-  { id: 'security', label: 'Security', icon: <Shield size={18} /> },
-  { id: 'integrations', label: 'Integrations', icon: <Link size={18} /> },
-  { id: 'templates', label: 'Templates', icon: <FileText size={18} /> },
-  { id: 'custom_fields', label: 'Custom Fields', icon: <Layers size={18} /> },
-  { id: 'business', label: 'Business Config', icon: <DollarSign size={18} /> },
-  { id: 'kiosk', label: 'Kiosk', icon: <Monitor size={18} /> },
+const coreTabs: { id: SettingsTab; tKey: string; icon: React.ReactNode }[] = [
+  { id: 'profile', tKey: 'settings.tabs.profile', icon: <User size={18} /> },
+  { id: 'company', tKey: 'settings.tabs.company', icon: <Building size={18} /> },
+  { id: 'team', tKey: 'settings.tabs.team', icon: <Users size={18} /> },
+  { id: 'billing', tKey: 'settings.tabs.billing', icon: <CreditCard size={18} /> },
+  { id: 'payments', tKey: 'settings.tabs.payments', icon: <Shield size={18} /> },
+  { id: 'notifications', tKey: 'settings.tabs.notifications', icon: <Bell size={18} /> },
+  { id: 'appearance', tKey: 'settings.tabs.appearance', icon: <Palette size={18} /> },
+  { id: 'security', tKey: 'settings.tabs.security', icon: <Shield size={18} /> },
+  { id: 'integrations', tKey: 'settings.tabs.integrations', icon: <Link size={18} /> },
+  { id: 'templates', tKey: 'settings.tabs.templates', icon: <FileText size={18} /> },
+  { id: 'custom_fields', tKey: 'settings.tabs.customFields', icon: <Layers size={18} /> },
+  { id: 'business', tKey: 'settings.tabs.businessConfig', icon: <DollarSign size={18} /> },
+  { id: 'kiosk', tKey: 'settings.tabs.kiosk', icon: <Monitor size={18} /> },
 ];
 
-const enterpriseTabs: { id: SettingsTab; label: string; icon: React.ReactNode; minTier: 'team' | 'business' | 'enterprise' }[] = [
-  { id: 'branches', label: 'Branches', icon: <GitBranch size={18} />, minTier: 'team' },
-  { id: 'trades', label: 'Trade Modules', icon: <Wrench size={18} />, minTier: 'team' },
-  { id: 'roles', label: 'Roles & Permissions', icon: <UserCog size={18} />, minTier: 'business' },
-  { id: 'forms', label: 'Compliance Forms', icon: <ClipboardList size={18} />, minTier: 'business' },
-  { id: 'apikeys', label: 'API Keys', icon: <Key size={18} />, minTier: 'enterprise' },
+const enterpriseTabs: { id: SettingsTab; tKey: string; icon: React.ReactNode; minTier: 'team' | 'business' | 'enterprise' }[] = [
+  { id: 'branches', tKey: 'settings.tabs.branches', icon: <GitBranch size={18} />, minTier: 'team' },
+  { id: 'trades', tKey: 'settings.tabs.tradeModules', icon: <Wrench size={18} />, minTier: 'team' },
+  { id: 'roles', tKey: 'settings.tabs.rolesPermissions', icon: <UserCog size={18} />, minTier: 'business' },
+  { id: 'forms', tKey: 'settings.tabs.complianceForms', icon: <ClipboardList size={18} />, minTier: 'business' },
+  { id: 'apikeys', tKey: 'settings.tabs.apiKeys', icon: <Key size={18} />, minTier: 'enterprise' },
 ];
 
 export default function SettingsPage() {
@@ -149,7 +149,7 @@ export default function SettingsPage() {
                     )}
                   >
                     {tab.icon}
-                    {tab.label}
+                    {t(tab.tKey)}
                   </button>
                 ))}
 
@@ -170,7 +170,7 @@ export default function SettingsPage() {
                         )}
                       >
                         {tab.icon}
-                        {tab.label}
+                        {t(tab.tKey)}
                       </button>
                     ))}
                   </>
@@ -184,7 +184,7 @@ export default function SettingsPage() {
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted hover:text-main hover:bg-surface-hover transition-colors"
                 >
                   <Upload size={18} />
-                  Import Data
+                  {t('settings.importData')}
                 </a>
               </nav>
             </CardContent>
@@ -266,7 +266,7 @@ function ProfileSettings() {
             </div>
             <div>
               <h3 className="font-medium text-main">{t('settings.profilePhoto')}</h3>
-              <p className="text-sm text-muted">JPG, PNG or GIF. Max 2MB</p>
+              <p className="text-sm text-muted">{t('settings.profilePhotoFormat')}</p>
             </div>
           </div>
 
@@ -353,7 +353,7 @@ function CompanySettings() {
       <Card>
         <CardHeader>
           <CardTitle>{t('settings.companyInformation')}</CardTitle>
-          <CardDescription>Update your business details. Logo appears on all bids, invoices, and client portal.</CardDescription>
+          <CardDescription>{t('settings.updateBusinessDetails')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Logo Upload */}
@@ -386,15 +386,15 @@ function CompanySettings() {
             <div>
               <h3 className="font-medium text-main">{t('settings.companyLogo')}</h3>
               <p className="text-sm text-muted">{t('settings.appearsOnBidsInvoices')}</p>
-              <p className="text-xs text-muted mt-1">PNG, JPG, or SVG. Max 2MB. Square works best.</p>
+              <p className="text-xs text-muted mt-1">{t('settings.logoFormat')}</p>
               <div className="flex gap-2 mt-2">
                 <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
                   <Camera size={14} />
-                  {logo ? 'Change' : 'Upload'}
+                  {logo ? t('settings.changeLogo') : t('settings.uploadLogo')}
                 </Button>
                 {logo && (
                   <Button variant="ghost" size="sm" onClick={removeLogo} className="text-red-500 hover:text-red-600">
-                    Remove
+                    {t('settings.removeLogo')}
                   </Button>
                 )}
               </div>
@@ -412,7 +412,7 @@ function CompanySettings() {
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.address')}</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input placeholder="Street Address" defaultValue="123 Main Street" className="md:col-span-2" />
+              <Input placeholder={t('settings.streetAddress')} defaultValue="123 Main Street" className="md:col-span-2" />
               <Input placeholder={t('common.city')} defaultValue="Hartford" />
               <div className="grid grid-cols-2 gap-4">
                 <Input placeholder={t('common.state')} defaultValue="CT" />
@@ -422,8 +422,8 @@ function CompanySettings() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="License Number" defaultValue="E.123456" />
-            <Input label="Tax ID / EIN" defaultValue="12-3456789" />
+            <Input label={t('settings.licenseNumber')} defaultValue="E.123456" />
+            <Input label={t('settings.taxIdEin')} defaultValue="12-3456789" />
           </div>
 
           <Button>{t('common.saveChanges')}</Button>
@@ -454,11 +454,11 @@ function TeamSettings() {
   ];
 
   const roleLabels: Record<string, string> = {
-    owner: 'Owner',
-    admin: 'Admin',
-    office: 'Office',
-    field_tech: 'Field Tech',
-    subcontractor: 'Subcontractor',
+    owner: t('settings.ownerRole'),
+    admin: t('settings.adminRole'),
+    office: t('settings.officeRole'),
+    field_tech: t('settings.fieldTechRole'),
+    subcontractor: t('settings.subcontractorRole'),
   };
 
   const roleColors: Record<string, string> = {
@@ -479,7 +479,7 @@ function TeamSettings() {
           </div>
           <Button onClick={() => setShowInviteModal(true)}>
             <Plus size={16} />
-            Invite Member
+            {t('settings.inviteMember')}
           </Button>
         </CardHeader>
         <CardContent className="p-0">
@@ -507,7 +507,7 @@ function TeamSettings() {
                     </div>
                     <div>
                       <p className="font-medium text-main">{invite.email}</p>
-                      <p className="text-sm text-muted">Invited {invite.sentAt}</p>
+                      <p className="text-sm text-muted">{t('settings.invited')} {invite.sentAt}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -516,7 +516,7 @@ function TeamSettings() {
                     </span>
                     <Button variant="ghost" size="sm">
                       <Send size={14} />
-                      Resend
+                      {t('settings.resendInvite')}
                     </Button>
                     <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
                       <Trash2 size={14} />
@@ -544,11 +544,11 @@ function TeamSettings() {
               <span className="text-center">{t('common.team')}</span>
               <span className="text-center">{t('common.billing')}</span>
             </div>
-            <PermissionRow role="Owner" permissions={[true, true, true, true, true]} roleColors={roleColors} />
-            <PermissionRow role="Admin" permissions={[true, true, true, true, false]} roleColors={roleColors} />
-            <PermissionRow role="Office" permissions={[true, true, true, false, false]} roleColors={roleColors} />
-            <PermissionRow role="Field Tech" permissions={[false, 'assigned', false, false, false]} roleColors={roleColors} />
-            <PermissionRow role="Subcontractor" permissions={[false, 'assigned', false, false, false]} roleColors={roleColors} />
+            <PermissionRow role={t('settings.ownerRole')} permissions={[true, true, true, true, true]} roleColors={roleColors} />
+            <PermissionRow role={t('settings.adminRole')} permissions={[true, true, true, true, false]} roleColors={roleColors} />
+            <PermissionRow role={t('settings.officeRole')} permissions={[true, true, true, false, false]} roleColors={roleColors} />
+            <PermissionRow role={t('settings.fieldTechRole')} permissions={[false, 'assigned', false, false, false]} roleColors={roleColors} />
+            <PermissionRow role={t('settings.subcontractorRole')} permissions={[false, 'assigned', false, false, false]} roleColors={roleColors} />
           </div>
         </CardContent>
       </Card>
@@ -559,6 +559,7 @@ function TeamSettings() {
 }
 
 function TeamMemberRow({ member, roleLabels, roleColors }: { member: any; roleLabels: Record<string, string>; roleColors: Record<string, string> }) {
+  const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -589,11 +590,11 @@ function TeamMemberRow({ member, roleLabels, roleColors }: { member: any; roleLa
               <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
                 <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                   <Edit size={14} />
-                  Change Role
+                  {t('settings.changeRole')}
                 </button>
                 <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                   <Trash2 size={14} />
-                  Remove
+                  {t('settings.removeTeamMember')}
                 </button>
               </div>
             </>
@@ -710,11 +711,11 @@ function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels:
               </div>
               <div className="flex gap-3 pt-4">
                 <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" className="flex-1">
                   <Send size={16} />
-                  Send Invite
+                  {t('settings.sendInvite')}
                 </Button>
               </div>
             </form>
@@ -740,7 +741,7 @@ function BillingSettings() {
                 <h3 className="font-semibold text-main text-lg">{t('settings.proPlan')}</h3>
                 <Badge variant="success">{t('common.active')}</Badge>
               </div>
-              <p className="text-muted mt-1">$29.99/month - billed monthly</p>
+              <p className="text-muted mt-1">$29.99/{t('common.month')} - {t('settings.billingCycleMonthly')}</p>
             </div>
             <Button variant="secondary">{t('settings.changePlan')}</Button>
           </div>
@@ -749,12 +750,12 @@ function BillingSettings() {
             <h4 className="font-medium text-main mb-3">{t('settings.planFeatures')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {[
-                'Unlimited bids & invoices',
-                'Cloud sync across devices',
-                'Web portal access',
-                'All calculators & tools',
-                'Customer portal',
-                'PDF exports',
+                t('settings.unlimitedBidsInvoices'),
+                t('settings.cloudSync'),
+                t('settings.webPortalAccess'),
+                t('settings.allCalculatorsTools'),
+                t('settings.customerPortal'),
+                t('settings.pdfExports'),
               ].map((feature) => (
                 <div key={feature} className="flex items-center gap-2 text-sm text-muted">
                   <Check size={16} className="text-emerald-500" />
@@ -777,8 +778,8 @@ function BillingSettings() {
                 <CreditCard size={24} className="text-muted" />
               </div>
               <div>
-                <p className="font-medium text-main">Visa ending in 4242</p>
-                <p className="text-sm text-muted">Expires 12/2026</p>
+                <p className="font-medium text-main">{t('settings.visaEndingIn')} 4242</p>
+                <p className="text-sm text-muted">{t('settings.expires')} 12/2026</p>
               </div>
             </div>
             <Button variant="ghost" size="sm">{t('common.update')}</Button>
@@ -793,9 +794,9 @@ function BillingSettings() {
         <CardContent className="p-0">
           <div className="divide-y divide-main">
             {[
-              { date: 'Feb 1, 2026', amount: 29.99, status: 'Paid' },
-              { date: 'Jan 1, 2026', amount: 29.99, status: 'Paid' },
-              { date: 'Dec 1, 2025', amount: 29.99, status: 'Paid' },
+              { date: 'Feb 1, 2026', amount: 29.99, status: t('settings.invoiceStatusPaid') },
+              { date: 'Jan 1, 2026', amount: 29.99, status: t('settings.invoiceStatusPaid') },
+              { date: 'Dec 1, 2025', amount: 29.99, status: t('settings.invoiceStatusPaid') },
             ].map((invoice, i) => (
               <div key={i} className="flex items-center justify-between px-6 py-4">
                 <div>
@@ -806,7 +807,7 @@ function BillingSettings() {
                   <Badge variant="success">{invoice.status}</Badge>
                   <Button variant="ghost" size="sm">
                     <FileText size={14} />
-                    Invoice
+                    {t('common.invoice')}
                   </Button>
                 </div>
               </div>
@@ -870,11 +871,11 @@ function PaymentsSettings() {
   };
 
   const statusConfig: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
-    active: { icon: <CheckCircle2 size={20} />, color: 'text-emerald-500', label: 'Connected & Active' },
-    onboarding_incomplete: { icon: <AlertTriangle size={20} />, color: 'text-amber-500', label: 'Onboarding Incomplete' },
-    restricted: { icon: <XCircle size={20} />, color: 'text-red-500', label: 'Restricted' },
-    disabled: { icon: <XCircle size={20} />, color: 'text-red-500', label: 'Disabled' },
-    not_connected: { icon: <DollarSign size={20} />, color: 'text-muted', label: 'Not Connected' },
+    active: { icon: <CheckCircle2 size={20} />, color: 'text-emerald-500', label: t('settings.stripeConnectedActive') },
+    onboarding_incomplete: { icon: <AlertTriangle size={20} />, color: 'text-amber-500', label: t('settings.stripeOnboardingIncomplete') },
+    restricted: { icon: <XCircle size={20} />, color: 'text-red-500', label: t('settings.stripeRestricted') },
+    disabled: { icon: <XCircle size={20} />, color: 'text-red-500', label: t('settings.stripeDisabled') },
+    not_connected: { icon: <DollarSign size={20} />, color: 'text-muted', label: t('settings.stripeNotConnected') },
   };
 
   const currentStatus = statusConfig[connectStatus?.status || 'not_connected'] || statusConfig.not_connected;
@@ -907,10 +908,10 @@ function PaymentsSettings() {
                   <p className="font-medium text-main">{currentStatus.label}</p>
                   <p className="text-sm text-muted">
                     {connectStatus?.connected
-                      ? 'Payments from customers are routed directly to your bank account'
+                      ? t('settings.stripeConnectedDesc')
                       : connectStatus?.status === 'onboarding_incomplete'
-                      ? 'Complete your Stripe onboarding to start accepting payments'
-                      : 'Connect Stripe to accept card and ACH payments from your customers'}
+                      ? t('settings.stripeOnboardingDesc')
+                      : t('settings.stripeNotConnectedDesc')}
                   </p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={checkStatus}>
@@ -922,11 +923,11 @@ function PaymentsSettings() {
               {!connectStatus?.connected && (
                 <Button onClick={startOnboarding} disabled={connecting} className="w-full">
                   {connecting ? (
-                    <><RefreshCw size={16} className="animate-spin" /> Connecting...</>
+                    <><RefreshCw size={16} className="animate-spin" /> {t('settings.connecting')}</>
                   ) : connectStatus?.status === 'onboarding_incomplete' ? (
-                    <><ExternalLink size={16} /> Continue Onboarding</>
+                    <><ExternalLink size={16} /> {t('settings.continueOnboarding')}</>
                   ) : (
-                    <><DollarSign size={16} /> Connect Stripe Account</>
+                    <><DollarSign size={16} /> {t('settings.connectStripe')}</>
                   )}
                 </Button>
               )}
@@ -939,14 +940,14 @@ function PaymentsSettings() {
                       <p className="text-xs text-muted">{t('settings.cardPayments')}</p>
                       <p className="font-medium text-main flex items-center gap-1.5 mt-0.5">
                         {connectStatus.details.chargesEnabled ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
-                        {connectStatus.details.chargesEnabled ? 'Enabled' : 'Disabled'}
+                        {connectStatus.details.chargesEnabled ? t('common.enabled') : t('common.disabled')}
                       </p>
                     </div>
                     <div className="p-3 bg-secondary rounded-lg">
                       <p className="text-xs text-muted">{t('settings.payouts')}</p>
                       <p className="font-medium text-main flex items-center gap-1.5 mt-0.5">
                         {connectStatus.details.payoutsEnabled ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
-                        {connectStatus.details.payoutsEnabled ? 'Enabled' : 'Disabled'}
+                        {connectStatus.details.payoutsEnabled ? t('common.enabled') : t('common.disabled')}
                       </p>
                     </div>
                   </div>
@@ -958,7 +959,7 @@ function PaymentsSettings() {
                       className="flex items-center gap-2 text-sm text-accent hover:underline"
                     >
                       <ExternalLink size={14} />
-                      Open Stripe Express Dashboard
+                      {t('settings.openStripeDashboard')}
                     </a>
                   )}
                 </div>
@@ -988,20 +989,20 @@ function PaymentsSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <ToggleItem
-            label="Accept credit/debit cards"
-            description="Visa, Mastercard, Amex via Stripe"
+            label={t('settings.acceptCards')}
+            description={t('settings.acceptCardsDesc')}
             checked={true}
             onChange={() => {}}
           />
           <ToggleItem
-            label="Accept ACH bank transfers"
-            description="Lower fees, 3-5 business day processing"
+            label={t('settings.acceptACH')}
+            description={t('settings.acceptACHDesc')}
             checked={true}
             onChange={() => {}}
           />
           <ToggleItem
-            label="Record manual payments"
-            description="Track check, cash, and other offline payments"
+            label={t('settings.recordManualPayments')}
+            description={t('settings.recordManualPaymentsDesc')}
             checked={true}
             onChange={() => {}}
           />
@@ -1058,20 +1059,20 @@ function NotificationSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <ToggleItem
-            label="Bid activity"
-            description="When bids are viewed, accepted, or rejected"
+            label={t('settings.bidActivity')}
+            description={t('settings.bidActivityDesc')}
             checked={notifications.email_bids}
             onChange={() => toggle('email_bids')}
           />
           <ToggleItem
-            label="Invoice activity"
-            description="When invoices are paid or overdue"
+            label={t('settings.invoiceActivity')}
+            description={t('settings.invoiceActivityDesc')}
             checked={notifications.email_invoices}
             onChange={() => toggle('email_invoices')}
           />
           <ToggleItem
-            label="Job updates"
-            description="When jobs are created, updated, or completed"
+            label={t('settings.jobUpdates')}
+            description={t('settings.jobUpdatesDesc')}
             checked={notifications.email_jobs}
             onChange={() => toggle('email_jobs')}
           />
@@ -1085,8 +1086,8 @@ function NotificationSettings() {
         </CardHeader>
         <CardContent>
           <ToggleItem
-            label="Enable all push notifications"
-            description="Receive alerts on your mobile device"
+            label={t('settings.enablePushNotifications')}
+            description={t('settings.enablePushNotificationsDesc')}
             checked={notifications.push_all}
             onChange={() => toggle('push_all')}
           />
@@ -1100,8 +1101,8 @@ function NotificationSettings() {
         </CardHeader>
         <CardContent>
           <ToggleItem
-            label="Urgent alerts only"
-            description="Emergency jobs and critical updates"
+            label={t('settings.urgentAlertsOnly')}
+            description={t('settings.urgentAlertsOnlyDesc')}
             checked={notifications.sms_urgent}
             onChange={() => toggle('sms_urgent')}
           />
@@ -1175,9 +1176,9 @@ function AppearanceSettings() {
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { id: 'light', label: 'Light', bg: 'bg-white', border: 'border-slate-200' },
-              { id: 'dark', label: 'Dark', bg: 'bg-slate-900', border: 'border-slate-700' },
-              { id: 'system', label: 'System', bg: 'bg-gradient-to-r from-white to-slate-900', border: 'border-slate-300' },
+              { id: 'light', label: t('settings.themeLight'), bg: 'bg-white', border: 'border-slate-200' },
+              { id: 'dark', label: t('settings.themeDark'), bg: 'bg-slate-900', border: 'border-slate-700' },
+              { id: 'system', label: t('settings.themeSystem'), bg: 'bg-gradient-to-r from-white to-slate-900', border: 'border-slate-300' },
             ].map((option) => (
               <button
                 key={option.id}
@@ -1297,15 +1298,15 @@ function GoodBetterBestCard() {
             </div>
             <div>
               <CardTitle className="flex items-center gap-2">
-                Good / Better / Best Pricing
+                {t('settings.goodBetterBestPricing')}
                 {enabled && (
                   <span className="px-2 py-0.5 text-[10px] font-bold bg-accent text-white rounded">{t('common.on')}</span>
                 )}
               </CardTitle>
               <CardDescription>
                 {enabled
-                  ? 'Bids show three pricing columns for clients to choose from'
-                  : 'Single price column on bids'}
+                  ? t('settings.goodBetterBestEnabledDesc')
+                  : t('settings.goodBetterBestDisabledDesc')}
               </CardDescription>
             </div>
           </div>
@@ -1330,8 +1331,7 @@ function GoodBetterBestCard() {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
             <Info size={16} className="text-muted mt-0.5 flex-shrink-0" />
             <p className="text-sm text-muted">
-              When enabled, bids show Good, Better, and Best columns with different scope
-              and material options per tier. Clients choose the option that fits their budget.
+              {t('settings.goodBetterBestInfo')}
             </p>
           </div>
         </CardContent>
@@ -1394,11 +1394,11 @@ function SecuritySettings() {
   const handlePasswordUpdate = async () => {
     setPasswordMsg(null);
     if (!newPassword || newPassword.length < 8) {
-      setPasswordMsg({ type: 'error', text: 'New password must be at least 8 characters' });
+      setPasswordMsg({ type: 'error', text: t('settings.passwordMinLength') });
       return;
     }
     if (newPassword !== confirmNewPassword) {
-      setPasswordMsg({ type: 'error', text: 'Passwords do not match' });
+      setPasswordMsg({ type: 'error', text: t('settings.passwordMismatch') });
       return;
     }
     setPasswordLoading(true);
@@ -1408,18 +1408,18 @@ function SecuritySettings() {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) {
         if (error.message.includes('same as')) {
-          setPasswordMsg({ type: 'error', text: 'New password must be different from your current password' });
+          setPasswordMsg({ type: 'error', text: t('settings.passwordSameAsCurrent') });
         } else {
           setPasswordMsg({ type: 'error', text: error.message });
         }
       } else {
-        setPasswordMsg({ type: 'success', text: 'Password updated successfully' });
+        setPasswordMsg({ type: 'success', text: t('settings.passwordUpdateSuccess') });
         setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
       }
     } catch {
-      setPasswordMsg({ type: 'error', text: 'Failed to update password' });
+      setPasswordMsg({ type: 'error', text: t('settings.passwordUpdateFailed') });
     } finally {
       setPasswordLoading(false);
     }
@@ -1544,11 +1544,11 @@ function SecuritySettings() {
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Min 8 characters"
+            placeholder={t('settings.minCharacters')}
             autoComplete="new-password"
           />
           <Input
-            label="Confirm New Password"
+            label={t('settings.confirmNewPassword')}
             type="password"
             value={confirmNewPassword}
             onChange={(e) => setConfirmNewPassword(e.target.value)}
@@ -1561,9 +1561,9 @@ function SecuritySettings() {
             {passwordLoading ? (
               <span className="flex items-center gap-2">
                 <RefreshCw size={14} className="animate-spin" />
-                Updating...
+                {t('common.updating')}
               </span>
-            ) : 'Update Password'}
+            ) : t('settings.updatePassword')}
           </Button>
         </CardContent>
       </Card>
@@ -1598,7 +1598,7 @@ function SecuritySettings() {
               <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
                 <Info size={16} className="text-muted mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-muted">
-                  Scan this QR code with your authenticator app (Google Authenticator, Authy, 1Password, etc.), then enter the 6-digit code below to verify.
+                  {t('settings.mfaScanQRDesc')}
                 </p>
               </div>
               <div className="flex justify-center p-4 bg-white rounded-lg w-fit mx-auto">
@@ -1606,12 +1606,12 @@ function SecuritySettings() {
                 <img src={enrollData.qr} alt="QR Code for authenticator app" width={200} height={200} />
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-muted">Can&apos;t scan? Enter this key manually:</p>
+                <p className="text-xs text-muted">{t('settings.mfaManualEntry')}</p>
                 <code className="block text-xs bg-secondary/50 p-2 rounded font-mono break-all select-all">{enrollData.secret}</code>
               </div>
               <div className="flex items-end gap-3">
                 <Input
-                  label="Verification Code"
+                  label={t('settings.verificationCode')}
                   value={verifyCode}
                   onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
@@ -1622,7 +1622,7 @@ function SecuritySettings() {
                   onClick={handleMfaVerify}
                   disabled={verifyCode.length !== 6}
                 >
-                  Verify
+                  {t('common.verify')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -1632,7 +1632,7 @@ function SecuritySettings() {
                     setVerifyCode('');
                   }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </div>
             </div>
@@ -1646,7 +1646,7 @@ function SecuritySettings() {
                       <Shield size={16} className="text-emerald-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-main text-sm">{factor.friendly_name || 'Authenticator App'}</p>
+                      <p className="font-medium text-main text-sm">{factor.friendly_name || t('settings.authenticatorApp')}</p>
                       <p className="text-xs text-muted">{t('settings.totpEnabled')}</p>
                     </div>
                   </div>
@@ -1656,7 +1656,7 @@ function SecuritySettings() {
                     className="text-red-500 hover:text-red-400"
                     onClick={() => handleMfaUnenroll(factor.id)}
                   >
-                    Disable
+                    {t('settings.disableMFA')}
                   </Button>
                 </div>
               ))}
@@ -1672,9 +1672,9 @@ function SecuritySettings() {
                 {enrolling ? (
                   <span className="flex items-center gap-2">
                     <RefreshCw size={14} className="animate-spin" />
-                    Setting up...
+                    {t('common.settingUp')}
                   </span>
-                ) : 'Enable'}
+                ) : t('settings.enableMFA')}
               </Button>
             </div>
           )}
@@ -1693,9 +1693,9 @@ function SecuritySettings() {
               <div className="space-y-1">
                 <p className="font-medium text-main text-sm">{sessionInfo.email}</p>
                 <p className="text-xs text-muted">
-                  Signed in via {sessionInfo.provider}
+                  {t('settings.signedInVia')} {sessionInfo.provider}
                   {sessionInfo.lastSignIn && (
-                    <> &middot; Last sign in {formatRelativeTime(sessionInfo.lastSignIn)}</>
+                    <> &middot; {t('settings.lastSignIn')} {formatRelativeTime(sessionInfo.lastSignIn)}</>
                   )}
                 </p>
               </div>
@@ -1723,7 +1723,7 @@ function SecuritySettings() {
               window.location.href = '/';
             }}
           >
-            Sign Out All Devices
+            {t('settings.signOutAllDevices')}
           </Button>
         </CardContent>
       </Card>
@@ -1736,10 +1736,10 @@ function IntegrationSettings() {
   const gcal = useGoogleCalendar();
 
   const integrations = [
-    { name: 'QuickBooks', description: 'Sync invoices and payments', connected: false },
-    { name: 'Stripe', description: 'Accept card payments', connected: false },
-    { name: 'Square', description: 'Accept card & tap payments', connected: false },
-    { name: 'PayPal', description: 'Accept PayPal payments', connected: false },
+    { name: 'QuickBooks', description: t('settings.quickbooksDesc'), connected: false },
+    { name: 'Stripe', description: t('settings.stripeIntegrationDesc'), connected: false },
+    { name: 'Square', description: t('settings.squareDesc'), connected: false },
+    { name: 'PayPal', description: t('settings.paypalDesc'), connected: false },
   ];
 
   return (
@@ -1748,7 +1748,7 @@ function IntegrationSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar size={18} /> Google Calendar
+            <Calendar size={18} /> {t('settings.googleCalendar')}
           </CardTitle>
           <CardDescription>{t('settings.twowaySyncBetweenZaftoJobsAndGoogleCalendar')}</CardDescription>
         </CardHeader>
@@ -1778,7 +1778,7 @@ function IntegrationSettings() {
                   window.location.href = url;
                 }}
               >
-                Connect Google Calendar
+                {t('settings.connectGoogleCalendar')}
               </Button>
             </div>
           )}
@@ -1821,26 +1821,26 @@ function IntegrationSettings() {
 // ============================================================
 
 const AVAILABLE_TRADES = [
-  { id: 'hvac', label: 'HVAC', description: 'Heating, ventilation, and air conditioning' },
-  { id: 'plumbing', label: 'Plumbing', description: 'Residential and commercial plumbing' },
-  { id: 'electrical', label: 'Electrical', description: 'Electrical systems and wiring' },
-  { id: 'roofing', label: 'Roofing', description: 'Roof installation, repair, and inspection' },
-  { id: 'restoration', label: 'Restoration', description: 'Water, fire, and mold remediation' },
-  { id: 'general', label: 'General Contractor', description: 'Multi-trade project management' },
-  { id: 'painting', label: 'Painting', description: 'Interior and exterior painting' },
-  { id: 'solar', label: 'Solar', description: 'Solar panel installation and service' },
-  { id: 'pool', label: 'Pool & Spa', description: 'Pool construction, service, and repair' },
-  { id: 'pest', label: 'Pest Control', description: 'Pest management and WDO inspections' },
-  { id: 'landscaping', label: 'Landscaping', description: 'Landscaping and irrigation' },
-  { id: 'fire_protection', label: 'Fire Protection', description: 'Sprinkler systems and fire safety' },
-  { id: 'chimney', label: 'Chimney', description: 'Chimney inspection, sweep, and repair' },
-  { id: 'environmental', label: 'Environmental', description: 'Environmental testing and remediation' },
-  { id: 'septic', label: 'Septic', description: 'Septic system service and inspection' },
-  { id: 'garage_door', label: 'Garage Door', description: 'Garage door installation and repair' },
-  { id: 'locksmith', label: 'Locksmith', description: 'Lock and security systems' },
-  { id: 'appliance', label: 'Appliance Repair', description: 'Home appliance service and repair' },
-  { id: 'flooring', label: 'Flooring', description: 'Floor installation and refinishing' },
-  { id: 'insulation', label: 'Insulation', description: 'Insulation installation and upgrades' },
+  { id: 'hvac', labelKey: 'trades.hvac', descKey: 'trades.hvacDesc' },
+  { id: 'plumbing', labelKey: 'trades.plumbing', descKey: 'trades.plumbingDesc' },
+  { id: 'electrical', labelKey: 'trades.electrical', descKey: 'trades.electricalDesc' },
+  { id: 'roofing', labelKey: 'trades.roofing', descKey: 'trades.roofingDesc' },
+  { id: 'restoration', labelKey: 'trades.restoration', descKey: 'trades.restorationDesc' },
+  { id: 'general', labelKey: 'trades.generalContractor', descKey: 'trades.generalContractorDesc' },
+  { id: 'painting', labelKey: 'trades.painting', descKey: 'trades.paintingDesc' },
+  { id: 'solar', labelKey: 'trades.solar', descKey: 'trades.solarDesc' },
+  { id: 'pool', labelKey: 'trades.poolSpa', descKey: 'trades.poolSpaDesc' },
+  { id: 'pest', labelKey: 'trades.pestControl', descKey: 'trades.pestControlDesc' },
+  { id: 'landscaping', labelKey: 'trades.landscaping', descKey: 'trades.landscapingDesc' },
+  { id: 'fire_protection', labelKey: 'trades.fireProtection', descKey: 'trades.fireProtectionDesc' },
+  { id: 'chimney', labelKey: 'trades.chimney', descKey: 'trades.chimneyDesc' },
+  { id: 'environmental', labelKey: 'trades.environmental', descKey: 'trades.environmentalDesc' },
+  { id: 'septic', labelKey: 'trades.septic', descKey: 'trades.septicDesc' },
+  { id: 'garage_door', labelKey: 'trades.garageDoor', descKey: 'trades.garageDoorDesc' },
+  { id: 'locksmith', labelKey: 'trades.locksmith', descKey: 'trades.locksmithDesc' },
+  { id: 'appliance', labelKey: 'trades.applianceRepair', descKey: 'trades.applianceRepairDesc' },
+  { id: 'flooring', labelKey: 'trades.flooring', descKey: 'trades.flooringDesc' },
+  { id: 'insulation', labelKey: 'trades.insulation', descKey: 'trades.insulationDesc' },
 ];
 
 function BranchesSettings() {
@@ -1891,16 +1891,16 @@ function BranchesSettings() {
             </div>
             <Button onClick={() => { setShowForm(true); setEditingId(null); setFormData({ name: '', address: '', city: '', state: '', zipCode: '', phone: '', email: '', timezone: 'America/New_York' }); }}>
               <Plus size={16} className="mr-2" />
-              Add Branch
+              {t('settings.addBranch')}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {showForm && (
             <div className="mb-6 p-4 border border-main rounded-lg space-y-4">
-              <h4 className="font-medium text-main">{editingId ? 'Edit Branch' : 'New Branch'}</h4>
+              <h4 className="font-medium text-main">{editingId ? t('settings.editBranch') : t('settings.newBranch')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input label="Branch Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                <Input label={t('settings.branchName')} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                 <Input label={t('phone.title')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                 <Input label={t('common.address')} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
                 <Input label={t('common.city')} value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
@@ -1908,7 +1908,7 @@ function BranchesSettings() {
                 <Input label={t('common.zip')} value={formData.zipCode} onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })} />
               </div>
               <div className="flex gap-2">
-                <Button onClick={handleSave}>{editingId ? 'Update' : 'Create'}</Button>
+                <Button onClick={handleSave}>{editingId ? t('settings.updateButton') : t('settings.createButton')}</Button>
                 <Button variant="ghost" onClick={() => { setShowForm(false); setEditingId(null); }}>{t('common.cancel')}</Button>
               </div>
             </div>
@@ -1930,12 +1930,12 @@ function BranchesSettings() {
                   <div>
                     <p className="font-medium text-main">{branch.name}</p>
                     <p className="text-sm text-muted">
-                      {[branch.city, branch.state].filter(Boolean).join(', ') || 'No address'}
+                      {[branch.city, branch.state].filter(Boolean).join(', ') || t('settings.noAddress')}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={branch.isActive ? 'success' : 'secondary'}>
-                      {branch.isActive ? 'Active' : 'Inactive'}
+                      {branch.isActive ? t('common.active') : t('common.inactive')}
                     </Badge>
                     <Button variant="ghost" size="sm" onClick={() => handleEdit(branch)}><Edit size={14} /></Button>
                     <Button variant="ghost" size="sm" onClick={() => deleteBranch(branch.id)}><Trash2 size={14} /></Button>
@@ -1958,24 +1958,24 @@ function RolesSettings() {
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
 
   const permissionCategories = [
-    { label: 'Jobs', perms: [PERMISSIONS.JOBS_VIEW_ALL, PERMISSIONS.JOBS_CREATE, PERMISSIONS.JOBS_EDIT_ALL, PERMISSIONS.JOBS_DELETE, PERMISSIONS.JOBS_ASSIGN] },
-    { label: 'Bids', perms: [PERMISSIONS.BIDS_VIEW_ALL, PERMISSIONS.BIDS_CREATE, PERMISSIONS.BIDS_EDIT_ALL, PERMISSIONS.BIDS_SEND, PERMISSIONS.BIDS_APPROVE] },
-    { label: 'Invoices', perms: [PERMISSIONS.INVOICES_VIEW_ALL, PERMISSIONS.INVOICES_CREATE, PERMISSIONS.INVOICES_EDIT, PERMISSIONS.INVOICES_SEND, PERMISSIONS.INVOICES_APPROVE] },
-    { label: 'Customers', perms: [PERMISSIONS.CUSTOMERS_VIEW_ALL, PERMISSIONS.CUSTOMERS_CREATE, PERMISSIONS.CUSTOMERS_EDIT, PERMISSIONS.CUSTOMERS_DELETE] },
-    { label: 'Team', perms: [PERMISSIONS.TEAM_VIEW, PERMISSIONS.TEAM_INVITE, PERMISSIONS.TEAM_EDIT, PERMISSIONS.TEAM_REMOVE] },
-    { label: 'Finance', perms: [PERMISSIONS.FINANCIALS_VIEW, PERMISSIONS.FINANCIALS_MANAGE, PERMISSIONS.PAYROLL_VIEW, PERMISSIONS.PAYROLL_MANAGE] },
-    { label: 'Admin', perms: [PERMISSIONS.COMPANY_SETTINGS, PERMISSIONS.BILLING_MANAGE, PERMISSIONS.ROLES_MANAGE, PERMISSIONS.AUDIT_VIEW] },
-    { label: 'Clock', perms: [PERMISSIONS.TIMECLOCK_OWN, PERMISSIONS.TIMECLOCK_VIEW_ALL, PERMISSIONS.TIMECLOCK_MANAGE] },
-    { label: 'Schedule', perms: [PERMISSIONS.SCHEDULING_VIEW, PERMISSIONS.SCHEDULING_MANAGE, PERMISSIONS.DISPATCH_VIEW, PERMISSIONS.DISPATCH_MANAGE] },
+    { label: t('settings.permCategoryJobs'), perms: [PERMISSIONS.JOBS_VIEW_ALL, PERMISSIONS.JOBS_CREATE, PERMISSIONS.JOBS_EDIT_ALL, PERMISSIONS.JOBS_DELETE, PERMISSIONS.JOBS_ASSIGN] },
+    { label: t('settings.permCategoryBids'), perms: [PERMISSIONS.BIDS_VIEW_ALL, PERMISSIONS.BIDS_CREATE, PERMISSIONS.BIDS_EDIT_ALL, PERMISSIONS.BIDS_SEND, PERMISSIONS.BIDS_APPROVE] },
+    { label: t('settings.permCategoryInvoices'), perms: [PERMISSIONS.INVOICES_VIEW_ALL, PERMISSIONS.INVOICES_CREATE, PERMISSIONS.INVOICES_EDIT, PERMISSIONS.INVOICES_SEND, PERMISSIONS.INVOICES_APPROVE] },
+    { label: t('settings.permCategoryCustomers'), perms: [PERMISSIONS.CUSTOMERS_VIEW_ALL, PERMISSIONS.CUSTOMERS_CREATE, PERMISSIONS.CUSTOMERS_EDIT, PERMISSIONS.CUSTOMERS_DELETE] },
+    { label: t('settings.permCategoryTeam'), perms: [PERMISSIONS.TEAM_VIEW, PERMISSIONS.TEAM_INVITE, PERMISSIONS.TEAM_EDIT, PERMISSIONS.TEAM_REMOVE] },
+    { label: t('settings.permCategoryFinance'), perms: [PERMISSIONS.FINANCIALS_VIEW, PERMISSIONS.FINANCIALS_MANAGE, PERMISSIONS.PAYROLL_VIEW, PERMISSIONS.PAYROLL_MANAGE] },
+    { label: t('settings.permCategoryAdmin'), perms: [PERMISSIONS.COMPANY_SETTINGS, PERMISSIONS.BILLING_MANAGE, PERMISSIONS.ROLES_MANAGE, PERMISSIONS.AUDIT_VIEW] },
+    { label: t('settings.permCategoryClock'), perms: [PERMISSIONS.TIMECLOCK_OWN, PERMISSIONS.TIMECLOCK_VIEW_ALL, PERMISSIONS.TIMECLOCK_MANAGE] },
+    { label: t('settings.permCategorySchedule'), perms: [PERMISSIONS.SCHEDULING_VIEW, PERMISSIONS.SCHEDULING_MANAGE, PERMISSIONS.DISPATCH_VIEW, PERMISSIONS.DISPATCH_MANAGE] },
   ];
 
   const builtInRoles = [
-    { key: 'owner', label: 'Owner', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300', desc: 'Full access to everything' },
-    { key: 'admin', label: 'Admin', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300', desc: 'Everything except billing' },
-    { key: 'office_manager', label: 'Office Mgr', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300', desc: 'Operations & scheduling' },
-    { key: 'technician', label: 'Technician', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', desc: 'Assigned jobs & field tools' },
-    { key: 'apprentice', label: 'Apprentice', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300', desc: 'Field work, no financials' },
-    { key: 'cpa', label: 'CPA', color: 'bg-secondary text-main', desc: 'Financials & reports only' },
+    { key: 'owner', label: t('settings.ownerRole'), color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300', desc: t('settings.ownerDesc') },
+    { key: 'admin', label: t('settings.adminRole'), color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300', desc: t('settings.adminDesc') },
+    { key: 'office_manager', label: t('settings.officeMgrRole'), color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300', desc: t('settings.officeManagerDesc') },
+    { key: 'technician', label: t('settings.technicianRole'), color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', desc: t('settings.technicianDesc') },
+    { key: 'apprentice', label: t('settings.apprenticeRole'), color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300', desc: t('settings.apprenticeDesc') },
+    { key: 'cpa', label: t('settings.cpaRole'), color: 'bg-secondary text-main', desc: t('settings.cpaDesc') },
   ];
 
   const getAccessLevel = (roleKey: string, categoryPerms: string[]): 'full' | 'partial' | 'own' | 'none' => {
@@ -2053,10 +2053,10 @@ function RolesSettings() {
             </table>
           </div>
           <div className="flex items-center gap-5 mt-4 pt-3 border-t border-light text-[11px] text-muted">
-            <div className="flex items-center gap-1.5"><Check size={13} className="text-emerald-500" /> Full</div>
-            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full border-2 border-amber-400 bg-amber-400/20" /> Partial</div>
-            <div className="flex items-center gap-1.5"><span className="font-medium text-amber-600">{t('common.own')}</span> Own only</div>
-            <div className="flex items-center gap-1.5"><span className="text-muted/40">{'\u2014'}</span> None</div>
+            <div className="flex items-center gap-1.5"><Check size={13} className="text-emerald-500" /> {t('settings.permissionFull')}</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full border-2 border-amber-400 bg-amber-400/20" /> {t('settings.permissionPartial')}</div>
+            <div className="flex items-center gap-1.5"><span className="font-medium text-amber-600">{t('common.own')}</span> {t('settings.permissionOwn')}</div>
+            <div className="flex items-center gap-1.5"><span className="text-muted/40">{'\u2014'}</span> {t('settings.permissionNone')}</div>
           </div>
         </CardContent>
       </Card>
@@ -2080,7 +2080,7 @@ function RolesSettings() {
             {isBusinessOrHigher && (
               <Button onClick={() => createRole({ name: 'New Role', baseRole: 'technician', permissions: {} })}>
                 <Plus size={16} className="mr-2" />
-                Create Role
+                {t('settings.createRole')}
               </Button>
             )}
           </div>
@@ -2091,7 +2091,7 @@ function RolesSettings() {
               <Lock size={32} className="mx-auto mb-3 text-muted opacity-40" />
               <p className="font-medium text-main">{t('common.customRoles')}</p>
               <p className="text-sm text-muted mt-1 max-w-md mx-auto">
-                Create roles tailored to your team structure with per-permission control. Available on Business plan and above.
+                {t('settings.customRolesLocked')}
               </p>
               <Button variant="secondary" className="mt-4">{t('common.upgradePlan')}</Button>
             </div>
@@ -2115,7 +2115,7 @@ function RolesSettings() {
                     <div>
                       <p className="font-medium text-main">{role.name}</p>
                       <p className="text-sm text-muted">
-                        Base: {role.baseRole} | {Object.values(role.permissions).filter(Boolean).length} permissions
+                        {t('settings.baseRole')} {role.baseRole} | {Object.values(role.permissions).filter(Boolean).length} {t('settings.permissionsCount')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -2181,7 +2181,7 @@ function RolesSettings() {
               <Lock size={32} className="mx-auto mb-3 text-muted opacity-40" />
               <p className="font-medium text-main">{t('common.approvalWorkflows')}</p>
               <p className="text-sm text-muted mt-1 max-w-md mx-auto">
-                Require admin approval for bids over a threshold, change orders, and large expenses. Available on Enterprise plan.
+                {t('settings.approvalWorkflowsLocked')}
               </p>
               <Button variant="secondary" className="mt-4">{t('common.upgradePlan')}</Button>
             </div>
@@ -2234,7 +2234,7 @@ function TradeModulesSettings() {
         <CardHeader>
           <CardTitle>{tr('settings.tradeModules')}</CardTitle>
           <CardDescription>
-            Enable trades to unlock trade-specific compliance forms, certification types, and field tools.
+            {tr('settings.tradeModulesDesc')}
             {saving && <span className="ml-2 text-accent">{tr('common.saving')}</span>}
           </CardDescription>
         </CardHeader>
@@ -2260,8 +2260,8 @@ function TradeModulesSettings() {
                     {enabled && <Check size={12} />}
                   </div>
                   <div>
-                    <p className="font-medium text-main text-sm">{trade.label}</p>
-                    <p className="text-xs text-muted mt-0.5">{trade.description}</p>
+                    <p className="font-medium text-main text-sm">{tr(trade.labelKey)}</p>
+                    <p className="text-xs text-muted mt-0.5">{tr(trade.descKey)}</p>
                   </div>
                 </button>
               );
@@ -2315,7 +2315,7 @@ function ComplianceFormsSettings() {
         <CardHeader>
           <CardTitle>{tr('settings.systemFormTemplates')}</CardTitle>
           <CardDescription>
-            Pre-built compliance forms organized by trade. These are read-only system templates.
+            {tr('settings.systemFormsDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -2328,7 +2328,7 @@ function ComplianceFormsSettings() {
               {Object.entries(tradeGroups).sort(([a], [b]) => a.localeCompare(b)).map(([trade, group]) => (
                 <div key={trade}>
                   <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
-                    {trade === 'General' ? 'All Trades' : trade.replace('_', ' ').toUpperCase()}
+                    {trade === 'General' ? tr('settings.allTradesLabel') : trade.replace('_', ' ').toUpperCase()}
                   </h4>
                   <div className="space-y-1">
                     {group.map((template) => (
@@ -2374,7 +2374,7 @@ function ApiKeysSettings() {
             </div>
             <Button disabled>
               <Plus size={16} className="mr-2" />
-              Generate Key
+              {t('settings.generateKey')}
             </Button>
           </div>
         </CardHeader>
@@ -2398,7 +2398,7 @@ function ApiKeysSettings() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={key.isActive ? 'success' : 'secondary'}>
-                      {key.isActive ? 'Active' : 'Revoked'}
+                      {key.isActive ? t('common.active') : t('common.revoked')}
                     </Badge>
                     {key.isActive && (
                       <Button variant="ghost" size="sm" onClick={() => revokeApiKey(key.id)}>{t('settings.revoke')}</Button>
@@ -2453,9 +2453,9 @@ function ToggleItem({
 }
 
 const APPROVAL_ENTITY_TYPES = [
-  { entityType: 'bid', label: 'Bid approval threshold', description: 'Bids over a set amount require admin or owner approval before sending', defaultAmount: 5000 },
-  { entityType: 'change_order', label: 'Change order approval', description: 'Change orders require owner approval before execution', defaultAmount: 1000 },
-  { entityType: 'expense', label: 'Expense approval', description: 'Expenses over a set amount require manager approval', defaultAmount: 2500 },
+  { entityType: 'bid', labelKey: 'settings.approvalBidLabel', descKey: 'settings.approvalBidDesc', defaultAmount: 5000 },
+  { entityType: 'change_order', labelKey: 'settings.approvalChangeOrderLabel', descKey: 'settings.approvalChangeOrderDesc', defaultAmount: 1000 },
+  { entityType: 'expense', labelKey: 'settings.approvalExpenseLabel', descKey: 'settings.approvalExpenseDesc', defaultAmount: 2500 },
 ] as const;
 
 function ApprovalWorkflowToggles({
@@ -2493,14 +2493,14 @@ function ApprovalWorkflowToggles({
 
   return (
     <div className="space-y-4">
-      {APPROVAL_ENTITY_TYPES.map(({ entityType, label, description, defaultAmount }) => {
+      {APPROVAL_ENTITY_TYPES.map(({ entityType, labelKey, descKey, defaultAmount }) => {
         const threshold = getThreshold(entityType);
         const isActive = !!threshold;
         return (
           <div key={entityType} className="space-y-2">
             <ToggleItem
-              label={label}
-              description={description}
+              label={tr(labelKey)}
+              description={tr(descKey)}
               checked={isActive}
               onChange={() => handleToggle(entityType, defaultAmount)}
             />
@@ -2516,7 +2516,7 @@ function ApprovalWorkflowToggles({
                   onBlur={() => handleAmountBlur(entityType)}
                   className="w-28 px-2 py-1 bg-secondary border border-default rounded text-sm text-main tabular-nums focus:outline-none focus:ring-1 focus:ring-accent"
                 />
-                <span className="text-xs text-muted">Requires: {threshold.requiresRole}</span>
+                <span className="text-xs text-muted">{tr('settings.approvalRequires')} {threshold.requiresRole}</span>
               </div>
             )}
           </div>
@@ -2530,19 +2530,19 @@ function ApprovalWorkflowToggles({
 // TEMPLATES SETTINGS (U12b)
 // ============================================================
 const TEMPLATE_TYPES = [
-  { value: 'bid', label: 'Bid' },
-  { value: 'estimate', label: 'Estimate' },
-  { value: 'invoice', label: 'Invoice' },
-  { value: 'proposal', label: 'Proposal' },
-  { value: 'contract', label: 'Contract' },
-  { value: 'agreement', label: 'Agreement' },
-  { value: 'change_order', label: 'Change Order' },
-  { value: 'lien_waiver', label: 'Lien Waiver' },
-  { value: 'warranty', label: 'Warranty' },
-  { value: 'scope_of_work', label: 'Scope of Work' },
-  { value: 'safety_plan', label: 'Safety Plan' },
-  { value: 'daily_report', label: 'Daily Report' },
-  { value: 'other', label: 'Other' },
+  { value: 'bid', labelKey: 'settings.templateTypeBid' },
+  { value: 'estimate', labelKey: 'settings.templateTypeEstimate' },
+  { value: 'invoice', labelKey: 'settings.templateTypeInvoice' },
+  { value: 'proposal', labelKey: 'settings.templateTypeProposal' },
+  { value: 'contract', labelKey: 'settings.templateTypeContract' },
+  { value: 'agreement', labelKey: 'settings.templateTypeAgreement' },
+  { value: 'change_order', labelKey: 'settings.templateTypeChangeOrder' },
+  { value: 'lien_waiver', labelKey: 'settings.templateTypeLienWaiver' },
+  { value: 'warranty', labelKey: 'settings.templateTypeWarranty' },
+  { value: 'scope_of_work', labelKey: 'settings.templateTypeScopeOfWork' },
+  { value: 'safety_plan', labelKey: 'settings.templateTypeSafetyPlan' },
+  { value: 'daily_report', labelKey: 'settings.templateTypeDailyReport' },
+  { value: 'other', labelKey: 'settings.templateTypeOther' },
 ];
 
 function TemplatesSettings() {
@@ -2600,10 +2600,10 @@ function TemplatesSettings() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>{tr('common.documentTemplates')}</CardTitle>
-              <CardDescription>Manage bid, invoice, estimate, and agreement templates</CardDescription>
+              <CardDescription>{tr('settings.documentTemplatesDesc')}</CardDescription>
             </div>
             <Button onClick={() => setShowCreate(!showCreate)}>
-              <Plus size={16} className="mr-1" /> New Template
+              <Plus size={16} className="mr-1" /> {tr('settings.newTemplate')}
             </Button>
           </div>
         </CardHeader>
@@ -2612,15 +2612,15 @@ function TemplatesSettings() {
           {showCreate && (
             <div className="p-4 bg-secondary rounded-lg space-y-3 border border-main">
               <div className="grid grid-cols-2 gap-3">
-                <Input label="Template Name" placeholder="My Custom Bid" value={newName} onChange={(e) => setNewName(e.target.value)} required />
+                <Input label={tr('settings.templateName')} placeholder={tr('settings.templateNamePlaceholder')} value={newName} onChange={(e) => setNewName(e.target.value)} required />
                 <div>
                   <label className="text-xs font-medium text-muted mb-1 block">{tr('common.type')}</label>
                   <select value={newType} onChange={(e) => setNewType(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
-                    {TEMPLATE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    {TEMPLATE_TYPES.map((tt) => <option key={tt.value} value={tt.value}>{tr(tt.labelKey)}</option>)}
                   </select>
                 </div>
               </div>
-              <Input label={tr('common.description')} placeholder="What this template is for..." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
+              <Input label={tr('common.description')} placeholder={tr('settings.templateDescPlaceholder')} value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setShowCreate(false)}>{tr('common.cancel')}</Button>
                 <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>{tr('common.createTemplate')}</Button>
@@ -2630,14 +2630,14 @@ function TemplatesSettings() {
 
           {/* Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted">Filter:</span>
-            <button onClick={() => setFilterType('all')} className={cn('px-2 py-1 rounded text-xs', filterType === 'all' ? 'bg-accent text-white' : 'bg-secondary text-muted hover:text-main')}>All ({templates.length})</button>
-            {TEMPLATE_TYPES.slice(0, 6).map((t) => {
-              const count = templates.filter((tmpl: ZDocsTemplate) => tmpl.templateType === t.value).length;
+            <span className="text-xs text-muted">{tr('common.filter')}:</span>
+            <button onClick={() => setFilterType('all')} className={cn('px-2 py-1 rounded text-xs', filterType === 'all' ? 'bg-accent text-white' : 'bg-secondary text-muted hover:text-main')}>{tr('common.all')} ({templates.length})</button>
+            {TEMPLATE_TYPES.slice(0, 6).map((tt) => {
+              const count = templates.filter((tmpl: ZDocsTemplate) => tmpl.templateType === tt.value).length;
               if (count === 0) return null;
               return (
-                <button key={t.value} onClick={() => setFilterType(t.value)} className={cn('px-2 py-1 rounded text-xs', filterType === t.value ? 'bg-accent text-white' : 'bg-secondary text-muted hover:text-main')}>
-                  {t.label} ({count})
+                <button key={tt.value} onClick={() => setFilterType(tt.value)} className={cn('px-2 py-1 rounded text-xs', filterType === tt.value ? 'bg-accent text-white' : 'bg-secondary text-muted hover:text-main')}>
+                  {tr(tt.labelKey)} ({count})
                 </button>
               );
             })}
@@ -2653,7 +2653,7 @@ function TemplatesSettings() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-medium text-main text-sm">{tmpl.name}</h4>
-                      <p className="text-xs text-muted mt-0.5">{tmpl.description || 'No description'}</p>
+                      <p className="text-xs text-muted mt-0.5">{tmpl.description || tr('common.noDescription')}</p>
                       <div className="flex gap-2 mt-2">
                         <Badge variant="default">{tmpl.templateType}</Badge>
                         {tmpl.isSystem && <Badge variant="secondary">{tr('common.system')}</Badge>}
@@ -2671,8 +2671,8 @@ function TemplatesSettings() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-3 text-xs text-muted">
-                    <span>{tmpl.variables?.length || 0} variables</span>
-                    <span>{tmpl.requiresSignature ? 'Signature required' : 'No signature'}</span>
+                    <span>{tmpl.variables?.length || 0} {tr('settings.variables')}</span>
+                    <span>{tmpl.requiresSignature ? tr('settings.signatureRequired') : tr('settings.noSignature')}</span>
                   </div>
                 </div>
               ))}
@@ -2687,26 +2687,26 @@ function TemplatesSettings() {
 // ============================================================
 // CUSTOM FIELDS SETTINGS (U12c)
 // ============================================================
-const ENTITY_TYPES: { value: EntityType; label: string }[] = [
-  { value: 'customer', label: 'Customer' },
-  { value: 'job', label: 'Job' },
-  { value: 'bid', label: 'Bid' },
-  { value: 'invoice', label: 'Invoice' },
-  { value: 'expense', label: 'Expense' },
-  { value: 'employee', label: 'Employee' },
+const ENTITY_TYPES: { value: EntityType; labelKey: string }[] = [
+  { value: 'customer', labelKey: 'settings.entityTypeCustomer' },
+  { value: 'job', labelKey: 'settings.entityTypeJob' },
+  { value: 'bid', labelKey: 'settings.entityTypeBid' },
+  { value: 'invoice', labelKey: 'settings.entityTypeInvoice' },
+  { value: 'expense', labelKey: 'settings.entityTypeExpense' },
+  { value: 'employee', labelKey: 'settings.entityTypeEmployee' },
 ];
 
-const FIELD_TYPES: { value: FieldType; label: string }[] = [
-  { value: 'text', label: 'Text' },
-  { value: 'textarea', label: 'Long Text' },
-  { value: 'number', label: 'Number' },
-  { value: 'date', label: 'Date' },
-  { value: 'boolean', label: 'Yes/No' },
-  { value: 'select', label: 'Dropdown' },
-  { value: 'multi_select', label: 'Multi-Select' },
-  { value: 'email', label: 'Email' },
-  { value: 'phone', label: 'Phone' },
-  { value: 'url', label: 'URL' },
+const FIELD_TYPES: { value: FieldType; labelKey: string }[] = [
+  { value: 'text', labelKey: 'settings.fieldTypeText' },
+  { value: 'textarea', labelKey: 'settings.fieldTypeLongText' },
+  { value: 'number', labelKey: 'settings.fieldTypeNumber' },
+  { value: 'date', labelKey: 'settings.fieldTypeDate' },
+  { value: 'boolean', labelKey: 'settings.fieldTypeYesNo' },
+  { value: 'select', labelKey: 'settings.fieldTypeDropdown' },
+  { value: 'multi_select', labelKey: 'settings.fieldTypeMultiSelect' },
+  { value: 'email', labelKey: 'settings.fieldTypeEmail' },
+  { value: 'phone', labelKey: 'settings.fieldTypePhone' },
+  { value: 'url', labelKey: 'settings.fieldTypeUrl' },
 ];
 
 function CustomFieldsSettings() {
@@ -2763,10 +2763,10 @@ function CustomFieldsSettings() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>{t('settings.customFields')}</CardTitle>
-              <CardDescription>Add custom data fields to customers, jobs, bids, and more. Values stored in each record&apos;s metadata.</CardDescription>
+              <CardDescription>{t('settings.customFieldsDesc')}</CardDescription>
             </div>
             <Button onClick={() => setShowAdd(!showAdd)}>
-              <Plus size={16} className="mr-1" /> Add Field
+              <Plus size={16} className="mr-1" /> {t('settings.addField')}
             </Button>
           </div>
         </CardHeader>
@@ -2786,7 +2786,7 @@ function CustomFieldsSettings() {
                       : 'text-muted hover:text-main hover:bg-surface-hover'
                   )}
                 >
-                  {et.label} {count > 0 && <span className="ml-1 text-xs opacity-70">({count})</span>}
+                  {t(et.labelKey)} {count > 0 && <span className="ml-1 text-xs opacity-70">({count})</span>}
                 </button>
               );
             })}
@@ -2796,20 +2796,20 @@ function CustomFieldsSettings() {
           {showAdd && (
             <div className="p-4 bg-secondary rounded-lg space-y-3 border border-main">
               <div className="grid grid-cols-2 gap-3">
-                <Input label="Field Label" placeholder="e.g. License Number" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} required />
+                <Input label={t('settings.fieldLabel')} placeholder={t('settings.fieldLabelPlaceholder')} value={newLabel} onChange={(e) => setNewLabel(e.target.value)} required />
                 <div>
                   <label className="text-xs font-medium text-muted mb-1 block">{t('settings.fieldType')}</label>
                   <select value={newType} onChange={(e) => setNewType(e.target.value as FieldType)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
-                    {FIELD_TYPES.map((ft) => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
+                    {FIELD_TYPES.map((ft) => <option key={ft.value} value={ft.value}>{t(ft.labelKey)}</option>)}
                   </select>
                 </div>
               </div>
               {(newType === 'select' || newType === 'multi_select') && (
-                <Input label="Options (comma-separated)" placeholder="Option A, Option B, Option C" value={newOptions} onChange={(e) => setNewOptions(e.target.value)} />
+                <Input label={t('settings.optionsLabel')} placeholder={t('settings.optionsPlaceholder')} value={newOptions} onChange={(e) => setNewOptions(e.target.value)} />
               )}
               <label className="flex items-center gap-2 text-sm text-main cursor-pointer">
                 <input type="checkbox" checked={newRequired} onChange={(e) => setNewRequired(e.target.checked)} className="rounded border-main" />
-                Required field
+                {t('settings.requiredField')}
               </label>
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setShowAdd(false)}>{t('common.cancel')}</Button>
@@ -2821,7 +2821,7 @@ function CustomFieldsSettings() {
           {/* Field list */}
           {currentFields.length === 0 ? (
             <div className="py-8 text-center text-muted text-sm">
-              No custom fields for {ENTITY_TYPES.find((e) => e.value === activeEntity)?.label || activeEntity}. Click &quot;Add Field&quot; to create one.
+              {t('settings.noCustomFieldsMessage')}
             </div>
           ) : (
             <div className="space-y-2">
@@ -2832,10 +2832,10 @@ function CustomFieldsSettings() {
                     <div>
                       <span className="text-sm font-medium text-main">{field.fieldLabel}</span>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <Badge variant="secondary">{FIELD_TYPES.find((ft) => ft.value === field.fieldType)?.label || field.fieldType}</Badge>
+                        <Badge variant="secondary">{(() => { const ft = FIELD_TYPES.find((f) => f.value === field.fieldType); return ft ? t(ft.labelKey) : field.fieldType; })()}</Badge>
                         {field.required && <Badge variant="default">{t('common.required')}</Badge>}
                         {field.options && field.options.length > 0 && (
-                          <span className="text-xs text-muted">{field.options.length} options</span>
+                          <span className="text-xs text-muted">{field.options.length} {t('common.options')}</span>
                         )}
                       </div>
                     </div>
@@ -2844,7 +2844,7 @@ function CustomFieldsSettings() {
                     <button
                       onClick={() => updateField(field.id, { isActive: !field.isActive })}
                       className={cn('p-1.5 rounded hover:bg-surface-hover', field.isActive ? 'text-accent' : 'text-muted')}
-                      title={field.isActive ? 'Disable' : 'Enable'}
+                      title={field.isActive ? t('common.disabled') : t('common.enabled')}
                     >
                       {field.isActive ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
                     </button>
@@ -2858,7 +2858,7 @@ function CustomFieldsSettings() {
           )}
 
           {fields.length > 0 && (
-            <p className="text-xs text-muted">Total custom fields: {fields.length} across all entities</p>
+            <p className="text-xs text-muted">{t('settings.totalCustomFields')} {fields.length}</p>
           )}
         </CardContent>
       </Card>
@@ -2987,7 +2987,7 @@ function BusinessConfigSettings() {
             </div>
             {editSection !== 'tax' && (
               <Button variant="secondary" size="sm" onClick={() => setEditSection('tax')}>
-                <Edit size={14} className="mr-1" /> Edit
+                <Edit size={14} className="mr-1" /> {t('settings.editButton')}
               </Button>
             )}
           </div>
@@ -3010,7 +3010,7 @@ function BusinessConfigSettings() {
                   <Input label={t('common.name')} placeholder="State Tax" value={newTaxName} onChange={(e) => setNewTaxName(e.target.value)} />
                 </div>
                 <div className="w-24">
-                  <Input label="Rate %" type="number" step="0.01" min="0" max="100" placeholder="6.35" value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value.replace(/[^0-9.]/g, ''))} />
+                  <Input label={t('settings.ratePercent')} type="number" step="0.01" min="0" max="100" placeholder={t('settings.ratePercentPlaceholder')} value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value.replace(/[^0-9.]/g, ''))} />
                 </div>
                 <div className="w-32">
                   <label className="text-xs font-medium text-muted mb-1 block">{t('settings.appliesTo')}</label>
@@ -3027,7 +3027,7 @@ function BusinessConfigSettings() {
               </div>
               <div className="flex gap-2 justify-end pt-2">
                 <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>{t('common.cancel')}</Button>
-                <Button size="sm" onClick={handleSaveTaxRates} disabled={saving}>{saving ? 'Saving...' : 'Save Tax Rates'}</Button>
+                <Button size="sm" onClick={handleSaveTaxRates} disabled={saving}>{saving ? t('common.saving') : t('settings.saveTaxRates')}</Button>
               </div>
             </div>
           ) : (
@@ -3054,7 +3054,7 @@ function BusinessConfigSettings() {
             </div>
             {editSection !== 'numbering' && (
               <Button variant="secondary" size="sm" onClick={() => setEditSection('numbering')}>
-                <Edit size={14} className="mr-1" /> Edit
+                <Edit size={14} className="mr-1" /> {t('settings.editButton')}
               </Button>
             )}
           </div>
@@ -3062,13 +3062,13 @@ function BusinessConfigSettings() {
         <CardContent>
           {editSection === 'numbering' ? (
             <div className="space-y-4">
-              <Input label="Invoice Number Format" placeholder="INV-{YYYY}-{NNNN}" value={invFormat} onChange={(e) => setInvFormat(e.target.value)} />
-              <Input label="Bid Number Format" placeholder="BID-{YYMMDD}-{NNN}" value={bidFormat} onChange={(e) => setBidFormat(e.target.value)} />
-              <Input label="Bid Validity (days)" type="number" min="1" max="365" placeholder="30" value={bidValidity} onChange={(e) => setBidValidity(e.target.value.replace(/[^0-9]/g, ''))} />
-              <p className="text-xs text-muted">Variables: {'{YYYY}'} = year, {'{YY}'} = 2-digit year, {'{MM}'} = month, {'{DD}'} = day, {'{NNNN}'} = sequence number, {'{NNN}'} = 3-digit sequence</p>
+              <Input label={t('settings.invoiceNumberFormat')} placeholder={t('settings.invoiceFormatPlaceholder')} value={invFormat} onChange={(e) => setInvFormat(e.target.value)} />
+              <Input label={t('settings.bidNumberFormat')} placeholder={t('settings.bidFormatPlaceholder')} value={bidFormat} onChange={(e) => setBidFormat(e.target.value)} />
+              <Input label={t('settings.bidValidityDays')} type="number" min="1" max="365" placeholder="30" value={bidValidity} onChange={(e) => setBidValidity(e.target.value.replace(/[^0-9]/g, ''))} />
+              <p className="text-xs text-muted">{t('settings.numberingVariablesHelp')}</p>
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>{t('common.cancel')}</Button>
-                <Button size="sm" onClick={handleSaveNumbering} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+                <Button size="sm" onClick={handleSaveNumbering} disabled={saving}>{saving ? t('common.saving') : t('common.save')}</Button>
               </div>
             </div>
           ) : (
@@ -3083,7 +3083,7 @@ function BusinessConfigSettings() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted">{t('settings.bidValidity')}</span>
-                <span className="text-main">{config.bidValidityDays} days</span>
+                <span className="text-main">{config.bidValidityDays} {t('settings.daysUnit')}</span>
               </div>
             </div>
           )}
@@ -3096,11 +3096,11 @@ function BusinessConfigSettings() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base">{t('settings.paymentTerms')}</CardTitle>
-              <CardDescription>Default payment terms, late fees, and early payment discounts</CardDescription>
+              <CardDescription>{t('settings.paymentTermsDesc')}</CardDescription>
             </div>
             {editSection !== 'payment' && (
               <Button variant="secondary" size="sm" onClick={() => setEditSection('payment')}>
-                <Edit size={14} className="mr-1" /> Edit
+                <Edit size={14} className="mr-1" /> {t('settings.editButton')}
               </Button>
             )}
           </div>
@@ -3118,11 +3118,11 @@ function BusinessConfigSettings() {
                   <option value="net_60">Net 60</option>
                 </select>
               </div>
-              <Input label="Late Fee Rate (%/month)" type="number" step="0.1" min="0" max="100" placeholder="1.5" value={lateFee} onChange={(e) => setLateFee(e.target.value.replace(/[^0-9.]/g, ''))} />
-              <Input label="Early Payment Discount (%)" type="number" step="0.1" min="0" max="100" placeholder="2" value={earlyDiscount} onChange={(e) => setEarlyDiscount(e.target.value.replace(/[^0-9.]/g, ''))} />
+              <Input label={t('settings.lateFeeRate')} type="number" step="0.1" min="0" max="100" placeholder={t('settings.lateFeeRatePlaceholder')} value={lateFee} onChange={(e) => setLateFee(e.target.value.replace(/[^0-9.]/g, ''))} />
+              <Input label={t('settings.earlyDiscountRate')} type="number" step="0.1" min="0" max="100" placeholder={t('settings.earlyDiscountPlaceholder')} value={earlyDiscount} onChange={(e) => setEarlyDiscount(e.target.value.replace(/[^0-9.]/g, ''))} />
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>{t('common.cancel')}</Button>
-                <Button size="sm" onClick={handleSavePayment} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+                <Button size="sm" onClick={handleSavePayment} disabled={saving}>{saving ? t('common.saving') : t('common.save')}</Button>
               </div>
             </div>
           ) : (
@@ -3133,7 +3133,7 @@ function BusinessConfigSettings() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted">{t('settings.lateFee')}</span>
-                <span className="text-main">{config.lateFeeRate}% / month</span>
+                <span className="text-main">{config.lateFeeRate}% {t('settings.perMonth')}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted">{t('settings.earlyPaymentDiscount')}</span>
@@ -3148,15 +3148,15 @@ function BusinessConfigSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t('settings.customStatuses')}</CardTitle>
-          <CardDescription>Customize statuses for jobs, bids, invoices, leads, and priorities. Null/empty = use system defaults.</CardDescription>
+          <CardDescription>{t('settings.customStatusesDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {[
-            { type: 'job', label: 'Job Statuses', values: jobStatuses, defaults: DEFAULT_JOB_STATUSES },
-            { type: 'bid', label: 'Bid Statuses', values: bidStatuses, defaults: DEFAULT_BID_STATUSES },
-            { type: 'invoice', label: 'Invoice Statuses', values: invoiceStatuses, defaults: DEFAULT_INVOICE_STATUSES },
-            { type: 'lead', label: 'Lead Sources', values: leadSources, defaults: DEFAULT_LEAD_SOURCES },
-            { type: 'priority', label: 'Priority Levels', values: priorityLevels, defaults: DEFAULT_PRIORITY_LEVELS },
+            { type: 'job', label: t('settings.jobStatuses'), values: jobStatuses, defaults: DEFAULT_JOB_STATUSES },
+            { type: 'bid', label: t('settings.bidStatuses'), values: bidStatuses, defaults: DEFAULT_BID_STATUSES },
+            { type: 'invoice', label: t('settings.invoiceStatuses'), values: invoiceStatuses, defaults: DEFAULT_INVOICE_STATUSES },
+            { type: 'lead', label: t('settings.leadSources'), values: leadSources, defaults: DEFAULT_LEAD_SOURCES },
+            { type: 'priority', label: t('settings.priorityLevels'), values: priorityLevels, defaults: DEFAULT_PRIORITY_LEVELS },
           ].map((section) => (
             <div key={section.type} className="p-3 bg-secondary rounded-lg border border-main">
               <div className="flex items-center justify-between mb-2">
@@ -3165,7 +3165,7 @@ function BusinessConfigSettings() {
                   onClick={() => setStatusEdit(statusEdit?.type === section.type ? null : { type: section.type, values: [...section.values] })}
                   className="text-xs text-accent hover:underline"
                 >
-                  {statusEdit?.type === section.type ? 'Cancel' : 'Edit'}
+                  {statusEdit?.type === section.type ? t('common.cancel') : t('settings.editButton')}
                 </button>
               </div>
 
@@ -3186,7 +3186,7 @@ function BusinessConfigSettings() {
                       value={newStatus}
                       onChange={(e) => setNewStatus(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddStatus())}
-                      placeholder="Add status..."
+                      placeholder={t('settings.addStatusPlaceholder')}
                       className="flex-1 px-2 py-1 bg-primary border border-main rounded text-sm text-main placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
                     />
                     <Button variant="secondary" size="sm" onClick={handleAddStatus} disabled={!newStatus.trim()}>
@@ -3195,7 +3195,7 @@ function BusinessConfigSettings() {
                   </div>
                   <div className="flex gap-2 justify-end">
                     <button onClick={() => setStatusEdit({ ...statusEdit, values: section.defaults })} className="text-xs text-muted hover:text-main">{t('settings.resetToDefaults')}</button>
-                    <Button size="sm" onClick={handleSaveStatuses} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+                    <Button size="sm" onClick={handleSaveStatuses} disabled={saving}>{saving ? t('common.saving') : t('common.save')}</Button>
                   </div>
                 </div>
               ) : (
@@ -3301,11 +3301,11 @@ function KioskSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-main">Time Clock Kiosk</h2>
-          <p className="text-xs text-muted mt-0.5">Set up tablet or PC stations for employee clock-in</p>
+          <h2 className="text-lg font-semibold text-main">{t('settings.kioskTitle')}</h2>
+          <p className="text-xs text-muted mt-0.5">{t('settings.kioskDesc')}</p>
         </div>
         <Button size="sm" onClick={() => setShowCreate(true)}>
-          <Plus size={14} className="mr-1.5" /> Create Kiosk
+          <Plus size={14} className="mr-1.5" /> {t('settings.createKiosk')}
         </Button>
       </div>
 
@@ -3314,40 +3314,40 @@ function KioskSettings() {
         <Card>
           <CardContent className="pt-5 space-y-4">
             <div>
-              <label className="text-xs font-medium text-main block mb-1">Kiosk Name</label>
+              <label className="text-xs font-medium text-main block mb-1">{t('settings.kioskNameLabel')}</label>
               <Input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="e.g. Shop Front Desk, Warehouse Entry"
+                placeholder={t('settings.kioskNamePlaceholder')}
                 className="max-w-md"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-main block mb-2">Authentication Methods</label>
+              <label className="text-xs font-medium text-main block mb-2">{t('settings.authMethodsLabel')}</label>
               <div className="flex flex-wrap gap-3">
                 <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
                   <input type="checkbox" checked={newAuthPin} onChange={(e) => setNewAuthPin(e.target.checked)} className="rounded" />
-                  <Hash size={14} /> PIN Code
+                  <Hash size={14} /> {t('settings.pinCodeAuth')}
                 </label>
                 <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
                   <input type="checkbox" checked={newAuthNameTap} onChange={(e) => setNewAuthNameTap(e.target.checked)} className="rounded" />
-                  <Users size={14} /> Name Tap
+                  <Users size={14} /> {t('settings.nameTapAuth')}
                 </label>
                 <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
                   <input type="checkbox" checked={newAuthPassword} onChange={(e) => setNewAuthPassword(e.target.checked)} className="rounded" />
-                  <Lock size={14} /> Password
+                  <Lock size={14} /> {t('settings.passwordAuth')}
                 </label>
                 <label className="flex items-center gap-2 text-xs text-muted cursor-not-allowed opacity-50">
                   <input type="checkbox" disabled className="rounded" />
-                  <Camera size={14} /> Facial Recognition (Coming Soon)
+                  <Camera size={14} /> {t('settings.facialRecognition')}
                 </label>
               </div>
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={handleCreate} disabled={creating || !newName.trim()}>
-                {creating ? 'Creating...' : 'Create Kiosk'}
+                {creating ? t('settings.creatingKiosk') : t('settings.createKioskButton')}
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowCreate(false)}>Cancel</Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowCreate(false)}>{t('common.cancel')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -3358,8 +3358,8 @@ function KioskSettings() {
         <Card>
           <CardContent className="py-12 text-center">
             <Monitor size={40} className="mx-auto mb-3 text-muted opacity-40" />
-            <p className="text-sm font-medium text-main">No kiosks configured</p>
-            <p className="text-xs text-muted mt-1">Create a kiosk station for tablet or PC-based employee clock-in</p>
+            <p className="text-sm font-medium text-main">{t('settings.noKiosksConfigured')}</p>
+            <p className="text-xs text-muted mt-1">{t('settings.kioskEmptyState')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -3373,7 +3373,7 @@ function KioskSettings() {
                       <Monitor size={16} className="text-accent shrink-0" />
                       <h3 className="text-sm font-medium text-main truncate">{kiosk.name}</h3>
                       <Badge variant={kiosk.isActive ? 'default' : 'secondary'} className="text-[10px]">
-                        {kiosk.isActive ? 'Active' : 'Inactive'}
+                        {kiosk.isActive ? t('common.active') : t('common.inactive')}
                       </Badge>
                     </div>
                     <div className="mt-2 flex items-center gap-2">
@@ -3385,23 +3385,23 @@ function KioskSettings() {
                         variant="ghost"
                         className="h-6 w-6 p-0"
                         onClick={() => handleCopy(kiosk.accessToken)}
-                        title="Copy URL"
+                        title={t('settings.copyUrl')}
                       >
                         {copied === kiosk.accessToken ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
                       </Button>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      {kiosk.authMethods.pin && <Badge variant="secondary" className="text-[10px]"><Hash size={10} className="mr-0.5" /> PIN</Badge>}
-                      {kiosk.authMethods.name_tap && <Badge variant="secondary" className="text-[10px]"><Users size={10} className="mr-0.5" /> Name Tap</Badge>}
-                      {kiosk.authMethods.password && <Badge variant="secondary" className="text-[10px]"><Lock size={10} className="mr-0.5" /> Password</Badge>}
-                      {kiosk.authMethods.face && <Badge variant="secondary" className="text-[10px]"><Camera size={10} className="mr-0.5" /> Face</Badge>}
+                      {kiosk.authMethods.pin && <Badge variant="secondary" className="text-[10px]"><Hash size={10} className="mr-0.5" /> {t('settings.pinCodeAuth')}</Badge>}
+                      {kiosk.authMethods.name_tap && <Badge variant="secondary" className="text-[10px]"><Users size={10} className="mr-0.5" /> {t('settings.nameTapAuth')}</Badge>}
+                      {kiosk.authMethods.password && <Badge variant="secondary" className="text-[10px]"><Lock size={10} className="mr-0.5" /> {t('settings.passwordAuth')}</Badge>}
+                      {kiosk.authMethods.face && <Badge variant="secondary" className="text-[10px]"><Camera size={10} className="mr-0.5" /> {t('settings.facialRecognition')}</Badge>}
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px]" onClick={() => handleToggle(kiosk)}>
                       {kiosk.isActive ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
                     </Button>
-                    <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px]" onClick={() => handleRegenerate(kiosk.id)} title="Regenerate URL">
+                    <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px]" onClick={() => handleRegenerate(kiosk.id)} title={t('settings.regenerateUrl')}>
                       <RefreshCw size={14} />
                     </Button>
                     <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] text-red-400 hover:text-red-300" onClick={() => setConfirmDelete(kiosk.id)}>
@@ -3413,10 +3413,10 @@ function KioskSettings() {
                 {/* Delete confirm */}
                 {confirmDelete === kiosk.id && (
                   <div className="mt-3 p-2 bg-red-500/10 border border-red-500/20 rounded flex items-center justify-between">
-                    <span className="text-xs text-red-400">Delete this kiosk? This will deactivate the URL.</span>
+                    <span className="text-xs text-red-400">{t('settings.deleteKioskConfirm')}</span>
                     <div className="flex gap-1.5">
-                      <Button size="sm" variant="ghost" className="h-6 text-[11px]" onClick={() => setConfirmDelete(null)}>Cancel</Button>
-                      <Button size="sm" variant="danger" className="h-6 text-[11px]" onClick={() => handleDelete(kiosk.id)}>Delete</Button>
+                      <Button size="sm" variant="ghost" className="h-6 text-[11px]" onClick={() => setConfirmDelete(null)}>{t('common.cancel')}</Button>
+                      <Button size="sm" variant="danger" className="h-6 text-[11px]" onClick={() => handleDelete(kiosk.id)}>{t('common.delete')}</Button>
                     </div>
                   </div>
                 )}
@@ -3428,12 +3428,12 @@ function KioskSettings() {
 
       {/* Employee PINs */}
       <div>
-        <h3 className="text-sm font-medium text-main mb-3">Employee PINs</h3>
-        <p className="text-xs text-muted mb-3">Set 4-8 digit PINs for kiosk clock-in authentication</p>
+        <h3 className="text-sm font-medium text-main mb-3">{t('settings.employeePINsTitle')}</h3>
+        <p className="text-xs text-muted mb-3">{t('settings.employeePINsDesc')}</p>
         <Card>
           <CardContent className="py-3">
             {employeePins.length === 0 ? (
-              <p className="text-xs text-muted text-center py-4">No active employees found</p>
+              <p className="text-xs text-muted text-center py-4">{t('settings.noActiveEmployees')}</p>
             ) : (
               <div className="divide-y divide-border">
                 {employeePins.map((emp) => (
@@ -3441,18 +3441,18 @@ function KioskSettings() {
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-main">{emp.userName || 'Unknown'}</span>
                       {emp.hasPin ? (
-                        <Badge variant="default" className="text-[10px]">PIN Set</Badge>
+                        <Badge variant="default" className="text-[10px]">{t('settings.pinSet')}</Badge>
                       ) : (
-                        <Badge variant="secondary" className="text-[10px]">No PIN</Badge>
+                        <Badge variant="secondary" className="text-[10px]">{t('settings.noPin')}</Badge>
                       )}
                     </div>
                     <div className="flex gap-1">
                       <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => { setPinModal({ userId: emp.userId, userName: emp.userName || 'Employee' }); setPinValue(''); setPinVisible(false); }}>
-                        {emp.hasPin ? 'Change PIN' : 'Set PIN'}
+                        {emp.hasPin ? t('settings.changePIN') : t('settings.setPIN')}
                       </Button>
                       {emp.hasPin && (
                         <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px] text-red-400" onClick={() => removeEmployeePin(emp.userId)}>
-                          Remove
+                          {t('settings.removePIN')}
                         </Button>
                       )}
                     </div>
@@ -3468,14 +3468,14 @@ function KioskSettings() {
       {pinModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setPinModal(null)}>
           <div className="bg-card border border-border rounded-xl p-6 w-full max-w-sm shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-sm font-semibold text-main mb-1">Set PIN for {pinModal.userName}</h3>
-            <p className="text-xs text-muted mb-4">Enter a 4-8 digit PIN for kiosk clock-in</p>
+            <h3 className="text-sm font-semibold text-main mb-1">{t('settings.setPINForUser')} {pinModal.userName}</h3>
+            <p className="text-xs text-muted mb-4">{t('settings.pinEntryDesc')}</p>
             <div className="relative">
               <Input
                 type={pinVisible ? 'text' : 'password'}
                 value={pinValue}
                 onChange={(e) => setPinValue(e.target.value.replace(/\D/g, '').slice(0, 8))}
-                placeholder="Enter PIN (4-8 digits)"
+                placeholder={t('settings.pinPlaceholder')}
                 className="pr-10"
                 inputMode="numeric"
                 pattern="[0-9]*"
@@ -3490,9 +3490,9 @@ function KioskSettings() {
             </div>
             <div className="flex gap-2 mt-4">
               <Button size="sm" onClick={handleSetPin} disabled={settingPin || pinValue.length < 4}>
-                {settingPin ? 'Saving...' : 'Save PIN'}
+                {settingPin ? t('settings.savingPIN') : t('settings.savePIN')}
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => setPinModal(null)}>Cancel</Button>
+              <Button size="sm" variant="ghost" onClick={() => setPinModal(null)}>{t('common.cancel')}</Button>
             </div>
           </div>
         </div>
