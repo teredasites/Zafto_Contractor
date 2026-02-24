@@ -18,13 +18,13 @@ export default function DashboardError({ error, reset }: { error: Error & { dige
         <div className="mt-4 flex justify-center gap-3">
           <button
             onClick={reset}
-            className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-md bg-surface px-4 py-2 text-sm font-medium text-main hover:bg-surface-hover"
           >
             Try again
           </button>
           <a
             href="/dashboard"
-            className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+            className="rounded-md border border-main bg-secondary px-4 py-2 text-sm font-medium text-muted hover:bg-surface-hover"
           >
             Back to Dashboard
           </a>

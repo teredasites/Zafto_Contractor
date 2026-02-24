@@ -56,12 +56,12 @@ export function PhoneDialer({ prefillNumber, customerId, jobId, onClose, compact
 
   return (
     <div className={cn(
-      'bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl',
+      'bg-surface border border-main rounded-xl shadow-xl',
       compact ? 'p-3 w-64' : 'p-6 w-80'
     )}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-zinc-400">Dial</h3>
+        <h3 className="text-sm font-medium text-muted">Dial</h3>
         {onClose && (
           <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={onClose}>
             <X className="h-3.5 w-3.5" />
@@ -70,13 +70,13 @@ export function PhoneDialer({ prefillNumber, customerId, jobId, onClose, compact
       </div>
 
       {/* Number display */}
-      <div className="flex items-center justify-between mb-4 bg-zinc-800 rounded-lg px-4 py-3">
+      <div className="flex items-center justify-between mb-4 bg-secondary rounded-lg px-4 py-3">
         <input
           type="tel"
           value={number}
           onChange={(e) => setNumber(e.target.value)}
           placeholder="Enter number"
-          className="bg-transparent text-xl font-mono text-zinc-100 focus:outline-none w-full"
+          className="bg-transparent text-xl font-mono text-main focus:outline-none w-full"
         />
         {number && (
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleBackspace}>
@@ -92,7 +92,7 @@ export function PhoneDialer({ prefillNumber, customerId, jobId, onClose, compact
             <button
               key={digit}
               onClick={() => handleDial(digit)}
-              className="h-12 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-lg font-medium text-zinc-100 transition-colors"
+              className="h-12 rounded-lg bg-secondary hover:bg-surface-hover text-lg font-medium text-main transition-colors"
             >
               {digit}
             </button>
