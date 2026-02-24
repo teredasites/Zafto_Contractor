@@ -156,20 +156,24 @@ export default function CalendarPage() {
                 </Button>
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={goToPreviousMonth}
+                    onClick={view === 'month' ? goToPreviousMonth : view === 'week' ? goToPreviousWeek : goToPreviousDay}
                     className="p-1.5 hover:bg-surface-hover rounded-lg transition-colors"
                   >
                     <ChevronLeft size={20} className="text-muted" />
                   </button>
                   <button
-                    onClick={goToNextMonth}
+                    onClick={view === 'month' ? goToNextMonth : view === 'week' ? goToNextWeek : goToNextDay}
                     className="p-1.5 hover:bg-surface-hover rounded-lg transition-colors"
                   >
                     <ChevronRight size={20} className="text-muted" />
                   </button>
                 </div>
                 <h2 className="text-lg font-semibold text-main">
-                  {MONTHS[month]} {year}
+                  {view === 'day'
+                    ? currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+                    : view === 'week'
+                    ? `${weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} — ${weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+                    : `${MONTHS[month]} ${year}`}
                 </h2>
               </div>
               <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg">
@@ -190,62 +194,135 @@ export default function CalendarPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {/* Days of week header */}
-              <div className="grid grid-cols-7 gap-1 mb-2">
-                {DAYS.map((day) => (
-                  <div
-                    key={day}
-                    className="text-center text-xs font-medium text-muted py-2"
-                  >
-                    {day}
+              {/* Month View */}
+              {view === 'month' && (
+                <>
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {DAYS.map((day) => (
+                      <div key={day} className="text-center text-xs font-medium text-muted py-2">{day}</div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {days.map((day, index) => {
+                      const isCurrentMonth = day.getMonth() === month;
+                      const isToday = day.toDateString() === new Date().toDateString();
+                      const isSelected = selectedDate && day.toDateString() === selectedDate.toDateString();
+                      const dayEvents = getEventsForDay(day);
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => { setSelectedDate(day); }}
+                          className={cn(
+                            'aspect-square p-1 rounded-lg transition-colors relative',
+                            isCurrentMonth ? 'text-main hover:bg-surface-hover' : 'text-muted/50',
+                            isToday && 'bg-accent-light',
+                            isSelected && 'ring-2 ring-accent bg-accent-light'
+                          )}
+                        >
+                          <span className={cn('text-sm', isToday && 'font-semibold text-accent')}>{day.getDate()}</span>
+                          {dayEvents.length > 0 && (
+                            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-0.5">
+                              {dayEvents.slice(0, 3).map((event, i) => (
+                                <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: event.color }} />
+                              ))}
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
 
-              {/* Calendar grid */}
-              <div className="grid grid-cols-7 gap-1">
-                {days.map((day, index) => {
-                  const isCurrentMonth = day.getMonth() === month;
-                  const isToday = day.toDateString() === new Date().toDateString();
-                  const isSelected = selectedDate && day.toDateString() === selectedDate.toDateString();
-                  const dayEvents = getEventsForDay(day);
+              {/* Week View */}
+              {view === 'week' && (
+                <div className="space-y-0">
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {weekDays.map((day, i) => {
+                      const isToday = day.toDateString() === new Date().toDateString();
+                      return (
+                        <div key={i} className="text-center">
+                          <div className="text-xs font-medium text-muted">{DAYS[day.getDay()]}</div>
+                          <div className={cn('text-sm mt-0.5', isToday ? 'font-bold text-accent' : 'text-main')}>{day.getDate()}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1 min-h-[300px]">
+                    {weekDays.map((day, i) => {
+                      const dayEvents = getEventsForDay(day);
+                      const isToday = day.toDateString() === new Date().toDateString();
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setSelectedDate(day)}
+                          className={cn(
+                            'border border-main rounded-lg p-2 cursor-pointer hover:bg-surface-hover transition-colors min-h-[200px]',
+                            isToday && 'border-accent bg-accent-light'
+                          )}
+                        >
+                          <div className="space-y-1">
+                            {dayEvents.map((event) => (
+                              <div
+                                key={event.id}
+                                className="px-2 py-1 rounded text-xs cursor-pointer hover:opacity-80"
+                                style={{ backgroundColor: `${event.color}20`, borderLeft: `3px solid ${event.color}` }}
+                                onClick={(e) => { e.stopPropagation(); if (event.jobId) router.push(`/dashboard/jobs/${event.jobId}`); }}
+                              >
+                                <p className="font-medium text-main truncate">{event.title}</p>
+                                <p className="text-muted">{formatTime(event.start)}</p>
+                              </div>
+                            ))}
+                            {dayEvents.length === 0 && (
+                              <p className="text-xs text-muted/50 text-center mt-8">No events</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedDate(day)}
-                      className={cn(
-                        'aspect-square p-1 rounded-lg transition-colors relative',
-                        isCurrentMonth
-                          ? 'text-main hover:bg-surface-hover'
-                          : 'text-muted/50',
-                        isToday && 'bg-accent-light',
-                        isSelected && 'ring-2 ring-accent bg-accent-light'
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'text-sm',
-                          isToday && 'font-semibold text-accent'
-                        )}
-                      >
-                        {day.getDate()}
-                      </span>
-                      {dayEvents.length > 0 && (
-                        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-0.5">
-                          {dayEvents.slice(0, 3).map((event, i) => (
-                            <span
-                              key={i}
-                              className="w-1.5 h-1.5 rounded-full"
-                              style={{ backgroundColor: event.color }}
-                            />
+              {/* Day View */}
+              {view === 'day' && (
+                <div className="space-y-0">
+                  {dayHours.map((hour) => {
+                    const hourEvents = schedule.filter((event) => {
+                      const eventDate = new Date(event.start);
+                      return eventDate.toDateString() === currentDate.toDateString() && eventDate.getHours() === hour;
+                    });
+                    return (
+                      <div key={hour} className="flex border-b border-main last:border-0">
+                        <div className="w-16 py-3 text-xs text-muted text-right pr-3 flex-shrink-0">
+                          {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
+                        </div>
+                        <div className="flex-1 py-2 px-2 min-h-[48px] hover:bg-surface-hover transition-colors">
+                          {hourEvents.map((event) => (
+                            <div
+                              key={event.id}
+                              className="px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:opacity-80 mb-1"
+                              style={{ backgroundColor: `${event.color}20`, borderLeft: `3px solid ${event.color}` }}
+                              onClick={() => event.jobId && router.push(`/dashboard/jobs/${event.jobId}`)}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-main">{event.title}</span>
+                                <span className="text-xs text-muted">{formatTime(event.start)} - {formatTime(event.end)}</span>
+                              </div>
+                              {event.assignedTo.length > 0 && (
+                                <div className="flex items-center gap-1 mt-1">
+                                  <User size={12} className="text-muted" />
+                                  <span className="text-xs text-muted">{event.assignedTo.length} assigned</span>
+                                </div>
+                              )}
+                            </div>
                           ))}
                         </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
