@@ -12,6 +12,9 @@ import {
   User,
   AlertTriangle,
   X,
+  ClipboardCheck,
+  FileWarning,
+  Shield,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -122,6 +125,36 @@ export default function CalendarPage() {
     }
     return result;
   }, [schedule]);
+
+  // Navigate to the appropriate page based on event type
+  const navigateToEvent = (event: typeof schedule[0]) => {
+    switch (event.type) {
+      case 'job':
+        if (event.jobId) router.push(`/dashboard/jobs/${event.jobId}`);
+        break;
+      case 'inspection':
+        router.push('/dashboard/inspections');
+        break;
+      case 'permit':
+        router.push('/dashboard/permits');
+        break;
+      case 'compliance':
+        router.push('/dashboard/compliance');
+        break;
+      default:
+        if (event.jobId) router.push(`/dashboard/jobs/${event.jobId}`);
+    }
+  };
+
+  // Icon for event type in the detail panel
+  const getEventTypeIcon = (type: string) => {
+    switch (type) {
+      case 'inspection': return <ClipboardCheck size={14} className="text-amber-500" />;
+      case 'permit': return <FileWarning size={14} className="text-red-500" />;
+      case 'compliance': return <Shield size={14} className="text-purple-500" />;
+      default: return null;
+    }
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -267,7 +300,7 @@ export default function CalendarPage() {
                                 key={event.id}
                                 className="px-2 py-1 rounded text-xs cursor-pointer hover:opacity-80"
                                 style={{ backgroundColor: `${event.color}20`, borderLeft: `3px solid ${event.color}` }}
-                                onClick={(e) => { e.stopPropagation(); if (event.jobId) router.push(`/dashboard/jobs/${event.jobId}`); }}
+                                onClick={(e) => { e.stopPropagation(); navigateToEvent(event); }}
                               >
                                 <p className="font-medium text-main truncate">{event.title}</p>
                                 <p className="text-muted">{formatTime(event.start)}</p>
@@ -303,7 +336,7 @@ export default function CalendarPage() {
                               key={event.id}
                               className="px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:opacity-80 mb-1"
                               style={{ backgroundColor: `${event.color}20`, borderLeft: `3px solid ${event.color}` }}
-                              onClick={() => event.jobId && router.push(`/dashboard/jobs/${event.jobId}`)}
+                              onClick={() => navigateToEvent(event)}
                             >
                               <div className="flex items-center justify-between">
                                 <span className="font-medium text-main">{event.title}</span>
@@ -353,7 +386,7 @@ export default function CalendarPage() {
                     <div
                       key={event.id}
                       className="px-6 py-4 hover:bg-surface-hover cursor-pointer transition-colors"
-                      onClick={() => event.jobId && router.push(`/dashboard/jobs/${event.jobId}`)}
+                      onClick={() => navigateToEvent(event)}
                     >
                       <div className="flex items-start gap-3">
                         <div
@@ -361,11 +394,19 @@ export default function CalendarPage() {
                           style={{ backgroundColor: event.color }}
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-main">{event.title}</h4>
+                          <div className="flex items-center gap-2">
+                            {getEventTypeIcon(event.type)}
+                            <h4 className="font-medium text-main">{event.title}</h4>
+                          </div>
+                          {event.type !== 'job' && event.type !== 'appointment' && event.type !== 'reminder' && (
+                            <span className="inline-block mt-1 text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${event.color}20`, color: event.color }}>
+                              {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                            </span>
+                          )}
                           <div className="flex items-center gap-3 mt-2 text-sm text-muted">
                             <span className="flex items-center gap-1">
                               <Clock size={14} />
-                              {formatTime(event.start)} - {formatTime(event.end)}
+                              {event.allDay ? 'All Day' : `${formatTime(event.start)} - ${formatTime(event.end)}`}
                             </span>
                           </div>
                           {event.assignedTo.length > 0 && (
@@ -402,9 +443,21 @@ export default function CalendarPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">{t('calendar.appointments')}</span>
+                  <span className="text-sm text-muted">Inspections</span>
                   <span className="font-semibold text-main">
-                    {schedule.filter((e) => e.type === 'appointment').length}
+                    {schedule.filter((e) => e.type === 'inspection').length}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted">Permits</span>
+                  <span className="font-semibold text-main">
+                    {schedule.filter((e) => e.type === 'permit').length}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted">Compliance</span>
+                  <span className="font-semibold text-main">
+                    {schedule.filter((e) => e.type === 'compliance').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -433,12 +486,16 @@ export default function CalendarPage() {
                   <span className="text-muted">{t('calendar.maintenanceJobs')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="w-3 h-3 rounded-full bg-amber-500" />
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
                   <span className="text-muted">Inspections</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="w-3 h-3 rounded-full bg-purple-500" />
-                  <span className="text-muted">Appointments</span>
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }} />
+                  <span className="text-muted">Permits</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#8b5cf6' }} />
+                  <span className="text-muted">Compliance</span>
                 </div>
               </div>
             </CardContent>
