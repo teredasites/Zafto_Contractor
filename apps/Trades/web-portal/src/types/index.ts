@@ -361,7 +361,7 @@ export interface TeamMember {
 // ==================== CALENDAR ====================
 export interface ScheduledItem {
   id: string;
-  type: 'job' | 'appointment' | 'reminder';
+  type: 'job' | 'appointment' | 'reminder' | 'inspection' | 'permit' | 'compliance';
   title: string;
   description?: string;
   start: Date;

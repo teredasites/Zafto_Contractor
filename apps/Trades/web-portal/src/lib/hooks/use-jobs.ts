@@ -241,11 +241,153 @@ export function useJob(id: string | undefined) {
   return { job, loading, error };
 }
 
-// Derive schedule items from jobs
+// Derive schedule items from jobs + inspections + permits + compliance deadlines
 export function useSchedule() {
-  const { jobs, loading, error } = useJobs();
+  const { jobs, loading: jobsLoading, error: jobsError } = useJobs();
+  const [extraItems, setExtraItems] = useState<ScheduledItem[]>([]);
+  const [extraLoading, setExtraLoading] = useState(true);
 
-  const schedule: ScheduledItem[] = jobs
+  // Fetch inspections, permits, compliance records in parallel
+  const fetchExtraSources = useCallback(async () => {
+    try {
+      setExtraLoading(true);
+      const supabase = getSupabase();
+
+      const [inspRes, permitsRes, complianceRes] = await Promise.all([
+        // Inspections from compliance_records where record_type = 'inspection' and has a date
+        supabase
+          .from('compliance_records')
+          .select('id, company_id, job_id, status, started_at, ended_at, data, created_at, jobs(title)')
+          .eq('record_type', 'inspection')
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false }),
+        // Permits with relevant dates
+        supabase
+          .from('permits')
+          .select('id, company_id, job_id, permit_number, permit_type, status, description, applied_date, approved_date, expiration_date, inspections, created_at, jobs(title)')
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false }),
+        // Compliance deadlines (non-inspection records)
+        supabase
+          .from('compliance_records')
+          .select('id, company_id, job_id, record_type, status, started_at, ended_at, data, created_at, jobs(title)')
+          .neq('record_type', 'inspection')
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false }),
+      ]);
+
+      const items: ScheduledItem[] = [];
+
+      // Map inspections
+      if (!inspRes.error && inspRes.data) {
+        for (const row of inspRes.data) {
+          const startDate = row.started_at || row.created_at;
+          if (!startDate) continue;
+          const data = (row.data as Record<string, unknown>) || {};
+          const jobData = row.jobs as { title?: string } | null;
+          const title = (data.title as string) || 'Inspection';
+          const start = new Date(startDate);
+          const end = row.ended_at ? new Date(row.ended_at) : new Date(start.getTime() + 1 * 60 * 60 * 1000);
+          items.push({
+            id: row.id,
+            type: 'inspection',
+            title: `${title}${jobData?.title ? ` — ${jobData.title}` : ''}`,
+            description: `Status: ${row.status || 'scheduled'}`,
+            start,
+            end,
+            allDay: false,
+            jobId: row.job_id || undefined,
+            assignedTo: data.assigned_to ? [data.assigned_to as string] : [],
+            color: '#f59e0b', // amber
+          });
+        }
+      }
+
+      // Map permits — show expiration dates and inspection dates
+      if (!permitsRes.error && permitsRes.data) {
+        for (const row of permitsRes.data) {
+          const jobData = row.jobs as { title?: string } | null;
+          const permitLabel = row.permit_number ? `Permit #${row.permit_number}` : `${(row.permit_type || 'other').replace(/_/g, ' ')} Permit`;
+
+          // Expiration date as a deadline event
+          if (row.expiration_date) {
+            const expDate = new Date(row.expiration_date);
+            items.push({
+              id: `${row.id}-exp`,
+              type: 'permit',
+              title: `${permitLabel} Expires${jobData?.title ? ` — ${jobData.title}` : ''}`,
+              description: row.description || `Status: ${row.status}`,
+              start: expDate,
+              end: expDate,
+              allDay: true,
+              jobId: row.job_id || undefined,
+              assignedTo: [],
+              color: '#ef4444', // red
+            });
+          }
+
+          // Permit inspection dates
+          const inspections = row.inspections as Array<{ id: string; date: string; result: string }> | null;
+          if (Array.isArray(inspections)) {
+            for (const insp of inspections) {
+              if (!insp.date) continue;
+              const inspDate = new Date(insp.date);
+              items.push({
+                id: `${row.id}-insp-${insp.id}`,
+                type: 'permit',
+                title: `Permit Inspection${jobData?.title ? ` — ${jobData.title}` : ''}`,
+                description: `Result: ${insp.result || 'scheduled'}`,
+                start: inspDate,
+                end: new Date(inspDate.getTime() + 1 * 60 * 60 * 1000),
+                allDay: false,
+                jobId: row.job_id || undefined,
+                assignedTo: [],
+                color: '#ef4444', // red
+              });
+            }
+          }
+        }
+      }
+
+      // Map compliance deadlines
+      if (!complianceRes.error && complianceRes.data) {
+        for (const row of complianceRes.data) {
+          const startDate = row.started_at || row.created_at;
+          if (!startDate) continue;
+          const data = (row.data as Record<string, unknown>) || {};
+          const jobData = row.jobs as { title?: string } | null;
+          const title = (data.title as string) || `${(row.record_type || 'compliance').replace(/_/g, ' ')} Deadline`;
+          const start = new Date(startDate);
+          const end = row.ended_at ? new Date(row.ended_at) : new Date(start.getTime() + 1 * 60 * 60 * 1000);
+          items.push({
+            id: row.id,
+            type: 'compliance',
+            title: `${title}${jobData?.title ? ` — ${jobData.title}` : ''}`,
+            description: `Status: ${row.status || 'pending'}`,
+            start,
+            end,
+            allDay: false,
+            jobId: row.job_id || undefined,
+            assignedTo: data.assigned_to ? [data.assigned_to as string] : [],
+            color: '#8b5cf6', // purple
+          });
+        }
+      }
+
+      setExtraItems(items);
+    } catch {
+      // Non-critical — calendar still shows jobs even if extra sources fail
+      setExtraItems([]);
+    } finally {
+      setExtraLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchExtraSources();
+  }, [fetchExtraSources]);
+
+  const jobItems: ScheduledItem[] = jobs
     .filter((j) => j.scheduledStart)
     .map((j) => ({
       id: j.id,
@@ -260,6 +402,10 @@ export function useSchedule() {
       assignedTo: j.assignedTo,
       color: j.propertyId ? '#10b981' : JOB_TYPE_COLORS[j.jobType]?.dot,
     }));
+
+  const schedule = [...jobItems, ...extraItems];
+  const loading = jobsLoading || extraLoading;
+  const error = jobsError;
 
   return { schedule, loading, error };
 }
