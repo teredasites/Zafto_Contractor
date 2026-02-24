@@ -41,6 +41,14 @@ import {
   X,
   Upload,
   Calendar,
+  Monitor,
+  Copy,
+  QrCode,
+  ToggleLeft,
+  ToggleRight,
+  Hash,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,9 +78,10 @@ import {
   DEFAULT_PRIORITY_LEVELS,
 } from '@/lib/hooks/use-company-config';
 import { useZDocs, type ZDocsTemplate } from '@/lib/hooks/use-zdocs';
+import { useKioskConfig, type KioskConfigData, type KioskAuthMethods } from '@/lib/hooks/use-kiosk-config';
 import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
-type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys' | 'templates' | 'custom_fields' | 'business';
+type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys' | 'templates' | 'custom_fields' | 'business' | 'kiosk';
 
 const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'profile', label: 'Profile', icon: <User size={18} /> },
@@ -87,6 +96,7 @@ const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'templates', label: 'Templates', icon: <FileText size={18} /> },
   { id: 'custom_fields', label: 'Custom Fields', icon: <Layers size={18} /> },
   { id: 'business', label: 'Business Config', icon: <DollarSign size={18} /> },
+  { id: 'kiosk', label: 'Kiosk', icon: <Monitor size={18} /> },
 ];
 
 const enterpriseTabs: { id: SettingsTab; label: string; icon: React.ReactNode; minTier: 'team' | 'business' | 'enterprise' }[] = [
@@ -200,6 +210,7 @@ export default function SettingsPage() {
           {activeTab === 'templates' && <TemplatesSettings />}
           {activeTab === 'custom_fields' && <CustomFieldsSettings />}
           {activeTab === 'business' && <BusinessConfigSettings />}
+          {activeTab === 'kiosk' && <KioskSettings />}
         </div>
       </div>
     </div>
@@ -3198,6 +3209,294 @@ function BusinessConfigSettings() {
           ))}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ── Kiosk Settings ──
+
+function KioskSettings() {
+  const { t } = useTranslation();
+  const { kiosks, employeePins, loading, createKiosk, updateKiosk, deleteKiosk, regenerateToken, setEmployeePin, removeEmployeePin, getKioskUrl } = useKioskConfig();
+  const [showCreate, setShowCreate] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newAuthPin, setNewAuthPin] = useState(true);
+  const [newAuthNameTap, setNewAuthNameTap] = useState(true);
+  const [newAuthPassword, setNewAuthPassword] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [pinModal, setPinModal] = useState<{ userId: string; userName: string } | null>(null);
+  const [pinValue, setPinValue] = useState('');
+  const [pinVisible, setPinVisible] = useState(false);
+  const [settingPin, setSettingPin] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [editKiosk, setEditKiosk] = useState<KioskConfigData | null>(null);
+
+  const handleCreate = async () => {
+    if (!newName.trim()) return;
+    try {
+      setCreating(true);
+      await createKiosk({
+        name: newName.trim(),
+        authMethods: { pin: newAuthPin, password: newAuthPassword, face: false, name_tap: newAuthNameTap },
+      });
+      setNewName('');
+      setShowCreate(false);
+    } catch {
+      // Error handled by hook
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCopy = (token: string) => {
+    const url = getKioskUrl(token);
+    navigator.clipboard.writeText(url);
+    setCopied(token);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleSetPin = async () => {
+    if (!pinModal || !pinValue) return;
+    try {
+      setSettingPin(true);
+      await setEmployeePin(pinModal.userId, pinValue);
+      setPinModal(null);
+      setPinValue('');
+    } catch {
+      // Error from hook
+    } finally {
+      setSettingPin(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteKiosk(id);
+      setConfirmDelete(null);
+    } catch {
+      // Error from hook
+    }
+  };
+
+  const handleToggle = async (kiosk: KioskConfigData) => {
+    await updateKiosk(kiosk.id, { isActive: !kiosk.isActive });
+  };
+
+  const handleRegenerate = async (id: string) => {
+    await regenerateToken(id);
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 bg-primary rounded animate-pulse w-48" />
+        <div className="h-48 bg-primary rounded animate-pulse" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-main">Time Clock Kiosk</h2>
+          <p className="text-xs text-muted mt-0.5">Set up tablet or PC stations for employee clock-in</p>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus size={14} className="mr-1.5" /> Create Kiosk
+        </Button>
+      </div>
+
+      {/* Create Form */}
+      {showCreate && (
+        <Card>
+          <CardContent className="pt-5 space-y-4">
+            <div>
+              <label className="text-xs font-medium text-main block mb-1">Kiosk Name</label>
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="e.g. Shop Front Desk, Warehouse Entry"
+                className="max-w-md"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-main block mb-2">Authentication Methods</label>
+              <div className="flex flex-wrap gap-3">
+                <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
+                  <input type="checkbox" checked={newAuthPin} onChange={(e) => setNewAuthPin(e.target.checked)} className="rounded" />
+                  <Hash size={14} /> PIN Code
+                </label>
+                <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
+                  <input type="checkbox" checked={newAuthNameTap} onChange={(e) => setNewAuthNameTap(e.target.checked)} className="rounded" />
+                  <Users size={14} /> Name Tap
+                </label>
+                <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
+                  <input type="checkbox" checked={newAuthPassword} onChange={(e) => setNewAuthPassword(e.target.checked)} className="rounded" />
+                  <Lock size={14} /> Password
+                </label>
+                <label className="flex items-center gap-2 text-xs text-muted cursor-not-allowed opacity-50">
+                  <input type="checkbox" disabled className="rounded" />
+                  <Camera size={14} /> Facial Recognition (Coming Soon)
+                </label>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={handleCreate} disabled={creating || !newName.trim()}>
+                {creating ? 'Creating...' : 'Create Kiosk'}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowCreate(false)}>Cancel</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Kiosk List */}
+      {kiosks.length === 0 && !showCreate ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <Monitor size={40} className="mx-auto mb-3 text-muted opacity-40" />
+            <p className="text-sm font-medium text-main">No kiosks configured</p>
+            <p className="text-xs text-muted mt-1">Create a kiosk station for tablet or PC-based employee clock-in</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {kiosks.map((kiosk) => (
+            <Card key={kiosk.id} className={cn(!kiosk.isActive && 'opacity-60')}>
+              <CardContent className="py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Monitor size={16} className="text-accent shrink-0" />
+                      <h3 className="text-sm font-medium text-main truncate">{kiosk.name}</h3>
+                      <Badge variant={kiosk.isActive ? 'default' : 'secondary'} className="text-[10px]">
+                        {kiosk.isActive ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <code className="text-[11px] bg-primary px-2 py-1 rounded text-muted truncate max-w-sm">
+                        {getKioskUrl(kiosk.accessToken)}
+                      </code>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0"
+                        onClick={() => handleCopy(kiosk.accessToken)}
+                        title="Copy URL"
+                      >
+                        {copied === kiosk.accessToken ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                      </Button>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {kiosk.authMethods.pin && <Badge variant="secondary" className="text-[10px]"><Hash size={10} className="mr-0.5" /> PIN</Badge>}
+                      {kiosk.authMethods.name_tap && <Badge variant="secondary" className="text-[10px]"><Users size={10} className="mr-0.5" /> Name Tap</Badge>}
+                      {kiosk.authMethods.password && <Badge variant="secondary" className="text-[10px]"><Lock size={10} className="mr-0.5" /> Password</Badge>}
+                      {kiosk.authMethods.face && <Badge variant="secondary" className="text-[10px]"><Camera size={10} className="mr-0.5" /> Face</Badge>}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px]" onClick={() => handleToggle(kiosk)}>
+                      {kiosk.isActive ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
+                    </Button>
+                    <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px]" onClick={() => handleRegenerate(kiosk.id)} title="Regenerate URL">
+                      <RefreshCw size={14} />
+                    </Button>
+                    <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] text-red-400 hover:text-red-300" onClick={() => setConfirmDelete(kiosk.id)}>
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Delete confirm */}
+                {confirmDelete === kiosk.id && (
+                  <div className="mt-3 p-2 bg-red-500/10 border border-red-500/20 rounded flex items-center justify-between">
+                    <span className="text-xs text-red-400">Delete this kiosk? This will deactivate the URL.</span>
+                    <div className="flex gap-1.5">
+                      <Button size="sm" variant="ghost" className="h-6 text-[11px]" onClick={() => setConfirmDelete(null)}>Cancel</Button>
+                      <Button size="sm" variant="danger" className="h-6 text-[11px]" onClick={() => handleDelete(kiosk.id)}>Delete</Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Employee PINs */}
+      <div>
+        <h3 className="text-sm font-medium text-main mb-3">Employee PINs</h3>
+        <p className="text-xs text-muted mb-3">Set 4-8 digit PINs for kiosk clock-in authentication</p>
+        <Card>
+          <CardContent className="py-3">
+            {employeePins.length === 0 ? (
+              <p className="text-xs text-muted text-center py-4">No active employees found</p>
+            ) : (
+              <div className="divide-y divide-border">
+                {employeePins.map((emp) => (
+                  <div key={emp.userId} className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-main">{emp.userName || 'Unknown'}</span>
+                      {emp.hasPin ? (
+                        <Badge variant="default" className="text-[10px]">PIN Set</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-[10px]">No PIN</Badge>
+                      )}
+                    </div>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => { setPinModal({ userId: emp.userId, userName: emp.userName || 'Employee' }); setPinValue(''); setPinVisible(false); }}>
+                        {emp.hasPin ? 'Change PIN' : 'Set PIN'}
+                      </Button>
+                      {emp.hasPin && (
+                        <Button size="sm" variant="ghost" className="h-6 px-2 text-[11px] text-red-400" onClick={() => removeEmployeePin(emp.userId)}>
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* PIN Modal */}
+      {pinModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setPinModal(null)}>
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-sm shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-sm font-semibold text-main mb-1">Set PIN for {pinModal.userName}</h3>
+            <p className="text-xs text-muted mb-4">Enter a 4-8 digit PIN for kiosk clock-in</p>
+            <div className="relative">
+              <Input
+                type={pinVisible ? 'text' : 'password'}
+                value={pinValue}
+                onChange={(e) => setPinValue(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                placeholder="Enter PIN (4-8 digits)"
+                className="pr-10"
+                inputMode="numeric"
+                pattern="[0-9]*"
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted"
+                onClick={() => setPinVisible(!pinVisible)}
+              >
+                {pinVisible ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Button size="sm" onClick={handleSetPin} disabled={settingPin || pinValue.length < 4}>
+                {settingPin ? 'Saving...' : 'Save PIN'}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setPinModal(null)}>Cancel</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
