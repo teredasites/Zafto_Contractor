@@ -15,6 +15,9 @@ import {
   Download,
   Mail,
   CreditCard,
+  Layers,
+  CheckSquare,
+  Square,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,9 +36,19 @@ export default function InvoicesPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [batchLoading, setBatchLoading] = useState(false);
   const { invoices, loading: invoicesLoading, sendInvoice, recordPayment, deleteInvoice } = useInvoices();
   const { stats: dashStats } = useStats();
   const stats = dashStats.invoices;
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   if (invoicesLoading) {
     return (
@@ -61,6 +74,44 @@ export default function InvoicesPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredInvoices.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredInvoices.map(i => i.id)));
+    }
+  };
+
+  const handleBatchSend = async () => {
+    const draftIds = [...selectedIds].filter(id => {
+      const inv = invoices.find(i => i.id === id);
+      return inv && inv.status === 'draft';
+    });
+    if (draftIds.length === 0) { alert('No draft invoices selected'); return; }
+    if (!confirm(`Send ${draftIds.length} draft invoice(s)?`)) return;
+    setBatchLoading(true);
+    try {
+      for (const id of draftIds) {
+        await sendInvoice(id);
+      }
+      setSelectedIds(new Set());
+    } catch (e) { alert(e instanceof Error ? e.message : 'Batch send failed'); }
+    setBatchLoading(false);
+  };
+
+  const handleBatchDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Delete ${selectedIds.size} invoice(s)? This cannot be undone.`)) return;
+    setBatchLoading(true);
+    try {
+      for (const id of selectedIds) {
+        await deleteInvoice(id);
+      }
+      setSelectedIds(new Set());
+    } catch (e) { alert(e instanceof Error ? e.message : 'Batch delete failed'); }
+    setBatchLoading(false);
+  };
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
@@ -160,6 +211,25 @@ export default function InvoicesPage() {
         />
       </div>
 
+      {/* Batch Action Bar */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-4 p-3 bg-accent/10 border border-accent/20 rounded-lg">
+          <span className="text-sm font-medium text-main">{selectedIds.size} selected</span>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={handleBatchSend} disabled={batchLoading}>
+              <Send size={14} className="mr-1" />
+              Send All
+            </Button>
+            <Button size="sm" variant="secondary" onClick={handleBatchDelete} disabled={batchLoading} className="text-red-400 hover:text-red-300">
+              Delete
+            </Button>
+          </div>
+          <button onClick={() => setSelectedIds(new Set())} className="ml-auto text-sm text-muted hover:text-main transition-colors">
+            Clear selection
+          </button>
+        </div>
+      )}
+
       {/* Invoices Table */}
       <Card>
         <CardContent className="p-0">
@@ -173,6 +243,13 @@ export default function InvoicesPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-main">
+                    <th className="px-3 py-3 w-10">
+                      <button onClick={toggleSelectAll} className="p-1 hover:bg-surface-hover rounded transition-colors">
+                        {selectedIds.size === filteredInvoices.length && filteredInvoices.length > 0
+                          ? <CheckSquare size={16} className="text-accent" />
+                          : <Square size={16} className="text-muted" />}
+                      </button>
+                    </th>
                     <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-6 py-3">
                       Invoice
                     </th>
@@ -199,6 +276,8 @@ export default function InvoicesPage() {
                     <InvoiceRow
                       key={invoice.id}
                       invoice={invoice}
+                      selected={selectedIds.has(invoice.id)}
+                      onToggleSelect={() => toggleSelect(invoice.id)}
                       onClick={() => router.push(`/dashboard/invoices/${invoice.id}`)}
                       onSendReminder={async () => { await sendInvoice(invoice.id); }}
                       onRecordPayment={async () => {
@@ -236,7 +315,7 @@ export default function InvoicesPage() {
   );
 }
 
-function InvoiceRow({ invoice, onClick, onSendReminder, onRecordPayment, onDelete, onDownloadPdf }: { invoice: Invoice; onClick: () => void; onSendReminder: () => Promise<void>; onRecordPayment: () => Promise<void>; onDelete: () => Promise<void>; onDownloadPdf: () => Promise<void> }) {
+function InvoiceRow({ invoice, selected, onToggleSelect, onClick, onSendReminder, onRecordPayment, onDelete, onDownloadPdf }: { invoice: Invoice; selected: boolean; onToggleSelect: () => void; onClick: () => void; onSendReminder: () => Promise<void>; onRecordPayment: () => Promise<void>; onDelete: () => Promise<void>; onDownloadPdf: () => Promise<void> }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isOverdue = invoice.status === 'overdue';
 
@@ -244,10 +323,21 @@ function InvoiceRow({ invoice, onClick, onSendReminder, onRecordPayment, onDelet
     <tr
       className={cn(
         'hover:bg-surface-hover cursor-pointer transition-colors',
-        isOverdue && 'bg-red-50/50 dark:bg-red-900/5'
+        isOverdue && 'bg-red-50/50 dark:bg-red-900/5',
+        selected && 'bg-accent/5'
       )}
       onClick={onClick}
     >
+      <td className="px-3 py-4">
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
+          className="p-1 hover:bg-surface-hover rounded transition-colors"
+        >
+          {selected
+            ? <CheckSquare size={16} className="text-accent" />
+            : <Square size={16} className="text-muted" />}
+        </button>
+      </td>
       <td className="px-6 py-4">
         <p className="font-medium text-main">{invoice.invoiceNumber}</p>
       </td>

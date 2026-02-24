@@ -306,7 +306,10 @@ export function mapInvoice(row: Record<string, unknown>): Invoice {
         }
       : undefined,
     jobId: (row.job_id as string) || undefined,
+    estimateId: (row.estimate_id as string) || undefined,
+    parentInvoiceId: (row.parent_invoice_id as string) || undefined,
     invoiceNumber: (row.invoice_number as string) || '',
+    title: (row.title as string) || undefined,
     status: (INVOICE_STATUS_FROM_DB[row.status as string] || (row.status as string)) as Invoice['status'],
     lineItems,
     subtotal: Number(row.subtotal) || 0,
@@ -326,6 +329,22 @@ export function mapInvoice(row: Record<string, unknown>): Invoice {
     lateFeePerDay: row.late_fee_per_day != null ? Number(row.late_fee_per_day) : undefined,
     discountPercent: row.discount_percent != null ? Number(row.discount_percent) : undefined,
     paymentTerms: (row.payment_terms as string) || undefined,
+    // Progress invoicing
+    progressGroupId: (row.progress_group_id as string) || undefined,
+    isProgressInvoice: row.is_progress_invoice === true,
+    milestoneName: (row.milestone_name as string) || undefined,
+    milestonePercent: row.milestone_percent != null ? Number(row.milestone_percent) : undefined,
+    // Recurring invoicing
+    isRecurringTemplate: row.is_recurring_template === true,
+    recurringFrequency: (row.recurring_frequency as Invoice['recurringFrequency']) || undefined,
+    recurringNextDate: row.recurring_next_date ? new Date(row.recurring_next_date as string) : undefined,
+    recurringEndDate: row.recurring_end_date ? new Date(row.recurring_end_date as string) : undefined,
+    recurringCount: row.recurring_count != null ? Number(row.recurring_count) : undefined,
+    recurringTemplateId: (row.recurring_template_id as string) || undefined,
+    serviceAgreementId: (row.service_agreement_id as string) || undefined,
+    // Online payment
+    paymentLinkToken: (row.payment_link_token as string) || undefined,
+    paymentLinkUrl: (row.payment_link_url as string) || undefined,
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
   };

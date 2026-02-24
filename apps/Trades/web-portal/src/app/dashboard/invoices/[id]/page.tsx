@@ -26,6 +26,12 @@ import {
   FileText,
   Percent,
   ChevronRight,
+  Repeat,
+  Layers,
+  Link,
+  ExternalLink,
+  Plus,
+  X,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -113,12 +119,13 @@ export default function InvoiceDetailPage() {
   const invoiceId = params.id as string;
 
   const { invoice, loading } = useInvoice(invoiceId);
-  const { sendInvoice, createInvoice, deleteInvoice, applyLateFee, createCreditMemo } = useInvoices();
+  const { sendInvoice, createInvoice, deleteInvoice, applyLateFee, createCreditMemo, createProgressInvoices, setupRecurringInvoice, generateFromRecurring, generatePaymentLink, getProgressGroup, invoices: allInvoices } = useInvoices();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCreditMemoModal, setShowCreditMemoModal] = useState(false);
   const [showLateFeeModal, setShowLateFeeModal] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
+  const [showRecurringModal, setShowRecurringModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   if (loading) {
@@ -668,7 +675,7 @@ export default function InvoiceDetailPage() {
             </Card>
           )}
 
-          {/* Progress Invoicing */}
+          {/* Progress Billing */}
           {invoice.total > 0 && invoice.amountPaid > 0 && invoice.amountDue > 0 && (
             <Card>
               <CardHeader className="pb-2">
@@ -688,6 +695,186 @@ export default function InvoiceDetailPage() {
                   <span>{Math.round((invoice.amountPaid / invoice.total) * 100)}% collected</span>
                   <span>{formatCurrency(invoice.amountDue)} remaining</span>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Progress Invoice Group (milestone-based) */}
+          {invoice.isProgressInvoice && invoice.progressGroupId && (() => {
+            const group = getProgressGroup(invoice.progressGroupId);
+            if (group.length <= 1) return null;
+            const totalContract = group.reduce((s, i) => s + i.total, 0);
+            const totalPaid = group.reduce((s, i) => s + i.amountPaid, 0);
+            return (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Layers size={16} className="text-muted" />
+                    Milestone Schedule
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full transition-all"
+                      style={{ width: `${totalContract > 0 ? Math.min(100, (totalPaid / totalContract) * 100) : 0}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted">
+                    <span>{totalContract > 0 ? Math.round((totalPaid / totalContract) * 100) : 0}% collected</span>
+                    <span>{formatCurrency(totalContract - totalPaid)} remaining</span>
+                  </div>
+                  <div className="space-y-2 mt-2">
+                    {group.sort((a, b) => (a.milestonePercent || 0) - (b.milestonePercent || 0)).map((mi) => (
+                      <button
+                        key={mi.id}
+                        onClick={() => router.push(`/dashboard/invoices/${mi.id}`)}
+                        className={cn(
+                          'w-full flex items-center justify-between p-2 rounded-lg text-sm transition-colors',
+                          mi.id === invoice.id ? 'bg-accent/10 border border-accent/20' : 'hover:bg-surface-hover'
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          {mi.status === 'paid' ? (
+                            <CheckCircle size={14} className="text-emerald-500" />
+                          ) : (
+                            <div className="w-3.5 h-3.5 rounded-full border-2 border-zinc-600" />
+                          )}
+                          <span className="text-main">{mi.milestoneName || mi.invoiceNumber}</span>
+                          <span className="text-muted">({mi.milestonePercent}%)</span>
+                        </div>
+                        <span className={cn('font-medium', mi.status === 'paid' ? 'text-emerald-500' : 'text-main')}>
+                          {formatCurrency(mi.total)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
+
+          {/* Recurring Invoice Info */}
+          {invoice.isRecurringTemplate && (
+            <Card className="border-blue-500/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2 text-blue-400">
+                  <Repeat size={16} />
+                  Recurring Template
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Frequency</span>
+                  <span className="text-main capitalize">{invoice.recurringFrequency?.replace('_', ' ')}</span>
+                </div>
+                {invoice.recurringNextDate && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted">Next invoice</span>
+                    <span className="text-main">{formatDate(invoice.recurringNextDate)}</span>
+                  </div>
+                )}
+                {invoice.recurringEndDate && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted">Ends</span>
+                    <span className="text-main">{formatDate(invoice.recurringEndDate)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Generated</span>
+                  <span className="text-main">{invoice.recurringCount || 0} invoices</span>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                  disabled={actionLoading}
+                  onClick={async () => {
+                    setActionLoading(true);
+                    try {
+                      const newId = await generateFromRecurring(invoice.id);
+                      if (newId) router.push(`/dashboard/invoices/${newId}`);
+                    } catch (e) { alert(e instanceof Error ? e.message : 'Failed'); }
+                    setActionLoading(false);
+                  }}
+                >
+                  <Plus size={14} className="mr-1" />
+                  Generate Next Invoice
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+          {invoice.recurringTemplateId && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Repeat size={16} className="text-muted" />
+                  Recurring Series
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => router.push(`/dashboard/invoices/${invoice.recurringTemplateId}`)}
+                >
+                  View Template
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Online Payment Link */}
+          {!isPaid && invoice.status !== 'void' && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Link size={16} className="text-muted" />
+                  Payment Link
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {invoice.paymentLinkUrl ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        readOnly
+                        value={invoice.paymentLinkUrl}
+                        className="flex-1 px-3 py-2 bg-secondary border border-main rounded-lg text-xs text-muted truncate"
+                      />
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(invoice.paymentLinkUrl || ''); alert('Link copied!'); }}
+                        className="p-2 hover:bg-surface-hover rounded-lg transition-colors"
+                        title="Copy link"
+                      >
+                        <Copy size={14} className="text-muted" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-muted">Share this link with your customer to collect payment online.</p>
+                  </>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full"
+                    disabled={actionLoading}
+                    onClick={async () => {
+                      setActionLoading(true);
+                      try {
+                        const url = await generatePaymentLink(invoice.id);
+                        navigator.clipboard.writeText(url);
+                        alert('Payment link generated and copied!');
+                        window.location.reload();
+                      } catch (e) { alert(e instanceof Error ? e.message : 'Failed'); }
+                      setActionLoading(false);
+                    }}
+                  >
+                    <ExternalLink size={14} className="mr-1" />
+                    Generate Payment Link
+                  </Button>
+                )}
               </CardContent>
             </Card>
           )}
@@ -719,6 +906,28 @@ export default function InvoiceDetailPage() {
                     Record Partial Payment
                   </Button>
                 )}
+                {invoice.status === 'draft' && !invoice.isProgressInvoice && !invoice.isRecurringTemplate && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-full justify-start"
+                      onClick={() => setShowProgressModal(true)}
+                    >
+                      <Layers size={14} className="mr-2" />
+                      Create Progress Invoices
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-full justify-start"
+                      onClick={() => setShowRecurringModal(true)}
+                    >
+                      <Repeat size={14} className="mr-2" />
+                      Set Up Recurring
+                    </Button>
+                  </>
+                )}
               </CardContent>
             </Card>
           )}
@@ -748,6 +957,24 @@ export default function InvoiceDetailPage() {
           invoice={invoice}
           onCreateMemo={createCreditMemo}
           onClose={() => setShowCreditMemoModal(false)}
+        />
+      )}
+
+      {/* Progress Invoice Modal */}
+      {showProgressModal && (
+        <ProgressInvoiceModal
+          invoice={invoice}
+          onCreate={createProgressInvoices}
+          onClose={() => setShowProgressModal(false)}
+        />
+      )}
+
+      {/* Recurring Invoice Modal */}
+      {showRecurringModal && (
+        <RecurringInvoiceModal
+          invoice={invoice}
+          onSetup={setupRecurringInvoice}
+          onClose={() => setShowRecurringModal(false)}
         />
       )}
     </div>
@@ -1045,6 +1272,278 @@ function CreditMemoModal({ invoice, onCreateMemo, onClose }: {
                 <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
                 <Button type="submit" className="flex-1" disabled={saving || !amount || !reason.trim()}>
                   {saving ? 'Creating...' : 'Issue Credit Memo'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}
+
+function ProgressInvoiceModal({ invoice, onCreate, onClose }: {
+  invoice: Invoice;
+  onCreate: (data: Partial<Invoice>, milestones: { name: string; percent: number }[]) => Promise<string[]>;
+  onClose: () => void;
+}) {
+  const [milestones, setMilestones] = useState<{ name: string; percent: string }[]>([
+    { name: 'Deposit', percent: '30' },
+    { name: 'Rough-in Complete', percent: '40' },
+    { name: 'Final Completion', percent: '30' },
+  ]);
+  const [saving, setSaving] = useState(false);
+
+  const totalPercent = milestones.reduce((sum, m) => sum + (parseFloat(m.percent) || 0), 0);
+  const isValid = milestones.length >= 2 && Math.abs(totalPercent - 100) < 0.01 && milestones.every(m => m.name.trim());
+
+  const addMilestone = () => {
+    const remaining = 100 - totalPercent;
+    setMilestones([...milestones, { name: '', percent: remaining > 0 ? remaining.toString() : '0' }]);
+  };
+
+  const removeMilestone = (idx: number) => {
+    if (milestones.length <= 2) return;
+    setMilestones(milestones.filter((_, i) => i !== idx));
+  };
+
+  const updateMilestone = (idx: number, field: 'name' | 'percent', value: string) => {
+    setMilestones(milestones.map((m, i) => i === idx ? { ...m, [field]: value } : m));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+    setSaving(true);
+    try {
+      const parsed = milestones.map(m => ({ name: m.name.trim(), percent: parseFloat(m.percent) }));
+      await onCreate(invoice, parsed);
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to create progress invoices');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const usePreset = (preset: { name: string; percent: string }[]) => setMilestones(preset);
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg z-50 max-h-[90vh] overflow-y-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Layers size={18} />
+              Progress Invoicing
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-sm text-muted">
+                Split invoice <span className="font-mono text-main">{invoice.invoiceNumber}</span> ({formatCurrency(invoice.total)}) into milestone-based invoices.
+              </p>
+
+              {/* Presets */}
+              <div>
+                <label className="block text-xs font-medium text-muted uppercase tracking-wider mb-2">Quick Presets</label>
+                <div className="flex gap-2 flex-wrap">
+                  <button type="button" onClick={() => usePreset([{ name: 'Deposit', percent: '50' }, { name: 'Completion', percent: '50' }])} className="px-3 py-1.5 text-xs bg-secondary border border-main rounded-lg hover:bg-surface-hover transition-colors">50/50</button>
+                  <button type="button" onClick={() => usePreset([{ name: 'Deposit', percent: '30' }, { name: 'Rough-in', percent: '40' }, { name: 'Completion', percent: '30' }])} className="px-3 py-1.5 text-xs bg-secondary border border-main rounded-lg hover:bg-surface-hover transition-colors">30/40/30</button>
+                  <button type="button" onClick={() => usePreset([{ name: 'Deposit', percent: '33' }, { name: 'Progress', percent: '34' }, { name: 'Final', percent: '33' }])} className="px-3 py-1.5 text-xs bg-secondary border border-main rounded-lg hover:bg-surface-hover transition-colors">Thirds</button>
+                  <button type="button" onClick={() => usePreset([{ name: 'Deposit', percent: '25' }, { name: 'Framing', percent: '25' }, { name: 'Rough-in', percent: '25' }, { name: 'Completion', percent: '25' }])} className="px-3 py-1.5 text-xs bg-secondary border border-main rounded-lg hover:bg-surface-hover transition-colors">Quarters</button>
+                </div>
+              </div>
+
+              {/* Milestones */}
+              <div className="space-y-3">
+                <label className="block text-xs font-medium text-muted uppercase tracking-wider">Milestones</label>
+                {milestones.map((m, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-xs text-muted w-5">{idx + 1}.</span>
+                    <input
+                      type="text"
+                      value={m.name}
+                      onChange={(e) => updateMilestone(idx, 'name', e.target.value)}
+                      placeholder="Milestone name"
+                      className="flex-1 px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                    />
+                    <div className="relative w-24">
+                      <input
+                        type="number"
+                        step="1"
+                        min="1"
+                        max="100"
+                        value={m.percent}
+                        onChange={(e) => updateMilestone(idx, 'percent', e.target.value)}
+                        className="w-full px-3 py-2 pr-8 bg-secondary border border-main rounded-lg text-sm text-main text-right focus:outline-none focus:ring-2 focus:ring-accent/50"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-sm">%</span>
+                    </div>
+                    <span className="text-xs text-muted w-20 text-right">{formatCurrency(invoice.total * (parseFloat(m.percent) || 0) / 100)}</span>
+                    {milestones.length > 2 && (
+                      <button type="button" onClick={() => removeMilestone(idx)} className="p-1 hover:bg-red-500/10 rounded transition-colors">
+                        <X size={14} className="text-red-400" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button type="button" onClick={addMilestone} className="flex items-center gap-1 text-sm text-accent hover:text-accent/80 transition-colors">
+                  <Plus size={14} />
+                  Add Milestone
+                </button>
+              </div>
+
+              {/* Total check */}
+              <div className={cn(
+                'p-3 rounded-lg',
+                Math.abs(totalPercent - 100) < 0.01 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-red-50 dark:bg-red-900/20'
+              )}>
+                <div className="flex justify-between text-sm font-medium">
+                  <span className="text-muted">Total</span>
+                  <span className={Math.abs(totalPercent - 100) < 0.01 ? 'text-emerald-400' : 'text-red-400'}>
+                    {totalPercent}%
+                  </span>
+                </div>
+                {Math.abs(totalPercent - 100) >= 0.01 && (
+                  <p className="text-xs text-red-400 mt-1">Must equal 100%</p>
+                )}
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={saving || !isValid}>
+                  {saving ? 'Creating...' : `Create ${milestones.length} Invoices`}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}
+
+function RecurringInvoiceModal({ invoice, onSetup, onClose }: {
+  invoice: Invoice;
+  onSetup: (data: Partial<Invoice>, frequency: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'semi_annual' | 'annual', startDate: Date, endDate?: Date, serviceAgreementId?: string) => Promise<string>;
+  onClose: () => void;
+}) {
+  const [frequency, setFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'semi_annual' | 'annual'>('monthly');
+  const [startDate, setStartDate] = useState(new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]);
+  const [hasEndDate, setHasEndDate] = useState(false);
+  const [endDate, setEndDate] = useState(new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0]);
+  const [saving, setSaving] = useState(false);
+
+  const frequencyLabel: Record<string, string> = {
+    weekly: 'Every week',
+    biweekly: 'Every 2 weeks',
+    monthly: 'Every month',
+    quarterly: 'Every 3 months',
+    semi_annual: 'Every 6 months',
+    annual: 'Every year',
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const newId = await onSetup(
+        invoice,
+        frequency,
+        new Date(startDate),
+        hasEndDate ? new Date(endDate) : undefined
+      );
+      onClose();
+      window.location.href = `/dashboard/invoices/${newId}`;
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to set up recurring');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Repeat size={18} />
+              Set Up Recurring Invoice
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-sm text-muted">
+                Create a recurring template from invoice <span className="font-mono text-main">{invoice.invoiceNumber}</span>.
+                New invoices ({formatCurrency(invoice.total)} each) will be generated automatically.
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Frequency</label>
+                <select
+                  value={frequency}
+                  onChange={(e) => setFrequency(e.target.value as typeof frequency)}
+                  className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                >
+                  <option value="weekly">Weekly</option>
+                  <option value="biweekly">Bi-weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="semi_annual">Semi-annual</option>
+                  <option value="annual">Annual</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Start Date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-main mb-1.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={hasEndDate}
+                    onChange={(e) => setHasEndDate(e.target.checked)}
+                    className="rounded border-main"
+                  />
+                  Set end date
+                </label>
+                {hasEndDate && (
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50 mt-2"
+                  />
+                )}
+              </div>
+
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex justify-between text-sm font-medium">
+                  <span className="text-muted">Amount per invoice</span>
+                  <span className="text-blue-400">{formatCurrency(invoice.total)}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted mt-1">
+                  <span>Schedule</span>
+                  <span>{frequencyLabel[frequency]}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={saving}>
+                  {saving ? 'Setting up...' : 'Create Recurring Template'}
                 </Button>
               </div>
             </form>
