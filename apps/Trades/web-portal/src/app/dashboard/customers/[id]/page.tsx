@@ -23,6 +23,17 @@ import {
   TrendingUp,
   AlertTriangle,
   MessageSquare,
+  Heart,
+  X,
+  Copy,
+  ExternalLink,
+  Shield,
+  UserPlus,
+  Merge,
+  Send,
+  Activity,
+  ChevronRight,
+  CheckCircle,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +50,7 @@ import { getSupabase } from '@/lib/supabase';
 import type { Customer } from '@/types';
 import { useTranslation } from '@/lib/translations';
 
-type TabType = 'overview' | 'bids' | 'jobs' | 'invoices' | 'activity';
+type TabType = 'overview' | 'bids' | 'jobs' | 'invoices' | 'documents' | 'activity';
 
 /** Compute payment behavior stats from customer's invoices */
 function computePaymentBehavior(invoices: { sentAt?: Date | string; paidAt?: Date | string; dueDate?: Date | string; total: number; status: string }[]) {
@@ -70,6 +81,56 @@ function computePaymentBehavior(invoices: { sentAt?: Date | string; paidAt?: Dat
   return { avgDaysToPay: avgDays, onTimeRate, totalLifetimeSpend: totalSpend, paidCount: paid.length, label };
 }
 
+/** Compute customer health score (0-100) from payment, engagement, and value metrics */
+function computeHealthScore(customer: Customer, invoices: any[], jobs: any[], bids: any[]) {
+  let score = 50; // Base score
+
+  // Payment behavior (up to +30 or -20)
+  const paymentStats = computePaymentBehavior(invoices);
+  if (paymentStats.paidCount > 0) {
+    score += Math.round((paymentStats.onTimeRate / 100) * 20); // On-time pays up to +20
+    if (paymentStats.avgDaysToPay <= 14) score += 10; // Fast payer
+    else if (paymentStats.avgDaysToPay > 45) score -= 15; // Very slow
+    else if (paymentStats.avgDaysToPay > 30) score -= 5; // Slow
+  }
+
+  // Engagement — recent activity (up to +15)
+  const allDates = [
+    ...jobs.map(j => new Date(j.updatedAt || j.createdAt)),
+    ...invoices.map(i => new Date(i.updatedAt || i.createdAt)),
+    ...bids.map(b => new Date(b.updatedAt || b.createdAt)),
+  ];
+  if (allDates.length > 0) {
+    const mostRecent = Math.max(...allDates.map(d => d.getTime()));
+    const daysSinceActivity = Math.round((Date.now() - mostRecent) / 86400000);
+    if (daysSinceActivity <= 30) score += 15;
+    else if (daysSinceActivity <= 90) score += 8;
+    else if (daysSinceActivity > 180) score -= 10;
+  }
+
+  // Value — repeat business (up to +10)
+  if (jobs.length >= 5) score += 10;
+  else if (jobs.length >= 3) score += 5;
+  else if (jobs.length >= 2) score += 2;
+
+  // Lifetime value bonus (up to +5)
+  if (customer.totalRevenue > 50000) score += 5;
+  else if (customer.totalRevenue > 10000) score += 3;
+
+  // Outstanding balance penalty
+  const overdueInvoices = invoices.filter(i => i.status === 'overdue');
+  if (overdueInvoices.length > 0) score -= overdueInvoices.length * 5;
+
+  return Math.max(0, Math.min(100, score));
+}
+
+function getHealthLabel(score: number): { label: string; color: string; bgColor: string } {
+  if (score >= 80) return { label: 'Excellent', color: 'text-emerald-500', bgColor: 'bg-emerald-500' };
+  if (score >= 60) return { label: 'Good', color: 'text-blue-500', bgColor: 'bg-blue-500' };
+  if (score >= 40) return { label: 'Fair', color: 'text-amber-500', bgColor: 'bg-amber-500' };
+  return { label: 'At Risk', color: 'text-red-500', bgColor: 'bg-red-500' };
+}
+
 export default function CustomerDetailPage() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -85,6 +146,10 @@ export default function CustomerDetailPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [newTag, setNewTag] = useState('');
+  const [showTagInput, setShowTagInput] = useState(false);
+  const [showPortalInvite, setShowPortalInvite] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [editData, setEditData] = useState({
     firstName: '', lastName: '', email: '', phone: '', alternatePhone: '',
     street: '', city: '', state: '', zip: '', notes: '',
@@ -149,6 +214,44 @@ export default function CustomerDetailPage() {
     }
   };
 
+  const addTag = async (tag: string) => {
+    if (!customer || !tag.trim()) return;
+    const normalized = tag.trim().toLowerCase().replace(/\s+/g, '-');
+    if (customer.tags.includes(normalized)) return;
+    try {
+      await updateCustomer(customerId, { tags: [...customer.tags, normalized] });
+      setNewTag('');
+      setShowTagInput(false);
+      refetch();
+    } catch { /* silent */ }
+  };
+
+  const removeTag = async (tag: string) => {
+    if (!customer) return;
+    try {
+      await updateCustomer(customerId, { tags: customer.tags.filter(t => t !== tag) });
+      refetch();
+    } catch { /* silent */ }
+  };
+
+  const sendPortalInvite = async () => {
+    if (!customer?.email) { alert('Customer has no email address'); return; }
+    setPortalLoading(true);
+    try {
+      const supabase = getSupabase();
+      const { error: err } = await supabase.functions.invoke('send-client-portal-invite', {
+        body: { customerId, email: customer.email, name: `${customer.firstName} ${customer.lastName}` },
+      });
+      if (err) throw err;
+      alert('Portal invitation sent!');
+      setShowPortalInvite(false);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to send invite');
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -179,10 +282,18 @@ export default function CustomerDetailPage() {
     { id: 'bids', label: 'Bids', count: customerBids.length },
     { id: 'jobs', label: 'Jobs', count: customerJobs.length },
     { id: 'invoices', label: 'Invoices', count: customerInvoices.length },
+    { id: 'documents', label: 'Documents', count: 0 },
     { id: 'activity', label: 'Activity', count: 0 },
   ];
 
   const paymentStats = computePaymentBehavior(customerInvoices);
+  const healthScore = computeHealthScore(customer, customerInvoices, customerJobs, customerBids);
+  const health = getHealthLabel(healthScore);
+
+  // Compute projected annual value from service agreements + repeat patterns
+  const avgJobValue = customer.jobCount > 0 ? customer.totalRevenue / customer.jobCount : 0;
+  const customerAge = Math.max(1, Math.round((Date.now() - new Date(customer.createdAt).getTime()) / (365.25 * 86400000)));
+  const annualValue = customer.totalRevenue / customerAge;
 
   return (
     <div className="space-y-6 pb-8">
@@ -223,18 +334,40 @@ export default function CustomerDetailPage() {
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
+                <div className="absolute right-0 top-full mt-1 w-56 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
                   <button onClick={startEditing} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Edit size={16} />
                     Edit Customer
                   </button>
+                  <hr className="my-1 border-main" />
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/jobs/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Briefcase size={16} />
                     Create Job
                   </button>
+                  <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/bids/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <FileText size={16} />
+                    Create Estimate
+                  </button>
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/invoices/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Receipt size={16} />
                     Create Invoice
+                  </button>
+                  <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/zdocs/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <FileText size={16} />
+                    Send Document
+                  </button>
+                  <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/scheduling/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <Calendar size={16} />
+                    Schedule Appointment
+                  </button>
+                  <hr className="my-1 border-main" />
+                  <button onClick={() => { setMenuOpen(false); setShowPortalInvite(true); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <ExternalLink size={16} />
+                    Send Portal Invite
+                  </button>
+                  <button onClick={() => { setMenuOpen(false); navigator.clipboard.writeText(`${customer.firstName} ${customer.lastName}\n${customer.email}\n${customer.phone}`); alert('Contact copied!'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <Copy size={16} />
+                    Copy Contact Info
                   </button>
                   <hr className="my-1 border-main" />
                   <button onClick={handleDelete} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
@@ -320,20 +453,51 @@ export default function CustomerDetailPage() {
           {activeTab === 'bids' && <BidsTab bids={customerBids} />}
           {activeTab === 'jobs' && <JobsTab jobs={customerJobs} />}
           {activeTab === 'invoices' && <InvoicesTab invoices={customerInvoices} />}
+          {activeTab === 'documents' && <DocumentsTab customerId={customerId} />}
           {activeTab === 'activity' && <ActivityTimeline customerId={customerId} bids={customerBids} jobs={customerJobs} invoices={customerInvoices} />}
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Stats */}
+          {/* Health Score */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t('common.customerValue')}</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Heart size={16} className={health.color} />
+                Customer Health
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className={cn('text-3xl font-bold', health.color)}>{healthScore}</span>
+                  <span className="text-sm text-muted">/100</span>
+                </div>
+                <span className={cn('text-sm font-medium px-2 py-0.5 rounded-full', health.color, health.bgColor + '/10')}>
+                  {health.label}
+                </span>
+              </div>
+              <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className={cn('h-full rounded-full transition-all', health.bgColor)}
+                  style={{ width: `${healthScore}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Lifetime Value */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <DollarSign size={16} className="text-emerald-500" />
+                Lifetime Value
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
               <div>
-                <p className="text-sm text-muted mb-1">{t('common.lifetimeRevenue')}</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(customer.totalRevenue)}</p>
+                <p className="text-xs text-muted">{t('common.lifetimeRevenue')}</p>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted">{t('customers.totalJobs')}</span>
@@ -341,9 +505,11 @@ export default function CustomerDetailPage() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted">{t('common.avgJobValue')}</span>
-                <span className="font-medium text-main">
-                  {customer.jobCount > 0 ? formatCurrency(customer.totalRevenue / customer.jobCount) : '$0'}
-                </span>
+                <span className="font-medium text-main">{formatCurrency(avgJobValue)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Annual Value</span>
+                <span className="font-medium text-main">{formatCurrency(annualValue)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted">{t('customers.customerSince')}</span>
@@ -425,7 +591,7 @@ export default function CustomerDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">{t('common.tags')}</CardTitle>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={() => setShowTagInput(true)}>
                 <Plus size={14} />
                 Add
               </Button>
@@ -433,12 +599,51 @@ export default function CustomerDetailPage() {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {customer.tags.map((tag) => (
-                  <Badge key={tag} variant="default">{tag}</Badge>
+                  <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-secondary border border-main rounded-full text-sm text-main group">
+                    {tag}
+                    <button
+                      onClick={() => removeTag(tag)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:bg-red-500/10 rounded-full"
+                    >
+                      <X size={12} className="text-red-400" />
+                    </button>
+                  </span>
                 ))}
-                {customer.tags.length === 0 && (
+                {customer.tags.length === 0 && !showTagInput && (
                   <p className="text-sm text-muted">{t('common.noTags')}</p>
                 )}
               </div>
+              {showTagInput && (
+                <div className="flex items-center gap-2 mt-3">
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    placeholder="Tag name..."
+                    className="flex-1 px-3 py-1.5 bg-secondary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                    onKeyDown={(e) => { if (e.key === 'Enter') addTag(newTag); if (e.key === 'Escape') setShowTagInput(false); }}
+                    autoFocus
+                  />
+                  <Button size="sm" onClick={() => addTag(newTag)}>Add</Button>
+                  <button onClick={() => { setShowTagInput(false); setNewTag(''); }} className="p-1 hover:bg-surface-hover rounded">
+                    <X size={14} className="text-muted" />
+                  </button>
+                </div>
+              )}
+              {/* Preset tag suggestions */}
+              {showTagInput && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {['vip', 'commercial', 'residential', 'insurance', 'maintenance', 'referral', 'repeat'].filter(t => !customer.tags.includes(t)).slice(0, 5).map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => addTag(suggestion)}
+                      className="px-2 py-0.5 text-xs bg-surface border border-main rounded-full text-muted hover:text-main hover:bg-surface-hover transition-colors"
+                    >
+                      + {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -454,19 +659,103 @@ export default function CustomerDetailPage() {
             </Card>
           )}
 
-          {/* Source */}
-          {customer.source && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">{t('common.leadSource')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Badge variant="default" className="capitalize">{customer.source}</Badge>
-              </CardContent>
-            </Card>
-          )}
+          {/* Source / Referral */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <UserPlus size={16} className="text-muted" />
+                Source & Referral
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Lead Source</span>
+                <Badge variant="default" className="capitalize">{customer.source || 'Direct'}</Badge>
+              </div>
+              {customer.source === 'referral' && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Referred By</span>
+                  <span className="text-main font-medium">—</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Referrals Made</span>
+                <span className="text-main font-medium">0</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Client Portal */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <ExternalLink size={16} className="text-muted" />
+                Client Portal
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-xs text-muted">
+                Give this customer access to view their jobs, invoices, and documents at client.zafto.cloud
+              </p>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-full"
+                disabled={portalLoading || !customer.email}
+                onClick={() => setShowPortalInvite(true)}
+              >
+                <Send size={14} className="mr-1" />
+                Send Portal Invite
+              </Button>
+              {!customer.email && (
+                <p className="text-xs text-amber-500">Add an email to send portal invites</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      {/* Portal Invite Modal */}
+      {showPortalInvite && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowPortalInvite(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ExternalLink size={18} />
+                  Send Portal Invitation
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted">
+                  Send a magic link to <span className="text-main font-medium">{customer.email}</span> so they can access their client portal at client.zafto.cloud
+                </p>
+                <div className="p-3 bg-secondary rounded-lg space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted">Customer</span>
+                    <span className="text-main">{customer.firstName} {customer.lastName}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted">Email</span>
+                    <span className="text-main">{customer.email}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted">Portal access</span>
+                    <span className="text-main">Jobs, Invoices, Documents, Payments</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="secondary" className="flex-1" onClick={() => setShowPortalInvite(false)}>Cancel</Button>
+                  <Button className="flex-1" disabled={portalLoading} onClick={sendPortalInvite}>
+                    {portalLoading ? 'Sending...' : 'Send Invite'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -794,6 +1083,99 @@ function ActivityTimeline({ customerId, bids, jobs, invoices }: {
                 );
               })}
             </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Documents associated with a customer */
+function DocumentsTab({ customerId }: { customerId: string }) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [docs, setDocs] = useState<{ id: string; title: string; type: string; createdAt: string; status: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadDocs() {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('documents')
+          .select('id, title, document_type, created_at, status')
+          .eq('customer_id', customerId)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false });
+
+        if (cancelled) return;
+        setDocs((data || []).map((d: Record<string, string>) => ({
+          id: d.id,
+          title: d.title || 'Untitled',
+          type: d.document_type || 'document',
+          createdAt: d.created_at,
+          status: d.status || 'draft',
+        })));
+      } catch {
+        // Table may not exist yet
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadDocs();
+    return () => { cancelled = true; };
+  }, [customerId]);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => <div key={i} className="h-12 bg-secondary rounded-lg animate-pulse" />)}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-base">Documents</CardTitle>
+        <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/zdocs/new?customerId=${customerId}`)}>
+          <Plus size={14} />
+          New Document
+        </Button>
+      </CardHeader>
+      <CardContent className="p-0">
+        {docs.length === 0 ? (
+          <div className="py-12 text-center">
+            <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
+            <p className="text-muted">No documents yet</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-main">
+            {docs.map((doc) => (
+              <div
+                key={doc.id}
+                onClick={() => router.push(`/dashboard/zdocs/${doc.id}`)}
+                className="px-6 py-4 hover:bg-surface-hover cursor-pointer transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FileText size={16} className="text-muted" />
+                    <div>
+                      <p className="font-medium text-main">{doc.title}</p>
+                      <p className="text-xs text-muted capitalize">{doc.type.replace(/_/g, ' ')} &middot; {formatDate(doc.createdAt)}</p>
+                    </div>
+                  </div>
+                  <Badge variant={doc.status === 'signed' ? 'success' : doc.status === 'sent' ? 'info' : 'default'}>
+                    {doc.status}
+                  </Badge>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </CardContent>

@@ -124,7 +124,39 @@ export function useCustomers() {
     fetchCustomers();
   };
 
-  return { customers, loading, error, createCustomer, updateCustomer, deleteCustomer, refetch: fetchCustomers };
+  const mergeCustomers = async (keepId: string, mergeId: string) => {
+    const supabase = getSupabase();
+
+    // Re-link all jobs, bids, invoices from mergeId to keepId
+    const tables = [
+      'jobs', 'bids', 'invoices', 'estimates', 'service_agreements',
+      'phone_calls', 'phone_messages', 'emails', 'documents', 'site_surveys',
+      'walkthroughs', 'properties',
+    ];
+
+    for (const table of tables) {
+      try {
+        await supabase.from(table).update({ customer_id: keepId }).eq('customer_id', mergeId);
+      } catch {
+        // Table may not exist — non-blocking
+      }
+    }
+
+    // Merge tags from both customers
+    const keep = customers.find(c => c.id === keepId);
+    const merge = customers.find(c => c.id === mergeId);
+    if (keep && merge) {
+      const mergedTags = [...new Set([...keep.tags, ...merge.tags])];
+      await supabase.from('customers').update({ tags: mergedTags }).eq('id', keepId);
+    }
+
+    // Soft-delete the merged customer
+    await supabase.from('customers').update({ deleted_at: new Date().toISOString() }).eq('id', mergeId);
+
+    fetchCustomers();
+  };
+
+  return { customers, loading, error, createCustomer, updateCustomer, deleteCustomer, mergeCustomers, refetch: fetchCustomers };
 }
 
 export function useCustomer(id: string | undefined) {

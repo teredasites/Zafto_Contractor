@@ -31,6 +31,8 @@ export default function CustomersPage() {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [tagFilter, setTagFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<'name' | 'revenue' | 'recent' | 'jobs'>('recent');
   const [view, setView] = useState<'list' | 'grid'>('list');
   const { customers, loading: customersLoading } = useCustomers();
 
@@ -38,14 +40,28 @@ export default function CustomersPage() {
   const allTags = [...new Set(customers.flatMap((c) => c.tags))];
 
   const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch =
-      customer.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      customer.lastName.toLowerCase().includes(search.toLowerCase()) ||
-      customer.email.toLowerCase().includes(search.toLowerCase());
+    const q = search.toLowerCase();
+    const matchesSearch = !q ||
+      customer.firstName.toLowerCase().includes(q) ||
+      customer.lastName.toLowerCase().includes(q) ||
+      (customer.email || '').toLowerCase().includes(q) ||
+      (customer.phone || '').replace(/\D/g, '').includes(q.replace(/\D/g, '')) ||
+      (customer.address?.street || '').toLowerCase().includes(q) ||
+      (customer.address?.city || '').toLowerCase().includes(q) ||
+      (customer.address?.zip || '').includes(q) ||
+      (customer.companyName || '').toLowerCase().includes(q);
 
     const matchesTag = tagFilter === 'all' || customer.tags.includes(tagFilter);
+    const matchesType = typeFilter === 'all' || customer.customerType === typeFilter;
 
-    return matchesSearch && matchesTag;
+    return matchesSearch && matchesTag && matchesType;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'name': return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
+      case 'revenue': return b.totalRevenue - a.totalRevenue;
+      case 'jobs': return b.jobCount - a.jobCount;
+      default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
   });
 
   const totalRevenue = customers.reduce((sum, c) => sum + c.totalRevenue, 0);
@@ -140,12 +156,22 @@ export default function CustomersPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder={t('customers.searchCustomers')}
+          placeholder="Search by name, email, phone, address..."
           className="sm:w-80"
+        />
+        <Select
+          options={[
+            { value: 'all', label: 'All Types' },
+            { value: 'residential', label: 'Residential' },
+            { value: 'commercial', label: 'Commercial' },
+          ]}
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          className="sm:w-40"
         />
         <Select
           options={[
@@ -154,7 +180,18 @@ export default function CustomersPage() {
           ]}
           value={tagFilter}
           onChange={(e) => setTagFilter(e.target.value)}
-          className="sm:w-48"
+          className="sm:w-40"
+        />
+        <Select
+          options={[
+            { value: 'recent', label: 'Most Recent' },
+            { value: 'name', label: 'Name A-Z' },
+            { value: 'revenue', label: 'Highest Revenue' },
+            { value: 'jobs', label: 'Most Jobs' },
+          ]}
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+          className="sm:w-44"
         />
         <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg ml-auto">
           <button
