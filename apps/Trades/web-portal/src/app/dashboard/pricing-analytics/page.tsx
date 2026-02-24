@@ -15,6 +15,7 @@ import {
 import { createClient } from '@/lib/supabase';
 import { useTranslation } from '@/lib/translations';
 import { formatCompactCurrency } from '@/lib/format-locale';
+import { CommandPalette } from '@/components/command-palette';
 
 const supabase = createClient();
 
@@ -163,9 +164,10 @@ export default function PricingAnalyticsPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      <CommandPalette />
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">{t('pricingAnalytics.title')}</h1>
-        <p className="text-sm text-zinc-400 mt-1">
+        <h1 className="text-2xl font-semibold text-main">{t('pricingAnalytics.title')}</h1>
+        <p className="text-sm text-muted mt-1">
           Track how smart pricing impacts close rates and revenue
         </p>
       </div>
@@ -195,27 +197,27 @@ export default function PricingAnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Close Rate by Price Tier */}
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingAnalytics.closeRateByPriceTier')}</h3>
+        <div className="bg-secondary/50 border border-main rounded-xl p-5">
+          <h3 className="text-sm font-medium text-main mb-4">{t('pricingAnalytics.closeRateByPriceTier')}</h3>
           {closeRateByTier.length === 0 ? (
-            <p className="text-zinc-600 text-sm">{t('pricingAnalytics.noDataYet')}</p>
+            <p className="text-muted text-sm">{t('pricingAnalytics.noDataYet')}</p>
           ) : (
             <div className="space-y-3">
               {closeRateByTier.map((tier) => (
                 <div key={tier.label} className="flex items-center gap-3">
-                  <span className="text-xs text-zinc-500 w-16">{tier.label}</span>
-                  <div className="flex-1 h-6 bg-zinc-700/30 rounded relative">
+                  <span className="text-xs text-muted w-16">{tier.label}</span>
+                  <div className="flex-1 h-6 bg-secondary/30 rounded relative">
                     <div
                       className={`h-full rounded ${
                         tier.closeRate >= 40 ? 'bg-emerald-500/40' : tier.closeRate >= 20 ? 'bg-amber-500/40' : 'bg-red-500/40'
                       }`}
                       style={{ width: `${Math.min(tier.closeRate, 100)}%` }}
                     />
-                    <span className="absolute inset-y-0 left-2 flex items-center text-xs text-zinc-300">
+                    <span className="absolute inset-y-0 left-2 flex items-center text-xs text-main">
                       {tier.closeRate.toFixed(0)}%
                     </span>
                   </div>
-                  <span className="text-xs text-zinc-600 w-20 text-right">
+                  <span className="text-xs text-muted w-20 text-right">
                     {tier.won}/{tier.withOutcome} won
                   </span>
                 </div>
@@ -225,23 +227,23 @@ export default function PricingAnalyticsPage() {
         </div>
 
         {/* Factor Breakdown */}
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingAnalytics.mostAppliedPricingFactors')}</h3>
+        <div className="bg-secondary/50 border border-main rounded-xl p-5">
+          <h3 className="text-sm font-medium text-main mb-4">{t('pricingAnalytics.mostAppliedPricingFactors')}</h3>
           {factorBreakdown.length === 0 ? (
-            <p className="text-zinc-600 text-sm">{t('pricingAnalytics.noPricingFactorsAppliedYet')}</p>
+            <p className="text-muted text-sm">{t('pricingAnalytics.noPricingFactorsAppliedYet')}</p>
           ) : (
             <div className="space-y-3">
               {factorBreakdown.map((f) => (
-                <div key={f.type} className="flex items-center justify-between py-2 border-b border-zinc-700/30 last:border-0">
+                <div key={f.type} className="flex items-center justify-between py-2 border-b border-main/30 last:border-0">
                   <div>
-                    <p className="text-sm text-zinc-200">{f.label}</p>
-                    <p className="text-xs text-zinc-500">{f.count} times applied</p>
+                    <p className="text-sm text-main">{f.label}</p>
+                    <p className="text-xs text-muted">{f.count} times applied</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-sm font-medium ${f.avgAmount >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                       {f.avgAmount >= 0 ? '+' : ''}{fmtMoney(f.avgAmount)} avg
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-muted">
                       {fmtMoney(f.totalAmount)} total
                     </p>
                   </div>
@@ -253,35 +255,35 @@ export default function PricingAnalyticsPage() {
       </div>
 
       {/* Acceptance/Decline */}
-      <div className="mt-6 bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingAnalytics.suggestionOutcomes')}</h3>
+      <div className="mt-6 bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-medium text-main mb-4">{t('pricingAnalytics.suggestionOutcomes')}</h3>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-emerald-400" />
             <div>
               <p className="text-lg font-bold text-emerald-400">{stats.accepted}</p>
-              <p className="text-xs text-zinc-500">{t('common.accepted')}</p>
+              <p className="text-xs text-muted">{t('common.accepted')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <XCircle className="h-5 w-5 text-red-400" />
             <div>
               <p className="text-lg font-bold text-red-400">{stats.declined}</p>
-              <p className="text-xs text-zinc-500">{t('pricingAnalytics.overridden')}</p>
+              <p className="text-xs text-muted">{t('pricingAnalytics.overridden')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Target className="h-5 w-5 text-blue-400" />
             <div>
               <p className="text-lg font-bold text-blue-400">{stats.jobsWon}</p>
-              <p className="text-xs text-zinc-500">{t('pricingAnalytics.jobsWon')}</p>
+              <p className="text-xs text-muted">{t('pricingAnalytics.jobsWon')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-zinc-400" />
+            <TrendingUp className="h-5 w-5 text-muted" />
             <div>
-              <p className="text-lg font-bold text-zinc-300">{stats.avgAdjustmentPct.toFixed(1)}%</p>
-              <p className="text-xs text-zinc-500">{t('pricingAnalytics.avgAdjustment')}</p>
+              <p className="text-lg font-bold text-main">{stats.avgAdjustmentPct.toFixed(1)}%</p>
+              <p className="text-xs text-muted">{t('pricingAnalytics.avgAdjustment')}</p>
             </div>
           </div>
         </div>
@@ -289,11 +291,11 @@ export default function PricingAnalyticsPage() {
 
       {/* Recent Suggestions */}
       {suggestions.length > 0 && (
-        <div className="mt-6 bg-zinc-800/50 border border-zinc-700/50 rounded-xl">
-          <div className="p-4 border-b border-zinc-700/50">
-            <h3 className="text-sm font-medium text-zinc-300">{t('pricingAnalytics.recentSuggestions')}</h3>
+        <div className="mt-6 bg-secondary/50 border border-main rounded-xl">
+          <div className="p-4 border-b border-main">
+            <h3 className="text-sm font-medium text-main">{t('pricingAnalytics.recentSuggestions')}</h3>
           </div>
-          <div className="divide-y divide-zinc-700/30">
+          <div className="divide-y divide-main/30">
             {suggestions.slice(0, 20).map((s) => {
               const adjustPct = s.base_price > 0
                 ? (((s.suggested_price - s.base_price) / s.base_price) * 100).toFixed(1)
@@ -305,22 +307,22 @@ export default function PricingAnalyticsPage() {
                     <div className={`w-2 h-2 rounded-full ${
                       s.accepted === true ? 'bg-emerald-400' :
                       s.accepted === false ? 'bg-red-400' :
-                      'bg-zinc-600'
+                      'bg-slate-600'
                     }`} />
                     <div>
-                      <p className="text-sm text-zinc-300">
+                      <p className="text-sm text-main">
                         {fmtMoney(s.base_price)} → {fmtMoney(s.suggested_price)}
                         <span className={`ml-2 text-xs ${Number(adjustPct) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                           ({Number(adjustPct) >= 0 ? '+' : ''}{adjustPct}%)
                         </span>
                       </p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-muted">
                         {s.factors_applied.map(f => f.label).join(', ') || 'No factors'}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-muted">
                       {formatDate(s.created_at)}
                     </p>
                     {s.job_won !== null && (
@@ -345,7 +347,7 @@ function StatCard({
   icon: Icon,
   label,
   value,
-  valueColor = 'text-white',
+  valueColor = 'text-main',
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -353,10 +355,10 @@ function StatCard({
   valueColor?: string;
 }) {
   return (
-    <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-4">
-      <Icon className="h-5 w-5 text-zinc-500 mb-2" />
+    <div className="bg-secondary/50 border border-main rounded-xl p-4">
+      <Icon className="h-5 w-5 text-muted mb-2" />
       <p className={`text-xl font-bold ${valueColor}`}>{value}</p>
-      <p className="text-xs text-zinc-500 mt-1">{label}</p>
+      <p className="text-xs text-muted mt-1">{label}</p>
     </div>
   );
 }

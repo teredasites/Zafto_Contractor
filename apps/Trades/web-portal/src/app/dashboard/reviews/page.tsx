@@ -42,7 +42,7 @@ const statusConfig: Record<ReviewStatus, { label: string; color: string; bgColor
   sent: { label: 'Sent', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30', icon: Send },
   opened: { label: 'Opened', color: 'text-indigo-700 dark:text-indigo-300', bgColor: 'bg-indigo-100 dark:bg-indigo-900/30', icon: ExternalLink },
   completed: { label: 'Completed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30', icon: CheckCircle },
-  skipped: { label: 'Skipped', color: 'text-zinc-500 dark:text-zinc-400', bgColor: 'bg-zinc-100 dark:bg-zinc-800/30', icon: SkipForward },
+  skipped: { label: 'Skipped', color: 'text-slate-500 dark:text-slate-400', bgColor: 'bg-slate-100 dark:bg-slate-800/30', icon: SkipForward },
   failed: { label: 'Failed', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30', icon: XCircle },
 };
 
@@ -50,7 +50,7 @@ const platformConfig: Record<ReviewPlatform, { label: string; color: string }> =
   google: { label: 'Google', color: 'text-blue-600 dark:text-blue-400' },
   yelp: { label: 'Yelp', color: 'text-red-600 dark:text-red-400' },
   facebook: { label: 'Facebook', color: 'text-indigo-600 dark:text-indigo-400' },
-  custom: { label: 'Custom', color: 'text-zinc-600 dark:text-zinc-400' },
+  custom: { label: 'Custom', color: 'text-slate-600 dark:text-slate-400' },
 };
 
 const channelIcon: Record<string, typeof Mail> = {
@@ -61,7 +61,7 @@ const channelIcon: Record<string, typeof Mail> = {
 
 function StarRating({ rating }: { rating: number | null }) {
   const { t } = useTranslation();
-  if (rating == null) return <span className="text-xs text-zinc-400">{t('reviews.noRating')}</span>;
+  if (rating == null) return <span className="text-xs text-muted">{t('reviews.noRating')}</span>;
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
@@ -123,7 +123,7 @@ export default function ReviewsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
       </div>
     );
   }
@@ -144,8 +144,8 @@ export default function ReviewsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">{t('reviews.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <h1 className="text-2xl font-semibold text-main">{t('reviews.title')}</h1>
+          <p className="text-sm text-muted mt-1">
             Track review requests and customer ratings
           </p>
         </div>
@@ -153,12 +153,12 @@ export default function ReviewsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('reviews.requestsSent')}</p>
-                <p className="text-2xl font-bold text-white mt-1">{stats.totalSent}</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('reviews.requestsSent')}</p>
+                <p className="text-2xl font-bold text-main mt-1">{stats.totalSent}</p>
               </div>
               <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
                 <Send className="h-5 w-5 text-blue-400" />
@@ -167,12 +167,12 @@ export default function ReviewsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('reviews.reviewsReceived')}</p>
-                <p className="text-2xl font-bold text-white mt-1">{stats.totalCompleted}</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('reviews.reviewsReceived')}</p>
+                <p className="text-2xl font-bold text-main mt-1">{stats.totalCompleted}</p>
               </div>
               <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-emerald-400" />
@@ -181,13 +181,13 @@ export default function ReviewsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('common.avgRating')}</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('common.avgRating')}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <p className="text-2xl font-bold text-white">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '--'}</p>
+                  <p className="text-2xl font-bold text-main">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '--'}</p>
                   {stats.avgRating > 0 && <Star className="h-5 w-5 text-amber-500 fill-amber-500" />}
                 </div>
               </div>
@@ -198,12 +198,12 @@ export default function ReviewsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-400 uppercase tracking-wider">{t('leadsPage.conversionRate')}</p>
-                <p className="text-2xl font-bold text-white mt-1">{stats.conversionRate > 0 ? `${stats.conversionRate.toFixed(0)}%` : '--'}</p>
+                <p className="text-xs text-muted uppercase tracking-wider">{t('leadsPage.conversionRate')}</p>
+                <p className="text-2xl font-bold text-main mt-1">{stats.conversionRate > 0 ? `${stats.conversionRate.toFixed(0)}%` : '--'}</p>
               </div>
               <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
                 <Target className="h-5 w-5 text-purple-400" />
@@ -258,11 +258,11 @@ export default function ReviewsPage() {
 
       {/* Review Requests List */}
       {filtered.length === 0 ? (
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="">
           <CardContent className="flex flex-col items-center justify-center py-16 gap-3">
-            <Inbox className="h-12 w-12 text-zinc-600" />
-            <p className="text-zinc-400">{t('reviews.noReviewRequestsFound')}</p>
-            <p className="text-xs text-zinc-500">
+            <Inbox className="h-12 w-12 text-muted opacity-50" />
+            <p className="text-muted">{t('reviews.noReviewRequestsFound')}</p>
+            <p className="text-xs text-muted">
               Review requests are created when jobs are marked complete
             </p>
           </CardContent>
@@ -276,7 +276,7 @@ export default function ReviewsPage() {
             const ChannelIcon = channelIcon[request.channel] || MessageSquare;
 
             return (
-              <Card key={request.id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+              <Card key={request.id} className="hover:border-accent/30 transition-colors">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     {/* Status Icon */}
@@ -287,7 +287,7 @@ export default function ReviewsPage() {
                     {/* Main Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-white truncate">
+                        <span className="text-sm font-medium text-main truncate">
                           {request.customerName || 'Unknown Customer'}
                         </span>
                         <Badge variant="default" className={cn('text-[10px] px-1.5 py-0', statusCfg.color, statusCfg.bgColor)}>
@@ -297,7 +297,7 @@ export default function ReviewsPage() {
                           {platformCfg.label}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-zinc-400">
+                      <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                         {request.jobTitle && (
                           <span className="truncate">{request.jobTitle}</span>
                         )}
@@ -320,7 +320,7 @@ export default function ReviewsPage() {
                     {/* Feedback */}
                     {request.feedbackText && (
                       <div className="shrink-0 max-w-[200px]">
-                        <p className="text-xs text-zinc-400 italic truncate">
+                        <p className="text-xs text-muted italic truncate">
                           &ldquo;{request.feedbackText}&rdquo;
                         </p>
                       </div>
@@ -343,7 +343,7 @@ export default function ReviewsPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-zinc-400 hover:text-zinc-300 text-xs"
+                            className="text-muted hover:text-main text-xs"
                             onClick={() => handleSkip(request.id)}
                           >
                             <SkipForward className="h-3.5 w-3.5 mr-1" />
@@ -367,7 +367,7 @@ export default function ReviewsPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-zinc-400 hover:text-zinc-300 text-xs"
+                          className="text-muted hover:text-main text-xs"
                           onClick={() => window.open(request.reviewUrl!, '_blank')}
                         >
                           <ExternalLink className="h-3.5 w-3.5 mr-1" />
