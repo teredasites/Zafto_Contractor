@@ -7,7 +7,7 @@ import {
   DollarSign, Package, Wrench, Zap, FileText, Home, Receipt,
   Calculator, Layers, AlertCircle, Loader2, Shield, Send, Eye,
   Ruler, Pencil, Check, Download, Satellite, ShoppingCart,
-  Star, Copy, BarChart3, ShieldCheck,
+  Star, Copy, BarChart3, ShieldCheck, TrendingUp, TrendingDown, Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
@@ -1854,7 +1854,96 @@ function TotalsPanel({
             </div>
           );
         })()}
+
+        {/* Crew Accuracy Insights */}
+        <CrewAccuracyPanel />
       </div>
+    </div>
+  );
+}
+
+// ── Crew Accuracy Panel ── (Historical Job Learning)
+
+function CrewAccuracyPanel() {
+  const [data, setData] = useState<Array<{
+    task_name: string; trade: string; estimated_hours: number; actual_hours: number;
+  }>>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data: rows } = await supabase
+          .from('crew_performance_log')
+          .select('task_name, trade, estimated_hours, actual_hours')
+          .order('created_at', { ascending: false })
+          .limit(50);
+        setData(rows || []);
+      } catch { /* silent */ }
+      setLoaded(true);
+    };
+    load();
+  }, []);
+
+  if (!loaded || data.length === 0) return null;
+
+  // Aggregate by trade
+  const byTrade: Record<string, { estimated: number; actual: number; count: number }> = {};
+  for (const row of data) {
+    const t = row.trade || 'General';
+    if (!byTrade[t]) byTrade[t] = { estimated: 0, actual: 0, count: 0 };
+    byTrade[t].estimated += row.estimated_hours;
+    byTrade[t].actual += row.actual_hours;
+    byTrade[t].count++;
+  }
+
+  const totalEstimated = data.reduce((s, r) => s + r.estimated_hours, 0);
+  const totalActual = data.reduce((s, r) => s + r.actual_hours, 0);
+  const overallVariance = totalEstimated > 0 ? ((totalActual - totalEstimated) / totalEstimated) * 100 : 0;
+
+  return (
+    <div className="pt-3 mt-1 border-t border-zinc-700/50 space-y-2">
+      <p className="text-[10px] text-zinc-400 uppercase font-semibold tracking-wider flex items-center gap-1">
+        <Activity className="w-3 h-3" />
+        Crew Accuracy
+      </p>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-zinc-500">Overall ({data.length} jobs)</span>
+        <div className="flex items-center gap-1">
+          {overallVariance > 5 ? (
+            <TrendingUp className="w-3 h-3 text-amber-400" />
+          ) : overallVariance < -5 ? (
+            <TrendingDown className="w-3 h-3 text-emerald-400" />
+          ) : (
+            <Activity className="w-3 h-3 text-emerald-400" />
+          )}
+          <span className={cn('font-medium', Math.abs(overallVariance) <= 5 ? 'text-emerald-400' : overallVariance > 15 ? 'text-red-400' : 'text-amber-400')}>
+            {overallVariance > 0 ? '+' : ''}{overallVariance.toFixed(0)}%
+          </span>
+        </div>
+      </div>
+      {Object.entries(byTrade).slice(0, 4).map(([trade, stats]) => {
+        const variance = stats.estimated > 0 ? ((stats.actual - stats.estimated) / stats.estimated) * 100 : 0;
+        return (
+          <div key={trade} className="flex items-center justify-between text-xs">
+            <span className="text-zinc-500">{trade} ({stats.count})</span>
+            <span className={cn('font-medium', Math.abs(variance) <= 5 ? 'text-emerald-400' : variance > 15 ? 'text-red-400' : 'text-amber-400')}>
+              {variance > 0 ? '+' : ''}{variance.toFixed(0)}%
+            </span>
+          </div>
+        );
+      })}
+      {overallVariance > 10 && (
+        <p className="text-[10px] text-amber-400/70 mt-1">
+          Your crew averages {overallVariance.toFixed(0)}% more hours than estimated. Consider adjusting labor estimates.
+        </p>
+      )}
+      {overallVariance < -10 && (
+        <p className="text-[10px] text-emerald-400/70 mt-1">
+          Your crew is {Math.abs(overallVariance).toFixed(0)}% faster than estimates. Your bids may be conservative.
+        </p>
+      )}
     </div>
   );
 }
