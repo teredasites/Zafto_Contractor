@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Clock,
   ChevronLeft,
@@ -15,21 +15,16 @@ import {
   Play,
   AlertCircle,
   CheckCircle2,
-  Users,
   Pause,
   DollarSign,
-  FileText,
   Shield,
   ArrowRight,
   Briefcase,
   History,
   Pencil,
   Eye,
-  CircleDot,
   Signal,
-  Wifi,
   WifiOff,
-  Hash,
   UserCheck,
   ClipboardCheck,
   ChevronDown,
@@ -46,13 +41,12 @@ import { cn } from '@/lib/utils';
 import { useTeam } from '@/lib/hooks/use-jobs';
 import { useTimeClock, type TimeEntry } from '@/lib/hooks/use-time-clock';
 import { useTranslation } from '@/lib/translations';
-import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
+import { formatCurrency, formatDateLocale, formatTimeLocale } from '@/lib/format-locale';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-type TimeEntryStatus = 'active' | 'completed' | 'approved' | 'rejected';
 type TabKey = 'live' | 'timesheets' | 'allocation' | 'adjustments';
 
 interface TimesheetRow {
@@ -70,122 +64,10 @@ interface TimesheetRow {
 interface JobAllocationRow {
   jobId: string;
   jobName: string;
-  customerName: string;
   employees: { userId: string; userName: string; hours: number; rate: number; cost: number }[];
   totalHours: number;
   totalCost: number;
 }
-
-interface AdjustmentRecord {
-  id: string;
-  entryId: string;
-  employeeName: string;
-  date: string;
-  originalClockIn: string;
-  originalClockOut: string;
-  adjustedClockIn: string;
-  adjustedClockOut: string;
-  reason: string;
-  adjustedBy: string;
-  adjustedAt: string;
-  approved: boolean;
-  approvedBy: string | null;
-}
-
-interface LiveEmployee {
-  userId: string;
-  userName: string;
-  role: string;
-  clockedInAt: string;
-  elapsedMinutes: number;
-  jobTitle: string | null;
-  gpsVerified: boolean;
-  gpsLocation: string | null;
-  onBreak: boolean;
-  breakStartedAt: string | null;
-  breakMinutes: number;
-}
-
-// ---------------------------------------------------------------------------
-// Demo data generators
-// ---------------------------------------------------------------------------
-
-const DEMO_LIVE_EMPLOYEES: LiveEmployee[] = [
-  { userId: 'u1', userName: 'Marcus Rivera', role: 'Lead Technician', clockedInAt: new Date(Date.now() - 4.5 * 3600000).toISOString(), elapsedMinutes: 270, jobTitle: 'HVAC Install - 1420 Oak Ave', gpsVerified: true, gpsLocation: '1420 Oak Ave, Suite B', onBreak: false, breakStartedAt: null, breakMinutes: 30 },
-  { userId: 'u2', userName: 'Sarah Chen', role: 'Apprentice', clockedInAt: new Date(Date.now() - 3.2 * 3600000).toISOString(), elapsedMinutes: 192, jobTitle: 'Duct Repair - 890 Pine St', gpsVerified: true, gpsLocation: '890 Pine St', onBreak: true, breakStartedAt: new Date(Date.now() - 0.15 * 3600000).toISOString(), breakMinutes: 0 },
-  { userId: 'u3', userName: 'James Wilson', role: 'Technician', clockedInAt: new Date(Date.now() - 5.8 * 3600000).toISOString(), elapsedMinutes: 348, jobTitle: 'Commercial AC - 2200 Market Blvd', gpsVerified: true, gpsLocation: '2200 Market Blvd', onBreak: false, breakStartedAt: null, breakMinutes: 45 },
-  { userId: 'u4', userName: 'Ana Rodriguez', role: 'Technician', clockedInAt: new Date(Date.now() - 2.1 * 3600000).toISOString(), elapsedMinutes: 126, jobTitle: null, gpsVerified: false, gpsLocation: null, onBreak: false, breakStartedAt: null, breakMinutes: 0 },
-  { userId: 'u5', userName: 'David Park', role: 'Senior Technician', clockedInAt: new Date(Date.now() - 6.5 * 3600000).toISOString(), elapsedMinutes: 390, jobTitle: 'Furnace Replace - 3311 Cedar Ln', gpsVerified: true, gpsLocation: '3311 Cedar Ln', onBreak: false, breakStartedAt: null, breakMinutes: 30 },
-];
-
-const DEMO_TIMESHEET_ROWS: TimesheetRow[] = [
-  { userId: 'u1', userName: 'Marcus Rivera', role: 'Lead Technician', dailyHours: [8.5, 9.0, 8.0, 8.5, 8.0, 4.0, null], dailyJobs: ['HVAC Install', 'HVAC Install', 'Duct Repair', 'HVAC Install', 'Commercial AC', 'Furnace Replace', null], dailyOt: [0.5, 1.0, 0, 0.5, 0, 0, null], weekTotal: 46.0, otTotal: 6.0, status: 'pending' },
-  { userId: 'u2', userName: 'Sarah Chen', role: 'Apprentice', dailyHours: [8.0, 8.0, 8.0, 7.5, 8.0, null, null], dailyJobs: ['Duct Repair', 'HVAC Install', 'Duct Repair', 'Duct Repair', 'Commercial AC', null, null], dailyOt: [0, 0, 0, 0, 0, null, null], weekTotal: 39.5, otTotal: 0, status: 'approved' },
-  { userId: 'u3', userName: 'James Wilson', role: 'Technician', dailyHours: [8.0, 10.0, 9.5, 8.0, 8.5, 5.0, null], dailyJobs: ['Commercial AC', 'Commercial AC', 'Commercial AC', 'Furnace Replace', 'Commercial AC', 'Furnace Replace', null], dailyOt: [0, 2.0, 1.5, 0, 0.5, 0, null], weekTotal: 49.0, otTotal: 9.0, status: 'pending' },
-  { userId: 'u4', userName: 'Ana Rodriguez', role: 'Technician', dailyHours: [8.0, 8.0, 8.0, 8.0, 7.0, null, null], dailyJobs: ['Residential AC', 'Residential AC', 'Heat Pump', 'Heat Pump', 'Residential AC', null, null], dailyOt: [0, 0, 0, 0, 0, null, null], weekTotal: 39.0, otTotal: 0, status: 'approved' },
-  { userId: 'u5', userName: 'David Park', role: 'Senior Technician', dailyHours: [9.0, 9.5, 8.0, 9.0, 8.5, 6.0, null], dailyJobs: ['Furnace Replace', 'Furnace Replace', 'Commercial AC', 'Furnace Replace', 'HVAC Install', 'Furnace Replace', null], dailyOt: [1.0, 1.5, 0, 1.0, 0.5, 0, null], weekTotal: 50.0, otTotal: 10.0, status: 'rejected' },
-];
-
-const DEMO_JOB_ALLOCATIONS: JobAllocationRow[] = [
-  {
-    jobId: 'j1', jobName: 'HVAC Install - 1420 Oak Ave', customerName: 'Thompson Residence',
-    employees: [
-      { userId: 'u1', userName: 'Marcus Rivera', hours: 26.0, rate: 45.00, cost: 1170.00 },
-      { userId: 'u2', userName: 'Sarah Chen', hours: 8.0, rate: 22.00, cost: 176.00 },
-      { userId: 'u5', userName: 'David Park', hours: 8.5, rate: 55.00, cost: 467.50 },
-    ],
-    totalHours: 42.5, totalCost: 1813.50,
-  },
-  {
-    jobId: 'j2', jobName: 'Commercial AC - 2200 Market Blvd', customerName: 'Market Square LLC',
-    employees: [
-      { userId: 'u3', userName: 'James Wilson', hours: 36.0, rate: 38.00, cost: 1368.00 },
-      { userId: 'u1', userName: 'Marcus Rivera', hours: 8.0, rate: 45.00, cost: 360.00 },
-      { userId: 'u2', userName: 'Sarah Chen', hours: 8.0, rate: 22.00, cost: 176.00 },
-      { userId: 'u5', userName: 'David Park', hours: 8.0, rate: 55.00, cost: 440.00 },
-    ],
-    totalHours: 60.0, totalCost: 2344.00,
-  },
-  {
-    jobId: 'j3', jobName: 'Duct Repair - 890 Pine St', customerName: 'Garcia Family',
-    employees: [
-      { userId: 'u2', userName: 'Sarah Chen', hours: 23.5, rate: 22.00, cost: 517.00 },
-      { userId: 'u1', userName: 'Marcus Rivera', hours: 8.0, rate: 45.00, cost: 360.00 },
-    ],
-    totalHours: 31.5, totalCost: 877.00,
-  },
-  {
-    jobId: 'j4', jobName: 'Furnace Replace - 3311 Cedar Ln', customerName: 'Williams Estate',
-    employees: [
-      { userId: 'u5', userName: 'David Park', hours: 33.5, rate: 55.00, cost: 1842.50 },
-      { userId: 'u3', userName: 'James Wilson', hours: 13.0, rate: 38.00, cost: 494.00 },
-    ],
-    totalHours: 46.5, totalCost: 2336.50,
-  },
-  {
-    jobId: 'j5', jobName: 'Residential AC - 450 Elm Dr', customerName: 'Patterson Home',
-    employees: [
-      { userId: 'u4', userName: 'Ana Rodriguez', hours: 31.0, rate: 35.00, cost: 1085.00 },
-    ],
-    totalHours: 31.0, totalCost: 1085.00,
-  },
-  {
-    jobId: 'j6', jobName: 'Heat Pump - 780 Birch Way', customerName: 'Nguyen Residence',
-    employees: [
-      { userId: 'u4', userName: 'Ana Rodriguez', hours: 16.0, rate: 35.00, cost: 560.00 },
-    ],
-    totalHours: 16.0, totalCost: 560.00,
-  },
-];
-
-const DEMO_ADJUSTMENTS: AdjustmentRecord[] = [
-  { id: 'adj1', entryId: 'te1', employeeName: 'Marcus Rivera', date: '2026-02-23', originalClockIn: '07:00 AM', originalClockOut: '04:30 PM', adjustedClockIn: '06:45 AM', adjustedClockOut: '04:30 PM', reason: 'Employee arrived early to prep job site, forgot to clock in on time', adjustedBy: 'Mike Torres (Manager)', adjustedAt: '2026-02-23T17:30:00Z', approved: true, approvedBy: 'Mike Torres' },
-  { id: 'adj2', entryId: 'te2', employeeName: 'James Wilson', date: '2026-02-22', originalClockIn: '07:00 AM', originalClockOut: '06:00 PM', adjustedClockIn: '07:00 AM', adjustedClockOut: '05:30 PM', reason: 'System did not register clock-out. Employee confirmed 5:30 PM departure.', adjustedBy: 'Mike Torres (Manager)', adjustedAt: '2026-02-22T18:15:00Z', approved: true, approvedBy: 'Mike Torres' },
-  { id: 'adj3', entryId: 'te3', employeeName: 'Sarah Chen', date: '2026-02-21', originalClockIn: '08:00 AM', originalClockOut: '04:00 PM', adjustedClockIn: '08:00 AM', adjustedClockOut: '04:30 PM', reason: 'Employee stayed 30 min extra for cleanup. Manager witnessed.', adjustedBy: 'Mike Torres (Manager)', adjustedAt: '2026-02-21T17:00:00Z', approved: true, approvedBy: 'Mike Torres' },
-  { id: 'adj4', entryId: 'te4', employeeName: 'David Park', date: '2026-02-20', originalClockIn: '06:30 AM', originalClockOut: '05:00 PM', adjustedClockIn: '06:30 AM', adjustedClockOut: '04:00 PM', reason: 'Employee left early due to medical appointment. Time adjusted per policy.', adjustedBy: 'Mike Torres (Manager)', adjustedAt: '2026-02-20T16:30:00Z', approved: false, approvedBy: null },
-  { id: 'adj5', entryId: 'te5', employeeName: 'Ana Rodriguez', date: '2026-02-19', originalClockIn: '07:30 AM', originalClockOut: '03:30 PM', adjustedClockIn: '07:00 AM', adjustedClockOut: '03:30 PM', reason: 'GPS verification delayed clock-in by 30 min. Employee was on site at 7:00 AM confirmed by lead.', adjustedBy: 'Mike Torres (Manager)', adjustedAt: '2026-02-19T16:00:00Z', approved: true, approvedBy: 'Mike Torres' },
-  { id: 'adj6', entryId: 'te6', employeeName: 'James Wilson', date: '2026-02-18', originalClockIn: '07:00 AM', originalClockOut: '07:00 PM', adjustedClockIn: '07:00 AM', adjustedClockOut: '06:30 PM', reason: 'Break time not deducted. 30 min lunch added per company policy.', adjustedBy: 'Mike Torres (Manager)', adjustedAt: '2026-02-18T19:15:00Z', approved: true, approvedBy: 'Mike Torres' },
-];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -212,6 +94,131 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+function getDayOfWeek(iso: string, weekStart: Date): number {
+  const d = new Date(iso);
+  const start = new Date(weekStart);
+  const diff = Math.floor((d.getTime() - start.getTime()) / 86400000);
+  return Math.max(0, Math.min(6, diff));
+}
+
+// ---------------------------------------------------------------------------
+// Derived data builders — compute UI data from real entries
+// ---------------------------------------------------------------------------
+
+function buildLiveEmployees(entries: TimeEntry[], now: number) {
+  return entries
+    .filter(e => e.status === 'active' && !e.clockOut)
+    .map(e => {
+      const elapsed = Math.round((now - new Date(e.clockIn).getTime()) / 60000);
+      return {
+        userId: e.userId,
+        userName: e.userName,
+        avatar: e.userAvatar,
+        role: '',
+        clockedInAt: e.clockIn,
+        elapsed,
+        jobTitle: e.jobTitle,
+        jobId: e.jobId,
+        breakMinutes: e.breakMinutes,
+        notes: e.notes,
+        entryId: e.id,
+      };
+    });
+}
+
+function buildTimesheetRows(entries: TimeEntry[], weekStart: Date): TimesheetRow[] {
+  const byUser = new Map<string, TimeEntry[]>();
+  for (const e of entries) {
+    const arr = byUser.get(e.userId) || [];
+    arr.push(e);
+    byUser.set(e.userId, arr);
+  }
+
+  const rows: TimesheetRow[] = [];
+  for (const [userId, userEntries] of byUser) {
+    const dailyHours: (number | null)[] = Array(7).fill(null);
+    const dailyJobs: (string | null)[] = Array(7).fill(null);
+    const dailyOt: (number | null)[] = Array(7).fill(null);
+
+    for (const e of userEntries) {
+      const dayIdx = getDayOfWeek(e.clockIn, weekStart);
+      const hours = e.totalMinutes ? e.totalMinutes / 60 : 0;
+      dailyHours[dayIdx] = (dailyHours[dayIdx] || 0) + hours;
+      if (e.jobTitle) dailyJobs[dayIdx] = e.jobTitle;
+      const ot = e.overtimeMinutes / 60;
+      if (ot > 0) dailyOt[dayIdx] = (dailyOt[dayIdx] || 0) + ot;
+    }
+
+    const weekTotal = dailyHours.reduce((s, h) => s + (h || 0), 0);
+    const otTotal = dailyOt.reduce((s, h) => s + (h || 0), 0);
+
+    // Determine status: if any entry is rejected -> rejected, if all approved -> approved, else pending
+    const hasRejected = userEntries.some(e => e.status === 'rejected');
+    const allApproved = userEntries.every(e => e.status === 'approved');
+    const status = hasRejected ? 'rejected' : allApproved ? 'approved' : 'pending';
+
+    rows.push({
+      userId,
+      userName: userEntries[0]?.userName || 'Unknown',
+      role: '',
+      dailyHours,
+      dailyJobs,
+      dailyOt,
+      weekTotal: Math.round(weekTotal * 10) / 10,
+      otTotal: Math.round(otTotal * 10) / 10,
+      status,
+    });
+  }
+
+  return rows;
+}
+
+function buildJobAllocations(entries: TimeEntry[]): JobAllocationRow[] {
+  const byJob = new Map<string, TimeEntry[]>();
+  for (const e of entries) {
+    if (!e.jobId) continue;
+    const arr = byJob.get(e.jobId) || [];
+    arr.push(e);
+    byJob.set(e.jobId, arr);
+  }
+
+  const rows: JobAllocationRow[] = [];
+  for (const [jobId, jobEntries] of byJob) {
+    const byEmp = new Map<string, { userName: string; hours: number; rate: number; cost: number }>();
+    for (const e of jobEntries) {
+      const existing = byEmp.get(e.userId);
+      const hours = e.totalMinutes ? e.totalMinutes / 60 : 0;
+      const rate = e.hourlyRate || 0;
+      const cost = e.laborCost || hours * rate;
+      if (existing) {
+        existing.hours += hours;
+        existing.cost += cost;
+        if (rate > 0) existing.rate = rate;
+      } else {
+        byEmp.set(e.userId, { userName: e.userName, hours, rate, cost });
+      }
+    }
+
+    const employees = [...byEmp.entries()].map(([uid, data]) => ({
+      userId: uid,
+      userName: data.userName,
+      hours: Math.round(data.hours * 10) / 10,
+      rate: data.rate,
+      cost: Math.round(data.cost * 100) / 100,
+    }));
+
+    rows.push({
+      jobId,
+      jobName: jobEntries[0]?.jobTitle || 'Unknown Job',
+      employees,
+      totalHours: Math.round(employees.reduce((s, e) => s + e.hours, 0) * 10) / 10,
+      totalCost: Math.round(employees.reduce((s, e) => s + e.cost, 0) * 100) / 100,
+    });
+  }
+
+  return rows.sort((a, b) => b.totalHours - a.totalHours);
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -231,7 +238,7 @@ export default function TimeClockPage() {
   // Live tick for elapsed timers
   useEffect(() => {
     if (activeTab !== 'live') return;
-    const interval = setInterval(() => setNow(Date.now()), 30000); // every 30s
+    const interval = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(interval);
   }, [activeTab]);
 
@@ -241,26 +248,15 @@ export default function TimeClockPage() {
     return allEntries.filter(e => e.userId === selectedUser);
   }, [allEntries, selectedUser]);
 
-  // Group entries by user for week view
-  const entriesByUser = useMemo(() => {
-    const grouped: Record<string, TimeEntry[]> = {};
-    weekEntries.forEach((entry) => {
-      if (!grouped[entry.userId]) grouped[entry.userId] = [];
-      grouped[entry.userId].push(entry);
-    });
-    return grouped;
-  }, [weekEntries]);
+  // Derived data from real entries
+  const liveEmployees = useMemo(() => buildLiveEmployees(allEntries, now), [allEntries, now]);
+  const timesheetRows = useMemo(() => buildTimesheetRows(weekEntries, weekRange.start), [weekEntries, weekRange.start]);
+  const jobAllocations = useMemo(() => buildJobAllocations(weekEntries), [weekEntries]);
 
-  // Get days of the week
-  const weekDays = useMemo(() => {
-    const days: Date[] = [];
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(weekRange.start);
-      day.setDate(day.getDate() + i);
-      days.push(day);
-    }
-    return days;
-  }, [weekRange.start.toISOString()]);
+  // Adjustment entries: completed entries that have notes or were recently modified
+  const adjustmentEntries = useMemo(() => {
+    return allEntries.filter(e => e.notes && e.notes.length > 0).slice(0, 20);
+  }, [allEntries]);
 
   const navigateWeek = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentWeek);
@@ -273,8 +269,8 @@ export default function TimeClockPage() {
     const rows = weekEntries.map(e => [
       e.userName,
       formatDate(e.clockIn),
-      formatTime(e.clockIn),
-      e.clockOut ? formatTime(e.clockOut) : '-',
+      formatTimeLocale(e.clockIn),
+      e.clockOut ? formatTimeLocale(e.clockOut) : '-',
       e.totalMinutes ? (e.totalMinutes / 60).toFixed(2) : '-',
       e.breakMinutes.toString(),
       e.status,
@@ -288,8 +284,11 @@ export default function TimeClockPage() {
     URL.revokeObjectURL(url);
   };
 
-  const formatTime = (isoStr: string) => {
-    return formatTimeLocale(isoStr);
+  const formatElapsed = (minutes: number) => {
+    const h = Math.floor(minutes / 60);
+    const m = Math.round(minutes % 60);
+    if (h === 0) return `${m}m`;
+    return `${h}h ${m}m`;
   };
 
   const formatHours = (minutes?: number | null) => {
@@ -299,46 +298,15 @@ export default function TimeClockPage() {
     return `${h}h ${m}m`;
   };
 
-  const formatDecimalHours = (hours: number | null) => {
-    if (hours === null || hours === undefined) return '-';
-    return `${hours.toFixed(1)}h`;
-  };
-
-  const formatElapsed = (minutes: number) => {
-    const h = Math.floor(minutes / 60);
-    const m = Math.round(minutes % 60);
-    if (h === 0) return `${m}m`;
-    return `${h}h ${m}m`;
-  };
-
-  const getStatusColor = (status: TimeEntryStatus) => {
-    switch (status) {
-      case 'active': return 'bg-green-500/10 text-green-500';
-      case 'completed': return 'bg-amber-500/10 text-amber-500';
-      case 'approved': return 'bg-blue-500/10 text-blue-500';
-      case 'rejected': return 'bg-red-500/10 text-red-500';
-    }
-  };
-
-  const getStatusLabel = (status: TimeEntryStatus) => {
-    switch (status) {
-      case 'active': return 'Active';
-      case 'completed': return 'Pending';
-      case 'approved': return 'Approved';
-      case 'rejected': return 'Rejected';
-    }
-  };
-
   const getTimesheetBadgeVariant = (status: string): 'warning' | 'success' | 'error' => {
     if (status === 'approved') return 'success';
     if (status === 'rejected') return 'error';
     return 'warning';
   };
 
-  // Aggregate stats for all tabs
-  const liveCount = DEMO_LIVE_EMPLOYEES.length;
-  const onBreakCount = DEMO_LIVE_EMPLOYEES.filter(e => e.onBreak).length;
-  const totalAllocatedCost = DEMO_JOB_ALLOCATIONS.reduce((s, j) => s + j.totalCost, 0);
+  const liveCount = liveEmployees.length;
+  const onBreakCount = 0; // TODO: track break status in time_entries
+  const totalAllocatedCost = jobAllocations.reduce((s, j) => s + j.totalCost, 0);
 
   // ---------------------------------------------------------------------------
   // Loading / Error states
@@ -386,7 +354,7 @@ export default function TimeClockPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title={t('timeClock.onTheClockNow')}
-          value={summary.activeNow > 0 ? summary.activeNow.toString() : liveCount.toString()}
+          value={summary.activeNow.toString()}
           icon={<Play size={20} className="text-green-500" />}
           trend="neutral"
           changeLabel={`${onBreakCount} on break`}
@@ -446,32 +414,36 @@ export default function TimeClockPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500" />
                 </span>
-                <span className="text-sm font-medium text-main">{liveCount} employees clocked in</span>
+                <span className="text-sm font-medium text-main">{liveCount} employee{liveCount !== 1 ? 's' : ''} clocked in</span>
               </div>
             </div>
             <p className="text-xs text-muted">Auto-refreshes every 30 seconds</p>
           </div>
 
           {/* Live employee cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {DEMO_LIVE_EMPLOYEES.map((emp) => {
-              const elapsed = Math.round((now - new Date(emp.clockedInAt).getTime()) / 60000);
-              return (
-                <Card key={emp.userId} className={cn('relative overflow-hidden', emp.onBreak && 'border-amber-500/30')}>
-                  {emp.onBreak && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500" />
-                  )}
+          {liveEmployees.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <Clock className="w-10 h-10 text-muted mx-auto mb-3" />
+                <p className="text-main font-medium mb-1">No employees clocked in</p>
+                <p className="text-sm text-muted">Active time entries will appear here in real time</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {liveEmployees.map((emp) => (
+                <Card key={emp.entryId} className="relative overflow-hidden">
                   <CardContent className="p-5">
                     <div className="flex items-start gap-4">
-                      <Avatar name={emp.userName} size="lg" showStatus isOnline={!emp.onBreak} />
+                      <Avatar name={emp.userName} size="lg" showStatus isOnline />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <div>
                             <p className="font-semibold text-main">{emp.userName}</p>
-                            <p className="text-xs text-muted">{emp.role}</p>
+                            {emp.role && <p className="text-xs text-muted">{emp.role}</p>}
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold text-main tabular-nums">{formatElapsed(elapsed)}</p>
+                            <p className="text-2xl font-bold text-main tabular-nums">{formatElapsed(emp.elapsed)}</p>
                             <p className="text-xs text-muted">elapsed</p>
                           </div>
                         </div>
@@ -489,71 +461,27 @@ export default function TimeClockPage() {
                           </div>
                         )}
 
-                        {/* Bottom row: GPS + Break + Clock times */}
+                        {/* Bottom row */}
                         <div className="flex items-center justify-between mt-3">
                           <div className="flex items-center gap-3">
-                            {/* GPS Badge */}
-                            {emp.gpsVerified ? (
-                              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-500/10 text-green-500">
-                                <MapPin size={12} />
-                                <span className="text-xs font-medium">GPS Verified</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-red-500/10 text-red-500">
-                                <WifiOff size={12} />
-                                <span className="text-xs font-medium">No GPS</span>
-                              </div>
-                            )}
-
-                            {/* Break indicator */}
-                            {emp.onBreak ? (
-                              <Badge variant="warning" dot>On Break</Badge>
-                            ) : emp.breakMinutes > 0 ? (
+                            {emp.breakMinutes > 0 && (
                               <div className="flex items-center gap-1 text-xs text-muted">
                                 <Coffee size={12} />
                                 <span>{emp.breakMinutes}m break taken</span>
                               </div>
-                            ) : null}
+                            )}
                           </div>
-
                           <div className="text-xs text-muted">
-                            In: {formatTime(emp.clockedInAt)}
+                            In: {formatTimeLocale(emp.clockedInAt)}
                           </div>
                         </div>
-
-                        {/* GPS location detail */}
-                        {emp.gpsLocation && (
-                          <p className="text-xs text-muted mt-2 flex items-center gap-1">
-                            <MapPin size={10} className="flex-shrink-0" />
-                            {emp.gpsLocation}
-                          </p>
-                        )}
                       </div>
-                    </div>
-
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-main">
-                      {emp.onBreak ? (
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Play size={14} />
-                          End Break
-                        </Button>
-                      ) : (
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Pause size={14} />
-                          Start Break
-                        </Button>
-                      )}
-                      <Button variant="danger" size="sm" className="flex-1">
-                        <Clock size={14} />
-                        Clock Out
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Payroll / Job cost flow indicator */}
           <Card className="border-accent/20 bg-accent/5">
@@ -621,163 +549,189 @@ export default function TimeClockPage() {
           </div>
 
           {/* Timesheet Grid */}
-          <Card>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-main">
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-56 sticky left-0 bg-surface z-10">Employee</th>
-                      {DAY_LABELS.map((day, i) => {
-                        const isWeekend = i >= 5;
+          {timesheetRows.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <ClipboardCheck className="w-10 h-10 text-muted mx-auto mb-3" />
+                <p className="text-main font-medium mb-1">No time entries this week</p>
+                <p className="text-sm text-muted">Time entries will appear here once employees clock in</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-main">
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-56 sticky left-0 bg-surface z-10">Employee</th>
+                        {DAY_LABELS.map((day, i) => {
+                          const isWeekend = i >= 5;
+                          return (
+                            <th key={day} className={cn('text-center px-3 py-3 text-xs font-semibold uppercase tracking-wider min-w-[100px]', isWeekend ? 'text-muted/60' : 'text-muted')}>
+                              {day}
+                            </th>
+                          );
+                        })}
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-20">Total</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-16">OT</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-28">Status</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-24">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-main">
+                      {timesheetRows.map((row) => {
+                        const hasOvertime = row.otTotal > 0;
                         return (
-                          <th key={day} className={cn('text-center px-3 py-3 text-xs font-semibold uppercase tracking-wider min-w-[100px]', isWeekend ? 'text-muted/60' : 'text-muted')}>
-                            {day}
-                          </th>
+                          <tr key={row.userId} className="hover:bg-surface-hover group">
+                            <td className="px-4 py-3 sticky left-0 bg-surface group-hover:bg-surface-hover z-10">
+                              <div className="flex items-center gap-3">
+                                <Avatar name={row.userName} size="sm" />
+                                <div>
+                                  <p className="font-medium text-main text-sm">{row.userName}</p>
+                                  {row.role && <p className="text-xs text-muted">{row.role}</p>}
+                                </div>
+                              </div>
+                            </td>
+                            {row.dailyHours.map((hours, i) => {
+                              const isWeekend = i >= 5;
+                              const ot = row.dailyOt[i];
+                              const job = row.dailyJobs[i];
+                              const isOt = ot !== null && ot > 0;
+                              return (
+                                <td key={i} className={cn('text-center px-3 py-3', isWeekend && 'bg-secondary/30')}>
+                                  {hours !== null && hours > 0 ? (
+                                    <div className="space-y-0.5">
+                                      <p className={cn('text-sm font-semibold', isOt ? 'text-orange-500' : 'text-main')}>
+                                        {hours.toFixed(1)}h
+                                      </p>
+                                      {isOt && (
+                                        <p className="text-[10px] text-orange-500 font-medium">+{ot.toFixed(1)} OT</p>
+                                      )}
+                                      {job && (
+                                        <p className="text-[10px] text-muted truncate max-w-[90px] mx-auto">{job}</p>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted text-sm">-</span>
+                                  )}
+                                </td>
+                              );
+                            })}
+                            <td className="text-center px-4 py-3">
+                              <p className={cn('text-lg font-bold', row.weekTotal > 40 ? 'text-orange-500' : 'text-main')}>
+                                {row.weekTotal.toFixed(1)}
+                              </p>
+                            </td>
+                            <td className="text-center px-4 py-3">
+                              {hasOvertime ? (
+                                <p className="text-sm font-bold text-orange-500">{row.otTotal.toFixed(1)}h</p>
+                              ) : (
+                                <span className="text-muted text-sm">-</span>
+                              )}
+                            </td>
+                            <td className="text-center px-4 py-3">
+                              <Badge variant={getTimesheetBadgeVariant(row.status)} dot>
+                                {row.status === 'pending' ? 'Pending' : row.status === 'approved' ? 'Approved' : 'Rejected'}
+                              </Badge>
+                            </td>
+                            <td className="text-center px-4 py-3">
+                              {row.status === 'pending' && (
+                                <div className="flex items-center justify-center gap-1">
+                                  <button
+                                    className="p-1.5 rounded-md hover:bg-green-500/10 text-green-500 transition-colors"
+                                    title="Approve"
+                                    onClick={async () => {
+                                      const userEntries = weekEntries.filter(e => e.userId === row.userId && e.status === 'completed');
+                                      for (const entry of userEntries) await approveEntry(entry.id);
+                                    }}
+                                  >
+                                    <Check size={14} />
+                                  </button>
+                                  <button
+                                    className="p-1.5 rounded-md hover:bg-red-500/10 text-red-500 transition-colors"
+                                    title="Reject"
+                                    onClick={async () => {
+                                      const userEntries = weekEntries.filter(e => e.userId === row.userId && e.status === 'completed');
+                                      for (const entry of userEntries) await rejectEntry(entry.id);
+                                    }}
+                                  >
+                                    <X size={14} />
+                                  </button>
+                                </div>
+                              )}
+                              {row.status === 'approved' && (
+                                <CheckCircle2 size={16} className="text-green-500 mx-auto" />
+                              )}
+                              {row.status === 'rejected' && (
+                                <AlertCircle size={16} className="text-red-500 mx-auto" />
+                              )}
+                            </td>
+                          </tr>
                         );
                       })}
-                      <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-20">Total</th>
-                      <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-16">OT</th>
-                      <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-28">Status</th>
-                      <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-24">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-main">
-                    {DEMO_TIMESHEET_ROWS.map((row) => {
-                      const hasOvertime = row.otTotal > 0;
-                      return (
-                        <tr key={row.userId} className="hover:bg-surface-hover group">
-                          <td className="px-4 py-3 sticky left-0 bg-surface group-hover:bg-surface-hover z-10">
-                            <div className="flex items-center gap-3">
-                              <Avatar name={row.userName} size="sm" />
-                              <div>
-                                <p className="font-medium text-main text-sm">{row.userName}</p>
-                                <p className="text-xs text-muted">{row.role}</p>
-                              </div>
-                            </div>
-                          </td>
-                          {row.dailyHours.map((hours, i) => {
-                            const isWeekend = i >= 5;
-                            const ot = row.dailyOt[i];
-                            const job = row.dailyJobs[i];
-                            const isOt = ot !== null && ot > 0;
-                            return (
-                              <td key={i} className={cn('text-center px-3 py-3', isWeekend && 'bg-secondary/30')}>
-                                {hours !== null ? (
-                                  <div className="space-y-0.5">
-                                    <p className={cn('text-sm font-semibold', isOt ? 'text-orange-500' : 'text-main')}>
-                                      {hours.toFixed(1)}h
-                                    </p>
-                                    {isOt && (
-                                      <p className="text-[10px] text-orange-500 font-medium">+{ot.toFixed(1)} OT</p>
-                                    )}
-                                    {job && (
-                                      <p className="text-[10px] text-muted truncate max-w-[90px] mx-auto">{job}</p>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <span className="text-muted text-sm">-</span>
-                                )}
-                              </td>
-                            );
-                          })}
-                          <td className="text-center px-4 py-3">
-                            <p className={cn('text-lg font-bold', row.weekTotal > 40 ? 'text-orange-500' : 'text-main')}>
-                              {row.weekTotal.toFixed(1)}
-                            </p>
-                          </td>
-                          <td className="text-center px-4 py-3">
-                            {hasOvertime ? (
-                              <p className="text-sm font-bold text-orange-500">{row.otTotal.toFixed(1)}h</p>
-                            ) : (
-                              <span className="text-muted text-sm">-</span>
-                            )}
-                          </td>
-                          <td className="text-center px-4 py-3">
-                            <Badge variant={getTimesheetBadgeVariant(row.status)} dot>
-                              {row.status === 'pending' ? 'Pending' : row.status === 'approved' ? 'Approved' : 'Rejected'}
-                            </Badge>
-                          </td>
-                          <td className="text-center px-4 py-3">
-                            {row.status === 'pending' && (
-                              <div className="flex items-center justify-center gap-1">
-                                <button className="p-1.5 rounded-md hover:bg-green-500/10 text-green-500 transition-colors" title="Approve">
-                                  <Check size={14} />
-                                </button>
-                                <button className="p-1.5 rounded-md hover:bg-red-500/10 text-red-500 transition-colors" title="Reject">
-                                  <X size={14} />
-                                </button>
-                              </div>
-                            )}
-                            {row.status === 'approved' && (
-                              <CheckCircle2 size={16} className="text-green-500 mx-auto" />
-                            )}
-                            {row.status === 'rejected' && (
-                              <AlertCircle size={16} className="text-red-500 mx-auto" />
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  {/* Summary footer */}
-                  <tfoot>
-                    <tr className="border-t-2 border-main bg-secondary/30">
-                      <td className="px-4 py-3 sticky left-0 bg-secondary/30 z-10">
-                        <p className="font-semibold text-sm text-main">Team Totals</p>
-                      </td>
-                      {DAY_LABELS.map((_, i) => {
-                        const dayTotal = DEMO_TIMESHEET_ROWS.reduce((s, r) => s + (r.dailyHours[i] || 0), 0);
-                        return (
-                          <td key={i} className="text-center px-3 py-3">
-                            <p className="text-sm font-bold text-main">{dayTotal > 0 ? dayTotal.toFixed(1) : '-'}</p>
-                          </td>
-                        );
-                      })}
-                      <td className="text-center px-4 py-3">
-                        <p className="text-lg font-bold text-accent">
-                          {DEMO_TIMESHEET_ROWS.reduce((s, r) => s + r.weekTotal, 0).toFixed(1)}
-                        </p>
-                      </td>
-                      <td className="text-center px-4 py-3">
-                        <p className="text-sm font-bold text-orange-500">
-                          {DEMO_TIMESHEET_ROWS.reduce((s, r) => s + r.otTotal, 0).toFixed(1)}h
-                        </p>
-                      </td>
-                      <td colSpan={2} />
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
+                    </tbody>
+                    {/* Summary footer */}
+                    <tfoot>
+                      <tr className="border-t-2 border-main bg-secondary/30">
+                        <td className="px-4 py-3 sticky left-0 bg-secondary/30 z-10">
+                          <p className="font-semibold text-sm text-main">Team Totals</p>
+                        </td>
+                        {DAY_LABELS.map((_, i) => {
+                          const dayTotal = timesheetRows.reduce((s, r) => s + (r.dailyHours[i] || 0), 0);
+                          return (
+                            <td key={i} className="text-center px-3 py-3">
+                              <p className="text-sm font-bold text-main">{dayTotal > 0 ? dayTotal.toFixed(1) : '-'}</p>
+                            </td>
+                          );
+                        })}
+                        <td className="text-center px-4 py-3">
+                          <p className="text-lg font-bold text-accent">
+                            {timesheetRows.reduce((s, r) => s + r.weekTotal, 0).toFixed(1)}
+                          </p>
+                        </td>
+                        <td className="text-center px-4 py-3">
+                          <p className="text-sm font-bold text-orange-500">
+                            {timesheetRows.reduce((s, r) => s + r.otTotal, 0).toFixed(1)}h
+                          </p>
+                        </td>
+                        <td colSpan={2} />
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Overtime compliance summary */}
-          <Card className="border-orange-500/20">
-            <CardContent className="py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <TrendingUp size={20} className="text-orange-500" />
-                  <div>
-                    <p className="font-medium text-main">Overtime Summary</p>
-                    <p className="text-sm text-muted">
-                      {DEMO_TIMESHEET_ROWS.filter(r => r.otTotal > 0).length} of {DEMO_TIMESHEET_ROWS.length} employees with overtime this week.
-                      Daily OT threshold: 8h. Weekly OT threshold: 40h.
+          {timesheetRows.some(r => r.otTotal > 0) && (
+            <Card className="border-orange-500/20">
+              <CardContent className="py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp size={20} className="text-orange-500" />
+                    <div>
+                      <p className="font-medium text-main">Overtime Summary</p>
+                      <p className="text-sm text-muted">
+                        {timesheetRows.filter(r => r.otTotal > 0).length} of {timesheetRows.length} employees with overtime this week.
+                        Daily OT threshold: 8h. Weekly OT threshold: 40h.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-orange-500">
+                      {timesheetRows.reduce((s, r) => s + r.otTotal, 0).toFixed(1)}h
                     </p>
+                    <p className="text-xs text-muted">total overtime</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-orange-500">
-                    {DEMO_TIMESHEET_ROWS.reduce((s, r) => s + r.otTotal, 0).toFixed(1)}h
-                  </p>
-                  <p className="text-xs text-muted">total overtime</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Bulk approval bar */}
-          {DEMO_TIMESHEET_ROWS.some(r => r.status === 'pending') && (
+          {timesheetRows.some(r => r.status === 'pending') && (
             <Card className="border-amber-500/30 bg-amber-500/5">
               <CardContent className="py-4">
                 <div className="flex items-center justify-between">
@@ -785,7 +739,7 @@ export default function TimeClockPage() {
                     <AlertCircle size={20} className="text-amber-500" />
                     <div>
                       <p className="font-medium text-main">
-                        {DEMO_TIMESHEET_ROWS.filter(r => r.status === 'pending').length} timesheets pending approval
+                        {timesheetRows.filter(r => r.status === 'pending').length} timesheets pending approval
                       </p>
                       <p className="text-sm text-muted">Review hours and job allocations before approving</p>
                     </div>
@@ -795,7 +749,11 @@ export default function TimeClockPage() {
                       <Eye size={14} />
                       Review All
                     </Button>
-                    <Button size="sm">
+                    <Button size="sm" onClick={async () => {
+                      if (!confirm('Approve all pending timesheets?')) return;
+                      const pending = weekEntries.filter(e => e.status === 'completed');
+                      for (const entry of pending) { await approveEntry(entry.id); }
+                    }}>
                       <Check size={14} />
                       Approve All Pending
                     </Button>
@@ -816,14 +774,14 @@ export default function TimeClockPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StatsCard
               title="Total Jobs This Week"
-              value={DEMO_JOB_ALLOCATIONS.length.toString()}
+              value={jobAllocations.length.toString()}
               icon={<Briefcase size={20} className="text-blue-500" />}
               trend="neutral"
               changeLabel="active jobs"
             />
             <StatsCard
               title="Total Allocated Hours"
-              value={`${DEMO_JOB_ALLOCATIONS.reduce((s, j) => s + j.totalHours, 0).toFixed(1)}h`}
+              value={`${jobAllocations.reduce((s, j) => s + j.totalHours, 0).toFixed(1)}h`}
               icon={<Timer size={20} className="text-accent" />}
               trend="neutral"
               changeLabel="across all jobs"
@@ -838,86 +796,95 @@ export default function TimeClockPage() {
           </div>
 
           {/* Job allocation cards */}
-          <div className="space-y-4">
-            {DEMO_JOB_ALLOCATIONS.map((job) => {
-              const isExpanded = expandedJob === job.jobId;
-              return (
-                <Card key={job.jobId}>
-                  <CardContent className="p-0">
-                    {/* Job header row */}
-                    <button
-                      onClick={() => setExpandedJob(isExpanded ? null : job.jobId)}
-                      className="w-full flex items-center justify-between px-6 py-4 hover:bg-surface-hover transition-colors text-left"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="p-2.5 rounded-lg bg-blue-500/10">
-                          <Briefcase size={18} className="text-blue-500" />
+          {jobAllocations.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <Briefcase className="w-10 h-10 text-muted mx-auto mb-3" />
+                <p className="text-main font-medium mb-1">No job allocations this week</p>
+                <p className="text-sm text-muted">Time entries linked to jobs will appear here</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {jobAllocations.map((job) => {
+                const isExpanded = expandedJob === job.jobId;
+                return (
+                  <Card key={job.jobId}>
+                    <CardContent className="p-0">
+                      {/* Job header row */}
+                      <button
+                        onClick={() => setExpandedJob(isExpanded ? null : job.jobId)}
+                        className="w-full flex items-center justify-between px-6 py-4 hover:bg-surface-hover transition-colors text-left"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="p-2.5 rounded-lg bg-blue-500/10">
+                            <Briefcase size={18} className="text-blue-500" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-main">{job.jobName}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-main">{job.jobName}</p>
-                          <p className="text-sm text-muted">{job.customerName}</p>
+                        <div className="flex items-center gap-8">
+                          <div className="text-right">
+                            <p className="text-sm text-muted">Hours</p>
+                            <p className="text-lg font-bold text-main">{job.totalHours.toFixed(1)}h</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-muted">Labor Cost</p>
+                            <p className="text-lg font-bold text-green-500">{formatCurrency(job.totalCost)}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-muted">Crew</p>
+                            <p className="text-lg font-bold text-main">{job.employees.length}</p>
+                          </div>
+                          <ChevronDown size={18} className={cn('text-muted transition-transform', isExpanded && 'rotate-180')} />
                         </div>
-                      </div>
-                      <div className="flex items-center gap-8">
-                        <div className="text-right">
-                          <p className="text-sm text-muted">Hours</p>
-                          <p className="text-lg font-bold text-main">{job.totalHours.toFixed(1)}h</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-muted">Labor Cost</p>
-                          <p className="text-lg font-bold text-green-500">{formatCurrency(job.totalCost)}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-muted">Crew</p>
-                          <p className="text-lg font-bold text-main">{job.employees.length}</p>
-                        </div>
-                        <ChevronDown size={18} className={cn('text-muted transition-transform', isExpanded && 'rotate-180')} />
-                      </div>
-                    </button>
+                      </button>
 
-                    {/* Expanded employee breakdown */}
-                    {isExpanded && (
-                      <div className="border-t border-main">
-                        <table className="w-full">
-                          <thead>
-                            <tr className="border-b border-main bg-secondary/30">
-                              <th className="text-left px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Employee</th>
-                              <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Hours</th>
-                              <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Rate</th>
-                              <th className="text-right px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Cost</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-main">
-                            {job.employees.map((emp) => (
-                              <tr key={emp.userId} className="hover:bg-surface-hover">
-                                <td className="px-6 py-3">
-                                  <div className="flex items-center gap-3">
-                                    <Avatar name={emp.userName} size="sm" />
-                                    <p className="text-sm font-medium text-main">{emp.userName}</p>
-                                  </div>
-                                </td>
-                                <td className="text-right px-4 py-3 text-sm font-semibold text-main">{emp.hours.toFixed(1)}h</td>
-                                <td className="text-right px-4 py-3 text-sm text-muted">{formatCurrency(emp.rate)}/hr</td>
-                                <td className="text-right px-6 py-3 text-sm font-semibold text-green-500">{formatCurrency(emp.cost)}</td>
+                      {/* Expanded employee breakdown */}
+                      {isExpanded && (
+                        <div className="border-t border-main">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b border-main bg-secondary/30">
+                                <th className="text-left px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Employee</th>
+                                <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Hours</th>
+                                <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Rate</th>
+                                <th className="text-right px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Cost</th>
                               </tr>
-                            ))}
-                          </tbody>
-                          <tfoot>
-                            <tr className="border-t-2 border-main bg-secondary/30">
-                              <td className="px-6 py-3 text-sm font-bold text-main">Total</td>
-                              <td className="text-right px-4 py-3 text-sm font-bold text-main">{job.totalHours.toFixed(1)}h</td>
-                              <td className="text-right px-4 py-3 text-sm text-muted">-</td>
-                              <td className="text-right px-6 py-3 text-sm font-bold text-green-500">{formatCurrency(job.totalCost)}</td>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                            </thead>
+                            <tbody className="divide-y divide-main">
+                              {job.employees.map((emp) => (
+                                <tr key={emp.userId} className="hover:bg-surface-hover">
+                                  <td className="px-6 py-3">
+                                    <div className="flex items-center gap-3">
+                                      <Avatar name={emp.userName} size="sm" />
+                                      <p className="text-sm font-medium text-main">{emp.userName}</p>
+                                    </div>
+                                  </td>
+                                  <td className="text-right px-4 py-3 text-sm font-semibold text-main">{emp.hours.toFixed(1)}h</td>
+                                  <td className="text-right px-4 py-3 text-sm text-muted">{emp.rate > 0 ? `${formatCurrency(emp.rate)}/hr` : '-'}</td>
+                                  <td className="text-right px-6 py-3 text-sm font-semibold text-green-500">{formatCurrency(emp.cost)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tfoot>
+                              <tr className="border-t-2 border-main bg-secondary/30">
+                                <td className="px-6 py-3 text-sm font-bold text-main">Total</td>
+                                <td className="text-right px-4 py-3 text-sm font-bold text-main">{job.totalHours.toFixed(1)}h</td>
+                                <td className="text-right px-4 py-3 text-sm text-muted">-</td>
+                                <td className="text-right px-6 py-3 text-sm font-bold text-green-500">{formatCurrency(job.totalCost)}</td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
 
           {/* Cost flow indicator */}
           <Card className="border-green-500/20 bg-green-500/5">
@@ -960,121 +927,108 @@ export default function TimeClockPage() {
               </p>
             </div>
             <Badge variant="info" dot>
-              {DEMO_ADJUSTMENTS.length} adjustments this period
+              {adjustmentEntries.length} entries with notes
             </Badge>
           </div>
 
-          {/* Adjustments list */}
-          <div className="space-y-3">
-            {DEMO_ADJUSTMENTS.map((adj) => (
-              <Card key={adj.id}>
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    {/* Status icon */}
-                    <div className={cn(
-                      'p-2.5 rounded-lg flex-shrink-0 mt-0.5',
-                      adj.approved ? 'bg-green-500/10' : 'bg-amber-500/10'
-                    )}>
-                      {adj.approved ? (
-                        <Shield size={18} className="text-green-500" />
-                      ) : (
-                        <AlertCircle size={18} className="text-amber-500" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      {/* Top line: employee + date + status */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <p className="font-semibold text-main">{adj.employeeName}</p>
-                          <span className="text-sm text-muted">{adj.date}</span>
-                          {adj.approved ? (
-                            <Badge variant="success" size="sm">Approved</Badge>
-                          ) : (
-                            <Badge variant="warning" size="sm">Pending Approval</Badge>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Time comparison */}
-                      <div className="grid grid-cols-2 gap-4 mt-3">
-                        <div className="p-3 rounded-lg bg-red-500/5 border border-red-500/10">
-                          <p className="text-xs font-medium text-red-500 uppercase tracking-wider mb-1.5">Original Time</p>
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <p className="text-xs text-muted">Clock In</p>
-                              <p className="text-sm font-semibold text-main">{adj.originalClockIn}</p>
-                            </div>
-                            <ArrowRight size={14} className="text-muted" />
-                            <div>
-                              <p className="text-xs text-muted">Clock Out</p>
-                              <p className="text-sm font-semibold text-main">{adj.originalClockOut}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/10">
-                          <p className="text-xs font-medium text-green-500 uppercase tracking-wider mb-1.5">Adjusted Time</p>
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <p className="text-xs text-muted">Clock In</p>
-                              <p className="text-sm font-semibold text-main">{adj.adjustedClockIn}</p>
-                            </div>
-                            <ArrowRight size={14} className="text-muted" />
-                            <div>
-                              <p className="text-xs text-muted">Clock Out</p>
-                              <p className="text-sm font-semibold text-main">{adj.adjustedClockOut}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Reason */}
-                      <div className="mt-3 p-3 rounded-lg bg-secondary/50">
-                        <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1">Reason</p>
-                        <p className="text-sm text-main">{adj.reason}</p>
-                      </div>
-
-                      {/* Audit trail */}
-                      <div className="flex items-center gap-4 mt-3 text-xs text-muted">
-                        <div className="flex items-center gap-1">
-                          <Pencil size={10} />
-                          <span>Adjusted by: <span className="font-medium text-main">{adj.adjustedBy}</span></span>
-                        </div>
-                        <span>|</span>
-                        <div className="flex items-center gap-1">
-                          <Calendar size={10} />
-                          <span>{new Date(adj.adjustedAt).toLocaleString()}</span>
-                        </div>
-                        {adj.approved && adj.approvedBy && (
-                          <>
-                            <span>|</span>
-                            <div className="flex items-center gap-1">
-                              <UserCheck size={10} />
-                              <span>Approved by: <span className="font-medium text-main">{adj.approvedBy}</span></span>
-                            </div>
-                          </>
+          {/* Entries with notes/adjustments */}
+          {adjustmentEntries.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <History className="w-10 h-10 text-muted mx-auto mb-3" />
+                <p className="text-main font-medium mb-1">No adjustments this period</p>
+                <p className="text-sm text-muted">Time entry adjustments and notes will appear here</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {adjustmentEntries.map((entry) => (
+                <Card key={entry.id}>
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className={cn(
+                        'p-2.5 rounded-lg flex-shrink-0 mt-0.5',
+                        entry.status === 'approved' ? 'bg-green-500/10' : 'bg-amber-500/10'
+                      )}>
+                        {entry.status === 'approved' ? (
+                          <Shield size={18} className="text-green-500" />
+                        ) : (
+                          <AlertCircle size={18} className="text-amber-500" />
                         )}
                       </div>
-                    </div>
 
-                    {/* Actions for pending */}
-                    {!adj.approved && (
-                      <div className="flex flex-col gap-2 flex-shrink-0">
-                        <Button size="sm" variant="ghost" className="text-green-500 hover:bg-green-500/10">
-                          <Check size={14} />
-                          Approve
-                        </Button>
-                        <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-500/10">
-                          <X size={14} />
-                          Reject
-                        </Button>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <p className="font-semibold text-main">{entry.userName}</p>
+                            <span className="text-sm text-muted">{formatDate(entry.clockIn)}</span>
+                            <Badge variant={entry.status === 'approved' ? 'success' : entry.status === 'rejected' ? 'error' : 'warning'} size="sm">
+                              {entry.status === 'approved' ? 'Approved' : entry.status === 'rejected' ? 'Rejected' : 'Pending'}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Time info */}
+                        <div className="grid grid-cols-2 gap-4 mt-3">
+                          <div className="p-3 rounded-lg bg-secondary/50">
+                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1.5">Time</p>
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <p className="text-xs text-muted">Clock In</p>
+                                <p className="text-sm font-semibold text-main">{formatTimeLocale(entry.clockIn)}</p>
+                              </div>
+                              <ArrowRight size={14} className="text-muted" />
+                              <div>
+                                <p className="text-xs text-muted">Clock Out</p>
+                                <p className="text-sm font-semibold text-main">{entry.clockOut ? formatTimeLocale(entry.clockOut) : 'Active'}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-3 rounded-lg bg-secondary/50">
+                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1.5">Duration</p>
+                            <p className="text-sm font-semibold text-main">{formatHours(entry.totalMinutes)}</p>
+                            {entry.breakMinutes > 0 && (
+                              <p className="text-xs text-muted mt-1">{entry.breakMinutes}m break</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Notes */}
+                        {entry.notes && (
+                          <div className="mt-3 p-3 rounded-lg bg-secondary/50">
+                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1">Notes</p>
+                            <p className="text-sm text-main">{entry.notes}</p>
+                          </div>
+                        )}
+
+                        {/* Job info */}
+                        {entry.jobTitle && (
+                          <div className="flex items-center gap-2 mt-2 text-xs text-muted">
+                            <Briefcase size={10} />
+                            <span>{entry.jobTitle}</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+
+                      {/* Actions for pending */}
+                      {entry.status === 'completed' && (
+                        <div className="flex flex-col gap-2 flex-shrink-0">
+                          <Button size="sm" variant="ghost" className="text-green-500 hover:bg-green-500/10" onClick={() => approveEntry(entry.id)}>
+                            <Check size={14} />
+                            Approve
+                          </Button>
+                          <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-500/10" onClick={() => rejectEntry(entry.id)}>
+                            <X size={14} />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
 
           {/* Compliance note */}
           <Card className="border-blue-500/20 bg-blue-500/5">

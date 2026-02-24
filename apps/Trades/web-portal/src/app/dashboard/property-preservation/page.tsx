@@ -37,6 +37,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/translations';
 import {
   usePpWorkOrders,
   usePpChargebacks,
@@ -253,6 +254,7 @@ function CreateWorkOrderModal({ onClose, onSubmit, nationals, woTypes }: CreateW
 // ── Main Page ──
 
 export default function PropertyPreservationPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>('board');
   const [showCreateModal, setShowCreateModal] = useState(false);
