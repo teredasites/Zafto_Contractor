@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -383,7 +383,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       // Find scan
       let scanRow: Record<string, unknown> | null = null;
@@ -487,7 +487,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
   // Real-time subscription on scan status
   useEffect(() => {
     if (!scanIdOrJobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const filter = mode === 'scan'
       ? `id=eq.${scanIdOrJobId}`
       : `job_id=eq.${scanIdOrJobId}`;
@@ -503,7 +503,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
   // Trigger new scan
   const triggerScan = useCallback(async (address: string, jobId?: string) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -519,8 +519,13 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Scan failed');
+      let data: Record<string, unknown>;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Scan failed (HTTP ${res.status})`);
+      }
+      if (!res.ok) throw new Error((data.error as string) || 'Scan failed');
 
       await fetchData();
       return data.scan_id as string;
@@ -533,7 +538,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
   // Trigger trade estimation
   const triggerTradeEstimate = useCallback(async (scanId: string, selectedTrades?: string[]) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -549,8 +554,13 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Trade estimation failed');
+      let data: Record<string, unknown>;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Trade estimation failed (HTTP ${res.status})`);
+      }
+      if (!res.ok) throw new Error((data.error as string) || 'Trade estimation failed');
 
       await fetchData();
       return data;
@@ -563,7 +573,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
   // Trigger property intelligence gathering after scan
   const triggerIntelligence = useCallback(async (scanId: string) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -579,8 +589,13 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Intelligence gathering failed');
+      let data: Record<string, unknown>;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Intelligence gathering failed (HTTP ${res.status})`);
+      }
+      if (!res.ok) throw new Error((data.error as string) || 'Intelligence gathering failed');
       return data;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Intelligence gathering failed');
@@ -591,7 +606,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
   // Trigger auto-scope generation for selected trades
   const triggerAutoScope = useCallback(async (scanId: string, trades: string[]) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -607,8 +622,13 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Auto-scope generation failed');
+      let data: Record<string, unknown>;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Auto-scope generation failed (HTTP ${res.status})`);
+      }
+      if (!res.ok) throw new Error((data.error as string) || 'Auto-scope generation failed');
 
       await fetchData();
       return data;
@@ -648,7 +668,7 @@ export function usePropertyScans() {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('property_scans')
         .select('*')

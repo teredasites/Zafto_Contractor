@@ -840,10 +840,13 @@ serve(async (req) => {
           const t3 = performance.now()
           // ATTOM requires split address: address1=street, address2=city,state,zip
           const attomAddr1 = geocodeStreet || address.split(',')[0]?.trim() || address
+          const addrParts = address.split(',').slice(1).join(',').trim()
           const attomAddr2 = geocodeCity && geocodeState
-            ? `${geocodeCity}, ${geocodeState}${geocodeZip ? `, ${geocodeZip}` : ''}`
-            : address.split(',').slice(1).join(',').trim()
-          console.log('[property-lookup] ATTOM request: address1=', attomAddr1, 'address2=', attomAddr2)
+            ? `${geocodeCity}, ${geocodeState}${geocodeZip ? ` ${geocodeZip}` : ''}`
+            : addrParts || ''
+          if (!attomAddr2) {
+            console.warn('[property-lookup] ATTOM skipped: could not parse city/state from address')
+          }
           const attomRes = await fetch(
             `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/expandedprofile?address1=${encodeURIComponent(attomAddr1)}&address2=${encodeURIComponent(attomAddr2)}`,
             {
@@ -1827,9 +1830,10 @@ serve(async (req) => {
     }
 
     // Auto-trigger roof calculator if we have a measurement
-    if (roofMeasurementId) {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    if (roofMeasurementId && supabaseUrl) {
       try {
-        await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/recon-roof-calculator`, {
+        const roofCalcRes = await fetch(`${supabaseUrl}/functions/v1/recon-roof-calculator`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1837,23 +1841,31 @@ serve(async (req) => {
           },
           body: JSON.stringify({ roof_measurement_id: roofMeasurementId }),
         })
-      } catch {
-        /* non-blocking */
+        if (!roofCalcRes.ok) {
+          console.warn(`[property-lookup] Roof calculator returned ${roofCalcRes.status}`)
+        }
+      } catch (e) {
+        console.warn('[property-lookup] Roof calculator auto-trigger failed:', e)
       }
     }
 
     // Auto-trigger trade estimator to generate all 10 trade pipelines
-    try {
-      await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/recon-trade-estimator`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ scan_id: scanId }),
-      })
-    } catch {
-      /* non-blocking — trade data can be generated on-demand */
+    if (supabaseUrl) {
+      try {
+        const tradeRes = await fetch(`${supabaseUrl}/functions/v1/recon-trade-estimator`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ scan_id: scanId }),
+        })
+        if (!tradeRes.ok) {
+          console.warn(`[property-lookup] Trade estimator returned ${tradeRes.status}`)
+        }
+      } catch (e) {
+        console.warn('[property-lookup] Trade estimator auto-trigger failed:', e)
+      }
     }
 
     // ========================================================================
