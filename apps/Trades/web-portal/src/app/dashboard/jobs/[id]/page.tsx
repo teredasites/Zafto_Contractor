@@ -2585,6 +2585,66 @@ function JobCostingView({ job }: { job: Job }) {
   const jobEstimates = estimates.filter(e => e.jobId === job.id);
   const jobInvoices = invoices.filter(inv => inv.jobId === job.id);
 
+  // Real cost data from time entries and POs
+  const [laborCost, setLaborCost] = useState(0);
+  const [laborHours, setLaborHours] = useState(0);
+  const [materialCost, setMaterialCost] = useState(0);
+  const [subCost, setSubCost] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchCosts = async () => {
+      const supabase = getSupabase();
+
+      // Labor: time entries × labor rate (default $45/hr if no rate set)
+      const { data: timeData } = await supabase
+        .from('time_entries')
+        .select('total_hours, clock_in, clock_out, hourly_rate')
+        .eq('job_id', job.id)
+        .is('deleted_at', null);
+
+      if (!cancelled && timeData) {
+        let hours = 0;
+        let cost = 0;
+        for (const e of timeData) {
+          const h = Number(e.total_hours) || (e.clock_out
+            ? (new Date(e.clock_out as string).getTime() - new Date(e.clock_in as string).getTime()) / 3600000
+            : 0);
+          hours += h;
+          cost += h * (Number(e.hourly_rate) || 45);
+        }
+        setLaborHours(Math.round(hours * 10) / 10);
+        setLaborCost(Math.round(cost * 100) / 100);
+      }
+
+      // Materials: PO line items for this job
+      const { data: poData } = await supabase
+        .from('purchase_order_items')
+        .select('total_cost, purchase_orders!inner(job_id, status)')
+        .eq('purchase_orders.job_id', job.id)
+        .is('deleted_at', null);
+
+      if (!cancelled && poData) {
+        const total = poData.reduce((sum: number, item: Record<string, unknown>) => sum + (Number(item.total_cost) || 0), 0);
+        setMaterialCost(Math.round(total * 100) / 100);
+      }
+
+      // Sub costs: sub invoices linked to this job
+      const { data: subData } = await supabase
+        .from('sub_invoices')
+        .select('amount')
+        .eq('job_id', job.id)
+        .is('deleted_at', null);
+
+      if (!cancelled && subData) {
+        const total = subData.reduce((sum: number, s: Record<string, unknown>) => sum + (Number(s.amount) || 0), 0);
+        setSubCost(Math.round(total * 100) / 100);
+      }
+    };
+    fetchCosts();
+    return () => { cancelled = true; };
+  }, [job.id]);
+
   // Estimated revenue = approved estimate total (or job estimated value)
   const estimatedRevenue = jobEstimates.reduce((sum, e) => {
     if (e.status === 'approved' || e.status === 'completed') return sum + (e.grandTotal || 0);
@@ -2600,11 +2660,10 @@ function JobCostingView({ job }: { job: Job }) {
   // Invoiced = all sent/paid invoices
   const invoicedTotal = jobInvoices.reduce((sum, inv) => sum + (inv.total || 0), 0);
 
-  // For actual costs, we'd need time clock entries and PO data
-  // For now show what we can derive from invoices vs estimates
-  const estimatedCost = estimatedRevenue * 0.6; // Industry average ~40% margin
-  const margin = estimatedRevenue > 0 ? ((estimatedRevenue - estimatedCost) / estimatedRevenue * 100) : 0;
-  const profitLoss = actualRevenue - estimatedCost;
+  // Actual total costs from real data
+  const actualCost = laborCost + materialCost + subCost;
+  const margin = estimatedRevenue > 0 ? ((estimatedRevenue - actualCost) / estimatedRevenue * 100) : 0;
+  const profitLoss = actualRevenue - actualCost;
 
   return (
     <Card>
@@ -2627,6 +2686,32 @@ function JobCostingView({ job }: { job: Job }) {
           </div>
         </div>
 
+        {/* Actual Costs Breakdown */}
+        <div className="space-y-2">
+          <p className="text-xs text-muted font-medium uppercase tracking-wider">Actual Costs</p>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-secondary rounded-lg p-2.5">
+              <p className="text-[10px] text-muted">Labor</p>
+              <p className="text-sm font-semibold text-main">{formatCurrency(laborCost)}</p>
+              <p className="text-[10px] text-muted">{laborHours}h logged</p>
+            </div>
+            <div className="bg-secondary rounded-lg p-2.5">
+              <p className="text-[10px] text-muted">Materials</p>
+              <p className="text-sm font-semibold text-main">{formatCurrency(materialCost)}</p>
+              <p className="text-[10px] text-muted">from POs</p>
+            </div>
+            <div className="bg-secondary rounded-lg p-2.5">
+              <p className="text-[10px] text-muted">Subs</p>
+              <p className="text-sm font-semibold text-main">{formatCurrency(subCost)}</p>
+              <p className="text-[10px] text-muted">sub invoices</p>
+            </div>
+          </div>
+          <div className="flex justify-between text-sm pt-1">
+            <span className="text-muted">Total Cost</span>
+            <span className="font-medium text-main">{formatCurrency(actualCost)}</span>
+          </div>
+        </div>
+
         {/* P&L Bars */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
@@ -2645,8 +2730,14 @@ function JobCostingView({ job }: { job: Job }) {
           )}
         </div>
 
-        {/* Margin */}
+        {/* Profit/Loss + Margin */}
         <div className="flex justify-between items-center text-sm border-t border-main pt-3">
+          <span className="text-muted">Profit / Loss</span>
+          <span className={cn('font-semibold', profitLoss >= 0 ? 'text-emerald-400' : 'text-red-400')}>
+            {profitLoss >= 0 ? '+' : ''}{formatCurrency(profitLoss)}
+          </span>
+        </div>
+        <div className="flex justify-between items-center text-sm">
           <span className="text-muted">{t('common.grossMargin')}</span>
           <span className={cn('font-semibold', margin >= 30 ? 'text-emerald-400' : margin >= 15 ? 'text-amber-400' : 'text-red-400')}>
             {margin.toFixed(1)}%
