@@ -45,7 +45,7 @@ export default function ApplianceRepairPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">{t('applianceRepair.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">Service logs, error codes, repair vs replace analysis</p>
+          <p className="text-sm text-muted mt-1">Service logs, error codes, repair vs replace analysis</p>
         </div>
         <div className="max-w-xs">
           <SearchInput placeholder="Search appliances..." value={search} onChange={(v) => setSearch(v)} />
@@ -53,20 +53,20 @@ export default function ApplianceRepairPage() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.totalServices')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.totalServices')}</p>
           <p className="text-2xl font-bold text-white">{logs.length}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.repaired')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.repaired')}</p>
           <p className="text-2xl font-bold text-green-400">{repairCount}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.replaced')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.replaced')}</p>
           <p className="text-2xl font-bold text-red-400">{replaceCount}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.revenue')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.revenue')}</p>
           <p className="text-2xl font-bold text-purple-400">
             {formatCurrency(logs.reduce((s, l) => s + (l.total_cost ?? 0), 0))}
           </p>
@@ -75,41 +75,41 @@ export default function ApplianceRepairPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500"><p>{t('applianceRepair.noRecords')}</p></div>
+          <div className="text-center py-12 text-muted"><p>{t('applianceRepair.noRecords')}</p></div>
         ) : (
           filtered.map((l) => (
-            <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <div key={l.id} className="bg-surface border border-main rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${TYPE_COLORS[l.appliance_type] ?? 'bg-zinc-700 text-zinc-300'}`}>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${TYPE_COLORS[l.appliance_type] ?? 'bg-secondary text-main'}`}>
                     {APPLIANCE_TYPE_LABELS[l.appliance_type] ?? l.appliance_type}
                   </span>
-                  {l.brand && <span className="text-xs text-zinc-400">{l.brand}</span>}
-                  {l.model_number && <span className="text-xs text-zinc-500">#{l.model_number}</span>}
+                  {l.brand && <span className="text-xs text-muted">{l.brand}</span>}
+                  {l.model_number && <span className="text-xs text-muted">#{l.model_number}</span>}
                 </div>
-                <span className="text-xs text-zinc-500">{formatDate(l.created_at)}</span>
+                <span className="text-xs text-muted">{formatDate(l.created_at)}</span>
               </div>
               {l.error_code && (
                 <div className="flex items-center gap-1 mb-1">
                   <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-red-500/15 text-red-400">
                     Error: {l.error_code}
                   </span>
-                  {l.error_description && <span className="text-xs text-zinc-400">{l.error_description}</span>}
+                  {l.error_description && <span className="text-xs text-muted">{l.error_description}</span>}
                 </div>
               )}
-              {l.diagnosis && <p className="text-xs text-zinc-400">{l.diagnosis}</p>}
+              {l.diagnosis && <p className="text-xs text-muted">{l.diagnosis}</p>}
               <div className="flex items-center gap-3 mt-2">
                 {l.repair_vs_replace && (
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
                     l.repair_vs_replace === 'repair' ? 'bg-green-500/15 text-green-400' :
                     l.repair_vs_replace === 'replace' || l.repair_vs_replace === 'not_economical' ? 'bg-red-500/15 text-red-400' :
-                    'bg-zinc-700 text-zinc-300'
+                    'bg-secondary text-main'
                   }`}>
                     {REPAIR_VS_REPLACE_LABELS[l.repair_vs_replace] ?? l.repair_vs_replace}
                   </span>
                 )}
                 {l.estimated_repair_cost && l.estimated_replace_cost && (
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-[10px] text-muted">
                     Repair ${l.estimated_repair_cost} vs Replace ${l.estimated_replace_cost}
                     ({Math.round((l.estimated_repair_cost / l.estimated_replace_cost) * 100)}%)
                   </span>
@@ -118,7 +118,7 @@ export default function ApplianceRepairPage() {
                   <span className={`text-[10px] px-1.5 py-0.5 rounded ${
                     l.warranty_status === 'in_warranty' || l.warranty_status === 'extended_warranty'
                       ? 'bg-green-500/15 text-green-400'
-                      : 'bg-zinc-700 text-zinc-400'
+                      : 'bg-secondary text-muted'
                   }`}>
                     {l.warranty_status.replace('_', ' ')}
                   </span>

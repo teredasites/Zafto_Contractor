@@ -117,10 +117,10 @@ export default function PricingSettingsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-white flex items-center gap-3">
-            <Settings className="h-6 w-6 text-zinc-400" />
+            <Settings className="h-6 w-6 text-muted" />
             {t('pricingSettings.title')}
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-muted mt-1">
             Configure automatic pricing adjustments for your estimates
           </p>
         </div>
@@ -137,8 +137,8 @@ export default function PricingSettingsPage() {
 
       {/* Add Rule Panel */}
       {showAdd && (
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5 mb-6">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('pricingSettings.chooseARuleType')}</h3>
+        <div className="bg-secondary border border-main rounded-xl p-5 mb-6">
+          <h3 className="text-sm font-medium text-main mb-4">{t('pricingSettings.chooseARuleType')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {availableTypes.map((rt) => {
               const Icon = rt.icon;
@@ -146,12 +146,12 @@ export default function PricingSettingsPage() {
                 <button
                   key={rt.type}
                   onClick={() => addRule(rt.type)}
-                  className="flex items-center gap-3 p-3 bg-zinc-700/30 border border-zinc-600/30 rounded-lg hover:bg-zinc-700/50 transition-colors text-left"
+                  className="flex items-center gap-3 p-3 bg-secondary/30 border border-muted/30 rounded-lg hover:bg-surface-hover transition-colors text-left"
                 >
                   <Icon className="h-5 w-5 text-blue-400 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-zinc-200">{rt.label}</p>
-                    <p className="text-xs text-zinc-500">{rt.description}</p>
+                    <p className="text-sm font-medium text-main">{rt.label}</p>
+                    <p className="text-xs text-muted">{rt.description}</p>
                   </div>
                 </button>
               );
@@ -162,10 +162,10 @@ export default function PricingSettingsPage() {
 
       {/* Rules List */}
       {rules.length === 0 ? (
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-12 text-center">
-          <AlertTriangle className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
-          <p className="text-zinc-400">{t('pricingSettings.noPricingRulesConfigured')}</p>
-          <p className="text-zinc-600 text-sm mt-2">
+        <div className="bg-secondary border border-main rounded-xl p-12 text-center">
+          <AlertTriangle className="h-12 w-12 text-muted mx-auto mb-4" />
+          <p className="text-muted">{t('pricingSettings.noPricingRulesConfigured')}</p>
+          <p className="text-muted text-sm mt-2">
             Add rules to automatically suggest optimized pricing on estimates
           </p>
         </div>
@@ -180,18 +180,18 @@ export default function PricingSettingsPage() {
                 key={rule.id}
                 className={`rounded-xl p-5 border transition-colors ${
                   rule.active
-                    ? 'bg-zinc-800/50 border-zinc-700/50'
-                    : 'bg-zinc-800/20 border-zinc-700/20 opacity-60'
+                    ? 'bg-secondary border-main'
+                    : 'bg-secondary/20 border-main/20 opacity-60'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <Icon className={`h-5 w-5 ${rule.active ? 'text-blue-400' : 'text-zinc-600'}`} />
+                    <Icon className={`h-5 w-5 ${rule.active ? 'text-blue-400' : 'text-muted'}`} />
                     <div>
-                      <p className="text-sm font-semibold text-zinc-200">
+                      <p className="text-sm font-semibold text-main">
                         {template?.label || rule.rule_type}
                       </p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-muted">
                         {template?.description || 'Custom rule'}
                         {rule.trade_type && ` — ${rule.trade_type}`}
                       </p>
@@ -200,13 +200,13 @@ export default function PricingSettingsPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleRule(rule.id, rule.active)}
-                      className="p-1.5 rounded-lg hover:bg-zinc-700/50 transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-surface-hover transition-colors"
                       title={rule.active ? 'Disable' : 'Enable'}
                     >
                       {rule.active ? (
                         <ToggleRight className="h-5 w-5 text-emerald-400" />
                       ) : (
-                        <ToggleLeft className="h-5 w-5 text-zinc-600" />
+                        <ToggleLeft className="h-5 w-5 text-muted" />
                       )}
                     </button>
                     <button
@@ -214,7 +214,7 @@ export default function PricingSettingsPage() {
                       className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
                       title={t('common.delete')}
                     >
-                      <Trash2 className="h-4 w-4 text-zinc-600 hover:text-red-400" />
+                      <Trash2 className="h-4 w-4 text-muted hover:text-red-400" />
                     </button>
                   </div>
                 </div>
@@ -224,7 +224,7 @@ export default function PricingSettingsPage() {
                   {Object.entries(rule.rule_config).map(([key, val]) => (
                     <span
                       key={key}
-                      className="text-xs bg-zinc-700/30 text-zinc-400 px-2 py-1 rounded"
+                      className="text-xs bg-secondary/30 text-muted px-2 py-1 rounded"
                     >
                       {key.replace(/_/g, ' ')}: {Array.isArray(val) ? val.join(', ') : String(val)}
                     </span>
