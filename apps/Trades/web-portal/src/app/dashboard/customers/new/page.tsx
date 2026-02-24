@@ -352,7 +352,7 @@ export default function NewCustomerPage() {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, emailOptIn: !formData.emailOptIn })}
-                  className={cn('w-10 h-5 rounded-full transition-colors relative', formData.emailOptIn ? 'bg-accent' : 'bg-gray-600')}
+                  className={cn('w-10 h-5 rounded-full transition-colors relative', formData.emailOptIn ? 'bg-accent' : 'bg-secondary')}
                 >
                   <div className={cn('w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform', formData.emailOptIn ? 'translate-x-5' : 'translate-x-0.5')} />
                 </button>
@@ -362,7 +362,7 @@ export default function NewCustomerPage() {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, smsOptIn: !formData.smsOptIn })}
-                  className={cn('w-10 h-5 rounded-full transition-colors relative', formData.smsOptIn ? 'bg-accent' : 'bg-gray-600')}
+                  className={cn('w-10 h-5 rounded-full transition-colors relative', formData.smsOptIn ? 'bg-accent' : 'bg-secondary')}
                 >
                   <div className={cn('w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform', formData.smsOptIn ? 'translate-x-5' : 'translate-x-0.5')} />
                 </button>

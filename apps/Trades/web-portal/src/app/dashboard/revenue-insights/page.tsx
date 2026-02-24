@@ -256,7 +256,7 @@ function RevenueTrendChart({ chartData }: { chartData: ChartDataPoint[] }) {
               Revenue
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-slate-300 dark:bg-slate-600" />
+              <span className="w-2.5 h-2.5 rounded-sm bg-secondary" />
               Expenses
             </span>
           </div>
@@ -282,7 +282,7 @@ function RevenueTrendChart({ chartData }: { chartData: ChartDataPoint[] }) {
                       {point.expenses > 0 && (
                         <div className="h-2 bg-secondary rounded overflow-hidden">
                           <div
-                            className="h-full bg-slate-300 dark:bg-slate-600 rounded transition-all duration-500"
+                            className="h-full bg-secondary rounded transition-all duration-500"
                             style={{ width: `${expenseWidth}%` }}
                           />
                         </div>

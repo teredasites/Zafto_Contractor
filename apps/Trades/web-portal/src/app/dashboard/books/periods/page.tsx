@@ -164,7 +164,7 @@ function YearEndCloseModal({
               type="checkbox"
               checked={confirmed}
               onChange={(e) => setConfirmed(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-accent focus:ring-accent"
+              className="w-4 h-4 rounded border-main text-accent focus:ring-accent"
             />
             <span className="text-sm text-main">
               I understand this is a permanent accounting action and have reviewed all period balances.
@@ -491,9 +491,9 @@ export default function FiscalPeriodsPage() {
             <div className="flex items-center gap-3">
               <div className={cn(
                 'w-10 h-10 rounded-lg flex items-center justify-center',
-                yearEndDone ? 'bg-emerald-500/10' : 'bg-slate-500/10'
+                yearEndDone ? 'bg-emerald-500/10' : 'bg-secondary'
               )}>
-                <BookOpen size={20} className={yearEndDone ? 'text-emerald-500' : 'text-slate-400'} />
+                <BookOpen size={20} className={yearEndDone ? 'text-emerald-500' : 'text-muted'} />
               </div>
               <div>
                 <p className="text-muted text-xs">{t('booksPeriods.retainedEarnings')}</p>

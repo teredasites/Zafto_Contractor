@@ -42,7 +42,7 @@ const predictionTypeConfig: Record<string, { label: string; icon: typeof Wrench;
 };
 
 const outreachStatusConfig: Record<OutreachStatus, { label: string; bg: string; text: string }> = {
-  pending: { label: 'Pending', bg: 'bg-slate-700/50', text: 'text-slate-400' },
+  pending: { label: 'Pending', bg: 'bg-secondary', text: 'text-muted' },
   sent: { label: 'Sent', bg: 'bg-blue-500/20', text: 'text-blue-400' },
   booked: { label: 'Booked', bg: 'bg-green-500/20', text: 'text-green-400' },
   declined: { label: 'Declined', bg: 'bg-red-500/20', text: 'text-red-400' },

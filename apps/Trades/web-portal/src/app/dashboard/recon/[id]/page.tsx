@@ -1988,7 +1988,7 @@ function SolarTab({ facets, tradeBids }: { facets: RoofFacetData[]; tradeBids: T
                       </span>
                     </div>
                     <div className="h-2 rounded-full bg-main/10 overflow-hidden">
-                      <div className={cn('h-full rounded-full', isUsable ? 'bg-gradient-to-r from-amber-500 to-yellow-400' : 'bg-gray-500')}
+                      <div className={cn('h-full rounded-full', isUsable ? 'bg-gradient-to-r from-amber-500 to-yellow-400' : 'bg-muted')}
                         style={{ width: `${Math.round(ratio * 100)}%` }} />
                     </div>
                   </div>

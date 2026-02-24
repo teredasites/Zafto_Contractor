@@ -2037,25 +2037,25 @@ Example:
       {/* Property Portal Preview Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+          <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
             {/* Preview Header */}
-            <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center justify-between p-3 bg-secondary border-b border-main">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Eye size={14} />
                 <span>{t('bids.propertyPortalPreview')}</span>
               </div>
               <button
                 onClick={() => setShowPreview(false)}
-                className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                className="p-1.5 hover:bg-surface-hover rounded"
               >
-                <X size={16} className="text-gray-500" />
+                <X size={16} className="text-muted" />
               </button>
             </div>
 
             {/* Portal Content */}
             <div className="overflow-y-auto max-h-[calc(90vh-48px)]">
               {/* Company Header */}
-              <div className="bg-gray-50 dark:bg-gray-800 px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="bg-secondary px-8 py-6 border-b border-main">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
                     {/* Company Logo */}
@@ -2066,21 +2066,21 @@ Example:
                         className="w-16 h-16 object-contain rounded-lg"
                       />
                     ) : (
-                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-400 text-center">{t('bids.noLogo')}</span>
+                      <div className="w-16 h-16 bg-secondary rounded-lg flex items-center justify-center">
+                        <span className="text-xs font-medium text-muted text-center">{t('bids.noLogo')}</span>
                       </div>
                     )}
                     <div>
-                      <h2 className="font-bold text-xl text-gray-900 dark:text-white">{company.name}</h2>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{company.phone} • {company.email}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-500">
+                      <h2 className="font-bold text-xl text-main">{company.name}</h2>
+                      <p className="text-sm text-muted">{company.phone} • {company.email}</p>
+                      <p className="text-sm text-muted">
                         {company.address.street}, {company.address.city}, {company.address.state} {company.address.zip}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('common.estimate')}</div>
-                    <div className="font-mono text-lg font-semibold text-gray-900 dark:text-white">#EST-2026-001</div>
+                    <div className="text-sm text-muted">{t('common.estimate')}</div>
+                    <div className="font-mono text-lg font-semibold text-main">#EST-2026-001</div>
                   </div>
                 </div>
               </div>
@@ -2090,26 +2090,26 @@ Example:
                 {/* Project & Customer Info */}
                 <div className="grid grid-cols-2 gap-8">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('bids.preparedFor')}</h3>
-                    <div className="text-gray-900 dark:text-white font-medium">{customerName || 'Customer Name'}</div>
-                    {customerEmail && <div className="text-sm text-gray-600 dark:text-gray-400">{customerEmail}</div>}
-                    {customerPhone && <div className="text-sm text-gray-600 dark:text-gray-400">{customerPhone}</div>}
+                    <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-2">{t('bids.preparedFor')}</h3>
+                    <div className="text-main font-medium">{customerName || 'Customer Name'}</div>
+                    {customerEmail && <div className="text-sm text-muted">{customerEmail}</div>}
+                    {customerPhone && <div className="text-sm text-muted">{customerPhone}</div>}
                     {customerStreet && (
-                      <div className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                      <div className="text-sm text-muted mt-1">
                         {customerStreet}<br />
                         {customerCity}, {customerState} {customerZip}
                       </div>
                     )}
                   </div>
                   <div className="text-right">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('common.projectDetails')}</h3>
-                    <div className="text-gray-900 dark:text-white font-medium">{title || 'Project Title'}</div>
+                    <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-2">{t('common.projectDetails')}</h3>
+                    <div className="text-main font-medium">{title || 'Project Title'}</div>
                     {trade && (
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-muted">
                         {tradeOptions.find(t => t.value === trade)?.label}
                       </div>
                     )}
-                    <div className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                    <div className="text-sm text-muted mt-2">
                       Valid until {formatDate(validUntil)}
                     </div>
                   </div>
@@ -2118,7 +2118,7 @@ Example:
                 {/* Photos (if any) */}
                 {photos.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('bids.projectPhotos')}</h3>
+                    <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">{t('bids.projectPhotos')}</h3>
                     <div className="grid grid-cols-4 gap-3">
                       {photos.slice(0, 4).map((photo) => (
                         <img
@@ -2135,9 +2135,9 @@ Example:
                 {/* Scope of Work */}
                 {scopeOfWork && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('common.scopeOfWork')}</h3>
-                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-sm">{scopeOfWork}</p>
+                    <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">{t('common.scopeOfWork')}</h3>
+                    <div className="bg-secondary rounded-lg p-4">
+                      <p className="text-main whitespace-pre-wrap text-sm">{scopeOfWork}</p>
                     </div>
                   </div>
                 )}
@@ -2145,7 +2145,7 @@ Example:
                 {/* Option Tabs (if multiple) */}
                 {useMultipleOptions && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('bids.pricingOptions')}</h3>
+                    <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">{t('bids.pricingOptions')}</h3>
                     <div className="flex gap-2 mb-4">
                       {options.map((option, index) => (
                         <button
@@ -2155,7 +2155,7 @@ Example:
                             'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                             activeOptionIndex === index
                               ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                              : 'bg-secondary text-main hover:bg-surface-hover'
                           )}
                         >
                           {option.name}
@@ -2167,44 +2167,44 @@ Example:
                 )}
 
                 {/* Line Items Table */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                <div className="border border-main rounded-lg overflow-hidden">
                   <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
+                    <thead className="bg-secondary">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">{t('common.description')}</th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-600 dark:text-gray-400 w-20">{t('common.qty')}</th>
-                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-600 dark:text-gray-400 w-28">{t('common.amount')}</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-muted">{t('common.description')}</th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-muted w-20">{t('common.qty')}</th>
+                        <th className="px-4 py-3 text-right text-sm font-medium text-muted w-28">{t('common.amount')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {activeOption.lineItems.length === 0 ? (
                         <tr>
-                          <td colSpan={3} className="px-4 py-8 text-center text-gray-400">
+                          <td colSpan={3} className="px-4 py-8 text-center text-muted">
                             No line items yet
                           </td>
                         </tr>
                       ) : (
                         activeOption.lineItems.map((item) => (
-                          <tr key={item.id} className="border-t border-gray-200 dark:border-gray-700">
-                            <td className="px-4 py-3 text-gray-900 dark:text-white">{item.description || 'Item description'}</td>
-                            <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{item.quantity} {item.unit}</td>
-                            <td className="px-4 py-3 text-right text-gray-900 dark:text-white font-medium">{formatCurrency(item.total)}</td>
+                          <tr key={item.id} className="border-t border-main">
+                            <td className="px-4 py-3 text-main">{item.description || 'Item description'}</td>
+                            <td className="px-4 py-3 text-center text-muted">{item.quantity} {item.unit}</td>
+                            <td className="px-4 py-3 text-right text-main font-medium">{formatCurrency(item.total)}</td>
                           </tr>
                         ))
                       )}
                     </tbody>
-                    <tfoot className="bg-gray-50 dark:bg-gray-800">
-                      <tr className="border-t border-gray-200 dark:border-gray-700">
-                        <td colSpan={2} className="px-4 py-2 text-right text-gray-600 dark:text-gray-400">{t('common.subtotal')}</td>
-                        <td className="px-4 py-2 text-right text-gray-900 dark:text-white">{formatCurrency(activeOption.subtotal)}</td>
+                    <tfoot className="bg-secondary">
+                      <tr className="border-t border-main">
+                        <td colSpan={2} className="px-4 py-2 text-right text-muted">{t('common.subtotal')}</td>
+                        <td className="px-4 py-2 text-right text-main">{formatCurrency(activeOption.subtotal)}</td>
                       </tr>
                       <tr>
-                        <td colSpan={2} className="px-4 py-2 text-right text-gray-600 dark:text-gray-400">Tax ({taxRate}%)</td>
-                        <td className="px-4 py-2 text-right text-gray-900 dark:text-white">{formatCurrency(activeOption.taxAmount)}</td>
+                        <td colSpan={2} className="px-4 py-2 text-right text-muted">Tax ({taxRate}%)</td>
+                        <td className="px-4 py-2 text-right text-main">{formatCurrency(activeOption.taxAmount)}</td>
                       </tr>
-                      <tr className="border-t-2 border-gray-300 dark:border-gray-600">
-                        <td colSpan={2} className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">{t('common.total')}</td>
-                        <td className="px-4 py-3 text-right font-bold text-xl text-gray-900 dark:text-white">{formatCurrency(grandTotal)}</td>
+                      <tr className="border-t-2 border-main">
+                        <td colSpan={2} className="px-4 py-3 text-right font-semibold text-main">{t('common.total')}</td>
+                        <td className="px-4 py-3 text-right font-bold text-xl text-main">{formatCurrency(grandTotal)}</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -2213,18 +2213,18 @@ Example:
                 {/* Add-ons (if any) */}
                 {addOns.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('bids.optionalAddons')}</h3>
+                    <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">{t('bids.optionalAddons')}</h3>
                     <div className="space-y-2">
                       {addOns.map((addon) => (
-                        <div key={addon.id} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div key={addon.id} className="flex items-center justify-between p-3 border border-main rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded" />
+                            <div className="w-5 h-5 border-2 border-main rounded" />
                             <div>
-                              <div className="font-medium text-gray-900 dark:text-white">{addon.name || 'Add-on'}</div>
-                              {addon.description && <div className="text-sm text-gray-500">{addon.description}</div>}
+                              <div className="font-medium text-main">{addon.name || 'Add-on'}</div>
+                              {addon.description && <div className="text-sm text-muted">{addon.description}</div>}
                             </div>
                           </div>
-                          <div className="font-medium text-gray-900 dark:text-white">+{formatCurrency(addon.price)}</div>
+                          <div className="font-medium text-main">+{formatCurrency(addon.price)}</div>
                         </div>
                       ))}
                     </div>
@@ -2246,18 +2246,18 @@ Example:
 
                 {/* Terms */}
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">{t('common.termsAndConditions')}</h3>
-                  <div className="text-xs text-gray-500 dark:text-gray-500 whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                  <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">{t('common.termsAndConditions')}</h3>
+                  <div className="text-xs text-muted whitespace-pre-wrap bg-secondary rounded-lg p-4">
                     {termsAndConditions}
                   </div>
                 </div>
 
                 {/* Signature Area */}
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
+                <div className="border-2 border-dashed border-main rounded-lg p-6">
                   <div className="text-center">
-                    <div className="text-gray-400 dark:text-gray-500 mb-4">{t('bids.customerSignature')}</div>
-                    <div className="h-16 border-b border-gray-300 dark:border-gray-600 mb-2" />
-                    <div className="text-sm text-gray-500">{t('bids.signAboveToApproveThisEstimate')}</div>
+                    <div className="text-muted mb-4">{t('bids.customerSignature')}</div>
+                    <div className="h-16 border-b border-main mb-2" />
+                    <div className="text-sm text-muted">{t('bids.signAboveToApproveThisEstimate')}</div>
                   </div>
                 </div>
 
@@ -2265,7 +2265,7 @@ Example:
                 <div className="flex gap-4">
                   <button
                     disabled
-                    className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg font-medium cursor-not-allowed"
+                    className="flex-1 py-3 bg-secondary text-muted rounded-lg font-medium cursor-not-allowed"
                   >
                     Decline
                   </button>

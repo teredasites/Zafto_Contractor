@@ -128,7 +128,7 @@ export default function BidsPage() {
 
   const pipelineStages = ['draft', 'sent', 'viewed', 'accepted', 'rejected'] as const;
   const stageConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-    draft: { label: 'Draft', color: 'text-slate-600 dark:text-slate-400', bgColor: 'bg-slate-100 dark:bg-slate-800' },
+    draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-secondary' },
     sent: { label: 'Sent', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
     viewed: { label: 'Viewed', color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
     accepted: { label: 'Won', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
@@ -250,8 +250,8 @@ export default function BidsPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                <FileText size={20} className="text-slate-600 dark:text-slate-400" />
+              <div className="p-2 bg-secondary rounded-lg">
+                <FileText size={20} className="text-muted" />
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats.totalValue)}</p>

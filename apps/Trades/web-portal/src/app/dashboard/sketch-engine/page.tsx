@@ -124,10 +124,10 @@ import { useTranslation } from '@/lib/translations';
 function CanvasLoadingPlaceholder() {
   const { t } = useTranslation();
   return (
-    <div className="flex-1 flex items-center justify-center bg-gray-50">
+    <div className="flex-1 flex items-center justify-center bg-secondary">
       <div className="text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
-        <p className="text-xs text-gray-400 mt-2">{t('sketchEngine.loadingCanvas')}</p>
+        <Loader2 className="h-6 w-6 animate-spin text-muted mx-auto" />
+        <p className="text-xs text-muted mt-2">{t('sketchEngine.loadingCanvas')}</p>
       </div>
     </div>
   );
@@ -143,8 +143,8 @@ const statusConfig: Record<
 > = {
   draft: {
     label: 'Draft',
-    color: 'text-slate-400',
-    bgColor: 'bg-slate-800',
+    color: 'text-muted',
+    bgColor: 'bg-secondary',
   },
   in_progress: {
     label: 'In Progress',
@@ -1232,10 +1232,10 @@ function EditorView({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-50" style={{ width: '100vw', height: '100vh' }}>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-secondary" style={{ width: '100vw', height: '100vh' }}>
         <div className="text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
-          <p className="text-xs text-gray-400 mt-2">
+          <Loader2 className="h-6 w-6 animate-spin text-muted mx-auto" />
+          <p className="text-xs text-muted mt-2">
             Loading floor plan...
           </p>
         </div>
@@ -1245,7 +1245,7 @@ function EditorView({
 
   if (error) {
     return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-50" style={{ width: '100vw', height: '100vh' }}>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-secondary" style={{ width: '100vw', height: '100vh' }}>
         <div className="text-center">
           <p className="text-sm text-red-500">{error}</p>
           <button
@@ -1262,15 +1262,15 @@ function EditorView({
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col bg-white" style={{ width: '100vw', height: '100vh' }}>
       {/* Editor top bar */}
-      <div className="h-12 border-b border-gray-200 flex items-center px-3 gap-3 bg-white/95 backdrop-blur">
+      <div className="h-12 border-b border-main flex items-center px-3 gap-3 bg-white/95 backdrop-blur">
         <button
           onClick={onClose}
-          className="p-1.5 rounded hover:bg-gray-100 text-gray-500"
+          className="p-1.5 rounded hover:bg-surface-hover text-muted"
         >
           <ArrowLeft size={16} />
         </button>
         <div className="flex-1 min-w-0 flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-gray-800 truncate">
+          <h2 className="text-sm font-semibold text-main truncate">
             {plan?.name || 'Floor Plan'}
           </h2>
           {/* Job link indicator / picker */}
@@ -1280,7 +1280,7 @@ function EditorView({
               className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${
                 plan?.jobId
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200'
+                  : 'bg-surface text-muted border border-main hover:bg-surface-hover'
               }`}
               title={plan?.jobId ? 'Linked to job — click to change' : 'Link to a job'}
             >
@@ -1290,34 +1290,34 @@ function EditorView({
                 : 'Link to Job'}
             </button>
             {showJobPicker && (
-              <div className="absolute top-full left-0 mt-1 w-64 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-xl z-50">
-                <div className="p-2 border-b border-gray-100">
-                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{t('sketchEngine.selectJob')}</span>
+              <div className="absolute top-full left-0 mt-1 w-64 max-h-60 overflow-y-auto bg-white border border-main rounded-lg shadow-xl z-50">
+                <div className="p-2 border-b border-main">
+                  <span className="text-[10px] font-semibold text-muted uppercase tracking-wider">{t('sketchEngine.selectJob')}</span>
                 </div>
                 {plan?.jobId && (
                   <button
                     onClick={() => { updatePlanJob(null); setShowJobPicker(false); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors border-b border-gray-100"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors border-b border-main"
                   >
                     <Link size={10} />
                     Unlink from job
                   </button>
                 )}
                 {jobs.length === 0 ? (
-                  <div className="px-3 py-4 text-xs text-gray-400 text-center">{t('jobs.noJobs')}</div>
+                  <div className="px-3 py-4 text-xs text-muted text-center">{t('jobs.noJobs')}</div>
                 ) : (
                   jobs.slice(0, 20).map(job => (
                     <button
                       key={job.id}
                       onClick={() => { updatePlanJob(job.id); setShowJobPicker(false); }}
-                      className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-gray-50 transition-colors ${
-                        plan?.jobId === job.id ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700'
+                      className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-surface-hover transition-colors ${
+                        plan?.jobId === job.id ? 'bg-emerald-50 text-emerald-700' : 'text-main'
                       }`}
                     >
                       <div className="flex-1 text-left truncate">
                         <span className="font-medium">{job.title}</span>
                         {job.address?.street && (
-                          <span className="text-gray-400 ml-1">— {job.address.street}</span>
+                          <span className="text-muted ml-1">— {job.address.street}</span>
                         )}
                       </div>
                       {plan?.jobId === job.id && <span className="text-emerald-500 text-[10px]">{t('common.current')}</span>}
@@ -1328,7 +1328,7 @@ function EditorView({
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="flex items-center gap-2 text-xs text-muted">
           {saving && (
             <>
               <Loader2 className="h-3 w-3 animate-spin" />
@@ -1346,7 +1346,7 @@ function EditorView({
         {/* SK13: Template picker */}
         <button
           onClick={() => setShowTemplatePicker(true)}
-          className="p-1.5 rounded transition-colors hover:bg-gray-100 text-gray-400"
+          className="p-1.5 rounded transition-colors hover:bg-surface-hover text-muted"
           title="Start from template"
         >
           <LayoutTemplate size={14} />
@@ -1356,7 +1356,7 @@ function EditorView({
         <button
           onClick={() => setShowEstimateModal(true)}
           disabled={planData.rooms.length === 0}
-          className="p-1.5 rounded transition-colors hover:bg-gray-100 text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-1.5 rounded transition-colors hover:bg-surface-hover text-muted disabled:opacity-30 disabled:cursor-not-allowed"
           title={planData.rooms.length === 0 ? 'Draw rooms first' : 'Generate estimate from rooms'}
         >
           <Calculator size={14} />
@@ -1366,7 +1366,7 @@ function EditorView({
         <button
           onClick={() => setShowExportModal(true)}
           disabled={planData.walls.length === 0}
-          className="p-1.5 rounded transition-colors hover:bg-gray-100 text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-1.5 rounded transition-colors hover:bg-surface-hover text-muted disabled:opacity-30 disabled:cursor-not-allowed"
           title={planData.walls.length === 0 ? 'Draw a floor plan first' : 'Export floor plan'}
         >
           <Download size={14} />
@@ -1378,7 +1378,7 @@ function EditorView({
           className={`p-1.5 rounded transition-colors ${
             pinMode
               ? 'bg-emerald-100 text-emerald-600 border border-emerald-300'
-              : 'hover:bg-gray-100 text-gray-400'
+              : 'hover:bg-surface-hover text-muted'
           }`}
           title={pinMode ? 'Cancel pin placement' : 'Place photo pin'}
         >
@@ -1391,7 +1391,7 @@ function EditorView({
           className={`p-1.5 rounded transition-colors ${
             showHistory
               ? 'bg-blue-100 text-blue-600 border border-blue-300'
-              : 'hover:bg-gray-100 text-gray-400'
+              : 'hover:bg-surface-hover text-muted'
           }`}
           title="Version history"
         >
@@ -1427,7 +1427,7 @@ function EditorView({
           {editorState.units === 'imperial' ? 'ft/in' : 'm/cm'}
         </button>
         {/* Stats */}
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-muted">
           {planMode === 'floor' ? (
             <>
               {planData.walls.length}W {planData.doors.length}D{' '}
@@ -1444,7 +1444,7 @@ function EditorView({
       </div>
 
       {/* Capabilities strip — all 12 engine features accessible */}
-      <div className="h-8 border-b border-gray-100 flex items-center gap-1 px-2 bg-gray-50/80 overflow-x-auto">
+      <div className="h-8 border-b border-main flex items-center gap-1 px-2 bg-secondary/80 overflow-x-auto">
         {[
           { icon: PenTool, label: 'Draw', action: () => handleToolChange('wall' as SketchTool), active: ['wall', 'arcWall', 'door', 'window', 'fixture'].includes(editorState.activeTool), color: '#10B981' },
           { icon: RulerIcon, label: 'Measure', action: () => handleToolChange('dimension' as SketchTool), active: editorState.activeTool === 'dimension', color: '#3B82F6' },
@@ -1466,8 +1466,8 @@ function EditorView({
               onClick={feat.action}
               className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium whitespace-nowrap transition-colors ${
                 feat.active
-                  ? 'bg-white shadow-sm border border-gray-200 text-gray-800'
-                  : 'text-gray-500 hover:bg-white/60 hover:text-gray-700'
+                  ? 'bg-white shadow-sm border border-main text-main'
+                  : 'text-muted hover:bg-white/60 hover:text-main'
               }`}
               title={feat.label}
             >
@@ -1623,8 +1623,8 @@ function EditorView({
                 </div>
 
                 {photoPins.length > 0 && (
-                  <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur border border-gray-200 rounded-lg px-2.5 py-1.5 shadow-sm">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur border border-main rounded-lg px-2.5 py-1.5 shadow-sm">
+                    <div className="flex items-center gap-1.5 text-xs text-muted">
                       <Camera size={12} className="text-emerald-500" />
                       <span>{photoPins.length} photo pin{photoPins.length !== 1 ? 's' : ''}</span>
                     </div>
@@ -1643,10 +1643,10 @@ function EditorView({
                   <>
                   {planData.walls.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center z-[5] pointer-events-none">
-                      <div className="pointer-events-auto bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-6 max-w-sm text-center shadow-lg">
+                      <div className="pointer-events-auto bg-white/95 backdrop-blur border border-main rounded-xl p-6 max-w-sm text-center shadow-lg">
                         <PenTool className="h-8 w-8 text-emerald-500 mx-auto mb-3" />
-                        <h3 className="font-semibold text-gray-800 mb-2">{t('sketchEngine.startDrawing')}</h3>
-                        <p className="text-sm text-gray-500 mb-4">
+                        <h3 className="font-semibold text-main mb-2">{t('sketchEngine.startDrawing')}</h3>
+                        <p className="text-sm text-muted mb-4">
                           Select the Wall tool from the toolbar on the left, then click on the canvas to draw walls. Close rooms to auto-calculate measurements.
                         </p>
                         <div className="flex gap-2 justify-center">
@@ -1658,7 +1658,7 @@ function EditorView({
                           </button>
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors"
+                            className="px-3 py-1.5 border border-main text-main text-sm rounded-md hover:bg-surface-hover transition-colors"
                           >
                             Use Template
                           </button>

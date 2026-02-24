@@ -381,7 +381,7 @@ function TemplateCard({
           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
             {typeLabel}
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full bg-secondary text-muted">
             {PROPERTY_TYPE_ICONS[template.propertyType]}
             {propLabel}
           </span>
@@ -1063,7 +1063,7 @@ function CustomFieldEditor({
               type="checkbox"
               checked={field.required}
               onChange={(e) => onUpdate({ ...field, required: e.target.checked })}
-              className="rounded border-gray-300"
+              className="rounded border-main"
             />
             <span className="text-muted text-xs">{tr('common.required')}</span>
           </label>
@@ -1176,7 +1176,7 @@ function ChecklistItemEditor({
           type="checkbox"
           checked={item.required}
           onChange={(e) => onUpdate({ ...item, required: e.target.checked })}
-          className="rounded border-gray-300"
+          className="rounded border-main"
         />
         <span className="text-xs text-muted">{t('common.required')}</span>
       </label>

@@ -341,7 +341,7 @@ export default function ClaimDetailPage() {
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                           d.logType === 'completion' ? 'bg-green-100 text-green-700' :
                           d.logType === 'setup' ? 'bg-blue-100 text-blue-700' :
-                          'bg-gray-100 text-gray-700'
+                          'bg-secondary text-muted'
                         }`}>{d.logType.replace('_', ' ')}</span>
                         <span className="text-sm font-medium">{d.summary}</span>
                       </div>
@@ -373,7 +373,7 @@ export default function ClaimDetailPage() {
                           <span className="text-sm font-medium">{EQUIPMENT_TYPE_LABELS[e.equipmentType] || e.equipmentType}</span>
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                             e.status === 'deployed' ? 'bg-green-100 text-green-700' :
-                            e.status === 'removed' ? 'bg-gray-100 text-gray-500' :
+                            e.status === 'removed' ? 'bg-secondary text-muted' :
                             'bg-yellow-100 text-yellow-700'
                           }`}>{e.status}</span>
                         </div>
@@ -665,7 +665,7 @@ const REASON_OPTIONS: { value: SupplementReason; label: string }[] = [
 ];
 
 const SUPPLEMENT_STATUS_STYLES: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+  draft: 'bg-secondary text-muted',
   submitted: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
   under_review: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400',
   approved: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400',

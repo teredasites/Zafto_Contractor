@@ -426,7 +426,7 @@ function EquipmentView({
       {/* Equipment Table */}
       {equipment.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <Shield className="w-12 h-12 text-slate-600 mb-3" />
+          <Shield className="w-12 h-12 text-muted mb-3" />
           <p className="text-muted">{t('equipment.noEquipment')}</p>
         </div>
       ) : (
@@ -451,7 +451,7 @@ function EquipmentView({
                         {[eq.manufacturer, eq.modelNumber].filter(Boolean).join(' — ')}
                       </p>
                       {eq.serialNumber && (
-                        <p className="text-xs text-slate-600">SN: {eq.serialNumber}</p>
+                        <p className="text-xs text-muted">SN: {eq.serialNumber}</p>
                       )}
                     </div>
                   </td>
@@ -527,7 +527,7 @@ function ClaimsView({
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <FileText className="w-12 h-12 text-slate-600 mb-3" />
+          <FileText className="w-12 h-12 text-muted mb-3" />
           <p className="text-muted">{t('insurance.noClaims')}</p>
         </div>
       ) : (
@@ -605,7 +605,7 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
     <div className="space-y-4">
       {outreach.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <Send className="w-12 h-12 text-slate-600 mb-3" />
+          <Send className="w-12 h-12 text-muted mb-3" />
           <p className="text-muted">{t('warrantyIntel.noOutreachHistory')}</p>
           <p className="text-xs text-muted mt-1">{t('warrantyIntel.automatedOutreachWillAppearHereWhenTheSchedulerRun')}</p>
         </div>
@@ -636,7 +636,7 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
                     {log.sentAt ? formatDate(log.sentAt) : 'Pending'}
                   </td>
                   <td className="px-4 py-3">
-                    {log.responseStatus ? <ResponseBadge status={log.responseStatus} /> : <span className="text-slate-600">—</span>}
+                    {log.responseStatus ? <ResponseBadge status={log.responseStatus} /> : <span className="text-muted">—</span>}
                   </td>
                 </tr>
               ))}
@@ -665,7 +665,7 @@ function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; aff
 
       {recalls.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <ShieldCheck className="w-12 h-12 text-slate-600 mb-3" />
+          <ShieldCheck className="w-12 h-12 text-muted mb-3" />
           <p className="text-muted">{t('warrantyIntel.noActiveRecalls')}</p>
         </div>
       ) : (

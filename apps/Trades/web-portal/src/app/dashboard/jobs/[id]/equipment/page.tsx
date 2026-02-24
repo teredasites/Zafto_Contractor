@@ -416,7 +416,7 @@ function CalculatorTab({ calculations }: { calculations: EquipmentCalculationDat
           <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{totals.scrubber}</p>
           <p className="text-xs text-purple-600 dark:text-purple-400">{t('common.airScrubbers')}</p>
         </div>
-        <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-center">
+        <div className="bg-secondary border border-main rounded-lg p-3 text-center">
           <p className="text-2xl font-bold text-main">{totals.sqft.toFixed(0)}</p>
           <p className="text-xs text-muted">{t('common.totalSqFt')}</p>
         </div>

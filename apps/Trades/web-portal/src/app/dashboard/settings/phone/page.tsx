@@ -391,7 +391,7 @@ function GeneralTab({
                           ? 'bg-emerald-500'
                           : line.status === 'busy'
                           ? 'bg-amber-500'
-                          : 'bg-slate-400'
+                          : 'bg-muted'
                       )}
                     />
                     <span className="text-xs text-muted">{line.status}</span>

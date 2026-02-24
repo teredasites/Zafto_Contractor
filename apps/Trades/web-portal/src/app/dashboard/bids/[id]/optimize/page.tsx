@@ -316,7 +316,7 @@ function RiskFactorCard({ risk }: { risk: RiskFactor }) {
   const severityConfig = {
     high: { variant: 'error' as const, icon: <ShieldAlert size={16} className="text-red-500" /> },
     medium: { variant: 'warning' as const, icon: <AlertTriangle size={16} className="text-amber-500" /> },
-    low: { variant: 'default' as const, icon: <AlertTriangle size={16} className="text-slate-400" /> },
+    low: { variant: 'default' as const, icon: <AlertTriangle size={16} className="text-muted" /> },
   };
 
   const config = severityConfig[risk.severity];

@@ -66,7 +66,7 @@ interface Permit {
 }
 
 const statusConfig: Record<PermitStatus, { label: string; color: string; bgColor: string }> = {
-  draft: { label: 'Draft', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-secondary' },
   applied: { label: 'Applied', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
   in_review: { label: 'In Review', color: 'text-purple-700 dark:text-purple-300', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
   approved: { label: 'Approved', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
@@ -80,11 +80,11 @@ const typeConfig: Record<PermitType, { label: string; color: string; bgColor: st
   electrical: { label: 'Electrical', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
   plumbing: { label: 'Plumbing', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
   mechanical: { label: 'Mechanical', color: 'text-orange-700 dark:text-orange-300', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
-  building: { label: 'Building', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  building: { label: 'Building', color: 'text-muted', bgColor: 'bg-secondary' },
   roofing: { label: 'Roofing', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
   solar: { label: 'Solar', color: 'text-yellow-700 dark:text-yellow-300', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
   demolition: { label: 'Demolition', color: 'text-rose-700 dark:text-rose-300', bgColor: 'bg-rose-100 dark:bg-rose-900/30' },
-  other: { label: 'Other', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  other: { label: 'Other', color: 'text-muted', bgColor: 'bg-secondary' },
 };
 
 function toPermit(d: PermitData): Permit {

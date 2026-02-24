@@ -840,7 +840,7 @@ function LaborDistributionTab({
           {/* Stacked bar */}
           <div className="h-8 rounded-full overflow-hidden flex mb-6">
             {allocations.map((a, i) => {
-              const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-amber-500', 'bg-slate-400'];
+              const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-amber-500', 'bg-muted'];
               return (
                 <div
                   key={a.jobId}
@@ -855,7 +855,7 @@ function LaborDistributionTab({
           {/* Legend + Table */}
           <div className="space-y-3">
             {allocations.map((a, i) => {
-              const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-amber-500', 'bg-slate-400'];
+              const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-amber-500', 'bg-muted'];
               const widthPct = maxCost > 0 ? (a.laborCost / maxCost) * 100 : 0;
               return (
                 <div key={a.jobId} className="p-4 bg-secondary rounded-xl">

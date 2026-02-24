@@ -55,7 +55,7 @@ import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { getSupabase } from '@/lib/supabase';
 import { EntityDocumentsPanel } from '@/components/entity-documents-panel';
 import { CommandPalette } from '@/components/command-palette';
-import type { Customer } from '@/types';
+import type { Customer, Bid, Job, Invoice } from '@/types';
 import { useTranslation } from '@/lib/translations';
 
 type TabType = 'overview' | 'bids' | 'jobs' | 'invoices' | 'documents' | 'activity' | 'estimates' | 'communications' | 'properties' | 'payments' | 'notes';
@@ -135,7 +135,7 @@ function computePaymentBehavior(invoices: { sentAt?: Date | string; paidAt?: Dat
 }
 
 /** Compute customer health score (0-100) from payment, engagement, and value metrics */
-function computeHealthScore(customer: Customer, invoices: any[], jobs: any[], bids: any[]) {
+function computeHealthScore(customer: Customer, invoices: Invoice[], jobs: Job[], bids: Bid[]) {
   let score = 50; // Base score
 
   // Payment behavior (up to +30 or -20)
@@ -149,9 +149,9 @@ function computeHealthScore(customer: Customer, invoices: any[], jobs: any[], bi
 
   // Engagement — recent activity (up to +15)
   const allDates = [
-    ...jobs.map((j: any) => new Date(j.updatedAt || j.createdAt)),
-    ...invoices.map((i: any) => new Date(i.updatedAt || i.createdAt)),
-    ...bids.map((b: any) => new Date(b.updatedAt || b.createdAt)),
+    ...jobs.map((j) => new Date(j.updatedAt || j.createdAt)),
+    ...invoices.map((i) => new Date(i.updatedAt || i.createdAt)),
+    ...bids.map((b) => new Date(b.updatedAt || b.createdAt)),
   ];
   if (allDates.length > 0) {
     const mostRecent = Math.max(...allDates.map(d => d.getTime()));
@@ -171,7 +171,7 @@ function computeHealthScore(customer: Customer, invoices: any[], jobs: any[], bi
   else if (customer.totalRevenue > 10000) score += 3;
 
   // Outstanding balance penalty
-  const overdueInvoices = invoices.filter((i: any) => i.status === 'overdue');
+  const overdueInvoices = invoices.filter((i) => i.status === 'overdue');
   if (overdueInvoices.length > 0) score -= overdueInvoices.length * 5;
 
   return Math.max(0, Math.min(100, score));
@@ -880,7 +880,7 @@ export default function CustomerDetailPage() {
 // EXISTING TABS
 // ===========================================================================
 
-function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; bids: any[]; jobs: any[]; invoices: any[] }) {
+function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; bids: Bid[]; jobs: Job[]; invoices: Invoice[] }) {
   const { t } = useTranslation();
   const router = useRouter();
   const recentActivity = [
@@ -955,7 +955,7 @@ function OverviewTab({ customer, bids, jobs, invoices }: { customer: Customer; b
   );
 }
 
-function BidsTab({ bids }: { bids: any[] }) {
+function BidsTab({ bids }: { bids: Bid[] }) {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -1001,7 +1001,7 @@ function BidsTab({ bids }: { bids: any[] }) {
   );
 }
 
-function JobsTab({ jobs }: { jobs: any[] }) {
+function JobsTab({ jobs }: { jobs: Job[] }) {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -1047,7 +1047,7 @@ function JobsTab({ jobs }: { jobs: any[] }) {
   );
 }
 
-function InvoicesTab({ invoices }: { invoices: any[] }) {
+function InvoicesTab({ invoices }: { invoices: Invoice[] }) {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -1096,9 +1096,9 @@ function InvoicesTab({ invoices }: { invoices: any[] }) {
 /** Unified communication timeline for a customer */
 function ActivityTimeline({ customerId, bids, jobs, invoices }: {
   customerId: string;
-  bids: any[];
-  jobs: any[];
-  invoices: any[];
+  bids: Bid[];
+  jobs: Job[];
+  invoices: Invoice[];
 }) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -1512,7 +1512,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
           items.push({
             id: e.id,
             type: 'email',
-            direction: (e as any).direction === 'inbound' ? 'inbound' : 'outbound',
+            direction: (e as { direction?: string }).direction === 'inbound' ? 'inbound' : 'outbound',
             subject: e.subject || 'No Subject',
             preview: '',
             timestamp: e.created_at || '',

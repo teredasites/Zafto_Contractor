@@ -256,7 +256,7 @@ function ScorecardRow({
                     {score != null ? score.toFixed(1) : '--'}
                   </span>
                   {score != null && (
-                    <div className="h-1 bg-slate-700 rounded-full mt-1 overflow-hidden">
+                    <div className="h-1 bg-secondary rounded-full mt-1 overflow-hidden">
                       <div
                         className={cn(
                           'h-full rounded-full',

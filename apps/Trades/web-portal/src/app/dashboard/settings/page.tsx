@@ -455,7 +455,7 @@ function TeamSettings() {
     admin: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
     office: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
     field_tech: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-    subcontractor: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+    subcontractor: 'bg-secondary text-main',
   };
 
   return (
@@ -1302,7 +1302,7 @@ function GoodBetterBestCard() {
             onClick={handleToggle}
             className={cn(
               'w-11 h-6 rounded-full transition-colors relative flex-shrink-0',
-              enabled ? 'bg-accent' : 'bg-slate-300 dark:bg-slate-600'
+              enabled ? 'bg-accent' : 'bg-secondary'
             )}
           >
             <span
@@ -1964,7 +1964,7 @@ function RolesSettings() {
     { key: 'office_manager', label: 'Office Mgr', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300', desc: 'Operations & scheduling' },
     { key: 'technician', label: 'Technician', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', desc: 'Assigned jobs & field tools' },
     { key: 'apprentice', label: 'Apprentice', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300', desc: 'Field work, no financials' },
-    { key: 'cpa', label: 'CPA', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', desc: 'Financials & reports only' },
+    { key: 'cpa', label: 'CPA', color: 'bg-secondary text-main', desc: 'Financials & reports only' },
   ];
 
   const getAccessLevel = (roleKey: string, categoryPerms: string[]): 'full' | 'partial' | 'own' | 'none' => {
@@ -2131,7 +2131,7 @@ function RolesSettings() {
                                       const newPerms = { ...role.permissions, [key]: !role.permissions[key] };
                                       updateRole(role.id, { permissions: newPerms });
                                     }}
-                                    className="rounded border-gray-300"
+                                    className="rounded border-main"
                                     disabled={role.isSystemRole}
                                   />
                                   <span className="text-main">{key.split('.').slice(1).join(' ')}</span>
@@ -2244,7 +2244,7 @@ function TradeModulesSettings() {
                 >
                   <div className={cn(
                     'w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5',
-                    enabled ? 'bg-accent border-accent text-white' : 'border-gray-300'
+                    enabled ? 'bg-accent border-accent text-white' : 'border-main'
                   )}>
                     {enabled && <Check size={12} />}
                   </div>
@@ -2427,7 +2427,7 @@ function ToggleItem({
         onClick={onChange}
         className={cn(
           'w-11 h-6 rounded-full transition-colors relative flex-shrink-0',
-          checked ? 'bg-accent' : 'bg-slate-300 dark:bg-slate-600'
+          checked ? 'bg-accent' : 'bg-secondary'
         )}
       >
         <span

@@ -383,19 +383,19 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
         {/* PDF Content */}
         <div className="p-8 space-y-6 text-black">
           {/* Header */}
-          <div className="flex items-start justify-between border-b border-gray-200 pb-4">
+          <div className="flex items-start justify-between border-b border-main pb-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                   <ClipboardList size={20} className="text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">{survey.title}</h1>
-                  <p className="text-sm text-gray-500">Site Survey Report</p>
+                  <h1 className="text-xl font-bold text-main">{survey.title}</h1>
+                  <p className="text-sm text-muted">Site Survey Report</p>
                 </div>
               </div>
             </div>
-            <div className="text-right text-sm text-gray-500">
+            <div className="text-right text-sm text-muted">
               <p>Date: {formatDate(survey.createdAt)}</p>
               <p>Surveyor: {survey.surveyorName}</p>
               <p>Status: {(statusConfig[survey.status] || statusConfig.draft).label}</p>
@@ -404,19 +404,19 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
 
           {/* Property Summary */}
           <div>
-            <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Property Summary</h2>
+            <h2 className="text-sm font-semibold text-main mb-2 uppercase tracking-wide">Property Summary</h2>
             <div className="grid grid-cols-3 gap-4 text-sm">
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-gray-500 text-xs mb-1">Property Type</p>
-                <p className="font-medium text-gray-900 capitalize">{survey.propertyType ? survey.propertyType.replace('_', ' ') : 'Not specified'}</p>
+              <div className="p-3 bg-secondary rounded-lg">
+                <p className="text-muted text-xs mb-1">Property Type</p>
+                <p className="font-medium text-main capitalize">{survey.propertyType ? survey.propertyType.replace('_', ' ') : 'Not specified'}</p>
               </div>
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-gray-500 text-xs mb-1">Year Built</p>
-                <p className="font-medium text-gray-900">{survey.yearBuilt || 'Unknown'}</p>
+              <div className="p-3 bg-secondary rounded-lg">
+                <p className="text-muted text-xs mb-1">Year Built</p>
+                <p className="font-medium text-main">{survey.yearBuilt || 'Unknown'}</p>
               </div>
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-gray-500 text-xs mb-1">Total Area</p>
-                <p className="font-medium text-gray-900">{totalSqft > 0 ? `${totalSqft.toLocaleString()} sqft` : (survey.totalSqft ? `${survey.totalSqft.toLocaleString()} sqft` : 'Not recorded')}</p>
+              <div className="p-3 bg-secondary rounded-lg">
+                <p className="text-muted text-xs mb-1">Total Area</p>
+                <p className="font-medium text-main">{totalSqft > 0 ? `${totalSqft.toLocaleString()} sqft` : (survey.totalSqft ? `${survey.totalSqft.toLocaleString()} sqft` : 'Not recorded')}</p>
               </div>
             </div>
           </div>
@@ -424,19 +424,19 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
           {/* Conditions Table */}
           {survey.conditions.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Conditions</h2>
-              <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+              <h2 className="text-sm font-semibold text-main mb-2 uppercase tracking-wide">Conditions</h2>
+              <table className="w-full text-sm border border-main rounded-lg overflow-hidden">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Area</th>
-                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Condition</th>
-                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Notes</th>
+                  <tr className="bg-secondary">
+                    <th className="text-left px-3 py-2 text-muted font-medium">Area</th>
+                    <th className="text-left px-3 py-2 text-muted font-medium">Condition</th>
+                    <th className="text-left px-3 py-2 text-muted font-medium">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
                   {survey.conditions.map((c, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-3 py-2 text-gray-900">{c.area}</td>
+                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-secondary'}>
+                      <td className="px-3 py-2 text-main">{c.area}</td>
                       <td className="px-3 py-2">
                         <span className={cn(
                           'px-2 py-0.5 rounded-full text-xs font-medium capitalize',
@@ -446,7 +446,7 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
                           c.condition === 'damaged' && 'bg-red-100 text-red-700',
                         )}>{c.condition}</span>
                       </td>
-                      <td className="px-3 py-2 text-gray-500">{c.notes || '—'}</td>
+                      <td className="px-3 py-2 text-muted">{c.notes || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -457,30 +457,30 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
           {/* Measurements Table */}
           {survey.measurements.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Measurements</h2>
-              <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+              <h2 className="text-sm font-semibold text-main mb-2 uppercase tracking-wide">Measurements</h2>
+              <table className="w-full text-sm border border-main rounded-lg overflow-hidden">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Area</th>
-                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Length (ft)</th>
-                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Width (ft)</th>
-                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Height (ft)</th>
-                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Sqft</th>
+                  <tr className="bg-secondary">
+                    <th className="text-left px-3 py-2 text-muted font-medium">Area</th>
+                    <th className="text-right px-3 py-2 text-muted font-medium">Length (ft)</th>
+                    <th className="text-right px-3 py-2 text-muted font-medium">Width (ft)</th>
+                    <th className="text-right px-3 py-2 text-muted font-medium">Height (ft)</th>
+                    <th className="text-right px-3 py-2 text-muted font-medium">Sqft</th>
                   </tr>
                 </thead>
                 <tbody>
                   {survey.measurements.map((m, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-3 py-2 text-gray-900">{m.area}</td>
-                      <td className="px-3 py-2 text-right text-gray-700">{m.length}</td>
-                      <td className="px-3 py-2 text-right text-gray-700">{m.width}</td>
-                      <td className="px-3 py-2 text-right text-gray-700">{m.height || '—'}</td>
-                      <td className="px-3 py-2 text-right font-medium text-gray-900">{(m.length * m.width).toLocaleString()}</td>
+                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-secondary'}>
+                      <td className="px-3 py-2 text-main">{m.area}</td>
+                      <td className="px-3 py-2 text-right text-main">{m.length}</td>
+                      <td className="px-3 py-2 text-right text-main">{m.width}</td>
+                      <td className="px-3 py-2 text-right text-main">{m.height || '—'}</td>
+                      <td className="px-3 py-2 text-right font-medium text-main">{(m.length * m.width).toLocaleString()}</td>
                     </tr>
                   ))}
-                  <tr className="bg-gray-100 font-semibold">
-                    <td className="px-3 py-2 text-gray-900" colSpan={4}>Total</td>
-                    <td className="px-3 py-2 text-right text-gray-900">{totalSqft.toLocaleString()}</td>
+                  <tr className="bg-secondary font-semibold">
+                    <td className="px-3 py-2 text-main" colSpan={4}>Total</td>
+                    <td className="px-3 py-2 text-right text-main">{totalSqft.toLocaleString()}</td>
                   </tr>
                 </tbody>
               </table>
@@ -511,13 +511,13 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
           {/* Photos Grid */}
           {survey.photos.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Photos ({survey.photos.length})</h2>
+              <h2 className="text-sm font-semibold text-main mb-2 uppercase tracking-wide">Photos ({survey.photos.length})</h2>
               <div className="grid grid-cols-3 gap-2">
                 {survey.photos.map((p, i) => (
-                  <div key={i} className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                  <div key={i} className="aspect-video bg-secondary rounded-lg flex items-center justify-center">
                     <div className="text-center">
-                      <Camera size={20} className="mx-auto text-gray-400 mb-1" />
-                      <p className="text-xs text-gray-500">{p.caption || `Photo ${i + 1}`}</p>
+                      <Camera size={20} className="mx-auto text-muted mb-1" />
+                      <p className="text-xs text-muted">{p.caption || `Photo ${i + 1}`}</p>
                     </div>
                   </div>
                 ))}
@@ -528,13 +528,13 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
           {/* Notes */}
           {survey.notes && (
             <div>
-              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Notes</h2>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg">{survey.notes}</p>
+              <h2 className="text-sm font-semibold text-main mb-2 uppercase tracking-wide">Notes</h2>
+              <p className="text-sm text-main whitespace-pre-wrap bg-secondary p-4 rounded-lg">{survey.notes}</p>
             </div>
           )}
 
           {/* Footer */}
-          <div className="border-t border-gray-200 pt-4 text-xs text-gray-400 text-center">
+          <div className="border-t border-main pt-4 text-xs text-muted text-center">
             Generated by Zafto Survey Engine | {new Date().toLocaleDateString()}
           </div>
         </div>
@@ -773,7 +773,7 @@ function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: ()
             {survey.conditions.map((c, i) => (
               <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-secondary">
                 <span className="text-main">{c.area}</span>
-                <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[c.condition] || 'text-muted bg-slate-700')}>{c.condition}</Badge>
+                <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[c.condition] || 'text-muted bg-secondary')}>{c.condition}</Badge>
                 {c.notes && <span className="text-muted truncate">{c.notes}</span>}
               </div>
             ))}

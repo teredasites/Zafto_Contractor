@@ -307,7 +307,7 @@ export default function PricingAnalyticsPage() {
                     <div className={`w-2 h-2 rounded-full ${
                       s.accepted === true ? 'bg-emerald-400' :
                       s.accepted === false ? 'bg-red-400' :
-                      'bg-slate-600'
+                      'bg-secondary'
                     }`} />
                     <div>
                       <p className="text-sm text-main">
