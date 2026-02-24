@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft, Plus, Trash2, Search, X, ChevronDown, ChevronRight, Save,
-  DollarSign, Package, Wrench, Zap, FileText, Home,
+  DollarSign, Package, Wrench, Zap, FileText, Home, Receipt,
   Calculator, Layers, AlertCircle, Loader2, Shield, Send, Eye,
   Ruler, Pencil, Check, Download, Satellite, ShoppingCart,
   Star, Copy, BarChart3, ShieldCheck,
@@ -16,6 +16,7 @@ import {
   type EstimateArea, type EstimateLineItem, type EstimateItem,
 } from '@/lib/hooks/use-estimates';
 import { useBids } from '@/lib/hooks/use-bids';
+import { useInvoices } from '@/lib/hooks/use-invoices';
 import { useMaterialCatalog, type MaterialTier, type MaterialCatalogItem } from '@/lib/hooks/use-material-catalog';
 import { useLaborUnits } from '@/lib/hooks/use-labor-units';
 import { useEstimateVersions } from '@/lib/hooks/use-estimate-versions';
@@ -77,6 +78,8 @@ export default function EstimateEditorPage() {
   } = useEstimateVersions(estimateId);
   const { rates: laborRates, loading: laborRatesLoading, lookupRates, getRate } = useLaborRates();
   const [convertingToBid, setConvertingToBid] = useState(false);
+  const [convertingToInvoice, setConvertingToInvoice] = useState(false);
+  const { createInvoiceFromEstimate } = useInvoices();
 
   // Auto-lookup labor rates when estimate ZIP is available
   useEffect(() => {
@@ -403,6 +406,22 @@ export default function EstimateEditorPage() {
     }
   }, [convertEstimateToBid, estimateId, router, convertingToBid]);
 
+  // Convert estimate to invoice
+  const handleConvertToInvoice = useCallback(async () => {
+    if (convertingToInvoice) return;
+    setConvertingToInvoice(true);
+    try {
+      const invId = await createInvoiceFromEstimate(estimateId);
+      if (invId) {
+        router.push(`/dashboard/invoices/${invId}`);
+      }
+    } catch {
+      // Error handled by hook
+    } finally {
+      setConvertingToInvoice(false);
+    }
+  }, [createInvoiceFromEstimate, estimateId, router, convertingToInvoice]);
+
   // ── Loading ──
   if (loading) {
     return (
@@ -503,6 +522,14 @@ export default function EstimateEditorPage() {
               >
                 {convertingToBid ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
                 {convertingToBid ? 'Converting...' : 'Convert to Bid'}
+              </button>
+              <button
+                onClick={handleConvertToInvoice}
+                disabled={convertingToInvoice}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 disabled:opacity-50"
+              >
+                {convertingToInvoice ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Receipt className="w-3.5 h-3.5" />}
+                {convertingToInvoice ? 'Creating...' : 'Convert to Invoice'}
               </button>
               <button
                 onClick={() => setShowReconImport(!showReconImport)}
