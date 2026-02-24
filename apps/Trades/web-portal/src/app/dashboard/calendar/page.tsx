@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ChevronLeft,
@@ -10,6 +10,8 @@ import {
   Clock,
   MapPin,
   User,
+  AlertTriangle,
+  X,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,8 +34,9 @@ export default function CalendarPage() {
   const { schedule } = useSchedule();
   const { team } = useTeam();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<'month' | 'week'>('month');
+  const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [showNewEvent, setShowNewEvent] = useState(false);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -80,6 +83,46 @@ export default function CalendarPage() {
     });
   };
 
+  // Navigation for week/day views
+  const goToPreviousWeek = () => setCurrentDate(new Date(year, month, currentDate.getDate() - 7));
+  const goToNextWeek = () => setCurrentDate(new Date(year, month, currentDate.getDate() + 7));
+  const goToPreviousDay = () => setCurrentDate(new Date(year, month, currentDate.getDate() - 1));
+  const goToNextDay = () => setCurrentDate(new Date(year, month, currentDate.getDate() + 1));
+
+  // Week days for week view
+  const weekStart = new Date(currentDate);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const weekDays: Date[] = [];
+  for (let i = 0; i < 7; i++) {
+    weekDays.push(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i));
+  }
+
+  // Day view hours
+  const dayHours = Array.from({ length: 14 }, (_, i) => i + 6); // 6 AM to 7 PM
+
+  // Conflict detection — find overlapping events on same day with same assignees
+  const conflicts = useMemo(() => {
+    const result: Array<{ event1: string; event2: string; date: string }> = [];
+    for (let i = 0; i < schedule.length; i++) {
+      for (let j = i + 1; j < schedule.length; j++) {
+        const a = schedule[i];
+        const b = schedule[j];
+        const aStart = new Date(a.start).getTime();
+        const aEnd = new Date(a.end).getTime();
+        const bStart = new Date(b.start).getTime();
+        const bEnd = new Date(b.end).getTime();
+        if (aStart < bEnd && bStart < aEnd) {
+          // Check if any assignee overlaps
+          const sharedAssignees = a.assignedTo.filter((id: string) => b.assignedTo.includes(id));
+          if (sharedAssignees.length > 0) {
+            result.push({ event1: a.title, event2: b.title, date: new Date(a.start).toLocaleDateString() });
+          }
+        }
+      }
+    }
+    return result;
+  }, [schedule]);
+
   return (
     <div className="space-y-8 animate-fade-in">
       <CommandPalette />
@@ -90,10 +133,16 @@ export default function CalendarPage() {
           <h1 className="text-2xl font-semibold text-main">{t('calendar.title')}</h1>
           <p className="text-muted mt-1">{t('calendar.manageDesc')}</p>
         </div>
-        <Button onClick={() => router.push('/dashboard/jobs/new')}>
-          <Plus size={16} />
-          {t('jobs.newJob')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" onClick={() => setShowNewEvent(true)}>
+            <Plus size={16} />
+            New Event
+          </Button>
+          <Button onClick={() => router.push('/dashboard/jobs/new')}>
+            <Plus size={16} />
+            {t('jobs.newJob')}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -124,28 +173,20 @@ export default function CalendarPage() {
                 </h2>
               </div>
               <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg">
-                <button
-                  onClick={() => setView('month')}
-                  className={cn(
-                    'px-3 py-1.5 text-sm rounded-md transition-colors',
-                    view === 'month'
-                      ? 'bg-surface text-main shadow-sm'
-                      : 'text-muted hover:text-main'
-                  )}
-                >
-                  {t('scheduling.month')}
-                </button>
-                <button
-                  onClick={() => setView('week')}
-                  className={cn(
-                    'px-3 py-1.5 text-sm rounded-md transition-colors',
-                    view === 'week'
-                      ? 'bg-surface text-main shadow-sm'
-                      : 'text-muted hover:text-main'
-                  )}
-                >
-                  {t('scheduling.week')}
-                </button>
+                {(['day', 'week', 'month'] as const).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setView(v)}
+                    className={cn(
+                      'px-3 py-1.5 text-sm rounded-md transition-colors',
+                      view === v
+                        ? 'bg-surface text-main shadow-sm'
+                        : 'text-muted hover:text-main'
+                    )}
+                  >
+                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                  </button>
+                ))}
               </div>
             </CardHeader>
             <CardContent>
@@ -314,11 +355,66 @@ export default function CalendarPage() {
                   <span className="w-3 h-3 rounded-full bg-emerald-500" />
                   <span className="text-muted">{t('calendar.maintenanceJobs')}</span>
                 </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="w-3 h-3 rounded-full bg-amber-500" />
+                  <span className="text-muted">Inspections</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="w-3 h-3 rounded-full bg-purple-500" />
+                  <span className="text-muted">Appointments</span>
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Conflict Alert */}
+          {conflicts.length > 0 && (
+            <Card className="border-amber-500/30">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-main">Schedule Conflicts</p>
+                    {conflicts.slice(0, 3).map((c, i) => (
+                      <p key={i} className="text-xs text-muted mt-1">
+                        {c.date}: &quot;{c.event1}&quot; overlaps with &quot;{c.event2}&quot;
+                      </p>
+                    ))}
+                    {conflicts.length > 3 && (
+                      <p className="text-xs text-muted mt-1">+{conflicts.length - 3} more conflicts</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
+
+      {/* New Event Modal */}
+      {showNewEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowNewEvent(false)}>
+          <div className="bg-surface border border-main rounded-xl shadow-2xl w-full max-w-md p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-main">Create Event</h3>
+              <button onClick={() => setShowNewEvent(false)} className="p-1 hover:bg-surface-hover rounded-lg">
+                <X size={18} className="text-muted" />
+              </button>
+            </div>
+            <p className="text-sm text-muted">
+              To create a scheduled event, create or edit a job and set the scheduled date.
+              All jobs with scheduled dates appear on this calendar automatically.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={() => setShowNewEvent(false)}>Cancel</Button>
+              <Button onClick={() => { setShowNewEvent(false); router.push('/dashboard/jobs/new'); }}>
+                <Plus size={16} />
+                Create Job
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
