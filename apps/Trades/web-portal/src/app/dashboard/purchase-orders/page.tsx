@@ -295,7 +295,7 @@ export default function PurchaseOrdersPage() {
 
       {/* New PO Modal */}
       {showNewPOModal && (
-        <NewPOModal onClose={() => setShowNewPOModal(false)} />
+        <NewPOModal onClose={() => setShowNewPOModal(false)} onCreated={fetchPurchaseOrders} />
       )}
     </div>
   );
@@ -511,11 +511,14 @@ function PORow({
   );
 }
 
-function NewPOModal({ onClose }: { onClose: () => void }) {
+function NewPOModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
   const { t } = useTranslation();
   const { vendors } = useProcurement();
   const [vendorId, setVendorId] = useState('');
   const [jobId, setJobId] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [notes, setNotes] = useState('');
+  const [saving, setSaving] = useState(false);
   const [jobs, setJobs] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
@@ -545,6 +548,41 @@ function NewPOModal({ onClose }: { onClose: () => void }) {
     ...jobs.map((j) => ({ value: j.id, label: j.title })),
   ];
 
+  const handleCreate = async () => {
+    if (!vendorId || saving) return;
+    try {
+      setSaving(true);
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const poNumber = `PO-${Date.now().toString(36).toUpperCase()}`;
+
+      const { error } = await supabase.from('purchase_orders').insert({
+        company_id: user.app_metadata?.company_id,
+        po_number: poNumber,
+        vendor_id: vendorId || null,
+        job_id: jobId || null,
+        status: 'draft',
+        subtotal: 0,
+        tax_amount: 0,
+        shipping_amount: 0,
+        total_amount: 0,
+        expected_delivery_date: deliveryDate || null,
+        notes: notes.trim() || null,
+      });
+
+      if (error) throw error;
+
+      onCreated();
+      onClose();
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Failed to create purchase order');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
@@ -573,16 +611,28 @@ function NewPOModal({ onClose }: { onClose: () => void }) {
             <label className="block text-sm font-medium text-main mb-1.5">{t('purchaseOrders.expectedDeliveryDate')}</label>
             <input
               type="date"
+              value={deliveryDate}
+              onChange={(e) => setDeliveryDate(e.target.value)}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="Add any notes for this purchase order..."
+              className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent resize-none"
+            />
+          </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>
+            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
               Cancel
             </Button>
-            <Button className="flex-1" disabled={!vendorId}>
+            <Button className="flex-1" disabled={!vendorId || saving} onClick={handleCreate}>
               <Plus size={16} />
-              Create PO
+              {saving ? 'Creating...' : 'Create PO'}
             </Button>
           </div>
         </CardContent>
