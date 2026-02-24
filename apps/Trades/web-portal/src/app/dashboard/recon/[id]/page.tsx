@@ -601,7 +601,7 @@ export default function ReconDetailPage() {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => router.push('/dashboard/sketch-engine')}
+                onClick={() => router.push(`/dashboard/sketch-engine?scan_id=${scan.id}`)}
                 className="gap-1.5"
               >
                 <PenTool size={13} /> Sketch

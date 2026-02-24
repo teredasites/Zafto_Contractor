@@ -2521,6 +2521,29 @@ function PropertyIntelligenceCard({ job }: { job: Job }) {
           </div>
         )}
 
+        {/* Hazard Warnings from Recon */}
+        {scan.hazardFlags && scan.hazardFlags.length > 0 && (() => {
+          const redFlags = scan.hazardFlags.filter((h: { severity: string }) => h.severity === 'red');
+          const yellowFlags = scan.hazardFlags.filter((h: { severity: string }) => h.severity === 'yellow');
+          return (
+            <div className="space-y-1.5">
+              <p className="text-xs font-medium text-muted uppercase tracking-wider">Property Hazards</p>
+              {redFlags.map((h: { type: string; title: string; what_to_do: string }, i: number) => (
+                <div key={`red-${i}`} className="flex items-start gap-2 p-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 text-xs">
+                  <AlertTriangle size={12} className="mt-0.5 shrink-0" />
+                  <span><strong>{h.title}</strong>{h.what_to_do ? ` — ${h.what_to_do}` : ''}</span>
+                </div>
+              ))}
+              {yellowFlags.map((h: { type: string; title: string; what_to_do: string }, i: number) => (
+                <div key={`yellow-${i}`} className="flex items-start gap-2 p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs">
+                  <Shield size={12} className="mt-0.5 shrink-0" />
+                  <span><strong>{h.title}</strong>{h.what_to_do ? ` — ${h.what_to_do}` : ''}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
         {/* Action buttons */}
         <div className="flex gap-2">
           <Button
