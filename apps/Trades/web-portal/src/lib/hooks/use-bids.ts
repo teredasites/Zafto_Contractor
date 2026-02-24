@@ -298,6 +298,105 @@ export function useBids() {
     return bid?.id || null;
   };
 
+  // Reject with win/loss analysis — record competitor, price difference, detailed reason
+  const rejectWithAnalysis = async (id: string, analysis: {
+    reason: string;
+    competitor?: string;
+    competitorPrice?: number;
+    feedback?: string;
+  }) => {
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('bids')
+      .update({
+        status: 'rejected',
+        rejected_at: new Date().toISOString(),
+        rejection_reason: analysis.reason,
+        lost_to_competitor: analysis.competitor || null,
+        competitor_price: analysis.competitorPrice || null,
+        loss_feedback: analysis.feedback || null,
+      })
+      .eq('id', id);
+    if (err) throw err;
+    fetchBids();
+  };
+
+  // Save bid as template
+  const saveBidAsTemplate = async (bidId: string, templateName: string) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+
+    const bid = bids.find(b => b.id === bidId);
+    if (!bid) throw new Error('Bid not found');
+
+    const { error: err } = await supabase.from('bid_templates').insert({
+      company_id: companyId,
+      name: templateName,
+      scope_of_work: bid.scopeOfWork || '',
+      terms: bid.termsAndConditions || '',
+      line_items: { options: bid.options, addOns: bid.addOns },
+      created_by_user_id: user.id,
+    });
+    if (err) throw err;
+  };
+
+  // Create bid from template
+  const createBidFromTemplate = async (templateId: string, customerId?: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    const { data: template, error: tErr } = await supabase
+      .from('bid_templates')
+      .select('*')
+      .eq('id', templateId)
+      .single();
+    if (tErr || !template) throw new Error('Template not found');
+
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const { count } = await supabase
+      .from('bids')
+      .select('*', { count: 'exact', head: true })
+      .ilike('bid_number', `BID-${dateStr}-%`);
+    const seq = String((count || 0) + 1).padStart(3, '0');
+
+    const lineItems = template.line_items as Record<string, unknown> || {};
+    const options = (lineItems.options || []) as Array<Record<string, unknown>>;
+    const subtotal = options.reduce((sum: number, opt: Record<string, unknown>) => {
+      const items = (opt.lineItems || []) as Array<Record<string, unknown>>;
+      return sum + items.reduce((s: number, li: Record<string, unknown>) =>
+        s + ((li.quantity as number) || 1) * ((li.unitPrice as number) || 0), 0);
+    }, 0);
+
+    const { data: bid, error: err } = await supabase
+      .from('bids')
+      .insert({
+        company_id: companyId,
+        created_by_user_id: user.id,
+        customer_id: customerId || null,
+        bid_number: `BID-${dateStr}-${seq}`,
+        title: template.name || 'From Template',
+        scope_of_work: template.scope_of_work || '',
+        terms: template.terms || '',
+        line_items: template.line_items || {},
+        subtotal,
+        tax_rate: 0,
+        tax_amount: 0,
+        total: subtotal,
+        valid_until: new Date(Date.now() + 30 * 86400000).toISOString(),
+        status: 'draft',
+      })
+      .select('id')
+      .single();
+    if (err) throw err;
+    fetchBids();
+    return bid?.id || null;
+  };
+
   return {
     bids,
     loading,
@@ -307,8 +406,11 @@ export function useBids() {
     sendBid,
     acceptBid,
     rejectBid,
+    rejectWithAnalysis,
     convertToJob,
     convertEstimateToBid,
+    saveBidAsTemplate,
+    createBidFromTemplate,
     deleteBid,
     refetch: fetchBids,
   };
