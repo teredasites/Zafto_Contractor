@@ -27,9 +27,13 @@ import {
   MessageSquare,
   Clock,
   Umbrella,
+  Loader2,
+  Home,
+  FolderOpen,
 } from 'lucide-react';
 import { ZMark } from '@/components/z-console/z-mark';
 import { cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 
 interface Command {
   id: string;
@@ -38,14 +42,73 @@ interface Command {
   icon: React.ReactNode;
   shortcut?: string[];
   action: () => void;
-  category: 'navigation' | 'actions' | 'ai';
+  category: 'navigation' | 'actions' | 'ai' | 'results';
+  badge?: string;
+}
+
+// Entity search across all major tables
+async function searchEntities(query: string): Promise<Command[]> {
+  if (!query || query.length < 2) return [];
+  const supabase = getSupabase();
+  const q = `%${query}%`;
+  const results: Command[] = [];
+
+  const [jobs, customers, estimates, invoices, properties, leads, docs] = await Promise.allSettled([
+    supabase.from('jobs').select('id, title, customer_name, status').ilike('title', q).is('deleted_at', null).limit(3),
+    supabase.from('customers').select('id, first_name, last_name, email, company_name').or(`first_name.ilike.${q},last_name.ilike.${q},email.ilike.${q},company_name.ilike.${q}`).is('deleted_at', null).limit(3),
+    supabase.from('estimates').select('id, title, customer_name, status').ilike('title', q).is('deleted_at', null).limit(3),
+    supabase.from('invoices').select('id, invoice_number, customer_name, status').or(`invoice_number.ilike.${q},customer_name.ilike.${q}`).is('deleted_at', null).limit(3),
+    supabase.from('properties').select('id, name, address').or(`name.ilike.${q},address.ilike.${q}`).is('deleted_at', null).limit(3),
+    supabase.from('leads').select('id, name, email, stage').or(`name.ilike.${q},email.ilike.${q}`).is('deleted_at', null).limit(3),
+    supabase.from('documents').select('id, name, document_type').ilike('name', q).is('deleted_at', null).limit(3),
+  ]);
+
+  if (jobs.status === 'fulfilled' && jobs.value.data) {
+    for (const j of jobs.value.data) {
+      results.push({ id: `search-job-${j.id}`, title: j.title || 'Untitled Job', subtitle: j.customer_name || j.status, icon: <Briefcase size={18} />, action: () => {}, category: 'results', badge: 'Job' });
+    }
+  }
+  if (customers.status === 'fulfilled' && customers.value.data) {
+    for (const c of customers.value.data) {
+      results.push({ id: `search-cust-${c.id}`, title: `${c.first_name || ''} ${c.last_name || ''}`.trim() || c.company_name || 'Customer', subtitle: c.email || c.company_name || '', icon: <Users size={18} />, action: () => {}, category: 'results', badge: 'Customer' });
+    }
+  }
+  if (estimates.status === 'fulfilled' && estimates.value.data) {
+    for (const e of estimates.value.data) {
+      results.push({ id: `search-est-${e.id}`, title: e.title || 'Untitled Estimate', subtitle: e.customer_name || e.status, icon: <FileText size={18} />, action: () => {}, category: 'results', badge: 'Estimate' });
+    }
+  }
+  if (invoices.status === 'fulfilled' && invoices.value.data) {
+    for (const inv of invoices.value.data) {
+      results.push({ id: `search-inv-${inv.id}`, title: inv.invoice_number || 'Invoice', subtitle: inv.customer_name || inv.status, icon: <Receipt size={18} />, action: () => {}, category: 'results', badge: 'Invoice' });
+    }
+  }
+  if (properties.status === 'fulfilled' && properties.value.data) {
+    for (const p of properties.value.data) {
+      results.push({ id: `search-prop-${p.id}`, title: p.name || p.address || 'Property', subtitle: p.address || '', icon: <Home size={18} />, action: () => {}, category: 'results', badge: 'Property' });
+    }
+  }
+  if (leads.status === 'fulfilled' && leads.value.data) {
+    for (const l of leads.value.data) {
+      results.push({ id: `search-lead-${l.id}`, title: l.name || 'Lead', subtitle: l.email || l.stage, icon: <Target size={18} />, action: () => {}, category: 'results', badge: 'Lead' });
+    }
+  }
+  if (docs.status === 'fulfilled' && docs.value.data) {
+    for (const d of docs.value.data) {
+      results.push({ id: `search-doc-${d.id}`, title: d.name || 'Document', subtitle: d.document_type || '', icon: <FolderOpen size={18} />, action: () => {}, category: 'results', badge: 'Document' });
+    }
+  }
+  return results;
 }
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [searchResults, setSearchResults] = useState<Command[]>([]);
+  const [searching, setSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
 
   const commands: Command[] = [
@@ -327,6 +390,43 @@ export function CommandPalette() {
     },
   ];
 
+  // Debounced entity search
+  useEffect(() => {
+    if (!isOpen || search.length < 2) {
+      setSearchResults([]);
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(async () => {
+      try {
+        const raw = await searchEntities(search);
+        // Patch in router actions now that we have access
+        const patched = raw.map(r => {
+          const id = r.id.split('-').slice(2).join('-');
+          const type = r.id.split('-')[1]; // job, cust, est, inv, prop, lead, doc
+          const routes: Record<string, string> = {
+            job: `/dashboard/jobs/${id}`,
+            cust: `/dashboard/customers/${id}`,
+            est: `/dashboard/estimates/${id}`,
+            inv: `/dashboard/invoices/${id}`,
+            prop: `/dashboard/properties/${id}`,
+            lead: `/dashboard/leads`,
+            doc: `/dashboard/documents`,
+          };
+          return { ...r, action: () => router.push(routes[type] || '/dashboard') };
+        });
+        setSearchResults(patched);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
+    return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
+  }, [search, isOpen, router]);
+
   const filteredCommands = search
     ? commands.filter(
         (cmd) =>
@@ -339,9 +439,11 @@ export function CommandPalette() {
     ai: filteredCommands.filter((c) => c.category === 'ai'),
     actions: filteredCommands.filter((c) => c.category === 'actions'),
     navigation: filteredCommands.filter((c) => c.category === 'navigation'),
+    results: searchResults,
   };
 
   const flatFilteredCommands = [
+    ...groupedCommands.results,
     ...groupedCommands.ai,
     ...groupedCommands.actions,
     ...groupedCommands.navigation,
@@ -451,6 +553,26 @@ export function CommandPalette() {
               </div>
             ) : (
               <>
+                {/* Search Results Section */}
+                {searching && (
+                  <div className="flex items-center gap-2 px-4 py-3 text-muted text-sm">
+                    <Loader2 size={14} className="animate-spin" /> Searching...
+                  </div>
+                )}
+                {groupedCommands.results.length > 0 && (
+                  <CommandGroup
+                    title="Search Results"
+                    commands={groupedCommands.results}
+                    selectedIndex={selectedIndex}
+                    onSelect={(cmd) => {
+                      cmd.action();
+                      setIsOpen(false);
+                      setSearch('');
+                    }}
+                    startIndex={0}
+                  />
+                )}
+
                 {/* AI Section */}
                 {groupedCommands.ai.length > 0 && (
                   <CommandGroup
@@ -462,7 +584,7 @@ export function CommandPalette() {
                       setIsOpen(false);
                       setSearch('');
                     }}
-                    startIndex={0}
+                    startIndex={groupedCommands.results.length}
                   />
                 )}
 
@@ -477,7 +599,7 @@ export function CommandPalette() {
                       setIsOpen(false);
                       setSearch('');
                     }}
-                    startIndex={groupedCommands.ai.length}
+                    startIndex={groupedCommands.results.length + groupedCommands.ai.length}
                   />
                 )}
 
@@ -492,7 +614,7 @@ export function CommandPalette() {
                       setIsOpen(false);
                       setSearch('');
                     }}
-                    startIndex={groupedCommands.ai.length + groupedCommands.actions.length}
+                    startIndex={groupedCommands.results.length + groupedCommands.ai.length + groupedCommands.actions.length}
                   />
                 )}
               </>
@@ -555,7 +677,14 @@ function CommandGroup({ title, commands, selectedIndex, onSelect, startIndex }: 
               {cmd.icon}
             </span>
             <div className="flex-1 min-w-0">
-              <div className="font-medium">{cmd.title}</div>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{cmd.title}</span>
+                {cmd.badge && (
+                  <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    {cmd.badge}
+                  </span>
+                )}
+              </div>
               {cmd.subtitle && (
                 <div className="text-xs text-muted truncate">{cmd.subtitle}</div>
               )}
