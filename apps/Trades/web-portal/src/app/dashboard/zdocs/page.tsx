@@ -117,6 +117,8 @@ export default function ZDocsPage() {
     renderDocument,
     sendForSignature,
     deleteRender,
+    generatePdf,
+    downloadPdf,
     fetchTemplateVersions,
     revertToVersion,
     activeTemplates,
@@ -309,6 +311,8 @@ export default function ZDocsPage() {
           setSearch={setSearch}
           onDelete={deleteRender}
           onSendForSignature={(renderId) => setShowSignatureModal(renderId)}
+          onGeneratePdf={generatePdf}
+          onDownloadPdf={downloadPdf}
         />
       )}
       {activeTab === 'signatures' && (
@@ -339,7 +343,16 @@ export default function ZDocsPage() {
             setShowGenerateModal(false);
             setPreselectedTemplateId(null);
           }}
-          onGenerate={renderDocument}
+          onGenerate={async (data) => {
+            const renderId = await renderDocument(data);
+            // Auto-generate PDF after rendering
+            try {
+              await generatePdf(renderId);
+            } catch {
+              // PDF generation is best-effort; render is still valid
+            }
+            return renderId;
+          }}
         />
       )}
       {showSignatureModal && (
@@ -852,16 +865,40 @@ function DocumentsTab({
   setSearch,
   onDelete,
   onSendForSignature,
+  onGeneratePdf,
+  onDownloadPdf,
 }: {
   renders: ZDocsRender[];
   search: string;
   setSearch: (v: string) => void;
   onDelete: (id: string) => Promise<void>;
   onSendForSignature: (renderId: string) => void;
+  onGeneratePdf: (renderId: string, options?: { companyName?: string; companyPhone?: string; companyEmail?: string; companyAddress?: string }) => Promise<string>;
+  onDownloadPdf: (renderId: string) => Promise<void>;
 }) {
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [generatingPdfId, setGeneratingPdfId] = useState<string | null>(null);
+
+  const handleGeneratePdf = async (renderId: string) => {
+    setGeneratingPdfId(renderId);
+    try {
+      await onGeneratePdf(renderId);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to generate PDF');
+    } finally {
+      setGeneratingPdfId(null);
+    }
+  };
+
+  const handleDownloadPdf = async (renderId: string) => {
+    try {
+      await onDownloadPdf(renderId);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to download PDF');
+    }
+  };
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
@@ -961,7 +998,12 @@ function DocumentsTab({
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <Badge variant={statusConf.variant} dot>{statusConf.label}</Badge>
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant={statusConf.variant} dot>{statusConf.label}</Badge>
+                        {render.pdfStoragePath && (
+                          <Badge variant="success">PDF</Badge>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       {sigConf ? (
@@ -981,11 +1023,30 @@ function DocumentsTab({
                         >
                           <Eye size={14} />
                         </Button>
-                        {render.pdfStoragePath && (
-                          <Button variant="ghost" size="sm" title={t('invoices.downloadPDF')}>
+                        {render.pdfStoragePath ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDownloadPdf(render.id)}
+                            title="Download PDF"
+                          >
                             <Download size={14} />
                           </Button>
-                        )}
+                        ) : render.renderedHtml ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleGeneratePdf(render.id)}
+                            disabled={generatingPdfId === render.id}
+                            title="Generate PDF"
+                          >
+                            {generatingPdfId === render.id ? (
+                              <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                              <FileText size={14} />
+                            )}
+                          </Button>
+                        ) : null}
                         {render.requiresSignature && render.signatureStatus !== 'signed' && (
                           <Button
                             variant="ghost"
