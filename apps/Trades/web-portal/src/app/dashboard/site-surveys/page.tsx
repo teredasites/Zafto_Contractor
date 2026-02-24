@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Plus,
   MapPin,
   Loader2,
   Briefcase,
-  Home,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -15,16 +14,68 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
+  X,
+  ClipboardList,
+  BarChart3,
+  Layers,
+  Download,
+  Printer,
+  Eye,
+  Shield,
+  Droplets,
+  Zap,
+  Wrench,
+  Home,
+  HardHat,
+  Flame,
+  Search as SearchIcon,
+  SquareStack,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SearchInput, Select } from '@/components/ui/input';
+import { SearchInput, Select, Input } from '@/components/ui/input';
+import { StatsCard } from '@/components/ui/stats-card';
 import { CommandPalette } from '@/components/command-palette';
 import { useSiteSurveys, type SiteSurvey } from '@/lib/hooks/use-site-surveys';
 import { useRouter } from 'next/navigation';
 import { formatDate, cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface SurveyTemplate {
+  id: string;
+  name: string;
+  description: string;
+  sections: string[];
+  itemCount: number;
+  estimatedMinutes: number;
+  icon: React.ReactNode;
+}
+
+interface SurveyReport {
+  id: string;
+  surveyTitle: string;
+  generatedAt: string;
+  surveyorName: string;
+  status: string;
+  pageCount: number;
+  propertyType: string;
+}
+
+interface MeasurementEntry {
+  area: string;
+  length: number;
+  width: number;
+  height: number | undefined;
+}
+
+// ---------------------------------------------------------------------------
+// Configs
+// ---------------------------------------------------------------------------
 
 const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: typeof Clock }> = {
   draft: { label: 'Draft', color: 'text-zinc-400', bgColor: 'bg-zinc-800', icon: FileText },
@@ -47,6 +98,83 @@ const conditionColors: Record<string, string> = {
   poor: 'text-orange-400 bg-orange-900/30',
   damaged: 'text-red-400 bg-red-900/30',
 };
+
+// ---------------------------------------------------------------------------
+// Demo data — templates
+// ---------------------------------------------------------------------------
+
+const SURVEY_TEMPLATES: SurveyTemplate[] = [
+  {
+    id: 'tpl-preconstruction',
+    name: 'Pre-Construction Survey',
+    description: 'Comprehensive site assessment before construction begins. Covers access, existing conditions, utilities, and environmental factors.',
+    sections: ['Site Access', 'Existing Conditions', 'Utilities', 'Drainage', 'Soil', 'Vegetation', 'Structures', 'Photos Needed'],
+    itemCount: 48,
+    estimatedMinutes: 90,
+    icon: <HardHat size={18} />,
+  },
+  {
+    id: 'tpl-insurance',
+    name: 'Insurance Assessment',
+    description: 'Property and damage assessment for insurance claims. Includes replacement cost estimation and coverage documentation.',
+    sections: ['Property Overview', 'Damage Assessment', 'Replacement Cost', 'Coverage Areas', 'Documentation Requirements'],
+    itemCount: 36,
+    estimatedMinutes: 60,
+    icon: <Shield size={18} />,
+  },
+  {
+    id: 'tpl-maintenance',
+    name: 'Maintenance Inspection',
+    description: 'Routine property inspection covering all major systems. Identifies maintenance needs and safety concerns.',
+    sections: ['HVAC', 'Plumbing', 'Electrical', 'Roofing', 'Exterior', 'Interior', 'Safety Systems'],
+    itemCount: 52,
+    estimatedMinutes: 75,
+    icon: <Wrench size={18} />,
+  },
+  {
+    id: 'tpl-emergency',
+    name: 'Emergency Assessment',
+    description: 'Rapid assessment for emergency situations. Prioritizes immediate hazards and structural integrity evaluation.',
+    sections: ['Immediate Hazards', 'Structural Integrity', 'Utility Status', 'Damage Extent', 'Temporary Measures Needed'],
+    itemCount: 28,
+    estimatedMinutes: 30,
+    icon: <Flame size={18} />,
+  },
+  {
+    id: 'tpl-prepurchase',
+    name: 'Pre-Purchase Evaluation',
+    description: 'Thorough property evaluation for prospective buyers. Covers all building systems and site conditions.',
+    sections: ['Foundation', 'Framing', 'Roofing', 'Plumbing', 'Electrical', 'HVAC', 'Exterior', 'Interior', 'Site'],
+    itemCount: 64,
+    estimatedMinutes: 120,
+    icon: <Home size={18} />,
+  },
+  {
+    id: 'tpl-restoration',
+    name: 'Restoration Scope',
+    description: 'Water damage, mold, and air quality assessment. Defines containment needs and rebuild scope for restoration projects.',
+    sections: ['Water Damage Extent', 'Mold Testing Areas', 'Air Quality', 'Containment Needs', 'Demo Scope', 'Rebuild Scope'],
+    itemCount: 42,
+    estimatedMinutes: 60,
+    icon: <Droplets size={18} />,
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Demo data — reports
+// ---------------------------------------------------------------------------
+
+const DEMO_REPORTS: SurveyReport[] = [
+  { id: 'rpt-1', surveyTitle: 'Oakwood Residence Pre-Job Survey', generatedAt: '2026-02-20T14:30:00Z', surveyorName: 'Mike Torres', status: 'completed', pageCount: 8, propertyType: 'Residential' },
+  { id: 'rpt-2', surveyTitle: 'Elm St. Insurance Damage Assessment', generatedAt: '2026-02-18T09:15:00Z', surveyorName: 'Sarah Chen', status: 'completed', pageCount: 12, propertyType: 'Residential' },
+  { id: 'rpt-3', surveyTitle: 'Downtown Office HVAC Inspection', generatedAt: '2026-02-15T11:00:00Z', surveyorName: 'James Wilson', status: 'completed', pageCount: 6, propertyType: 'Commercial' },
+  { id: 'rpt-4', surveyTitle: 'Maple Ave Emergency Pipe Burst', generatedAt: '2026-02-12T16:45:00Z', surveyorName: 'Mike Torres', status: 'completed', pageCount: 4, propertyType: 'Residential' },
+  { id: 'rpt-5', surveyTitle: 'Industrial Park Building C Assessment', generatedAt: '2026-02-10T08:00:00Z', surveyorName: 'Sarah Chen', status: 'completed', pageCount: 14, propertyType: 'Industrial' },
+];
+
+// ---------------------------------------------------------------------------
+// SurveyRow
+// ---------------------------------------------------------------------------
 
 function SurveyRow({ survey, onSelect, isSelected }: { survey: SiteSurvey; onSelect: () => void; isSelected: boolean }) {
   const status = statusConfig[survey.status] || statusConfig.draft;
@@ -91,7 +219,457 @@ function SurveyRow({ survey, onSelect, isSelected }: { survey: SiteSurvey; onSel
   );
 }
 
-function SurveyDetail({ survey }: { survey: SiteSurvey }) {
+// ---------------------------------------------------------------------------
+// MeasurementsPanel — inline form to add measurements
+// ---------------------------------------------------------------------------
+
+function MeasurementsPanel({ survey }: { survey: SiteSurvey }) {
+  const { t } = useTranslation();
+  const { updateSurvey } = useSiteSurveys();
+  const [adding, setAdding] = useState(false);
+  const [entry, setEntry] = useState<MeasurementEntry>({ area: '', length: 0, width: 0, height: undefined });
+  const [saving, setSaving] = useState(false);
+
+  const totalSqft = survey.measurements.reduce((sum, m) => sum + (m.length * m.width), 0);
+
+  const handleAdd = async () => {
+    if (!entry.area || entry.length <= 0 || entry.width <= 0) return;
+    setSaving(true);
+    try {
+      const newMeasurements = [
+        ...survey.measurements,
+        { area: entry.area, length: entry.length, width: entry.width, height: entry.height },
+      ];
+      await updateSurvey(survey.id, { measurements: newMeasurements });
+      setEntry({ area: '', length: 0, width: 0, height: undefined });
+      setAdding(false);
+    } catch {
+      // Error handled by hook
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs text-zinc-500 flex items-center gap-1">
+          <Ruler className="h-3 w-3" />
+          {t('siteSurveys.measurements')} ({survey.measurements.length})
+          {totalSqft > 0 && (
+            <span className="ml-2 text-zinc-400 font-medium">{totalSqft.toLocaleString()} sqft total</span>
+          )}
+        </p>
+        {!adding && (
+          <button
+            onClick={() => setAdding(true)}
+            className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+          >
+            <Plus className="h-3 w-3" />Add Measurement
+          </button>
+        )}
+      </div>
+
+      {survey.measurements.length > 0 && (
+        <div className="grid grid-cols-2 gap-1 mb-2">
+          {survey.measurements.map((m, i) => (
+            <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-zinc-800">
+              <span className="text-zinc-300 font-medium">{m.area}</span>
+              <span className="text-zinc-500">{m.length} x {m.width}{m.height ? ` x ${m.height}` : ''} ft</span>
+              <span className="text-zinc-400 ml-auto">{(m.length * m.width).toLocaleString()} sqft</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {adding && (
+        <div className="p-3 rounded-lg bg-zinc-800/60 border border-zinc-700 space-y-2">
+          <div className="grid grid-cols-4 gap-2">
+            <div>
+              <label className="text-[10px] text-zinc-500 mb-0.5 block">Area Name</label>
+              <input
+                type="text"
+                value={entry.area}
+                onChange={e => setEntry(prev => ({ ...prev, area: e.target.value }))}
+                placeholder="e.g. Living Room"
+                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-zinc-500 mb-0.5 block">Length (ft)</label>
+              <input
+                type="number"
+                value={entry.length || ''}
+                onChange={e => setEntry(prev => ({ ...prev, length: parseFloat(e.target.value) || 0 }))}
+                placeholder="0"
+                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-zinc-500 mb-0.5 block">Width (ft)</label>
+              <input
+                type="number"
+                value={entry.width || ''}
+                onChange={e => setEntry(prev => ({ ...prev, width: parseFloat(e.target.value) || 0 }))}
+                placeholder="0"
+                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-zinc-500 mb-0.5 block">Height (ft, opt.)</label>
+              <input
+                type="number"
+                value={entry.height ?? ''}
+                onChange={e => {
+                  const val = e.target.value;
+                  setEntry(prev => ({ ...prev, height: val ? parseFloat(val) : undefined }));
+                }}
+                placeholder="8"
+                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+              />
+            </div>
+          </div>
+          {entry.length > 0 && entry.width > 0 && (
+            <p className="text-[10px] text-zinc-400">
+              Calculated: {(entry.length * entry.width).toLocaleString()} sqft
+              {entry.height ? ` | ${(2 * (entry.length + entry.width) * entry.height).toLocaleString()} wall sqft` : ''}
+            </p>
+          )}
+          <div className="flex items-center gap-2">
+            <Button size="sm" onClick={handleAdd} disabled={saving || !entry.area || entry.length <= 0 || entry.width <= 0}>
+              {saving ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Plus className="h-3 w-3 mr-1" />}
+              Add
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setAdding(false)}>Cancel</Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// PDF Preview Modal
+// ---------------------------------------------------------------------------
+
+function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () => void }) {
+  const { t } = useTranslation();
+  const totalSqft = survey.measurements.reduce((sum, m) => sum + (m.length * m.width), 0);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+      <div
+        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Toolbar */}
+        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 bg-zinc-900 rounded-t-xl border-b border-zinc-800">
+          <h3 className="text-sm font-semibold text-zinc-100">PDF Report Preview</h3>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={() => window.print()}>
+              <Printer className="h-3.5 w-3.5 mr-1" />Print
+            </Button>
+            <Button size="sm" variant="secondary">
+              <Download className="h-3.5 w-3.5 mr-1" />Download PDF
+            </Button>
+            <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded-lg">
+              <X size={18} className="text-zinc-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* PDF Content */}
+        <div className="p-8 space-y-6 text-black">
+          {/* Header */}
+          <div className="flex items-start justify-between border-b border-gray-200 pb-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <ClipboardList size={20} className="text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">{survey.title}</h1>
+                  <p className="text-sm text-gray-500">Site Survey Report</p>
+                </div>
+              </div>
+            </div>
+            <div className="text-right text-sm text-gray-500">
+              <p>Date: {formatDate(survey.createdAt)}</p>
+              <p>Surveyor: {survey.surveyorName}</p>
+              <p>Status: {(statusConfig[survey.status] || statusConfig.draft).label}</p>
+            </div>
+          </div>
+
+          {/* Property Summary */}
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Property Summary</h2>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 text-xs mb-1">Property Type</p>
+                <p className="font-medium text-gray-900 capitalize">{survey.propertyType ? survey.propertyType.replace('_', ' ') : 'Not specified'}</p>
+              </div>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 text-xs mb-1">Year Built</p>
+                <p className="font-medium text-gray-900">{survey.yearBuilt || 'Unknown'}</p>
+              </div>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 text-xs mb-1">Total Area</p>
+                <p className="font-medium text-gray-900">{totalSqft > 0 ? `${totalSqft.toLocaleString()} sqft` : (survey.totalSqft ? `${survey.totalSqft.toLocaleString()} sqft` : 'Not recorded')}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Conditions Table */}
+          {survey.conditions.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Conditions</h2>
+              <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Area</th>
+                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Condition</th>
+                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {survey.conditions.map((c, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-3 py-2 text-gray-900">{c.area}</td>
+                      <td className="px-3 py-2">
+                        <span className={cn(
+                          'px-2 py-0.5 rounded-full text-xs font-medium capitalize',
+                          c.condition === 'good' && 'bg-emerald-100 text-emerald-700',
+                          c.condition === 'fair' && 'bg-amber-100 text-amber-700',
+                          c.condition === 'poor' && 'bg-orange-100 text-orange-700',
+                          c.condition === 'damaged' && 'bg-red-100 text-red-700',
+                        )}>{c.condition}</span>
+                      </td>
+                      <td className="px-3 py-2 text-gray-500">{c.notes || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Measurements Table */}
+          {survey.measurements.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Measurements</h2>
+              <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left px-3 py-2 text-gray-600 font-medium">Area</th>
+                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Length (ft)</th>
+                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Width (ft)</th>
+                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Height (ft)</th>
+                    <th className="text-right px-3 py-2 text-gray-600 font-medium">Sqft</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {survey.measurements.map((m, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-3 py-2 text-gray-900">{m.area}</td>
+                      <td className="px-3 py-2 text-right text-gray-700">{m.length}</td>
+                      <td className="px-3 py-2 text-right text-gray-700">{m.width}</td>
+                      <td className="px-3 py-2 text-right text-gray-700">{m.height || '—'}</td>
+                      <td className="px-3 py-2 text-right font-medium text-gray-900">{(m.length * m.width).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  <tr className="bg-gray-100 font-semibold">
+                    <td className="px-3 py-2 text-gray-900" colSpan={4}>Total</td>
+                    <td className="px-3 py-2 text-right text-gray-900">{totalSqft.toLocaleString()}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Hazards */}
+          {survey.hazards.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-red-700 mb-2 uppercase tracking-wide flex items-center gap-1">
+                <AlertTriangle size={14} />Hazards Identified
+              </h2>
+              <div className="space-y-2">
+                {survey.hazards.map((h, i) => (
+                  <div key={i} className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm">
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-red-700">{h.type}</span>
+                      <span className="text-red-500 capitalize text-xs px-2 py-0.5 bg-red-100 rounded-full">{h.severity}</span>
+                    </div>
+                    <p className="text-red-600 mt-1">Location: {h.location}</p>
+                    {h.mitigation_needed && <p className="text-red-600 text-xs mt-0.5">Mitigation required</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Photos Grid */}
+          {survey.photos.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Photos ({survey.photos.length})</h2>
+              <div className="grid grid-cols-3 gap-2">
+                {survey.photos.map((p, i) => (
+                  <div key={i} className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <Camera size={20} className="mx-auto text-gray-400 mb-1" />
+                      <p className="text-xs text-gray-500">{p.caption || `Photo ${i + 1}`}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
+          {survey.notes && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900 mb-2 uppercase tracking-wide">Notes</h2>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg">{survey.notes}</p>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="border-t border-gray-200 pt-4 text-xs text-gray-400 text-center">
+            Generated by Zafto Survey Engine | {new Date().toLocaleDateString()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// New Survey Modal
+// ---------------------------------------------------------------------------
+
+function NewSurveyModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
+  const { t } = useTranslation();
+  const { createSurvey } = useSiteSurveys();
+  const [title, setTitle] = useState('');
+  const [surveyType, setSurveyType] = useState('pre_job');
+  const [surveyorName, setSurveyorName] = useState('');
+  const [jobId, setJobId] = useState('');
+  const [propertyType, setPropertyType] = useState('');
+  const [templateId, setTemplateId] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+
+  const handleCreate = async () => {
+    if (!title.trim()) { setFormError('Title is required'); return; }
+    if (!surveyorName.trim()) { setFormError('Surveyor name is required'); return; }
+    setFormError('');
+    setSaving(true);
+    try {
+      await createSurvey({
+        title: title.trim(),
+        surveyType,
+        surveyorName: surveyorName.trim(),
+        jobId: jobId || undefined,
+        propertyType: propertyType || undefined,
+      });
+      onCreated();
+      onClose();
+    } catch {
+      setFormError('Failed to create survey');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+      <div className="bg-surface border border-main rounded-xl shadow-2xl w-full max-w-lg p-6 space-y-4" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-main">{t('siteSurveys.new')}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-surface-hover rounded-lg">
+            <X size={18} className="text-muted" />
+          </button>
+        </div>
+
+        {formError && (
+          <div className="p-2 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">{formError}</div>
+        )}
+
+        <div className="space-y-3">
+          <Input
+            label="Survey Title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="e.g. 123 Main St Pre-Job Survey"
+          />
+
+          <Select
+            label="Survey Type"
+            value={surveyType}
+            onChange={e => setSurveyType(e.target.value)}
+            options={[
+              { value: 'pre_job', label: 'Pre-Job' },
+              { value: 'progress', label: 'Progress' },
+              { value: 'final', label: 'Final' },
+              { value: 'insurance', label: 'Insurance' },
+              { value: 'maintenance', label: 'Maintenance' },
+            ]}
+          />
+
+          <Input
+            label="Surveyor Name"
+            value={surveyorName}
+            onChange={e => setSurveyorName(e.target.value)}
+            placeholder="Team member name"
+          />
+
+          <Input
+            label="Job ID (optional)"
+            value={jobId}
+            onChange={e => setJobId(e.target.value)}
+            placeholder="Link to existing job"
+          />
+
+          <Select
+            label="Property Type"
+            value={propertyType}
+            onChange={e => setPropertyType(e.target.value)}
+            options={[
+              { value: '', label: 'Select property type...' },
+              { value: 'residential', label: 'Residential' },
+              { value: 'commercial', label: 'Commercial' },
+              { value: 'industrial', label: 'Industrial' },
+              { value: 'multi_family', label: 'Multi-Family' },
+              { value: 'mixed_use', label: 'Mixed Use' },
+            ]}
+          />
+
+          <Select
+            label="Template (optional)"
+            value={templateId}
+            onChange={e => setTemplateId(e.target.value)}
+            options={[
+              { value: '', label: 'No template — blank survey' },
+              ...SURVEY_TEMPLATES.map(tpl => ({ value: tpl.id, label: tpl.name })),
+            ]}
+          />
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-main">
+          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+          <Button size="sm" onClick={handleCreate} disabled={saving}>
+            {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Plus className="h-3.5 w-3.5 mr-1" />}
+            {saving ? 'Creating...' : 'Create Survey'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// SurveyDetail — enhanced with measurements panel + PDF button
+// ---------------------------------------------------------------------------
+
+function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: () => void }) {
   const { t } = useTranslation();
   const router = useRouter();
   const { createEstimateFromSurvey } = useSiteSurveys();
@@ -119,6 +697,9 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
         <Button size="sm" onClick={handleGenerateEstimate} disabled={generating}>
           {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <FileText className="h-3.5 w-3.5 mr-1" />}
           {generating ? 'Generating...' : 'Generate Estimate'}
+        </Button>
+        <Button size="sm" variant="secondary" onClick={onShowPdf}>
+          <Eye className="h-3.5 w-3.5 mr-1" />Generate PDF Report
         </Button>
       </div>
 
@@ -198,6 +779,9 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
         </div>
       )}
 
+      {/* Measurements with inline add */}
+      <MeasurementsPanel survey={survey} />
+
       {/* Notes */}
       {survey.notes && (
         <div>
@@ -215,15 +799,135 @@ function SurveyDetail({ survey }: { survey: SiteSurvey }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Templates Tab
+// ---------------------------------------------------------------------------
+
+function TemplatesTab() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold text-zinc-100">Survey Templates</h2>
+          <p className="text-xs text-zinc-500 mt-0.5">Pre-built templates to standardize your site surveys</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {SURVEY_TEMPLATES.map(tpl => (
+          <Card key={tpl.id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400">
+                    {tpl.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-zinc-100">{tpl.name}</h3>
+                    <p className="text-[10px] text-zinc-500">{tpl.sections.length} sections | {tpl.itemCount} items</p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-zinc-400 leading-relaxed">{tpl.description}</p>
+              <div className="flex flex-wrap gap-1">
+                {tpl.sections.map(s => (
+                  <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>
+                ))}
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+                <span className="text-[10px] text-zinc-500 flex items-center gap-1">
+                  <Clock size={10} />Est. {tpl.estimatedMinutes} min
+                </span>
+                <Button size="sm" variant="secondary">
+                  <ClipboardList className="h-3 w-3 mr-1" />Use Template
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Reports Tab
+// ---------------------------------------------------------------------------
+
+function ReportsTab() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold text-zinc-100">Generated Reports</h2>
+          <p className="text-xs text-zinc-500 mt-0.5">PDF reports generated from completed surveys</p>
+        </div>
+      </div>
+      <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
+        {DEMO_REPORTS.length === 0 ? (
+          <CardContent className="p-8 text-center">
+            <FileText className="h-8 w-8 mx-auto mb-3 text-zinc-600" />
+            <p className="text-zinc-400 text-sm">No reports generated yet</p>
+          </CardContent>
+        ) : (
+          <div>
+            {/* Table header */}
+            <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-zinc-800/50 text-xs text-zinc-500 font-medium border-b border-zinc-800">
+              <div className="col-span-4">Report</div>
+              <div className="col-span-2">Surveyor</div>
+              <div className="col-span-2">Property</div>
+              <div className="col-span-1 text-center">Pages</div>
+              <div className="col-span-2">Generated</div>
+              <div className="col-span-1 text-right">Actions</div>
+            </div>
+            {DEMO_REPORTS.map(report => (
+              <div key={report.id} className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-zinc-800 hover:bg-zinc-800/30 transition-colors items-center">
+                <div className="col-span-4 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-zinc-500 flex-shrink-0" />
+                  <span className="text-sm text-zinc-200 truncate">{report.surveyTitle}</span>
+                </div>
+                <div className="col-span-2 text-sm text-zinc-400">{report.surveyorName}</div>
+                <div className="col-span-2">
+                  <Badge variant="secondary" className="text-[10px]">{report.propertyType}</Badge>
+                </div>
+                <div className="col-span-1 text-sm text-zinc-400 text-center">{report.pageCount}</div>
+                <div className="col-span-2 text-xs text-zinc-500">{formatDate(report.generatedAt)}</div>
+                <div className="col-span-1 flex items-center justify-end gap-1">
+                  <button className="p-1.5 rounded hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors">
+                    <Eye size={14} />
+                  </button>
+                  <button className="p-1.5 rounded hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors">
+                    <Download size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main Page
+// ---------------------------------------------------------------------------
+
+type TabValue = 'surveys' | 'templates' | 'reports';
+
 export default function SiteSurveysPage() {
   const { t } = useTranslation();
-  const { surveys, drafts, inProgress, completed, loading, error } = useSiteSurveys();
+  const { surveys, drafts, inProgress, completed, loading, error, fetchSurveys } = useSiteSurveys();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabValue>('surveys');
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [pdfSurvey, setPdfSurvey] = useState<SiteSurvey | null>(null);
 
-  const filtered = surveys.filter(s => {
+  const filtered = useMemo(() => surveys.filter(s => {
     if (statusFilter !== 'all' && s.status !== statusFilter) return false;
     if (typeFilter !== 'all' && s.surveyType !== typeFilter) return false;
     if (search) {
@@ -231,109 +935,175 @@ export default function SiteSurveysPage() {
       return s.title.toLowerCase().includes(q) || (s.jobTitle || '').toLowerCase().includes(q) || s.surveyorName.toLowerCase().includes(q);
     }
     return true;
-  });
+  }), [surveys, statusFilter, typeFilter, search]);
 
-  const hazardCount = surveys.reduce((sum, s) => sum + s.hazards.length, 0);
+  const hazardCount = useMemo(() => surveys.reduce((sum, s) => sum + s.hazards.length, 0), [surveys]);
+  const totalSqft = useMemo(() => surveys.reduce((sum, s) => {
+    const measured = s.measurements.reduce((ms, m) => ms + (m.length * m.width), 0);
+    return sum + (measured > 0 ? measured : (s.totalSqft || 0));
+  }, 0), [surveys]);
+
+  const tabs: { value: TabValue; label: string; icon: React.ReactNode; count?: number }[] = [
+    { value: 'surveys', label: 'Surveys', icon: <ClipboardList size={14} />, count: surveys.length },
+    { value: 'templates', label: 'Templates', icon: <Layers size={14} />, count: SURVEY_TEMPLATES.length },
+    { value: 'reports', label: 'Reports', icon: <BarChart3 size={14} />, count: DEMO_REPORTS.length },
+  ];
 
   return (
     <>
       <CommandPalette />
       <div className="space-y-6">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-zinc-100">{t('siteSurveys.title')}</h1>
             <p className="text-sm text-zinc-500 mt-1">Property assessments, conditions, measurements, and hazard tracking</p>
           </div>
-          <Button size="sm"><Plus className="h-3.5 w-3.5 mr-1" />{t('siteSurveys.new')}</Button>
+          <Button size="sm" onClick={() => setShowNewModal(true)}>
+            <Plus className="h-3.5 w-3.5 mr-1" />{t('siteSurveys.new')}
+          </Button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
-          <Card className="bg-zinc-900 border-zinc-800">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('siteSurveys.totalSurveys')}</p>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{surveys.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('common.inProgress')}</p>
-              <p className="text-2xl font-bold text-amber-400 mt-1">{inProgress.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('common.completed')}</p>
-              <p className="text-2xl font-bold text-emerald-400 mt-1">{completed.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('siteSurveys.hazardsFound')}</p>
-              <p className="text-2xl font-bold text-red-400 mt-1">{hazardCount}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-3">
-          <div className="w-64">
-            <SearchInput placeholder="Search surveys..." value={search} onChange={setSearch} />
-          </div>
-          <Select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            options={[
-              { value: 'all', label: 'All Statuses' },
-              { value: 'draft', label: 'Draft' },
-              { value: 'in_progress', label: 'In Progress' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'submitted', label: 'Submitted' },
-            ]}
+        {/* Stats — 5-column grid with StatsCard */}
+        <div className="grid grid-cols-5 gap-4">
+          <StatsCard
+            title={t('siteSurveys.totalSurveys')}
+            value={surveys.length}
+            icon={<MapPin size={20} />}
           />
-          <Select
-            value={typeFilter}
-            onChange={e => setTypeFilter(e.target.value)}
-            options={[
-              { value: 'all', label: 'All Types' },
-              { value: 'pre_job', label: 'Pre-Job' },
-              { value: 'progress', label: 'Progress' },
-              { value: 'final', label: 'Final' },
-              { value: 'insurance', label: 'Insurance' },
-              { value: 'maintenance', label: 'Maintenance' },
-            ]}
+          <StatsCard
+            title={t('common.inProgress')}
+            value={inProgress.length}
+            icon={<Clock size={20} />}
+          />
+          <StatsCard
+            title={t('common.completed')}
+            value={completed.length}
+            icon={<CheckCircle size={20} />}
+          />
+          <StatsCard
+            title={t('siteSurveys.hazardsFound')}
+            value={hazardCount}
+            icon={<AlertTriangle size={20} />}
+          />
+          <StatsCard
+            title="Total Sqft"
+            value={totalSqft > 0 ? totalSqft.toLocaleString() : '0'}
+            icon={<SquareStack size={20} />}
           />
         </div>
 
-        {error && (
-          <div className="p-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">{error}</div>
+        {/* Tabs */}
+        <div className="flex items-center gap-1 border-b border-zinc-800">
+          {tabs.map(tab => (
+            <button
+              key={tab.value}
+              onClick={() => setActiveTab(tab.value)}
+              className={cn(
+                'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px',
+                activeTab === tab.value
+                  ? 'border-blue-500 text-zinc-100'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
+              )}
+            >
+              {tab.icon}
+              {tab.label}
+              {tab.count !== undefined && (
+                <span className={cn(
+                  'ml-1 text-xs px-1.5 py-0.5 rounded-full',
+                  activeTab === tab.value ? 'bg-blue-900/40 text-blue-400' : 'bg-zinc-800 text-zinc-500'
+                )}>{tab.count}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'surveys' && (
+          <>
+            {/* Filters */}
+            <div className="flex items-center gap-3">
+              <div className="w-64">
+                <SearchInput placeholder="Search surveys..." value={search} onChange={setSearch} />
+              </div>
+              <Select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                options={[
+                  { value: 'all', label: 'All Statuses' },
+                  { value: 'draft', label: 'Draft' },
+                  { value: 'in_progress', label: 'In Progress' },
+                  { value: 'completed', label: 'Completed' },
+                  { value: 'submitted', label: 'Submitted' },
+                ]}
+              />
+              <Select
+                value={typeFilter}
+                onChange={e => setTypeFilter(e.target.value)}
+                options={[
+                  { value: 'all', label: 'All Types' },
+                  { value: 'pre_job', label: 'Pre-Job' },
+                  { value: 'progress', label: 'Progress' },
+                  { value: 'final', label: 'Final' },
+                  { value: 'insurance', label: 'Insurance' },
+                  { value: 'maintenance', label: 'Maintenance' },
+                ]}
+              />
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">{error}</div>
+            )}
+
+            {/* Survey list */}
+            <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
+              {loading ? (
+                <div className="flex items-center justify-center py-12 text-zinc-500">
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading surveys...
+                </div>
+              ) : filtered.length === 0 ? (
+                <CardContent className="p-8 text-center">
+                  <MapPin className="h-8 w-8 mx-auto mb-3 text-zinc-600" />
+                  <p className="text-zinc-400 text-sm">{t('siteSurveys.noSurveysYetCreateOneToStartDocumentingSiteConditi')}</p>
+                </CardContent>
+              ) : (
+                filtered.map(survey => (
+                  <div key={survey.id}>
+                    <SurveyRow
+                      survey={survey}
+                      isSelected={selectedId === survey.id}
+                      onSelect={() => setSelectedId(selectedId === survey.id ? null : survey.id)}
+                    />
+                    {selectedId === survey.id && (
+                      <SurveyDetail
+                        survey={survey}
+                        onShowPdf={() => setPdfSurvey(survey)}
+                      />
+                    )}
+                  </div>
+                ))
+              )}
+            </Card>
+          </>
         )}
 
-        {/* Survey list */}
-        <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center py-12 text-zinc-500">
-              <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading surveys...
-            </div>
-          ) : filtered.length === 0 ? (
-            <CardContent className="p-8 text-center">
-              <MapPin className="h-8 w-8 mx-auto mb-3 text-zinc-600" />
-              <p className="text-zinc-400 text-sm">{t('siteSurveys.noSurveysYetCreateOneToStartDocumentingSiteConditi')}</p>
-            </CardContent>
-          ) : (
-            filtered.map(survey => (
-              <div key={survey.id}>
-                <SurveyRow
-                  survey={survey}
-                  isSelected={selectedId === survey.id}
-                  onSelect={() => setSelectedId(selectedId === survey.id ? null : survey.id)}
-                />
-                {selectedId === survey.id && <SurveyDetail survey={survey} />}
-              </div>
-            ))
-          )}
-        </Card>
+        {activeTab === 'templates' && <TemplatesTab />}
+        {activeTab === 'reports' && <ReportsTab />}
       </div>
+
+      {/* Modals */}
+      {showNewModal && (
+        <NewSurveyModal
+          onClose={() => setShowNewModal(false)}
+          onCreated={() => fetchSurveys()}
+        />
+      )}
+      {pdfSurvey && (
+        <PdfPreviewModal
+          survey={pdfSurvey}
+          onClose={() => setPdfSurvey(null)}
+        />
+      )}
     </>
   );
 }

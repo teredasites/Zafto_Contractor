@@ -49,6 +49,8 @@ import { useProperties } from '@/lib/hooks/use-properties';
 import { useRent } from '@/lib/hooks/use-rent';
 import { useReports } from '@/lib/hooks/use-reports';
 import { useUnits } from '@/lib/hooks/use-units';
+import { useLeads } from '@/lib/hooks/use-leads';
+import { useCompliance } from '@/lib/hooks/use-compliance';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 import { useZConsole } from '@/components/z-console';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -73,6 +75,23 @@ export default function DashboardPage() {
   const { charges } = useRent();
   const { requests: maintenanceRequests } = usePmMaintenance();
   const { leases } = useLeases();
+  const { leads } = useLeads();
+  const { certifications, summary: complianceSummary } = useCompliance();
+
+  // Leads needing follow-up (overdue or due today)
+  const leadsNeedingFollowUp = leads.filter(l => {
+    if (l.stage === 'won' || l.stage === 'lost') return false;
+    if (!l.nextFollowUp) return l.stage === 'new'; // New leads with no follow-up scheduled
+    return new Date(l.nextFollowUp) <= new Date();
+  }).slice(0, 5);
+
+  // Expiring compliance items (within 30 days)
+  const expiringCompliance = certifications.filter(c => {
+    if (!c.expiration_date || c.status !== 'active') return false;
+    const expDate = new Date(c.expiration_date);
+    const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    return expDate <= thirtyDays;
+  }).slice(0, 5);
 
   // PM stats
   const pmEnabled = properties.length > 0;
@@ -622,6 +641,93 @@ export default function DashboardPage() {
                       onClick={() => router.push('/dashboard/invoices?status=overdue')}
                     >
                       {t('dashboard.viewInvoices')}
+                      <ArrowRight size={14} />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Leads Needing Follow-Up */}
+          {leadsNeedingFollowUp.length > 0 && (
+            <Card className="border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/10">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                    <Phone size={20} className="text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-amber-900 dark:text-amber-100">
+                      {leadsNeedingFollowUp.length} Lead{leadsNeedingFollowUp.length > 1 ? 's' : ''} Need Follow-Up
+                    </h4>
+                    <div className="mt-2 space-y-1.5">
+                      {leadsNeedingFollowUp.map(lead => (
+                        <div
+                          key={lead.id}
+                          className="flex items-center justify-between text-xs cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900/20 rounded px-2 py-1 transition-colors"
+                          onClick={() => router.push('/dashboard/leads')}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-amber-800 dark:text-amber-200">{lead.name}</span>
+                            <span className="text-amber-600 dark:text-amber-400 capitalize">{lead.stage}</span>
+                          </div>
+                          {lead.nextFollowUp && (
+                            <span className="text-amber-600 dark:text-amber-400">
+                              {formatRelativeTime(lead.nextFollowUp.toISOString())}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 text-amber-700 dark:text-amber-300 hover:text-amber-900 hover:bg-amber-100 dark:hover:bg-amber-900/30 p-0"
+                      onClick={() => router.push('/dashboard/leads')}
+                    >
+                      View All Leads
+                      <ArrowRight size={14} />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Expiring Compliance Items */}
+          {expiringCompliance.length > 0 && (
+            <Card className="border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-900/10">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                    <Shield size={20} className="text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-orange-900 dark:text-orange-100">
+                      {expiringCompliance.length} Certification{expiringCompliance.length > 1 ? 's' : ''} Expiring Soon
+                    </h4>
+                    <div className="mt-2 space-y-1.5">
+                      {expiringCompliance.map(cert => (
+                        <div
+                          key={cert.id}
+                          className="flex items-center justify-between text-xs cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/20 rounded px-2 py-1 transition-colors"
+                          onClick={() => router.push('/dashboard/certifications')}
+                        >
+                          <span className="font-medium text-orange-800 dark:text-orange-200">{cert.certification_name}</span>
+                          <span className="text-orange-600 dark:text-orange-400">
+                            Expires {formatDate(cert.expiration_date!)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 text-orange-700 dark:text-orange-300 hover:text-orange-900 hover:bg-orange-100 dark:hover:bg-orange-900/30 p-0"
+                      onClick={() => router.push('/dashboard/certifications')}
+                    >
+                      Manage Certifications
                       <ArrowRight size={14} />
                     </Button>
                   </div>
