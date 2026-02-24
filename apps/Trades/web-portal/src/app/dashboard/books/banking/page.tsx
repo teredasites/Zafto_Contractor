@@ -334,7 +334,7 @@ export default function BankingPage() {
   const handleSync = async (accountId: string) => {
     const result = await syncTransactions(accountId);
     if (result) {
-      console.log(`Synced ${result.synced} transactions, matched ${result.matched} invoices`);
+      // Sync completed successfully
     }
   };
 

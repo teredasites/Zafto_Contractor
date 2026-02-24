@@ -53,9 +53,11 @@ export interface CompliancePacket {
   packet_name: string;
   requested_by: string | null;
   documents: Array<{ type: string; certificationId: string; name: string }>;
+  status: 'draft' | 'generating' | 'ready' | 'shared' | 'expired';
   generated_at: string | null;
   shared_via: string | null;
   share_link: string | null;
+  shared_at: string | null;
   expires_at: string | null;
   notes: string | null;
   created_at: string;
@@ -85,9 +87,9 @@ export function useCompliance() {
     setError(null);
     try {
       const [certsRes, reqsRes, packetsRes] = await Promise.all([
-        supabase.from('certifications').select('*').order('expiration_date'),
-        supabase.from('compliance_requirements').select('*').order('trade_type'),
-        supabase.from('compliance_packets').select('*').order('created_at', { ascending: false }),
+        supabase.from('certifications').select('*').is('deleted_at', null).order('expiration_date'),
+        supabase.from('compliance_requirements').select('*').is('deleted_at', null).order('trade_type'),
+        supabase.from('compliance_packets').select('*').is('deleted_at', null).order('created_at', { ascending: false }),
       ]);
 
       if (certsRes.error) throw certsRes.error;
@@ -212,6 +214,14 @@ export function useCompliance() {
     await load();
   }, [load]);
 
+  const deletePacket = useCallback(async (id: string) => {
+    const { error: err } = await supabase.from('compliance_packets')
+      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+      .eq('id', id);
+    if (err) throw err;
+    await load();
+  }, [load]);
+
   const createPacket = useCallback(async (packet: Partial<CompliancePacket>) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -261,6 +271,7 @@ export function useCompliance() {
     updateCertification,
     deleteCertification,
     createPacket,
+    deletePacket,
     getRequirementsForTrade,
     checkCompliance,
     reload: load,

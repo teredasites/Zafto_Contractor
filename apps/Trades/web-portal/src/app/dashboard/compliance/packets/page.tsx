@@ -2,81 +2,32 @@
 
 // L8: Compliance Packets — select certs/docs, generate combined packet, share via link/email
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Package,
   ArrowLeft,
-  FileText,
   Download,
   Mail,
   Link2,
   CheckCircle,
   Plus,
-  Clock,
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase';
+import { useCompliance } from '@/lib/hooks/use-compliance';
 import { useTranslation } from '@/lib/translations';
-
-const supabase = createClient();
-
-interface CompliancePacket {
-  id: string;
-  company_id: string;
-  packet_name: string;
-  description: string | null;
-  certification_ids: string[];
-  generated_document_path: string | null;
-  shared_link: string | null;
-  shared_at: string | null;
-  status: 'draft' | 'generating' | 'ready' | 'shared' | 'expired';
-  created_at: string;
-  updated_at: string;
-}
-
-interface Certification {
-  id: string;
-  certification_name: string;
-  certification_type: string;
-  status: string;
-  expiration_date: string | null;
-  document_url: string | null;
-  document_path: string | null;
-}
 
 export default function CompliancePacketsPage() {
   const { t, formatDate } = useTranslation();
-  const [packets, setPackets] = useState<CompliancePacket[]>([]);
-  const [certs, setCerts] = useState<Certification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { packets, certifications: certs, loading, error, createPacket: hookCreatePacket, deletePacket: hookDeletePacket } = useCompliance();
   const [creating, setCreating] = useState(false);
   const [selectedCerts, setSelectedCerts] = useState<Set<string>>(new Set());
   const [packetName, setPacketName] = useState('');
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const [{ data: packetData, error: pErr }, { data: certData, error: cErr }] = await Promise.all([
-        supabase.from('compliance_packets').select('*').order('created_at', { ascending: false }),
-        supabase.from('certifications').select('id, certification_name, certification_type, status, expiration_date, document_url, document_path').eq('status', 'active'),
-      ]);
-      if (pErr) throw pErr;
-      if (cErr) throw cErr;
-      setPackets(packetData || []);
-      setCerts(certData || []);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  const activeCerts = certs.filter(c => c.status === 'active');
 
   const toggleCert = (certId: string) => {
     setSelectedCerts(prev => {
@@ -87,40 +38,31 @@ export default function CompliancePacketsPage() {
     });
   };
 
-  const createPacket = async () => {
+  const handleCreatePacket = async () => {
     if (!packetName.trim() || selectedCerts.size === 0) return;
-
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const companyId = user.app_metadata?.company_id;
-      if (!companyId) return;
-
-      const { error: err } = await supabase.from('compliance_packets').insert({
-        company_id: companyId,
+      await hookCreatePacket({
         packet_name: packetName.trim(),
-        certification_ids: Array.from(selectedCerts),
-        status: 'ready',
+        documents: Array.from(selectedCerts).map(certId => ({
+          type: 'certification',
+          certificationId: certId,
+          name: activeCerts.find(c => c.id === certId)?.certification_name || '',
+        })),
       });
-
-      if (err) throw err;
-
       setPacketName('');
       setSelectedCerts(new Set());
       setCreating(false);
-      await fetchData();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to create packet');
+    } catch {
+      // Error handled by hook
     }
   };
 
-  const deletePacket = async (packetId: string) => {
-    const { error: err } = await supabase
-      .from('compliance_packets')
-      .delete()
-      .eq('id', packetId);
-    if (!err) await fetchData();
+  const handleDeletePacket = async (packetId: string) => {
+    try {
+      await hookDeletePacket(packetId);
+    } catch {
+      // Error handled by hook
+    }
   };
 
   if (loading) {
@@ -178,7 +120,7 @@ export default function CompliancePacketsPage() {
                 Select Certifications ({selectedCerts.size} selected)
               </label>
               <div className="space-y-2 max-h-60 overflow-y-auto">
-                {certs.map(cert => (
+                {activeCerts.map(cert => (
                   <button
                     key={cert.id}
                     onClick={() => toggleCert(cert.id)}
@@ -208,14 +150,14 @@ export default function CompliancePacketsPage() {
                     </div>
                   </button>
                 ))}
-                {certs.length === 0 && (
+                {activeCerts.length === 0 && (
                   <p className="text-sm text-muted text-center py-4">{t('compliancePackets.noActiveCertificationsFound')}</p>
                 )}
               </div>
             </div>
 
             <div className="flex items-center gap-3 pt-2">
-              <Button onClick={createPacket} disabled={!packetName.trim() || selectedCerts.size === 0}>
+              <Button onClick={handleCreatePacket} disabled={!packetName.trim() || selectedCerts.size === 0}>
                 Create Packet
               </Button>
               <Button variant="ghost" onClick={() => { setCreating(false); setSelectedCerts(new Set()); setPacketName(''); }}>
@@ -238,7 +180,7 @@ export default function CompliancePacketsPage() {
       ) : (
         <div className="space-y-3">
           {packets.map(packet => {
-            const packetCerts = certs.filter(c => packet.certification_ids?.includes(c.id));
+            const packetCerts = activeCerts.filter(c => packet.documents?.some(d => d.certificationId === c.id));
             return (
               <Card key={packet.id} className="hover:border-muted transition-colors">
                 <CardContent className="p-4">
@@ -282,7 +224,7 @@ export default function CompliancePacketsPage() {
                           </Button>
                         </>
                       )}
-                      <Button variant="ghost" size="sm" onClick={() => deletePacket(packet.id)} title={t('common.delete')}>
+                      <Button variant="ghost" size="sm" onClick={() => handleDeletePacket(packet.id)} title={t('common.delete')}>
                         <Trash2 className="h-4 w-4 text-red-400" />
                       </Button>
                     </div>
