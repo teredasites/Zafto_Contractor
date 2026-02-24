@@ -88,7 +88,8 @@ export interface ZDocsSignatureRequest {
 export const ZDOCS_TEMPLATE_TYPES = [
   'contract', 'proposal', 'lien_waiver', 'change_order', 'invoice',
   'warranty', 'scope_of_work', 'safety_plan', 'daily_report',
-  'inspection_report', 'completion_cert', 'other',
+  'inspection_report', 'completion_cert', 'notice', 'insurance',
+  'letter', 'property_preservation', 'permit', 'compliance', 'other',
 ] as const;
 
 export const ZDOCS_TEMPLATE_TYPE_LABELS: Record<string, string> = {
@@ -103,8 +104,24 @@ export const ZDOCS_TEMPLATE_TYPE_LABELS: Record<string, string> = {
   daily_report: 'Daily Report',
   inspection_report: 'Inspection Report',
   completion_cert: 'Completion Certificate',
+  notice: 'Notice',
+  insurance: 'Insurance',
+  letter: 'Letter',
+  property_preservation: 'Property Preservation',
+  permit: 'Permit',
+  compliance: 'Compliance',
   other: 'Other',
 };
+
+export interface TemplateVersion {
+  id: string;
+  templateId: string;
+  versionNumber: number;
+  contentHtml: string | null;
+  changeNote: string | null;
+  createdBy: string | null;
+  createdAt: string;
+}
 
 export const ZDOCS_ENTITY_TYPES = [
   'job', 'customer', 'estimate', 'invoice', 'bid', 'property',
@@ -422,8 +439,36 @@ export function useZDocs() {
     variables: TemplateVariable[];
     isActive: boolean;
     requiresSignature: boolean;
-  }>) => {
+  }>, changeNote?: string) => {
     const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // If content changed, save version snapshot first
+    if (data.contentHtml !== undefined) {
+      const existing = templates.find(t => t.id === id);
+      if (existing && existing.contentHtml !== data.contentHtml) {
+        // Get current version number
+        const { data: versions } = await supabase
+          .from('document_template_versions')
+          .select('version_number')
+          .eq('template_id', id)
+          .order('version_number', { ascending: false })
+          .limit(1);
+
+        const nextVersion = (versions?.[0]?.version_number || 0) + 1;
+
+        // Save the new version
+        await supabase.from('document_template_versions').insert({
+          template_id: id,
+          version_number: nextVersion,
+          content_html: data.contentHtml,
+          variables: data.variables || existing.variables || [],
+          change_note: changeNote || null,
+          created_by: user?.id || null,
+        });
+      }
+    }
+
     const update: Record<string, unknown> = {};
     if (data.name !== undefined) update.name = data.name;
     if (data.description !== undefined) update.description = data.description;
@@ -435,6 +480,42 @@ export function useZDocs() {
 
     const { error: err } = await supabase.from('document_templates').update(update).eq('id', id);
     if (err) throw err;
+  };
+
+  const fetchTemplateVersions = async (templateId: string): Promise<TemplateVersion[]> => {
+    const supabase = getSupabase();
+    const { data, error: err } = await supabase
+      .from('document_template_versions')
+      .select('*')
+      .eq('template_id', templateId)
+      .order('version_number', { ascending: false });
+
+    if (err) throw err;
+    return (data || []).map((row: Record<string, unknown>) => ({
+      id: row.id as string,
+      templateId: row.template_id as string,
+      versionNumber: row.version_number as number,
+      contentHtml: row.content_html as string | null,
+      changeNote: row.change_note as string | null,
+      createdBy: row.created_by as string | null,
+      createdAt: row.created_at as string,
+    }));
+  };
+
+  const revertToVersion = async (templateId: string, versionId: string) => {
+    const supabase = getSupabase();
+    const { data: version, error: fetchErr } = await supabase
+      .from('document_template_versions')
+      .select('content_html, variables')
+      .eq('id', versionId)
+      .single();
+
+    if (fetchErr || !version) throw fetchErr || new Error('Version not found');
+
+    await updateTemplate(templateId, {
+      contentHtml: version.content_html as string | null,
+      variables: version.variables as TemplateVariable[],
+    }, `Reverted to version`);
   };
 
   const deleteTemplate = async (id: string) => {
@@ -592,6 +673,9 @@ export function useZDocs() {
     sendForSignature,
     duplicateTemplate,
     deleteRender,
+    // Versioning
+    fetchTemplateVersions,
+    revertToVersion,
     // Computed
     activeTemplates,
     totalRenders,
