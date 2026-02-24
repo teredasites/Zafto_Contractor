@@ -33,6 +33,7 @@ import {
   TrendingUp,
   Info,
   ChevronRight,
+  ChevronDown,
   MapPin,
   Calendar,
   Database,
@@ -41,6 +42,12 @@ import {
   Building,
   ExternalLink,
   FolderOpen,
+  Bug,
+  Snowflake,
+  Mountain,
+  TreePine,
+  Leaf,
+  Gauge,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -56,12 +63,14 @@ import {
   type WallMeasurementData,
   type TradeBidData,
   type TradeType,
+  type HazardFlagData,
+  type StormEventData,
 } from '@/lib/hooks/use-property-scan';
 import { useStormAssess } from '@/lib/hooks/use-storm-assess';
 import { useTranslation } from '@/lib/translations';
 import { formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
-type TabType = 'property' | 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
+type TabType = 'property' | 'hazards' | 'environment' | 'roof' | 'walls' | 'trades' | 'solar' | 'storm';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   complete: { label: 'Complete', color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
@@ -73,6 +82,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 const TABS: { key: TabType; label: string; icon: LucideIcon; color: string }[] = [
   { key: 'property', label: 'Property', icon: Building, color: '#8B5CF6' },
+  { key: 'hazards', label: 'Hazards', icon: ShieldAlert, color: '#EF4444' },
+  { key: 'environment', label: 'Environment', icon: Leaf, color: '#10B981' },
   { key: 'roof', label: 'Roof', icon: Home, color: '#A855F7' },
   { key: 'walls', label: 'Walls', icon: Ruler, color: '#3B82F6' },
   { key: 'trades', label: 'Trade Data', icon: BarChart3, color: '#10B981' },
@@ -121,6 +132,12 @@ const SOURCE_COLORS: Record<string, string> = {
   fema_flood: '#0EA5E9',
   us_census: '#7C3AED',
   nws_alerts: '#F97316',
+  open_meteo: '#14B8A6',
+  noaa_storm: '#DC2626',
+  nlcd_canopy: '#22C55E',
+  epa_radon: '#A855F7',
+  asce7: '#78716C',
+  iecc: '#0EA5E9',
 };
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -135,6 +152,12 @@ const SOURCE_LABELS: Record<string, string> = {
   fema_flood: 'FEMA Flood',
   us_census: 'US Census',
   nws_alerts: 'NWS Weather',
+  open_meteo: 'Open-Meteo Weather',
+  noaa_storm: 'NOAA Storm Events',
+  nlcd_canopy: 'NLCD Tree Canopy',
+  epa_radon: 'EPA Radon',
+  asce7: 'ASCE 7 Standards',
+  iecc: 'IECC Climate Data',
 };
 
 const EXTERNAL_LINK_LABELS: Record<string, { label: string; color: string }> = {
@@ -145,6 +168,30 @@ const EXTERNAL_LINK_LABELS: Record<string, { label: string; color: string }> = {
   google_maps: { label: 'Google Maps', color: '#4285F4' },
   fema_flood_map: { label: 'FEMA Flood Map', color: '#0EA5E9' },
   county_assessor: { label: 'County Assessor', color: '#8B5CF6' },
+  building_department: { label: 'Building Dept', color: '#D97706' },
+  permit_history: { label: 'Permit History', color: '#7C3AED' },
+  utility_lookup: { label: 'Utility Lookup', color: '#14B8A6' },
+};
+
+const HAZARD_SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
+  red: { label: 'High Risk', color: '#EF4444', bg: 'rgba(239,68,68,0.08)', icon: AlertTriangle },
+  yellow: { label: 'Caution', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', icon: ShieldAlert },
+  green: { label: 'Low Risk', color: '#10B981', bg: 'rgba(16,185,129,0.08)', icon: Shield },
+};
+
+const HAZARD_TYPE_ICONS: Record<string, LucideIcon> = {
+  lead_paint: AlertTriangle,
+  asbestos: AlertTriangle,
+  radon: Mountain,
+  flood: Droplet,
+  wildfire: Flame,
+  seismic: Activity,
+  problem_panels: Zap,
+  termite: Bug,
+  galvanized_pipe: Droplet,
+  knob_and_tube: Zap,
+  chinese_drywall: Home,
+  polybutylene_pipe: Droplet,
 };
 
 const FLOOD_RISK_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -579,6 +626,9 @@ export default function ReconDetailPage() {
         ))}
       </div>
 
+      {/* ── NO WASTED TRIP SUMMARY ───────────────────── */}
+      <NoWastedTripSummary scan={scan} features={features} />
+
       {/* ── EXTERNAL LINKS + STORAGE ───────────────────── */}
       {Object.keys(scan.externalLinks).length > 0 && (
         <div className="rounded-xl bg-card border border-main p-4">
@@ -634,6 +684,8 @@ export default function ReconDetailPage() {
 
       {/* ── TAB CONTENT ────────────────────────────────── */}
       {activeTab === 'property' && <PropertyTab features={features} scan={scan} />}
+      {activeTab === 'hazards' && <HazardsTab scan={scan} />}
+      {activeTab === 'environment' && <EnvironmentTab scan={scan} features={features} />}
       {activeTab === 'roof' && <RoofTab roof={roof} facets={facets} scan={scan} />}
       {activeTab === 'walls' && <WallsTab walls={walls} onEstimate={handleEstimate} estimating={estimating} />}
       {activeTab === 'trades' && (
@@ -650,6 +702,452 @@ export default function ReconDetailPage() {
           Measurements derived from satellite imagery and public records. Roof footprint area shown — multiply by number of stories for estimated living area.
           Always verify on site before material orders. Roof analysis powered by Google Solar API where available.
         </p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// NO WASTED TRIP SUMMARY
+// ============================================================================
+
+function NoWastedTripSummary({ scan, features }: {
+  scan: PropertyScanData; features: PropertyFeaturesData | null;
+}) {
+  const hazards = scan.hazardFlags || [];
+  const redCount = hazards.filter(h => h.severity === 'red').length;
+  const yellowCount = hazards.filter(h => h.severity === 'yellow').length;
+  const greenCount = hazards.filter(h => h.severity === 'green').length;
+  const propertyAge = features?.yearBuilt ? new Date().getFullYear() - features.yearBuilt : null;
+  const measurements = (scan.computedMeasurements || {}) as Record<string, number>;
+  const weather = (scan.weatherHistory || {}) as Record<string, number>;
+
+  return (
+    <div className="rounded-xl bg-card border border-main overflow-hidden">
+      <div className="px-4 py-2.5 border-b border-main flex items-center gap-2.5 bg-gradient-to-r from-accent/5 to-transparent">
+        <ShieldAlert size={14} className="text-accent" />
+        <h3 className="text-[13px] font-semibold text-main flex-1">Pre-Visit Briefing</h3>
+        <span className="text-[10px] text-muted">Decide in 10 seconds if this job is worth the drive</span>
+      </div>
+      <div className="p-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          {/* Property basics */}
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface">
+            <Home size={16} className="text-[#8B5CF6] shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[9px] text-muted uppercase tracking-wider">Property</p>
+              <p className="text-xs font-semibold text-main truncate">
+                {features?.livingSqft ? `${features.livingSqft.toLocaleString()} sqft` : '—'}
+                {features?.stories ? ` / ${features.stories} story` : ''}
+              </p>
+            </div>
+          </div>
+
+          {/* Age */}
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface">
+            <Calendar size={16} className="text-[#F59E0B] shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[9px] text-muted uppercase tracking-wider">Age</p>
+              <p className="text-xs font-semibold text-main">
+                {propertyAge != null ? `${propertyAge} years` : '—'}
+                {features?.yearBuilt ? ` (${features.yearBuilt})` : ''}
+              </p>
+            </div>
+          </div>
+
+          {/* Flood zone */}
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface">
+            <Droplet size={16} className="text-[#3B82F6] shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[9px] text-muted uppercase tracking-wider">Flood Zone</p>
+              <p className="text-xs font-semibold text-main">
+                {scan.floodZone ? `Zone ${scan.floodZone}` : 'None identified'}
+              </p>
+            </div>
+          </div>
+
+          {/* Last sale */}
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface">
+            <TrendingUp size={16} className="text-[#10B981] shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[9px] text-muted uppercase tracking-wider">Last Sale</p>
+              <p className="text-xs font-semibold text-main">
+                {features?.lastSalePrice ? `$${features.lastSalePrice.toLocaleString()}` : '—'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Hazard flags summary */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[10px] font-semibold text-muted uppercase tracking-wider mr-1">Hazards:</span>
+          {hazards.length === 0 ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-500/10 text-emerald-500">
+              <Shield size={10} /> No hazards detected
+            </span>
+          ) : (
+            <>
+              {redCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-red-500/10 text-red-400">
+                  <AlertTriangle size={10} /> {redCount} high risk
+                </span>
+              )}
+              {yellowCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-500/10 text-amber-500">
+                  <ShieldAlert size={10} /> {yellowCount} caution
+                </span>
+              )}
+              {greenCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-500/10 text-emerald-500">
+                  <Shield size={10} /> {greenCount} low risk
+                </span>
+              )}
+            </>
+          )}
+
+          {/* Key measurements chips */}
+          {measurements.lawn_area_sqft != null && measurements.lawn_area_sqft > 0 && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-main/50 text-[10px] text-muted">
+              Yard: {Math.round(measurements.lawn_area_sqft).toLocaleString()} sqft
+            </span>
+          )}
+          {measurements.boundary_perimeter_ft != null && measurements.boundary_perimeter_ft > 0 && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-main/50 text-[10px] text-muted">
+              Boundary: {Math.round(measurements.boundary_perimeter_ft).toLocaleString()} LF
+            </span>
+          )}
+          {weather.freeze_thaw_cycles != null && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-main/50 text-[10px] text-muted">
+              <Snowflake size={9} /> {weather.freeze_thaw_cycles} freeze-thaw cycles/yr
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// HAZARDS TAB
+// ============================================================================
+
+function HazardsTab({ scan }: { scan: PropertyScanData }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const hazards = scan.hazardFlags || [];
+
+  if (hazards.length === 0) {
+    return (
+      <EmptyTab icon={Shield} title="No Hazards Detected"
+        description="No environmental or structural hazards were identified for this property based on available data sources including EPA radon zones, FEMA flood maps, wildfire risk assessments, and historical property records." />
+    );
+  }
+
+  // Sort: red first, then yellow, then green
+  const severityOrder: Record<string, number> = { red: 0, yellow: 1, green: 2 };
+  const sorted = [...hazards].sort((a, b) => (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9));
+
+  const redCount = hazards.filter(h => h.severity === 'red').length;
+  const yellowCount = hazards.filter(h => h.severity === 'yellow').length;
+  const greenCount = hazards.filter(h => h.severity === 'green').length;
+
+  return (
+    <div className="space-y-4">
+      {/* Summary strip */}
+      <KpiStrip items={[
+        { label: 'Total Hazards', value: hazards.length, icon: ShieldAlert, color: '#8B5CF6' },
+        { label: 'High Risk', value: redCount, icon: AlertTriangle, color: '#EF4444' },
+        { label: 'Caution', value: yellowCount, icon: ShieldAlert, color: '#F59E0B' },
+        { label: 'Low Risk', value: greenCount, icon: Shield, color: '#10B981' },
+      ]} />
+
+      {/* Hazard cards */}
+      <div className="space-y-2">
+        {sorted.map((hazard, i) => {
+          const config = HAZARD_SEVERITY_CONFIG[hazard.severity] || HAZARD_SEVERITY_CONFIG.yellow;
+          const HazardIcon = HAZARD_TYPE_ICONS[hazard.type] || config.icon;
+          const isExpanded = expanded === `${hazard.type}-${i}`;
+
+          return (
+            <div key={`${hazard.type}-${i}`}
+              className="rounded-xl border overflow-hidden transition-all"
+              style={{ borderColor: `${config.color}30`, backgroundColor: config.bg }}>
+              <button
+                onClick={() => setExpanded(isExpanded ? null : `${hazard.type}-${i}`)}
+                className="w-full px-4 py-3 flex items-center gap-3 text-left">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: `${config.color}20` }}>
+                  <HazardIcon size={16} style={{ color: config.color }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-main">{hazard.title}</h4>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold"
+                      style={{ color: config.color, backgroundColor: `${config.color}15` }}>
+                      {config.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted mt-0.5 line-clamp-1">{hazard.description}</p>
+                </div>
+                <ChevronDown size={16} className={cn('text-muted transition-transform shrink-0', isExpanded && 'rotate-180')} />
+              </button>
+
+              {isExpanded && (
+                <div className="px-4 pb-4 border-t space-y-3" style={{ borderColor: `${config.color}20` }}>
+                  <div className="pt-3">
+                    <p className="text-xs text-main leading-relaxed">{hazard.description}</p>
+                  </div>
+                  {hazard.what_to_do && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">What To Do</p>
+                      <p className="text-xs text-main leading-relaxed">{hazard.what_to_do}</p>
+                    </div>
+                  )}
+                  {hazard.cost_implications && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">Cost Implications</p>
+                      <p className="text-xs text-main leading-relaxed">{hazard.cost_implications}</p>
+                    </div>
+                  )}
+                  {hazard.regulatory && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">Regulatory</p>
+                      <p className="text-xs text-main leading-relaxed">{hazard.regulatory}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// ENVIRONMENT TAB (Environmental + Code Requirements + Weather + Measurements)
+// ============================================================================
+
+function EnvironmentTab({ scan, features }: {
+  scan: PropertyScanData; features: PropertyFeaturesData | null;
+}) {
+  const env = (scan.environmentalData || {}) as Record<string, unknown>;
+  const code = (scan.codeRequirements || {}) as Record<string, unknown>;
+  const weather = (scan.weatherHistory || {}) as Record<string, unknown>;
+  const measurements = (scan.computedMeasurements || {}) as Record<string, unknown>;
+  const stormEvents = scan.noaaStormEvents || [];
+
+  const hasEnv = Object.keys(env).length > 0 || features?.climateZone || features?.radonZone;
+  const hasCode = Object.keys(code).length > 0;
+  const hasWeather = Object.keys(weather).length > 0;
+  const hasMeasurements = Object.keys(measurements).length > 0;
+  const hasAny = hasEnv || hasCode || hasWeather || hasMeasurements || stormEvents.length > 0;
+
+  if (!hasAny) {
+    return (
+      <EmptyTab icon={Leaf} title="Environmental Data Pending"
+        description="Environmental analysis, building code requirements, weather history, and computed measurements will appear here after a complete property scan. This data is derived from IECC climate zones, EPA radon maps, ASCE 7 standards, Open-Meteo weather, and NOAA storm databases." />
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Environmental Panel */}
+      {hasEnv && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <Panel title="Climate & Environment" icon={Leaf} color="#10B981">
+            <div className="space-y-0">
+              {!!(features?.climateZone || env.climate_zone) && (
+                <DataRow label="IECC Climate Zone" value={String(features?.climateZone || env.climate_zone)} highlight />
+              )}
+              {(features?.frostLineDepthIn != null || env.frost_line_depth_in != null) && (
+                <DataRow label="Frost Line Depth" value={`${features?.frostLineDepthIn ?? env.frost_line_depth_in}"`} mono />
+              )}
+              {!!(features?.soilType || env.soil_type) && (
+                <DataRow label="Soil Type" value={formatLabel(String(features?.soilType || env.soil_type))} />
+              )}
+              {!!(features?.soilDrainage || env.soil_drainage) && (
+                <DataRow label="Soil Drainage" value={formatLabel(String(features?.soilDrainage || env.soil_drainage))} />
+              )}
+              {!!features?.soilBearingCapacity && (
+                <DataRow label="Bearing Capacity" value={formatLabel(features.soilBearingCapacity)} />
+              )}
+              {(features?.treeCanopyPct != null || env.tree_canopy_pct != null) && (
+                <DataRow label="Tree Canopy Coverage" value={`${Number(features?.treeCanopyPct ?? env.tree_canopy_pct).toFixed(1)}%`} />
+              )}
+            </div>
+          </Panel>
+
+          <Panel title="Hazard Zones" icon={ShieldAlert} color="#EF4444">
+            <div className="space-y-0">
+              {(features?.radonZone != null || env.radon_zone != null) && (() => {
+                const zone = features?.radonZone ?? Number(env.radon_zone);
+                const radonLabel = zone === 1 ? 'Zone 1 (High)' : zone === 2 ? 'Zone 2 (Moderate)' : 'Zone 3 (Low)';
+                const isHigh = zone === 1;
+                return <DataRow label="EPA Radon Zone" value={radonLabel} highlight={isHigh} />;
+              })()}
+              {!!(features?.wildfireRisk || env.wildfire_risk) && (
+                <DataRow label="Wildfire Risk" value={formatLabel(String(features?.wildfireRisk || env.wildfire_risk))}
+                  highlight={['very_high', 'high'].includes(String(features?.wildfireRisk || env.wildfire_risk))} />
+              )}
+              {!!(features?.termiteZone || env.termite_zone) && (
+                <DataRow label="Termite Zone" value={formatLabel(String(features?.termiteZone || env.termite_zone))}
+                  highlight={['very_heavy', 'moderate_to_heavy'].includes(String(features?.termiteZone || env.termite_zone))} />
+              )}
+              {scan.floodZone && (
+                <DataRow label="FEMA Flood Zone" value={`Zone ${scan.floodZone}`} highlight />
+              )}
+              {!!(features?.seismicCategory || env.seismic_category) && (
+                <DataRow label="Seismic Category" value={String(features?.seismicCategory || env.seismic_category)}
+                  highlight={['D0', 'D1', 'D2', 'E', 'F'].includes(String(features?.seismicCategory || env.seismic_category))} />
+              )}
+            </div>
+          </Panel>
+        </div>
+      )}
+
+      {/* Code Requirements Panel */}
+      {hasCode && (
+        <Panel title="Building Code Requirements" icon={FileText} color="#3B82F6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-0">
+            {code.wind_speed_mph != null && (
+              <DataRow label="Design Wind Speed" value={`${code.wind_speed_mph} mph`} mono />
+            )}
+            {code.snow_load_psf != null && (
+              <DataRow label="Ground Snow Load" value={`${code.snow_load_psf} PSF`} mono />
+            )}
+            {!!code.seismic_category && (
+              <DataRow label="Seismic Design Category" value={String(code.seismic_category)} highlight={['D0', 'D1', 'D2', 'E', 'F'].includes(String(code.seismic_category))} />
+            )}
+            {!!code.energy_code && (
+              <DataRow label="Energy Code" value={String(code.energy_code)} />
+            )}
+            {code.frost_line_depth_in != null && (
+              <DataRow label="Min. Footing Depth" value={`${code.frost_line_depth_in}"`} mono />
+            )}
+            {!!code.insulation_r_values && (() => {
+              const rVals = code.insulation_r_values as Record<string, number>;
+              return (
+                <>
+                  {rVals.attic && <DataRow label="R-Value: Attic" value={`R-${rVals.attic}`} mono />}
+                  {rVals.wall && <DataRow label="R-Value: Wall" value={`R-${rVals.wall}`} mono />}
+                  {rVals.floor && <DataRow label="R-Value: Floor" value={`R-${rVals.floor}`} mono />}
+                  {rVals.basement && <DataRow label="R-Value: Basement" value={`R-${rVals.basement}`} mono />}
+                  {rVals.crawlspace && <DataRow label="R-Value: Crawlspace" value={`R-${rVals.crawlspace}`} mono />}
+                </>
+              );
+            })()}
+          </div>
+        </Panel>
+      )}
+
+      {/* Weather History Panel */}
+      {hasWeather && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <Panel title="Weather History (2yr)" icon={Thermometer} color="#06B6D4">
+            <div className="space-y-0">
+              {weather.freeze_thaw_cycles != null && (
+                <DataRow label="Freeze-Thaw Cycles" value={`${weather.freeze_thaw_cycles}/yr`} mono
+                  highlight={Number(weather.freeze_thaw_cycles) > 40} />
+              )}
+              {weather.annual_precip_in != null && (
+                <DataRow label="Annual Precipitation" value={`${Number(weather.annual_precip_in).toFixed(1)}"`} mono />
+              )}
+              {weather.temp_min_f != null && weather.temp_max_f != null && (
+                <DataRow label="Temperature Range" value={`${weather.temp_min_f}°F to ${weather.temp_max_f}°F`} mono />
+              )}
+              {weather.avg_wind_mph != null && (
+                <DataRow label="Avg Wind Speed" value={`${Number(weather.avg_wind_mph).toFixed(1)} mph`} mono />
+              )}
+              {weather.hail_events != null && (
+                <DataRow label="Hail Events" value={String(weather.hail_events)}
+                  highlight={Number(weather.hail_events) > 0} />
+              )}
+              {weather.wind_events != null && (
+                <DataRow label="Severe Wind Events" value={String(weather.wind_events)}
+                  highlight={Number(weather.wind_events) > 0} />
+              )}
+            </div>
+          </Panel>
+
+          {/* Measurements Panel */}
+          {hasMeasurements && (
+            <Panel title="Computed Measurements" icon={Ruler} color="#8B5CF6">
+              <div className="space-y-0">
+                {measurements.lawn_area_sqft != null && (
+                  <DataRow label="Lawn/Yard Area" value={Math.round(Number(measurements.lawn_area_sqft)).toLocaleString()} unit="sqft" mono />
+                )}
+                {measurements.wall_area_sqft != null && (
+                  <DataRow label="Wall Area (est)" value={Math.round(Number(measurements.wall_area_sqft)).toLocaleString()} unit="sqft" mono />
+                )}
+                {measurements.roof_complexity_factor != null && (
+                  <DataRow label="Roof Complexity" value={`${Number(measurements.roof_complexity_factor).toFixed(2)}x`} mono
+                    highlight={Number(measurements.roof_complexity_factor) >= 1.5} />
+                )}
+                {measurements.boundary_perimeter_ft != null && (
+                  <DataRow label="Property Boundary" value={Math.round(Number(measurements.boundary_perimeter_ft)).toLocaleString()} unit="LF" mono />
+                )}
+                {measurements.driveway_area_sqft != null && (
+                  <DataRow label="Driveway Area (est)" value={Math.round(Number(measurements.driveway_area_sqft)).toLocaleString()} unit="sqft" mono />
+                )}
+              </div>
+            </Panel>
+          )}
+        </div>
+      )}
+
+      {/* NOAA Storm Events Timeline */}
+      {stormEvents.length > 0 && (
+        <Panel title={`NOAA Storm Events (${stormEvents.length})`} icon={CloudLightning} color="#DC2626" noPad>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-main">
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Event Type</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Magnitude</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted uppercase tracking-wider">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stormEvents.map((event, i) => (
+                  <tr key={i} className="border-b border-main/30 hover:bg-surface/40 transition-colors">
+                    <td className="px-4 py-2.5 text-main text-xs font-mono whitespace-nowrap">{event.date}</td>
+                    <td className="px-4 py-2.5">
+                      <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium',
+                        event.event_type.toLowerCase().includes('hail') ? 'bg-blue-500/10 text-blue-400' :
+                        event.event_type.toLowerCase().includes('wind') ? 'bg-amber-500/10 text-amber-500' :
+                        event.event_type.toLowerCase().includes('tornado') ? 'bg-red-500/10 text-red-400' :
+                        'bg-surface text-muted'
+                      )}>
+                        {event.event_type.toLowerCase().includes('hail') ? <CircleDot size={10} /> :
+                         event.event_type.toLowerCase().includes('wind') ? <Wind size={10} /> :
+                         <CloudLightning size={10} />}
+                        {event.event_type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-main font-mono text-xs">{event.magnitude || '—'}</td>
+                    <td className="px-4 py-2.5 text-muted text-xs max-w-xs truncate">{event.description || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+      )}
+
+      {/* Data source footer */}
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface border border-main/50">
+        <Database size={11} className="text-muted shrink-0" />
+        <span className="text-[10px] text-muted">Environmental data from:</span>
+        {['open_meteo', 'noaa_storm', 'nlcd_canopy', 'epa_radon', 'asce7', 'iecc'].map(src => (
+          scan.scanSources.includes(src) && (
+            <span key={src} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-card text-[10px] font-medium text-muted">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: SOURCE_COLORS[src] || '#6B7280' }} />
+              {SOURCE_LABELS[src] || src}
+            </span>
+          )
+        ))}
       </div>
     </div>
   );
