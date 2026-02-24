@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft, Plus, Trash2, Search, X, ChevronDown, ChevronRight, Save,
-  DollarSign, Package, Wrench, Zap, FileText, Home, Receipt,
+  DollarSign, Package, Wrench, Zap, FileText, Home, Receipt, Briefcase,
   Calculator, Layers, AlertCircle, Loader2, Shield, Send, Eye,
   Ruler, Pencil, Check, Download, Satellite, ShoppingCart,
   Star, Copy, BarChart3, ShieldCheck, TrendingUp, TrendingDown, Activity,
@@ -21,6 +21,7 @@ import { useMaterialCatalog, type MaterialTier, type MaterialCatalogItem } from 
 import { useLaborUnits } from '@/lib/hooks/use-labor-units';
 import { useEstimateVersions } from '@/lib/hooks/use-estimate-versions';
 import { useLaborRates, type LaborRateResult } from '@/lib/hooks/use-labor-rates';
+import { useJobs } from '@/lib/hooks/use-jobs';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
@@ -79,7 +80,9 @@ export default function EstimateEditorPage() {
   const { rates: laborRates, loading: laborRatesLoading, lookupRates, getRate } = useLaborRates();
   const [convertingToBid, setConvertingToBid] = useState(false);
   const [convertingToInvoice, setConvertingToInvoice] = useState(false);
+  const [convertingToJob, setConvertingToJob] = useState(false);
   const { createInvoiceFromEstimate } = useInvoices();
+  const { createJob } = useJobs();
 
   // Auto-lookup labor rates when estimate ZIP is available
   useEffect(() => {
@@ -422,6 +425,40 @@ export default function EstimateEditorPage() {
     }
   }, [createInvoiceFromEstimate, estimateId, router, convertingToInvoice]);
 
+  // Convert estimate to job
+  const handleConvertToJob = useCallback(async () => {
+    if (convertingToJob || !estimate) return;
+    setConvertingToJob(true);
+    try {
+      const jobId = await createJob({
+        title: estimate.title || 'Job from Estimate',
+        customerId: estimate.customerId || undefined,
+        description: `Created from estimate: ${estimate.title}`,
+        status: 'lead',
+        address: {
+          street: estimate.propertyAddress || '',
+          city: estimate.propertyCity || '',
+          state: estimate.propertyState || '',
+          zip: estimate.propertyZip || '',
+        },
+        customer: {
+          firstName: (estimate.customerName || '').split(' ')[0] || '',
+          lastName: (estimate.customerName || '').split(' ').slice(1).join(' ') || '',
+          email: estimate.customerEmail || '',
+          phone: estimate.customerPhone || '',
+        },
+        estimatedValue: estimate.grandTotal || 0,
+      } as any);
+      if (jobId) {
+        router.push(`/dashboard/jobs/${jobId}`);
+      }
+    } catch {
+      // Error handled by hook
+    } finally {
+      setConvertingToJob(false);
+    }
+  }, [createJob, estimate, router, convertingToJob]);
+
   // ── Loading ──
   if (loading) {
     return (
@@ -530,6 +567,14 @@ export default function EstimateEditorPage() {
               >
                 {convertingToInvoice ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Receipt className="w-3.5 h-3.5" />}
                 {convertingToInvoice ? 'Creating...' : 'Convert to Invoice'}
+              </button>
+              <button
+                onClick={handleConvertToJob}
+                disabled={convertingToJob}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 disabled:opacity-50"
+              >
+                {convertingToJob ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Briefcase className="w-3.5 h-3.5" />}
+                {convertingToJob ? 'Creating...' : 'Create Job'}
               </button>
               <button
                 onClick={() => setShowReconImport(!showReconImport)}
