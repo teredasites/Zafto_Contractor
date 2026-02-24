@@ -66,6 +66,7 @@ import { useDocuments } from '@/lib/hooks/use-documents';
 import { useChangeOrders } from '@/lib/hooks/use-change-orders';
 import { usePermits } from '@/lib/hooks/use-permits';
 import { useDailyLogs } from '@/lib/hooks/use-daily-logs';
+import { EntityDocumentsPanel } from '@/components/entity-documents-panel';
 import type { Job, JobType, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 import { useTranslation } from '@/lib/translations';
@@ -1928,6 +1929,7 @@ function InvoicesTab({ jobId }: { jobId: string }) {
 function DocumentsTab({ jobId }: { jobId: string }) {
   const { t } = useTranslation();
   const { documents, loading } = useDocuments();
+  const router = useRouter();
   const jobDocs = documents.filter(d => d.jobId === jobId);
 
   if (loading) {
@@ -1947,51 +1949,61 @@ function DocumentsTab({ jobId }: { jobId: string }) {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-base">{t('common.documents')}</CardTitle>
-          {jobDocs.length > 0 && (
-            <p className="text-xs text-muted mt-1">{jobDocs.length} {t('common.documents').toLowerCase()}</p>
+    <div className="space-y-4">
+      {/* ZDocs Generated Documents */}
+      <EntityDocumentsPanel
+        entityType="job"
+        entityId={jobId}
+        onGenerateDocument={() => router.push('/dashboard/zdocs')}
+      />
+
+      {/* Uploaded Documents */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-base">{t('documents.uploadedFiles')}</CardTitle>
+            {jobDocs.length > 0 && (
+              <p className="text-xs text-muted mt-1">{jobDocs.length} {t('documents.uploadedFiles').toLowerCase()}</p>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {jobDocs.length === 0 ? (
+            <div className="text-center py-8">
+              <FileText size={32} className="mx-auto text-muted mb-2" />
+              <p className="text-sm text-muted">{t('documents.noDocuments')}</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {jobDocs.map(doc => (
+                <div
+                  key={doc.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors"
+                >
+                  <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                    <FileText size={16} className="text-blue-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-main truncate">{doc.name}</p>
+                    <p className="text-xs text-muted">
+                      {doc.documentType} &middot; {formatFileSize(doc.fileSizeBytes)} &middot; {formatDateLocale(doc.createdAt)}
+                    </p>
+                  </div>
+                  {doc.requiresSignature && (
+                    <span className={cn(
+                      'text-[10px] px-1.5 py-0.5 rounded-full',
+                      doc.signatureStatus === 'signed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                    )}>
+                      {doc.signatureStatus === 'signed' ? 'Signed' : 'Needs Signature'}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        {jobDocs.length === 0 ? (
-          <div className="text-center py-8">
-            <FileText size={32} className="mx-auto text-muted mb-2" />
-            <p className="text-sm text-muted">{t('documents.noDocuments')}</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {jobDocs.map(doc => (
-              <div
-                key={doc.id}
-                className="flex items-center gap-3 p-3 rounded-lg border border-main hover:bg-surface-hover transition-colors"
-              >
-                <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                  <FileText size={16} className="text-blue-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-main truncate">{doc.name}</p>
-                  <p className="text-xs text-muted">
-                    {doc.documentType} &middot; {formatFileSize(doc.fileSizeBytes)} &middot; {formatDateLocale(doc.createdAt)}
-                  </p>
-                </div>
-                {doc.requiresSignature && (
-                  <span className={cn(
-                    'text-[10px] px-1.5 py-0.5 rounded-full',
-                    doc.signatureStatus === 'signed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
-                  )}>
-                    {doc.signatureStatus === 'signed' ? 'Signed' : 'Needs Signature'}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

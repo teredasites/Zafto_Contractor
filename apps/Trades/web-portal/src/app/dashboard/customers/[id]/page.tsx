@@ -47,6 +47,7 @@ import { useInvoices } from '@/lib/hooks/use-invoices';
 import { Input, Select } from '@/components/ui/input';
 import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { getSupabase } from '@/lib/supabase';
+import { EntityDocumentsPanel } from '@/components/entity-documents-panel';
 import type { Customer } from '@/types';
 import { useTranslation } from '@/lib/translations';
 
@@ -1140,45 +1141,55 @@ function DocumentsTab({ customerId }: { customerId: string }) {
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Documents</CardTitle>
-        <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/zdocs/new?customerId=${customerId}`)}>
-          <Plus size={14} />
-          New Document
-        </Button>
-      </CardHeader>
-      <CardContent className="p-0">
-        {docs.length === 0 ? (
-          <div className="py-12 text-center">
-            <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
-            <p className="text-muted">No documents yet</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-main">
-            {docs.map((doc) => (
-              <div
-                key={doc.id}
-                onClick={() => router.push(`/dashboard/zdocs/${doc.id}`)}
-                className="px-6 py-4 hover:bg-surface-hover cursor-pointer transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileText size={16} className="text-muted" />
-                    <div>
-                      <p className="font-medium text-main">{doc.title}</p>
-                      <p className="text-xs text-muted capitalize">{doc.type.replace(/_/g, ' ')} &middot; {formatDate(doc.createdAt)}</p>
+    <div className="space-y-4">
+      {/* ZDocs Generated Documents */}
+      <EntityDocumentsPanel
+        entityType="customer"
+        entityId={customerId}
+        onGenerateDocument={() => router.push('/dashboard/zdocs')}
+      />
+
+      {/* Uploaded/Legacy Documents */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Uploaded Documents</CardTitle>
+          <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/zdocs/new?customerId=${customerId}`)}>
+            <Plus size={14} />
+            New Document
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0">
+          {docs.length === 0 ? (
+            <div className="py-12 text-center">
+              <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
+              <p className="text-muted">No uploaded documents yet</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-main">
+              {docs.map((doc) => (
+                <div
+                  key={doc.id}
+                  onClick={() => router.push(`/dashboard/zdocs/${doc.id}`)}
+                  className="px-6 py-4 hover:bg-surface-hover cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FileText size={16} className="text-muted" />
+                      <div>
+                        <p className="font-medium text-main">{doc.title}</p>
+                        <p className="text-xs text-muted capitalize">{doc.type.replace(/_/g, ' ')} &middot; {formatDate(doc.createdAt)}</p>
+                      </div>
                     </div>
+                    <Badge variant={doc.status === 'signed' ? 'success' : doc.status === 'sent' ? 'info' : 'default'}>
+                      {doc.status}
+                    </Badge>
                   </div>
-                  <Badge variant={doc.status === 'signed' ? 'success' : doc.status === 'sent' ? 'info' : 'default'}>
-                    {doc.status}
-                  </Badge>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
