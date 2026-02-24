@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Plus,
@@ -14,10 +14,19 @@ import {
   Clock,
   Archive,
   LayoutDashboard,
+  ClipboardList,
+  AlertTriangle,
+  MapPin,
+  Users,
+  Diamond,
+  TrendingUp,
+  Copy,
+  Save,
 } from 'lucide-react';
 import { useScheduleProjects } from '@/lib/hooks/use-schedule';
 import { useTranslation } from '@/lib/translations';
-import type { ScheduleProject, ScheduleProjectStatus } from '@/lib/types/scheduling';
+import { getSupabase } from '@/lib/supabase';
+import type { ScheduleProject, ScheduleProjectStatus, ScheduleTask } from '@/lib/types/scheduling';
 
 const STATUS_CONFIG: Record<ScheduleProjectStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   draft: { label: 'Draft', color: 'text-secondary', bg: 'bg-surface-alt', icon: Clock },
@@ -35,7 +44,47 @@ export default function SchedulingPage() {
   const [showNewModal, setShowNewModal] = useState(false);
   const [newName, setNewName] = useState('');
   const [creating, setCreating] = useState(false);
+  const [activeTab, setActiveTab] = useState<'projects' | 'dispatch'>('projects');
+  const [todayTasks, setTodayTasks] = useState<ScheduleTask[]>([]);
+  const [loadingDispatch, setLoadingDispatch] = useState(false);
   const { projects, loading, createProject } = useScheduleProjects();
+
+  // Load today's tasks for dispatch view
+  useEffect(() => {
+    if (activeTab !== 'dispatch') return;
+    const loadTodayTasks = async () => {
+      setLoadingDispatch(true);
+      try {
+        const supabase = getSupabase();
+        const today = new Date().toISOString().slice(0, 10);
+        const { data } = await supabase
+          .from('schedule_tasks')
+          .select('*')
+          .is('deleted_at', null)
+          .lte('planned_start', today)
+          .gte('planned_finish', today)
+          .lt('percent_complete', 100)
+          .order('planned_start', { ascending: true });
+        setTodayTasks(data || []);
+      } catch {
+        // silent
+      } finally {
+        setLoadingDispatch(false);
+      }
+    };
+    loadTodayTasks();
+  }, [activeTab]);
+
+  // Group today's tasks by assigned_to for dispatch
+  const dispatchGroups = useMemo(() => {
+    const groups: Record<string, ScheduleTask[]> = { unassigned: [] };
+    for (const task of todayTasks) {
+      const key = task.assigned_to || 'unassigned';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(task);
+    }
+    return groups;
+  }, [todayTasks]);
 
   const filtered = projects.filter((p) => {
     const matchesSearch = !search || p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -50,6 +99,27 @@ export default function SchedulingPage() {
     onTrack: projects.filter(p => p.status === 'active' && p.overall_percent_complete >= 0).length,
     complete: projects.filter(p => p.status === 'complete').length,
   };
+
+  // Schedule vs actual — count projects behind/ahead/on-track
+  const varianceStats = useMemo(() => {
+    let behind = 0, ahead = 0, onTrack = 0;
+    for (const p of projects.filter(p => p.status === 'active')) {
+      if (p.planned_finish && p.actual_finish) {
+        const diff = new Date(p.actual_finish).getTime() - new Date(p.planned_finish).getTime();
+        if (diff > 86400000) behind++;
+        else if (diff < -86400000) ahead++;
+        else onTrack++;
+      } else if (p.planned_finish) {
+        // Still in progress — compare planned finish to today
+        const diff = new Date().getTime() - new Date(p.planned_finish).getTime();
+        if (diff > 86400000) behind++;
+        else onTrack++;
+      } else {
+        onTrack++;
+      }
+    }
+    return { behind, ahead, onTrack };
+  }, [projects]);
 
   const handleCreate = async () => {
     if (!newName.trim() || creating) return;
@@ -108,66 +178,182 @@ export default function SchedulingPage() {
         </div>
       </div>
 
+      {/* Tabs: Projects | Today's Dispatch */}
+      <div className="flex gap-1 bg-surface border border-main rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setActiveTab('projects')}
+          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'projects' ? 'bg-accent text-on-accent' : 'text-secondary hover:text-primary'
+          }`}
+        >
+          <GanttChart className="w-4 h-4" />
+          Schedules
+        </button>
+        <button
+          onClick={() => setActiveTab('dispatch')}
+          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'dispatch' ? 'bg-accent text-on-accent' : 'text-secondary hover:text-primary'
+          }`}
+        >
+          <ClipboardList className="w-4 h-4" />
+          Today&apos;s Dispatch
+        </button>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard label={t('scheduling.totalSchedules')} value={stats.total} />
         <StatCard label={t('common.active')} value={stats.active} color="text-success" />
-        <StatCard label={t('scheduling.onTrack')} value={stats.onTrack} color="text-info" />
+        <StatCard label={t('scheduling.onTrack')} value={varianceStats.onTrack} color="text-info" />
         <StatCard label={t('common.completed')} value={stats.complete} color="text-accent" />
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
-          <input
-            type="text"
-            placeholder={t('scheduling.searchSchedules')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-surface border border-main rounded-lg text-sm text-primary placeholder:text-quaternary focus:outline-none focus:border-accent"
-          />
+      {/* Behind Schedule Alert */}
+      {varianceStats.behind > 0 && activeTab === 'projects' && (
+        <div className="flex items-center gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+          <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
+          <p className="text-sm text-primary">
+            <span className="font-medium">{varianceStats.behind} project{varianceStats.behind > 1 ? 's' : ''}</span> behind schedule.
+            Review and adjust task assignments to get back on track.
+          </p>
         </div>
-        <div className="flex gap-1 bg-surface border border-main rounded-lg p-1">
-          {['all', 'active', 'draft', 'on_hold', 'complete'].map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                statusFilter === s ? 'bg-accent text-on-accent' : 'text-secondary hover:text-primary'
-              }`}
-            >
-              {s === 'all' ? 'All' : s === 'on_hold' ? 'On Hold' : s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
-      {/* Projects List */}
-      {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
-            <GanttChart className="w-8 h-8 text-secondary" />
+      {activeTab === 'projects' && (
+        <>
+          {/* Filters */}
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
+              <input
+                type="text"
+                placeholder={t('scheduling.searchSchedules')}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-surface border border-main rounded-lg text-sm text-primary placeholder:text-quaternary focus:outline-none focus:border-accent"
+              />
+            </div>
+            <div className="flex gap-1 bg-surface border border-main rounded-lg p-1">
+              {['all', 'active', 'draft', 'on_hold', 'complete'].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStatusFilter(s)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    statusFilter === s ? 'bg-accent text-on-accent' : 'text-secondary hover:text-primary'
+                  }`}
+                >
+                  {s === 'all' ? 'All' : s === 'on_hold' ? 'On Hold' : s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
-          <h3 className="text-lg font-semibold text-primary mb-1">{t('scheduling.noSchedules')}</h3>
-          <p className="text-sm text-secondary mb-4">{t('scheduling.noSchedulesDesc')}</p>
-          <button
-            onClick={() => setShowNewModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium"
-          >
-            <Plus className="w-4 h-4" />
-            New Schedule
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onClick={() => router.push(`/dashboard/scheduling/${project.id}`)}
-            />
-          ))}
+
+          {/* Projects List */}
+          {filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
+                <GanttChart className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-1">{t('scheduling.noSchedules')}</h3>
+              <p className="text-sm text-secondary mb-4">{t('scheduling.noSchedulesDesc')}</p>
+              <button
+                onClick={() => setShowNewModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium"
+              >
+                <Plus className="w-4 h-4" />
+                New Schedule
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filtered.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onClick={() => router.push(`/dashboard/scheduling/${project.id}`)}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Daily Dispatch View */}
+      {activeTab === 'dispatch' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-primary">
+              Today&apos;s Dispatch — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </h2>
+            <span className="text-sm text-secondary">{todayTasks.length} task{todayTasks.length !== 1 ? 's' : ''} scheduled</span>
+          </div>
+
+          {loadingDispatch ? (
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-4 w-32 mb-2" /><div className="skeleton h-3 w-48" /></div>)}
+            </div>
+          ) : todayTasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
+                <ClipboardList className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary mb-1">No tasks scheduled today</h3>
+              <p className="text-sm text-secondary">Create schedule tasks and assign team members to see them here</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {Object.entries(dispatchGroups).map(([userId, tasks]) => (
+                <div key={userId} className="bg-surface border border-main rounded-xl overflow-hidden">
+                  <div className="px-5 py-3 bg-surface-alt border-b border-main flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                      <Users className="w-4 h-4 text-accent" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-primary">
+                        {userId === 'unassigned' ? 'Unassigned' : `Team Member`}
+                      </p>
+                      <p className="text-xs text-secondary">{tasks.length} task{tasks.length !== 1 ? 's' : ''}</p>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-main">
+                    {tasks.map((task) => (
+                      <div key={task.id} className="px-5 py-3 hover:bg-surface-alt/50 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {task.task_type === 'milestone' ? (
+                              <Diamond className="w-4 h-4 text-warning flex-shrink-0" />
+                            ) : (
+                              <Activity className="w-4 h-4 text-accent flex-shrink-0" />
+                            )}
+                            <div>
+                              <p className="text-sm font-medium text-primary">{task.name}</p>
+                              {task.notes && <p className="text-xs text-secondary mt-0.5 line-clamp-1">{task.notes}</p>}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <p className="text-xs text-secondary">
+                                {task.planned_start?.slice(5, 10)} → {task.planned_finish?.slice(5, 10)}
+                              </p>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <div className="w-16 h-1.5 bg-surface-alt rounded-full overflow-hidden">
+                                  <div className="h-full bg-accent rounded-full" style={{ width: `${task.percent_complete}%` }} />
+                                </div>
+                                <span className="text-xs text-secondary">{task.percent_complete}%</span>
+                              </div>
+                            </div>
+                            {task.is_critical && (
+                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-red-500/10 text-red-500">CRIT</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -246,7 +432,39 @@ function ProjectCard({ project, onClick }: { project: ScheduleProject; onClick: 
             {project.planned_finish && ` → ${project.planned_finish.slice(5, 10)}`}
           </span>
         )}
+        {project.actual_start && (
+          <span className="flex items-center gap-1 text-success">
+            <Activity className="w-3 h-3" />
+            Started {project.actual_start.slice(5, 10)}
+          </span>
+        )}
       </div>
+
+      {/* Schedule Variance */}
+      {project.status === 'active' && project.planned_finish && (
+        (() => {
+          const today = new Date();
+          const planned = new Date(project.planned_finish);
+          const diffDays = Math.round((today.getTime() - planned.getTime()) / 86400000);
+          if (diffDays > 1) {
+            return (
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-warning">
+                <AlertTriangle className="w-3 h-3" />
+                {diffDays} day{diffDays > 1 ? 's' : ''} behind schedule
+              </div>
+            );
+          }
+          if (diffDays < -7) {
+            return (
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-success">
+                <TrendingUp className="w-3 h-3" />
+                {Math.abs(diffDays)} days ahead
+              </div>
+            );
+          }
+          return null;
+        })()
+      )}
 
       {project.overall_percent_complete > 0 && (
         <div className="mt-3 h-1.5 bg-surface-alt rounded-full overflow-hidden">
