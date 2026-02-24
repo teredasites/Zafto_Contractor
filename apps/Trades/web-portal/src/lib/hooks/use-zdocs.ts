@@ -638,6 +638,290 @@ export function useZDocs() {
     return result.id;
   };
 
+  const generatePdf = async (renderId: string, options?: {
+    companyName?: string;
+    companyPhone?: string;
+    companyEmail?: string;
+    companyAddress?: string;
+  }): Promise<string> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company associated');
+
+    // Fetch the render to get HTML content
+    const render = renders.find(r => r.id === renderId);
+    if (!render) throw new Error('Render not found');
+    if (!render.renderedHtml) throw new Error('No content to generate PDF from');
+
+    const { jsPDF } = await import('jspdf');
+
+    // Create portrait letter-size PDF
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+    const pageW = 215.9;
+    const margin = 15;
+    const contentW = pageW - margin * 2;
+
+    doc.setProperties({
+      title: render.title,
+      subject: `Document: ${render.title}`,
+      author: options?.companyName || 'Zafto',
+      creator: 'Zafto ZDocs',
+    });
+
+    let y = margin;
+
+    // Company header
+    if (options?.companyName) {
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text(options.companyName, margin, y + 6);
+      y += 8;
+
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      const contactParts = [options.companyAddress, options.companyPhone, options.companyEmail].filter(Boolean);
+      if (contactParts.length > 0) {
+        doc.text(contactParts.join('  |  '), margin, y + 4);
+        y += 6;
+      }
+
+      // Separator line
+      doc.setDrawColor(200);
+      doc.setLineWidth(0.3);
+      doc.line(margin, y + 2, margin + contentW, y + 2);
+      y += 6;
+    }
+
+    // Document title
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(render.title, margin, y + 5);
+    y += 8;
+
+    // Date
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(120, 120, 120);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, y + 3);
+    y += 8;
+    doc.setTextColor(0, 0, 0);
+
+    // Parse HTML content to plain text sections for PDF
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = render.renderedHtml;
+
+    const walkNode = (node: Node) => {
+      if (y > 260) {
+        doc.addPage();
+        y = margin;
+      }
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = (node.textContent || '').trim();
+        if (text) {
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          const lines = doc.splitTextToSize(text, contentW);
+          for (const line of lines) {
+            if (y > 260) {
+              doc.addPage();
+              y = margin;
+            }
+            doc.text(line, margin, y);
+            y += 4.5;
+          }
+        }
+        return;
+      }
+
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      const el = node as HTMLElement;
+      const tag = el.tagName.toLowerCase();
+
+      // Headings
+      if (['h1', 'h2', 'h3', 'h4'].includes(tag)) {
+        y += 3;
+        const sizes: Record<string, number> = { h1: 16, h2: 14, h3: 12, h4: 11 };
+        doc.setFontSize(sizes[tag] || 12);
+        doc.setFont('helvetica', 'bold');
+        const headText = (el.textContent || '').trim();
+        if (headText) {
+          const lines = doc.splitTextToSize(headText, contentW);
+          for (const line of lines) {
+            if (y > 260) { doc.addPage(); y = margin; }
+            doc.text(line, margin, y);
+            y += (sizes[tag] || 12) * 0.45;
+          }
+        }
+        y += 2;
+        return;
+      }
+
+      // Horizontal rule
+      if (tag === 'hr') {
+        y += 2;
+        doc.setDrawColor(200);
+        doc.setLineWidth(0.2);
+        doc.line(margin, y, margin + contentW, y);
+        y += 4;
+        return;
+      }
+
+      // List items
+      if (tag === 'li') {
+        const text = (el.textContent || '').trim();
+        if (text) {
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          const bullet = el.parentElement?.tagName.toLowerCase() === 'ol' ? `${Array.from(el.parentElement.children).indexOf(el) + 1}. ` : '  \u2022  ';
+          const lines = doc.splitTextToSize(bullet + text, contentW - 5);
+          for (const line of lines) {
+            if (y > 260) { doc.addPage(); y = margin; }
+            doc.text(line, margin + 3, y);
+            y += 4.5;
+          }
+        }
+        return;
+      }
+
+      // Bold/strong
+      if (tag === 'strong' || tag === 'b') {
+        doc.setFont('helvetica', 'bold');
+        const text = (el.textContent || '').trim();
+        if (text) {
+          doc.setFontSize(10);
+          const lines = doc.splitTextToSize(text, contentW);
+          for (const line of lines) {
+            if (y > 260) { doc.addPage(); y = margin; }
+            doc.text(line, margin, y);
+            y += 4.5;
+          }
+        }
+        doc.setFont('helvetica', 'normal');
+        return;
+      }
+
+      // Paragraph / div / blockquote — recurse into children
+      if (['p', 'div', 'blockquote', 'section'].includes(tag)) {
+        for (const child of Array.from(el.childNodes)) {
+          walkNode(child);
+        }
+        y += 2; // paragraph spacing
+        return;
+      }
+
+      // Table — simplified rendering
+      if (tag === 'table') {
+        const rows = el.querySelectorAll('tr');
+        const cellW = contentW / Math.max(1, (rows[0]?.children.length || 1));
+        doc.setFontSize(8);
+        for (const row of Array.from(rows)) {
+          if (y > 260) { doc.addPage(); y = margin; }
+          const cells = row.querySelectorAll('th, td');
+          let cx = margin;
+          const isHeader = row.querySelector('th') !== null;
+          if (isHeader) {
+            doc.setFillColor(240, 240, 240);
+            doc.rect(margin, y - 3, contentW, 5, 'F');
+            doc.setFont('helvetica', 'bold');
+          } else {
+            doc.setFont('helvetica', 'normal');
+          }
+          for (const cell of Array.from(cells)) {
+            const text = (cell.textContent || '').trim();
+            doc.text(text, cx + 1, y, { maxWidth: cellW - 2 });
+            cx += cellW;
+          }
+          y += 5;
+        }
+        y += 2;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        return;
+      }
+
+      // Default: recurse into children
+      for (const child of Array.from(el.childNodes)) {
+        walkNode(child);
+      }
+    };
+
+    for (const child of Array.from(tempDiv.childNodes)) {
+      walkNode(child);
+    }
+
+    // Footer on last page
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150, 150, 150);
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        pageW / 2,
+        279.4 - 8,
+        { align: 'center' }
+      );
+      doc.text(
+        `Generated by Zafto ZDocs`,
+        pageW - margin,
+        279.4 - 8,
+        { align: 'right' }
+      );
+      doc.setTextColor(0, 0, 0);
+    }
+
+    // Convert to blob and upload to Supabase Storage
+    const pdfBlob = doc.output('blob');
+    const storagePath = `${companyId}/zdocs/${renderId}.pdf`;
+
+    const { error: uploadErr } = await supabase.storage
+      .from('documents')
+      .upload(storagePath, pdfBlob, {
+        contentType: 'application/pdf',
+        upsert: true,
+      });
+
+    if (uploadErr) throw new Error(`PDF upload failed: ${uploadErr.message}`);
+
+    // Update render record with storage path
+    const { error: updateErr } = await supabase
+      .from('zdocs_renders')
+      .update({ pdf_storage_path: storagePath })
+      .eq('id', renderId);
+
+    if (updateErr) throw new Error(`Failed to update render: ${updateErr.message}`);
+
+    // Refresh renders to reflect the new pdf_storage_path
+    await fetchRenders();
+
+    return storagePath;
+  };
+
+  const downloadPdf = async (renderId: string): Promise<void> => {
+    const supabase = getSupabase();
+    const render = renders.find(r => r.id === renderId);
+    if (!render?.pdfStoragePath) throw new Error('No PDF available');
+
+    const { data, error: err } = await supabase.storage
+      .from('documents')
+      .createSignedUrl(render.pdfStoragePath, 60 * 60); // 1 hour
+
+    if (err || !data?.signedUrl) throw new Error('Failed to get download URL');
+
+    // Trigger browser download
+    const a = document.createElement('a');
+    a.href = data.signedUrl;
+    a.download = `${render.title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   const deleteRender = async (id: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase.from('zdocs_renders').update({ deleted_at: new Date().toISOString() }).eq('id', id);
@@ -677,6 +961,9 @@ export function useZDocs() {
     sendForSignature,
     duplicateTemplate,
     deleteRender,
+    // PDF
+    generatePdf,
+    downloadPdf,
     // Versioning
     fetchTemplateVersions,
     revertToVersion,
