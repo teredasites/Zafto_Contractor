@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Plus,
   Wrench,
@@ -23,11 +23,12 @@ import { Button } from '@/components/ui/button';
 import { SearchInput, Select, Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 import { useRestorationTools } from '@/lib/hooks/use-restoration-tools';
 import { useTranslation } from '@/lib/translations';
 import type { RestorationEquipmentWithJob } from '@/lib/hooks/use-restoration-tools';
 import { EQUIPMENT_TYPE_LABELS } from '@/lib/hooks/mappers';
-import type { EquipmentStatus } from '@/types';
+import type { EquipmentStatus, EquipmentType } from '@/types';
 
 type RestorationStatus = 'deployed' | 'removed' | 'maintenance' | 'lost';
 
@@ -72,7 +73,7 @@ export default function EquipmentPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<RestorationEquipmentWithJob | null>(null);
-  const { equipment, activeEquipment, stats, loading, updateEquipment } = useRestorationTools();
+  const { equipment, activeEquipment, stats, loading, updateEquipment, addEquipment } = useRestorationTools();
 
   if (loading) {
     return (
@@ -226,7 +227,7 @@ export default function EquipmentPage() {
 
       {/* Add Modal */}
       {showAddModal && (
-        <AddEquipmentModal onClose={() => setShowAddModal(false)} />
+        <AddEquipmentModal onClose={() => setShowAddModal(false)} onAdd={addEquipment} />
       )}
 
       {/* Detail Modal */}
@@ -442,11 +443,94 @@ function EquipmentDetailModal({
   );
 }
 
-function AddEquipmentModal({ onClose }: { onClose: () => void }) {
+function AddEquipmentModal({ onClose, onAdd }: {
+  onClose: () => void;
+  onAdd: (input: {
+    jobId: string;
+    claimId?: string;
+    equipmentType: EquipmentType;
+    make?: string;
+    model?: string;
+    serialNumber?: string;
+    assetTag?: string;
+    areaDeployed: string;
+    dailyRate: number;
+    notes?: string;
+  }) => Promise<string>;
+}) {
   const { t } = useTranslation();
+  const [equipmentType, setEquipmentType] = useState<string>('dehumidifier');
+  const [make, setMake] = useState('');
+  const [model, setModel] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
+  const [assetTag, setAssetTag] = useState('');
+  const [areaDeployed, setAreaDeployed] = useState('');
+  const [dailyRate, setDailyRate] = useState('');
+  const [notes, setNotes] = useState('');
+  const [jobId, setJobId] = useState('');
+  const [jobs, setJobs] = useState<Array<{ id: string; title: string }>>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  // Fetch active jobs for the selector
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data, error: err } = await supabase
+          .from('jobs')
+          .select('id, title')
+          .is('deleted_at', null)
+          .not('status', 'in', '("cancelled","completed")')
+          .order('created_at', { ascending: false })
+          .limit(200);
+        if (!err && data) {
+          setJobs(data.map((j: Record<string, unknown>) => ({ id: j.id as string, title: (j.title as string) || 'Untitled Job' })));
+        }
+      } catch {
+        // Non-critical
+      } finally {
+        setJobsLoading(false);
+      }
+    };
+    fetchJobs();
+  }, []);
+
+  const handleSubmit = async () => {
+    setFormError(null);
+
+    // Validation
+    if (!jobId) { setFormError('Please select a job.'); return; }
+    if (!areaDeployed.trim()) { setFormError('Area Deployed is required.'); return; }
+    const rate = parseFloat(dailyRate);
+    if (isNaN(rate) || rate < 0) { setFormError('Please enter a valid daily rate.'); return; }
+
+    try {
+      setSaving(true);
+      await onAdd({
+        jobId,
+        equipmentType: equipmentType as EquipmentType,
+        make: make.trim() || undefined,
+        model: model.trim() || undefined,
+        serialNumber: serialNumber.trim() || undefined,
+        assetTag: assetTag.trim() || undefined,
+        areaDeployed: areaDeployed.trim(),
+        dailyRate: rate,
+        notes: notes.trim() || undefined,
+      });
+      onClose();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to add equipment';
+      setFormError(msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>{t('common.addEquipment')}</CardTitle>
@@ -456,35 +540,75 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Job Selector */}
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Assign to Job *</label>
+            <select
+              value={jobId}
+              onChange={(e) => setJobId(e.target.value)}
+              className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main"
+            >
+              <option value="">{jobsLoading ? 'Loading jobs...' : 'Select a job...'}</option>
+              {jobs.map((j) => (
+                <option key={j.id} value={j.id}>{j.title}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Equipment Type */}
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Equipment Type *</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
+            <select
+              value={equipmentType}
+              onChange={(e) => setEquipmentType(e.target.value)}
+              className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main"
+            >
               {Object.entries(EQUIPMENT_TYPE_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}
             </select>
           </div>
+
           <div className="grid grid-cols-2 gap-4">
-            <Input label={t('fleet.make')} placeholder="Dri-Eaz" />
-            <Input label={t('fleet.model')} placeholder="LGR 3500i" />
+            <Input label={t('fleet.make')} placeholder="Dri-Eaz" value={make} onChange={(e) => setMake(e.target.value)} />
+            <Input label={t('fleet.model')} placeholder="LGR 3500i" value={model} onChange={(e) => setModel(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label={t('common.serialNumber')} placeholder={t('common.optional')} />
-            <Input label="Asset Tag" placeholder={t('common.optional')} />
+            <Input label={t('common.serialNumber')} placeholder={t('common.optional')} value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} />
+            <Input label="Asset Tag" placeholder={t('common.optional')} value={assetTag} onChange={(e) => setAssetTag(e.target.value)} />
           </div>
-          <Input label="Area Deployed *" placeholder="Living Room - East Wall" />
-          <Input label="Daily Rate ($)" type="number" placeholder="0.00" />
+          <Input label="Area Deployed *" placeholder="Living Room - East Wall" value={areaDeployed} onChange={(e) => setAreaDeployed(e.target.value)} />
+          <Input label="Daily Rate ($)" type="number" placeholder="0.00" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea
               rows={2}
               placeholder="Additional notes..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none"
             />
           </div>
+
+          {formError && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+              <AlertTriangle size={16} className="text-red-500 flex-shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-300">{formError}</p>
+            </div>
+          )}
+
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
-            <Button className="flex-1"><Plus size={16} />{t('common.addEquipment')}</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>{t('common.cancel')}</Button>
+            <Button className="flex-1" onClick={handleSubmit} disabled={saving}>
+              {saving ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Saving...
+                </span>
+              ) : (
+                <><Plus size={16} />{t('common.addEquipment')}</>
+              )}
+            </Button>
           </div>
         </CardContent>
       </Card>
