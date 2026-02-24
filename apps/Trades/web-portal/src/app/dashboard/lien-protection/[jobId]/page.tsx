@@ -41,14 +41,14 @@ function TimelineStep({ label, date, completed, hasDoc, formatDate }: {
   return (
     <div className="flex items-center gap-3 py-2">
       <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-        completed ? 'bg-emerald-500' : 'bg-zinc-800 border border-zinc-700'
+        completed ? 'bg-emerald-500' : 'bg-secondary border border-main'
       }`}>
         {completed && <CheckCircle className="h-3 w-3 text-white" />}
       </div>
       <div className="flex-1 flex items-center justify-between">
-        <span className={`text-sm ${completed ? 'text-white font-medium' : 'text-zinc-500'}`}>{label}</span>
+        <span className={`text-sm ${completed ? 'text-white font-medium' : 'text-muted'}`}>{label}</span>
         <div className="flex items-center gap-2">
-          {date && <span className="text-xs text-zinc-400">{formatDate(date)}</span>}
+          {date && <span className="text-xs text-muted">{formatDate(date)}</span>}
           {hasDoc && <FileText className="h-3.5 w-3.5 text-blue-400" />}
         </div>
       </div>
@@ -85,8 +85,8 @@ export default function LienDetailPage() {
       <div className="p-6">
         <Card>
           <CardContent className="p-8 text-center">
-            <Shield className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">{t('lienProtection.noRecord')}</p>
+            <Shield className="h-12 w-12 text-muted mx-auto mb-3" />
+            <p className="text-muted">{t('lienProtection.noRecord')}</p>
             <Link href="/dashboard/lien-protection">
               <Button variant="ghost" className="mt-4"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard</Button>
             </Link>
@@ -112,7 +112,7 @@ export default function LienDetailPage() {
               {lien.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
             </Badge>
           </div>
-          <p className="text-sm text-zinc-400 mt-1 flex items-center gap-2">
+          <p className="text-sm text-muted mt-1 flex items-center gap-2">
             <MapPin className="h-3.5 w-3.5" />
             {lien.property_city ? `${lien.property_city}, ` : ''}{lien.property_state} ({lien.state_code})
           </p>
@@ -124,7 +124,7 @@ export default function LienDetailPage() {
         {lien.contract_amount != null && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('common.contract')}</p>
+              <p className="text-xs text-muted">{t('common.contract')}</p>
               <p className="text-xl font-bold text-white">{formatCurrency(lien.contract_amount)}</p>
             </CardContent>
           </Card>
@@ -132,7 +132,7 @@ export default function LienDetailPage() {
         {lien.amount_owed != null && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('lienProtection.amountOwed')}</p>
+              <p className="text-xs text-muted">{t('lienProtection.amountOwed')}</p>
               <p className="text-xl font-bold text-amber-400">{formatCurrency(lien.amount_owed)}</p>
             </CardContent>
           </Card>
@@ -140,15 +140,15 @@ export default function LienDetailPage() {
         {rule && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs text-zinc-500">{t('lienProtection.filingDeadline')}</p>
+              <p className="text-xs text-muted">{t('lienProtection.filingDeadline')}</p>
               <p className="text-xl font-bold text-white">{rule.lien_filing_deadline_days} days</p>
-              <p className="text-xs text-zinc-500">from {rule.lien_filing_from.replace(/_/g, ' ')}</p>
+              <p className="text-xs text-muted">from {rule.lien_filing_from.replace(/_/g, ' ')}</p>
             </CardContent>
           </Card>
         )}
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-zinc-500">{t('common.state')}</p>
+            <p className="text-xs text-muted">{t('common.state')}</p>
             <p className="text-xl font-bold text-white">{lien.state_code}</p>
             {rule?.notarization_required && <p className="text-xs text-amber-400">{t('lienProtection.notarizationRequired')}</p>}
           </CardContent>
@@ -183,7 +183,7 @@ export default function LienDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-zinc-400">{t('common.preliminaryNotice')}</span>
+                <span className="text-muted">{t('common.preliminaryNotice')}</span>
                 <span className="text-white">
                   {rule.preliminary_notice_required
                     ? `${rule.preliminary_notice_deadline_days}d from ${rule.preliminary_notice_from?.replace(/_/g, ' ')}`
@@ -191,24 +191,24 @@ export default function LienDetailPage() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-zinc-400">{t('common.lienFiling')}</span>
+                <span className="text-muted">{t('common.lienFiling')}</span>
                 <span className="text-white">{rule.lien_filing_deadline_days}d from {rule.lien_filing_from.replace(/_/g, ' ')}</span>
               </div>
               {rule.lien_enforcement_deadline_days && (
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-400">{t('common.enforcement')}</span>
+                  <span className="text-muted">{t('common.enforcement')}</span>
                   <span className="text-white">{rule.lien_enforcement_deadline_days}d from filing</span>
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-400">{t('lienProtection.notarization')}</span>
-                <span className={rule.notarization_required ? 'text-amber-400' : 'text-zinc-500'}>
+                <span className="text-muted">{t('lienProtection.notarization')}</span>
+                <span className={rule.notarization_required ? 'text-amber-400' : 'text-muted'}>
                   {rule.notarization_required ? 'Required' : 'Not required'}
                 </span>
               </div>
               {rule.statutory_reference && (
-                <div className="pt-2 border-t border-zinc-800">
-                  <p className="text-xs text-zinc-500">{rule.statutory_reference}</p>
+                <div className="pt-2 border-t border-main">
+                  <p className="text-xs text-muted">{rule.statutory_reference}</p>
                 </div>
               )}
             </CardContent>
@@ -219,7 +219,7 @@ export default function LienDetailPage() {
       {lien.notes && (
         <Card>
           <CardContent className="p-4">
-            <h3 className="text-sm font-medium text-zinc-400 mb-2">{t('common.notes')}</h3>
+            <h3 className="text-sm font-medium text-muted mb-2">{t('common.notes')}</h3>
             <p className="text-sm text-white">{lien.notes}</p>
           </CardContent>
         </Card>

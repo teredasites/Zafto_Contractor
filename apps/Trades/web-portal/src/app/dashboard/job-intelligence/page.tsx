@@ -36,7 +36,7 @@ export default function JobIntelligencePage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 text-zinc-400">
+      <div className="flex flex-col items-center justify-center h-96 text-muted">
         <AlertTriangle className="h-12 w-12 mb-4 text-red-400" />
         <p>{t('jobIntel.failedToLoadIntelligenceData')}</p>
       </div>
@@ -55,7 +55,7 @@ export default function JobIntelligencePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-white">{t('jobIntelligence.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted mt-1">
             Profitability analysis from {summary.totalJobs} completed jobs
           </p>
         </div>
@@ -100,15 +100,15 @@ export default function JobIntelligencePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-zinc-800/50 p-1 rounded-lg w-fit">
+      <div className="flex gap-1 mb-6 bg-secondary p-1 rounded-lg w-fit">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setActiveTab(t.key)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
               activeTab === t.key
-                ? 'bg-zinc-700 text-white'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-secondary text-white'
+                : 'text-muted hover:text-main'
             }`}
           >
             {t.label}
@@ -147,10 +147,10 @@ function StatCard({
   valueColor?: string;
 }) {
   return (
-    <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-4">
-      <Icon className="h-5 w-5 text-zinc-500 mb-2" />
+    <div className="bg-secondary border border-main rounded-xl p-4">
+      <Icon className="h-5 w-5 text-muted mb-2" />
       <p className={`text-xl font-bold ${valueColor}`}>{value}</p>
-      <p className="text-xs text-zinc-500 mt-1">{label}</p>
+      <p className="text-xs text-muted mt-1">{label}</p>
     </div>
   );
 }
@@ -189,14 +189,14 @@ function OverviewTab({
 
       {/* Recent autopsies list */}
       <div>
-        <h3 className="text-sm font-medium text-zinc-300 mb-3">{t('jobIntel.recentJobAutopsies')}</h3>
+        <h3 className="text-sm font-medium text-main mb-3">{t('jobIntel.recentJobAutopsies')}</h3>
         {recent.length === 0 ? (
-          <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-8 text-center">
-            <BarChart3 className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">{t('jobIntel.noAutopsiesYetCompleteJobsToGenerateAnalysis')}</p>
+          <div className="bg-secondary border border-main rounded-xl p-8 text-center">
+            <BarChart3 className="h-10 w-10 text-muted mx-auto mb-3" />
+            <p className="text-muted text-sm">{t('jobIntel.noAutopsiesYetCompleteJobsToGenerateAnalysis')}</p>
           </div>
         ) : (
-          <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl divide-y divide-zinc-700/50">
+          <div className="bg-secondary border border-main rounded-xl divide-y divide-main">
             {recent.map((a) => {
               const margin = a.gross_margin_pct || 0;
               const revenue = a.revenue || 0;
@@ -206,7 +206,7 @@ function OverviewTab({
                 <Link
                   key={a.id}
                   href={`/dashboard/job-intelligence/${a.job_id}`}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-zinc-700/30 transition-colors"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-surface-hover transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -221,10 +221,10 @@ function OverviewTab({
                       {margin.toFixed(0)}%
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-zinc-200">
+                      <p className="text-sm font-medium text-main">
                         {(a.job_type || 'Unknown').replace(/_/g, ' ')}
                       </p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-muted">
                         {a.completed_at
                           ? formatDateLocale(a.completed_at)
                           : 'No date'}
@@ -233,12 +233,12 @@ function OverviewTab({
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-sm text-zinc-300">{fmtMoney(revenue)}</p>
+                      <p className="text-sm text-main">{fmtMoney(revenue)}</p>
                       <p className={`text-xs ${variance > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
                         {variance > 0 ? '+' : ''}{variance.toFixed(1)}% variance
                       </p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-zinc-600" />
+                    <ChevronRight className="h-4 w-4 text-muted" />
                   </div>
                 </Link>
               );
@@ -278,10 +278,10 @@ function ByTypeTab({ insights }: { insights: AutopsyInsight[] }) {
         return (
           <div
             key={ins.id}
-            className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5"
+            className="bg-secondary border border-main rounded-xl p-5"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-main uppercase tracking-wide">
                 {(ins.insight_key || '').replace(/_/g, ' ')}
               </h3>
               <span
@@ -309,7 +309,7 @@ function ByTypeTab({ insights }: { insights: AutopsyInsight[] }) {
               <MiniStat
                 label="Avg Variance"
                 value={`${variance > 0 ? '+' : ''}${variance.toFixed(1)}%`}
-                color={variance > 5 ? 'text-red-400' : variance < -5 ? 'text-emerald-400' : 'text-zinc-300'}
+                color={variance > 5 ? 'text-red-400' : variance < -5 ? 'text-emerald-400' : 'text-main'}
               />
               <MiniStat label="Jobs" value={count.toString()} />
             </div>
@@ -346,24 +346,24 @@ function ByTechTab({ insights }: { insights: AutopsyInsight[] }) {
         return (
           <div
             key={ins.id}
-            className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5"
+            className="bg-secondary border border-main rounded-xl p-5"
           >
             <div className="flex items-center gap-3 mb-3">
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
                   idx === 0
                     ? 'bg-emerald-500/15 text-emerald-400'
-                    : 'bg-zinc-700/50 text-zinc-400'
+                    : 'bg-secondary/50 text-muted'
                 }`}
               >
                 #{idx + 1}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <HardHat className="h-4 w-4 text-zinc-500" />
-                  <p className="text-sm font-medium text-zinc-200">{t('team.roles.technician')}</p>
+                  <HardHat className="h-4 w-4 text-muted" />
+                  <p className="text-sm font-medium text-main">{t('team.roles.technician')}</p>
                 </div>
-                <p className="text-xs text-zinc-600">
+                <p className="text-xs text-muted">
                   {(ins.insight_key || '').substring(0, 8)}...
                 </p>
               </div>
@@ -432,15 +432,15 @@ function TrendsTab({
     <div className="space-y-6">
       {/* Margin trend */}
       {monthlyMargins.length > 0 && (
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">{tr('jobIntel.monthlyMarginTrend')}</h3>
+        <div className="bg-secondary border border-main rounded-xl p-5">
+          <h3 className="text-sm font-medium text-main mb-4">{tr('jobIntel.monthlyMarginTrend')}</h3>
           <div className="space-y-2">
             {monthlyMargins.map((m) => {
               const barWidth = Math.min(Math.max(m.avgMargin, 0), 50) * 2;
               return (
                 <div key={m.month} className="flex items-center gap-3">
-                  <span className="text-xs text-zinc-500 w-16">{m.month}</span>
-                  <div className="flex-1 h-6 bg-zinc-700/30 rounded relative">
+                  <span className="text-xs text-muted w-16">{m.month}</span>
+                  <div className="flex-1 h-6 bg-secondary/30 rounded relative">
                     <div
                       className={`h-full rounded ${
                         m.avgMargin >= 20
@@ -451,11 +451,11 @@ function TrendsTab({
                       }`}
                       style={{ width: `${barWidth}%` }}
                     />
-                    <span className="absolute inset-y-0 left-2 flex items-center text-xs text-zinc-300">
+                    <span className="absolute inset-y-0 left-2 flex items-center text-xs text-main">
                       {m.avgMargin.toFixed(1)}%
                     </span>
                   </div>
-                  <span className="text-xs text-zinc-600 w-12">{m.count} jobs</span>
+                  <span className="text-xs text-muted w-12">{m.count} jobs</span>
                 </div>
               );
             })}
@@ -465,12 +465,12 @@ function TrendsTab({
 
       {/* Variance trend */}
       {trendData.length > 0 && (
-        <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-zinc-300 mb-4">{tr('jobIntel.costVarianceTrend')}</h3>
+        <div className="bg-secondary border border-main rounded-xl p-5">
+          <h3 className="text-sm font-medium text-main mb-4">{tr('jobIntel.costVarianceTrend')}</h3>
           <div className="space-y-2">
             {trendData.map((t) => (
               <div key={t.month} className="flex items-center gap-3">
-                <span className="text-xs text-zinc-500 w-16">{t.month}</span>
+                <span className="text-xs text-muted w-16">{t.month}</span>
                 <div className="flex-1 flex items-center">
                   {t.avg_variance > 0 ? (
                     <TrendingUp className="h-4 w-4 text-red-400 mr-2" />
@@ -485,7 +485,7 @@ function TrendsTab({
                     {t.avg_variance > 0 ? '+' : ''}{t.avg_variance.toFixed(1)}%
                   </span>
                 </div>
-                <span className="text-xs text-zinc-600 w-12">{t.count} jobs</span>
+                <span className="text-xs text-muted w-12">{t.count} jobs</span>
               </div>
             ))}
           </div>
@@ -500,7 +500,7 @@ function TrendsTab({
 function MiniStat({
   label,
   value,
-  color = 'text-zinc-300',
+  color = 'text-main',
 }: {
   label: string;
   value: string;
@@ -509,16 +509,16 @@ function MiniStat({
   return (
     <div>
       <p className={`text-sm font-semibold ${color}`}>{value}</p>
-      <p className="text-xs text-zinc-500">{label}</p>
+      <p className="text-xs text-muted">{label}</p>
     </div>
   );
 }
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-12 text-center">
-      <BarChart3 className="h-12 w-12 text-zinc-600 mx-auto mb-4" />
-      <p className="text-zinc-500">{message}</p>
+    <div className="bg-secondary border border-main rounded-xl p-12 text-center">
+      <BarChart3 className="h-12 w-12 text-muted mx-auto mb-4" />
+      <p className="text-muted">{message}</p>
     </div>
   );
 }

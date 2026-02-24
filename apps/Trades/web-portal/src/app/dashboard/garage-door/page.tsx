@@ -17,7 +17,7 @@ const SERVICE_COLORS: Record<string, string> = {
 
 function statusBadge(status: string | null) {
   if (!status) return null;
-  const color = status === 'pass' ? 'bg-green-500/15 text-green-400' : status === 'fail' ? 'bg-red-500/15 text-red-400' : 'bg-zinc-700 text-zinc-400';
+  const color = status === 'pass' ? 'bg-green-500/15 text-green-400' : status === 'fail' ? 'bg-red-500/15 text-red-400' : 'bg-secondary text-muted';
   return <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${color}`}>{status}</span>;
 }
 
@@ -53,7 +53,7 @@ export default function GarageDoorPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">{t('garageDoor.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">Service logs, spring specs, safety tests</p>
+          <p className="text-sm text-muted mt-1">Service logs, spring specs, safety tests</p>
         </div>
         <div className="max-w-xs">
           <SearchInput placeholder="Search services..." value={search} onChange={(v) => setSearch(v)} />
@@ -61,20 +61,20 @@ export default function GarageDoorPage() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.totalServices')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.totalServices')}</p>
           <p className="text-2xl font-bold text-white">{logs.length}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.springJobs')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.springJobs')}</p>
           <p className="text-2xl font-bold text-orange-400">{springJobs}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.failedSensors')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.failedSensors')}</p>
           <p className="text-2xl font-bold text-red-400">{failedSensors}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.revenue')}</p>
+        <div className="bg-surface border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.revenue')}</p>
           <p className="text-2xl font-bold text-green-400">
             {formatCurrency(logs.reduce((s, l) => s + (l.total_cost ?? 0), 0))}
           </p>
@@ -83,20 +83,20 @@ export default function GarageDoorPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500"><p>{t('garageDoor.noRecords')}</p></div>
+          <div className="text-center py-12 text-muted"><p>{t('garageDoor.noRecords')}</p></div>
         ) : (
           filtered.map((l) => (
-            <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <div key={l.id} className="bg-surface border border-main rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${SERVICE_COLORS[l.service_type] ?? 'bg-zinc-700 text-zinc-300'}`}>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${SERVICE_COLORS[l.service_type] ?? 'bg-secondary text-main'}`}>
                     {GARAGE_DOOR_SERVICE_LABELS[l.service_type] ?? l.service_type}
                   </span>
-                  <span className="text-xs text-zinc-500">{DOOR_TYPE_LABELS[l.door_type] ?? l.door_type}</span>
+                  <span className="text-xs text-muted">{DOOR_TYPE_LABELS[l.door_type] ?? l.door_type}</span>
                 </div>
-                <span className="text-xs text-zinc-500">{formatDate(l.created_at)}</span>
+                <span className="text-xs text-muted">{formatDate(l.created_at)}</span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-zinc-500">
+              <div className="flex items-center gap-3 text-xs text-muted">
                 {l.door_width_inches && l.door_height_inches && (
                   <span>{Math.round(l.door_width_inches / 12)}&apos; x {Math.round(l.door_height_inches / 12)}&apos;</span>
                 )}
@@ -106,18 +106,18 @@ export default function GarageDoorPage() {
               <div className="flex items-center gap-2 mt-2">
                 {l.safety_sensor_status && (
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-zinc-500">Sensors:</span>
+                    <span className="text-[10px] text-muted">Sensors:</span>
                     {statusBadge(l.safety_sensor_status)}
                   </div>
                 )}
                 {l.balance_test_result && (
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-zinc-500">Balance:</span>
+                    <span className="text-[10px] text-muted">Balance:</span>
                     {statusBadge(l.balance_test_result)}
                   </div>
                 )}
               </div>
-              {l.diagnosis && <p className="text-xs text-zinc-400 mt-1">{l.diagnosis}</p>}
+              {l.diagnosis && <p className="text-xs text-muted mt-1">{l.diagnosis}</p>}
               {l.total_cost && <p className="text-sm font-bold text-white mt-1">{formatCurrency(Number(l.total_cost))}</p>}
             </div>
           ))

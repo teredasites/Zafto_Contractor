@@ -52,13 +52,13 @@ function VideoRow({ video }: { video: AsyncVideo }) {
   };
 
   return (
-    <div className="flex items-center gap-4 px-4 py-3 hover:bg-zinc-800/50 border-b border-zinc-800">
-      <div className="flex-shrink-0 w-10 h-10 rounded bg-zinc-800 flex items-center justify-center">
-        <Play className="h-4 w-4 text-zinc-400" />
+    <div className="flex items-center gap-4 px-4 py-3 hover:bg-surface-hover border-b border-main">
+      <div className="flex-shrink-0 w-10 h-10 rounded bg-secondary flex items-center justify-center">
+        <Play className="h-4 w-4 text-muted" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-zinc-100 truncate">
+          <span className="font-medium text-main truncate">
             {video.title || `Video to ${video.recipientName || video.recipientEmail || 'Unknown'}`}
           </span>
           <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">
@@ -70,7 +70,7 @@ function VideoRow({ video }: { video: AsyncVideo }) {
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-3 text-xs text-zinc-500 mt-0.5">
+        <div className="flex items-center gap-3 text-xs text-muted mt-0.5">
           <span className="flex items-center gap-1">
             <Send className="h-3 w-3" />
             {video.sentByName}
@@ -91,13 +91,13 @@ function VideoRow({ video }: { video: AsyncVideo }) {
           <span>{formatDateLocale(video.sentAt)}</span>
         </div>
         {video.message && (
-          <p className="text-xs text-zinc-400 mt-1 line-clamp-1">{video.message}</p>
+          <p className="text-xs text-muted mt-1 line-clamp-1">{video.message}</p>
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <span className={cn(
           'flex items-center gap-1 text-xs',
-          video.viewCount > 0 ? 'text-emerald-400' : 'text-zinc-500'
+          video.viewCount > 0 ? 'text-emerald-400' : 'text-muted'
         )}>
           <Eye className="h-3 w-3" />
           {video.viewCount > 0 ? `Viewed ${video.viewCount}x` : 'Not viewed'}
@@ -137,39 +137,39 @@ export default function AsyncVideosPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">{t('meetingsAsyncVideos.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">{t('meetingsAsync.loomstyleVideoMessagesTiedToJobs')}</p>
+            <h1 className="text-2xl font-bold text-main">{t('meetingsAsyncVideos.title')}</h1>
+            <p className="text-sm text-muted mt-1">{t('meetingsAsync.loomstyleVideoMessagesTiedToJobs')}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-surface border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Video className="h-4 w-4" />Total Videos
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{videos.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{videos.length}</p>
             </CardContent>
           </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-surface border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Send className="h-4 w-4" />Sent
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{sent.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{sent.length}</p>
             </CardContent>
           </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-surface border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Eye className="h-4 w-4 text-amber-400" />Not Viewed
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{unviewed.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{unviewed.length}</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-surface border-main">
           <CardHeader className="pb-0">
             <div className="flex items-center justify-between">
               <div className="flex gap-1">
@@ -200,13 +200,13 @@ export default function AsyncVideosPage() {
           </CardHeader>
           <CardContent className="p-0 mt-4">
             {loading ? (
-              <div className="flex items-center justify-center py-12 text-zinc-500">
+              <div className="flex items-center justify-center py-12 text-muted">
                 <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading...
               </div>
             ) : error ? (
               <div className="text-red-400 text-center py-12">{error}</div>
             ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+              <div className="flex flex-col items-center justify-center py-12 text-muted">
                 <Video className="h-8 w-8 mb-2 opacity-50" />
                 <p>No {tab === 'all' ? '' : tab} videos</p>
                 <p className="text-xs mt-1">{t('meetingsAsync.recordAVideoFromAnyJobPage')}</p>

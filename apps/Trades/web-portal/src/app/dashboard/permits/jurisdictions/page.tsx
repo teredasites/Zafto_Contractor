@@ -50,12 +50,12 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
     <Card>
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-zinc-800">
-            <Icon className="h-4 w-4 text-zinc-400" />
+          <div className="p-2 rounded-lg bg-secondary">
+            <Icon className="h-4 w-4 text-muted" />
           </div>
           <div>
             <p className="text-2xl font-bold text-white">{value}</p>
-            <p className="text-xs text-zinc-500">{label}</p>
+            <p className="text-xs text-muted">{label}</p>
           </div>
         </div>
       </CardContent>
@@ -167,7 +167,7 @@ export default function JurisdictionsPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-red-400 mb-2">{t('permitsJurisdictions.failedToLoadJurisdictions')}</p>
-            <p className="text-sm text-zinc-500">{error}</p>
+            <p className="text-sm text-muted">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -180,7 +180,7 @@ export default function JurisdictionsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">{t('permitsJurisdictions.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted mt-1">
             Community-powered building department database. Help fellow contractors by updating info for your area.
           </p>
         </div>
@@ -303,9 +303,9 @@ export default function JurisdictionsPage() {
       {filtered.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center">
-            <MapPin className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">{t('permitsJurisdictions.noJurisdictionsFound')}</p>
-            <p className="text-sm text-zinc-500 mt-1">
+            <MapPin className="h-12 w-12 text-muted mx-auto mb-3" />
+            <p className="text-muted">{t('permitsJurisdictions.noJurisdictionsFound')}</p>
+            <p className="text-sm text-muted mt-1">
               {searchQuery ? 'Try adjusting your search' : 'Select a state or add a new jurisdiction'}
             </p>
           </CardContent>
@@ -313,7 +313,7 @@ export default function JurisdictionsPage() {
       ) : (
         <div className="space-y-3">
           {filtered.map(j => (
-            <Card key={j.id} className="hover:border-zinc-600 transition-colors">
+            <Card key={j.id} className="hover:border-muted transition-colors">
               <CardContent className="p-4">
                 {editingId === j.id ? (
                   /* Edit Mode */
@@ -379,14 +379,14 @@ export default function JurisdictionsPage() {
                       </div>
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                         {j.building_dept_name && (
-                          <div className="flex items-center gap-2 text-zinc-400">
-                            <Building className="h-3.5 w-3.5 text-zinc-500" />
+                          <div className="flex items-center gap-2 text-muted">
+                            <Building className="h-3.5 w-3.5 text-muted" />
                             <span>{j.building_dept_name}</span>
                           </div>
                         )}
                         {j.building_dept_phone && (
-                          <div className="flex items-center gap-2 text-zinc-400">
-                            <Phone className="h-3.5 w-3.5 text-zinc-500" />
+                          <div className="flex items-center gap-2 text-muted">
+                            <Phone className="h-3.5 w-3.5 text-muted" />
                             <span>{j.building_dept_phone}</span>
                           </div>
                         )}
@@ -414,20 +414,20 @@ export default function JurisdictionsPage() {
                           </a>
                         )}
                         {j.avg_turnaround_days != null && (
-                          <div className="flex items-center gap-2 text-zinc-400">
-                            <Clock className="h-3.5 w-3.5 text-zinc-500" />
+                          <div className="flex items-center gap-2 text-muted">
+                            <Clock className="h-3.5 w-3.5 text-muted" />
                             <span>{j.avg_turnaround_days} day avg</span>
                           </div>
                         )}
                         {j.contribution_count > 0 && (
-                          <div className="flex items-center gap-2 text-zinc-400">
-                            <Users className="h-3.5 w-3.5 text-zinc-500" />
+                          <div className="flex items-center gap-2 text-muted">
+                            <Users className="h-3.5 w-3.5 text-muted" />
                             <span>{j.contribution_count} update{j.contribution_count !== 1 ? 's' : ''}</span>
                           </div>
                         )}
                       </div>
                       {j.notes && (
-                        <p className="text-xs text-zinc-500 mt-2">{j.notes}</p>
+                        <p className="text-xs text-muted mt-2">{j.notes}</p>
                       )}
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => startEdit(j)} className="ml-4">
@@ -442,7 +442,7 @@ export default function JurisdictionsPage() {
       )}
 
       {/* Attribution */}
-      <p className="text-xs text-zinc-600 text-center">
+      <p className="text-xs text-muted text-center">
         Address data powered by OpenStreetMap. Jurisdiction data is community-contributed and may not be fully verified.
       </p>
     </div>
