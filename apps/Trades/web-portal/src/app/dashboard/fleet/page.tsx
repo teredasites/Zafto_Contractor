@@ -99,86 +99,6 @@ const priorityConfig: Record<string, { label: string; variant: 'secondary' | 'in
   critical: { label: 'Critical', variant: 'error' },
 };
 
-// ────────────────────────────────────────────────────────
-// Demo data — Maintenance schedule items
-// ────────────────────────────────────────────────────────
-
-interface MaintenanceScheduleItem {
-  id: string;
-  vehicleName: string;
-  serviceType: string;
-  triggerType: 'mileage' | 'date' | 'both';
-  nextDueDate: string | null;
-  nextDueMileage: number | null;
-  currentMileage: number;
-  lastServiceDate: string | null;
-  status: 'upcoming' | 'overdue' | 'due_soon';
-}
-
-const demoMaintenanceSchedule: MaintenanceScheduleItem[] = [
-  { id: 'ms-1', vehicleName: '2023 Ford F-150 #101', serviceType: 'Oil Change', triggerType: 'both', nextDueDate: '2026-03-10', nextDueMileage: 48000, currentMileage: 47200, lastServiceDate: '2025-12-15', status: 'due_soon' },
-  { id: 'ms-2', vehicleName: '2022 Chevy Express #102', serviceType: 'Tire Rotation', triggerType: 'mileage', nextDueDate: null, nextDueMileage: 35000, currentMileage: 34500, lastServiceDate: '2025-11-20', status: 'due_soon' },
-  { id: 'ms-3', vehicleName: '2023 Ford F-150 #101', serviceType: 'Brake Inspection', triggerType: 'date', nextDueDate: '2026-02-15', nextDueMileage: null, currentMileage: 47200, lastServiceDate: '2025-08-15', status: 'overdue' },
-  { id: 'ms-4', vehicleName: '2024 Ram ProMaster #103', serviceType: 'DOT Annual Inspection', triggerType: 'date', nextDueDate: '2026-06-01', nextDueMileage: null, currentMileage: 12800, lastServiceDate: '2025-06-01', status: 'upcoming' },
-  { id: 'ms-5', vehicleName: '2022 Chevy Express #102', serviceType: 'Transmission Fluid', triggerType: 'mileage', nextDueDate: null, nextDueMileage: 40000, currentMileage: 34500, lastServiceDate: null, status: 'upcoming' },
-  { id: 'ms-6', vehicleName: '2021 Toyota Tacoma #104', serviceType: 'Oil Change', triggerType: 'both', nextDueDate: '2026-02-20', nextDueMileage: 62000, currentMileage: 62400, lastServiceDate: '2025-11-01', status: 'overdue' },
-];
-
-// ────────────────────────────────────────────────────────
-// Demo data — Fuel log entries
-// ────────────────────────────────────────────────────────
-
-interface DemoFuelEntry {
-  id: string;
-  vehicleName: string;
-  fuelDate: string;
-  gallons: number;
-  pricePerGallon: number;
-  totalCost: number;
-  odometer: number;
-  stationName: string;
-  fuelType: string;
-  mpg: number | null;
-  anomaly: boolean;
-}
-
-const demoFuelEntries: DemoFuelEntry[] = [
-  { id: 'fl-1', vehicleName: '2023 Ford F-150 #101', fuelDate: '2026-02-22', gallons: 18.5, pricePerGallon: 3.45, totalCost: 63.83, odometer: 47200, stationName: 'Shell - Main St', fuelType: 'Regular', mpg: 18.2, anomaly: false },
-  { id: 'fl-2', vehicleName: '2022 Chevy Express #102', fuelDate: '2026-02-21', gallons: 24.8, pricePerGallon: 3.52, totalCost: 87.30, odometer: 34500, stationName: 'BP - Highway 9', fuelType: 'Regular', mpg: 14.1, anomaly: false },
-  { id: 'fl-3', vehicleName: '2024 Ram ProMaster #103', fuelDate: '2026-02-20', gallons: 22.3, pricePerGallon: 3.48, totalCost: 77.60, odometer: 12800, stationName: 'Exxon - Oak Ave', fuelType: 'Regular', mpg: 16.5, anomaly: false },
-  { id: 'fl-4', vehicleName: '2021 Toyota Tacoma #104', fuelDate: '2026-02-19', gallons: 14.2, pricePerGallon: 3.45, totalCost: 48.99, odometer: 62400, stationName: 'Costco Gas', fuelType: 'Regular', mpg: 22.8, anomaly: false },
-  { id: 'fl-5', vehicleName: '2023 Ford F-150 #101', fuelDate: '2026-02-18', gallons: 19.1, pricePerGallon: 3.42, totalCost: 65.32, odometer: 46860, stationName: 'Speedway - 5th St', fuelType: 'Regular', mpg: 17.8, anomaly: false },
-  { id: 'fl-6', vehicleName: '2022 Chevy Express #102', fuelDate: '2026-02-17', gallons: 26.5, pricePerGallon: 3.55, totalCost: 94.08, odometer: 34150, stationName: 'Shell - Main St', fuelType: 'Regular', mpg: 8.3, anomaly: true },
-  { id: 'fl-7', vehicleName: '2024 Ram ProMaster #103', fuelDate: '2026-02-15', gallons: 21.0, pricePerGallon: 3.50, totalCost: 73.50, odometer: 12430, stationName: 'BP - Highway 9', fuelType: 'Regular', mpg: 17.1, anomaly: false },
-  { id: 'fl-8', vehicleName: '2021 Toyota Tacoma #104', fuelDate: '2026-02-14', gallons: 13.8, pricePerGallon: 3.49, totalCost: 48.16, odometer: 62080, stationName: 'QuikTrip - Elm', fuelType: 'Regular', mpg: 23.2, anomaly: false },
-];
-
-// ────────────────────────────────────────────────────────
-// Demo data — Inspection checklists
-// ────────────────────────────────────────────────────────
-
-interface InspectionRecord {
-  id: string;
-  vehicleName: string;
-  inspectorName: string;
-  inspectionDate: string;
-  result: 'pass' | 'fail' | 'missing';
-  itemsPassed: number;
-  itemsFailed: number;
-  totalItems: number;
-  defects: string[];
-  notes: string | null;
-}
-
-const demoInspections: InspectionRecord[] = [
-  { id: 'insp-1', vehicleName: '2023 Ford F-150 #101', inspectorName: 'Mike Johnson', inspectionDate: '2026-02-24', result: 'pass', itemsPassed: 26, itemsFailed: 0, totalItems: 26, defects: [], notes: null },
-  { id: 'insp-2', vehicleName: '2022 Chevy Express #102', inspectorName: 'Sarah Williams', inspectionDate: '2026-02-24', result: 'fail', itemsPassed: 23, itemsFailed: 3, totalItems: 26, defects: ['Left turn signal out', 'Wiper blade worn', 'Low tire pressure — rear left'], notes: 'Scheduled for repair before next dispatch' },
-  { id: 'insp-3', vehicleName: '2024 Ram ProMaster #103', inspectorName: 'Carlos Reyes', inspectionDate: '2026-02-24', result: 'pass', itemsPassed: 26, itemsFailed: 0, totalItems: 26, defects: [], notes: null },
-  { id: 'insp-4', vehicleName: '2021 Toyota Tacoma #104', inspectorName: 'Mike Johnson', inspectionDate: '2026-02-23', result: 'pass', itemsPassed: 25, itemsFailed: 1, totalItems: 26, defects: ['Minor windshield chip — monitor'], notes: 'Chip does not impair visibility, monitor for spreading' },
-  { id: 'insp-5', vehicleName: '2023 Ford F-150 #101', inspectorName: 'Sarah Williams', inspectionDate: '2026-02-23', result: 'pass', itemsPassed: 26, itemsFailed: 0, totalItems: 26, defects: [], notes: null },
-  { id: 'insp-6', vehicleName: '2022 Chevy Express #102', inspectorName: 'Carlos Reyes', inspectionDate: '2026-02-22', result: 'fail', itemsPassed: 22, itemsFailed: 4, totalItems: 26, defects: ['Brake light out', 'Fluid leak under engine', 'Fire extinguisher expired', 'Cracked mirror — passenger side'], notes: 'Vehicle pulled from service until repairs completed' },
-];
-
 const DOT_CHECKLIST_ITEMS = [
   'Engine oil level',
   'Coolant level',
@@ -207,20 +127,6 @@ const DOT_CHECKLIST_ITEMS = [
   'First aid kit',
   'Reflective triangles/flares',
 ];
-
-// ────────────────────────────────────────────────────────
-// Fuel stats calculator
-// ────────────────────────────────────────────────────────
-
-function computeFuelStats(entries: DemoFuelEntry[]) {
-  if (entries.length === 0) return { avgMpg: 0, avgCostPerGal: 0, totalSpent: 0, anomalyCount: 0 };
-  const withMpg = entries.filter((e) => e.mpg !== null);
-  const avgMpg = withMpg.length > 0 ? withMpg.reduce((s, e) => s + (e.mpg || 0), 0) / withMpg.length : 0;
-  const avgCostPerGal = entries.reduce((s, e) => s + e.pricePerGallon, 0) / entries.length;
-  const totalSpent = entries.reduce((s, e) => s + e.totalCost, 0);
-  const anomalyCount = entries.filter((e) => e.anomaly).length;
-  return { avgMpg, avgCostPerGal, totalSpent, anomalyCount };
-}
 
 // ────────────────────────────────────────────────────────
 // Main Page
@@ -270,33 +176,188 @@ export default function FleetPage() {
     });
   }, [vehicles, search, statusFilter]);
 
+  // ── Build maintenance schedule from hook data ──
+  const maintenanceSchedule = useMemo(() => {
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const thirtyDaysOut = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    const vehicleMap = new Map(vehicles.map((v) => [v.id, v]));
+
+    return maintenance
+      .filter((m) => m.status === 'scheduled' || m.status === 'in_progress')
+      .map((m) => {
+        const vehicle = vehicleMap.get(m.vehicleId);
+        const currentMileage = vehicle?.currentOdometer ?? 0;
+
+        let status: 'overdue' | 'due_soon' | 'upcoming' = 'upcoming';
+        if (m.scheduledDate && m.scheduledDate < todayStr) {
+          status = 'overdue';
+        } else if (m.nextDueOdometer != null && currentMileage >= m.nextDueOdometer) {
+          status = 'overdue';
+        } else if (m.scheduledDate && m.scheduledDate <= thirtyDaysOut) {
+          status = 'due_soon';
+        } else if (m.nextDueOdometer != null && m.nextDueOdometer - currentMileage <= 1000) {
+          status = 'due_soon';
+        }
+
+        let triggerType: 'mileage' | 'date' | 'both' = 'date';
+        if (m.scheduledDate && m.nextDueOdometer != null) triggerType = 'both';
+        else if (m.nextDueOdometer != null) triggerType = 'mileage';
+
+        return {
+          id: m.id,
+          vehicleName: vehicle?.vehicleName ?? 'Unknown Vehicle',
+          serviceType: maintenanceTypeLabels[m.maintenanceType] || m.title,
+          triggerType,
+          nextDueDate: m.scheduledDate || m.nextDueDate,
+          nextDueMileage: m.nextDueOdometer,
+          currentMileage,
+          lastServiceDate: m.completedDate,
+          status,
+        };
+      })
+      .sort((a, b) => {
+        const order = { overdue: 0, due_soon: 1, upcoming: 2 };
+        return order[a.status] - order[b.status];
+      });
+  }, [maintenance, vehicles]);
+
   // ── Maintenance schedule filtering ──
   const filteredSchedule = useMemo(() => {
-    if (maintenanceFilter === 'all') return demoMaintenanceSchedule;
-    return demoMaintenanceSchedule.filter((m) => m.status === maintenanceFilter);
-  }, [maintenanceFilter]);
+    if (maintenanceFilter === 'all') return maintenanceSchedule;
+    return maintenanceSchedule.filter((m) => m.status === maintenanceFilter);
+  }, [maintenanceFilter, maintenanceSchedule]);
+
+  // ── Fuel log entries with computed MPG ──
+  const fuelEntriesWithMpg = useMemo(() => {
+    const vehicleMap = new Map(vehicles.map((v) => [v.id, v]));
+    const sortedByVehicleAndDate = [...fuelLogs].sort((a, b) => {
+      if (a.vehicleId !== b.vehicleId) return a.vehicleId.localeCompare(b.vehicleId);
+      return a.fuelDate.localeCompare(b.fuelDate);
+    });
+
+    const mpgMap = new Map<string, number | null>();
+    let prevByVehicle = new Map<string, FuelLog>();
+
+    for (const entry of sortedByVehicleAndDate) {
+      const prev = prevByVehicle.get(entry.vehicleId);
+      if (prev && prev.odometer != null && entry.odometer != null && entry.gallons > 0) {
+        const milesDriven = entry.odometer - prev.odometer;
+        if (milesDriven > 0) {
+          mpgMap.set(entry.id, Math.round((milesDriven / entry.gallons) * 10) / 10);
+        } else {
+          mpgMap.set(entry.id, null);
+        }
+      } else {
+        mpgMap.set(entry.id, null);
+      }
+      prevByVehicle.set(entry.vehicleId, entry);
+    }
+
+    return fuelLogs.map((f) => {
+      const vehicle = vehicleMap.get(f.vehicleId);
+      const mpg = mpgMap.get(f.id) ?? null;
+      const avgMpgForVehicle = fuelLogs
+        .filter((fl) => fl.vehicleId === f.vehicleId)
+        .reduce<number[]>((acc, fl) => {
+          const m = mpgMap.get(fl.id);
+          if (m != null) acc.push(m);
+          return acc;
+        }, []);
+      const vehicleAvg = avgMpgForVehicle.length > 0
+        ? avgMpgForVehicle.reduce((s, v) => s + v, 0) / avgMpgForVehicle.length
+        : null;
+      const anomaly = mpg != null && vehicleAvg != null && mpg < vehicleAvg * 0.6;
+
+      return {
+        id: f.id,
+        vehicleId: f.vehicleId,
+        vehicleName: vehicle?.vehicleName ?? 'Unknown Vehicle',
+        fuelDate: f.fuelDate,
+        gallons: f.gallons,
+        pricePerGallon: f.pricePerGallon,
+        totalCost: f.totalCost,
+        odometer: f.odometer,
+        stationName: f.stationName ?? '',
+        fuelType: f.fuelType,
+        mpg,
+        anomaly,
+      };
+    });
+  }, [fuelLogs, vehicles]);
 
   // ── Fuel log filtering ──
   const filteredFuel = useMemo(() => {
-    if (fuelVehicleFilter === 'all') return demoFuelEntries;
-    return demoFuelEntries.filter((f) => f.vehicleName === fuelVehicleFilter);
-  }, [fuelVehicleFilter]);
+    if (fuelVehicleFilter === 'all') return fuelEntriesWithMpg;
+    return fuelEntriesWithMpg.filter((f) => f.vehicleName === fuelVehicleFilter);
+  }, [fuelVehicleFilter, fuelEntriesWithMpg]);
 
-  const fuelStats = useMemo(() => computeFuelStats(filteredFuel), [filteredFuel]);
+  const fuelStats = useMemo(() => {
+    if (filteredFuel.length === 0) return { avgMpg: 0, avgCostPerGal: 0, totalSpent: 0, anomalyCount: 0 };
+    const withMpg = filteredFuel.filter((e) => e.mpg !== null);
+    const avgMpg = withMpg.length > 0 ? withMpg.reduce((s, e) => s + (e.mpg || 0), 0) / withMpg.length : 0;
+    const avgCostPerGal = filteredFuel.reduce((s, e) => s + e.pricePerGallon, 0) / filteredFuel.length;
+    const totalSpent = filteredFuel.reduce((s, e) => s + e.totalCost, 0);
+    const anomalyCount = filteredFuel.filter((e) => e.anomaly).length;
+    return { avgMpg, avgCostPerGal, totalSpent, anomalyCount };
+  }, [filteredFuel]);
+
+  // ── Build inspection records from maintenance items of type 'inspection' ──
+  const inspectionRecords = useMemo(() => {
+    const vehicleMap = new Map(vehicles.map((v) => [v.id, v]));
+    return maintenance
+      .filter((m) => m.maintenanceType === 'inspection')
+      .map((m) => {
+        const vehicle = vehicleMap.get(m.vehicleId);
+        const isCompleted = m.status === 'completed';
+        const isCancelled = m.status === 'cancelled';
+        let result: 'pass' | 'fail' | 'missing' = 'missing';
+        if (isCompleted) {
+          const hasDefects = m.notes && m.notes.toLowerCase().includes('fail');
+          result = hasDefects ? 'fail' : 'pass';
+        } else if (!isCancelled) {
+          result = 'missing';
+        }
+
+        const defects: string[] = [];
+        if (m.description && result === 'fail') {
+          defects.push(...m.description.split('\n').filter(Boolean));
+        }
+
+        const totalItems = DOT_CHECKLIST_ITEMS.length;
+        const itemsFailed = defects.length;
+        const itemsPassed = totalItems - itemsFailed;
+
+        return {
+          id: m.id,
+          vehicleName: vehicle?.vehicleName ?? 'Unknown Vehicle',
+          inspectorName: m.completedByUserId ? m.completedByUserId.slice(0, 8) + '...' : 'Unassigned',
+          inspectionDate: m.completedDate || m.scheduledDate || m.createdAt,
+          result,
+          itemsPassed,
+          itemsFailed,
+          totalItems,
+          defects,
+          notes: m.notes,
+        };
+      })
+      .sort((a, b) => (b.inspectionDate || '').localeCompare(a.inspectionDate || ''));
+  }, [maintenance, vehicles]);
 
   // ── Inspection filtering ──
   const filteredInspections = useMemo(() => {
-    if (inspectionFilter === 'all') return demoInspections;
-    return demoInspections.filter((i) => i.result === inspectionFilter);
-  }, [inspectionFilter]);
+    if (inspectionFilter === 'all') return inspectionRecords;
+    return inspectionRecords.filter((i) => i.result === inspectionFilter);
+  }, [inspectionFilter, inspectionRecords]);
 
   const inspectionStats = useMemo(() => {
-    const total = demoInspections.length;
-    const passed = demoInspections.filter((i) => i.result === 'pass').length;
-    const failed = demoInspections.filter((i) => i.result === 'fail').length;
-    const missing = demoInspections.filter((i) => i.result === 'missing').length;
+    const total = inspectionRecords.length;
+    const passed = inspectionRecords.filter((i) => i.result === 'pass').length;
+    const failed = inspectionRecords.filter((i) => i.result === 'fail').length;
+    const missing = inspectionRecords.filter((i) => i.result === 'missing').length;
     return { total, passed, failed, missing, passRate: total > 0 ? (passed / total) * 100 : 0 };
-  }, []);
+  }, [inspectionRecords]);
 
   // ── Helpers to get related data ──
   const getMaintenanceForVehicle = (vehicleId: string) =>
@@ -307,13 +368,42 @@ export default function FleetPage() {
 
   // ── Unique vehicle names for fuel filter ──
   const uniqueFuelVehicles = useMemo(() => {
-    const names = [...new Set(demoFuelEntries.map((f) => f.vehicleName))];
+    const vehicleMap = new Map(vehicles.map((v) => [v.id, v]));
+    const names = [...new Set(fuelLogs.map((f) => vehicleMap.get(f.vehicleId)?.vehicleName).filter(Boolean))] as string[];
     return names.sort();
-  }, []);
+  }, [fuelLogs, vehicles]);
 
-  // ── Overdue maintenance count ──
-  const overdueCount = demoMaintenanceSchedule.filter((m) => m.status === 'overdue').length;
-  const dueSoonCount = demoMaintenanceSchedule.filter((m) => m.status === 'due_soon').length;
+  // ── Overdue / due soon counts from computed schedule ──
+  const overdueCount = useMemo(() => maintenanceSchedule.filter((m) => m.status === 'overdue').length, [maintenanceSchedule]);
+  const dueSoonCount = useMemo(() => maintenanceSchedule.filter((m) => m.status === 'due_soon').length, [maintenanceSchedule]);
+
+  // ── Missing inspection alerts: vehicles with no inspection-type maintenance completed today ──
+  const missingInspectionAlerts = useMemo(() => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    return vehicles
+      .filter((v) => v.status === 'active')
+      .filter((v) => {
+        const latestInspection = maintenance
+          .filter((m) => m.vehicleId === v.id && m.maintenanceType === 'inspection' && m.status === 'completed')
+          .sort((a, b) => (b.completedDate || '').localeCompare(a.completedDate || ''))[0];
+        if (!latestInspection || !latestInspection.completedDate) return true;
+        return latestInspection.completedDate.split('T')[0] < todayStr;
+      })
+      .map((v) => {
+        const latestInspection = maintenance
+          .filter((m) => m.vehicleId === v.id && m.maintenanceType === 'inspection' && m.status === 'completed')
+          .sort((a, b) => (b.completedDate || '').localeCompare(a.completedDate || ''))[0];
+        const lastDate = latestInspection?.completedDate?.split('T')[0] || null;
+        const daysMissing = lastDate
+          ? Math.floor((new Date().getTime() - new Date(lastDate).getTime()) / (1000 * 60 * 60 * 24))
+          : null;
+        return {
+          vehicle: v.vehicleName,
+          lastInspection: lastDate,
+          daysMissing: daysMissing ?? 0,
+        };
+      });
+  }, [vehicles, maintenance]);
 
   // ── Tab definitions ──
   const tabs: { key: FleetTab; label: string; icon: React.ReactNode; count?: number }[] = [
@@ -473,11 +563,13 @@ export default function FleetPage() {
           overdueCount={overdueCount}
           dueSoonCount={dueSoonCount}
           maintenanceDue={maintenanceDue}
+          totalScheduled={maintenanceSchedule.length}
         />
       )}
       {activeTab === 'fuel' && (
         <FuelTab
           entries={filteredFuel}
+          allEntries={fuelEntriesWithMpg}
           stats={fuelStats}
           vehicleFilter={fuelVehicleFilter}
           setVehicleFilter={setFuelVehicleFilter}
@@ -490,6 +582,8 @@ export default function FleetPage() {
           stats={inspectionStats}
           filter={inspectionFilter}
           setFilter={setInspectionFilter}
+          missingAlerts={missingInspectionAlerts}
+          activeVehicleCount={activeVehicles.length}
         />
       )}
     </div>
@@ -843,6 +937,18 @@ function DetailField({ icon, label, value }: { icon: React.ReactNode; label: str
 // TAB 2: Maintenance
 // ────────────────────────────────────────────────────────
 
+interface ScheduleItem {
+  id: string;
+  vehicleName: string;
+  serviceType: string;
+  triggerType: 'mileage' | 'date' | 'both';
+  nextDueDate: string | null;
+  nextDueMileage: number | null;
+  currentMileage: number;
+  lastServiceDate: string | null;
+  status: 'upcoming' | 'overdue' | 'due_soon';
+}
+
 function MaintenanceTab({
   schedule,
   history,
@@ -851,14 +957,16 @@ function MaintenanceTab({
   overdueCount,
   dueSoonCount,
   maintenanceDue,
+  totalScheduled,
 }: {
-  schedule: MaintenanceScheduleItem[];
+  schedule: ScheduleItem[];
   history: VehicleMaintenance[];
   maintenanceFilter: 'all' | 'overdue' | 'due_soon' | 'upcoming';
   setMaintenanceFilter: (v: 'all' | 'overdue' | 'due_soon' | 'upcoming') => void;
   overdueCount: number;
   dueSoonCount: number;
   maintenanceDue: VehicleMaintenance[];
+  totalScheduled: number;
 }) {
   const scheduleStatusConfig: Record<string, { label: string; variant: 'error' | 'warning' | 'info' }> = {
     overdue: { label: 'Overdue', variant: 'error' },
@@ -903,7 +1011,7 @@ function MaintenanceTab({
                 <Calendar size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{demoMaintenanceSchedule.length}</p>
+                <p className="text-2xl font-semibold text-main">{totalScheduled}</p>
                 <p className="text-sm text-muted">Total Scheduled</p>
               </div>
             </div>
@@ -1089,14 +1197,31 @@ function MaintenanceTab({
 // TAB 3: Fuel Log
 // ────────────────────────────────────────────────────────
 
+interface FuelEntry {
+  id: string;
+  vehicleId: string;
+  vehicleName: string;
+  fuelDate: string;
+  gallons: number;
+  pricePerGallon: number;
+  totalCost: number;
+  odometer: number | null;
+  stationName: string;
+  fuelType: string;
+  mpg: number | null;
+  anomaly: boolean;
+}
+
 function FuelTab({
   entries,
+  allEntries,
   stats,
   vehicleFilter,
   setVehicleFilter,
   uniqueVehicles,
 }: {
-  entries: DemoFuelEntry[];
+  entries: FuelEntry[];
+  allEntries: FuelEntry[];
   stats: { avgMpg: number; avgCostPerGal: number; totalSpent: number; anomalyCount: number };
   vehicleFilter: string;
   setVehicleFilter: (v: string) => void;
@@ -1187,7 +1312,7 @@ function FuelTab({
           {entries.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <Fuel size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No fuel logs match this filter</p>
+              <p>No fuel logs recorded yet</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -1227,7 +1352,7 @@ function FuelTab({
                     <p className="text-sm font-medium text-main">{formatCurrency(entry.totalCost)}</p>
                   </div>
                   <div className="col-span-1">
-                    <p className="text-sm text-muted">{formatNumber(entry.odometer)}</p>
+                    <p className="text-sm text-muted">{entry.odometer != null ? formatNumber(entry.odometer) : '--'}</p>
                   </div>
                   <div className="col-span-1">
                     {entry.mpg != null ? (
@@ -1249,7 +1374,7 @@ function FuelTab({
                     )}
                   </div>
                   <div className="col-span-2">
-                    <p className="text-sm text-muted truncate">{entry.stationName}</p>
+                    <p className="text-sm text-muted truncate">{entry.stationName || '--'}</p>
                   </div>
                   <div className="col-span-1">
                     {entry.anomaly ? (
@@ -1272,31 +1397,35 @@ function FuelTab({
             <TrendingUp size={15} />
             MPG Trend Summary
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {uniqueVehicles.map((vName) => {
-              const vehicleEntries = demoFuelEntries.filter((e) => e.vehicleName === vName && e.mpg !== null);
-              if (vehicleEntries.length === 0) return null;
-              const avg = vehicleEntries.reduce((s, e) => s + (e.mpg || 0), 0) / vehicleEntries.length;
-              const latest = vehicleEntries[0]?.mpg || 0;
-              const trend = vehicleEntries.length > 1 ? latest - (vehicleEntries[vehicleEntries.length - 1]?.mpg || 0) : 0;
-              return (
-                <div key={vName} className="p-3 bg-secondary/30 border border-main rounded-lg">
-                  <p className="text-xs text-muted truncate mb-1">{vName}</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-lg font-semibold text-main">{avg.toFixed(1)} MPG</p>
-                    <div className={cn(
-                      'flex items-center gap-0.5 text-xs font-medium',
-                      trend >= 0 ? 'text-emerald-400' : 'text-red-400'
-                    )}>
-                      {trend >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                      {trend >= 0 ? '+' : ''}{trend.toFixed(1)}
+          {uniqueVehicles.length === 0 ? (
+            <p className="text-sm text-muted">No fuel data available to compute MPG trends.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {uniqueVehicles.map((vName) => {
+                const vehicleEntries = allEntries.filter((e) => e.vehicleName === vName && e.mpg !== null);
+                if (vehicleEntries.length === 0) return null;
+                const avg = vehicleEntries.reduce((s, e) => s + (e.mpg || 0), 0) / vehicleEntries.length;
+                const latest = vehicleEntries[0]?.mpg || 0;
+                const trend = vehicleEntries.length > 1 ? latest - (vehicleEntries[vehicleEntries.length - 1]?.mpg || 0) : 0;
+                return (
+                  <div key={vName} className="p-3 bg-secondary/30 border border-main rounded-lg">
+                    <p className="text-xs text-muted truncate mb-1">{vName}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-lg font-semibold text-main">{avg.toFixed(1)} MPG</p>
+                      <div className={cn(
+                        'flex items-center gap-0.5 text-xs font-medium',
+                        trend >= 0 ? 'text-emerald-400' : 'text-red-400'
+                      )}>
+                        {trend >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                        {trend >= 0 ? '+' : ''}{trend.toFixed(1)}
+                      </div>
                     </div>
+                    <p className="text-xs text-muted mt-1">Latest: {latest.toFixed(1)} MPG</p>
                   </div>
-                  <p className="text-xs text-muted mt-1">Latest: {latest.toFixed(1)} MPG</p>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -1310,21 +1439,28 @@ function FuelTab({
           <p className="text-xs text-muted mb-4">
             Standard mileage rate for 2026: $0.70/mile (estimated). Consult your CPA for actual deduction amounts.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {uniqueVehicles.map((vName) => {
-              const vehicleEntries = demoFuelEntries.filter((e) => e.vehicleName === vName).sort((a, b) => a.odometer - b.odometer);
-              if (vehicleEntries.length < 2) return null;
-              const milesDriven = vehicleEntries[vehicleEntries.length - 1].odometer - vehicleEntries[0].odometer;
-              const deduction = milesDriven * 0.70;
-              return (
-                <div key={vName} className="p-3 bg-secondary/30 border border-main rounded-lg">
-                  <p className="text-xs text-muted truncate mb-1">{vName}</p>
-                  <p className="text-lg font-semibold text-main">{formatCurrency(deduction)}</p>
-                  <p className="text-xs text-muted mt-1">{formatNumber(milesDriven)} miles tracked</p>
-                </div>
-              );
-            })}
-          </div>
+          {uniqueVehicles.length === 0 ? (
+            <p className="text-sm text-muted">No fuel data available to compute mileage deductions.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {uniqueVehicles.map((vName) => {
+                const vehicleEntries = allEntries
+                  .filter((e) => e.vehicleName === vName && e.odometer != null)
+                  .sort((a, b) => (a.odometer || 0) - (b.odometer || 0));
+                if (vehicleEntries.length < 2) return null;
+                const milesDriven = (vehicleEntries[vehicleEntries.length - 1].odometer || 0) - (vehicleEntries[0].odometer || 0);
+                if (milesDriven <= 0) return null;
+                const deduction = milesDriven * 0.70;
+                return (
+                  <div key={vName} className="p-3 bg-secondary/30 border border-main rounded-lg">
+                    <p className="text-xs text-muted truncate mb-1">{vName}</p>
+                    <p className="text-lg font-semibold text-main">{formatCurrency(deduction)}</p>
+                    <p className="text-xs text-muted mt-1">{formatNumber(milesDriven)} miles tracked</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -1335,16 +1471,33 @@ function FuelTab({
 // TAB 4: Inspections
 // ────────────────────────────────────────────────────────
 
+interface InspectionRecord {
+  id: string;
+  vehicleName: string;
+  inspectorName: string;
+  inspectionDate: string;
+  result: 'pass' | 'fail' | 'missing';
+  itemsPassed: number;
+  itemsFailed: number;
+  totalItems: number;
+  defects: string[];
+  notes: string | null;
+}
+
 function InspectionsTab({
   inspections,
   stats,
   filter,
   setFilter,
+  missingAlerts,
+  activeVehicleCount,
 }: {
   inspections: InspectionRecord[];
   stats: { total: number; passed: number; failed: number; missing: number; passRate: number };
   filter: 'all' | 'pass' | 'fail' | 'missing';
   setFilter: (v: 'all' | 'pass' | 'fail' | 'missing') => void;
+  missingAlerts: { vehicle: string; lastInspection: string | null; daysMissing: number }[];
+  activeVehicleCount: number;
 }) {
   const [expandedInspection, setExpandedInspection] = useState<string | null>(null);
   const [showChecklist, setShowChecklist] = useState(false);
@@ -1478,7 +1631,7 @@ function InspectionsTab({
           {inspections.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <ClipboardCheck size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No inspections match this filter</p>
+              <p>No inspections recorded yet</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -1637,26 +1790,44 @@ function InspectionsTab({
             Vehicles that have not completed their daily pre-trip inspection. DOT requires a pre-trip inspection before each trip.
           </p>
           <div className="space-y-2">
-            {[
-              { vehicle: '2021 Toyota Tacoma #104', lastInspection: '2026-02-23', daysMissing: 1 },
-            ].map((alert, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-amber-950/20 border border-amber-800/30 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle size={16} className="text-amber-400 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-main">{alert.vehicle}</p>
-                    <p className="text-xs text-muted">Last inspection: {formatDate(alert.lastInspection)}</p>
+            {missingAlerts.length > 0 ? (
+              <>
+                {missingAlerts.map((alert, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 bg-amber-950/20 border border-amber-800/30 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle size={16} className="text-amber-400 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-main">{alert.vehicle}</p>
+                        <p className="text-xs text-muted">
+                          {alert.lastInspection ? `Last inspection: ${formatDate(alert.lastInspection)}` : 'No inspections recorded'}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge variant="warning" size="sm">
+                      {alert.daysMissing > 0
+                        ? `${alert.daysMissing} day${alert.daysMissing !== 1 ? 's' : ''} overdue`
+                        : 'Due today'}
+                    </Badge>
                   </div>
-                </div>
-                <Badge variant="warning" size="sm">
-                  {alert.daysMissing} day{alert.daysMissing !== 1 ? 's' : ''} overdue
-                </Badge>
+                ))}
+                {missingAlerts.length < activeVehicleCount && (
+                  <div className="flex items-center gap-2 p-3 bg-secondary/30 border border-main rounded-lg">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                    <p className="text-sm text-muted">All other vehicles have completed today&apos;s pre-trip inspection</p>
+                  </div>
+                )}
+              </>
+            ) : activeVehicleCount > 0 ? (
+              <div className="flex items-center gap-2 p-3 bg-emerald-950/20 border border-emerald-800/30 rounded-lg">
+                <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                <p className="text-sm text-emerald-300">All active vehicles have completed today&apos;s pre-trip inspection</p>
               </div>
-            ))}
-            <div className="flex items-center gap-2 p-3 bg-secondary/30 border border-main rounded-lg">
-              <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-              <p className="text-sm text-muted">All other vehicles have completed today&apos;s pre-trip inspection</p>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2 p-3 bg-secondary/30 border border-main rounded-lg">
+                <ClipboardCheck size={16} className="text-muted shrink-0" />
+                <p className="text-sm text-muted">No active vehicles in fleet</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

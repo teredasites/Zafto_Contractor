@@ -1,17 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   FileText,
   Plus,
   Calendar,
-  Clock,
   Users,
   Cloud,
-  Camera,
   AlertTriangle,
   CheckCircle,
-  Save,
   Download,
   ChevronRight,
   ChevronDown,
@@ -23,19 +20,20 @@ import {
   Thermometer,
   Wind,
   Droplets,
-  Sun,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
+import { useDailyLogs } from '@/lib/hooks/use-daily-logs';
+import type { DailyLogData } from '@/lib/hooks/use-daily-logs';
+import { useJobs } from '@/lib/hooks/use-jobs';
 
 type LucideIcon = React.ComponentType<{ size?: number; className?: string }>;
 
-// ── Types ──
+// ── Types (page display model) ──
 
 interface DailyLog {
   id: string;
@@ -61,6 +59,8 @@ interface DailyLog {
   notes: string;
   photos: string[];
   totalHours: number;
+  // Keep reference to original DB record for saving
+  _raw: DailyLogData;
 }
 
 interface CrewEntry {
@@ -127,106 +127,7 @@ interface SubEntry {
   workPerformed: string;
 }
 
-// ── Generate demo data ──
-
-function generateId(): string {
-  return Math.random().toString(36).substring(2, 10);
-}
-
-const today = new Date().toISOString().split('T')[0];
-const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
-const demoLogs: DailyLog[] = [
-  {
-    id: '1', jobId: 'j1', jobName: 'Kitchen Remodel — Wilson', date: today, status: 'draft',
-    weather: { condition: 'Partly Cloudy', tempHigh: 62, tempLow: 45, windSpeed: 8, precipitation: 'None' },
-    crewOnSite: [
-      { id: 'c1', name: 'Mike Torres', role: 'Lead', timeIn: '7:00 AM', timeOut: '3:30 PM', hours: 8.5, jobTask: 'Cabinet install' },
-      { id: 'c2', name: 'James Park', role: 'Carpenter', timeIn: '7:00 AM', timeOut: '3:30 PM', hours: 8.5, jobTask: 'Cabinet install' },
-      { id: 'c3', name: 'Ryan Cook', role: 'Helper', timeIn: '7:30 AM', timeOut: '3:30 PM', hours: 8, jobTask: 'Demo cleanup' },
-    ],
-    workPerformed: [
-      { id: 'w1', description: 'Upper cabinet installation — north wall', trade: 'Carpentry', percentComplete: 75, notes: 'One cabinet arrived with damage, ordered replacement' },
-      { id: 'w2', description: 'Demo of old countertops', trade: 'Demo', percentComplete: 100, notes: 'Hauled 2 loads to dump' },
-    ],
-    materialsUsed: [
-      { id: 'm1', name: 'Shaker cabinets (42")', quantity: 4, unit: 'ea', poNumber: 'PO-2024-089' },
-      { id: 'm2', name: 'Cabinet mounting screws', quantity: 2, unit: 'box', poNumber: '' },
-    ],
-    equipment: [
-      { id: 'e1', name: 'Miter Saw', hours: 3, status: 'in_use' },
-      { id: 'e2', name: 'Pneumatic Nailer', hours: 5, status: 'in_use' },
-    ],
-    visitors: [
-      { id: 'v1', name: 'Sarah Wilson', company: 'Homeowner', purpose: 'Check progress, approve cabinet placement', timeIn: '10:00 AM', timeOut: '10:30 AM' },
-    ],
-    delays: [
-      { id: 'd1', type: 'material', description: 'Damaged cabinet — waiting for replacement', hoursLost: 1.5 },
-    ],
-    safetyIncidents: [],
-    subActivity: [],
-    notes: 'Good progress on cabinets despite damaged unit. Replacement arriving Thursday. Countertop template scheduled for Friday.',
-    photos: [],
-    totalHours: 25,
-  },
-  {
-    id: '2', jobId: 'j2', jobName: 'Roof Replacement — Garcia', date: today, status: 'draft',
-    weather: { condition: 'Clear', tempHigh: 68, tempLow: 48, windSpeed: 5, precipitation: 'None' },
-    crewOnSite: [
-      { id: 'c4', name: 'Carlos Mendez', role: 'Foreman', timeIn: '6:30 AM', timeOut: '3:00 PM', hours: 8.5, jobTask: 'Tear-off supervision' },
-      { id: 'c5', name: 'Luis Reyes', role: 'Roofer', timeIn: '6:30 AM', timeOut: '3:00 PM', hours: 8.5, jobTask: 'Tear-off' },
-      { id: 'c6', name: 'David Kim', role: 'Roofer', timeIn: '6:30 AM', timeOut: '3:00 PM', hours: 8.5, jobTask: 'Tear-off' },
-      { id: 'c7', name: 'Alex Brown', role: 'Laborer', timeIn: '7:00 AM', timeOut: '3:00 PM', hours: 8, jobTask: 'Ground cleanup' },
-    ],
-    workPerformed: [
-      { id: 'w3', description: 'Complete tear-off of existing shingles (south slope)', trade: 'Roofing', percentComplete: 100, notes: 'Found rotted sheathing in 2 areas — documented for change order' },
-      { id: 'w4', description: 'Ice shield and underlayment (south slope)', trade: 'Roofing', percentComplete: 60, notes: 'On schedule' },
-    ],
-    materialsUsed: [
-      { id: 'm3', name: 'GAF Timberline HDZ (Charcoal)', quantity: 0, unit: 'bundle', poNumber: 'PO-2024-092' },
-      { id: 'm4', name: 'Grace Ice & Water Shield', quantity: 4, unit: 'roll', poNumber: 'PO-2024-092' },
-      { id: 'm5', name: 'Synthetic underlayment', quantity: 3, unit: 'roll', poNumber: 'PO-2024-092' },
-    ],
-    equipment: [
-      { id: 'e3', name: 'Roofing nail gun', hours: 6, status: 'in_use' },
-      { id: 'e4', name: 'Magnetic nail sweeper', hours: 2, status: 'in_use' },
-    ],
-    visitors: [
-      { id: 'v2', name: 'Tom Harris', company: 'City Inspections', purpose: 'Sheathing inspection', timeIn: '1:00 PM', timeOut: '1:20 PM' },
-    ],
-    delays: [],
-    safetyIncidents: [
-      { id: 's1', type: 'observation', description: 'Harness check — all crew wearing fall protection. One harness showing wear, replaced.', actionTaken: 'Replaced worn harness with new unit from truck stock' },
-    ],
-    subActivity: [],
-    notes: 'Good day. South slope tear-off complete. Found 2 areas of rot (approx 4x6 each) — will need sheathing replacement before shingling. Documented with photos for change order.',
-    photos: [],
-    totalHours: 33.5,
-  },
-  {
-    id: '3', jobId: 'j1', jobName: 'Kitchen Remodel — Wilson', date: yesterday, status: 'finalized',
-    weather: { condition: 'Rain', tempHigh: 58, tempLow: 42, windSpeed: 12, precipitation: '0.4 in' },
-    crewOnSite: [
-      { id: 'c8', name: 'Mike Torres', role: 'Lead', timeIn: '7:00 AM', timeOut: '3:30 PM', hours: 8.5, jobTask: 'Demo & prep' },
-      { id: 'c9', name: 'James Park', role: 'Carpenter', timeIn: '7:00 AM', timeOut: '3:30 PM', hours: 8.5, jobTask: 'Demo & prep' },
-    ],
-    workPerformed: [
-      { id: 'w5', description: 'Demo of existing upper cabinets', trade: 'Demo', percentComplete: 100, notes: '' },
-      { id: 'w6', description: 'Electrical rough-in for under-cabinet lighting', trade: 'Electrical', percentComplete: 100, notes: 'Sub completed on schedule' },
-    ],
-    materialsUsed: [],
-    equipment: [{ id: 'e5', name: 'Reciprocating Saw', hours: 2, status: 'in_use' }],
-    visitors: [],
-    delays: [],
-    safetyIncidents: [],
-    subActivity: [
-      { id: 'sub1', company: 'Spark Electric LLC', trade: 'Electrical', crewSize: 1, workPerformed: 'Under-cabinet lighting rough-in, 3 circuits' },
-    ],
-    notes: 'Rainy day — all work was interior, no impact. Demo complete, ready for cabinet install tomorrow.',
-    photos: [],
-    totalHours: 17,
-  },
-];
+// ── Config arrays (UI config, not data) ──
 
 const delayTypes = [
   { value: 'weather', label: 'Weather' },
@@ -244,17 +145,78 @@ const incidentTypes = [
   { value: 'observation', label: 'Safety Observation' },
 ];
 
+// ── Mapping functions ──
+
+function mapDbLogToDisplay(dbLog: DailyLogData, jobName: string): DailyLog {
+  const td = dbLog.tradeData || {};
+  const crewOnSite = Array.isArray(td.crew_on_site) ? (td.crew_on_site as CrewEntry[]) : [];
+  const workPerformed = Array.isArray(td.work_performed_entries) ? (td.work_performed_entries as WorkEntry[]) : [];
+  const materialsUsed = Array.isArray(td.materials_used) ? (td.materials_used as MaterialEntry[]) : [];
+  const equipment = Array.isArray(td.equipment) ? (td.equipment as EquipmentEntry[]) : [];
+  const visitors = Array.isArray(td.visitors) ? (td.visitors as VisitorEntry[]) : [];
+  const delays = Array.isArray(td.delays) ? (td.delays as DelayEntry[]) : [];
+  const safetyIncidents = Array.isArray(td.safety_incidents) ? (td.safety_incidents as SafetyIncident[]) : [];
+  const subActivity = Array.isArray(td.sub_activity) ? (td.sub_activity as SubEntry[]) : [];
+  const weather = (td.weather as DailyLog['weather']) || {
+    condition: dbLog.weather || '',
+    tempHigh: dbLog.temperatureF || 0,
+    tempLow: 0,
+    windSpeed: 0,
+    precipitation: 'None',
+  };
+  const status = (td.status as 'draft' | 'finalized') || 'draft';
+  const totalHours = crewOnSite.reduce((sum, c) => sum + (c.hours || 0), 0) || dbLog.hoursWorked || 0;
+
+  return {
+    id: dbLog.id,
+    jobId: dbLog.jobId,
+    jobName,
+    date: dbLog.logDate,
+    status,
+    weather,
+    crewOnSite,
+    workPerformed,
+    materialsUsed,
+    equipment,
+    visitors,
+    delays,
+    safetyIncidents,
+    subActivity,
+    notes: dbLog.summary || '',
+    photos: dbLog.photoIds || [],
+    totalHours,
+    _raw: dbLog,
+  };
+}
+
+function buildTradeData(log: DailyLog): Record<string, unknown> {
+  return {
+    crew_on_site: log.crewOnSite,
+    work_performed_entries: log.workPerformed,
+    materials_used: log.materialsUsed,
+    equipment: log.equipment,
+    visitors: log.visitors,
+    delays: log.delays,
+    safety_incidents: log.safetyIncidents,
+    sub_activity: log.subActivity,
+    weather: log.weather,
+    status: log.status,
+  };
+}
+
 type ViewTab = 'today' | 'history' | 'job_diary';
 
 export default function DailyLogsPage() {
   const { t } = useTranslation();
+  const { logs: dbLogs, loading, error, saveLog, updateLog, refresh } = useDailyLogs();
+  const { jobs } = useJobs();
   const [activeTab, setActiveTab] = useState<ViewTab>('today');
-  const [logs, setLogs] = useState<DailyLog[]>(demoLogs);
-  const [selectedLog, setSelectedLog] = useState<DailyLog | null>(null);
+  const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['crew', 'work', 'materials']));
   const [jobFilter, setJobFilter] = useState('all');
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [addSection, setAddSection] = useState<string>('');
+  const [saving, setSaving] = useState(false);
 
   // Adding entries
   const [newCrewName, setNewCrewName] = useState('');
@@ -266,16 +228,36 @@ export default function DailyLogsPage() {
   const [newWorkTrade, setNewWorkTrade] = useState('');
   const [newWorkPct, setNewWorkPct] = useState(0);
   const [newWorkNotes, setNewWorkNotes] = useState('');
-  const [newNote, setNewNote] = useState('');
 
-  const todayLogs = logs.filter(l => l.date === today);
-  const jobIds = [...new Set(logs.map(l => l.jobId))];
+  // Build a map of jobId -> jobName from the jobs hook
+  const jobNameMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    jobs.forEach(j => { map[j.id] = j.title; });
+    return map;
+  }, [jobs]);
+
+  // Map DB logs to display format
+  const logs: DailyLog[] = useMemo(() => {
+    return dbLogs.map(dbLog => {
+      const jobName = jobNameMap[dbLog.jobId] || 'Unknown Job';
+      return mapDbLogToDisplay(dbLog, jobName);
+    });
+  }, [dbLogs, jobNameMap]);
+
+  const today = new Date().toISOString().split('T')[0];
+  const todayLogs = useMemo(() => logs.filter(l => l.date === today), [logs, today]);
+  const jobIds = useMemo(() => [...new Set(logs.map(l => l.jobId))], [logs]);
 
   const filteredLogs = useMemo(() => {
     if (activeTab === 'today') return todayLogs;
-    if (jobFilter !== 'all') return logs.filter(l => l.jobId === jobFilter);
+    if (activeTab === 'job_diary' && jobFilter !== 'all') return logs.filter(l => l.jobId === jobFilter);
     return logs;
   }, [activeTab, jobFilter, logs, todayLogs]);
+
+  const selectedLog = useMemo(() => {
+    if (!selectedLogId) return null;
+    return logs.find(l => l.id === selectedLogId) || null;
+  }, [logs, selectedLogId]);
 
   function toggleSection(section: string) {
     setExpandedSections(prev => {
@@ -286,17 +268,42 @@ export default function DailyLogsPage() {
     });
   }
 
-  function finalizeLog(logId: string) {
-    setLogs(prev => prev.map(l => l.id === logId ? { ...l, status: 'finalized' as const } : l));
+  const persistLog = useCallback(async (log: DailyLog) => {
+    setSaving(true);
+    try {
+      const tradeData = buildTradeData(log);
+      const totalHours = log.crewOnSite.reduce((sum, c) => sum + (c.hours || 0), 0);
+      await updateLog(log.id, {
+        summary: log.notes,
+        weather: log.weather.condition,
+        temperatureF: log.weather.tempHigh,
+        crewCount: log.crewOnSite.length,
+        hoursWorked: totalHours,
+        safetyNotes: log.safetyIncidents.map(i => `${i.type}: ${i.description}`).join('; '),
+        issues: log.delays.map(d => d.description).join('; '),
+        tradeData,
+      });
+    } catch {
+      // error is set in hook
+    } finally {
+      setSaving(false);
+    }
+  }, [updateLog]);
+
+  async function finalizeLog(logId: string) {
+    const log = logs.find(l => l.id === logId);
+    if (!log) return;
+    const updated = { ...log, status: 'finalized' as const };
+    await persistLog(updated);
   }
 
-  function addCrewEntry() {
+  async function addCrewEntry() {
     if (!selectedLog || !newCrewName) return;
     const timeInParts = newCrewTimeIn.split(':').map(Number);
     const timeOutParts = newCrewTimeOut.split(':').map(Number);
     const hours = (timeOutParts[0] + timeOutParts[1] / 60) - (timeInParts[0] + timeInParts[1] / 60);
     const entry: CrewEntry = {
-      id: generateId(),
+      id: crypto.randomUUID(),
       name: newCrewName,
       role: newCrewRole,
       timeIn: newCrewTimeIn,
@@ -304,31 +311,44 @@ export default function DailyLogsPage() {
       hours: Math.round(hours * 10) / 10,
       jobTask: newCrewTask,
     };
-    setLogs(prev => prev.map(l => l.id === selectedLog.id ? { ...l, crewOnSite: [...l.crewOnSite, entry] } : l));
-    setSelectedLog(prev => prev ? { ...prev, crewOnSite: [...prev.crewOnSite, entry] } : null);
+    const updated = { ...selectedLog, crewOnSite: [...selectedLog.crewOnSite, entry] };
+    updated.totalHours = updated.crewOnSite.reduce((sum, c) => sum + (c.hours || 0), 0);
+    await persistLog(updated);
     setNewCrewName(''); setNewCrewRole(''); setNewCrewTask('');
     setShowAddEntry(false);
   }
 
-  function addWorkEntry() {
+  async function addWorkEntry() {
     if (!selectedLog || !newWorkDesc) return;
     const entry: WorkEntry = {
-      id: generateId(),
+      id: crypto.randomUUID(),
       description: newWorkDesc,
       trade: newWorkTrade,
       percentComplete: newWorkPct,
       notes: newWorkNotes,
     };
-    setLogs(prev => prev.map(l => l.id === selectedLog.id ? { ...l, workPerformed: [...l.workPerformed, entry] } : l));
-    setSelectedLog(prev => prev ? { ...prev, workPerformed: [...prev.workPerformed, entry] } : null);
+    const updated = { ...selectedLog, workPerformed: [...selectedLog.workPerformed, entry] };
+    await persistLog(updated);
     setNewWorkDesc(''); setNewWorkTrade(''); setNewWorkPct(0); setNewWorkNotes('');
     setShowAddEntry(false);
   }
 
-  function updateNotes(logId: string, notes: string) {
-    setLogs(prev => prev.map(l => l.id === logId ? { ...l, notes } : l));
-    if (selectedLog?.id === logId) setSelectedLog(prev => prev ? { ...prev, notes } : null);
+  async function updateNotes(logId: string, notes: string) {
+    const log = logs.find(l => l.id === logId);
+    if (!log) return;
+    // Update locally first for responsive feel, then persist
+    setSaving(true);
+    try {
+      await updateLog(logId, { summary: notes, tradeData: buildTradeData({ ...log, notes }) });
+    } catch {
+      // error set in hook
+    } finally {
+      setSaving(false);
+    }
   }
+
+  // Debounced notes save — just update tradeData on blur
+  const [localNotes, setLocalNotes] = useState<string | null>(null);
 
   const tabs: { key: ViewTab; label: string; icon: LucideIcon }[] = [
     { key: 'today', label: "Today's Logs", icon: Calendar },
@@ -353,6 +373,72 @@ export default function DailyLogsPage() {
     );
   }
 
+  // ── Loading state ──
+  if (loading) {
+    return (
+      <div className="flex-1 flex flex-col min-h-0">
+        <CommandPalette />
+        <div className="shrink-0 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                <FileText className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold text-foreground">Daily Job Logs</h1>
+                <p className="text-sm text-muted-foreground">
+                  Document every day on every job — crew, work, materials, safety, delays
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Loading daily logs...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Error state ──
+  if (error) {
+    return (
+      <div className="flex-1 flex flex-col min-h-0">
+        <CommandPalette />
+        <div className="shrink-0 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                <FileText className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold text-foreground">Daily Job Logs</h1>
+                <p className="text-sm text-muted-foreground">
+                  Document every day on every job — crew, work, materials, safety, delays
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-6">
+          <Card>
+            <CardContent className="p-8 text-center">
+              <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-destructive" />
+              <p className="text-sm font-medium text-foreground mb-1">Failed to load daily logs</p>
+              <p className="text-xs text-muted-foreground mb-4">{error}</p>
+              <Button variant="outline" size="sm" onClick={refresh}>
+                Try Again
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <CommandPalette />
@@ -371,6 +457,12 @@ export default function DailyLogsPage() {
               </p>
             </div>
           </div>
+          {saving && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Saving...
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-1 px-6 pb-2">
           {tabs.map(tab => {
@@ -378,7 +470,7 @@ export default function DailyLogsPage() {
             return (
               <button
                 key={tab.key}
-                onClick={() => { setActiveTab(tab.key); setSelectedLog(null); }}
+                onClick={() => { setActiveTab(tab.key); setSelectedLogId(null); }}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors',
                   activeTab === tab.key
@@ -407,7 +499,7 @@ export default function DailyLogsPage() {
                 >
                   <option value="all">All Jobs</option>
                   {jobIds.map(jid => {
-                    const name = logs.find(l => l.jobId === jid)?.jobName || jid;
+                    const name = jobNameMap[jid] || logs.find(l => l.jobId === jid)?.jobName || jid;
                     return <option key={jid} value={jid}>{name}</option>;
                   })}
                 </select>
@@ -418,7 +510,14 @@ export default function DailyLogsPage() {
               <Card>
                 <CardContent className="p-8 text-center text-muted-foreground">
                   <FileText className="w-8 h-8 mx-auto mb-2 text-muted" />
-                  <p className="text-sm">No logs for this view</p>
+                  <p className="text-sm font-medium mb-1">
+                    {activeTab === 'today' ? 'No logs for today' : 'No logs found'}
+                  </p>
+                  <p className="text-xs">
+                    {activeTab === 'today'
+                      ? 'Daily logs will appear here once created for today\'s jobs.'
+                      : 'Create a daily log from a job to start tracking work.'}
+                  </p>
                 </CardContent>
               </Card>
             ) : (
@@ -426,7 +525,10 @@ export default function DailyLogsPage() {
                 <Card
                   key={log.id}
                   className={cn('cursor-pointer transition-all hover:shadow-md', selectedLog?.id === log.id && 'ring-2 ring-primary')}
-                  onClick={() => setSelectedLog(log)}
+                  onClick={() => {
+                    setSelectedLogId(log.id);
+                    setLocalNotes(null);
+                  }}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
@@ -457,7 +559,7 @@ export default function DailyLogsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                      <Cloud size={10} /> {log.weather.condition} &middot; {log.weather.tempHigh}&deg;/{log.weather.tempLow}&deg;F
+                      <Cloud size={10} /> {log.weather.condition || 'No weather data'} {log.weather.tempHigh ? <>&middot; {log.weather.tempHigh}&deg;/{log.weather.tempLow}&deg;F</> : null}
                     </div>
                   </CardContent>
                 </Card>
@@ -478,8 +580,8 @@ export default function DailyLogsPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {selectedLog.status === 'draft' && (
-                        <Button size="sm" onClick={() => finalizeLog(selectedLog.id)}>
-                          <CheckCircle className="w-3.5 h-3.5 mr-1" /> Finalize
+                        <Button size="sm" onClick={() => finalizeLog(selectedLog.id)} disabled={saving}>
+                          {saving ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5 mr-1" />} Finalize
                         </Button>
                       )}
                       <Button variant="outline" size="sm">
@@ -491,7 +593,7 @@ export default function DailyLogsPage() {
                   {/* Weather strip */}
                   <div className="flex items-center gap-4 mt-3 p-2 rounded-lg bg-muted/40">
                     <div className="flex items-center gap-1 text-xs">
-                      <Cloud size={12} className="text-muted-foreground" /> {selectedLog.weather.condition}
+                      <Cloud size={12} className="text-muted-foreground" /> {selectedLog.weather.condition || 'N/A'}
                     </div>
                     <div className="flex items-center gap-1 text-xs">
                       <Thermometer size={12} className="text-muted-foreground" /> {selectedLog.weather.tempHigh}&deg;/{selectedLog.weather.tempLow}&deg;F
@@ -695,8 +797,14 @@ export default function DailyLogsPage() {
                 <CardContent>
                   {selectedLog.status === 'draft' ? (
                     <textarea
-                      value={selectedLog.notes}
-                      onChange={e => updateNotes(selectedLog.id, e.target.value)}
+                      value={localNotes !== null ? localNotes : selectedLog.notes}
+                      onChange={e => setLocalNotes(e.target.value)}
+                      onBlur={() => {
+                        if (localNotes !== null && localNotes !== selectedLog.notes) {
+                          updateNotes(selectedLog.id, localNotes);
+                        }
+                        setLocalNotes(null);
+                      }}
                       className="w-full p-3 rounded-lg border border-border bg-background text-sm min-h-[100px] resize-y"
                       placeholder="End-of-day notes..."
                     />
@@ -776,7 +884,8 @@ export default function DailyLogsPage() {
             </div>
             <div className="flex justify-end gap-2 p-4 border-t border-border/60">
               <Button variant="outline" size="sm" onClick={() => setShowAddEntry(false)}>Cancel</Button>
-              <Button size="sm" onClick={() => addSection === 'crew' ? addCrewEntry() : addWorkEntry()}>
+              <Button size="sm" disabled={saving} onClick={() => addSection === 'crew' ? addCrewEntry() : addWorkEntry()}>
+                {saving ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : null}
                 Add Entry
               </Button>
             </div>

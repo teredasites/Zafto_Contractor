@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useJobs } from '@/lib/hooks/use-jobs';
 import {
   Cloud,
   CloudRain,
@@ -134,14 +135,7 @@ function generateForecast(): DayForecast[] {
   });
 }
 
-const demoJobs: ScheduledJob[] = [
-  { id: '1', name: 'Roof Replacement — 742 Evergreen', customer: 'Smith', address: '742 Evergreen Terrace', trade: 'roofing', date: new Date().toISOString().split('T')[0], startTime: '7:00 AM', endTime: '4:00 PM', crewSize: 4, isOutdoor: true },
-  { id: '2', name: 'Exterior Paint — Oak St', customer: 'Johnson', address: '1234 Oak St', trade: 'painting', date: new Date(Date.now() + 86400000).toISOString().split('T')[0], startTime: '8:00 AM', endTime: '5:00 PM', crewSize: 3, isOutdoor: true },
-  { id: '3', name: 'HVAC Install — Pine Ave', customer: 'Williams', address: '567 Pine Ave', trade: 'hvac', date: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0], startTime: '9:00 AM', endTime: '3:00 PM', crewSize: 2, isOutdoor: false },
-  { id: '4', name: 'Concrete Pour — Maple Dr', customer: 'Davis', address: '890 Maple Dr', trade: 'concrete', date: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0], startTime: '6:00 AM', endTime: '2:00 PM', crewSize: 5, isOutdoor: true },
-  { id: '5', name: 'Landscape Install — Elm Way', customer: 'Brown', address: '321 Elm Way', trade: 'landscaping', date: new Date(Date.now() + 86400000 * 4).toISOString().split('T')[0], startTime: '7:30 AM', endTime: '4:30 PM', crewSize: 3, isOutdoor: true },
-  { id: '6', name: 'Panel Upgrade — Cedar Ln', customer: 'Miller', address: '654 Cedar Ln', trade: 'electrical', date: new Date(Date.now() + 86400000 * 6).toISOString().split('T')[0], startTime: '8:00 AM', endTime: '12:00 PM', crewSize: 2, isOutdoor: true },
-];
+const OUTDOOR_TRADES = new Set(['roofing', 'painting', 'concrete', 'landscaping', 'electrical', 'fencing', 'siding', 'gutters', 'paving']);
 
 const defaultTradeRules: TradeWeatherRule[] = [
   { trade: 'roofing', rules: [
@@ -245,9 +239,34 @@ type ViewTab = 'forecast' | 'conflicts' | 'rules' | 'delays';
 
 export default function WeatherSchedulingPage() {
   const { t } = useTranslation();
+  const { jobs: rawJobs } = useJobs();
   const [activeTab, setActiveTab] = useState<ViewTab>('forecast');
   const [forecast] = useState<DayForecast[]>(() => generateForecast());
-  const [jobs] = useState<ScheduledJob[]>(demoJobs);
+
+  const jobs = useMemo<ScheduledJob[]>(() => {
+    const activeStatuses = new Set(['scheduled', 'in_progress', 'on_hold']);
+    return rawJobs
+      .filter(j => j.scheduledStart && activeStatuses.has(j.status))
+      .map(j => {
+        const startDate = new Date(j.scheduledStart!);
+        const endDate = j.scheduledEnd ? new Date(j.scheduledEnd) : new Date(startDate.getTime() + 8 * 3600000);
+        const trade = (j.tradeType || j.jobType || 'general').toLowerCase();
+        const addr = j.address ? `${j.address.street || ''}, ${j.address.city || ''}`.replace(/^,\s*|,\s*$/g, '') : '';
+        const customerName = j.customer ? `${j.customer.firstName || ''} ${j.customer.lastName || ''}`.trim() : '';
+        return {
+          id: j.id,
+          name: j.title,
+          customer: customerName,
+          address: addr,
+          trade,
+          date: startDate.toISOString().split('T')[0],
+          startTime: startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          endTime: endDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          crewSize: j.assignedTo?.length || 1,
+          isOutdoor: OUTDOOR_TRADES.has(trade),
+        };
+      });
+  }, [rawJobs]);
   const [tradeRules, setTradeRules] = useState<TradeWeatherRule[]>(defaultTradeRules);
   const [showRuleEditor, setShowRuleEditor] = useState(false);
   const [editingTrade, setEditingTrade] = useState<string | null>(null);

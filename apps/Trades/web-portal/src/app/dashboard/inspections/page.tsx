@@ -136,10 +136,10 @@ const severityConfig: Record<string, { label: string; variant: 'error' | 'warnin
 };
 
 // ============================================================================
-// DEMO DATA: Inspection Templates per Trade
+// Static Configuration: Inspection Templates per Trade
 // ============================================================================
 
-const DEMO_TEMPLATES: InspectionTemplate[] = [
+const INSPECTION_TEMPLATES: InspectionTemplate[] = [
   {
     id: 'tpl-general', name: 'General Home Inspection', trade: 'General', tradeIcon: Home, itemCount: 127,
     sections: [
@@ -254,65 +254,6 @@ const IRC_INSPECTION_PHASES = INSPECTION_PHASES.map(phase => ({
   criticalItems: phase.sections.flatMap(s => s.items.filter(i => i.criticality === 'critical')),
 }));
 
-// ============================================================================
-// DEMO DATA: Deficiencies
-// ============================================================================
-
-const DEMO_DEFICIENCIES: Deficiency[] = [
-  {
-    id: 'def-1', inspectionId: 'ins-1', inspectionTitle: 'Rough-In Electrical QC', jobName: 'Full Home Rewire — 742 Oak Dr',
-    item: 'GFCI protection missing on bathroom circuit', location: 'Master Bath', severity: 'critical',
-    status: 'assigned', assignedTo: 'Mike Torres', photos: 2,
-    notes: 'Circuit #14 feeds master bath receptacles without GFCI. NEC 210.8(A)(1) violation.',
-    identifiedDate: '2026-02-20',
-  },
-  {
-    id: 'def-2', inspectionId: 'ins-1', inspectionTitle: 'Rough-In Electrical QC', jobName: 'Full Home Rewire — 742 Oak Dr',
-    item: 'Junction box not accessible', location: 'Attic — north side', severity: 'major',
-    status: 'repaired', assignedTo: 'Jason Lee', photos: 3,
-    notes: 'J-box buried under insulation. NEC 314.29 requires all boxes to remain accessible.',
-    identifiedDate: '2026-02-20', resolvedDate: '2026-02-22',
-  },
-  {
-    id: 'def-3', inspectionId: 'ins-2', inspectionTitle: 'Roofing Final Inspection', jobName: 'Roof Replacement — 1120 Elm St',
-    item: 'Flashing not properly sealed at chimney', location: 'Chimney — south face', severity: 'critical',
-    status: 'identified', assignedTo: '', photos: 4,
-    notes: 'Step flashing at chimney not sealed with roofing cement. Water intrusion risk. Counter-flashing missing on south side.',
-    identifiedDate: '2026-02-22',
-  },
-  {
-    id: 'def-4', inspectionId: 'ins-2', inspectionTitle: 'Roofing Final Inspection', jobName: 'Roof Replacement — 1120 Elm St',
-    item: 'Missing drip edge on east gable', location: 'East gable end', severity: 'major',
-    status: 'assigned', assignedTo: 'Carlos Ruiz', photos: 1,
-    notes: 'Drip edge not installed along east gable rake. IRC R905.2.8.5 requires drip edge.',
-    identifiedDate: '2026-02-22',
-  },
-  {
-    id: 'def-5', inspectionId: 'ins-3', inspectionTitle: 'HVAC Commissioning Check', jobName: 'HVAC Install — 305 Pine Rd',
-    item: 'Duct joint not sealed', location: 'Supply trunk — basement', severity: 'minor',
-    status: 'cleared', assignedTo: 'Mike Torres', photos: 2,
-    notes: 'Supply duct joint at trunk line transition not sealed with mastic. Conditioned air loss.',
-    identifiedDate: '2026-02-18', resolvedDate: '2026-02-19',
-  },
-  {
-    id: 'def-6', inspectionId: 'ins-3', inspectionTitle: 'HVAC Commissioning Check', jobName: 'HVAC Install — 305 Pine Rd',
-    item: 'Condensate drain not properly trapped', location: 'Air handler — utility closet', severity: 'major',
-    status: 're_inspected', assignedTo: 'Jason Lee', photos: 1,
-    notes: 'P-trap on condensate line is dry — no water seal. May allow sewer gas into living space.',
-    identifiedDate: '2026-02-18',
-  },
-];
-
-// ============================================================================
-// DEMO DATA: Reports
-// ============================================================================
-
-const DEMO_REPORTS: InspectionReport[] = [
-  { id: 'rpt-1', inspectionTitle: 'Rough-In Electrical QC', jobName: 'Full Home Rewire — 742 Oak Dr', customerName: 'Anderson Family', generatedAt: '2026-02-21T10:00:00Z', format: 'pdf', pages: 12, findings: 8, status: 'sent' },
-  { id: 'rpt-2', inspectionTitle: 'Roofing Final Inspection', jobName: 'Roof Replacement — 1120 Elm St', customerName: 'Patel Residence', generatedAt: '2026-02-22T14:30:00Z', format: 'pdf', pages: 18, findings: 14, status: 'viewed' },
-  { id: 'rpt-3', inspectionTitle: 'HVAC Commissioning Check', jobName: 'HVAC Install — 305 Pine Rd', customerName: 'Thompson Home', generatedAt: '2026-02-19T09:00:00Z', format: 'pdf', pages: 8, findings: 4, status: 'generated' },
-  { id: 'rpt-4', inspectionTitle: 'General Home Inspection', jobName: 'Pre-Purchase — 890 Maple Ave', customerName: 'Chen Family', generatedAt: '2026-02-17T16:00:00Z', format: 'pdf', pages: 24, findings: 22, status: 'sent' },
-];
 
 // ============================================================================
 // MAIN PAGE
@@ -337,12 +278,75 @@ export default function InspectionsPage() {
     { key: 'reports' as Tab, label: 'Reports', icon: <FileText size={16} /> },
   ];
 
+  // Derive deficiencies from real inspections data
+  const derivedDeficiencies = useMemo((): Deficiency[] => {
+    // Deficiencies would be stored in the inspection's checklist items that failed
+    // or in a dedicated deficiencies field in the data JSONB. Since the compliance_records
+    // table stores inspection data in a JSONB `data` column, deficiencies would be
+    // nested there. For now, derive from failed checklist items on failed inspections.
+    const defs: Deficiency[] = [];
+    inspections.forEach(ins => {
+      if (ins.status === 'failed' || ins.status === 'partial') {
+        const failedItems = ins.checklist.filter(c => !c.completed && c.note);
+        failedItems.forEach(item => {
+          defs.push({
+            id: `def-${ins.id}-${item.id}`,
+            inspectionId: ins.id,
+            inspectionTitle: ins.title,
+            jobName: ins.jobName,
+            item: item.label,
+            location: ins.address || '',
+            severity: 'major',
+            status: 'identified',
+            assignedTo: ins.assignedTo,
+            photos: 0,
+            notes: item.note || '',
+            identifiedDate: ins.scheduledDate instanceof Date
+              ? ins.scheduledDate.toISOString().split('T')[0]
+              : String(ins.scheduledDate).split('T')[0],
+          });
+        });
+      }
+    });
+    return defs;
+  }, [inspections]);
+
+  // Derive reports from completed/passed inspections
+  const derivedReports = useMemo((): InspectionReport[] => {
+    // Reports are generated from completed inspections (passed or failed with findings).
+    // Since there is no dedicated reports table yet, derive from inspections that have been completed.
+    return inspections
+      .filter(ins => ins.status === 'passed' || ins.status === 'failed')
+      .map(ins => {
+        const completedItems = ins.checklist.filter(c => c.completed).length;
+        const totalItems = ins.checklist.length;
+        const failedItems = totalItems - completedItems;
+        return {
+          id: `rpt-${ins.id}`,
+          inspectionTitle: ins.title,
+          jobName: ins.jobName,
+          customerName: ins.customerName,
+          generatedAt: ins.completedDate
+            ? ins.completedDate instanceof Date
+              ? ins.completedDate.toISOString()
+              : String(ins.completedDate)
+            : ins.createdAt instanceof Date
+              ? ins.createdAt.toISOString()
+              : String(ins.createdAt),
+          format: 'pdf' as const,
+          pages: Math.max(4, Math.ceil(totalItems / 5)),
+          findings: failedItems,
+          status: 'generated' as const,
+        };
+      });
+  }, [inspections]);
+
   // Stats
   const scheduledCount = inspections.filter(i => i.status === 'scheduled').length;
   const inProgressCount = inspections.filter(i => i.status === 'in_progress').length;
   const passedCount = inspections.filter(i => i.status === 'passed').length;
   const failedCount = inspections.filter(i => i.status === 'failed').length;
-  const openDeficiencies = DEMO_DEFICIENCIES.filter(d => d.status !== 'cleared').length;
+  const openDeficiencies = derivedDeficiencies.filter(d => d.status !== 'cleared').length;
 
   // Filtered inspections
   const filteredInspections = inspections.filter(ins => {
@@ -356,23 +360,25 @@ export default function InspectionsPage() {
   });
 
   // Filtered deficiencies
-  const filteredDeficiencies = DEMO_DEFICIENCIES.filter(d => {
-    const matchesSearch = d.item.toLowerCase().includes(search.toLowerCase()) ||
-      d.jobName.toLowerCase().includes(search.toLowerCase()) ||
-      d.location.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = deficiencyStatusFilter === 'all' || d.status === deficiencyStatusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredDeficiencies = useMemo(() => {
+    return derivedDeficiencies.filter(d => {
+      const matchesSearch = d.item.toLowerCase().includes(search.toLowerCase()) ||
+        d.jobName.toLowerCase().includes(search.toLowerCase()) ||
+        d.location.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = deficiencyStatusFilter === 'all' || d.status === deficiencyStatusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [derivedDeficiencies, search, deficiencyStatusFilter]);
 
   // Filtered templates
-  const filteredTemplates = DEMO_TEMPLATES.filter(t => {
+  const filteredTemplates = INSPECTION_TEMPLATES.filter(t => {
     const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase()) ||
       t.trade.toLowerCase().includes(search.toLowerCase());
     const matchesTrade = templateTradeFilter === 'all' || t.trade === templateTradeFilter;
     return matchesSearch && matchesTrade;
   });
 
-  const uniqueTrades = [...new Set(DEMO_TEMPLATES.map(t => t.trade))];
+  const uniqueTrades = [...new Set(INSPECTION_TEMPLATES.map(t => t.trade))];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -457,11 +463,11 @@ export default function InspectionsPage() {
       )}
 
       {tab === 'reports' && (
-        <ReportsTab reports={DEMO_REPORTS} />
+        <ReportsTab reports={derivedReports} />
       )}
 
       {/* Modals */}
-      {selectedInspection && <InspectionDetailModal inspection={selectedInspection} onClose={() => setSelectedInspection(null)} />}
+      {selectedInspection && <InspectionDetailModal inspection={selectedInspection} deficiencies={derivedDeficiencies} onClose={() => setSelectedInspection(null)} />}
       {showNewModal && <NewInspectionModal onClose={() => setShowNewModal(false)} />}
     </div>
   );
@@ -801,8 +807,9 @@ function DeficienciesTab({
                 {deficiencies.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center text-muted">
-                      <AlertTriangle size={32} className="mx-auto mb-2 opacity-50" />
-                      <p>No deficiencies found</p>
+                      <CheckCircle size={32} className="mx-auto mb-2 opacity-50" />
+                      <p className="font-medium mb-1">No deficiencies recorded yet</p>
+                      <p className="text-xs">Deficiencies will appear here when failed inspection items are identified.</p>
                     </td>
                   </tr>
                 )}
@@ -913,6 +920,15 @@ function ReportsTab({ reports }: { reports: InspectionReport[] }) {
                     </tr>
                   );
                 })}
+                {reports.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className="px-6 py-12 text-center text-muted">
+                      <FileText size={32} className="mx-auto mb-2 opacity-50" />
+                      <p className="font-medium mb-1">No reports generated yet</p>
+                      <p className="text-xs">Reports will appear here once inspections are completed and finalized.</p>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -952,7 +968,7 @@ function ReportsTab({ reports }: { reports: InspectionReport[] }) {
 // INSPECTION DETAIL MODAL
 // ============================================================================
 
-function InspectionDetailModal({ inspection, onClose }: { inspection: InspectionData; onClose: () => void }) {
+function InspectionDetailModal({ inspection, deficiencies, onClose }: { inspection: InspectionData; deficiencies: Deficiency[]; onClose: () => void }) {
   const { t } = useTranslation();
   const sConfig = statusConfig[inspection.status as InspectionStatus] || statusConfig.scheduled;
   const tConfig = typeConfig[inspection.type as InspectionType] || typeConfig.quality;
@@ -960,8 +976,8 @@ function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection
   const totalItems = inspection.checklist.length;
   const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-  // Related deficiencies
-  const relatedDeficiencies = DEMO_DEFICIENCIES.filter(d => d.inspectionTitle === inspection.title);
+  // Related deficiencies from real data
+  const relatedDeficiencies = deficiencies.filter(d => d.inspectionId === inspection.id);
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -1126,13 +1142,13 @@ function NewInspectionModal({ onClose }: { onClose: () => void }) {
               onChange={e => setSelectedTemplate(e.target.value)}
             >
               <option value="">Start blank</option>
-              {DEMO_TEMPLATES.map(tpl => (
+              {INSPECTION_TEMPLATES.map(tpl => (
                 <option key={tpl.id} value={tpl.id}>{tpl.name} ({tpl.itemCount} items)</option>
               ))}
             </select>
             {selectedTemplate && (
               <p className="text-xs text-muted mt-1">
-                {DEMO_TEMPLATES.find(t => t.id === selectedTemplate)?.description}
+                {INSPECTION_TEMPLATES.find(t => t.id === selectedTemplate)?.description}
               </p>
             )}
           </div>

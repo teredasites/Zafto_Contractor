@@ -68,13 +68,6 @@ interface ReadReceipt {
   readAt: string;
 }
 
-// Demo data for job thread cards
-const DEMO_JOB_DATA: Record<string, { title: string; status: string; customer: string }> = {
-  default: { title: 'Kitchen Remodel — 1245 Oak Ave', status: 'In Progress', customer: 'Sarah Mitchell' },
-};
-
-// Demo online status
-const DEMO_ONLINE_IDS = new Set<string>();
 
 // ════════════════════════════════════════════════════════════════
 // MENTION RENDERING
@@ -511,7 +504,8 @@ function PhotoPreview({
 // ════════════════════════════════════════════════════════════════
 
 function JobThreadCard({ conversation }: { conversation: Conversation }) {
-  const jobData = DEMO_JOB_DATA.default;
+  if (!conversation.jobId) return null;
+  const title = conversation.title || 'Job Conversation';
 
   return (
     <div className="px-4 py-2.5 border-b border-main bg-secondary/30">
@@ -521,10 +515,10 @@ function JobThreadCard({ conversation }: { conversation: Conversation }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-main truncate">{jobData.title}</span>
-            <Badge variant="success" className="text-[10px] px-1.5 py-0">{jobData.status}</Badge>
+            <span className="text-sm font-medium text-main truncate">{title}</span>
+            <Badge variant="success" className="text-[10px] px-1.5 py-0">Active</Badge>
           </div>
-          <p className="text-xs text-muted mt-0.5">Customer: {jobData.customer}</p>
+          <p className="text-xs text-muted mt-0.5">Job Thread</p>
         </div>
         <ChevronRight className="h-4 w-4 text-muted flex-shrink-0" />
       </div>
@@ -600,7 +594,7 @@ function ConversationInfoPanel({
         {activeTab === 'members' && (
           <div className="py-1">
             {participants.map(member => {
-              const isOnline = DEMO_ONLINE_IDS.has(member.id) || Math.random() > 0.5;
+              const isOnline = false; // TODO: wire to Supabase presence channel
               const name = `${member.firstName} ${member.lastName}`.trim();
               return (
                 <div key={member.id} className="flex items-center gap-2.5 px-4 py-2">

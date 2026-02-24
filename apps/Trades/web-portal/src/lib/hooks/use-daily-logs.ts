@@ -142,6 +142,44 @@ export function useDailyLogs(jobId?: string) {
     }
   };
 
+  const updateLog = async (logId: string, updates: {
+    summary?: string;
+    weather?: string;
+    temperatureF?: number;
+    workPerformed?: string;
+    issues?: string;
+    delays?: string;
+    visitors?: string;
+    crewCount?: number;
+    hoursWorked?: number;
+    safetyNotes?: string;
+    tradeData?: Record<string, unknown>;
+  }) => {
+    try {
+      setError(null);
+      const supabase = getSupabase();
+      const payload: Record<string, unknown> = {};
+      if (updates.summary !== undefined) payload.summary = updates.summary;
+      if (updates.weather !== undefined) payload.weather = updates.weather;
+      if (updates.temperatureF !== undefined) payload.temperature_f = updates.temperatureF;
+      if (updates.workPerformed !== undefined) payload.work_performed = updates.workPerformed;
+      if (updates.issues !== undefined) payload.issues = updates.issues;
+      if (updates.delays !== undefined) payload.delays = updates.delays;
+      if (updates.visitors !== undefined) payload.visitors = updates.visitors;
+      if (updates.crewCount !== undefined) payload.crew_count = updates.crewCount;
+      if (updates.hoursWorked !== undefined) payload.hours_worked = updates.hoursWorked;
+      if (updates.safetyNotes !== undefined) payload.safety_notes = updates.safetyNotes;
+      if (updates.tradeData !== undefined) payload.trade_data = updates.tradeData;
+      const { error: err } = await supabase.from('daily_logs').update(payload).eq('id', logId);
+      if (err) throw err;
+      await fetchLogs();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to update daily log';
+      setError(msg);
+      throw e;
+    }
+  };
+
   const deleteLog = async (logId: string) => {
     try {
       setError(null);
@@ -161,5 +199,5 @@ export function useDailyLogs(jobId?: string) {
   const todayLog = logs.find(l => l.logDate === new Date().toISOString().split('T')[0]);
   const logsWithIssues = logs.filter(l => l.issues && l.issues.trim().length > 0);
 
-  return { logs, todayLog, logsWithIssues, loading, error, saveLog, deleteLog, refresh: fetchLogs };
+  return { logs, todayLog, logsWithIssues, loading, error, saveLog, updateLog, deleteLog, refresh: fetchLogs };
 }

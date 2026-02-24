@@ -16,14 +16,11 @@ import {
   Send,
   Loader2,
   Trash2,
-  FileText,
   TrendingUp,
   AlertTriangle,
   ChevronDown,
   ChevronUp,
-  Minus,
   Download,
-  History,
   BarChart3,
 } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
@@ -36,7 +33,7 @@ import { formatDate, cn } from '@/lib/utils';
 import { useChangeOrders } from '@/lib/hooks/use-change-orders';
 import type { ChangeOrderData } from '@/lib/hooks/mappers';
 import { useTranslation } from '@/lib/translations';
-import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
+import { formatCurrency } from '@/lib/format-locale';
 
 type ChangeOrderStatus = 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'voided';
 
@@ -48,130 +45,14 @@ const statusConfig: Record<ChangeOrderStatus, { label: string; color: string; bg
   voided: { label: 'Voided', color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-100 dark:bg-slate-900/30' },
 };
 
-// ── Demo data for depth features ──
-
-interface ScopeDiffItem {
-  category: string;
-  item: string;
-  originalQty: number;
-  newQty: number;
-  originalPrice: number;
-  newPrice: number;
-  changeType: 'added' | 'removed' | 'modified' | 'unchanged';
-}
-
-interface CumulativeJob {
-  jobId: string;
-  jobName: string;
-  customerName: string;
-  originalContract: number;
-  changeOrders: { coNumber: string; amount: number; status: string; date: string; scheduleDays: number }[];
-  currentContract: number;
-  totalDaysAdded: number;
-  originalEndDate: string;
-  adjustedEndDate: string;
-}
-
-const demoScopeDiffs: ScopeDiffItem[] = [
-  { category: 'Electrical', item: '200A Panel Upgrade', originalQty: 1, newQty: 1, originalPrice: 3200, newPrice: 3200, changeType: 'unchanged' },
-  { category: 'Electrical', item: 'EV Charger Circuit (240V/50A)', originalQty: 0, newQty: 1, originalPrice: 0, newPrice: 1850, changeType: 'added' },
-  { category: 'Electrical', item: 'Whole-House Surge Protector', originalQty: 0, newQty: 1, originalPrice: 0, newPrice: 450, changeType: 'added' },
-  { category: 'Plumbing', item: 'Water Heater Replacement', originalQty: 1, newQty: 1, originalPrice: 2800, newPrice: 2800, changeType: 'unchanged' },
-  { category: 'Plumbing', item: 'Tankless Recirculating Pump', originalQty: 1, newQty: 0, originalPrice: 650, newPrice: 0, changeType: 'removed' },
-  { category: 'HVAC', item: 'Ductwork Modification', originalQty: 1, newQty: 1, originalPrice: 1400, newPrice: 1750, changeType: 'modified' },
-  { category: 'HVAC', item: 'Zone Damper (additional)', originalQty: 0, newQty: 2, originalPrice: 0, newPrice: 380, changeType: 'added' },
-  { category: 'Framing', item: 'Load-Bearing Wall Header', originalQty: 1, newQty: 1, originalPrice: 900, newPrice: 900, changeType: 'unchanged' },
-  { category: 'Drywall', item: 'Drywall Repair (sq ft)', originalQty: 120, newQty: 180, originalPrice: 4.50, newPrice: 4.50, changeType: 'modified' },
-];
-
-const demoCumulativeJobs: CumulativeJob[] = [
-  {
-    jobId: 'j1', jobName: 'Kitchen Remodel — Thompson', customerName: 'Sarah Thompson',
-    originalContract: 45000,
-    changeOrders: [
-      { coNumber: 'CO-001', amount: 2300, status: 'approved', date: '2026-01-15', scheduleDays: 2 },
-      { coNumber: 'CO-002', amount: -650, status: 'approved', date: '2026-01-28', scheduleDays: 0 },
-      { coNumber: 'CO-003', amount: 1100, status: 'pending_approval', date: '2026-02-10', scheduleDays: 1 },
-    ],
-    currentContract: 47750,
-    totalDaysAdded: 3,
-    originalEndDate: '2026-03-15',
-    adjustedEndDate: '2026-03-18',
-  },
-  {
-    jobId: 'j2', jobName: 'Bathroom Addition — Garcia', customerName: 'Miguel Garcia',
-    originalContract: 28500,
-    changeOrders: [
-      { coNumber: 'CO-004', amount: 4200, status: 'approved', date: '2026-02-01', scheduleDays: 5 },
-      { coNumber: 'CO-005', amount: 850, status: 'approved', date: '2026-02-12', scheduleDays: 0 },
-    ],
-    currentContract: 33550,
-    totalDaysAdded: 5,
-    originalEndDate: '2026-04-01',
-    adjustedEndDate: '2026-04-06',
-  },
-  {
-    jobId: 'j3', jobName: 'Roof Replacement — Park', customerName: 'James Park',
-    originalContract: 18200,
-    changeOrders: [
-      { coNumber: 'CO-006', amount: 2100, status: 'approved', date: '2026-02-05', scheduleDays: 1 },
-    ],
-    currentContract: 20300,
-    totalDaysAdded: 1,
-    originalEndDate: '2026-02-28',
-    adjustedEndDate: '2026-03-01',
-  },
-  {
-    jobId: 'j4', jobName: 'HVAC System — Williams', customerName: 'Denise Williams',
-    originalContract: 12800,
-    changeOrders: [],
-    currentContract: 12800,
-    totalDaysAdded: 0,
-    originalEndDate: '2026-03-10',
-    adjustedEndDate: '2026-03-10',
-  },
-];
-
-interface COAnalytics {
-  totalCOs: number;
-  approvalRate: number;
-  avgAmount: number;
-  avgApprovalDays: number;
-  totalAdded: number;
-  totalRemoved: number;
-  netChange: number;
-  avgScheduleImpact: number;
-  byReason: { reason: string; count: number; totalAmount: number }[];
-  byMonth: { month: string; count: number; amount: number }[];
-}
-
-const demoAnalytics: COAnalytics = {
-  totalCOs: 24,
-  approvalRate: 87.5,
-  avgAmount: 1850,
-  avgApprovalDays: 2.3,
-  totalAdded: 38400,
-  totalRemoved: 6200,
-  netChange: 32200,
-  avgScheduleImpact: 1.8,
-  byReason: [
-    { reason: 'Customer Request', count: 10, totalAmount: 18500 },
-    { reason: 'Discovered During Work', count: 6, totalAmount: 8200 },
-    { reason: 'Code Requirement', count: 4, totalAmount: 5100 },
-    { reason: 'Design Change', count: 3, totalAmount: 4600 },
-    { reason: 'Contractor Recommendation', count: 1, totalAmount: 1800 },
-  ],
-  byMonth: [
-    { month: 'Sep 2025', count: 2, amount: 3400 },
-    { month: 'Oct 2025', count: 4, amount: 7200 },
-    { month: 'Nov 2025', count: 3, amount: 4100 },
-    { month: 'Dec 2025', count: 5, amount: 9800 },
-    { month: 'Jan 2026', count: 6, amount: 11200 },
-    { month: 'Feb 2026', count: 4, amount: 6500 },
-  ],
+const REASON_LABELS: Record<string, string> = {
+  customer_request: 'Customer Request',
+  discovered_during_work: 'Discovered During Work',
+  code_requirement: 'Code Requirement',
+  design_change: 'Design Change',
+  contractor_recommendation: 'Contractor Recommendation',
 };
 
-// ── Tabs ──
 const tabs = [
   { key: 'orders', label: 'Change Orders', icon: FileDiff },
   { key: 'cumulative', label: 'Cumulative', icon: TrendingUp },
@@ -282,9 +163,9 @@ export default function ChangeOrdersPage() {
           t={t}
         />
       )}
-      {activeTab === 'cumulative' && <CumulativeTab />}
-      {activeTab === 'scope-diff' && <ScopeDiffTab />}
-      {activeTab === 'analytics' && <AnalyticsTab />}
+      {activeTab === 'cumulative' && <CumulativeTab changeOrders={changeOrders} />}
+      {activeTab === 'scope-diff' && <ScopeDiffTab changeOrders={changeOrders} />}
+      {activeTab === 'analytics' && <AnalyticsTab changeOrders={changeOrders} />}
 
       {selectedCO && <CODetailModal co={selectedCO} onClose={() => setSelectedCO(null)} />}
       {showNewModal && <NewCOModal onClose={() => setShowNewModal(false)} onCreate={createChangeOrder} />}
@@ -364,36 +245,76 @@ function OrdersTab({ filteredCOs, search, setSearch, statusFilter, setStatusFilt
 
 // ── Cumulative Tracking Tab ──
 
-function CumulativeTab() {
+function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
   const [expandedJob, setExpandedJob] = useState<string | null>(null);
 
+  const cumulativeJobs = useMemo(() => {
+    const jobMap = new Map<string, {
+      jobId: string;
+      jobName: string;
+      customerName: string;
+      changeOrders: { coNumber: string; amount: number; status: string; date: string }[];
+    }>();
+
+    changeOrders.forEach(co => {
+      const existing = jobMap.get(co.jobId);
+      const coEntry = {
+        coNumber: co.number,
+        amount: co.amount,
+        status: co.status,
+        date: co.createdAt.toISOString().split('T')[0],
+      };
+      if (existing) {
+        existing.changeOrders.push(coEntry);
+      } else {
+        jobMap.set(co.jobId, {
+          jobId: co.jobId,
+          jobName: co.jobName || 'Untitled Job',
+          customerName: co.customerName || 'Unknown',
+          changeOrders: [coEntry],
+        });
+      }
+    });
+
+    return Array.from(jobMap.values()).map(job => {
+      const approvedTotal = job.changeOrders
+        .filter(co => co.status === 'approved')
+        .reduce((sum, co) => sum + co.amount, 0);
+      return { ...job, approvedTotal };
+    });
+  }, [changeOrders]);
+
   const totals = useMemo(() => {
-    let origTotal = 0, currentTotal = 0, totalDays = 0, totalCOs = 0;
-    demoCumulativeJobs.forEach(j => {
-      origTotal += j.originalContract;
-      currentTotal += j.currentContract;
-      totalDays += j.totalDaysAdded;
+    let totalApproved = 0;
+    let totalCOs = 0;
+    cumulativeJobs.forEach(j => {
+      totalApproved += j.approvedTotal;
       totalCOs += j.changeOrders.length;
     });
-    return { origTotal, currentTotal, netChange: currentTotal - origTotal, totalDays, totalCOs };
-  }, []);
+    return { totalApproved, totalCOs, jobCount: cumulativeJobs.length };
+  }, [cumulativeJobs]);
+
+  if (cumulativeJobs.length === 0) {
+    return (
+      <Card><CardContent className="p-12 text-center">
+        <TrendingUp size={48} className="mx-auto text-muted mb-4" />
+        <h3 className="text-lg font-medium text-main mb-2">No cumulative data yet</h3>
+        <p className="text-muted">Create change orders to see cumulative job-level tracking here.</p>
+      </CardContent></Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Summary stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Original Contracts</p>
-          <p className="text-xl font-semibold text-main mt-1">{formatCurrency(totals.origTotal)}</p>
+          <p className="text-xs text-muted uppercase tracking-wider">Jobs with COs</p>
+          <p className="text-xl font-semibold text-main mt-1">{totals.jobCount}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Current Value</p>
-          <p className="text-xl font-semibold text-emerald-400 mt-1">{formatCurrency(totals.currentTotal)}</p>
-        </CardContent></Card>
-        <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Net Change</p>
-          <p className={cn('text-xl font-semibold mt-1', totals.netChange >= 0 ? 'text-emerald-400' : 'text-red-400')}>
-            {totals.netChange >= 0 ? '+' : ''}{formatCurrency(totals.netChange)}
+          <p className="text-xs text-muted uppercase tracking-wider">Net Approved</p>
+          <p className={cn('text-xl font-semibold mt-1', totals.totalApproved >= 0 ? 'text-emerald-400' : 'text-red-400')}>
+            {totals.totalApproved >= 0 ? '+' : ''}{formatCurrency(totals.totalApproved)}
           </p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
@@ -401,16 +322,17 @@ function CumulativeTab() {
           <p className="text-xl font-semibold text-main mt-1">{totals.totalCOs}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Schedule Impact</p>
-          <p className="text-xl font-semibold text-amber-400 mt-1">+{totals.totalDays} days</p>
+          <p className="text-xs text-muted uppercase tracking-wider">Avg COs per Job</p>
+          <p className="text-xl font-semibold text-main mt-1">
+            {totals.jobCount > 0 ? (totals.totalCOs / totals.jobCount).toFixed(1) : '0'}
+          </p>
         </CardContent></Card>
       </div>
 
-      {/* Per-job cumulative breakdown */}
       <div className="space-y-3">
-        {demoCumulativeJobs.map(job => {
+        {cumulativeJobs.map(job => {
           const isExpanded = expandedJob === job.jobId;
-          const changePercent = ((job.currentContract - job.originalContract) / job.originalContract * 100);
+          const jobTotal = job.changeOrders.reduce((sum, co) => sum + co.amount, 0);
           return (
             <Card key={job.jobId}>
               <div
@@ -429,20 +351,10 @@ function CumulativeTab() {
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <p className="text-sm text-muted">Original</p>
-                      <p className="font-medium text-main">{formatCurrency(job.originalContract)}</p>
-                    </div>
-                    <div className="text-center">
-                      <ArrowUpRight size={14} className="text-muted mx-auto" />
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted">Current</p>
-                      <p className="font-semibold text-emerald-400">{formatCurrency(job.currentContract)}</p>
-                    </div>
-                    <div className="text-right w-20">
-                      <Badge variant={changePercent > 10 ? 'warning' : changePercent > 0 ? 'info' : 'secondary'} size="sm">
-                        {changePercent >= 0 ? '+' : ''}{changePercent.toFixed(1)}%
-                      </Badge>
+                      <p className="text-sm text-muted">Net Change</p>
+                      <p className={cn('font-semibold', jobTotal >= 0 ? 'text-emerald-400' : 'text-red-400')}>
+                        {jobTotal >= 0 ? '+' : ''}{formatCurrency(jobTotal)}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-muted">{job.changeOrders.length} CO{job.changeOrders.length !== 1 ? 's' : ''}</p>
@@ -453,18 +365,7 @@ function CumulativeTab() {
 
               {isExpanded && (
                 <div className="border-t border-main px-4 pb-4">
-                  {/* CO timeline for this job */}
                   <div className="ml-8 mt-3 space-y-2">
-                    {/* Original contract line */}
-                    <div className="flex items-center gap-3 text-sm p-2 bg-secondary/30 rounded-lg">
-                      <FileText size={14} className="text-muted" />
-                      <span className="font-mono text-xs text-muted w-20">Original</span>
-                      <span className="text-main flex-1">Original Contract</span>
-                      <span className="font-medium text-main">{formatCurrency(job.originalContract)}</span>
-                      <span className="text-xs text-muted w-24 text-right">Running: {formatCurrency(job.originalContract)}</span>
-                    </div>
-
-                    {/* Each CO */}
                     {job.changeOrders.reduce<{ runningTotal: number; elements: React.ReactNode[] }>((acc, co) => {
                       acc.runningTotal += co.amount;
                       const sConfig = statusConfig[co.status as ChangeOrderStatus] || statusConfig.draft;
@@ -481,37 +382,19 @@ function CumulativeTab() {
                           <span className={cn('font-medium', co.amount >= 0 ? 'text-emerald-400' : 'text-red-400')}>
                             {co.amount >= 0 ? '+' : ''}{formatCurrency(co.amount)}
                           </span>
-                          <span className="text-xs text-muted w-24 text-right">Running: {formatCurrency(job.originalContract + acc.runningTotal)}</span>
-                          {co.scheduleDays > 0 && (
-                            <span className="text-xs text-amber-400">+{co.scheduleDays}d</span>
-                          )}
+                          <span className="text-xs text-muted w-24 text-right">Running: {formatCurrency(acc.runningTotal)}</span>
                         </div>
                       );
                       return acc;
                     }, { runningTotal: 0, elements: [] }).elements}
 
-                    {/* Final line */}
                     <div className="flex items-center gap-3 text-sm p-2 bg-secondary/50 rounded-lg border border-main">
                       <DollarSign size={14} className="text-accent" />
-                      <span className="font-mono text-xs text-accent w-20">Current</span>
-                      <span className="text-main font-medium flex-1">Current Contract Value</span>
-                      <span className="font-bold text-accent">{formatCurrency(job.currentContract)}</span>
+                      <span className="font-mono text-xs text-accent w-20">Total</span>
+                      <span className="text-main font-medium flex-1">Net Change Order Value</span>
+                      <span className="font-bold text-accent">{formatCurrency(jobTotal)}</span>
                     </div>
                   </div>
-
-                  {/* Schedule impact */}
-                  {job.totalDaysAdded > 0 && (
-                    <div className="ml-8 mt-3 p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar size={14} className="text-amber-400" />
-                        <span className="text-amber-300 font-medium">Schedule Impact: +{job.totalDaysAdded} days</span>
-                      </div>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-muted ml-6">
-                        <span>Original end: {job.originalEndDate}</span>
-                        <span>Adjusted end: <span className="text-amber-300">{job.adjustedEndDate}</span></span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
             </Card>
@@ -524,56 +407,75 @@ function CumulativeTab() {
 
 // ── Scope Diff Tab ──
 
-function ScopeDiffTab() {
+function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
+  const scopeItems = useMemo(() => {
+    const allItems: { category: string; item: string; quantity: number; unitPrice: number; total: number; coNumber: string; coStatus: string }[] = [];
+    changeOrders.forEach(co => {
+      co.items.forEach(item => {
+        allItems.push({
+          category: co.jobName || 'Uncategorized',
+          item: item.description,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          total: item.total,
+          coNumber: co.number,
+          coStatus: co.status,
+        });
+      });
+    });
+    return allItems;
+  }, [changeOrders]);
+
   const categories = useMemo(() => {
-    const map = new Map<string, ScopeDiffItem[]>();
-    demoScopeDiffs.forEach(d => {
+    const map = new Map<string, typeof scopeItems>();
+    scopeItems.forEach(d => {
       const existing = map.get(d.category) || [];
       existing.push(d);
       map.set(d.category, existing);
     });
     return Array.from(map.entries());
-  }, []);
+  }, [scopeItems]);
 
-  const originalTotal = demoScopeDiffs.reduce((sum, d) => sum + d.originalQty * d.originalPrice, 0);
-  const newTotal = demoScopeDiffs.reduce((sum, d) => sum + d.newQty * d.newPrice, 0);
-  const added = demoScopeDiffs.filter(d => d.changeType === 'added').length;
-  const removed = demoScopeDiffs.filter(d => d.changeType === 'removed').length;
-  const modified = demoScopeDiffs.filter(d => d.changeType === 'modified').length;
+  const totalValue = scopeItems.reduce((sum, d) => sum + d.total, 0);
+  const totalItems = scopeItems.length;
+  const approvedItems = scopeItems.filter(d => d.coStatus === 'approved');
+  const pendingItems = scopeItems.filter(d => d.coStatus === 'pending_approval');
+  const approvedValue = approvedItems.reduce((sum, d) => sum + d.total, 0);
+
+  if (scopeItems.length === 0) {
+    return (
+      <Card><CardContent className="p-12 text-center">
+        <FileDiff size={48} className="mx-auto text-muted mb-4" />
+        <h3 className="text-lg font-medium text-main mb-2">No scope items yet</h3>
+        <p className="text-muted">Add line items to change orders to see a scope breakdown here.</p>
+      </CardContent></Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Diff summary */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Original Scope</p>
-          <p className="text-xl font-semibold text-main mt-1">{formatCurrency(originalTotal)}</p>
+          <p className="text-xs text-muted uppercase tracking-wider">Total Value</p>
+          <p className="text-xl font-semibold text-main mt-1">{formatCurrency(totalValue)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Revised Scope</p>
-          <p className="text-xl font-semibold text-main mt-1">{formatCurrency(newTotal)}</p>
-        </CardContent></Card>
-        <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Net Delta</p>
-          <p className={cn('text-xl font-semibold mt-1', newTotal - originalTotal >= 0 ? 'text-emerald-400' : 'text-red-400')}>
-            {newTotal - originalTotal >= 0 ? '+' : ''}{formatCurrency(newTotal - originalTotal)}
-          </p>
+          <p className="text-xs text-muted uppercase tracking-wider">Approved Value</p>
+          <p className="text-xl font-semibold text-emerald-400 mt-1">{formatCurrency(approvedValue)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <div className="flex items-center gap-2">
-            <Badge variant="success" size="sm">+{added}</Badge>
-            <Badge variant="error" size="sm">-{removed}</Badge>
-            <Badge variant="warning" size="sm">{modified} mod</Badge>
+            <Badge variant="success" size="sm">{approvedItems.length} approved</Badge>
+            <Badge variant="warning" size="sm">{pendingItems.length} pending</Badge>
           </div>
-          <p className="text-xs text-muted mt-2">Line Item Changes</p>
+          <p className="text-xs text-muted mt-2">Line Item Statuses</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <p className="text-xs text-muted uppercase tracking-wider">Total Items</p>
-          <p className="text-xl font-semibold text-main mt-1">{demoScopeDiffs.length}</p>
+          <p className="text-xl font-semibold text-main mt-1">{totalItems}</p>
         </CardContent></Card>
       </div>
 
-      {/* Category breakdown with diff table */}
       {categories.map(([category, items]) => (
         <Card key={category}>
           <CardHeader className="pb-2">
@@ -585,44 +487,25 @@ function ScopeDiffTab() {
                 <thead>
                   <tr className="bg-secondary text-left text-xs font-medium text-muted">
                     <th className="px-4 py-2">Item</th>
-                    <th className="px-4 py-2 text-right">Original Qty</th>
-                    <th className="px-4 py-2 text-right">New Qty</th>
-                    <th className="px-4 py-2 text-right">Original Price</th>
-                    <th className="px-4 py-2 text-right">New Price</th>
-                    <th className="px-4 py-2 text-right">Original Total</th>
-                    <th className="px-4 py-2 text-right">New Total</th>
-                    <th className="px-4 py-2 text-center">Change</th>
+                    <th className="px-4 py-2 text-center">CO #</th>
+                    <th className="px-4 py-2 text-right">Qty</th>
+                    <th className="px-4 py-2 text-right">Unit Price</th>
+                    <th className="px-4 py-2 text-right">Total</th>
+                    <th className="px-4 py-2 text-center">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, i) => {
-                    const origTotal = item.originalQty * item.originalPrice;
-                    const nTotal = item.newQty * item.newPrice;
+                    const sConfig = statusConfig[item.coStatus as ChangeOrderStatus] || statusConfig.draft;
                     return (
-                      <tr key={i} className={cn(
-                        'border-t border-main/50 text-sm',
-                        item.changeType === 'added' && 'bg-emerald-500/5',
-                        item.changeType === 'removed' && 'bg-red-500/5',
-                        item.changeType === 'modified' && 'bg-amber-500/5',
-                      )}>
+                      <tr key={i} className="border-t border-main/50 text-sm">
                         <td className="px-4 py-2 text-main">{item.item}</td>
-                        <td className="px-4 py-2 text-right text-muted">{item.originalQty}</td>
-                        <td className={cn('px-4 py-2 text-right font-medium',
-                          item.newQty > item.originalQty ? 'text-emerald-400' :
-                          item.newQty < item.originalQty ? 'text-red-400' : 'text-main'
-                        )}>{item.newQty}</td>
-                        <td className="px-4 py-2 text-right text-muted">{formatCurrency(item.originalPrice)}</td>
-                        <td className={cn('px-4 py-2 text-right font-medium',
-                          item.newPrice > item.originalPrice ? 'text-emerald-400' :
-                          item.newPrice < item.originalPrice ? 'text-red-400' : 'text-main'
-                        )}>{formatCurrency(item.newPrice)}</td>
-                        <td className="px-4 py-2 text-right text-muted">{formatCurrency(origTotal)}</td>
-                        <td className="px-4 py-2 text-right font-medium text-main">{formatCurrency(nTotal)}</td>
+                        <td className="px-4 py-2 text-center font-mono text-xs text-muted">{item.coNumber}</td>
+                        <td className="px-4 py-2 text-right text-main">{item.quantity}</td>
+                        <td className="px-4 py-2 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
+                        <td className="px-4 py-2 text-right font-medium text-main">{formatCurrency(item.total)}</td>
                         <td className="px-4 py-2 text-center">
-                          {item.changeType === 'added' && <Badge variant="success" size="sm">Added</Badge>}
-                          {item.changeType === 'removed' && <Badge variant="error" size="sm">Removed</Badge>}
-                          {item.changeType === 'modified' && <Badge variant="warning" size="sm">Modified</Badge>}
-                          {item.changeType === 'unchanged' && <Minus size={14} className="mx-auto text-muted" />}
+                          <span className={cn('px-1.5 py-0.5 rounded text-xs', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
                         </td>
                       </tr>
                     );
@@ -639,46 +522,112 @@ function ScopeDiffTab() {
 
 // ── Analytics Tab ──
 
-function AnalyticsTab() {
-  const maxMonthAmount = Math.max(...demoAnalytics.byMonth.map(m => m.amount));
-  const maxReasonAmount = Math.max(...demoAnalytics.byReason.map(r => r.totalAmount));
+function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
+  const analytics = useMemo(() => {
+    const total = changeOrders.length;
+    const approved = changeOrders.filter(co => co.status === 'approved');
+    const approvalRate = total > 0 ? (approved.length / total) * 100 : 0;
+    const avgAmount = total > 0 ? changeOrders.reduce((sum, co) => sum + Math.abs(co.amount), 0) / total : 0;
+
+    const totalAdded = changeOrders.filter(co => co.amount > 0).reduce((sum, co) => sum + co.amount, 0);
+    const totalRemoved = changeOrders.filter(co => co.amount < 0).reduce((sum, co) => sum + Math.abs(co.amount), 0);
+    const netChange = totalAdded - totalRemoved;
+
+    let avgApprovalDays = 0;
+    const approvedWithDates = approved.filter(co => co.approvedAt);
+    if (approvedWithDates.length > 0) {
+      const totalDays = approvedWithDates.reduce((sum, co) => {
+        const created = co.createdAt.getTime();
+        const approvedDate = co.approvedAt!.getTime();
+        return sum + Math.max(0, (approvedDate - created) / (1000 * 60 * 60 * 24));
+      }, 0);
+      avgApprovalDays = totalDays / approvedWithDates.length;
+    }
+
+    const reasonMap = new Map<string, { count: number; totalAmount: number }>();
+    changeOrders.forEach(co => {
+      const reason = REASON_LABELS[co.reason] || co.reason || 'Other';
+      const existing = reasonMap.get(reason) || { count: 0, totalAmount: 0 };
+      existing.count += 1;
+      existing.totalAmount += Math.abs(co.amount);
+      reasonMap.set(reason, existing);
+    });
+    const byReason = Array.from(reasonMap.entries())
+      .map(([reason, data]) => ({ reason, ...data }))
+      .sort((a, b) => b.totalAmount - a.totalAmount);
+
+    const monthMap = new Map<string, { count: number; amount: number }>();
+    changeOrders.forEach(co => {
+      const d = co.createdAt;
+      const monthKey = `${d.toLocaleString('en', { month: 'short' })} ${d.getFullYear()}`;
+      const existing = monthMap.get(monthKey) || { count: 0, amount: 0 };
+      existing.count += 1;
+      existing.amount += Math.abs(co.amount);
+      monthMap.set(monthKey, existing);
+    });
+    const byMonth = Array.from(monthMap.entries())
+      .map(([month, data]) => ({ month, ...data }))
+      .sort((a, b) => {
+        const parseMonth = (s: string) => {
+          const [mon, yr] = s.split(' ');
+          return new Date(`${mon} 1, ${yr}`).getTime();
+        };
+        return parseMonth(a.month) - parseMonth(b.month);
+      });
+
+    return { totalCOs: total, approvalRate, avgAmount, avgApprovalDays, totalAdded, totalRemoved, netChange, byReason, byMonth };
+  }, [changeOrders]);
+
+  if (changeOrders.length === 0) {
+    return (
+      <Card><CardContent className="p-12 text-center">
+        <BarChart3 size={48} className="mx-auto text-muted mb-4" />
+        <h3 className="text-lg font-medium text-main mb-2">No analytics data yet</h3>
+        <p className="text-muted">Create change orders to see analytics and trends here.</p>
+      </CardContent></Card>
+    );
+  }
+
+  const maxMonthAmount = analytics.byMonth.length > 0 ? Math.max(...analytics.byMonth.map(m => m.amount)) : 1;
+  const maxReasonAmount = analytics.byReason.length > 0 ? Math.max(...analytics.byReason.map(r => r.totalAmount)) : 1;
 
   return (
     <div className="space-y-6">
-      {/* Top stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
           <p className="text-xs text-muted uppercase tracking-wider">Approval Rate</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">{demoAnalytics.approvalRate}%</p>
-          <p className="text-xs text-muted mt-1">{demoAnalytics.totalCOs} total change orders</p>
+          <p className="text-2xl font-bold text-emerald-400 mt-1">{analytics.approvalRate.toFixed(1)}%</p>
+          <p className="text-xs text-muted mt-1">{analytics.totalCOs} total change orders</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <p className="text-xs text-muted uppercase tracking-wider">Average CO Amount</p>
-          <p className="text-2xl font-bold text-main mt-1">{formatCurrency(demoAnalytics.avgAmount)}</p>
-          <p className="text-xs text-muted mt-1">Avg {demoAnalytics.avgApprovalDays} days to approve</p>
+          <p className="text-2xl font-bold text-main mt-1">{formatCurrency(analytics.avgAmount)}</p>
+          <p className="text-xs text-muted mt-1">Avg {analytics.avgApprovalDays.toFixed(1)} days to approve</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <p className="text-xs text-muted uppercase tracking-wider">Net Contract Change</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">+{formatCurrency(demoAnalytics.netChange)}</p>
+          <p className={cn('text-2xl font-bold mt-1', analytics.netChange >= 0 ? 'text-emerald-400' : 'text-red-400')}>
+            {analytics.netChange >= 0 ? '+' : ''}{formatCurrency(analytics.netChange)}
+          </p>
           <p className="text-xs text-muted mt-1">
-            <span className="text-emerald-400">+{formatCurrency(demoAnalytics.totalAdded)}</span>
+            <span className="text-emerald-400">+{formatCurrency(analytics.totalAdded)}</span>
             {' / '}
-            <span className="text-red-400">-{formatCurrency(demoAnalytics.totalRemoved)}</span>
+            <span className="text-red-400">-{formatCurrency(analytics.totalRemoved)}</span>
           </p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Avg Schedule Impact</p>
-          <p className="text-2xl font-bold text-amber-400 mt-1">+{demoAnalytics.avgScheduleImpact} days</p>
+          <p className="text-xs text-muted uppercase tracking-wider">Avg Approval Time</p>
+          <p className="text-2xl font-bold text-amber-400 mt-1">{analytics.avgApprovalDays.toFixed(1)} days</p>
           <p className="text-xs text-muted mt-1">per change order</p>
         </CardContent></Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* By Reason */}
         <Card>
           <CardHeader><CardTitle className="text-base">By Reason</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            {demoAnalytics.byReason.map((r, i) => (
+            {analytics.byReason.length === 0 && <p className="text-sm text-muted">No data available</p>}
+            {analytics.byReason.map((r, i) => (
               <div key={i}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-main">{r.reason}</span>
@@ -698,54 +647,70 @@ function AnalyticsTab() {
           </CardContent>
         </Card>
 
-        {/* By Month */}
         <Card>
           <CardHeader><CardTitle className="text-base">Monthly Trend</CardTitle></CardHeader>
           <CardContent>
-            <div className="flex items-end gap-2 h-40">
-              {demoAnalytics.byMonth.map((m, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <span className="text-xs text-muted">{formatCurrency(m.amount)}</span>
-                  <div
-                    className="w-full bg-accent/80 rounded-t"
-                    style={{ height: `${(m.amount / maxMonthAmount) * 120}px` }}
-                  />
-                  <span className="text-xs text-muted">{m.count}</span>
-                  <span className="text-[10px] text-muted">{m.month.split(' ')[0]}</span>
-                </div>
-              ))}
-            </div>
+            {analytics.byMonth.length === 0 ? (
+              <p className="text-sm text-muted">No data available</p>
+            ) : (
+              <div className="flex items-end gap-2 h-40">
+                {analytics.byMonth.map((m, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                    <span className="text-xs text-muted">{formatCurrency(m.amount)}</span>
+                    <div
+                      className="w-full bg-accent/80 rounded-t"
+                      style={{ height: `${(m.amount / maxMonthAmount) * 120}px` }}
+                    />
+                    <span className="text-xs text-muted">{m.count}</span>
+                    <span className="text-[10px] text-muted">{m.month.split(' ')[0]}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Recommendations */}
-      <Card>
-        <CardHeader><CardTitle className="text-base">Insights</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
-            <AlertTriangle size={16} className="text-amber-400 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-main">High change order rate on kitchen jobs</p>
-              <p className="text-xs text-muted mt-1">Kitchen remodels average 2.8 change orders per job vs 1.2 for other jobs. Consider more thorough initial scoping for kitchens.</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
-            <TrendingUp size={16} className="text-emerald-400 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-main">Change orders increase revenue by 6.1%</p>
-              <p className="text-xs text-muted mt-1">Net positive change orders added {formatCurrency(demoAnalytics.netChange)} to contract values this period. {demoAnalytics.approvalRate}% approval rate indicates strong customer trust.</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
-            <Clock size={16} className="text-blue-400 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-main">Average approval time: {demoAnalytics.avgApprovalDays} days</p>
-              <p className="text-xs text-muted mt-1">Down from 3.1 days last quarter. Faster approvals reduce crew idle time and improve schedule predictability.</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {analytics.totalCOs > 0 && (
+        <Card>
+          <CardHeader><CardTitle className="text-base">Insights</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            {analytics.approvalRate > 0 && (
+              <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
+                <TrendingUp size={16} className="text-emerald-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-main">
+                    {analytics.netChange >= 0 ? 'Change orders increase revenue' : 'Change orders have net reductions'}
+                  </p>
+                  <p className="text-xs text-muted mt-1">
+                    Net change of {formatCurrency(Math.abs(analytics.netChange))} across {analytics.totalCOs} change orders. {analytics.approvalRate.toFixed(0)}% approval rate.
+                  </p>
+                </div>
+              </div>
+            )}
+            {analytics.avgApprovalDays > 0 && (
+              <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
+                <Clock size={16} className="text-blue-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-main">Average approval time: {analytics.avgApprovalDays.toFixed(1)} days</p>
+                  <p className="text-xs text-muted mt-1">Faster approvals reduce crew idle time and improve schedule predictability.</p>
+                </div>
+              </div>
+            )}
+            {analytics.byReason.length > 0 && (
+              <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
+                <AlertTriangle size={16} className="text-amber-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-main">Top reason: {analytics.byReason[0].reason}</p>
+                  <p className="text-xs text-muted mt-1">
+                    {analytics.byReason[0].count} change orders totaling {formatCurrency(analytics.byReason[0].totalAmount)} attributed to {analytics.byReason[0].reason.toLowerCase()}.
+                  </p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
