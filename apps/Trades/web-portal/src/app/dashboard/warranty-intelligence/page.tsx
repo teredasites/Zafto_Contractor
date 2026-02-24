@@ -87,7 +87,7 @@ export default function WarrantyIntelligencePage() {
         <AlertTriangle className="w-12 h-12 text-red-400" />
         <p className="text-muted">{error}</p>
         <Button onClick={refresh} variant="outline" size="sm">
-          <RefreshCw className="w-4 h-4 mr-2" /> Retry
+          <RefreshCw className="w-4 h-4 mr-2" /> {t('common.retry')}
         </Button>
       </div>
     );
@@ -102,22 +102,22 @@ export default function WarrantyIntelligencePage() {
           <div>
             <h1 className="text-2xl font-semibold text-main">{t('warrantyIntelligence.title')}</h1>
             <p className="text-sm text-muted mt-1">
-              Track equipment warranties, claims, recalls, and outreach
+              {t('warrantyIntel.trackEquipmentWarranties')}
             </p>
           </div>
           <Button onClick={refresh} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+            <RefreshCw className="w-4 h-4 mr-2" /> {t('common.refresh')}
           </Button>
         </div>
 
         {/* Tab Bar */}
         <div className="flex gap-1 border-b border-main pb-px">
           {([
-            { key: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-            { key: 'equipment', label: 'Equipment', icon: Shield },
-            { key: 'claims', label: 'Claims', icon: FileText },
-            { key: 'outreach', label: 'Outreach', icon: Send },
-            { key: 'recalls', label: 'Recalls', icon: AlertTriangle },
+            { key: 'dashboard', label: t('warrantyIntel.tabDashboard'), icon: BarChart3 },
+            { key: 'equipment', label: t('warrantyIntel.tabEquipment'), icon: Shield },
+            { key: 'claims', label: t('warrantyIntel.tabClaims'), icon: FileText },
+            { key: 'outreach', label: t('warrantyIntel.tabOutreach'), icon: Send },
+            { key: 'recalls', label: t('warrantyIntel.tabRecalls'), icon: AlertTriangle },
           ] as const).map(tab => (
             <button
               key={tab.key}
@@ -234,11 +234,11 @@ function DashboardView({
     <div className="space-y-6">
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <StatCard icon={Shield} label="Total Equipment" value={stats.totalEquipment} color="blue" />
+        <StatCard icon={Shield} label={t('warrantyIntel.totalEquipment')} value={stats.totalEquipment} color="blue" />
         <StatCard icon={ShieldCheck} label={t('warranties.activeWarranties')} value={stats.activeWarranties} color="green" />
-        <StatCard icon={Clock} label={t('certifications.expiring')} value={stats.expiringSoon} color="yellow" />
+        <StatCard icon={Clock} label={t('warrantyIntel.expiringSoon')} value={stats.expiringSoon} color="yellow" />
         <StatCard icon={FileText} label={t('warranties.openClaims')} value={stats.openClaims} color="orange" />
-        <StatCard icon={DollarSign} label="Claims Approved" value={formatCurrency(stats.approvedClaimValue)} color="green" />
+        <StatCard icon={DollarSign} label={t('warrantyIntel.claimsApproved')} value={formatCurrency(stats.approvedClaimValue)} color="green" />
       </div>
 
       {/* Alerts Row */}
@@ -248,7 +248,7 @@ function DashboardView({
             <Card className="border-red-500/30 bg-red-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-red-400 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4" /> Active Recalls ({recalledEquipment.length})
+                  <AlertTriangle className="w-4 h-4" /> {t('warrantyIntel.activeRecalls')} ({recalledEquipment.length})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -273,7 +273,7 @@ function DashboardView({
             <Card className="border-yellow-500/30 bg-yellow-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-yellow-400 flex items-center gap-2">
-                  <Clock className="w-4 h-4" /> Expiring Soon ({stats.expiringSoon})
+                  <Clock className="w-4 h-4" /> {t('warrantyIntel.expiringSoon')} ({stats.expiringSoon})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -286,7 +286,7 @@ function DashboardView({
                     <div>
                       <p className="text-sm font-medium text-main">{eq.name}</p>
                       <p className="text-xs text-muted">
-                        {eq.daysRemaining} days — {eq.customerName}
+                        {eq.daysRemaining}{t('warrantyIntel.daysLeft')} — {eq.customerName}
                       </p>
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted" />
@@ -337,8 +337,8 @@ function DashboardView({
                 {recentOutreach.map(log => (
                   <div key={log.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
                     <div>
-                      <p className="text-sm text-main">{outreachTypeLabel(log.outreachType)}</p>
-                      <p className="text-xs text-muted">{log.customerName} — {log.sentAt ? formatDate(log.sentAt) : 'Pending'}</p>
+                      <p className="text-sm text-main">{t(OUTREACH_TYPE_LABEL_KEYS[log.outreachType] || '') || log.outreachType}</p>
+                      <p className="text-xs text-muted">{log.customerName} — {log.sentAt ? formatDate(log.sentAt) : t('common.pending')}</p>
                     </div>
                     {log.responseStatus && <ResponseBadge status={log.responseStatus} />}
                   </div>
@@ -404,7 +404,7 @@ function EquipmentView({
       {/* Filters */}
       <div className="flex gap-3">
         <SearchInput
-          placeholder="Search equipment, manufacturer, customer..."
+          placeholder={t('warrantyIntel.searchEquipment')}
           value={searchQuery}
           onChange={onSearchChange}
           className="flex-1"
@@ -414,11 +414,11 @@ function EquipmentView({
           onChange={(e) => onStatusChange(e.target.value)}
           className="w-48"
           options={[
-            { value: 'all', label: 'All Status' },
-            { value: 'active', label: 'Active' },
-            { value: 'expiring_soon', label: 'Expiring Soon' },
-            { value: 'expired', label: 'Expired' },
-            { value: 'no_warranty', label: 'No Warranty' },
+            { value: 'all', label: t('warrantyIntel.allStatus') },
+            { value: 'active', label: t('common.active') },
+            { value: 'expiring_soon', label: t('warrantyIntel.expiringSoonStatus') },
+            { value: 'expired', label: t('warrantyIntel.expired') },
+            { value: 'no_warranty', label: t('warrantyIntel.noWarranty') },
           ]}
         />
       </div>
@@ -451,7 +451,7 @@ function EquipmentView({
                         {[eq.manufacturer, eq.modelNumber].filter(Boolean).join(' — ')}
                       </p>
                       {eq.serialNumber && (
-                        <p className="text-xs text-muted">SN: {eq.serialNumber}</p>
+                        <p className="text-xs text-muted">{t('common.serialNumber')}: {eq.serialNumber}</p>
                       )}
                     </div>
                   </td>
@@ -459,10 +459,10 @@ function EquipmentView({
                   <td className="px-4 py-3">
                     <div>
                       <p className="text-muted text-xs">
-                        {eq.warrantyType ? warrantyTypeLabel(eq.warrantyType) : '—'}
+                        {eq.warrantyType ? (t(WARRANTY_TYPE_LABEL_KEYS[eq.warrantyType] || '') || eq.warrantyType) : '—'}
                       </p>
                       {eq.warrantyEndDate && (
-                        <p className="text-xs text-muted">Expires {formatDate(eq.warrantyEndDate)}</p>
+                        <p className="text-xs text-muted">{t('warrantyIntel.expires')} {formatDate(eq.warrantyEndDate)}</p>
                       )}
                     </div>
                   </td>
@@ -479,7 +479,7 @@ function EquipmentView({
                       onClick={() => onFileClaim(eq)}
                       className="text-xs"
                     >
-                      File Claim
+                      {t('warrantyIntel.fileClaim')}
                     </Button>
                   </td>
                 </tr>
@@ -520,7 +520,7 @@ function ClaimsView({
                 : 'bg-secondary text-muted hover:text-main'
             )}
           >
-            {s === 'all' ? 'All' : s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+            {s === 'all' ? t('common.all') : s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
           </button>
         ))}
       </div>
@@ -542,15 +542,15 @@ function ClaimsView({
                       <ClaimStatusBadge status={claim.claimStatus} />
                     </div>
                     <p className="text-xs text-muted">
-                      {claim.equipmentName} — Filed {formatDate(claim.claimDate)}
-                      {claim.manufacturerClaimNumber && ` — Claim #${claim.manufacturerClaimNumber}`}
+                      {claim.equipmentName} — {t('warrantyIntel.filed')} {formatDate(claim.claimDate)}
+                      {claim.manufacturerClaimNumber && ` — ${t('warrantyIntel.tabClaims')} #${claim.manufacturerClaimNumber}`}
                     </p>
                     <div className="flex gap-4 mt-2 text-xs text-muted">
                       {claim.amountClaimed != null && (
-                        <span>Claimed: {formatCurrency(claim.amountClaimed)}</span>
+                        <span>{t('warrantyIntel.claimed')}: {formatCurrency(claim.amountClaimed)}</span>
                       )}
                       {claim.amountApproved != null && (
-                        <span className="text-green-400">Approved: {formatCurrency(claim.amountApproved)}</span>
+                        <span className="text-green-400">{t('warrantyIntel.approved')}: {formatCurrency(claim.amountApproved)}</span>
                       )}
                     </div>
                     {claim.resolutionNotes && (
@@ -566,7 +566,7 @@ function ClaimsView({
                           className="text-xs"
                           onClick={() => onUpdateStatus(claim.id, 'under_review')}
                         >
-                          Review
+                          {t('warrantyIntel.review')}
                         </Button>
                       )}
                       <Button
@@ -575,7 +575,7 @@ function ClaimsView({
                         className="text-xs text-green-400"
                         onClick={() => onUpdateStatus(claim.id, 'approved')}
                       >
-                        Approve
+                        {t('warrantyIntel.approve')}
                       </Button>
                       <Button
                         variant="outline"
@@ -583,7 +583,7 @@ function ClaimsView({
                         className="text-xs text-red-400"
                         onClick={() => onUpdateStatus(claim.id, 'denied')}
                       >
-                        Deny
+                        {t('warrantyIntel.deny')}
                       </Button>
                     </div>
                   )}
@@ -627,13 +627,13 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <OutreachTypeIcon type={log.outreachType} />
-                      <span className="text-main">{outreachTypeLabel(log.outreachType)}</span>
+                      <span className="text-main">{t(OUTREACH_TYPE_LABEL_KEYS[log.outreachType] || '') || log.outreachType}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted">{log.customerName || '—'}</td>
                   <td className="px-4 py-3 text-muted">{log.equipmentName || '—'}</td>
                   <td className="px-4 py-3 text-muted text-xs">
-                    {log.sentAt ? formatDate(log.sentAt) : 'Pending'}
+                    {log.sentAt ? formatDate(log.sentAt) : t('common.pending')}
                   </td>
                   <td className="px-4 py-3">
                     {log.responseStatus ? <ResponseBadge status={log.responseStatus} /> : <span className="text-muted">—</span>}
@@ -658,7 +658,7 @@ function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; aff
         <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
           <AlertTriangle className="w-5 h-5 text-red-400" />
           <p className="text-sm text-red-300">
-            <strong>{affectedCount}</strong> of your installed equipment {affectedCount === 1 ? 'is' : 'are'} affected by active recalls
+            <strong>{affectedCount}</strong> {t('warrantyIntel.affectedByRecalls')}
           </p>
         </div>
       )}
@@ -684,14 +684,14 @@ function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; aff
                     </div>
                     <p className="text-xs text-muted">
                       {recall.manufacturer}
-                      {recall.modelPattern && ` — Model: ${recall.modelPattern}`}
-                      {' — '}Issued {formatDate(recall.recallDate)}
+                      {recall.modelPattern && ` — ${t('warrantyIntel.model')}: ${recall.modelPattern}`}
+                      {' — '}{t('warrantyIntel.issued')} {formatDate(recall.recallDate)}
                     </p>
                     {recall.recallDescription && (
                       <p className="text-xs text-muted mt-2">{recall.recallDescription}</p>
                     )}
                     {recall.affectedSerialRange && (
-                      <p className="text-xs text-muted mt-1">Serial range: {recall.affectedSerialRange}</p>
+                      <p className="text-xs text-muted mt-1">{t('warrantyIntel.serialRange')}: {recall.affectedSerialRange}</p>
                     )}
                   </div>
                   {recall.sourceUrl && (
@@ -748,17 +748,17 @@ function ClaimModal({
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-muted mb-1">Claim Reason *</label>
+            <label className="block text-xs text-muted mb-1">{t('warrantyIntel.claimReason')}</label>
             <textarea
               value={reason}
               onChange={e => setReason(e.target.value)}
-              placeholder="Describe the issue..."
+              placeholder={t('warrantyIntel.describeIssue')}
               rows={3}
               className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-xs text-muted mb-1">Amount Claimed ($)</label>
+            <label className="block text-xs text-muted mb-1">{t('warrantyIntel.amountClaimed')}</label>
             <input
               type="number"
               value={amount}
@@ -779,7 +779,7 @@ function ClaimModal({
             disabled={!reason.trim() || submitting}
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-            Submit Claim
+            {t('warrantyIntel.submitClaim')}
           </Button>
         </div>
       </div>
@@ -816,27 +816,29 @@ function StatCard({ icon: Icon, label, value, color }: { icon: React.ComponentTy
 }
 
 function WarrantyStatusBadge({ status, daysRemaining }: { status: string; daysRemaining: number | null }) {
+  const { t } = useTranslation();
   const config: Record<string, { bg: string; text: string; label: string }> = {
-    active: { bg: 'bg-green-500/20', text: 'text-green-400', label: daysRemaining ? `${Math.round(daysRemaining / 30)}mo left` : 'Active' },
-    expiring_soon: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: daysRemaining != null ? `${daysRemaining}d left` : 'Expiring' },
-    expired: { bg: 'bg-secondary/50', text: 'text-muted', label: 'Expired' },
-    no_warranty: { bg: 'bg-secondary', text: 'text-muted', label: 'None' },
+    active: { bg: 'bg-green-500/20', text: 'text-green-400', label: daysRemaining ? `${Math.round(daysRemaining / 30)}${t('warrantyIntel.moLeft')}` : t('common.active') },
+    expiring_soon: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: daysRemaining != null ? `${daysRemaining}${t('warrantyIntel.daysLeft')}` : t('warrantyIntel.expiringSoon') },
+    expired: { bg: 'bg-secondary/50', text: 'text-muted', label: t('warrantyIntel.expired') },
+    no_warranty: { bg: 'bg-secondary', text: 'text-muted', label: t('common.none') },
   };
   const c = config[status] || config.no_warranty;
   return <Badge className={cn(c.bg, c.text, 'text-[10px]')}>{c.label}</Badge>;
 }
 
 function ClaimStatusBadge({ status }: { status: ClaimStatus }) {
-  const config: Record<ClaimStatus, { bg: string; text: string; label: string }> = {
-    submitted: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Submitted' },
-    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Under Review' },
-    approved: { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Approved' },
-    denied: { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Denied' },
-    resolved: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Resolved' },
-    closed: { bg: 'bg-secondary/50', text: 'text-muted', label: 'Closed' },
+  const { t } = useTranslation();
+  const config: Record<ClaimStatus, { bg: string; text: string; labelKey: string }> = {
+    submitted: { bg: 'bg-blue-500/20', text: 'text-blue-400', labelKey: 'warrantyIntel.statusSubmitted' },
+    under_review: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', labelKey: 'warrantyIntel.statusUnderReview' },
+    approved: { bg: 'bg-green-500/20', text: 'text-green-400', labelKey: 'warrantyIntel.statusApproved' },
+    denied: { bg: 'bg-red-500/20', text: 'text-red-400', labelKey: 'warrantyIntel.statusDenied' },
+    resolved: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', labelKey: 'warrantyIntel.statusResolved' },
+    closed: { bg: 'bg-secondary/50', text: 'text-muted', labelKey: 'warrantyIntel.statusClosed' },
   };
   const c = config[status] || config.submitted;
-  return <Badge className={cn(c.bg, c.text, 'text-[10px]')}>{c.label}</Badge>;
+  return <Badge className={cn(c.bg, c.text, 'text-[10px]')}>{t(c.labelKey)}</Badge>;
 }
 
 function ResponseBadge({ status }: { status: string }) {
@@ -878,24 +880,18 @@ function OutreachTypeIcon({ type }: { type: string }) {
   }
 }
 
-function outreachTypeLabel(type: string): string {
-  const labels: Record<string, string> = {
-    warranty_expiring: 'Warranty Expiring',
-    maintenance_reminder: 'Maintenance Reminder',
-    recall_notice: 'Recall Notice',
-    upsell_extended: 'Extended Warranty Upsell',
-    seasonal_check: 'Seasonal Check',
-  };
-  return labels[type] || type;
-}
+const OUTREACH_TYPE_LABEL_KEYS: Record<string, string> = {
+  warranty_expiring: 'warrantyIntel.warrantyExpiring',
+  maintenance_reminder: 'warrantyIntel.maintenanceReminder',
+  recall_notice: 'warrantyIntel.recallNotice',
+  upsell_extended: 'warrantyIntel.extendedWarrantyUpsell',
+  seasonal_check: 'warrantyIntel.seasonalCheck',
+};
 
-function warrantyTypeLabel(type: string): string {
-  const labels: Record<string, string> = {
-    manufacturer: 'Manufacturer',
-    extended: 'Extended',
-    labor: 'Labor Only',
-    parts_labor: 'Parts & Labor',
-    home_warranty: 'Home Warranty',
-  };
-  return labels[type] || type;
-}
+const WARRANTY_TYPE_LABEL_KEYS: Record<string, string> = {
+  manufacturer: 'warrantyIntel.manufacturer',
+  extended: 'warrantyIntel.extended',
+  labor: 'warrantyIntel.laborOnly',
+  parts_labor: 'warrantyIntel.partsAndLabor',
+  home_warranty: 'warrantyIntel.homeWarranty',
+};
