@@ -61,7 +61,7 @@ export default function VendorsPage() {
               : 'border-transparent text-muted hover:text-main'
           )}
         >
-          Supplier Directory
+          {t('vendors.supplierDirectory')}
         </button>
         <button
           onClick={() => { setActiveTab('accounting'); setSearch(''); }}
@@ -72,7 +72,7 @@ export default function VendorsPage() {
               : 'border-transparent text-muted hover:text-main'
           )}
         >
-          Accounting Vendors
+          {t('vendors.accountingVendors')}
         </button>
       </div>
 
@@ -96,8 +96,8 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
   const [showNewModal, setShowNewModal] = useState(false);
 
   const typeOptions = [
-    { value: 'all', label: 'All Types' },
-    ...PROC_VENDOR_TYPES.map((t) => ({ value: t, label: PROC_TYPE_LABELS[t] || t })),
+    { value: 'all', label: t('vendors.allTypes') },
+    ...PROC_VENDOR_TYPES.map((vt) => ({ value: vt, label: PROC_TYPE_LABELS[vt] || vt })),
   ];
 
   const filteredVendors = vendors.filter((v) => {
@@ -200,7 +200,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
           <SearchInput
             value={search}
             onChange={setSearch}
-            placeholder="Search suppliers..."
+            placeholder={t('vendors.searchSuppliers')}
             className="sm:w-80"
           />
           <Select
@@ -212,7 +212,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
         </div>
         <Button onClick={() => setShowNewModal(true)}>
           <Plus size={16} />
-          Add Supplier
+          {t('vendors.addSupplier')}
         </Button>
       </div>
 
@@ -221,7 +221,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
         <Card>
           <CardContent className="py-12 text-center">
             <Building size={40} className="mx-auto mb-2 opacity-50 text-muted" />
-            <p className="text-muted">{error || 'No suppliers found'}</p>
+            <p className="text-muted">{error || t('vendors.noSuppliersFound')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -308,7 +308,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
                     </td>
                     <td className="px-6 py-3">
                       <Badge variant={vendor.isActive ? 'success' : 'default'} size="sm">
-                        {vendor.isActive ? 'Active' : 'Inactive'}
+                        {vendor.isActive ? t('common.active') : t('common.inactive')}
                       </Badge>
                     </td>
                   </tr>
@@ -340,7 +340,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
   const [typeFilter, setTypeFilter] = useState('all');
 
   const typeOptions = [
-    { value: 'all', label: 'All Types' },
+    { value: 'all', label: t('vendors.allTypes') },
     ...Object.entries(ZBOOKS_TYPE_LABELS).map(([value, label]) => ({ value, label })),
   ];
 
@@ -403,7 +403,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{eligible1099.length}</p>
-                <p className="text-sm text-muted">1099 Eligible</p>
+                <p className="text-sm text-muted">{t('vendors.eligible1099')}</p>
               </div>
             </div>
           </CardContent>
@@ -416,7 +416,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{over600.length}</p>
-                <p className="text-sm text-muted">1099 Required ($600+)</p>
+                <p className="text-sm text-muted">{t('vendors.required1099Over600')}</p>
               </div>
             </div>
           </CardContent>
@@ -428,7 +428,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search accounting vendors..."
+          placeholder={t('vendors.searchAccountingVendors')}
           className="sm:w-80"
         />
         <Select
@@ -444,7 +444,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
         <Card>
           <CardContent className="py-12 text-center">
             <Building size={40} className="mx-auto mb-2 opacity-50 text-muted" />
-            <p className="text-muted">{error || 'No accounting vendors found'}</p>
+            <p className="text-muted">{error || t('vendors.noAccountingVendorsFound')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -499,7 +499,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
                           variant={(vendor.ytdPayments || 0) >= 600 ? 'error' : 'warning'}
                           size="sm"
                         >
-                          {(vendor.ytdPayments || 0) >= 600 ? '1099 Required' : '1099 Eligible'}
+                          {(vendor.ytdPayments || 0) >= 600 ? t('vendors.required1099') : t('vendors.eligible1099')}
                         </Badge>
                       ) : (
                         <span className="text-xs text-muted">{t('vendors.na')}</span>
@@ -507,7 +507,7 @@ function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch
                     </td>
                     <td className="px-6 py-3">
                       <Badge variant={vendor.isActive ? 'success' : 'default'} size="sm">
-                        {vendor.isActive ? 'Active' : 'Inactive'}
+                        {vendor.isActive ? t('common.active') : t('common.inactive')}
                       </Badge>
                     </td>
                   </tr>
@@ -598,27 +598,27 @@ function NewSupplierModal({
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
-            label="Company Name *"
+            label={tr('vendors.companyNameRequired')}
             placeholder="Electrical Supply Co."
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <Input
-            label="Contact Name"
+            label={tr('vendors.contactName')}
             placeholder="John Smith"
             value={contactName}
             onChange={(e) => setContactName(e.target.value)}
           />
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Email"
+              label={tr('common.email')}
               type="email"
               placeholder="orders@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Input
-              label="Phone"
+              label={tr('common.phone')}
               type="tel"
               placeholder="(555) 123-4567"
               value={phone}
@@ -630,24 +630,24 @@ function NewSupplierModal({
             />
           </div>
           <Select
-            label="Vendor Type"
+            label={tr('vendors.vendorType')}
             options={vendorTypeOptions}
             value={vendorType}
             onChange={(e) => setVendorType(e.target.value)}
           />
           <Select
-            label="Payment Terms"
+            label={tr('vendors.paymentTerms')}
             options={termsOptions}
             value={paymentTerms}
             onChange={(e) => setPaymentTerms(e.target.value)}
           />
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>
-              Cancel
+              {tr('common.cancel')}
             </Button>
             <Button className="flex-1" onClick={handleCreate} loading={saving} disabled={!name.trim()}>
               <Plus size={16} />
-              Add Supplier
+              {tr('vendors.addSupplier')}
             </Button>
           </div>
         </CardContent>

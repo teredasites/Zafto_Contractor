@@ -29,37 +29,37 @@ import { useTranslation } from '@/lib/translations';
 
 // ── Status config ──
 
-const STATUS_CONFIG: Record<string, { label: string; variant: string; bg: string; text: string; dot: string }> = {
+const STATUS_CONFIG: Record<string, { labelKey: string; variant: string; bg: string; text: string; dot: string }> = {
   in_progress: {
-    label: 'In Progress',
+    labelKey: 'walkthroughs.statusInProgress',
     variant: 'warning',
     bg: 'bg-amber-100 dark:bg-amber-900/30',
     text: 'text-amber-700 dark:text-amber-300',
     dot: 'bg-amber-500',
   },
   completed: {
-    label: 'Completed',
+    labelKey: 'walkthroughs.statusCompleted',
     variant: 'success',
     bg: 'bg-emerald-100 dark:bg-emerald-900/30',
     text: 'text-emerald-700 dark:text-emerald-300',
     dot: 'bg-emerald-500',
   },
   uploaded: {
-    label: 'Uploaded',
+    labelKey: 'walkthroughs.statusUploaded',
     variant: 'info',
     bg: 'bg-blue-100 dark:bg-blue-900/30',
     text: 'text-blue-700 dark:text-blue-300',
     dot: 'bg-blue-500',
   },
   bid_generated: {
-    label: 'Bid Generated',
+    labelKey: 'walkthroughs.statusBidGenerated',
     variant: 'purple',
     bg: 'bg-purple-100 dark:bg-purple-900/30',
     text: 'text-purple-700 dark:text-purple-300',
     dot: 'bg-purple-500',
   },
   archived: {
-    label: 'Archived',
+    labelKey: 'walkthroughs.statusArchived',
     variant: 'default',
     bg: 'bg-secondary',
     text: 'text-muted',
@@ -68,34 +68,35 @@ const STATUS_CONFIG: Record<string, { label: string; variant: string; bg: string
 };
 
 function WalkthroughStatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.in_progress;
   return (
     <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full', config.bg, config.text)}>
       <span className={cn('w-1.5 h-1.5 rounded-full', config.dot)} />
-      {config.label}
+      {t(config.labelKey)}
     </span>
   );
 }
 
 // ── Type config ──
 
-const TYPE_LABELS: Record<string, string> = {
-  general: 'General',
-  insurance: 'Insurance',
-  maintenance: 'Maintenance',
-  pre_purchase: 'Pre-Purchase',
-  renovation: 'Renovation',
-  restoration: 'Restoration',
+const TYPE_LABEL_KEYS: Record<string, string> = {
+  general: 'walkthroughs.typeGeneral',
+  insurance: 'walkthroughs.typeInsurance',
+  maintenance: 'walkthroughs.typeMaintenance',
+  pre_purchase: 'walkthroughs.typePrePurchase',
+  renovation: 'walkthroughs.typeRenovation',
+  restoration: 'walkthroughs.typeRestoration',
 };
 
 // ── Filter tabs ──
 
 const FILTER_TABS = [
-  { key: 'all', label: 'All' },
-  { key: 'in_progress', label: 'In Progress' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'uploaded', label: 'Uploaded' },
-  { key: 'archived', label: 'Archived' },
+  { key: 'all', labelKey: 'common.all' },
+  { key: 'in_progress', labelKey: 'walkthroughs.statusInProgress' },
+  { key: 'completed', labelKey: 'walkthroughs.statusCompleted' },
+  { key: 'uploaded', labelKey: 'walkthroughs.statusUploaded' },
+  { key: 'archived', labelKey: 'walkthroughs.statusArchived' },
 ];
 
 export default function WalkthroughsPage() {
@@ -172,7 +173,7 @@ export default function WalkthroughsPage() {
         </div>
         <Button onClick={() => router.push('/dashboard/walkthroughs/new')}>
           <Plus size={16} />
-          New Walkthrough
+          {t('walkthroughs.new')}
         </Button>
       </div>
 
@@ -237,7 +238,7 @@ export default function WalkthroughsPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search walkthroughs..."
+          placeholder={t('walkthroughs.searchWalkthroughs')}
           className="sm:w-80"
         />
         {/* Tab filters */}
@@ -253,7 +254,7 @@ export default function WalkthroughsPage() {
                   : 'text-muted hover:text-main'
               )}
             >
-              {tab.label}
+              {t(tab.labelKey)}
             </button>
           ))}
         </div>
@@ -267,7 +268,7 @@ export default function WalkthroughsPage() {
                 ? 'bg-surface text-main shadow-sm'
                 : 'text-muted hover:text-main'
             )}
-            title="List view"
+            title={t('walkthroughs.listView')}
           >
             <LayoutList size={16} />
           </button>
@@ -279,7 +280,7 @@ export default function WalkthroughsPage() {
                 ? 'bg-surface text-main shadow-sm'
                 : 'text-muted hover:text-main'
             )}
-            title="Grid view"
+            title={t('walkthroughs.gridView')}
           >
             <LayoutGrid size={16} />
           </button>
@@ -295,8 +296,8 @@ export default function WalkthroughsPage() {
               <p className="text-lg font-medium">{t('walkthroughs.noWalkthroughsFound')}</p>
               <p className="text-sm mt-1">
                 {search || statusFilter !== 'all'
-                  ? 'Try adjusting your filters'
-                  : 'Create your first walkthrough to get started'}
+                  ? t('walkthroughs.tryAdjustingFilters')
+                  : t('walkthroughs.createFirstWalkthrough')}
               </p>
               {!search && statusFilter === 'all' && (
                 <Button
@@ -304,7 +305,7 @@ export default function WalkthroughsPage() {
                   onClick={() => router.push('/dashboard/walkthroughs/new')}
                 >
                   <Plus size={16} />
-                  New Walkthrough
+                  {t('walkthroughs.new')}
                 </Button>
               )}
             </div>
@@ -353,6 +354,7 @@ export default function WalkthroughsPage() {
 // ── Row component ──
 
 function WalkthroughRow({ walkthrough, onClick }: { walkthrough: Walkthrough; onClick: () => void }) {
+  const { t } = useTranslation();
   const fullAddress = [walkthrough.address, walkthrough.city, walkthrough.state]
     .filter(Boolean)
     .join(', ');
@@ -371,17 +373,17 @@ function WalkthroughRow({ walkthrough, onClick }: { walkthrough: Walkthrough; on
         <div className="flex items-center gap-4 text-sm text-muted">
           <span className="flex items-center gap-1">
             <MapPin size={14} />
-            {fullAddress || 'No address'}
+            {fullAddress || t('walkthroughs.noAddress')}
           </span>
         </div>
         <div className="flex items-center gap-4 text-sm text-muted">
           <span className="flex items-center gap-1">
             <DoorOpen size={14} />
-            {walkthrough.totalRooms} rooms
+            {walkthrough.totalRooms} {t('walkthroughs.rooms').toLowerCase()}
           </span>
           <span className="flex items-center gap-1">
             <Camera size={14} />
-            {walkthrough.totalPhotos} photos
+            {walkthrough.totalPhotos} {t('walkthroughs.photos').toLowerCase()}
           </span>
         </div>
       </div>
@@ -393,13 +395,13 @@ function WalkthroughRow({ walkthrough, onClick }: { walkthrough: Walkthrough; on
         </div>
         <div>
           <Badge variant="secondary" size="sm">
-            {TYPE_LABELS[walkthrough.walkthroughType] || walkthrough.walkthroughType}
+            {t(TYPE_LABEL_KEYS[walkthrough.walkthroughType] || '') || walkthrough.walkthroughType}
           </Badge>
         </div>
         <div className="min-w-0">
           <span className="text-sm text-muted truncate flex items-center gap-1">
             <MapPin size={14} className="flex-shrink-0" />
-            {fullAddress || 'No address'}
+            {fullAddress || t('walkthroughs.noAddress')}
           </span>
         </div>
         <div className="text-center">
@@ -431,6 +433,7 @@ function WalkthroughRow({ walkthrough, onClick }: { walkthrough: Walkthrough; on
 // ── Card component ──
 
 function WalkthroughCard({ walkthrough, onClick }: { walkthrough: Walkthrough; onClick: () => void }) {
+  const { t } = useTranslation();
   const fullAddress = [walkthrough.address, walkthrough.city, walkthrough.state]
     .filter(Boolean)
     .join(', ');
@@ -444,11 +447,11 @@ function WalkthroughCard({ walkthrough, onClick }: { walkthrough: Walkthrough; o
       <div className="space-y-2 mb-3">
         <p className="text-xs text-muted flex items-center gap-1">
           <MapPin size={12} />
-          {fullAddress || 'No address'}
+          {fullAddress || t('walkthroughs.noAddress')}
         </p>
         <div className="flex items-center gap-1">
           <Badge variant="secondary" size="sm">
-            {TYPE_LABELS[walkthrough.walkthroughType] || walkthrough.walkthroughType}
+            {t(TYPE_LABEL_KEYS[walkthrough.walkthroughType] || '') || walkthrough.walkthroughType}
           </Badge>
           {walkthrough.propertyType && (
             <Badge variant="secondary" size="sm">
@@ -461,11 +464,11 @@ function WalkthroughCard({ walkthrough, onClick }: { walkthrough: Walkthrough; o
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1">
             <DoorOpen size={12} />
-            {walkthrough.totalRooms} rooms
+            {walkthrough.totalRooms} {t('walkthroughs.rooms').toLowerCase()}
           </span>
           <span className="flex items-center gap-1">
             <Camera size={12} />
-            {walkthrough.totalPhotos} photos
+            {walkthrough.totalPhotos} {t('walkthroughs.photos').toLowerCase()}
           </span>
         </div>
         <span>
