@@ -30,6 +30,17 @@ import { useRestorationTools } from '@/lib/hooks/use-restoration-tools';
 import { useWaterDamageAssessments, calculateGpp, calculateDewPoint } from '@/lib/hooks/use-water-damage';
 import type { WaterDamageAssessmentData } from '@/lib/hooks/use-water-damage';
 import type { RestorationEquipmentWithJob, MoistureReadingWithJob, DryingLogWithJob } from '@/lib/hooks/use-restoration-tools';
+import {
+  WATER_CATEGORIES,
+  WATER_CLASSES,
+  DRYING_STANDARDS,
+  AIR_MOVER_FORMULAS,
+  DEHUMIDIFICATION_FORMULA,
+  S500_DOCUMENTATION_REQUIREMENTS,
+  calculateAirMovers,
+  calculateDehumidifiers,
+  assessCategoryEscalation,
+} from '@/lib/official-iicrc-protocols';
 
 type LucideIcon = React.ComponentType<{ size?: number; className?: string }>;
 
@@ -37,72 +48,49 @@ type LucideIcon = React.ComponentType<{ size?: number; className?: string }>;
 // CONSTANTS & REFERENCE DATA
 // ============================================================================
 
-const CATEGORY_INFO: Record<number, { label: string; color: string; bg: string; description: string; examples: string; antimicrobial: string }> = {
-  1: {
-    label: 'Category 1 — Clean Water',
-    color: 'text-blue-400',
-    bg: 'bg-blue-900/10 border-blue-700/30',
-    description: 'Originates from a sanitary source with no substantial risk from dermal, ingestion, or inhalation exposure.',
-    examples: 'Broken supply lines, tub/sink overflows (no contaminants), melting ice/snow, falling rainwater, broken toilet tanks (no urine/feces)',
-    antimicrobial: 'Not required unless Category escalates',
-  },
-  2: {
-    label: 'Category 2 — Gray Water',
-    color: 'text-amber-400',
-    bg: 'bg-amber-900/10 border-amber-700/30',
-    description: 'Contains significant contamination and has potential to cause discomfort or sickness if contacted or consumed.',
-    examples: 'Dishwasher/washing machine discharge, toilet overflow with urine, sump pump failures, hydrostatic pressure seepage, waterbed leaks',
-    antimicrobial: 'Required on all affected porous materials',
-  },
-  3: {
-    label: 'Category 3 — Black Water',
-    color: 'text-red-400',
-    bg: 'bg-red-900/10 border-red-700/30',
-    description: 'Grossly contaminated and may contain pathogenic agents arising from sewage or other contaminated water sources.',
-    examples: 'Sewage, flooding from rivers/streams, wind-driven rain from hurricanes, groundwater intrusion, toilet overflow with feces',
-    antimicrobial: 'Required. Remove ALL affected porous materials (carpet, pad, drywall below flood line)',
-  },
+// Derived from IICRC S500-2021 official protocol data
+const CATEGORY_COLORS: Record<number, { color: string; bg: string }> = {
+  1: { color: 'text-blue-400', bg: 'bg-blue-900/10 border-blue-700/30' },
+  2: { color: 'text-amber-400', bg: 'bg-amber-900/10 border-amber-700/30' },
+  3: { color: 'text-red-400', bg: 'bg-red-900/10 border-red-700/30' },
 };
+const CATEGORY_INFO: Record<number, { label: string; color: string; bg: string; description: string; examples: string; antimicrobial: string }> = Object.fromEntries(
+  WATER_CATEGORIES.map(cat => [cat.category, {
+    label: `Category ${cat.category} — ${cat.name}`,
+    color: CATEGORY_COLORS[cat.category].color,
+    bg: CATEGORY_COLORS[cat.category].bg,
+    description: cat.description,
+    examples: cat.sources.join(', '),
+    antimicrobial: cat.specialProcedures[0] || 'Follow S500 procedures',
+  }])
+);
 
-const CLASS_INFO: Record<number, { label: string; description: string; equipment: string; materials: string }> = {
-  1: {
-    label: 'Class 1 — Slow Rate of Evaporation',
-    description: 'Least amount of water absorption, adsorption, and evaporation. Only part of a room or area is wet.',
-    equipment: 'Minimal equipment. 1 dehumidifier may suffice. Limited air movers.',
-    materials: 'Low-porosity materials (concrete, stone). Water has not migrated.',
-  },
-  2: {
-    label: 'Class 2 — Fast Rate of Evaporation',
-    description: 'Significant water absorption. Entire room/area affected. Carpet and cushion wet.',
-    equipment: '1 dehu per 1,000-1,200 sqft. Air movers: 1 per 10-16 LF of affected wall.',
-    materials: 'Carpet, cushion, drywall wicked <24 inches, structural wood partially wet.',
-  },
-  3: {
-    label: 'Class 3 — Fastest Rate of Evaporation',
-    description: 'Greatest amount of water. Ceilings, walls, insulation, carpet, cushion, and sub-floor saturated.',
-    equipment: 'Aggressive drying. May need specialty equipment. Consider desiccant dehumidifiers.',
-    materials: 'Saturated ceiling/walls, wet insulation, subfloor wet through, water from above.',
-  },
-  4: {
-    label: 'Class 4 — Specialty Drying',
-    description: 'Wet materials with very low permeance/porosity. Significantly longer dry time.',
-    equipment: 'Specialty drying techniques: heat drying, desiccant dehumidification. Lower airflow, higher temperature.',
-    materials: 'Hardwood floors, plaster, concrete, stone, crawlspaces.',
-  },
-};
+// Derived from IICRC S500-2021 official protocol data
+const CLASS_INFO: Record<number, { label: string; description: string; equipment: string; materials: string }> = Object.fromEntries(
+  WATER_CLASSES.map(cls => [cls.class, {
+    label: `Class ${cls.class} — ${cls.name.split('—')[0]?.trim() || cls.name}`,
+    description: cls.description,
+    equipment: `Air movers: ${cls.equipmentGuidelines.airMoversPerSqFt}. Dehu: ${cls.equipmentGuidelines.dehumidificationFactor}`,
+    materials: cls.typicalMaterials.join(', '),
+  }])
+);
 
-const MATERIAL_TARGETS: Record<string, { target: number; description: string }> = {
-  drywall: { target: 12, description: 'Standard 1/2" or 5/8" gypsum board' },
-  wood: { target: 15, description: 'Dimensional lumber, studs, plates, joists' },
-  concrete: { target: 17, description: 'Slab, block, poured foundation' },
-  carpet: { target: 10, description: 'Carpet fiber (test backing separately)' },
-  pad: { target: 10, description: 'Carpet cushion/padding' },
-  insulation: { target: 8, description: 'Fiberglass batt, blown-in cellulose' },
-  subfloor: { target: 15, description: 'OSB or plywood subfloor' },
-  hardwood: { target: 15, description: 'Hardwood flooring planks' },
-  laminate: { target: 12, description: 'Laminate/engineered flooring' },
-  tile_backer: { target: 12, description: 'Cement backer board (Durock, HardieBacker)' },
-  plaster: { target: 5, description: 'Plaster walls — very low permeance' },
+// Drying targets from IICRC S500-2021 — Note: per S500, most meters are NOT calibrated
+// for drywall/plaster/concrete. Targets for those materials are comparative, not absolute.
+// The numbers below are general field guidelines. Per S500, "acceptable dry standard" is
+// within 10% of pre-loss EMC of similar unaffected materials in the same structure.
+const MATERIAL_TARGETS: Record<string, { target: number; description: string; source: string }> = {
+  drywall: { target: 12, description: 'Standard 1/2" or 5/8" gypsum board', source: 'S500: comparative to unaffected drywall — meters not calibrated for gypsum' },
+  wood: { target: 15, description: 'Dimensional lumber, studs, plates, joists', source: 'S500/USDA: target 15% MC, not to exceed 19%. Below 16% before installing new drywall.' },
+  concrete: { target: 17, description: 'Slab, block, poured foundation', source: 'S500/ASTM F2170: comparative. Below 75% RH at slab surface for flooring install.' },
+  carpet: { target: 10, description: 'Carpet fiber (test backing separately)', source: 'S500: dry to touch, matching ambient. Cat 2/3 pad must be discarded.' },
+  pad: { target: 10, description: 'Carpet cushion/padding', source: 'S500: must be removed for Cat 2/3 water. Cat 1 — discard if not dried within 48hrs.' },
+  insulation: { target: 8, description: 'Fiberglass batt, blown-in cellulose', source: 'S500: wet insulation should be removed, not dried in place.' },
+  subfloor: { target: 15, description: 'OSB or plywood subfloor', source: 'S500: within 4% of pre-loss EMC. Not to exceed 19%.' },
+  hardwood: { target: 14, description: 'Hardwood flooring planks', source: 'S500/NWFA: within 2-4% of pre-loss EMC. Risk of cupping/crowning.' },
+  laminate: { target: 12, description: 'Laminate/engineered flooring', source: 'S500: comparative to unaffected areas.' },
+  tile_backer: { target: 12, description: 'Cement backer board (Durock, HardieBacker)', source: 'S500: comparative.' },
+  plaster: { target: 5, description: 'Plaster walls — very low permeance (Class 4)', source: 'S500: Class 4 material, specialty drying. Comparative only.' },
 };
 
 const ESCALATION_HOURS = 48;

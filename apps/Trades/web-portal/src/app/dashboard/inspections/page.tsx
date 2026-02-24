@@ -45,6 +45,11 @@ import { formatDate, cn } from '@/lib/utils';
 import { useInspections } from '@/lib/hooks/use-inspections';
 import type { InspectionData } from '@/lib/hooks/mappers';
 import { useTranslation } from '@/lib/translations';
+import {
+  INSPECTION_PHASES,
+  getCriticalInspectionItems,
+  getInspectionPhasesForPermit,
+} from '@/lib/official-inspection-checklists';
 
 // ============================================================================
 // TYPES
@@ -236,6 +241,18 @@ const DEMO_TEMPLATES: InspectionTemplate[] = [
     isDefault: true,
   },
 ];
+
+// Official IRC R109 inspection phases — real code references
+const IRC_INSPECTION_PHASES = INSPECTION_PHASES.map(phase => ({
+  id: phase.id,
+  name: phase.name,
+  codeReference: phase.codeReference,
+  description: phase.description,
+  sequence: phase.sequence,
+  totalItems: phase.sections.reduce((sum, s) => sum + s.items.length, 0),
+  sections: phase.sections.map(s => ({ name: s.title, items: s.items.length })),
+  criticalItems: phase.sections.flatMap(s => s.items.filter(i => i.criticality === 'critical')),
+}));
 
 // ============================================================================
 // DEMO DATA: Deficiencies
@@ -644,6 +661,36 @@ function TemplatesTab({
           </CardContent>
         </Card>
       )}
+
+      {/* Official IRC R109 Inspection Sequence */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold text-main mb-1">Official IRC R109 Inspection Sequence</h3>
+        <p className="text-sm text-muted mb-4">Code-based inspection phases per IRC R109 — mandatory checkpoints for building permit compliance</p>
+        <div className="space-y-3">
+          {IRC_INSPECTION_PHASES.map((phase) => (
+            <div key={phase.id} className="border border-main rounded-lg p-4 hover:bg-surface-hover transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono bg-blue-900/30 text-blue-400 px-2 py-0.5 rounded">Phase {phase.sequence}</span>
+                  <span className="font-medium text-main">{phase.name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" size="sm">{phase.totalItems} items</Badge>
+                  {phase.criticalItems.length > 0 && (
+                    <Badge variant="error" size="sm">{phase.criticalItems.length} critical</Badge>
+                  )}
+                </div>
+              </div>
+              <p className="text-sm text-muted mb-2">{phase.description}</p>
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <span className="font-mono">{phase.codeReference}</span>
+                <span>•</span>
+                <span>{phase.sections.map(s => s.name).join(' · ')}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 }

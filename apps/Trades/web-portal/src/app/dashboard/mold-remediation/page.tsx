@@ -42,6 +42,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatDateLocale } from '@/lib/format-locale';
+import { CommandPalette } from '@/components/command-palette';
+import {
+  MOLD_CONTAINMENT_LEVELS,
+  MOLD_REMEDIATION_STEPS,
+  MATERIAL_REMEDIATION_DECISIONS,
+  determineContainmentLevel,
+} from '@/lib/official-iicrc-protocols';
 
 // ── Types ──
 
@@ -68,38 +75,20 @@ const IICRC_LEVEL_INFO: Record<IicrcLevel, {
   airFiltration: string;
   description: string;
   clearance: string;
-}> = {
-  1: {
-    label: 'Level 1 — Small Isolated Area',
-    sqft: '10 sqft or less',
-    ppe: ['N95 respirator', 'Gloves', 'Eye protection'],
-    containment: 'Minimal — mist area to suppress spores',
-    airFiltration: 'Not typically required',
-    description: 'Small isolated areas of mold growth on non-porous surfaces. Can be addressed by trained maintenance personnel.',
-    clearance: 'Visual inspection — no lab testing required',
-  },
-  2: {
-    label: 'Level 2 — Mid-Size Isolated Area',
-    sqft: '10-30 sqft',
-    ppe: ['N95 or half-face respirator', 'Gloves', 'Eye protection', 'Disposable coveralls'],
-    containment: 'Limited — poly sheeting over openings, HEPA vacuum perimeter',
-    airFiltration: 'HEPA air scrubber recommended',
-    description: 'Mid-size areas on non-porous and semi-porous surfaces. Requires trained remediation personnel.',
-    clearance: 'Visual inspection + optional air sampling',
-  },
-  3: {
-    label: 'Level 3 — Large Area',
-    sqft: '30+ sqft or HVAC contaminated',
-    ppe: ['Full-face respirator or PAPR', 'Tyvek suit', 'Gloves', 'Boot covers'],
-    containment: 'Full — sealed poly enclosure, negative air (4+ ACH), decon chamber',
-    airFiltration: 'HEPA negative air machine — mandatory',
-    description: 'Large contamination areas, HVAC involvement, or high-risk populations. Licensed professional remediator required.',
-    clearance: 'Third-party clearance testing required — air + surface sampling',
-  },
-};
+}> = Object.fromEntries(
+  MOLD_CONTAINMENT_LEVELS.map(lvl => [lvl.level, {
+    label: `Level ${lvl.level} — ${lvl.name}`,
+    sqft: lvl.affectedArea,
+    ppe: lvl.ppeRequirements,
+    containment: lvl.containmentRequirements.join('; '),
+    airFiltration: lvl.airFiltration.join('; '),
+    description: `${lvl.name}: ${lvl.affectedArea}. ${lvl.containmentRequirements[0] || ''}`,
+    clearance: lvl.postRemediationVerification.join('; '),
+  }])
+) as Record<IicrcLevel, { label: string; sqft: string; ppe: string[]; containment: string; airFiltration: string; description: string; clearance: string }>;
 
 const STATUS_COLORS: Record<string, string> = {
-  planned: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',
+  planned: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
   in_progress: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
   completed: 'bg-green-500/15 text-green-400 border-green-500/30',
   on_hold: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
@@ -160,7 +149,7 @@ export default function MoldRemediationPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
       </div>
     );
   }
@@ -175,10 +164,11 @@ export default function MoldRemediationPage() {
 
   return (
     <div className="space-y-6">
+      <CommandPalette />
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">{t('moldRemediation.title')}</h1>
-        <p className="text-sm text-zinc-400 mt-1">IICRC S520 compliant assessments, containment planning, air sampling, clearance testing</p>
+        <h1 className="text-2xl font-bold text-main">{t('moldRemediation.title')}</h1>
+        <p className="text-sm text-muted mt-1">IICRC S520 compliant assessments, containment planning, air sampling, clearance testing</p>
       </div>
 
       {/* Stats */}
@@ -206,7 +196,7 @@ export default function MoldRemediationPage() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                 filterLevel === level
                   ? 'bg-white/10 text-white border-white/20'
-                  : 'text-zinc-400 border-zinc-700 hover:border-zinc-600'
+                  : 'text-muted border-main hover:border-accent/30'
               }`}
             >
               {level === 'all' ? 'All Levels' : `Level ${level}`}
@@ -220,7 +210,7 @@ export default function MoldRemediationPage() {
         {/* List */}
         <div className="col-span-4 space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
           {filtered.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500">
+            <div className="text-center py-12 text-muted">
               <p className="text-sm">{t('moldRemediation.noRecords')}</p>
             </div>
           ) : (
@@ -230,8 +220,8 @@ export default function MoldRemediationPage() {
                 onClick={() => setSelectedId(a.id)}
                 className={`w-full text-left p-4 rounded-xl border transition-colors ${
                   selectedId === a.id
-                    ? 'bg-zinc-800 border-zinc-600'
-                    : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                    ? 'bg-secondary border-accent/30'
+                    : 'bg-surface border-main hover:border-accent/30'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -245,15 +235,15 @@ export default function MoldRemediationPage() {
                       ? 'bg-red-500/15 text-red-400 border-red-500/30'
                       : a.moistureSourceStatus === 'resolved'
                       ? 'bg-green-500/15 text-green-400 border-green-500/30'
-                      : 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30'
+                      : 'bg-slate-500/15 text-slate-400 border-slate-500/30'
                   }`}>
                     {a.moistureSourceStatus === 'active_leak' ? 'Active Leak' : a.moistureSourceStatus === 'resolved' ? 'Resolved' : 'Unknown Source'}
                   </span>
                 </div>
-                <div className="text-sm text-white font-medium">
+                <div className="text-sm text-main font-medium">
                   {CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown Cause'} — {a.occupancyStatus ?? 'Unknown'}
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                   <span>{a.affectedAreaSqft ? `${a.affectedAreaSqft} sqft` : 'Area TBD'}</span>
                   <span>{fmtDate(a.assessmentDate)}</span>
                 </div>
@@ -267,8 +257,8 @@ export default function MoldRemediationPage() {
           {selected ? (
             <AssessmentDetail assessment={selected} licensing={licensing} />
           ) : (
-            <div className="flex items-center justify-center h-96 rounded-xl bg-zinc-900 border border-zinc-800">
-              <p className="text-sm text-zinc-500">{t('common.selectAnAssessmentToViewDetails')}</p>
+            <div className="flex items-center justify-center h-96 rounded-xl bg-secondary/50 border border-main">
+              <p className="text-sm text-muted">{t('common.selectAnAssessmentToViewDetails')}</p>
             </div>
           )}
         </div>
@@ -279,10 +269,10 @@ export default function MoldRemediationPage() {
 
 // ── Components ──
 
-function StatCard({ label, value, color = 'text-white' }: { label: string; value: number; color?: string }) {
+function StatCard({ label, value, color = 'text-main' }: { label: string; value: number; color?: string }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-      <p className="text-xs text-zinc-500 mb-1">{label}</p>
+    <div className="bg-secondary/50 border border-main rounded-xl p-4">
+      <p className="text-xs text-muted mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
     </div>
   );
@@ -313,7 +303,7 @@ function AssessmentDetail({
                 'flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors',
                 activeTab === tab.key
                   ? 'bg-white/10 text-white'
-                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800'
+                  : 'text-muted hover:text-main hover:bg-surface-hover'
               )}
             >
               <Icon size={14} />
@@ -364,7 +354,7 @@ function OverviewTab({ assessment: a }: { assessment: MoldAssessment }) {
       </div>
 
       {/* Overview Grid */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
         <div className="grid grid-cols-2 gap-4">
           <InfoRow label="Affected Area" value={a.affectedAreaSqft ? `${a.affectedAreaSqft} sqft` : 'TBD'} />
           <InfoRow label="Suspected Cause" value={CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown'} />
@@ -385,11 +375,11 @@ function OverviewTab({ assessment: a }: { assessment: MoldAssessment }) {
 
       {/* Visible Mold Types */}
       {Array.isArray(a.visibleMoldType) && a.visibleMoldType.length > 0 && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Visible Mold Types</h3>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Visible Mold Types</h3>
           <div className="flex flex-wrap gap-2">
             {a.visibleMoldType.map((mt, i) => (
-              <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded">{String(mt)}</span>
+              <span key={i} className="text-xs bg-secondary text-main px-2 py-1 rounded">{String(mt)}</span>
             ))}
           </div>
         </div>
@@ -397,27 +387,27 @@ function OverviewTab({ assessment: a }: { assessment: MoldAssessment }) {
 
       {/* Remediation Plan Summary */}
       {activePlan && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Active Remediation Plan</h3>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Active Remediation Plan</h3>
           <div className="flex items-center justify-between mb-2">
             <span className={`text-xs font-medium px-2 py-0.5 rounded border ${STATUS_COLORS[activePlan.status] ?? ''}`}>
               {STATUS_LABELS[activePlan.status] ?? activePlan.status}
             </span>
             {activePlan.containmentType && (
-              <span className="text-xs text-zinc-400">{activePlan.containmentType} containment</span>
+              <span className="text-xs text-muted">{activePlan.containmentType} containment</span>
             )}
           </div>
           {activePlan.scopeDescription && (
-            <p className="text-sm text-zinc-400 mt-1">{activePlan.scopeDescription}</p>
+            <p className="text-sm text-muted mt-1">{activePlan.scopeDescription}</p>
           )}
         </div>
       )}
 
       {/* Notes */}
       {a.overallNotes && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Notes</h3>
-          <p className="text-sm text-zinc-400 whitespace-pre-wrap">{a.overallNotes}</p>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Notes</h3>
+          <p className="text-sm text-muted whitespace-pre-wrap">{a.overallNotes}</p>
         </div>
       )}
     </div>
@@ -459,8 +449,8 @@ function ContainmentTab({ assessment: a }: { assessment: MoldAssessment }) {
 
       {/* Containment Calculator */}
       {estimatedRoomDimensions && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-          <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+        <div className="bg-secondary/50 border border-main rounded-xl p-5">
+          <h3 className="text-sm font-bold text-main mb-3 flex items-center gap-2">
             <Calculator size={14} />
             Containment Material Calculator
           </h3>
@@ -486,11 +476,11 @@ function ContainmentTab({ assessment: a }: { assessment: MoldAssessment }) {
       )}
 
       {/* PPE Requirements */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-3">PPE Requirements</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-3">PPE Requirements</h3>
         <div className="space-y-2">
           {levelInfo.ppe.map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm text-zinc-300">
+            <div key={i} className="flex items-center gap-2 text-sm text-main">
               <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
               {item}
             </div>
@@ -499,17 +489,17 @@ function ContainmentTab({ assessment: a }: { assessment: MoldAssessment }) {
       </div>
 
       {/* Equipment Deployed */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-3">Equipment Deployed ({equipment.length})</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-3">Equipment Deployed ({equipment.length})</h3>
         {equipment.length === 0 ? (
-          <p className="text-sm text-zinc-500">No equipment deployed</p>
+          <p className="text-sm text-muted">No equipment deployed</p>
         ) : (
           <div className="space-y-2">
             {equipment.map((eq) => (
-              <div key={eq.id} className="flex items-center justify-between bg-zinc-800/50 rounded-lg p-3">
+              <div key={eq.id} className="flex items-center justify-between bg-secondary/50 rounded-lg p-3">
                 <div>
-                  <p className="text-sm text-white font-medium">{eq.equipmentType.replace(/_/g, ' ')}</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-sm text-main font-medium">{eq.equipmentType.replace(/_/g, ' ')}</p>
+                  <p className="text-xs text-muted">
                     {eq.modelName || 'No model'} {eq.placementLocation ? `— ${eq.placementLocation}` : ''}
                   </p>
                 </div>
@@ -523,8 +513,8 @@ function ContainmentTab({ assessment: a }: { assessment: MoldAssessment }) {
       </div>
 
       {/* Containment Checklist */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-3">Containment Setup Checklist</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-3">Containment Setup Checklist</h3>
         <div className="space-y-1.5">
           {[
             'Identify and stop moisture source',
@@ -538,8 +528,8 @@ function ContainmentTab({ assessment: a }: { assessment: MoldAssessment }) {
             'Warning signage posted',
             'Workers donned in proper PPE',
           ].map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm text-zinc-400 py-1">
-              <div className="h-4 w-4 rounded border border-zinc-600 flex-shrink-0" />
+            <div key={i} className="flex items-center gap-2 text-sm text-muted py-1">
+              <div className="h-4 w-4 rounded border border-main flex-shrink-0" />
               {item}
             </div>
           ))}
@@ -577,18 +567,18 @@ function MoistureTab({ assessment: a }: { assessment: MoldAssessment }) {
         'rounded-xl border p-4',
         a.moistureSourceStatus === 'active_leak' ? 'border-red-500/30 bg-red-500/5' :
         a.moistureSourceStatus === 'resolved' ? 'border-green-500/30 bg-green-500/5' :
-        'border-zinc-700 bg-zinc-900'
+        'border-main bg-surface'
       )}>
         <div className="flex items-center gap-2 mb-2">
           <Droplets size={16} className={
             a.moistureSourceStatus === 'active_leak' ? 'text-red-400' :
-            a.moistureSourceStatus === 'resolved' ? 'text-green-400' : 'text-zinc-400'
+            a.moistureSourceStatus === 'resolved' ? 'text-green-400' : 'text-muted'
           } />
-          <span className="text-sm font-bold text-white">
+          <span className="text-sm font-bold text-main">
             Moisture Source: {a.moistureSourceStatus === 'active_leak' ? 'ACTIVE LEAK' : a.moistureSourceStatus === 'resolved' ? 'Resolved' : 'Unknown'}
           </span>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-muted">
           Cause: {CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'Unknown'}
         </p>
         {a.moistureSourceStatus === 'active_leak' && (
@@ -609,10 +599,10 @@ function MoistureTab({ assessment: a }: { assessment: MoldAssessment }) {
 
       {/* Readings by Room */}
       {byRoom.length === 0 ? (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-          <Droplets size={32} className="mx-auto text-zinc-600 mb-3" />
-          <p className="text-sm text-zinc-500">No moisture readings recorded</p>
-          <p className="text-xs text-zinc-600 mt-1">Document readings at each monitoring point to track moisture levels over time</p>
+        <div className="bg-secondary/50 border border-main rounded-xl p-8 text-center">
+          <Droplets size={32} className="mx-auto text-muted opacity-50 mb-3" />
+          <p className="text-sm text-muted">No moisture readings recorded</p>
+          <p className="text-xs text-muted mt-1">Document readings at each monitoring point to track moisture levels over time</p>
         </div>
       ) : (
         byRoom.map(([room, roomReadings]) => {
@@ -621,35 +611,35 @@ function MoistureTab({ assessment: a }: { assessment: MoldAssessment }) {
           const hasConcern = roomReadings.some((r) => r.severity === 'concern' || r.severity === 'saturation');
 
           return (
-            <div key={room} className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+            <div key={room} className="bg-secondary/50 border border-main rounded-xl overflow-hidden">
               <button
-                className="w-full text-left p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
+                className="w-full text-left p-4 flex items-center justify-between hover:bg-secondary/50 transition-colors"
                 onClick={() => setExpandedRoom(isExpanded ? null : room)}
               >
                 <div className="flex items-center gap-3">
-                  <MapPin size={14} className={hasConcern ? 'text-yellow-400' : 'text-zinc-400'} />
+                  <MapPin size={14} className={hasConcern ? 'text-yellow-400' : 'text-muted'} />
                   <div>
-                    <p className="text-sm font-medium text-white">{room}</p>
-                    <p className="text-xs text-zinc-500">{roomReadings.length} reading{roomReadings.length !== 1 ? 's' : ''}</p>
+                    <p className="text-sm font-medium text-main">{room}</p>
+                    <p className="text-xs text-muted">{roomReadings.length} reading{roomReadings.length !== 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {hasConcern && <Badge variant="warning">Elevated</Badge>}
-                  <span className="text-sm font-bold text-white">{latestReading.readingValue}{latestReading.readingUnit}</span>
-                  {isExpanded ? <ChevronDown size={14} className="text-zinc-500" /> : <ChevronRight size={14} className="text-zinc-500" />}
+                  <span className="text-sm font-bold text-main">{latestReading.readingValue}{latestReading.readingUnit}</span>
+                  {isExpanded ? <ChevronDown size={14} className="text-muted" /> : <ChevronRight size={14} className="text-muted" />}
                 </div>
               </button>
 
               {isExpanded && (
-                <div className="border-t border-zinc-800 p-4 space-y-2">
+                <div className="border-t border-main p-4 space-y-2">
                   {roomReadings.map((r) => (
-                    <div key={r.id} className="flex items-center justify-between bg-zinc-800/30 rounded-lg p-3">
+                    <div key={r.id} className="flex items-center justify-between bg-secondary/30 rounded-lg p-3">
                       <div>
-                        <p className="text-xs text-zinc-400">{r.locationDetail ?? r.readingType.replace(/_/g, ' ')}</p>
-                        <p className="text-xs text-zinc-600">{r.meterModel ? `Meter: ${r.meterModel}` : ''} {fmtDate(r.createdAt)}</p>
+                        <p className="text-xs text-muted">{r.locationDetail ?? r.readingType.replace(/_/g, ' ')}</p>
+                        <p className="text-xs text-muted">{r.meterModel ? `Meter: ${r.meterModel}` : ''} {fmtDate(r.createdAt)}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-white">{r.readingValue}{r.readingUnit}</span>
+                        <span className="text-sm font-bold text-main">{r.readingValue}{r.readingUnit}</span>
                         {r.severity && (
                           <span className={cn(
                             'text-xs px-2 py-0.5 rounded',
@@ -671,9 +661,9 @@ function MoistureTab({ assessment: a }: { assessment: MoldAssessment }) {
       )}
 
       {/* Moisture Reference */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-        <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Moisture Content Reference</h3>
-        <div className="space-y-1 text-xs text-zinc-400">
+      <div className="bg-secondary/50 border border-main rounded-xl p-4">
+        <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Moisture Content Reference</h3>
+        <div className="space-y-1 text-xs text-muted">
           <div className="flex justify-between"><span>Drywall (normal)</span><span className="text-green-400">{'<'} 1% MC</span></div>
           <div className="flex justify-between"><span>Wood framing (normal)</span><span className="text-green-400">6-12% MC</span></div>
           <div className="flex justify-between"><span>Concrete (normal)</span><span className="text-green-400">{'<'} 4% MC</span></div>
@@ -697,8 +687,8 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
   return (
     <div className="space-y-4">
       {/* Clearance Workflow */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-3">Clearance Testing Workflow</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-3">Clearance Testing Workflow</h3>
         <div className="relative">
           {[
             { step: 1, label: 'Pre-Remediation Samples', description: 'Air + surface samples to establish baseline', done: labSamples.some((s) => s.status !== 'pending') },
@@ -710,13 +700,13 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
             <div key={i} className="flex items-start gap-3 mb-4 last:mb-0">
               <div className={cn(
                 'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold flex-shrink-0',
-                step.done ? 'bg-green-500 text-white' : 'bg-zinc-700 text-zinc-400'
+                step.done ? 'bg-green-500 text-white' : 'bg-slate-700 text-muted'
               )}>
                 {step.done ? <CheckCircle size={14} /> : step.step}
               </div>
               <div>
-                <p className={cn('text-sm font-medium', step.done ? 'text-green-400' : 'text-white')}>{step.label}</p>
-                <p className="text-xs text-zinc-500">{step.description}</p>
+                <p className={cn('text-sm font-medium', step.done ? 'text-green-400' : 'text-main')}>{step.label}</p>
+                <p className="text-xs text-muted">{step.description}</p>
               </div>
             </div>
           ))}
@@ -724,21 +714,21 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
       </div>
 
       {/* Lab Samples */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-3 flex items-center gap-2">
           <Microscope size={14} />
           Lab Samples ({labSamples.length})
         </h3>
         {labSamples.length === 0 ? (
-          <p className="text-sm text-zinc-500 text-center py-4">No samples collected</p>
+          <p className="text-sm text-muted text-center py-4">No samples collected</p>
         ) : (
           <div className="space-y-2">
             {labSamples.map((s) => (
-              <div key={s.id} className="bg-zinc-800/50 rounded-lg p-3">
+              <div key={s.id} className="bg-secondary/50 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-white">{s.sampleType.replace(/_/g, ' ')}</span>
-                    <span className="text-xs text-zinc-500">@ {s.sampleLocation}</span>
+                    <span className="text-sm font-medium text-main">{s.sampleType.replace(/_/g, ' ')}</span>
+                    <span className="text-xs text-muted">@ {s.sampleLocation}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {s.passFail ? (
@@ -750,7 +740,7 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
                     )}
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-2 mt-2 text-xs text-zinc-400">
+                <div className="grid grid-cols-3 gap-2 mt-2 text-xs text-muted">
                   <div>Collected: {fmtDate(s.dateCollected)}</div>
                   {s.labName && <div>Lab: {s.labName}</div>}
                   {s.sporeCount != null && (
@@ -760,12 +750,12 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
                 {s.speciesFound && Array.isArray(s.speciesFound) && s.speciesFound.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {s.speciesFound.map((sp, i) => (
-                      <span key={i} className="text-xs bg-zinc-700 text-zinc-300 px-2 py-0.5 rounded">{String(sp)}</span>
+                      <span key={i} className="text-xs bg-slate-700 text-main px-2 py-0.5 rounded">{String(sp)}</span>
                     ))}
                   </div>
                 )}
                 {s.resultsNotes && (
-                  <p className="text-xs text-zinc-500 mt-1">{s.resultsNotes}</p>
+                  <p className="text-xs text-muted mt-1">{s.resultsNotes}</p>
                 )}
               </div>
             ))}
@@ -774,10 +764,10 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
       </div>
 
       {/* Clearance Tests */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-3">Clearance Tests ({clearanceTests.length})</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-3">Clearance Tests ({clearanceTests.length})</h3>
         {clearanceTests.length === 0 ? (
-          <p className="text-sm text-zinc-500 text-center py-4">No clearance tests performed</p>
+          <p className="text-sm text-muted text-center py-4">No clearance tests performed</p>
         ) : (
           <div className="space-y-3">
             {clearanceTests.map((ct) => (
@@ -785,10 +775,10 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
                 'rounded-lg border p-4',
                 ct.overallResult === 'pass' ? 'border-green-500/30 bg-green-500/5' :
                 ct.overallResult === 'fail' ? 'border-red-500/30 bg-red-500/5' :
-                'border-zinc-700 bg-zinc-800/50'
+                'border-main bg-secondary/50'
               )}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-white">Clearance — {fmtDate(ct.clearanceDate)}</span>
+                  <span className="text-sm font-medium text-main">Clearance — {fmtDate(ct.clearanceDate)}</span>
                   {ct.overallResult && (
                     <Badge variant={ct.overallResult === 'pass' ? 'success' : ct.overallResult === 'fail' ? 'error' : 'warning'}>
                       {ct.overallResult.toUpperCase()}
@@ -802,14 +792,14 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
                   <ClearanceItem label="Odor" pass={ct.odorPass} />
                 </div>
                 {ct.assessorName && (
-                  <p className="text-xs text-zinc-500 mt-2">
+                  <p className="text-xs text-muted mt-2">
                     Assessor: {ct.assessorName} {ct.assessorCompany ? `(${ct.assessorCompany})` : ''} {ct.assessorLicense ? `License: ${ct.assessorLicense}` : ''}
                   </p>
                 )}
                 {ct.certificateNumber && (
-                  <p className="text-xs text-zinc-500">Certificate: {ct.certificateNumber}</p>
+                  <p className="text-xs text-muted">Certificate: {ct.certificateNumber}</p>
                 )}
-                {ct.notes && <p className="text-xs text-zinc-400 mt-1">{ct.notes}</p>}
+                {ct.notes && <p className="text-xs text-muted mt-1">{ct.notes}</p>}
               </div>
             ))}
           </div>
@@ -817,9 +807,9 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
       </div>
 
       {/* Clearance Criteria Reference */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-        <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Clearance Criteria — Level {level}</h3>
-        <div className="space-y-1 text-xs text-zinc-400">
+      <div className="bg-secondary/50 border border-main rounded-xl p-4">
+        <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Clearance Criteria — Level {level}</h3>
+        <div className="space-y-1 text-xs text-muted">
           <p>1. All visible mold removed — no remaining growth on surfaces</p>
           <p>2. Moisture readings at or below normal for material type</p>
           <p>3. No musty odor detected in remediated area</p>
@@ -835,13 +825,13 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
 function ClearanceItem({ label, pass }: { label: string; pass: boolean | null }) {
   return (
     <div className="text-center">
-      <p className="text-zinc-500 mb-1">{label}</p>
+      <p className="text-muted mb-1">{label}</p>
       {pass === true ? (
         <CheckCircle size={16} className="mx-auto text-green-400" />
       ) : pass === false ? (
         <XCircle size={16} className="mx-auto text-red-400" />
       ) : (
-        <div className="h-4 w-4 mx-auto rounded-full bg-zinc-700" />
+        <div className="h-4 w-4 mx-auto rounded-full bg-slate-700" />
       )}
     </div>
   );
@@ -942,9 +932,9 @@ function ProtocolTab({ assessment: a }: { assessment: MoldAssessment }) {
   return (
     <div className="space-y-4">
       {/* Protocol Header */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-1">Remediation Protocol — Level {level}</h3>
-        <p className="text-xs text-zinc-500">
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-1">Remediation Protocol — Level {level}</h3>
+        <p className="text-xs text-muted">
           Auto-generated based on IICRC S520 standards for {a.affectedAreaSqft ?? 0} sqft,{' '}
           {CAUSE_LABELS[a.suspectedCause ?? ''] ?? 'unknown cause'}, {a.occupancyStatus ?? 'unknown'} occupancy
         </p>
@@ -952,12 +942,12 @@ function ProtocolTab({ assessment: a }: { assessment: MoldAssessment }) {
 
       {/* Protocol Sections */}
       {protocolSections.map((section, si) => (
-        <div key={si} className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-          <h4 className="text-sm font-bold text-white mb-3">{si + 1}. {section.title}</h4>
+        <div key={si} className="bg-secondary/50 border border-main rounded-xl p-5">
+          <h4 className="text-sm font-bold text-main mb-3">{si + 1}. {section.title}</h4>
           <div className="space-y-2">
             {section.items.map((item, ii) => (
-              <div key={ii} className="flex items-start gap-2 text-sm text-zinc-400">
-                <div className="h-4 w-4 mt-0.5 rounded border border-zinc-600 flex-shrink-0" />
+              <div key={ii} className="flex items-start gap-2 text-sm text-muted">
+                <div className="h-4 w-4 mt-0.5 rounded border border-main flex-shrink-0" />
                 <span>{item}</span>
               </div>
             ))}
@@ -967,13 +957,13 @@ function ProtocolTab({ assessment: a }: { assessment: MoldAssessment }) {
 
       {/* Active Plan Status */}
       {activePlan && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-          <h4 className="text-sm font-bold text-white mb-2">Plan Status</h4>
+        <div className="bg-secondary/50 border border-main rounded-xl p-5">
+          <h4 className="text-sm font-bold text-main mb-2">Plan Status</h4>
           <div className="flex items-center justify-between">
             <span className={cn('text-xs font-medium px-2 py-0.5 rounded border', STATUS_COLORS[activePlan.status] ?? '')}>
               {STATUS_LABELS[activePlan.status] ?? activePlan.status}
             </span>
-            <div className="flex items-center gap-3 text-xs text-zinc-500">
+            <div className="flex items-center gap-3 text-xs text-muted">
               {activePlan.startedAt && <span>Started: {fmtDate(activePlan.startedAt)}</span>}
               {activePlan.completedAt && <span>Completed: {fmtDate(activePlan.completedAt)}</span>}
             </div>
@@ -997,9 +987,9 @@ function LicensingTab({ licensing }: { licensing: MoldStateLicensing[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-white mb-1">State Licensing Requirements</h3>
-        <p className="text-xs text-zinc-500 mb-3">
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-bold text-main mb-1">State Licensing Requirements</h3>
+        <p className="text-xs text-muted mb-3">
           Mold remediation licensing requirements vary by state. Check your operating state before beginning work.
         </p>
         <SearchInput
@@ -1010,28 +1000,28 @@ function LicensingTab({ licensing }: { licensing: MoldStateLicensing[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="text-center py-8 text-zinc-500 text-sm">
+        <div className="text-center py-8 text-muted text-sm">
           {licensing.length === 0 ? 'Licensing data not available' : 'No matching states'}
         </div>
       ) : (
         <div className="space-y-2">
           {filtered.map((s) => (
-            <div key={s.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <div key={s.id} className="bg-secondary/50 border border-main rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-white">{s.stateName} ({s.stateCode})</span>
+                <span className="text-sm font-medium text-main">{s.stateName} ({s.stateCode})</span>
                 <Badge variant={s.licenseRequired ? 'warning' : 'success'}>
                   {s.licenseRequired ? 'License Required' : 'No License Required'}
                 </Badge>
               </div>
               {s.licenseRequired && (
-                <div className="grid grid-cols-2 gap-2 text-xs text-zinc-400 mt-2">
+                <div className="grid grid-cols-2 gap-2 text-xs text-muted mt-2">
                   {s.issuingAgency && <div>Agency: {s.issuingAgency}</div>}
                   {s.costRange && <div>Cost: {s.costRange}</div>}
                   {s.renewalPeriod && <div>Renewal: {s.renewalPeriod}</div>}
                   {s.ceRequirements && <div>CE: {s.ceRequirements}</div>}
                 </div>
               )}
-              {s.notes && <p className="text-xs text-zinc-500 mt-2">{s.notes}</p>}
+              {s.notes && <p className="text-xs text-muted mt-2">{s.notes}</p>}
             </div>
           ))}
         </div>
@@ -1045,17 +1035,17 @@ function LicensingTab({ licensing }: { licensing: MoldStateLicensing[] }) {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[10px] text-zinc-500 uppercase tracking-wider">{label}</p>
-      <p className="text-sm text-zinc-300">{value}</p>
+      <p className="text-[10px] text-muted uppercase tracking-wider">{label}</p>
+      <p className="text-sm text-main">{value}</p>
     </div>
   );
 }
 
 function MiniStat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-      <p className="text-lg font-bold text-white">{value}</p>
-      <p className="text-[10px] text-zinc-500">{label}</p>
+    <div className="bg-secondary/50 border border-main rounded-xl p-3 text-center">
+      <p className="text-lg font-bold text-main">{value}</p>
+      <p className="text-[10px] text-muted">{label}</p>
     </div>
   );
 }
