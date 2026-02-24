@@ -160,17 +160,19 @@ const SURVEY_TEMPLATES: SurveyTemplate[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Demo data — reports
-// ---------------------------------------------------------------------------
-
-const DEMO_REPORTS: SurveyReport[] = [
-  { id: 'rpt-1', surveyTitle: 'Oakwood Residence Pre-Job Survey', generatedAt: '2026-02-20T14:30:00Z', surveyorName: 'Mike Torres', status: 'completed', pageCount: 8, propertyType: 'Residential' },
-  { id: 'rpt-2', surveyTitle: 'Elm St. Insurance Damage Assessment', generatedAt: '2026-02-18T09:15:00Z', surveyorName: 'Sarah Chen', status: 'completed', pageCount: 12, propertyType: 'Residential' },
-  { id: 'rpt-3', surveyTitle: 'Downtown Office HVAC Inspection', generatedAt: '2026-02-15T11:00:00Z', surveyorName: 'James Wilson', status: 'completed', pageCount: 6, propertyType: 'Commercial' },
-  { id: 'rpt-4', surveyTitle: 'Maple Ave Emergency Pipe Burst', generatedAt: '2026-02-12T16:45:00Z', surveyorName: 'Mike Torres', status: 'completed', pageCount: 4, propertyType: 'Residential' },
-  { id: 'rpt-5', surveyTitle: 'Industrial Park Building C Assessment', generatedAt: '2026-02-10T08:00:00Z', surveyorName: 'Sarah Chen', status: 'completed', pageCount: 14, propertyType: 'Industrial' },
-];
+function deriveSurveyReports(surveys: SiteSurvey[]): SurveyReport[] {
+  return surveys
+    .filter(s => s.status === 'completed')
+    .map(s => ({
+      id: s.id,
+      surveyTitle: s.title,
+      generatedAt: s.updatedAt || s.createdAt,
+      surveyorName: s.surveyorName,
+      status: s.status,
+      pageCount: Math.max(1, Math.ceil((s.conditions.length + s.measurements.length + s.hazards.length + s.photos.length) / 4)),
+      propertyType: s.propertyType || 'Residential',
+    }));
+}
 
 // ---------------------------------------------------------------------------
 // SurveyRow
@@ -855,7 +857,7 @@ function TemplatesTab() {
 // Reports Tab
 // ---------------------------------------------------------------------------
 
-function ReportsTab() {
+function ReportsTab({ surveyReports }: { surveyReports: SurveyReport[] }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -865,7 +867,7 @@ function ReportsTab() {
         </div>
       </div>
       <Card className="bg-surface border-main overflow-hidden">
-        {DEMO_REPORTS.length === 0 ? (
+        {surveyReports.length === 0 ? (
           <CardContent className="p-8 text-center">
             <FileText className="h-8 w-8 mx-auto mb-3 text-muted" />
             <p className="text-muted text-sm">No reports generated yet</p>
@@ -881,7 +883,7 @@ function ReportsTab() {
               <div className="col-span-2">Generated</div>
               <div className="col-span-1 text-right">Actions</div>
             </div>
-            {DEMO_REPORTS.map(report => (
+            {surveyReports.map(report => (
               <div key={report.id} className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-main hover:bg-surface-hover transition-colors items-center">
                 <div className="col-span-4 flex items-center gap-2">
                   <FileText className="h-4 w-4 text-muted flex-shrink-0" />
@@ -937,6 +939,7 @@ export default function SiteSurveysPage() {
     return true;
   }), [surveys, statusFilter, typeFilter, search]);
 
+  const surveyReports = useMemo(() => deriveSurveyReports(surveys), [surveys]);
   const hazardCount = useMemo(() => surveys.reduce((sum, s) => sum + s.hazards.length, 0), [surveys]);
   const totalSqft = useMemo(() => surveys.reduce((sum, s) => {
     const measured = s.measurements.reduce((ms, m) => ms + (m.length * m.width), 0);
@@ -946,7 +949,7 @@ export default function SiteSurveysPage() {
   const tabs: { value: TabValue; label: string; icon: React.ReactNode; count?: number }[] = [
     { value: 'surveys', label: 'Surveys', icon: <ClipboardList size={14} />, count: surveys.length },
     { value: 'templates', label: 'Templates', icon: <Layers size={14} />, count: SURVEY_TEMPLATES.length },
-    { value: 'reports', label: 'Reports', icon: <BarChart3 size={14} />, count: DEMO_REPORTS.length },
+    { value: 'reports', label: 'Reports', icon: <BarChart3 size={14} />, count: surveyReports.length },
   ];
 
   return (
@@ -1088,7 +1091,7 @@ export default function SiteSurveysPage() {
         )}
 
         {activeTab === 'templates' && <TemplatesTab />}
-        {activeTab === 'reports' && <ReportsTab />}
+        {activeTab === 'reports' && <ReportsTab surveyReports={surveyReports} />}
       </div>
 
       {/* Modals */}

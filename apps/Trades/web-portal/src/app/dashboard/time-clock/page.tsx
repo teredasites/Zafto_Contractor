@@ -149,8 +149,8 @@ function buildTimesheetRows(entries: TimeEntry[], weekStart: Date): TimesheetRow
       if (ot > 0) dailyOt[dayIdx] = (dailyOt[dayIdx] || 0) + ot;
     }
 
-    const weekTotal = dailyHours.reduce((s, h) => s + (h || 0), 0);
-    const otTotal = dailyOt.reduce((s, h) => s + (h || 0), 0);
+    const weekTotal = dailyHours.reduce<number>((s, h) => s + (h || 0), 0);
+    const otTotal = dailyOt.reduce<number>((s, h) => s + (h || 0), 0);
 
     // Determine status: if any entry is rejected -> rejected, if all approved -> approved, else pending
     const hasRejected = userEntries.some(e => e.status === 'rejected');

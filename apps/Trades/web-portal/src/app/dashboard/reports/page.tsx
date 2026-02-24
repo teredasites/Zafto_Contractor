@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   BarChart3,
   TrendingUp,
@@ -30,6 +30,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/translations';
 import { useReports } from '@/lib/hooks/use-reports';
+import { useJobCosts, type JobCostData } from '@/lib/hooks/use-job-costs';
 import type { MonthlyRevenue, StatusCount, RevenueCategory, TeamMemberStat, InvoiceStats, JobStats } from '@/lib/hooks/use-reports';
 
 // ────────────────────────────────────────────────────────
@@ -76,29 +77,52 @@ interface TaxSummary {
   vendorCount1099: number;
 }
 
-// ── Demo data ──
+function deriveJobCostReports(jobs: JobCostData[]): JobCostReport[] {
+  return jobs.map(j => {
+    const overheadAllocation = Math.round(j.bidAmount * 0.05);
+    const totalCost = j.actualSpend;
+    const profit = j.bidAmount - totalCost;
+    const profitMargin = j.bidAmount > 0 ? Math.round((profit / j.bidAmount) * 1000) / 10 : 0;
+    return {
+      jobId: j.id,
+      jobName: j.name,
+      customer: j.customer,
+      status: j.percentComplete >= 100 ? 'completed' : j.percentComplete > 0 ? 'in_progress' : 'scheduled',
+      contractAmount: j.bidAmount,
+      laborCost: j.laborActual,
+      materialCost: j.materialsActual,
+      subcontractorCost: j.expenseActual,
+      overheadAllocation,
+      totalCost,
+      profit,
+      profitMargin,
+    };
+  });
+}
 
-const demoJobCosts: JobCostReport[] = [
-  { jobId: 'j-1', jobName: 'Thompson Kitchen Remodel', customer: 'Sarah Thompson', status: 'in_progress', contractAmount: 48500, laborCost: 12480, materialCost: 18200, subcontractorCost: 3500, overheadAllocation: 2425, totalCost: 36605, profit: 11895, profitMargin: 24.5 },
-  { jobId: 'j-2', jobName: 'Garcia Bathroom Suite', customer: 'Mike Garcia', status: 'completed', contractAmount: 22000, laborCost: 7440, materialCost: 6800, subcontractorCost: 0, overheadAllocation: 1100, totalCost: 15340, profit: 6660, profitMargin: 30.3 },
-  { jobId: 'j-3', jobName: 'Riverside Office Build-Out', customer: 'Riverside Properties', status: 'in_progress', contractAmount: 185000, laborCost: 54600, materialCost: 62400, subcontractorCost: 28000, overheadAllocation: 9250, totalCost: 154250, profit: 30750, profitMargin: 16.6 },
-  { jobId: 'j-4', jobName: 'Wilson Deck & Patio', customer: 'James Wilson', status: 'completed', contractAmount: 18500, laborCost: 5200, materialCost: 7800, subcontractorCost: 0, overheadAllocation: 925, totalCost: 13925, profit: 4575, profitMargin: 24.7 },
-  { jobId: 'j-5', jobName: 'Nguyen Whole-House Renovation', customer: 'David Nguyen', status: 'in_progress', contractAmount: 125000, laborCost: 32000, materialCost: 48000, subcontractorCost: 15000, overheadAllocation: 6250, totalCost: 101250, profit: 23750, profitMargin: 19.0 },
-  { jobId: 'j-6', jobName: 'Pine Estates — Phase 2', customer: 'Pine Estates HOA', status: 'scheduled', contractAmount: 72000, laborCost: 0, materialCost: 0, subcontractorCost: 0, overheadAllocation: 0, totalCost: 0, profit: 72000, profitMargin: 100 },
-];
+function deriveWIPEntries(jobs: JobCostData[]): WIPEntry[] {
+  return jobs
+    .filter(j => j.percentComplete > 0 && j.percentComplete < 100)
+    .map(j => {
+      const earnedRevenue = Math.round(j.bidAmount * (j.percentComplete / 100));
+      const billedToDate = Math.round(j.bidAmount * (j.percentBudgetUsed / 100));
+      return {
+        jobId: j.id,
+        jobName: j.name,
+        customer: j.customer,
+        estimatedTotal: j.bidAmount,
+        costsToDate: j.actualSpend,
+        percentComplete: j.percentComplete,
+        billedToDate,
+        earnedRevenue,
+        overUnderBilled: billedToDate - earnedRevenue,
+      };
+    });
+}
 
-const demoWIP: WIPEntry[] = [
-  { jobId: 'j-1', jobName: 'Thompson Kitchen Remodel', customer: 'Sarah Thompson', estimatedTotal: 48500, costsToDate: 36605, percentComplete: 72, billedToDate: 38800, earnedRevenue: 34920, overUnderBilled: 3880 },
-  { jobId: 'j-3', jobName: 'Riverside Office Build-Out', customer: 'Riverside Properties', estimatedTotal: 185000, costsToDate: 154250, percentComplete: 65, billedToDate: 111000, earnedRevenue: 120250, overUnderBilled: -9250 },
-  { jobId: 'j-5', jobName: 'Nguyen Whole-House Renovation', customer: 'David Nguyen', estimatedTotal: 125000, costsToDate: 101250, percentComplete: 55, billedToDate: 62500, earnedRevenue: 68750, overUnderBilled: -6250 },
-  { jobId: 'j-6', jobName: 'Pine Estates — Phase 2', customer: 'Pine Estates HOA', estimatedTotal: 72000, costsToDate: 0, percentComplete: 0, billedToDate: 14400, earnedRevenue: 0, overUnderBilled: 14400 },
-];
-
-const demoTax: TaxSummary[] = [
-  { period: 'Q1 2026', salesTaxCollected: 14280, salesTaxRemitted: 12400, salesTaxOwed: 1880, estimatedIncomeTax: 18500, vendorPayments1099: 45200, vendorCount1099: 8 },
-  { period: 'Q4 2025', salesTaxCollected: 12100, salesTaxRemitted: 12100, salesTaxOwed: 0, estimatedIncomeTax: 15200, vendorPayments1099: 38700, vendorCount1099: 7 },
-  { period: 'Q3 2025', salesTaxCollected: 16450, salesTaxRemitted: 16450, salesTaxOwed: 0, estimatedIncomeTax: 22400, vendorPayments1099: 52100, vendorCount1099: 9 },
-];
+function deriveTaxSummary(): TaxSummary[] {
+  return [];
+}
 
 // ────────────────────────────────────────────────────────
 // Page
@@ -107,8 +131,13 @@ const demoTax: TaxSummary[] = [
 export default function ReportsPage() {
   const { t } = useTranslation();
   const { data, loading, error } = useReports();
+  const { jobs: costJobs } = useJobCosts();
   const [activeReport, setActiveReport] = useState<ReportType>('revenue');
   const [dateRange, setDateRange] = useState<DateRange>('30d');
+
+  const jobCostReports = useMemo(() => deriveJobCostReports(costJobs), [costJobs]);
+  const wipEntries = useMemo(() => deriveWIPEntries(costJobs), [costJobs]);
+  const taxSummary = useMemo(() => deriveTaxSummary(), []);
 
   const reports: { id: ReportType; label: string; icon: React.ReactNode }[] = [
     { id: 'revenue', label: 'Revenue', icon: <DollarSign size={16} /> },
@@ -209,9 +238,9 @@ export default function ReportsPage() {
       {data && activeReport === 'jobs' && <JobsReport statusData={data.jobsByStatus} stats={data.jobStats} />}
       {data && activeReport === 'team' && <TeamReport team={data.team} />}
       {data && activeReport === 'invoices' && <InvoicesReport stats={data.invoiceStats} />}
-      {activeReport === 'jobcost' && <JobCostingReport jobs={demoJobCosts} />}
-      {activeReport === 'wip' && <WIPReport entries={demoWIP} />}
-      {activeReport === 'tax' && <TaxReport periods={demoTax} />}
+      {activeReport === 'jobcost' && <JobCostingReport jobs={jobCostReports} />}
+      {activeReport === 'wip' && <WIPReport entries={wipEntries} />}
+      {activeReport === 'tax' && <TaxReport periods={taxSummary} />}
       {activeReport === 'cpa' && <CPAExportTab />}
     </div>
   );

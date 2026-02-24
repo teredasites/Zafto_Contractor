@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -27,11 +27,8 @@ import {
   X,
   Copy,
   ExternalLink,
-  Shield,
   UserPlus,
-  Merge,
   Send,
-  Activity,
   ChevronRight,
   CheckCircle,
   Home,
@@ -41,14 +38,7 @@ import {
   PhoneIncoming,
   PhoneOutgoing,
   Building2,
-  Droplets,
   Zap,
-  Thermometer,
-  Gauge,
-  TreePine,
-  Search,
-  Filter,
-  Download,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -59,6 +49,7 @@ import { useCustomer, useCustomers } from '@/lib/hooks/use-customers';
 import { useBids } from '@/lib/hooks/use-bids';
 import { useJobs } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
+import { useEstimates } from '@/lib/hooks/use-estimates';
 import { Input, Select } from '@/components/ui/input';
 import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { getSupabase } from '@/lib/supabase';
@@ -70,21 +61,8 @@ import { useTranslation } from '@/lib/translations';
 type TabType = 'overview' | 'bids' | 'jobs' | 'invoices' | 'documents' | 'activity' | 'estimates' | 'communications' | 'properties' | 'payments' | 'notes';
 
 // ---------------------------------------------------------------------------
-// Demo data interfaces for new tabs (will be replaced by real hooks)
+// Shared interfaces for tabs backed by inline Supabase queries
 // ---------------------------------------------------------------------------
-
-interface EstimateItem {
-  id: string;
-  estimateNumber: string;
-  title: string;
-  description: string;
-  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined' | 'expired';
-  total: number;
-  createdAt: string;
-  expiresAt: string;
-  lineItemCount: number;
-  jobType: string;
-}
 
 interface CommunicationItem {
   id: string;
@@ -94,7 +72,7 @@ interface CommunicationItem {
   preview: string;
   timestamp: string;
   duration?: number; // seconds, for calls
-  status: 'completed' | 'missed' | 'sent' | 'delivered' | 'read' | 'bounced' | 'failed';
+  status: string;
   assignedTo?: string;
 }
 
@@ -104,18 +82,11 @@ interface PropertyItem {
   city: string;
   state: string;
   zip: string;
-  propertyType: 'residential' | 'commercial' | 'industrial';
-  yearBuilt: number;
-  sqft: number;
+  propertyType: string;
+  yearBuilt: number | null;
+  sqft: number | null;
   lastScanDate?: string;
-  conditions: PropertyCondition[];
   jobCount: number;
-}
-
-interface PropertyCondition {
-  area: string;
-  severity: 'good' | 'fair' | 'poor' | 'critical';
-  note: string;
 }
 
 interface PaymentItem {
@@ -123,330 +94,11 @@ interface PaymentItem {
   invoiceId: string;
   invoiceNumber: string;
   amount: number;
-  method: 'credit_card' | 'ach' | 'check' | 'cash' | 'wire';
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
+  method: string;
+  status: string;
   paidAt: string;
   transactionId?: string;
   cardLast4?: string;
-}
-
-interface NoteItem {
-  id: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  isPinned: boolean;
-  category: 'general' | 'follow-up' | 'issue' | 'preference' | 'site-access';
-}
-
-// ---------------------------------------------------------------------------
-// Demo data generators
-// ---------------------------------------------------------------------------
-
-function getDemoEstimates(customerId: string): EstimateItem[] {
-  return [
-    {
-      id: 'est-001',
-      estimateNumber: 'EST-2026-0147',
-      title: 'Full Kitchen Remodel',
-      description: 'Complete kitchen renovation including cabinets, countertops, backsplash, and flooring',
-      status: 'accepted',
-      total: 28750.00,
-      createdAt: '2026-01-15T10:30:00Z',
-      expiresAt: '2026-02-15T10:30:00Z',
-      lineItemCount: 18,
-      jobType: 'Remodel',
-    },
-    {
-      id: 'est-002',
-      estimateNumber: 'EST-2026-0163',
-      title: 'Bathroom Tile & Fixture Replacement',
-      description: 'Master bath tile replacement, new vanity, toilet, and shower fixtures',
-      status: 'sent',
-      total: 9450.00,
-      createdAt: '2026-02-01T14:15:00Z',
-      expiresAt: '2026-03-01T14:15:00Z',
-      lineItemCount: 12,
-      jobType: 'Renovation',
-    },
-    {
-      id: 'est-003',
-      estimateNumber: 'EST-2026-0178',
-      title: 'Deck Repair & Staining',
-      description: 'Repair damaged deck boards, replace railing sections, sand and restain entire deck',
-      status: 'draft',
-      total: 4200.00,
-      createdAt: '2026-02-10T09:00:00Z',
-      expiresAt: '2026-03-10T09:00:00Z',
-      lineItemCount: 7,
-      jobType: 'Repair',
-    },
-    {
-      id: 'est-004',
-      estimateNumber: 'EST-2025-0892',
-      title: 'Exterior Paint — Full House',
-      description: 'Pressure wash, scrape, prime, and paint exterior of 2-story colonial',
-      status: 'expired',
-      total: 12600.00,
-      createdAt: '2025-09-20T11:00:00Z',
-      expiresAt: '2025-10-20T11:00:00Z',
-      lineItemCount: 9,
-      jobType: 'Painting',
-    },
-    {
-      id: 'est-005',
-      estimateNumber: 'EST-2025-0910',
-      title: 'HVAC System Replacement',
-      description: 'Remove existing 15-year-old furnace and AC, install new high-efficiency system with smart thermostat',
-      status: 'declined',
-      total: 18900.00,
-      createdAt: '2025-10-05T08:45:00Z',
-      expiresAt: '2025-11-05T08:45:00Z',
-      lineItemCount: 14,
-      jobType: 'HVAC',
-    },
-  ];
-}
-
-function getDemoCommunications(customerId: string): CommunicationItem[] {
-  return [
-    {
-      id: 'comm-001',
-      type: 'call',
-      direction: 'outbound',
-      subject: 'Kitchen remodel scheduling',
-      preview: 'Discussed start date options for the kitchen remodel project. Customer prefers mid-February start.',
-      timestamp: '2026-02-20T15:30:00Z',
-      duration: 480,
-      status: 'completed',
-      assignedTo: 'Mike Torres',
-    },
-    {
-      id: 'comm-002',
-      type: 'email',
-      direction: 'outbound',
-      subject: 'Estimate #EST-2026-0163 — Bathroom Renovation',
-      preview: 'Hi, please find attached the estimate for your master bathroom tile and fixture replacement project...',
-      timestamp: '2026-02-01T14:20:00Z',
-      status: 'read',
-      assignedTo: 'Mike Torres',
-    },
-    {
-      id: 'comm-003',
-      type: 'sms',
-      direction: 'inbound',
-      subject: 'Appointment confirmation',
-      preview: 'Yes, Thursday at 9am works for us. The side gate code is 4521.',
-      timestamp: '2026-02-18T08:12:00Z',
-      status: 'delivered',
-    },
-    {
-      id: 'comm-004',
-      type: 'call',
-      direction: 'inbound',
-      subject: 'Warranty question',
-      preview: 'Customer called about warranty coverage on last year\'s roof repair. Confirmed 5-year material warranty.',
-      timestamp: '2026-02-10T11:00:00Z',
-      duration: 300,
-      status: 'completed',
-      assignedTo: 'Sarah Kim',
-    },
-    {
-      id: 'comm-005',
-      type: 'email',
-      direction: 'outbound',
-      subject: 'Invoice #INV-2026-0089 — Payment Received',
-      preview: 'Thank you for your payment of $14,375.00. This confirms the first 50% deposit for your kitchen remodel...',
-      timestamp: '2026-01-28T10:00:00Z',
-      status: 'read',
-    },
-    {
-      id: 'comm-006',
-      type: 'sms',
-      direction: 'outbound',
-      subject: 'Crew arrival notification',
-      preview: 'Hi! Our crew (Jake + Luis) will arrive at 7:30am tomorrow for the demo day. Please make sure all items are cleared from kitchen counters.',
-      timestamp: '2026-02-16T16:45:00Z',
-      status: 'delivered',
-    },
-    {
-      id: 'comm-007',
-      type: 'call',
-      direction: 'outbound',
-      subject: 'Follow-up on deck estimate',
-      preview: 'Left voicemail regarding the deck repair estimate. Customer hasn\'t responded to the proposal sent 2/10.',
-      timestamp: '2026-02-22T09:30:00Z',
-      duration: 45,
-      status: 'missed',
-      assignedTo: 'Mike Torres',
-    },
-    {
-      id: 'comm-008',
-      type: 'email',
-      direction: 'inbound',
-      subject: 'RE: Deck Repair & Staining Estimate',
-      preview: 'Mike — we reviewed the estimate and have a few questions about the composite vs. wood option for the replacement boards...',
-      timestamp: '2026-02-23T13:15:00Z',
-      status: 'read',
-    },
-  ];
-}
-
-function getDemoProperties(customerId: string): PropertyItem[] {
-  return [
-    {
-      id: 'prop-001',
-      address: '1847 Oakridge Drive',
-      city: 'Cedar Park',
-      state: 'TX',
-      zip: '78613',
-      propertyType: 'residential',
-      yearBuilt: 2004,
-      sqft: 2850,
-      lastScanDate: '2026-01-12T10:00:00Z',
-      conditions: [
-        { area: 'Roof', severity: 'fair', note: 'Some granule loss on south-facing slope, estimated 5-7 years remaining' },
-        { area: 'Foundation', severity: 'good', note: 'No visible cracks, proper drainage grade observed' },
-        { area: 'Exterior Siding', severity: 'poor', note: 'Faded paint, peeling on north and west facades, caulk deterioration around windows' },
-        { area: 'Deck', severity: 'critical', note: '3 warped boards, 2 loose railing posts, surface splintering throughout' },
-        { area: 'HVAC', severity: 'fair', note: 'Unit is 15 years old, running but efficiency is down 20% from baseline' },
-      ],
-      jobCount: 4,
-    },
-    {
-      id: 'prop-002',
-      address: '320 Commerce Blvd, Suite 100',
-      city: 'Round Rock',
-      state: 'TX',
-      zip: '78664',
-      propertyType: 'commercial',
-      yearBuilt: 2012,
-      sqft: 5200,
-      lastScanDate: '2025-11-08T14:00:00Z',
-      conditions: [
-        { area: 'Roof (Flat TPO)', severity: 'good', note: 'Membrane intact, no ponding observed, seams solid' },
-        { area: 'Parking Lot', severity: 'fair', note: 'Minor cracking in northwest corner, seal coat recommended within 12 months' },
-        { area: 'Interior Plumbing', severity: 'poor', note: 'Restroom fixtures aged, supply lines showing corrosion, recommend replacement' },
-      ],
-      jobCount: 1,
-    },
-  ];
-}
-
-function getDemoPayments(customerId: string): PaymentItem[] {
-  return [
-    {
-      id: 'pay-001',
-      invoiceId: 'inv-089',
-      invoiceNumber: 'INV-2026-0089',
-      amount: 14375.00,
-      method: 'credit_card',
-      status: 'completed',
-      paidAt: '2026-01-28T09:45:00Z',
-      transactionId: 'ch_3Nk2pJ4f8sR7xY',
-      cardLast4: '4242',
-    },
-    {
-      id: 'pay-002',
-      invoiceId: 'inv-072',
-      invoiceNumber: 'INV-2025-0072',
-      amount: 6300.00,
-      method: 'ach',
-      status: 'completed',
-      paidAt: '2025-11-15T14:20:00Z',
-      transactionId: 'bt_7Hm3qK5g9tS8zA',
-    },
-    {
-      id: 'pay-003',
-      invoiceId: 'inv-072',
-      invoiceNumber: 'INV-2025-0072',
-      amount: 6300.00,
-      method: 'ach',
-      status: 'completed',
-      paidAt: '2025-12-01T10:00:00Z',
-      transactionId: 'bt_9Jn4rL6h0uT9aB',
-    },
-    {
-      id: 'pay-004',
-      invoiceId: 'inv-055',
-      invoiceNumber: 'INV-2025-0055',
-      amount: 3150.00,
-      method: 'check',
-      status: 'completed',
-      paidAt: '2025-08-22T11:30:00Z',
-    },
-    {
-      id: 'pay-005',
-      invoiceId: 'inv-089',
-      invoiceNumber: 'INV-2026-0089',
-      amount: 14375.00,
-      method: 'credit_card',
-      status: 'pending',
-      paidAt: '2026-02-20T00:00:00Z',
-      transactionId: 'ch_4Ol3qK5g9tS8zA',
-      cardLast4: '4242',
-    },
-    {
-      id: 'pay-006',
-      invoiceId: 'inv-041',
-      invoiceNumber: 'INV-2025-0041',
-      amount: 1800.00,
-      method: 'cash',
-      status: 'completed',
-      paidAt: '2025-06-10T08:00:00Z',
-    },
-  ];
-}
-
-function getDemoNotes(customerId: string): NoteItem[] {
-  return [
-    {
-      id: 'note-001',
-      content: 'Customer prefers to be contacted after 4pm on weekdays. Works from home and has meetings until then. Best to call cell, not home phone.',
-      createdAt: '2026-01-10T16:00:00Z',
-      updatedAt: '2026-01-10T16:00:00Z',
-      createdBy: 'Mike Torres',
-      isPinned: true,
-      category: 'preference',
-    },
-    {
-      id: 'note-002',
-      content: 'Side gate code is 4521. Dogs are friendly but loud — ring doorbell first so they can put them in the backyard. Park on the street, not driveway (fresh seal coat).',
-      createdAt: '2026-01-12T10:30:00Z',
-      updatedAt: '2026-02-18T08:15:00Z',
-      createdBy: 'Jake Moreno',
-      isPinned: true,
-      category: 'site-access',
-    },
-    {
-      id: 'note-003',
-      content: 'Follow up in March about the deck repair estimate. Customer said they want to wait until after their daughter\'s outdoor birthday party on 3/8.',
-      createdAt: '2026-02-22T09:45:00Z',
-      updatedAt: '2026-02-22T09:45:00Z',
-      createdBy: 'Mike Torres',
-      isPinned: false,
-      category: 'follow-up',
-    },
-    {
-      id: 'note-004',
-      content: 'Customer mentioned water staining on the ceiling in the master bedroom during walkthrough. Could indicate a slow roof leak. Worth a closer inspection when crew is on-site for kitchen work.',
-      createdAt: '2026-01-15T11:20:00Z',
-      updatedAt: '2026-01-15T11:20:00Z',
-      createdBy: 'Sarah Kim',
-      isPinned: false,
-      category: 'issue',
-    },
-    {
-      id: 'note-005',
-      content: 'Great referral source — sent us the Henderson family for their bathroom remodel. Consider adding to the referral rewards program.',
-      createdAt: '2025-12-05T14:00:00Z',
-      updatedAt: '2025-12-05T14:00:00Z',
-      createdBy: 'Mike Torres',
-      isPinned: false,
-      category: 'general',
-    },
-  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -547,6 +199,7 @@ export default function CustomerDetailPage() {
   const { bids } = useBids();
   const { jobs } = useJobs();
   const { invoices } = useInvoices();
+  const { estimates } = useEstimates();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -678,28 +331,67 @@ export default function CustomerDetailPage() {
     );
   }
 
-  const customerBids = bids.filter((b) => b.customerId === customerId);
-  const customerJobs = jobs.filter((j) => j.customerId === customerId);
-  const customerInvoices = invoices.filter((i) => i.customerId === customerId);
+  const customerBids = useMemo(() => bids.filter((b) => b.customerId === customerId), [bids, customerId]);
+  const customerJobs = useMemo(() => jobs.filter((j) => j.customerId === customerId), [jobs, customerId]);
+  const customerInvoices = useMemo(() => invoices.filter((i) => i.customerId === customerId), [invoices, customerId]);
+  const customerEstimates = useMemo(() => estimates.filter((e) => e.customerId === customerId), [estimates, customerId]);
 
-  // Demo data counts for new tabs
-  const demoEstimates = getDemoEstimates(customerId);
-  const demoCommunications = getDemoCommunications(customerId);
-  const demoProperties = getDemoProperties(customerId);
-  const demoPayments = getDemoPayments(customerId);
-  const demoNotes = getDemoNotes(customerId);
+  // Derive unique property addresses from customer jobs for the Properties tab
+  const customerPropertyAddresses = useMemo(() => {
+    const seen = new Set<string>();
+    const results: PropertyItem[] = [];
+    for (const j of customerJobs) {
+      const addr = j.address?.street || '';
+      if (!addr) continue;
+      const key = `${addr}|${j.address?.city || ''}|${j.address?.state || ''}|${j.address?.zip || ''}`;
+      if (seen.has(key)) {
+        // Increment job count on existing entry
+        const existing = results.find(p => p.id === key);
+        if (existing) existing.jobCount++;
+        continue;
+      }
+      seen.add(key);
+      results.push({
+        id: key,
+        address: addr,
+        city: j.address?.city || '',
+        state: j.address?.state || '',
+        zip: j.address?.zip || '',
+        propertyType: 'residential',
+        yearBuilt: null,
+        sqft: null,
+        jobCount: 1,
+      });
+    }
+    return results;
+  }, [customerJobs]);
+
+  // Derive payment records from paid invoices
+  const customerPayments = useMemo((): PaymentItem[] => {
+    return customerInvoices
+      .filter((inv) => inv.paidAt && inv.amountPaid > 0)
+      .map((inv) => ({
+        id: `pay-${inv.id}`,
+        invoiceId: inv.id,
+        invoiceNumber: inv.invoiceNumber,
+        amount: inv.amountPaid,
+        method: inv.paymentMethod || 'other',
+        status: inv.amountDue <= 0 ? 'completed' : 'partial',
+        paidAt: typeof inv.paidAt === 'string' ? inv.paidAt : inv.paidAt ? new Date(inv.paidAt).toISOString() : new Date().toISOString(),
+      }));
+  }, [customerInvoices]);
 
   const tabs: { id: TabType; label: string; count: number }[] = [
     { id: 'overview', label: 'Overview', count: 0 },
     { id: 'bids', label: 'Bids', count: customerBids.length },
-    { id: 'estimates', label: 'Estimates', count: demoEstimates.length },
+    { id: 'estimates', label: 'Estimates', count: customerEstimates.length },
     { id: 'jobs', label: 'Jobs', count: customerJobs.length },
     { id: 'invoices', label: 'Invoices', count: customerInvoices.length },
-    { id: 'payments', label: 'Payments', count: demoPayments.length },
-    { id: 'properties', label: 'Properties', count: demoProperties.length },
-    { id: 'communications', label: 'Comms', count: demoCommunications.length },
+    { id: 'payments', label: 'Payments', count: customerPayments.length },
+    { id: 'properties', label: 'Properties', count: customerPropertyAddresses.length },
+    { id: 'communications', label: 'Comms', count: 0 },
     { id: 'documents', label: 'Documents', count: 0 },
-    { id: 'notes', label: 'Notes', count: demoNotes.length },
+    { id: 'notes', label: 'Notes', count: 0 },
     { id: 'activity', label: 'Activity', count: 0 },
   ];
 
@@ -870,14 +562,14 @@ export default function CustomerDetailPage() {
             <OverviewTab customer={customer} bids={customerBids} jobs={customerJobs} invoices={customerInvoices} />
           )}
           {activeTab === 'bids' && <BidsTab bids={customerBids} />}
-          {activeTab === 'estimates' && <EstimatesTab customerId={customerId} estimates={demoEstimates} />}
+          {activeTab === 'estimates' && <EstimatesTab customerId={customerId} estimates={customerEstimates} />}
           {activeTab === 'jobs' && <JobsTab jobs={customerJobs} />}
           {activeTab === 'invoices' && <InvoicesTab invoices={customerInvoices} />}
-          {activeTab === 'payments' && <PaymentsTab customerId={customerId} payments={demoPayments} />}
-          {activeTab === 'properties' && <PropertiesTab customerId={customerId} properties={demoProperties} />}
-          {activeTab === 'communications' && <CommunicationsTab customerId={customerId} communications={demoCommunications} />}
+          {activeTab === 'payments' && <PaymentsTab customerId={customerId} payments={customerPayments} />}
+          {activeTab === 'properties' && <PropertiesTab customerId={customerId} properties={customerPropertyAddresses} />}
+          {activeTab === 'communications' && <CommunicationsTab customerId={customerId} />}
           {activeTab === 'documents' && <DocumentsTab customerId={customerId} />}
-          {activeTab === 'notes' && <NotesTab customerId={customerId} notes={demoNotes} />}
+          {activeTab === 'notes' && <NotesTab customerId={customerId} customerNotes={customer.notes || ''} updateCustomer={updateCustomer} refetch={refetch} />}
           {activeTab === 'activity' && <ActivityTimeline customerId={customerId} bids={customerBids} jobs={customerJobs} invoices={customerInvoices} />}
         </div>
 
@@ -1625,30 +1317,30 @@ function DocumentsTab({ customerId }: { customerId: string }) {
 // NEW TABS
 // ===========================================================================
 
-/** Estimates tab — shows all estimates for this customer */
-function EstimatesTab({ customerId, estimates }: { customerId: string; estimates: EstimateItem[] }) {
+/** Estimates tab — shows all estimates for this customer (real data from useEstimates) */
+function EstimatesTab({ customerId, estimates }: { customerId: string; estimates: import('@/lib/hooks/use-estimates').Estimate[] }) {
   const { t } = useTranslation();
   const router = useRouter();
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const filtered = filterStatus === 'all' ? estimates : estimates.filter(e => e.status === filterStatus);
 
-  const totalPipeline = estimates.filter(e => e.status === 'sent' || e.status === 'viewed').reduce((s, e) => s + e.total, 0);
-  const totalAccepted = estimates.filter(e => e.status === 'accepted').reduce((s, e) => s + e.total, 0);
+  const totalPipeline = estimates.filter(e => e.status === 'sent').reduce((s, e) => s + e.grandTotal, 0);
+  const totalApproved = estimates.filter(e => e.status === 'approved').reduce((s, e) => s + e.grandTotal, 0);
   const conversionRate = estimates.length > 0
-    ? Math.round((estimates.filter(e => e.status === 'accepted').length / estimates.length) * 100)
+    ? Math.round((estimates.filter(e => e.status === 'approved').length / estimates.length) * 100)
     : 0;
 
-  function getEstimateStatusBadge(status: EstimateItem['status']) {
-    const map: Record<EstimateItem['status'], { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
+  function getEstimateStatusBadge(status: string) {
+    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
       draft: { variant: 'secondary', label: 'Draft' },
       sent: { variant: 'info', label: 'Sent' },
-      viewed: { variant: 'purple', label: 'Viewed' },
-      accepted: { variant: 'success', label: 'Accepted' },
+      approved: { variant: 'success', label: 'Approved' },
       declined: { variant: 'error', label: 'Declined' },
-      expired: { variant: 'warning', label: 'Expired' },
+      revised: { variant: 'purple', label: 'Revised' },
+      completed: { variant: 'success', label: 'Completed' },
     };
-    const cfg = map[status];
+    const cfg = map[status] || { variant: 'default' as const, label: status };
     return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
   }
 
@@ -1660,14 +1352,14 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
           <CardContent className="p-4">
             <p className="text-xs text-muted uppercase tracking-wider">Pipeline</p>
             <p className="text-xl font-semibold text-main mt-1">{formatCurrency(totalPipeline)}</p>
-            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'sent' || e.status === 'viewed').length} open estimates</p>
+            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'sent').length} open estimates</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted uppercase tracking-wider">Won</p>
-            <p className="text-xl font-semibold text-emerald-500 mt-1">{formatCurrency(totalAccepted)}</p>
-            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'accepted').length} accepted</p>
+            <p className="text-xl font-semibold text-emerald-500 mt-1">{formatCurrency(totalApproved)}</p>
+            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'approved').length} approved</p>
           </CardContent>
         </Card>
         <Card>
@@ -1691,10 +1383,10 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
               <option value="all">All Statuses</option>
               <option value="draft">Draft</option>
               <option value="sent">Sent</option>
-              <option value="viewed">Viewed</option>
-              <option value="accepted">Accepted</option>
+              <option value="approved">Approved</option>
               <option value="declined">Declined</option>
-              <option value="expired">Expired</option>
+              <option value="revised">Revised</option>
+              <option value="completed">Completed</option>
             </select>
             <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/bids/new?customerId=${customerId}`)}>
               <Plus size={14} />
@@ -1719,18 +1411,18 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-main">{est.title}</p>
+                        <p className="font-medium text-main">{est.title || 'Untitled Estimate'}</p>
                         <span className="text-xs text-muted">{est.estimateNumber}</span>
                       </div>
-                      <p className="text-sm text-muted mt-0.5 truncate">{est.description}</p>
+                      {est.notes && <p className="text-sm text-muted mt-0.5 truncate">{est.notes}</p>}
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs text-muted">{est.lineItemCount} line items</span>
-                        <span className="text-xs text-muted">{est.jobType}</span>
+                        <span className="text-xs text-muted capitalize">{est.estimateType}</span>
                         <span className="text-xs text-muted">Created {formatDate(est.createdAt)}</span>
+                        {est.validUntil && <span className="text-xs text-muted">Expires {formatDate(est.validUntil)}</span>}
                       </div>
                     </div>
                     <div className="flex items-center gap-3 ml-4">
-                      <span className="font-semibold text-main">{formatCurrency(est.total)}</span>
+                      <span className="font-semibold text-main">{formatCurrency(est.grandTotal)}</span>
                       {getEstimateStatusBadge(est.status)}
                     </div>
                   </div>
@@ -1745,9 +1437,102 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
 }
 
 /** Communications tab — calls, emails, SMS timeline */
-function CommunicationsTab({ customerId, communications }: { customerId: string; communications: CommunicationItem[] }) {
+function CommunicationsTab({ customerId }: { customerId: string }) {
   const { t } = useTranslation();
   const [filterType, setFilterType] = useState<string>('all');
+  const [communications, setCommunications] = useState<CommunicationItem[]>([]);
+  const [commsLoading, setCommsLoading] = useState(true);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchCommunications() {
+      try {
+        setCommsLoading(true);
+        const supabase = getSupabase();
+
+        // Fetch phone calls
+        const { data: calls } = await supabase
+          .from('phone_calls')
+          .select('id, direction, status, duration_seconds, ai_summary, started_at, caller_name')
+          .eq('customer_id', customerId)
+          .is('deleted_at', null)
+          .order('started_at', { ascending: false })
+          .limit(50);
+
+        // Fetch text messages
+        const { data: messages } = await supabase
+          .from('phone_messages')
+          .select('id, direction, body, status, created_at')
+          .eq('customer_id', customerId)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        // Fetch emails linked to this customer
+        const { data: emails } = await supabase
+          .from('email_sends')
+          .select('id, subject, status, created_at, direction')
+          .eq('related_type', 'customer')
+          .eq('related_id', customerId)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (ignore) return;
+
+        const items: CommunicationItem[] = [];
+
+        for (const c of calls || []) {
+          items.push({
+            id: c.id,
+            type: 'call',
+            direction: c.direction === 'inbound' ? 'inbound' : 'outbound',
+            subject: c.direction === 'inbound' ? 'Incoming Call' : 'Outgoing Call',
+            preview: c.ai_summary || 'No summary',
+            timestamp: c.started_at || '',
+            duration: c.duration_seconds ?? undefined,
+            status: c.status || 'completed',
+          });
+        }
+
+        for (const m of messages || []) {
+          items.push({
+            id: m.id,
+            type: 'sms',
+            direction: m.direction === 'inbound' ? 'inbound' : 'outbound',
+            subject: m.direction === 'inbound' ? 'Incoming Text' : 'Outgoing Text',
+            preview: m.body || '',
+            timestamp: m.created_at || '',
+            status: m.status || 'delivered',
+          });
+        }
+
+        for (const e of emails || []) {
+          items.push({
+            id: e.id,
+            type: 'email',
+            direction: (e as any).direction === 'inbound' ? 'inbound' : 'outbound',
+            subject: e.subject || 'No Subject',
+            preview: '',
+            timestamp: e.created_at || '',
+            status: e.status || 'sent',
+          });
+        }
+
+        // Sort by timestamp descending
+        items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setCommunications(items);
+      } catch {
+        // Non-blocking — leave empty
+      } finally {
+        if (!ignore) setCommsLoading(false);
+      }
+    }
+
+    fetchCommunications();
+    return () => { ignore = true; };
+  }, [customerId]);
 
   const filtered = filterType === 'all' ? communications : communications.filter(c => c.type === filterType);
 
@@ -1765,8 +1550,8 @@ function CommunicationsTab({ customerId, communications }: { customerId: string;
     return <MessageSquare size={16} className="text-purple-500" />;
   }
 
-  function getCommStatusBadge(status: CommunicationItem['status']) {
-    const map: Record<CommunicationItem['status'], { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
+  function getCommStatusBadge(status: string) {
+    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
       completed: { variant: 'success', label: 'Completed' },
       missed: { variant: 'error', label: 'Missed' },
       sent: { variant: 'info', label: 'Sent' },
@@ -1775,7 +1560,7 @@ function CommunicationsTab({ customerId, communications }: { customerId: string;
       bounced: { variant: 'error', label: 'Bounced' },
       failed: { variant: 'error', label: 'Failed' },
     };
-    const cfg = map[status];
+    const cfg = map[status] || { variant: 'default' as const, label: status };
     return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
   }
 
@@ -1784,6 +1569,14 @@ function CommunicationsTab({ customerId, communications }: { customerId: string;
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+  }
+
+  if (commsLoading) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+      </div>
+    );
   }
 
   return (
@@ -1866,7 +1659,7 @@ function CommunicationsTab({ customerId, communications }: { customerId: string;
                         </div>
                         {getCommStatusBadge(comm.status)}
                       </div>
-                      <p className="text-sm text-muted mt-1">{comm.preview}</p>
+                      {comm.preview && <p className="text-sm text-muted mt-1">{comm.preview}</p>}
                       <div className="flex items-center gap-3 mt-2">
                         <span className="text-xs text-muted">{formatDate(comm.timestamp)}</span>
                         {comm.duration !== undefined && (
@@ -1894,23 +1687,11 @@ function CommunicationsTab({ customerId, communications }: { customerId: string;
   );
 }
 
-/** Properties tab — linked properties with condition data */
+/** Properties tab — derived from customer job addresses */
 function PropertiesTab({ customerId, properties }: { customerId: string; properties: PropertyItem[] }) {
-  const { t } = useTranslation();
   const router = useRouter();
 
-  function getSeverityBadge(severity: PropertyCondition['severity']) {
-    const map: Record<PropertyCondition['severity'], { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
-      good: { variant: 'success', label: 'Good' },
-      fair: { variant: 'warning', label: 'Fair' },
-      poor: { variant: 'error', label: 'Poor' },
-      critical: { variant: 'error', label: 'Critical' },
-    };
-    const cfg = map[severity];
-    return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
-  }
-
-  function getPropertyTypeIcon(type: PropertyItem['propertyType']) {
+  function getPropertyTypeIcon(type: string) {
     if (type === 'commercial') return <Building2 size={18} className="text-blue-500" />;
     if (type === 'industrial') return <Zap size={18} className="text-amber-500" />;
     return <Home size={18} className="text-indigo-500" />;
@@ -1919,11 +1700,7 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-main">Linked Properties ({properties.length})</h3>
-        <Button variant="secondary" size="sm">
-          <Plus size={14} />
-          Link Property
-        </Button>
+        <h3 className="text-sm font-medium text-main">Properties ({properties.length})</h3>
       </div>
 
       {properties.length === 0 ? (
@@ -1931,7 +1708,7 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
           <CardContent className="py-12 text-center">
             <Home size={40} className="mx-auto text-muted mb-2 opacity-50" />
             <p className="text-muted">No properties linked to this customer</p>
-            <p className="text-xs text-muted mt-1">Link a property to track conditions and scan data</p>
+            <p className="text-xs text-muted mt-1">Properties are derived from job addresses</p>
           </CardContent>
         </Card>
       ) : (
@@ -1947,10 +1724,10 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
                     <CardTitle className="text-base">{prop.address}</CardTitle>
                     <p className="text-sm text-muted mt-0.5">{prop.city}, {prop.state} {prop.zip}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-muted">Built {prop.yearBuilt}</span>
-                      <span className="text-xs text-muted">{prop.sqft.toLocaleString()} sq ft</span>
+                      {prop.yearBuilt && <span className="text-xs text-muted">Built {prop.yearBuilt}</span>}
+                      {prop.sqft && <span className="text-xs text-muted">{prop.sqft.toLocaleString()} sq ft</span>}
                       <Badge variant="default" className="capitalize">{prop.propertyType}</Badge>
-                      <span className="text-xs text-muted">{prop.jobCount} jobs</span>
+                      <span className="text-xs text-muted">{prop.jobCount} {prop.jobCount === 1 ? 'job' : 'jobs'}</span>
                     </div>
                   </div>
                 </div>
@@ -1962,24 +1739,6 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
                 )}
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
-              {prop.conditions.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted uppercase tracking-wider">Condition Report</p>
-                  <div className="space-y-2">
-                    {prop.conditions.map((cond, idx) => (
-                      <div key={idx} className="flex items-start gap-3 p-2 bg-secondary rounded-lg">
-                        <div className="min-w-[100px]">
-                          <p className="text-sm font-medium text-main">{cond.area}</p>
-                          {getSeverityBadge(cond.severity)}
-                        </div>
-                        <p className="text-sm text-muted flex-1">{cond.note}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </CardContent>
           </Card>
         ))
       )}
@@ -1987,49 +1746,50 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
   );
 }
 
-/** Payments tab — payment history across all invoices */
+/** Payments tab — payment history derived from paid invoices */
 function PaymentsTab({ customerId, payments }: { customerId: string; payments: PaymentItem[] }) {
-  const { t } = useTranslation();
   const router = useRouter();
 
   const totalReceived = payments.filter(p => p.status === 'completed').reduce((s, p) => s + p.amount, 0);
-  const totalPending = payments.filter(p => p.status === 'pending').reduce((s, p) => s + p.amount, 0);
-  const totalRefunded = payments.filter(p => p.status === 'refunded').reduce((s, p) => s + p.amount, 0);
+  const totalPartial = payments.filter(p => p.status === 'partial').reduce((s, p) => s + p.amount, 0);
 
-  function getPaymentMethodLabel(method: PaymentItem['method']): string {
-    const map: Record<PaymentItem['method'], string> = {
+  function getPaymentMethodLabel(method: string): string {
+    const map: Record<string, string> = {
       credit_card: 'Credit Card',
       ach: 'ACH Transfer',
       check: 'Check',
       cash: 'Cash',
       wire: 'Wire Transfer',
+      stripe: 'Stripe',
+      other: 'Other',
     };
-    return map[method];
+    return map[method] || method;
   }
 
-  function getPaymentMethodIcon(method: PaymentItem['method']) {
-    if (method === 'credit_card') return <CreditCard size={16} className="text-blue-500" />;
+  function getPaymentMethodIcon(method: string) {
+    if (method === 'credit_card' || method === 'stripe') return <CreditCard size={16} className="text-blue-500" />;
     if (method === 'ach') return <Building2 size={16} className="text-indigo-500" />;
     if (method === 'check') return <FileText size={16} className="text-amber-500" />;
     if (method === 'wire') return <Zap size={16} className="text-purple-500" />;
     return <DollarSign size={16} className="text-emerald-500" />;
   }
 
-  function getPaymentStatusBadge(status: PaymentItem['status']) {
-    const map: Record<PaymentItem['status'], { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
-      completed: { variant: 'success', label: 'Completed' },
+  function getPaymentStatusBadge(status: string) {
+    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
+      completed: { variant: 'success', label: 'Paid in Full' },
+      partial: { variant: 'warning', label: 'Partial' },
       pending: { variant: 'warning', label: 'Pending' },
       failed: { variant: 'error', label: 'Failed' },
       refunded: { variant: 'info', label: 'Refunded' },
     };
-    const cfg = map[status];
+    const cfg = map[status] || { variant: 'default' as const, label: status };
     return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
   }
 
   return (
     <div className="space-y-4">
       {/* Payment summary cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted uppercase tracking-wider">Total Received</p>
@@ -2039,16 +1799,9 @@ function PaymentsTab({ customerId, payments }: { customerId: string; payments: P
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Pending</p>
-            <p className="text-xl font-semibold text-amber-500 mt-1">{formatCurrency(totalPending)}</p>
-            <p className="text-xs text-muted">{payments.filter(p => p.status === 'pending').length} pending</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Refunded</p>
-            <p className="text-xl font-semibold text-blue-500 mt-1">{formatCurrency(totalRefunded)}</p>
-            <p className="text-xs text-muted">{payments.filter(p => p.status === 'refunded').length} refunds</p>
+            <p className="text-xs text-muted uppercase tracking-wider">Partial Payments</p>
+            <p className="text-xl font-semibold text-amber-500 mt-1">{formatCurrency(totalPartial)}</p>
+            <p className="text-xs text-muted">{payments.filter(p => p.status === 'partial').length} partial</p>
           </CardContent>
         </Card>
       </div>
@@ -2056,16 +1809,13 @@ function PaymentsTab({ customerId, payments }: { customerId: string; payments: P
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Payment History</CardTitle>
-          <Button variant="secondary" size="sm">
-            <Download size={14} />
-            Export
-          </Button>
         </CardHeader>
         <CardContent className="p-0">
           {payments.length === 0 ? (
             <div className="py-12 text-center">
               <CreditCard size={40} className="mx-auto text-muted mb-2 opacity-50" />
               <p className="text-muted">No payments recorded</p>
+              <p className="text-xs text-muted mt-1">Payments appear here when invoices are paid</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -2109,124 +1859,86 @@ function PaymentsTab({ customerId, payments }: { customerId: string; payments: P
   );
 }
 
-/** Notes tab — customer notes with add note functionality */
-function NotesTab({ customerId, notes: initialNotes }: { customerId: string; notes: NoteItem[] }) {
+/** Notes tab — persists to the customer.notes text field in the database */
+function NotesTab({ customerId, customerNotes, updateCustomer, refetch }: {
+  customerId: string;
+  customerNotes: string;
+  updateCustomer: (id: string, data: Partial<Customer>) => Promise<void>;
+  refetch: () => void;
+}) {
   const { t } = useTranslation();
-  const [notes, setNotes] = useState<NoteItem[]>(initialNotes);
-  const [newNoteContent, setNewNoteContent] = useState('');
-  const [newNoteCategory, setNewNoteCategory] = useState<NoteItem['category']>('general');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [noteText, setNoteText] = useState(customerNotes);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const pinnedNotes = notes.filter(n => n.isPinned);
-  const unpinnedNotes = notes.filter(n => !n.isPinned);
+  // Sync if customer data refreshes from outside
+  useEffect(() => {
+    if (!isEditing) {
+      setNoteText(customerNotes);
+    }
+  }, [customerNotes, isEditing]);
 
-  const filteredNotes = filterCategory === 'all'
-    ? [...pinnedNotes, ...unpinnedNotes]
-    : [...pinnedNotes.filter(n => n.category === filterCategory), ...unpinnedNotes.filter(n => n.category === filterCategory)];
-
-  const handleAddNote = () => {
-    if (!newNoteContent.trim()) return;
-    const newNote: NoteItem = {
-      id: `note-${Date.now()}`,
-      content: newNoteContent.trim(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: 'You',
-      isPinned: false,
-      category: newNoteCategory,
-    };
-    setNotes([newNote, ...notes]);
-    setNewNoteContent('');
-    setNewNoteCategory('general');
-    setShowAddForm(false);
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      await updateCustomer(customerId, { notes: noteText.trim() || undefined });
+      setIsEditing(false);
+      refetch();
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const togglePin = (noteId: string) => {
-    setNotes(notes.map(n => n.id === noteId ? { ...n, isPinned: !n.isPinned } : n));
+  const handleCancel = () => {
+    setNoteText(customerNotes);
+    setIsEditing(false);
   };
-
-  const deleteNote = (noteId: string) => {
-    setNotes(notes.filter(n => n.id !== noteId));
-  };
-
-  function getCategoryBadge(category: NoteItem['category']) {
-    const map: Record<NoteItem['category'], { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
-      general: { variant: 'default', label: 'General' },
-      'follow-up': { variant: 'info', label: 'Follow-up' },
-      issue: { variant: 'error', label: 'Issue' },
-      preference: { variant: 'purple', label: 'Preference' },
-      'site-access': { variant: 'warning', label: 'Site Access' },
-    };
-    const cfg = map[category];
-    return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
-  }
 
   return (
     <div className="space-y-4">
-      {/* Add note button / form */}
-      {!showAddForm ? (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="text-xs bg-secondary border border-main rounded-md px-2 py-1 text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
-            >
-              <option value="all">All Categories</option>
-              <option value="general">General</option>
-              <option value="follow-up">Follow-up</option>
-              <option value="issue">Issue</option>
-              <option value="preference">Preference</option>
-              <option value="site-access">Site Access</option>
-            </select>
-          </div>
-          <Button variant="secondary" size="sm" onClick={() => setShowAddForm(true)}>
-            <Plus size={14} />
-            Add Note
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium text-main">Customer Notes</h3>
+        {!isEditing && (
+          <Button variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
+            <Edit size={14} />
+            {noteText ? 'Edit Notes' : 'Add Notes'}
           </Button>
-        </div>
-      ) : (
+        )}
+      </div>
+
+      {isEditing ? (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">New Note</CardTitle>
+            <CardTitle className="text-base">{noteText ? 'Edit Notes' : 'Add Notes'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <textarea
-              value={newNoteContent}
-              onChange={(e) => setNewNoteContent(e.target.value)}
-              placeholder="Write a note about this customer..."
-              rows={4}
-              className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="Write notes about this customer — preferences, site access details, follow-up reminders..."
+              rows={8}
+              className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y"
               autoFocus
             />
-            <div className="flex items-center justify-between">
-              <select
-                value={newNoteCategory}
-                onChange={(e) => setNewNoteCategory(e.target.value as NoteItem['category'])}
-                className="text-xs bg-secondary border border-main rounded-md px-2 py-1 text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
-              >
-                <option value="general">General</option>
-                <option value="follow-up">Follow-up</option>
-                <option value="issue">Issue</option>
-                <option value="preference">Preference</option>
-                <option value="site-access">Site Access</option>
-              </select>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => { setShowAddForm(false); setNewNoteContent(''); }}>
-                  {t('common.cancel')}
-                </Button>
-                <Button size="sm" onClick={handleAddNote} disabled={!newNoteContent.trim()}>
-                  Save Note
-                </Button>
-              </div>
+            <div className="flex items-center justify-end gap-2">
+              <Button variant="ghost" size="sm" onClick={handleCancel}>
+                {t('common.cancel')}
+              </Button>
+              <Button size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? 'Saving...' : 'Save Notes'}
+              </Button>
             </div>
           </CardContent>
         </Card>
-      )}
-
-      {/* Notes list */}
-      {filteredNotes.length === 0 ? (
+      ) : noteText ? (
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-sm text-main whitespace-pre-wrap">{noteText}</p>
+          </CardContent>
+        </Card>
+      ) : (
         <Card>
           <CardContent className="py-12 text-center">
             <StickyNote size={40} className="mx-auto text-muted mb-2 opacity-50" />
@@ -2234,58 +1946,6 @@ function NotesTab({ customerId, notes: initialNotes }: { customerId: string; not
             <p className="text-xs text-muted mt-1">Add notes to keep track of important customer details</p>
           </CardContent>
         </Card>
-      ) : (
-        <div className="space-y-3">
-          {filteredNotes.map((note) => (
-            <Card key={note.id} className={cn(note.isPinned && 'border-amber-500/30')}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    {note.isPinned && (
-                      <div className="flex items-center gap-1 mb-1">
-                        <Tag size={12} className="text-amber-500" />
-                        <span className="text-xs font-medium text-amber-500">Pinned</span>
-                      </div>
-                    )}
-                    <p className="text-sm text-main whitespace-pre-wrap">{note.content}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      {getCategoryBadge(note.category)}
-                      <span className="text-xs text-muted">
-                        <User size={10} className="inline mr-1" />
-                        {note.createdBy}
-                      </span>
-                      <span className="text-xs text-muted">{formatDate(note.createdAt)}</span>
-                      {note.updatedAt !== note.createdAt && (
-                        <span className="text-xs text-muted">(edited)</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button
-                      onClick={() => togglePin(note.id)}
-                      className={cn(
-                        'p-1.5 rounded-md transition-colors',
-                        note.isPinned
-                          ? 'text-amber-500 bg-amber-500/10 hover:bg-amber-500/20'
-                          : 'text-muted hover:text-main hover:bg-surface-hover'
-                      )}
-                      title={note.isPinned ? 'Unpin note' : 'Pin note'}
-                    >
-                      <Tag size={14} />
-                    </button>
-                    <button
-                      onClick={() => deleteNote(note.id)}
-                      className="p-1.5 rounded-md text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
-                      title="Delete note"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
       )}
     </div>
   );

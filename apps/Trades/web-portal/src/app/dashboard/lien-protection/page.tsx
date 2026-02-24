@@ -16,7 +16,6 @@ import {
   Calendar,
   CheckCircle,
   XCircle,
-  Search,
   Bell,
   Scale,
   Gavel,
@@ -24,35 +23,26 @@ import {
   Send,
   Download,
   Eye,
-  Filter,
-  ArrowUpRight,
   Timer,
   Landmark,
   CircleDot,
   Info,
   Plus,
-  Building2,
   ClipboardCheck,
-  FileWarning,
   FilePlus,
-  TriangleAlert,
-  Hourglass,
   CalendarClock,
-  ArrowRight,
   Stamp,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput } from '@/components/ui/input';
-import { useLienProtection, type LienRecord } from '@/lib/hooks/use-lien-protection';
+import { useLienProtection, type LienRecord, type LienRule } from '@/lib/hooks/use-lien-protection';
 import { useTranslation } from '@/lib/translations';
-import { formatCurrency, formatDateLocale } from '@/lib/format-locale';
+import { formatCurrency } from '@/lib/format-locale';
 import { CommandPalette } from '@/components/command-palette';
 import {
   STATE_LIEN_WAIVER_CONFIGS,
-  getLienWaiverConfig,
-  getStatutoryFormStates,
 } from '@/lib/official-lien-waivers';
 
 // ── Tab type ──────────────────────────────────────────────
@@ -97,80 +87,31 @@ function formatStatusLabel(status: string): string {
   return status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// ── Demo Data: 50-State Rules ─────────────────────────────
-interface StateRule {
-  stateCode: string;
-  stateName: string;
-  prelimNoticeRequired: boolean;
-  prelimNoticeDeadlineDays: number | null;
-  prelimNoticeFrom: string;
-  lienFilingDeadlineDays: number;
-  lienFilingFrom: string;
-  lienEnforcementDeadlineDays: number;
-  lienEnforcementFrom: string;
-  requiredForms: string[];
-  recordingOffice: string;
-  specialRequirements: string[];
-  notarizationRequired: boolean;
-  residentialDifferent: boolean;
-  statutoryRef: string;
+// ── Helpers for extracting display data from LienRule.special_rules JSONB ──
+function extractSpecialRuleField(rule: LienRule, field: string): string[] {
+  if (!rule.special_rules || !Array.isArray(rule.special_rules)) return [];
+  const entry = rule.special_rules.find(r => field in (r as Record<string, unknown>));
+  if (!entry) return [];
+  const val = (entry as Record<string, unknown>)[field];
+  return Array.isArray(val) ? val.map(String) : typeof val === 'string' ? [val] : [];
 }
 
-const STATE_RULES_DATA: StateRule[] = [
-  { stateCode: 'CA', stateName: 'California', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 20, prelimNoticeFrom: 'first furnishing labor/materials', lienFilingDeadlineDays: 90, lienFilingFrom: 'completion of work', lienEnforcementDeadlineDays: 90, lienEnforcementFrom: 'recording of lien', requiredForms: ['Preliminary 20-Day Notice', 'Claim of Mechanics Lien', 'Notice of Mechanics Lien Release'], recordingOffice: 'County Recorder', specialRequirements: ['Must serve copy on owner within 10 days of recording', 'Preliminary notice must be sent via certified mail', 'Design professionals have separate rules'], notarizationRequired: false, residentialDifferent: true, statutoryRef: 'Cal. Civ. Code 8400-8494' },
-  { stateCode: 'TX', stateName: 'Texas', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 15, prelimNoticeFrom: 'each month for unpaid work', lienFilingDeadlineDays: 90, lienFilingFrom: 'last day of month in which work performed', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'last day work performed', requiredForms: ['Monthly Notices', 'Affidavit Claiming Lien', 'Lien Release'], recordingOffice: 'County Clerk', specialRequirements: ['Monthly billing notices required for subcontractors', 'Retainage liens have separate rules', 'Fund trapping available for unpaid subs'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'Tex. Prop. Code Ch. 53' },
-  { stateCode: 'FL', stateName: 'Florida', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 45, prelimNoticeFrom: 'first furnishing labor/materials', lienFilingDeadlineDays: 90, lienFilingFrom: 'final furnishing of labor/materials', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'recording of claim of lien', requiredForms: ['Notice to Owner', 'Claim of Lien', 'Notice of Contest of Lien'], recordingOffice: 'County Recorder/Clerk of Court', specialRequirements: ['Notice to Owner must be served before lien rights attach', 'Contractors in direct privity with owner exempt from NTO', 'Lien must be verified (sworn)'], notarizationRequired: true, residentialDifferent: false, statutoryRef: 'Fla. Stat. 713.001-713.37' },
-  { stateCode: 'NY', stateName: 'New York', prelimNoticeRequired: false, prelimNoticeDeadlineDays: null, prelimNoticeFrom: '-', lienFilingDeadlineDays: 240, lienFilingFrom: 'last date of work', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'filing of notice of lien', requiredForms: ['Notice of Lien', 'Notice of Mechanics Lien'], recordingOffice: 'County Clerk', specialRequirements: ['Private improvements: file within 8 months of completion', 'Public improvements: file within 30 days of completion', 'Must serve copy on owner within 30 days of filing'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'N.Y. Lien Law Art. 2' },
-  { stateCode: 'IL', stateName: 'Illinois', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 60, prelimNoticeFrom: 'first furnishing (subcontractors)', lienFilingDeadlineDays: 120, lienFilingFrom: 'completion of work', lienEnforcementDeadlineDays: 730, lienEnforcementFrom: 'recording of claim for lien', requiredForms: ['Notice of Lien Claim', 'Claim for Lien', 'Notice of Subcontractor Claim'], recordingOffice: 'County Recorder of Deeds', specialRequirements: ['Subcontractors must serve 60-day notice on owner', 'Contractor notice to owner within 90 days if subcontractor', 'Must include sworn statement of amounts due'], notarizationRequired: true, residentialDifferent: true, statutoryRef: '770 ILCS 60/1-39' },
-  { stateCode: 'PA', stateName: 'Pennsylvania', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 30, prelimNoticeFrom: 'starting work on residential', lienFilingDeadlineDays: 180, lienFilingFrom: 'last date of work', lienEnforcementDeadlineDays: 730, lienEnforcementFrom: 'filing of lien claim', requiredForms: ['Notice of Furnishing', 'Mechanics Lien Claim'], recordingOffice: 'Prothonotary (Court of Common Pleas)', specialRequirements: ['Residential: formal written contract required for GC lien rights', 'Notice of furnishing within 30 days for subs on residential', 'Must include legal description of property'], notarizationRequired: true, residentialDifferent: true, statutoryRef: '49 Pa. Cons. Stat. 1101-1902' },
-  { stateCode: 'OH', stateName: 'Ohio', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 21, prelimNoticeFrom: 'first furnishing (subcontractors)', lienFilingDeadlineDays: 75, lienFilingFrom: 'last date of work', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'filing of affidavit', requiredForms: ['Notice of Furnishing', 'Affidavit for Mechanic\'s Lien', 'Notice of Commencement'], recordingOffice: 'County Recorder', specialRequirements: ['Notice of Commencement by owner affects deadlines', 'Sub-subs must serve notice within 21 days', 'Affidavit must be filed within 75 days after last work'], notarizationRequired: true, residentialDifferent: false, statutoryRef: 'Ohio Rev. Code 1311.01-1311.32' },
-  { stateCode: 'GA', stateName: 'Georgia', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 30, prelimNoticeFrom: 'start of work on project', lienFilingDeadlineDays: 90, lienFilingFrom: 'completion/abandonment of project', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'filing of claim of lien', requiredForms: ['Notice of Commencement', 'Preliminary Notice', 'Claim of Lien'], recordingOffice: 'Superior Court Clerk', specialRequirements: ['Owner must file Notice of Commencement', 'All lien claimants must send preliminary notice within 30 days of project start', 'Lien must be commenced by filing verified complaint'], notarizationRequired: false, residentialDifferent: false, statutoryRef: 'O.C.G.A. 44-14-360 to 44-14-368' },
-  { stateCode: 'NC', stateName: 'North Carolina', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 15, prelimNoticeFrom: 'first furnishing (sub-subs only)', lienFilingDeadlineDays: 120, lienFilingFrom: 'last furnishing of labor/materials', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'filing of claim of lien', requiredForms: ['Notice to Lien Agent', 'Claim of Lien on Real Property', 'Lien Waiver and Release'], recordingOffice: 'Clerk of Superior Court', specialRequirements: ['Owner must appoint Lien Agent for projects >$30k', 'Sub-subs must notify Lien Agent within 15 days of first furnishing', 'Separate rules for residential vs commercial'], notarizationRequired: false, residentialDifferent: true, statutoryRef: 'N.C. Gen. Stat. 44A-7 to 44A-23' },
-  { stateCode: 'MI', stateName: 'Michigan', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 20, prelimNoticeFrom: 'first furnishing (subcontractors)', lienFilingDeadlineDays: 90, lienFilingFrom: 'last furnishing of labor/materials', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'recording of claim of lien', requiredForms: ['Notice of Furnishing', 'Statement of Account', 'Claim of Lien'], recordingOffice: 'County Register of Deeds', specialRequirements: ['Subcontractors must provide 20-day preliminary notice', 'Sworn statement must accompany each payment application', 'Residential: contractor must provide pre-lien notice'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'Mich. Comp. Laws 570.1101-570.1305' },
-  { stateCode: 'NJ', stateName: 'New Jersey', prelimNoticeRequired: false, prelimNoticeDeadlineDays: null, prelimNoticeFrom: '-', lienFilingDeadlineDays: 90, lienFilingFrom: 'last date of work/materials', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'last date of work', requiredForms: ['NJ Construction Lien Claim', 'Notice of Unpaid Balance and Right to File Lien'], recordingOffice: 'County Clerk', specialRequirements: ['Must send Notice of Unpaid Balance 10 days before filing', 'Residential improvements under $750k have special rules', 'Arbitration clause may limit enforcement options'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'N.J. Stat. Ann. 2A:44A-1 to 2A:44A-38' },
-  { stateCode: 'VA', stateName: 'Virginia', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 30, prelimNoticeFrom: 'start of work (subcontractors)', lienFilingDeadlineDays: 90, lienFilingFrom: 'last day of month in which work performed', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'recording of memorandum of lien', requiredForms: ['Notice of Intent to File Lien', 'Memorandum of Mechanic\'s Lien'], recordingOffice: 'Circuit Court Clerk', specialRequirements: ['Must send Notice of Intent 30 days before filing', 'Residential owner-occupants: contractor must provide written contract', 'Filing limited to 150 days from last work for GCs'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'Va. Code Ann. 43-1 to 43-71' },
-  { stateCode: 'WA', stateName: 'Washington', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 60, prelimNoticeFrom: 'first delivery of materials/labor', lienFilingDeadlineDays: 90, lienFilingFrom: 'cessation of furnishing labor/materials', lienEnforcementDeadlineDays: 240, lienEnforcementFrom: 'recording of claim of lien', requiredForms: ['Pre-Claim Notice', 'Claim of Lien', 'Notice of Lien Filing'], recordingOffice: 'County Auditor', specialRequirements: ['Must give Pre-Claim Notice 60 days before filing', 'Residential: must also provide Notice to Customer', 'Owner may request lien claimant to commence suit'], notarizationRequired: false, residentialDifferent: true, statutoryRef: 'Wash. Rev. Code 60.04' },
-  { stateCode: 'AZ', stateName: 'Arizona', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 20, prelimNoticeFrom: 'first furnishing of labor/materials', lienFilingDeadlineDays: 120, lienFilingFrom: 'completion of work', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'recording of claim of lien', requiredForms: ['Preliminary 20-Day Notice', 'Claim of Mechanics Lien', 'Notice of Completion'], recordingOffice: 'County Recorder', specialRequirements: ['Preliminary notice every 20 days for continued work', 'Owner may record Notice of Completion to shorten deadline', 'Must include legal description and property owner info'], notarizationRequired: false, residentialDifferent: false, statutoryRef: 'Ariz. Rev. Stat. 33-981 to 33-1008' },
-  { stateCode: 'CO', stateName: 'Colorado', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 10, prelimNoticeFrom: 'first furnishing (for subcontractors)', lienFilingDeadlineDays: 120, lienFilingFrom: 'last date of work', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'filing of lien statement', requiredForms: ['Notice of Intent to File Lien', 'Statement of Lien', 'Lien Waiver'], recordingOffice: 'County Clerk and Recorder', specialRequirements: ['Must send Notice of Intent 10 business days before filing', 'Applies to both real and personal property', 'Trust fund statute protects subcontractor payments'], notarizationRequired: false, residentialDifferent: false, statutoryRef: 'Colo. Rev. Stat. 38-22-101 to 38-22-133' },
-  { stateCode: 'MA', stateName: 'Massachusetts', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 30, prelimNoticeFrom: 'start of work (for sub-subs)', lienFilingDeadlineDays: 90, lienFilingFrom: 'last date of work', lienEnforcementDeadlineDays: 30, lienEnforcementFrom: 'filing of statement of account', requiredForms: ['Notice of Identification', 'Statement of Account', 'Dissolution of Lien Bond'], recordingOffice: 'Registry of Deeds', specialRequirements: ['Sub-subs must file Notice of Identification with GC', 'Very short enforcement deadline of 30 days after filing', 'Public projects require 90-day bond claim'], notarizationRequired: false, residentialDifferent: false, statutoryRef: 'Mass. Gen. Laws ch. 254' },
-  { stateCode: 'TN', stateName: 'Tennessee', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 90, prelimNoticeFrom: 'completion of work (for subs)', lienFilingDeadlineDays: 90, lienFilingFrom: 'completion of the improvement', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'date lien became effective', requiredForms: ['Notice of Non-Payment', 'Notice of Lien', 'Sworn Statement of Lien'], recordingOffice: 'Register of Deeds', specialRequirements: ['Remote contractors/suppliers must serve Notice of Non-Payment', 'Residential owner-occupied: contractor must have written contract', 'Lien attaches from date notice is served on owner'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'Tenn. Code Ann. 66-11-101 to 66-11-151' },
-  { stateCode: 'MD', stateName: 'Maryland', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 120, prelimNoticeFrom: 'doing work (for subcontractors)', lienFilingDeadlineDays: 180, lienFilingFrom: 'last date of work', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'filing of petition', requiredForms: ['Notice to Owner', 'Petition to Establish Mechanic\'s Lien', 'Affidavit of Lien'], recordingOffice: 'Circuit Court Clerk', specialRequirements: ['Subcontractors must give written notice to owner', 'Petition must be filed in circuit court, not recorded', 'Owner-occupied residential: contractor must provide contract'], notarizationRequired: true, residentialDifferent: true, statutoryRef: 'Md. Code Real Prop. 9-101 to 9-113' },
-  { stateCode: 'MN', stateName: 'Minnesota', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 45, prelimNoticeFrom: 'first furnishing (for subcontractors)', lienFilingDeadlineDays: 120, lienFilingFrom: 'last date of labor/materials', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'recording of lien statement', requiredForms: ['Pre-Lien Notice', 'Mechanic\'s Lien Statement', 'Notice of Lien Filing'], recordingOffice: 'County Recorder', specialRequirements: ['Pre-lien notice within 45 days for subs/suppliers', 'Must serve copy on owner within 5 days of recording', 'Residential: owner may demand sworn statement of amounts'], notarizationRequired: false, residentialDifferent: true, statutoryRef: 'Minn. Stat. 514.01-514.17' },
-  { stateCode: 'NV', stateName: 'Nevada', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 31, prelimNoticeFrom: 'first furnishing of labor/materials', lienFilingDeadlineDays: 90, lienFilingFrom: 'completion/cessation of work', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'recording of notice of lien', requiredForms: ['Notice of Right to Lien', 'Notice of Mechanic\'s Lien', 'Notice to Owner of Pending Lien'], recordingOffice: 'County Recorder', specialRequirements: ['Must serve Notice of Right to Lien within 31 days', 'Must give owner 15-day pre-filing notice', 'Recording within 90 days after notice of completion or 180 if none'], notarizationRequired: true, residentialDifferent: false, statutoryRef: 'Nev. Rev. Stat. 108.221-108.246' },
-];
-
-// Statutory vs non-statutory waiver states from official data
-const STATUTORY_WAIVER_STATES = getStatutoryFormStates();
-
-// ── Demo Data: Waivers ────────────────────────────────────
-type WaiverType = 'conditional_progress' | 'unconditional_progress' | 'conditional_final' | 'unconditional_final';
-type WaiverStatus = 'pending_send' | 'sent' | 'received' | 'missing' | 'overdue';
-
-interface LienWaiver {
-  id: string;
-  jobName: string;
-  propertyAddress: string;
-  partyName: string;
-  partyType: 'subcontractor' | 'supplier' | 'gc';
-  waiverType: WaiverType;
-  amount: number;
-  status: WaiverStatus;
-  dateSent: string | null;
-  dateReceived: string | null;
-  paymentReleasedWithoutWaiver: boolean;
+function getRequiredForms(rule: LienRule): string[] {
+  return extractSpecialRuleField(rule, 'required_forms');
 }
 
-const DEMO_WAIVERS: LienWaiver[] = [
-  { id: 'w1', jobName: 'Kitchen Remodel — Johnson', propertyAddress: '1420 Elm St, Austin, TX', partyName: 'ABC Plumbing Co.', partyType: 'subcontractor', waiverType: 'conditional_progress', amount: 12500, status: 'sent', dateSent: '2026-02-10', dateReceived: null, paymentReleasedWithoutWaiver: false },
-  { id: 'w2', jobName: 'Kitchen Remodel — Johnson', propertyAddress: '1420 Elm St, Austin, TX', partyName: 'Premium Granite Supply', partyType: 'supplier', waiverType: 'unconditional_progress', amount: 8200, status: 'received', dateSent: '2026-01-28', dateReceived: '2026-02-03', paymentReleasedWithoutWaiver: false },
-  { id: 'w3', jobName: 'Roof Replacement — Davis', propertyAddress: '891 Oak Blvd, Tampa, FL', partyName: 'SunCoast Roofing Supply', partyType: 'supplier', waiverType: 'conditional_progress', amount: 18750, status: 'overdue', dateSent: '2026-01-15', dateReceived: null, paymentReleasedWithoutWaiver: true },
-  { id: 'w4', jobName: 'Bathroom Renovation — Kim', propertyAddress: '302 Pine Ave, Los Angeles, CA', partyName: 'Elite Tile Installers', partyType: 'subcontractor', waiverType: 'unconditional_final', amount: 6400, status: 'received', dateSent: '2026-02-05', dateReceived: '2026-02-12', paymentReleasedWithoutWaiver: false },
-  { id: 'w5', jobName: 'Commercial Build-Out — TechCorp', propertyAddress: '500 Commerce Dr, Chicago, IL', partyName: 'Midwest Electric LLC', partyType: 'subcontractor', waiverType: 'conditional_final', amount: 34200, status: 'pending_send', dateSent: null, dateReceived: null, paymentReleasedWithoutWaiver: false },
-  { id: 'w6', jobName: 'HVAC Install — Martinez', propertyAddress: '7722 Maple Ct, Phoenix, AZ', partyName: 'Desert Cool HVAC', partyType: 'subcontractor', waiverType: 'unconditional_progress', amount: 15000, status: 'missing', dateSent: null, dateReceived: null, paymentReleasedWithoutWaiver: true },
-  { id: 'w7', jobName: 'Office Renovation — StartupHQ', propertyAddress: '188 Broadway, New York, NY', partyName: 'Brooklyn Drywall Co.', partyType: 'subcontractor', waiverType: 'conditional_progress', amount: 22000, status: 'sent', dateSent: '2026-02-18', dateReceived: null, paymentReleasedWithoutWaiver: false },
-];
+function getRecordingOffice(rule: LienRule): string | null {
+  const vals = extractSpecialRuleField(rule, 'recording_office');
+  return vals.length > 0 ? vals[0] : null;
+}
 
-// ── Demo Data: Deadlines ──────────────────────────────────
+function getSpecialRequirements(rule: LienRule): string[] {
+  return extractSpecialRuleField(rule, 'special_requirements');
+}
+
+// (Waiver types reserved for future dedicated waiver tracking table)
+
+// ── Deadline interface (derived from real liens + rules) ──
 interface LienDeadline {
   id: string;
   jobName: string;
@@ -183,44 +124,25 @@ interface LienDeadline {
   amountAtRisk: number;
 }
 
-const DEMO_DEADLINES: LienDeadline[] = [
-  { id: 'd1', jobName: 'Kitchen Remodel — Johnson', propertyAddress: '1420 Elm St, Austin, TX', stateCode: 'TX', deadlineType: 'lien_filing', deadlineDate: '2026-03-01', daysRemaining: 5, status: 'critical', amountAtRisk: 24500 },
-  { id: 'd2', jobName: 'Roof Replacement — Davis', propertyAddress: '891 Oak Blvd, Tampa, FL', stateCode: 'FL', deadlineType: 'preliminary_notice', deadlineDate: '2026-02-28', daysRemaining: 4, status: 'critical', amountAtRisk: 18750 },
-  { id: 'd3', jobName: 'Bathroom Renovation — Kim', propertyAddress: '302 Pine Ave, Los Angeles, CA', stateCode: 'CA', deadlineType: 'lien_enforcement', deadlineDate: '2026-03-15', daysRemaining: 19, status: 'urgent', amountAtRisk: 6400 },
-  { id: 'd4', jobName: 'Commercial Build-Out — TechCorp', propertyAddress: '500 Commerce Dr, Chicago, IL', stateCode: 'IL', deadlineType: 'lien_filing', deadlineDate: '2026-04-10', daysRemaining: 45, status: 'upcoming', amountAtRisk: 85000 },
-  { id: 'd5', jobName: 'HVAC Install — Martinez', propertyAddress: '7722 Maple Ct, Phoenix, AZ', stateCode: 'AZ', deadlineType: 'preliminary_notice', deadlineDate: '2026-02-25', daysRemaining: 1, status: 'critical', amountAtRisk: 15000 },
-  { id: 'd6', jobName: 'Office Renovation — StartupHQ', propertyAddress: '188 Broadway, New York, NY', stateCode: 'NY', deadlineType: 'lien_filing', deadlineDate: '2026-06-20', daysRemaining: 116, status: 'upcoming', amountAtRisk: 45000 },
-  { id: 'd7', jobName: 'Deck Build — Thompson', propertyAddress: '4510 Birch Rd, Denver, CO', stateCode: 'CO', deadlineType: 'notice_of_intent', deadlineDate: '2026-03-08', daysRemaining: 12, status: 'urgent', amountAtRisk: 9200 },
-  { id: 'd8', jobName: 'Foundation Repair — Garcia', propertyAddress: '912 Vine St, San Antonio, TX', stateCode: 'TX', deadlineType: 'lien_enforcement', deadlineDate: '2026-02-20', daysRemaining: -4, status: 'overdue', amountAtRisk: 31000 },
-  { id: 'd9', jobName: 'Siding Install — Lee', propertyAddress: '665 Spruce Ln, Seattle, WA', stateCode: 'WA', deadlineType: 'preliminary_notice', deadlineDate: '2026-03-22', daysRemaining: 26, status: 'upcoming', amountAtRisk: 11200 },
-  { id: 'd10', jobName: 'Electrical Upgrade — Patel', propertyAddress: '330 Ash Dr, Atlanta, GA', stateCode: 'GA', deadlineType: 'lien_filing', deadlineDate: '2026-03-05', daysRemaining: 9, status: 'urgent', amountAtRisk: 7800 },
-];
-
-// ── Demo Data: Notices ────────────────────────────────────
-interface PrelimNotice {
-  id: string;
-  jobName: string;
-  propertyAddress: string;
-  stateCode: string;
-  ownerName: string;
-  generalContractor: string;
-  lenderName: string | null;
-  amountDue: number;
-  firstFurnishingDate: string;
-  noticeSentDate: string | null;
-  noticeDeadline: string;
-  status: 'draft' | 'generated' | 'sent' | 'confirmed' | 'expired';
-  deliveryMethod: 'certified_mail' | 'personal_service' | 'registered_mail' | null;
+function computeDeadlineStatus(daysRemaining: number, isCompleted: boolean): LienDeadline['status'] {
+  if (isCompleted) return 'completed';
+  if (daysRemaining <= 0) return 'overdue';
+  if (daysRemaining <= 7) return 'critical';
+  if (daysRemaining <= 14) return 'urgent';
+  return 'upcoming';
 }
 
-const DEMO_NOTICES: PrelimNotice[] = [
-  { id: 'n1', jobName: 'Kitchen Remodel — Johnson', propertyAddress: '1420 Elm St, Austin, TX', stateCode: 'TX', ownerName: 'Robert Johnson', generalContractor: 'Self (Prime)', lenderName: 'First National Bank', amountDue: 24500, firstFurnishingDate: '2026-01-05', noticeSentDate: '2026-01-12', noticeDeadline: '2026-01-20', status: 'confirmed', deliveryMethod: 'certified_mail' },
-  { id: 'n2', jobName: 'Roof Replacement — Davis', propertyAddress: '891 Oak Blvd, Tampa, FL', stateCode: 'FL', ownerName: 'Sarah Davis', generalContractor: 'Self (Prime)', lenderName: null, amountDue: 18750, firstFurnishingDate: '2026-02-01', noticeSentDate: null, noticeDeadline: '2026-03-18', status: 'draft', deliveryMethod: null },
-  { id: 'n3', jobName: 'Bathroom Renovation — Kim', propertyAddress: '302 Pine Ave, Los Angeles, CA', stateCode: 'CA', ownerName: 'David Kim', generalContractor: 'Pacific Builders Inc.', lenderName: 'Wells Fargo', amountDue: 6400, firstFurnishingDate: '2026-01-20', noticeSentDate: '2026-01-28', noticeDeadline: '2026-02-09', status: 'sent', deliveryMethod: 'certified_mail' },
-  { id: 'n4', jobName: 'HVAC Install — Martinez', propertyAddress: '7722 Maple Ct, Phoenix, AZ', stateCode: 'AZ', ownerName: 'Maria Martinez', generalContractor: 'Desert Build Corp.', lenderName: null, amountDue: 15000, firstFurnishingDate: '2026-02-10', noticeSentDate: null, noticeDeadline: '2026-03-02', status: 'generated', deliveryMethod: 'registered_mail' },
-  { id: 'n5', jobName: 'Deck Build — Thompson', propertyAddress: '4510 Birch Rd, Denver, CO', stateCode: 'CO', ownerName: 'James Thompson', generalContractor: 'Self (Prime)', lenderName: 'Chase Bank', amountDue: 9200, firstFurnishingDate: '2026-02-15', noticeSentDate: null, noticeDeadline: '2026-02-25', status: 'draft', deliveryMethod: null },
-  { id: 'n6', jobName: 'Siding Install — Lee', propertyAddress: '665 Spruce Ln, Seattle, WA', stateCode: 'WA', ownerName: 'Jennifer Lee', generalContractor: 'NW Construction Co.', lenderName: null, amountDue: 11200, firstFurnishingDate: '2026-01-30', noticeSentDate: '2026-02-15', noticeDeadline: '2026-03-31', status: 'sent', deliveryMethod: 'personal_service' },
-];
+// ── Notice interface (derived from real liens + rules) ──
+interface PrelimNotice {
+  id: string;
+  propertyAddress: string;
+  stateCode: string;
+  amountDue: number;
+  firstFurnishingDate: string | null;
+  noticeSentDate: string | null;
+  noticeDeadline: string | null;
+  status: 'draft' | 'generated' | 'sent' | 'confirmed' | 'expired';
+}
 
 // ── Stat Card Component ───────────────────────────────────
 function StatCard({ label, value, icon: Icon, variant }: {
@@ -282,7 +204,6 @@ export default function LienProtectionPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedState, setExpandedState] = useState<string | null>(null);
   const [deadlineFilter, setDeadlineFilter] = useState<'all' | 'critical' | 'urgent' | 'upcoming' | 'overdue'>('all');
-  const [waiverFilter, setWaiverFilter] = useState<'all' | 'pending_send' | 'sent' | 'received' | 'missing' | 'overdue' | 'flagged'>('all');
   const [noticeFilter, setNoticeFilter] = useState<'all' | 'draft' | 'generated' | 'sent' | 'confirmed' | 'expired'>('all');
 
   // ── Filtered Liens (dashboard) ──
@@ -296,37 +217,107 @@ export default function LienProtectionPage() {
     );
   }, [activeLiens, searchQuery]);
 
-  // ── Filtered State Rules ──
+  // ── Filtered State Rules (from DB) ──
   const filteredRules = useMemo(() => {
-    if (!searchQuery) return STATE_RULES_DATA;
+    if (!searchQuery) return rules;
     const q = searchQuery.toLowerCase();
-    return STATE_RULES_DATA.filter(r =>
-      r.stateName.toLowerCase().includes(q) ||
-      r.stateCode.toLowerCase().includes(q) ||
-      r.statutoryRef.toLowerCase().includes(q)
+    return rules.filter(r =>
+      r.state_name.toLowerCase().includes(q) ||
+      r.state_code.toLowerCase().includes(q) ||
+      (r.statutory_reference || '').toLowerCase().includes(q)
     );
-  }, [searchQuery]);
+  }, [rules, searchQuery]);
 
-  // ── Filtered Waivers ──
-  const filteredWaivers = useMemo(() => {
-    let list = DEMO_WAIVERS;
-    if (waiverFilter === 'flagged') {
-      list = list.filter(w => w.paymentReleasedWithoutWaiver);
-    } else if (waiverFilter !== 'all') {
-      list = list.filter(w => w.status === waiverFilter);
+  // ── Derived Deadlines from real liens + rules ──
+  const derivedDeadlines = useMemo((): LienDeadline[] => {
+    const deadlines: LienDeadline[] = [];
+    const now = Date.now();
+
+    for (const lien of activeLiens) {
+      const rule = rules.find(r => r.state_code === lien.state_code);
+      if (!rule) continue;
+
+      // Preliminary notice deadline
+      if (rule.preliminary_notice_required && rule.preliminary_notice_deadline_days && lien.first_work_date) {
+        const deadline = new Date(lien.first_work_date);
+        deadline.setDate(deadline.getDate() + rule.preliminary_notice_deadline_days);
+        const daysRemaining = Math.ceil((deadline.getTime() - now) / 86400000);
+        deadlines.push({
+          id: `${lien.id}-prelim`,
+          jobName: lien.property_address,
+          propertyAddress: lien.property_address,
+          stateCode: lien.state_code,
+          deadlineType: 'preliminary_notice',
+          deadlineDate: deadline.toISOString().split('T')[0],
+          daysRemaining,
+          status: computeDeadlineStatus(daysRemaining, lien.preliminary_notice_sent),
+          amountAtRisk: lien.amount_owed ?? 0,
+        });
+      }
+
+      // Lien filing deadline
+      const filingRefDate = lien.last_work_date || lien.completion_date;
+      if (filingRefDate) {
+        const deadline = new Date(filingRefDate);
+        deadline.setDate(deadline.getDate() + rule.lien_filing_deadline_days);
+        const daysRemaining = Math.ceil((deadline.getTime() - now) / 86400000);
+        deadlines.push({
+          id: `${lien.id}-filing`,
+          jobName: lien.property_address,
+          propertyAddress: lien.property_address,
+          stateCode: lien.state_code,
+          deadlineType: 'lien_filing',
+          deadlineDate: deadline.toISOString().split('T')[0],
+          daysRemaining,
+          status: computeDeadlineStatus(daysRemaining, lien.lien_filed),
+          amountAtRisk: lien.amount_owed ?? 0,
+        });
+      }
+
+      // Lien enforcement deadline
+      if (rule.lien_enforcement_deadline_days && lien.lien_filing_date) {
+        const deadline = new Date(lien.lien_filing_date);
+        deadline.setDate(deadline.getDate() + rule.lien_enforcement_deadline_days);
+        const daysRemaining = Math.ceil((deadline.getTime() - now) / 86400000);
+        deadlines.push({
+          id: `${lien.id}-enforce`,
+          jobName: lien.property_address,
+          propertyAddress: lien.property_address,
+          stateCode: lien.state_code,
+          deadlineType: 'lien_enforcement',
+          deadlineDate: deadline.toISOString().split('T')[0],
+          daysRemaining,
+          status: computeDeadlineStatus(daysRemaining, lien.enforcement_filed),
+          amountAtRisk: lien.amount_owed ?? 0,
+        });
+      }
+
+      // Notice of intent deadline
+      if (rule.notice_of_intent_required && rule.notice_of_intent_deadline_days && filingRefDate) {
+        const deadline = new Date(filingRefDate);
+        deadline.setDate(deadline.getDate() + rule.notice_of_intent_deadline_days);
+        const daysRemaining = Math.ceil((deadline.getTime() - now) / 86400000);
+        deadlines.push({
+          id: `${lien.id}-noi`,
+          jobName: lien.property_address,
+          propertyAddress: lien.property_address,
+          stateCode: lien.state_code,
+          deadlineType: 'notice_of_intent',
+          deadlineDate: deadline.toISOString().split('T')[0],
+          daysRemaining,
+          status: computeDeadlineStatus(daysRemaining, lien.notice_of_intent_sent),
+          amountAtRisk: lien.amount_owed ?? 0,
+        });
+      }
     }
-    if (!searchQuery) return list;
-    const q = searchQuery.toLowerCase();
-    return list.filter(w =>
-      w.jobName.toLowerCase().includes(q) ||
-      w.partyName.toLowerCase().includes(q) ||
-      w.propertyAddress.toLowerCase().includes(q)
-    );
-  }, [searchQuery, waiverFilter]);
+
+    // Sort by most urgent first (lowest daysRemaining)
+    return deadlines.filter(d => d.status !== 'completed').sort((a, b) => a.daysRemaining - b.daysRemaining);
+  }, [activeLiens, rules]);
 
   // ── Filtered Deadlines ──
   const filteredDeadlines = useMemo(() => {
-    let list = DEMO_DEADLINES;
+    let list = derivedDeadlines;
     if (deadlineFilter !== 'all') {
       list = list.filter(d => d.status === deadlineFilter);
     }
@@ -337,22 +328,61 @@ export default function LienProtectionPage() {
       d.propertyAddress.toLowerCase().includes(q) ||
       d.stateCode.toLowerCase().includes(q)
     );
-  }, [searchQuery, deadlineFilter]);
+  }, [derivedDeadlines, searchQuery, deadlineFilter]);
+
+  // ── Derived Notices from real liens ──
+  const derivedNotices = useMemo((): PrelimNotice[] => {
+    return activeLiens
+      .filter(lien => {
+        const rule = rules.find(r => r.state_code === lien.state_code);
+        return rule?.preliminary_notice_required;
+      })
+      .map(lien => {
+        const rule = rules.find(r => r.state_code === lien.state_code)!;
+        let deadlineDate: string | null = null;
+        if (lien.first_work_date && rule.preliminary_notice_deadline_days) {
+          const d = new Date(lien.first_work_date);
+          d.setDate(d.getDate() + rule.preliminary_notice_deadline_days);
+          deadlineDate = d.toISOString().split('T')[0];
+        }
+
+        let status: PrelimNotice['status'] = 'draft';
+        if (lien.preliminary_notice_sent && lien.preliminary_notice_date) {
+          status = 'confirmed';
+        } else if (lien.preliminary_notice_sent) {
+          status = 'sent';
+        } else if (lien.preliminary_notice_document_path) {
+          status = 'generated';
+        } else if (deadlineDate && new Date(deadlineDate) < new Date()) {
+          status = 'expired';
+        }
+
+        return {
+          id: `notice-${lien.id}`,
+          propertyAddress: lien.property_address,
+          stateCode: lien.state_code,
+          amountDue: lien.amount_owed ?? 0,
+          firstFurnishingDate: lien.first_work_date,
+          noticeSentDate: lien.preliminary_notice_date,
+          noticeDeadline: deadlineDate,
+          status,
+        };
+      });
+  }, [activeLiens, rules]);
 
   // ── Filtered Notices ──
   const filteredNotices = useMemo(() => {
-    let list = DEMO_NOTICES;
+    let list = derivedNotices;
     if (noticeFilter !== 'all') {
       list = list.filter(n => n.status === noticeFilter);
     }
     if (!searchQuery) return list;
     const q = searchQuery.toLowerCase();
     return list.filter(n =>
-      n.jobName.toLowerCase().includes(q) ||
       n.propertyAddress.toLowerCase().includes(q) ||
-      n.ownerName.toLowerCase().includes(q)
+      n.stateCode.toLowerCase().includes(q)
     );
-  }, [searchQuery, noticeFilter]);
+  }, [derivedNotices, searchQuery, noticeFilter]);
 
   // ── Loading State ──
   if (loading) {
@@ -379,10 +409,12 @@ export default function LienProtectionPage() {
   }
 
   // ── Aggregate counts for deadline tabs ──
-  const criticalCount = DEMO_DEADLINES.filter(d => d.status === 'critical').length;
-  const urgentCount = DEMO_DEADLINES.filter(d => d.status === 'urgent').length;
-  const overdueCount = DEMO_DEADLINES.filter(d => d.status === 'overdue').length;
-  const flaggedWaiverCount = DEMO_WAIVERS.filter(w => w.paymentReleasedWithoutWaiver).length;
+  const criticalCount = derivedDeadlines.filter(d => d.status === 'critical').length;
+  const urgentDeadlineCount = derivedDeadlines.filter(d => d.status === 'urgent').length;
+  const overdueCount = derivedDeadlines.filter(d => d.status === 'overdue').length;
+  const upcomingCount = derivedDeadlines.filter(d => d.status === 'upcoming').length;
+  // No waiver tracking in DB yet — always 0
+  const flaggedWaiverCount = 0;
 
   return (
     <div className="p-6 space-y-6">
@@ -578,7 +610,7 @@ export default function LienProtectionPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-main">50-State Lien Rules Database</h2>
-              <p className="text-sm text-muted">{STATE_RULES_DATA.length} states with detailed mechanic&apos;s lien requirements</p>
+              <p className="text-sm text-muted">{rules.length} states with detailed mechanic&apos;s lien requirements</p>
             </div>
           </div>
 
@@ -592,45 +624,53 @@ export default function LienProtectionPage() {
             <Card>
               <CardContent className="p-8 text-center">
                 <BookOpen className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
-                <p className="text-muted font-medium">No states match your search</p>
+                <p className="text-muted font-medium">
+                  {rules.length === 0 ? 'State lien rules have not been loaded yet' : 'No states match your search'}
+                </p>
+                {rules.length === 0 && (
+                  <p className="text-sm text-muted mt-1">Lien rules will appear here once the state rules database is seeded.</p>
+                )}
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-2">
               {filteredRules.map(rule => {
-                const isExpanded = expandedState === rule.stateCode;
+                const isExpanded = expandedState === rule.state_code;
+                const requiredForms = getRequiredForms(rule);
+                const recordingOffice = getRecordingOffice(rule);
+                const specialRequirements = getSpecialRequirements(rule);
                 return (
-                  <Card key={rule.stateCode} className="overflow-hidden">
+                  <Card key={rule.state_code} className="overflow-hidden">
                     <button
                       className="w-full text-left"
-                      onClick={() => setExpandedState(isExpanded ? null : rule.stateCode)}
+                      onClick={() => setExpandedState(isExpanded ? null : rule.state_code)}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                              <span className="text-sm font-bold text-blue-400">{rule.stateCode}</span>
+                              <span className="text-sm font-bold text-blue-400">{rule.state_code}</span>
                             </div>
                             <div>
-                              <h3 className="text-sm font-semibold text-main">{rule.stateName}</h3>
-                              <p className="text-xs text-muted">{rule.statutoryRef}</p>
+                              <h3 className="text-sm font-semibold text-main">{rule.state_name}</h3>
+                              <p className="text-xs text-muted">{rule.statutory_reference || ''}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
                             <div className="hidden sm:flex items-center gap-2">
-                              {rule.prelimNoticeRequired && (
+                              {rule.preliminary_notice_required && (
                                 <Badge variant="info" size="sm">Prelim Required</Badge>
                               )}
-                              {rule.notarizationRequired && (
+                              {rule.notarization_required && (
                                 <Badge variant="purple" size="sm">Notarization</Badge>
                               )}
-                              {rule.residentialDifferent && (
+                              {rule.residential_different && (
                                 <Badge variant="warning" size="sm">Res. Different</Badge>
                               )}
                             </div>
                             <div className="flex items-center gap-4 text-xs text-muted">
-                              <span className="hidden md:inline">{rule.lienFilingDeadlineDays}d filing</span>
-                              <span className="hidden md:inline">{rule.lienEnforcementDeadlineDays}d enforcement</span>
+                              <span className="hidden md:inline">{rule.lien_filing_deadline_days}d filing</span>
+                              <span className="hidden md:inline">{rule.lien_enforcement_deadline_days ?? '—'}d enforcement</span>
                             </div>
                             {isExpanded ? (
                               <ChevronDown className="h-4 w-4 text-muted" />
@@ -653,10 +693,10 @@ export default function LienProtectionPage() {
                                 <Send className="h-4 w-4 text-blue-400" />
                                 <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Preliminary Notice</span>
                               </div>
-                              {rule.prelimNoticeRequired ? (
+                              {rule.preliminary_notice_required ? (
                                 <>
-                                  <p className="text-lg font-bold text-main">{rule.prelimNoticeDeadlineDays} days</p>
-                                  <p className="text-xs text-muted mt-1">From: {rule.prelimNoticeFrom}</p>
+                                  <p className="text-lg font-bold text-main">{rule.preliminary_notice_deadline_days} days</p>
+                                  <p className="text-xs text-muted mt-1">From: {rule.preliminary_notice_from || 'first furnishing'}</p>
                                 </>
                               ) : (
                                 <p className="text-sm text-muted">Not required in this state</p>
@@ -668,8 +708,8 @@ export default function LienProtectionPage() {
                                 <Gavel className="h-4 w-4 text-amber-400" />
                                 <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Lien Filing</span>
                               </div>
-                              <p className="text-lg font-bold text-main">{rule.lienFilingDeadlineDays} days</p>
-                              <p className="text-xs text-muted mt-1">From: {rule.lienFilingFrom}</p>
+                              <p className="text-lg font-bold text-main">{rule.lien_filing_deadline_days} days</p>
+                              <p className="text-xs text-muted mt-1">From: {rule.lien_filing_from}</p>
                             </div>
                             {/* Enforcement */}
                             <div className="p-3 rounded-lg bg-secondary/50 border border-main">
@@ -677,92 +717,105 @@ export default function LienProtectionPage() {
                                 <Scale className="h-4 w-4 text-red-400" />
                                 <span className="text-xs font-semibold text-red-400 uppercase tracking-wider">Enforcement</span>
                               </div>
-                              <p className="text-lg font-bold text-main">{rule.lienEnforcementDeadlineDays} days</p>
-                              <p className="text-xs text-muted mt-1">From: {rule.lienEnforcementFrom}</p>
+                              <p className="text-lg font-bold text-main">{rule.lien_enforcement_deadline_days ?? '—'} days</p>
+                              <p className="text-xs text-muted mt-1">From: {rule.lien_enforcement_from || '—'}</p>
                             </div>
                           </div>
 
-                          {/* Required Forms */}
-                          <div>
-                            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                              <FileText className="h-3.5 w-3.5" /> Required Forms
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {rule.requiredForms.map((form, i) => (
-                                <span key={i} className="text-xs bg-secondary text-main px-2.5 py-1 rounded-md border border-main">
-                                  {form}
-                                </span>
-                              ))}
+                          {/* Required Forms (from special_rules JSONB) */}
+                          {requiredForms.length > 0 && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <FileText className="h-3.5 w-3.5" /> Required Forms
+                              </h4>
+                              <div className="flex flex-wrap gap-2">
+                                {requiredForms.map((form, i) => (
+                                  <span key={i} className="text-xs bg-secondary text-main px-2.5 py-1 rounded-md border border-main">
+                                    {form}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
                           {/* Recording Office & Details */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                <Landmark className="h-3.5 w-3.5" /> Recording Office
-                              </h4>
-                              <p className="text-sm text-main">{rule.recordingOffice}</p>
-                            </div>
+                            {recordingOffice && (
+                              <div>
+                                <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                  <Landmark className="h-3.5 w-3.5" /> Recording Office
+                                </h4>
+                                <p className="text-sm text-main">{recordingOffice}</p>
+                              </div>
+                            )}
                             <div>
                               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
                                 <Info className="h-3.5 w-3.5" /> Key Attributes
                               </h4>
                               <div className="flex flex-wrap gap-2 text-xs">
-                                <span className={`px-2 py-0.5 rounded ${rule.notarizationRequired ? 'bg-purple-500/10 text-purple-400' : 'bg-secondary text-muted'}`}>
-                                  {rule.notarizationRequired ? 'Notarization Required' : 'No Notarization'}
+                                <span className={`px-2 py-0.5 rounded ${rule.notarization_required ? 'bg-purple-500/10 text-purple-400' : 'bg-secondary text-muted'}`}>
+                                  {rule.notarization_required ? 'Notarization Required' : 'No Notarization'}
                                 </span>
-                                <span className={`px-2 py-0.5 rounded ${rule.residentialDifferent ? 'bg-amber-500/10 text-amber-400' : 'bg-secondary text-muted'}`}>
-                                  {rule.residentialDifferent ? 'Residential Rules Differ' : 'Same for All Projects'}
+                                <span className={`px-2 py-0.5 rounded ${rule.residential_different ? 'bg-amber-500/10 text-amber-400' : 'bg-secondary text-muted'}`}>
+                                  {rule.residential_different ? 'Residential Rules Differ' : 'Same for All Projects'}
                                 </span>
                               </div>
                             </div>
                           </div>
 
-                          {/* Special Requirements */}
-                          <div>
-                            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                              <AlertTriangle className="h-3.5 w-3.5" /> Special Requirements
-                            </h4>
-                            <ul className="space-y-1.5">
-                              {rule.specialRequirements.map((req, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm text-main">
-                                  <CircleDot className="h-3 w-3 text-muted opacity-50 mt-1 flex-shrink-0" />
-                                  {req}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                          {/* Special Requirements (from special_rules JSONB) */}
+                          {specialRequirements.length > 0 && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <AlertTriangle className="h-3.5 w-3.5" /> Special Requirements
+                              </h4>
+                              <ul className="space-y-1.5">
+                                {specialRequirements.map((req, i) => (
+                                  <li key={i} className="flex items-start gap-2 text-sm text-main">
+                                    <CircleDot className="h-3 w-3 text-muted opacity-50 mt-1 flex-shrink-0" />
+                                    {req}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Notes */}
+                          {rule.notes && (
+                            <div className="text-xs text-muted bg-secondary/30 p-3 rounded-lg border border-main">
+                              <span className="font-semibold">Notes:</span> {rule.notes}
+                            </div>
+                          )}
 
                           {/* Official Waiver Form Status */}
-                          {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode] && (
+                          {STATE_LIEN_WAIVER_CONFIGS[rule.state_code] && (
                             <div className="mt-2 pt-2 border-t border-main">
                               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
                                 <Stamp className="h-3.5 w-3.5" /> Lien Waiver Forms
                               </h4>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <Badge variant={STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].hasStatutoryForm ? 'warning' : 'secondary'} className="text-xs">
-                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].hasStatutoryForm ? 'Statutory (Mandatory Form)' : 'Non-Statutory'}
+                                <Badge variant={STATE_LIEN_WAIVER_CONFIGS[rule.state_code].hasStatutoryForm ? 'warning' : 'secondary'} className="text-xs">
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].hasStatutoryForm ? 'Statutory (Mandatory Form)' : 'Non-Statutory'}
                                 </Badge>
-                                {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].notarizationRequired && (
+                                {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].notarizationRequired && (
                                   <Badge variant="purple" size="sm">Notarization Required for Waivers</Badge>
                                 )}
                                 <span className="text-xs text-muted">
-                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].statuteCitation}
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].statuteCitation}
                                 </span>
                               </div>
-                              {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].forms.length > 0 && (
+                              {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].forms.length > 0 && (
                                 <div className="mt-2 flex flex-wrap gap-1.5">
-                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].forms.map((form, i) => (
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].forms.map((form, i) => (
                                     <span key={i} className="text-xs bg-secondary text-main px-2 py-0.5 rounded border border-main">
                                       {form.title}
                                     </span>
                                   ))}
                                 </div>
                               )}
-                              {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].specialRequirements.length > 0 && (
+                              {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].specialRequirements.length > 0 && (
                                 <ul className="mt-2 space-y-1">
-                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].specialRequirements.map((req, i) => (
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.state_code].specialRequirements.map((req, i) => (
                                     <li key={i} className="flex items-start gap-2 text-xs text-muted">
                                       <CircleDot className="h-2.5 w-2.5 opacity-50 mt-0.5 flex-shrink-0" />
                                       {req}
@@ -803,148 +856,54 @@ export default function LienProtectionPage() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-main">{DEMO_WAIVERS.length}</p>
+                <p className="text-xl font-bold text-main">0</p>
                 <p className="text-xs text-muted">Total Waivers</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-emerald-400">{DEMO_WAIVERS.filter(w => w.status === 'received').length}</p>
+                <p className="text-xl font-bold text-emerald-400">0</p>
                 <p className="text-xs text-muted">Received</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-blue-400">{DEMO_WAIVERS.filter(w => w.status === 'sent').length}</p>
+                <p className="text-xl font-bold text-blue-400">0</p>
                 <p className="text-xs text-muted">Sent / Pending</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-red-400">{DEMO_WAIVERS.filter(w => w.status === 'overdue' || w.status === 'missing').length}</p>
+                <p className="text-xl font-bold text-red-400">0</p>
                 <p className="text-xs text-muted">Overdue / Missing</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-amber-400">{flaggedWaiverCount}</p>
+                <p className="text-xl font-bold text-amber-400">0</p>
                 <p className="text-xs text-muted">Payment w/o Waiver</p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-muted mr-1">Filter:</span>
-            {([
-              { key: 'all', label: 'All' },
-              { key: 'pending_send', label: 'Pending' },
-              { key: 'sent', label: 'Sent' },
-              { key: 'received', label: 'Received' },
-              { key: 'missing', label: 'Missing' },
-              { key: 'overdue', label: 'Overdue' },
-              { key: 'flagged', label: 'Flagged' },
-            ] as { key: typeof waiverFilter; label: string }[]).map(f => (
-              <button
-                key={f.key}
-                onClick={() => setWaiverFilter(f.key)}
-                className={`text-xs px-3 py-1 rounded-full border transition-colors ${
-                  waiverFilter === f.key
-                    ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                    : 'border-main text-muted hover:border-accent/30'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-
-          <SearchInput
-            placeholder="Search by job, party name, or address..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-          />
-
-          {/* Waiver List */}
-          {filteredWaivers.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <ClipboardCheck className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
-                <p className="text-muted font-medium">No waivers match your filters</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-2">
-              {filteredWaivers.map(waiver => {
-                const waiverTypeLabel: Record<WaiverType, string> = {
-                  conditional_progress: 'Conditional Progress',
-                  unconditional_progress: 'Unconditional Progress',
-                  conditional_final: 'Conditional Final',
-                  unconditional_final: 'Unconditional Final',
-                };
-                const statusMap: Record<WaiverStatus, { variant: 'success' | 'info' | 'warning' | 'error' | 'secondary'; label: string }> = {
-                  pending_send: { variant: 'secondary', label: 'Pending Send' },
-                  sent: { variant: 'info', label: 'Sent' },
-                  received: { variant: 'success', label: 'Received' },
-                  missing: { variant: 'error', label: 'Missing' },
-                  overdue: { variant: 'error', label: 'Overdue' },
-                };
-
-                return (
-                  <Card key={waiver.id} className={`${waiver.paymentReleasedWithoutWaiver ? 'border-amber-500/30' : ''}`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
-                          <div className={`p-2 rounded-lg mt-0.5 ${
-                            waiver.paymentReleasedWithoutWaiver ? 'bg-amber-500/10' : 'bg-secondary'
-                          }`}>
-                            {waiver.paymentReleasedWithoutWaiver ? (
-                              <FileWarning className="h-4 w-4 text-amber-400" />
-                            ) : (
-                              <ClipboardCheck className="h-4 w-4 text-muted" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="text-sm font-semibold text-main">{waiver.partyName}</h3>
-                              <Badge variant={statusMap[waiver.status].variant} size="sm">
-                                {statusMap[waiver.status].label}
-                              </Badge>
-                              <Badge variant="secondary" size="sm">
-                                {waiverTypeLabel[waiver.waiverType]}
-                              </Badge>
-                            </div>
-                            <div className="flex items-center gap-3 mt-1 text-xs text-muted flex-wrap">
-                              <span>{waiver.jobName}</span>
-                              <span className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />{waiver.propertyAddress}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Building2 className="h-3 w-3" />{waiver.partyType === 'gc' ? 'General Contractor' : waiver.partyType === 'subcontractor' ? 'Subcontractor' : 'Supplier'}
-                              </span>
-                            </div>
-                            {waiver.paymentReleasedWithoutWaiver && (
-                              <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-400 bg-amber-500/5 px-2 py-1 rounded w-fit">
-                                <TriangleAlert className="h-3 w-3" />
-                                Payment released without waiver on file
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-sm font-semibold text-main">{formatCurrency(waiver.amount)}</p>
-                          <div className="text-xs text-muted mt-1 space-y-0.5">
-                            {waiver.dateSent && <p>Sent: {waiver.dateSent}</p>}
-                            {waiver.dateReceived && <p className="text-emerald-400">Received: {waiver.dateReceived}</p>}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
+          {/* Empty State */}
+          <Card>
+            <CardContent className="p-12 text-center">
+              <ClipboardCheck className="h-14 w-14 text-muted opacity-40 mx-auto mb-4" />
+              <p className="text-main font-semibold text-lg">No lien waivers tracked yet</p>
+              <p className="text-sm text-muted mt-2 max-w-md mx-auto">
+                Waivers will appear here as you manage liens on your jobs. Track conditional and unconditional progress and final waivers for all subcontractors and suppliers.
+              </p>
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                {(['Conditional Progress', 'Unconditional Progress', 'Conditional Final', 'Unconditional Final'] as const).map(type => (
+                  <div key={type} className="p-3 rounded-lg bg-secondary/50 border border-main text-center">
+                    <p className="text-xs font-medium text-main">{type}</p>
+                    <p className="text-xs text-muted mt-1">Waiver</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -1000,7 +959,7 @@ export default function LienProtectionPage() {
                       <Clock className="h-4 w-4 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-lg font-bold text-amber-400">{urgentCount}</p>
+                      <p className="text-lg font-bold text-amber-400">{urgentDeadlineCount}</p>
                       <p className="text-xs text-muted">Urgent (8-14d)</p>
                     </div>
                   </div>
@@ -1015,7 +974,7 @@ export default function LienProtectionPage() {
                       <Calendar className="h-4 w-4 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-lg font-bold text-blue-400">{DEMO_DEADLINES.filter(d => d.status === 'upcoming').length}</p>
+                      <p className="text-lg font-bold text-blue-400">{upcomingCount}</p>
                       <p className="text-xs text-muted">Upcoming (15+d)</p>
                     </div>
                   </div>
@@ -1045,7 +1004,14 @@ export default function LienProtectionPage() {
             <Card>
               <CardContent className="p-8 text-center">
                 <CalendarClock className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
-                <p className="text-muted font-medium">No deadlines match your filters</p>
+                <p className="text-muted font-medium">
+                  {derivedDeadlines.length === 0
+                    ? 'No lien deadlines to track'
+                    : 'No deadlines match your filters'}
+                </p>
+                {derivedDeadlines.length === 0 && (
+                  <p className="text-sm text-muted mt-1">Deadlines are auto-calculated when liens have work dates and matching state rules.</p>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -1190,31 +1156,31 @@ export default function LienProtectionPage() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-main">{DEMO_NOTICES.length}</p>
+                <p className="text-xl font-bold text-main">{derivedNotices.length}</p>
                 <p className="text-xs text-muted">Total Notices</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-muted">{DEMO_NOTICES.filter(n => n.status === 'draft').length}</p>
+                <p className="text-xl font-bold text-muted">{derivedNotices.filter(n => n.status === 'draft').length}</p>
                 <p className="text-xs text-muted">Drafts</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-blue-400">{DEMO_NOTICES.filter(n => n.status === 'generated').length}</p>
+                <p className="text-xl font-bold text-blue-400">{derivedNotices.filter(n => n.status === 'generated').length}</p>
                 <p className="text-xs text-muted">Generated</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-amber-400">{DEMO_NOTICES.filter(n => n.status === 'sent').length}</p>
+                <p className="text-xl font-bold text-amber-400">{derivedNotices.filter(n => n.status === 'sent').length}</p>
                 <p className="text-xs text-muted">Sent</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-emerald-400">{DEMO_NOTICES.filter(n => n.status === 'confirmed').length}</p>
+                <p className="text-xl font-bold text-emerald-400">{derivedNotices.filter(n => n.status === 'confirmed').length}</p>
                 <p className="text-xs text-muted">Confirmed</p>
               </CardContent>
             </Card>
@@ -1246,7 +1212,7 @@ export default function LienProtectionPage() {
           </div>
 
           <SearchInput
-            placeholder="Search by job, address, or owner name..."
+            placeholder="Search by address or state..."
             value={searchQuery}
             onChange={setSearchQuery}
           />
@@ -1256,7 +1222,14 @@ export default function LienProtectionPage() {
             <Card>
               <CardContent className="p-8 text-center">
                 <Send className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
-                <p className="text-muted font-medium">No notices match your filters</p>
+                <p className="text-muted font-medium">
+                  {derivedNotices.length === 0
+                    ? 'No preliminary notices required yet'
+                    : 'No notices match your filters'}
+                </p>
+                {derivedNotices.length === 0 && (
+                  <p className="text-sm text-muted mt-1">Preliminary notices will appear here for liens in states that require them.</p>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -1291,54 +1264,38 @@ export default function LienProtectionPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="text-sm font-semibold text-main">{notice.jobName}</h3>
+                              <h3 className="text-sm font-semibold text-main">{notice.propertyAddress}</h3>
                               <Badge variant={cfg.variant} size="sm">{cfg.label}</Badge>
                               <Badge variant="secondary" size="sm">{notice.stateCode}</Badge>
                             </div>
 
-                            {/* Property & Parties */}
+                            {/* Property */}
                             <div className="flex items-center gap-3 mt-1.5 text-xs text-muted flex-wrap">
                               <span className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />{notice.propertyAddress}
+                                <MapPin className="h-3 w-3" />{notice.stateCode}
                               </span>
-                              <span className="flex items-center gap-1">
-                                <Building2 className="h-3 w-3" />Owner: {notice.ownerName}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Stamp className="h-3 w-3" />GC: {notice.generalContractor}
-                              </span>
-                              {notice.lenderName && (
-                                <span className="flex items-center gap-1">
-                                  <Landmark className="h-3 w-3" />Lender: {notice.lenderName}
-                                </span>
-                              )}
                             </div>
 
                             {/* Key Dates & Amount */}
                             <div className="flex items-center gap-4 mt-2 text-xs flex-wrap">
-                              <span className="text-muted">
-                                First furnishing: <span className="text-main">{notice.firstFurnishingDate}</span>
-                              </span>
-                              <span className="text-muted">
-                                Deadline: <span className={`font-medium ${
-                                  new Date(notice.noticeDeadline) < new Date() ? 'text-red-400' : 'text-main'
-                                }`}>{notice.noticeDeadline}</span>
-                              </span>
-                              <span className="text-amber-400 font-medium">
-                                {formatCurrency(notice.amountDue)} due
-                              </span>
-                            </div>
-
-                            {/* Delivery Method */}
-                            {notice.deliveryMethod && (
-                              <div className="mt-2">
-                                <span className="text-xs bg-secondary text-main px-2 py-0.5 rounded border border-main">
-                                  {notice.deliveryMethod === 'certified_mail' ? 'Certified Mail' :
-                                   notice.deliveryMethod === 'personal_service' ? 'Personal Service' :
-                                   'Registered Mail'}
+                              {notice.firstFurnishingDate && (
+                                <span className="text-muted">
+                                  First furnishing: <span className="text-main">{notice.firstFurnishingDate}</span>
                                 </span>
-                              </div>
-                            )}
+                              )}
+                              {notice.noticeDeadline && (
+                                <span className="text-muted">
+                                  Deadline: <span className={`font-medium ${
+                                    new Date(notice.noticeDeadline) < new Date() ? 'text-red-400' : 'text-main'
+                                  }`}>{notice.noticeDeadline}</span>
+                                </span>
+                              )}
+                              {notice.amountDue > 0 && (
+                                <span className="text-amber-400 font-medium">
+                                  {formatCurrency(notice.amountDue)} due
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
 

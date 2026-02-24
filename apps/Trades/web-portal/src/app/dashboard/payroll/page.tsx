@@ -106,29 +106,6 @@ interface CertifiedProject {
   entries: CertifiedPayrollEntry[];
 }
 
-const demoLaborAllocations: LaborAllocation[] = [
-  { jobId: 'j-1', jobName: 'Thompson Kitchen Remodel', customerName: 'Sarah Thompson', totalHours: 186, regularHours: 160, overtimeHours: 26, laborCost: 12480, employeeCount: 4, costPerHour: 67.10, percentOfTotal: 32 },
-  { jobId: 'j-2', jobName: 'Garcia Bathroom Suite', customerName: 'Mike Garcia', totalHours: 124, regularHours: 120, overtimeHours: 4, laborCost: 7440, employeeCount: 3, costPerHour: 60.00, percentOfTotal: 19 },
-  { jobId: 'j-3', jobName: 'Riverside Office Build-Out', customerName: 'Riverside Properties', totalHours: 312, regularHours: 280, overtimeHours: 32, laborCost: 21840, employeeCount: 8, costPerHour: 70.00, percentOfTotal: 36 },
-  { jobId: 'j-4', jobName: 'Wilson Deck & Patio', customerName: 'James Wilson', totalHours: 64, regularHours: 64, overtimeHours: 0, laborCost: 3200, employeeCount: 2, costPerHour: 50.00, percentOfTotal: 8 },
-  { jobId: 'j-5', jobName: 'Overhead / Shop Time', customerName: '—', totalHours: 40, regularHours: 40, overtimeHours: 0, laborCost: 2000, employeeCount: 5, costPerHour: 50.00, percentOfTotal: 5 },
-];
-
-const demoCertifiedProject: CertifiedProject = {
-  id: 'cp-1',
-  projectName: 'City Hall HVAC Replacement',
-  contractNumber: 'DOT-2026-4418',
-  contractor: 'Tereda Mechanical LLC',
-  prevailingWageArea: 'Harris County, TX',
-  weekEnding: '2026-02-21',
-  entries: [
-    { employeeName: 'Rodriguez, Carlos', ssn: 'XXX-XX-4821', classification: 'Pipefitter', totalHours: 40, regularHours: 40, overtimeHours: 0, rate: 48.75, otRate: 73.13, grossPay: 1950, deductions: 487.50, netPay: 1462.50, fringes: 22.15 },
-    { employeeName: 'Martinez, Elena', ssn: 'XXX-XX-3019', classification: 'HVAC Mechanic', totalHours: 44, regularHours: 40, overtimeHours: 4, rate: 52.30, otRate: 78.45, grossPay: 2405.80, deductions: 601.45, netPay: 1804.35, fringes: 24.50 },
-    { employeeName: 'Davis, Marcus', ssn: 'XXX-XX-7742', classification: 'Sheet Metal Worker', totalHours: 40, regularHours: 40, overtimeHours: 0, rate: 46.20, otRate: 69.30, grossPay: 1848, deductions: 462.00, netPay: 1386, fringes: 21.80 },
-    { employeeName: 'Nguyen, Tran', ssn: 'XXX-XX-5588', classification: 'Apprentice Pipefitter', totalHours: 40, regularHours: 40, overtimeHours: 0, rate: 28.50, otRate: 42.75, grossPay: 1140, deductions: 285.00, netPay: 855, fringes: 12.60 },
-    { employeeName: 'Johnson, Andre', ssn: 'XXX-XX-9931', classification: 'HVAC Mechanic', totalHours: 48, regularHours: 40, overtimeHours: 8, rate: 52.30, otRate: 78.45, grossPay: 2719.60, deductions: 679.90, netPay: 2039.70, fringes: 24.50 },
-  ],
-};
 
 // ────────────────────────────────────────────────────────
 // Page
@@ -187,9 +164,10 @@ export default function PayrollPage() {
   const totalEmployees = currentPeriod?.employeeCount || 0;
   const currentNet = currentPeriod?.totalNet || 0;
 
-  // ── Totals for labor ──
-  const totalLaborHours = demoLaborAllocations.reduce((s, a) => s + a.totalHours, 0);
-  const totalLaborCost = demoLaborAllocations.reduce((s, a) => s + a.laborCost, 0);
+  // ── Totals for labor (derived from time entries when available) ──
+  const laborAllocations: LaborAllocation[] = [];
+  const totalLaborHours = laborAllocations.reduce((s, a) => s + a.totalHours, 0);
+  const totalLaborCost = laborAllocations.reduce((s, a) => s + a.laborCost, 0);
 
   if (loading) {
     return (
@@ -286,12 +264,12 @@ export default function PayrollPage() {
       {activeTab === 'calculator' && <PayrollCalculatorTab />}
       {activeTab === 'labor' && (
         <LaborDistributionTab
-          allocations={demoLaborAllocations}
+          allocations={laborAllocations}
           totalHours={totalLaborHours}
           totalCost={totalLaborCost}
         />
       )}
-      {activeTab === 'certified' && <CertifiedPayrollTab project={demoCertifiedProject} />}
+      {activeTab === 'certified' && <CertifiedPayrollTab project={null} />}
     </div>
   );
 }
@@ -815,6 +793,26 @@ function LaborDistributionTab({
 }) {
   const maxCost = Math.max(...allocations.map((a) => a.laborCost), 1);
 
+  if (allocations.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatsCard title="Total Labor Hours" value="0" icon={<Clock size={20} />} />
+          <StatsCard title="Total Labor Cost" value={formatCurrency(0)} icon={<DollarSign size={20} />} />
+          <StatsCard title="Avg Cost / Hour" value={formatCurrency(0)} icon={<TrendingUp size={20} />} />
+          <StatsCard title="Jobs Allocated" value="0" icon={<Briefcase size={20} />} />
+        </div>
+        <Card>
+          <CardContent className="p-12 text-center">
+            <Briefcase size={32} className="mx-auto mb-3 text-muted" />
+            <p className="text-main font-medium">No Labor Distribution Data</p>
+            <p className="text-muted text-sm mt-1">Labor allocation by job will appear here once time entries are logged against jobs.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Summary */}
@@ -962,7 +960,31 @@ function LaborDistributionTab({
 // TAB 4: Certified Payroll (WH-347)
 // ════════════════════════════════════════════════════════
 
-function CertifiedPayrollTab({ project }: { project: CertifiedProject }) {
+function CertifiedPayrollTab({ project }: { project: CertifiedProject | null }) {
+  if (!project) {
+    return (
+      <div className="space-y-6">
+        {/* Info Banner */}
+        <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl">
+          <Shield size={20} className="text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Certified Payroll (WH-347)</p>
+            <p className="text-xs text-blue-700 dark:text-blue-400 mt-1">
+              Required for Davis-Bacon prevailing wage projects and government contracts. Generated from approved timesheets and prevailing wage rates for the project area.
+            </p>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="p-12 text-center">
+            <Shield size={32} className="mx-auto mb-3 text-muted" />
+            <p className="text-main font-medium">No Certified Payroll Projects</p>
+            <p className="text-muted text-sm mt-1">Certified payroll reports will appear here when you set up prevailing wage projects with approved timesheets.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const totalGross = project.entries.reduce((s, e) => s + e.grossPay, 0);
   const totalDeductions = project.entries.reduce((s, e) => s + e.deductions, 0);
   const totalNet = project.entries.reduce((s, e) => s + e.netPay, 0);
