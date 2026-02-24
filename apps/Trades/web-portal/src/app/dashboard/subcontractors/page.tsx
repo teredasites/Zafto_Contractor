@@ -153,14 +153,14 @@ export default function SubcontractorsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-main flex items-center gap-2">
             <HardHat size={24} className="text-orange-400" />
             {t('subcontractors.title')}
           </h1>
-          <p className="text-zinc-400 text-sm mt-1">{t('subcontractors.manageYourSubcontractorNetwork')}</p>
+          <p className="text-muted text-sm mt-1">{t('subcontractors.manageYourSubcontractorNetwork')}</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handle1099Export} className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-sm flex items-center gap-2">
+          <button onClick={handle1099Export} className="bg-secondary hover:bg-surface-hover text-muted px-3 py-2 rounded-lg text-sm flex items-center gap-2">
             <Download size={14} /> 1099 Export
           </button>
           <button onClick={() => setShowAdd(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
@@ -171,27 +171,27 @@ export default function SubcontractorsPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-          <div className="text-2xl font-bold text-white">{subs.length}</div>
-          <div className="text-xs text-zinc-500">{t('subcontractors.totalSubs')}</div>
+        <div className="bg-surface border border-main rounded-lg p-4">
+          <div className="text-2xl font-bold text-main">{subs.length}</div>
+          <div className="text-xs text-muted">{t('subcontractors.totalSubs')}</div>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+        <div className="bg-surface border border-main rounded-lg p-4">
           <div className="text-2xl font-bold text-green-400">{activeSubs}</div>
-          <div className="text-xs text-zinc-500">{t('common.active')}</div>
+          <div className="text-xs text-muted">{t('common.active')}</div>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-          <div className="text-2xl font-bold text-white">{formatCurrency(totalPaid)}</div>
-          <div className="text-xs text-zinc-500">{t('common.totalPaid')}</div>
+        <div className="bg-surface border border-main rounded-lg p-4">
+          <div className="text-2xl font-bold text-main">{formatCurrency(totalPaid)}</div>
+          <div className="text-xs text-muted">{t('common.totalPaid')}</div>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+        <div className="bg-surface border border-main rounded-lg p-4">
           <div className={`text-2xl font-bold ${alertCount > 0 ? 'text-amber-400' : 'text-green-400'}`}>{alertCount}</div>
-          <div className="text-xs text-zinc-500">{t('subcontractors.complianceAlerts')}</div>
+          <div className="text-xs text-muted">{t('subcontractors.complianceAlerts')}</div>
         </div>
       </div>
 
       {/* View Tabs + Filters */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 bg-zinc-900 rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-surface rounded-lg p-1">
           {([
             { key: 'directory', label: 'Directory' },
             { key: 'compliance', label: `Compliance (${alertCount})` },
@@ -200,7 +200,7 @@ export default function SubcontractorsPage() {
             <button
               key={tab.key}
               onClick={() => setView(tab.key)}
-              className={`px-3 py-1.5 rounded-md text-sm ${view === tab.key ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+              className={`px-3 py-1.5 rounded-md text-sm ${view === tab.key ? 'bg-blue-600 text-white' : 'text-muted hover:text-main'}`}
             >
               {tab.label}
             </button>
@@ -209,18 +209,18 @@ export default function SubcontractorsPage() {
         {view === 'directory' && (
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search subs..."
-                className="bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white w-56"
+                className="bg-surface border border-main rounded-lg pl-9 pr-3 py-2 text-sm text-main w-56"
               />
             </div>
             <select
               value={tradeFilter}
               onChange={(e) => setTradeFilter(e.target.value)}
-              className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
+              className="bg-surface border border-main rounded-lg px-3 py-2 text-sm text-main"
             >
               <option value="">{t('subcontractors.allTrades')}</option>
               {TRADE_TYPE_OPTIONS.map((t) => (
@@ -230,7 +230,7 @@ export default function SubcontractorsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
+              className="bg-surface border border-main rounded-lg px-3 py-2 text-sm text-main"
             >
               <option value="">{t('common.allStatus')}</option>
               <option value="active">{t('common.active')}</option>
@@ -245,32 +245,32 @@ export default function SubcontractorsPage() {
       {view === 'directory' && (
         <div className="space-y-2">
           {filtered.length === 0 ? (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-              <HardHat size={40} className="text-zinc-700 mx-auto mb-3" />
-              <p className="text-zinc-500">{t('subcontractors.noSubs')}</p>
+            <div className="bg-surface border border-main rounded-lg p-12 text-center">
+              <HardHat size={40} className="text-muted mx-auto mb-3" />
+              <p className="text-muted">{t('subcontractors.noSubs')}</p>
               <button onClick={() => setShowAdd(true)} className="text-blue-400 text-sm mt-2 hover:text-blue-300">{t('subcontractors.addYourFirstSub')}</button>
             </div>
           ) : filtered.map((sub) => (
-            <div key={sub.id} className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+            <div key={sub.id} className="bg-surface border border-main rounded-lg overflow-hidden">
               <div
-                className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-zinc-800/50"
+                className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-secondary/50"
                 onClick={() => setExpandedId(expandedId === sub.id ? null : sub.id)}
               >
                 <div className="flex items-center gap-3">
-                  {expandedId === sub.id ? <ChevronDown size={16} className="text-zinc-500" /> : <ChevronRight size={16} className="text-zinc-500" />}
+                  {expandedId === sub.id ? <ChevronDown size={16} className="text-muted" /> : <ChevronRight size={16} className="text-muted" />}
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-medium">{sub.name}</span>
-                      {sub.companyName && <span className="text-zinc-500 text-sm">({sub.companyName})</span>}
+                      <span className="text-main font-medium">{sub.name}</span>
+                      {sub.companyName && <span className="text-muted text-sm">({sub.companyName})</span>}
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         sub.status === 'active' ? 'bg-green-500/10 text-green-400' :
                         sub.status === 'suspended' ? 'bg-red-500/10 text-red-400' :
-                        'bg-zinc-700 text-zinc-400'
+                        'bg-surface-hover text-muted'
                       }`}>{sub.status}</span>
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
                       {sub.tradeTypes.map((t) => (
-                        <span key={t} className="text-xs text-zinc-500">{formatTradeLabel(t)}</span>
+                        <span key={t} className="text-xs text-muted">{formatTradeLabel(t)}</span>
                       ))}
                     </div>
                   </div>
@@ -281,56 +281,56 @@ export default function SubcontractorsPage() {
                       <Star size={14} fill="currentColor" /> {sub.rating}
                     </div>
                   )}
-                  <span className="text-zinc-400">{sub.totalJobsAssigned} jobs</span>
+                  <span className="text-muted">{sub.totalJobsAssigned} jobs</span>
                   <span className="text-green-400">{formatCurrency(sub.totalPaid)}</span>
                 </div>
               </div>
 
               {expandedId === sub.id && (
-                <div className="border-t border-zinc-800 px-4 py-4 space-y-4">
+                <div className="border-t border-main px-4 py-4 space-y-4">
                   {/* Contact */}
                   <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center gap-2 text-zinc-400">
+                    <div className="flex items-center gap-2 text-muted">
                       <Mail size={14} /> {sub.email || 'No email'}
                     </div>
-                    <div className="flex items-center gap-2 text-zinc-400">
+                    <div className="flex items-center gap-2 text-muted">
                       <Phone size={14} /> {sub.phone || 'No phone'}
                     </div>
-                    <div className="flex items-center gap-2 text-zinc-400">
+                    <div className="flex items-center gap-2 text-muted">
                       <Briefcase size={14} /> {sub.totalJobsAssigned} jobs assigned
                     </div>
                   </div>
 
                   {/* Compliance */}
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-zinc-800 rounded-lg p-3">
-                      <div className="text-xs text-zinc-500 mb-1">{t('common.license')}</div>
+                    <div className="bg-secondary rounded-lg p-3">
+                      <div className="text-xs text-muted mb-1">{t('common.license')}</div>
                       {sub.licenseNumber ? (
-                        <div className="text-sm text-white">
+                        <div className="text-sm text-main">
                           {sub.licenseNumber} ({sub.licenseState})
                           {sub.licenseExpiry && (
-                            <div className="text-xs text-zinc-500 mt-0.5">Exp: {sub.licenseExpiry}</div>
+                            <div className="text-xs text-muted mt-0.5">Exp: {sub.licenseExpiry}</div>
                           )}
                         </div>
                       ) : (
-                        <div className="text-sm text-zinc-600">{t('common.notProvided')}</div>
+                        <div className="text-sm text-muted">{t('common.notProvided')}</div>
                       )}
                     </div>
-                    <div className="bg-zinc-800 rounded-lg p-3">
-                      <div className="text-xs text-zinc-500 mb-1">{t('common.insurance')}</div>
+                    <div className="bg-secondary rounded-lg p-3">
+                      <div className="text-xs text-muted mb-1">{t('common.insurance')}</div>
                       {sub.insuranceCarrier ? (
-                        <div className="text-sm text-white">
+                        <div className="text-sm text-main">
                           {sub.insuranceCarrier}
                           {sub.insuranceExpiry && (
-                            <div className="text-xs text-zinc-500 mt-0.5">Exp: {sub.insuranceExpiry}</div>
+                            <div className="text-xs text-muted mt-0.5">Exp: {sub.insuranceExpiry}</div>
                           )}
                         </div>
                       ) : (
-                        <div className="text-sm text-zinc-600">{t('common.notProvided')}</div>
+                        <div className="text-sm text-muted">{t('common.notProvided')}</div>
                       )}
                     </div>
-                    <div className="bg-zinc-800 rounded-lg p-3">
-                      <div className="text-xs text-zinc-500 mb-1">W-9</div>
+                    <div className="bg-secondary rounded-lg p-3">
+                      <div className="text-xs text-muted mb-1">W-9</div>
                       <div className={`text-sm flex items-center gap-1 ${sub.w9OnFile ? 'text-green-400' : 'text-red-400'}`}>
                         {sub.w9OnFile ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
                         {sub.w9OnFile ? 'On File' : 'Missing'}
@@ -340,7 +340,7 @@ export default function SubcontractorsPage() {
 
                   {/* Rating */}
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-zinc-500">Rating:</span>
+                    <span className="text-xs text-muted">Rating:</span>
                     {[1, 2, 3, 4, 5].map((r) => (
                       <button
                         key={r}
@@ -349,7 +349,7 @@ export default function SubcontractorsPage() {
                       >
                         <Star
                           size={16}
-                          className={r <= (sub.rating || 0) ? 'text-amber-400' : 'text-zinc-700'}
+                          className={r <= (sub.rating || 0) ? 'text-amber-400' : 'text-muted'}
                           fill={r <= (sub.rating || 0) ? 'currentColor' : 'none'}
                         />
                       </button>
@@ -357,14 +357,14 @@ export default function SubcontractorsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 pt-2 border-t border-zinc-800">
+                  <div className="flex items-center gap-2 pt-2 border-t border-main">
                     <button
                       onClick={() => handleStatusToggle(sub)}
-                      className="text-xs text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg bg-zinc-800"
+                      className="text-xs text-muted hover:text-main px-3 py-1.5 rounded-lg bg-secondary"
                     >
                       {sub.status === 'active' ? 'Deactivate' : 'Activate'}
                     </button>
-                    <button onClick={() => handleDelete(sub.id)} className="text-xs text-red-400 hover:text-red-300 px-3 py-1.5 rounded-lg bg-zinc-800">
+                    <button onClick={() => handleDelete(sub.id)} className="text-xs text-red-400 hover:text-red-300 px-3 py-1.5 rounded-lg bg-secondary">
                       Remove
                     </button>
                   </div>
@@ -379,22 +379,22 @@ export default function SubcontractorsPage() {
       {view === 'compliance' && (
         <div className="space-y-2">
           {complianceAlerts.length === 0 ? (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
+            <div className="bg-surface border border-main rounded-lg p-12 text-center">
               <Shield size={40} className="text-green-400 mx-auto mb-3" />
               <p className="text-green-400 font-medium">{t('subcontractors.allClear')}</p>
-              <p className="text-zinc-500 text-sm mt-1">{t('subcontractors.noComplianceIssuesFound')}</p>
+              <p className="text-muted text-sm mt-1">{t('subcontractors.noComplianceIssuesFound')}</p>
             </div>
           ) : (
             complianceAlerts.map((alert, i) => (
-              <div key={`${alert.subcontractorId}-${alert.type}-${i}`} className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 flex items-center justify-between">
+              <div key={`${alert.subcontractorId}-${alert.type}-${i}`} className="bg-surface border border-main rounded-lg px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <AlertTriangle size={16} className={
                     alert.type === 'missing_w9' ? 'text-red-400' :
                     (alert.daysRemaining || 0) <= 7 ? 'text-red-400' : 'text-amber-400'
                   } />
                   <div>
-                    <span className="text-white font-medium">{alert.name}</span>
-                    <span className="text-zinc-500 text-sm ml-2">
+                    <span className="text-main font-medium">{alert.name}</span>
+                    <span className="text-muted text-sm ml-2">
                       {alert.type === 'insurance_expiring' && `Insurance expires ${alert.expiryDate} (${alert.daysRemaining} days)`}
                       {alert.type === 'license_expiring' && `License expires ${alert.expiryDate} (${alert.daysRemaining} days)`}
                       {alert.type === 'missing_w9' && 'W-9 not on file'}
@@ -416,14 +416,14 @@ export default function SubcontractorsPage() {
 
       {/* 1099 View */}
       {view === '1099' && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+        <div className="bg-surface border border-main rounded-lg p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-white font-medium flex items-center gap-2">
+              <h3 className="text-main font-medium flex items-center gap-2">
                 <FileText size={18} className="text-blue-400" />
                 1099-NEC Data — {new Date().getFullYear()}
               </h3>
-              <p className="text-zinc-500 text-xs mt-1">Subcontractors paid $600+ this calendar year</p>
+              <p className="text-muted text-xs mt-1">Subcontractors paid $600+ this calendar year</p>
             </div>
             <button onClick={handle1099Export} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
               <Download size={14} /> Export CSV
@@ -432,23 +432,23 @@ export default function SubcontractorsPage() {
 
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-700">
-                <th className="text-left py-2 text-zinc-500">{t('common.name')}</th>
-                <th className="text-left py-2 text-zinc-500">{t('common.company')}</th>
-                <th className="text-right py-2 text-zinc-500">{t('common.totalPaid')}</th>
-                <th className="text-center py-2 text-zinc-500">1099 Required</th>
+              <tr className="border-b border-main">
+                <th className="text-left py-2 text-muted">{t('common.name')}</th>
+                <th className="text-left py-2 text-muted">{t('common.company')}</th>
+                <th className="text-right py-2 text-muted">{t('common.totalPaid')}</th>
+                <th className="text-center py-2 text-muted">1099 Required</th>
               </tr>
             </thead>
             <tbody>
               {subs.filter((s) => s.totalPaid >= 600).length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center text-zinc-600 py-8">No subcontractors paid $600+ yet</td>
+                  <td colSpan={4} className="text-center text-muted py-8">No subcontractors paid $600+ yet</td>
                 </tr>
               ) : (
                 subs.filter((s) => s.totalPaid >= 600).map((sub) => (
-                  <tr key={sub.id} className="border-b border-zinc-800">
-                    <td className="py-2 text-white">{sub.name}</td>
-                    <td className="py-2 text-zinc-400">{sub.companyName || '-'}</td>
+                  <tr key={sub.id} className="border-b border-main">
+                    <td className="py-2 text-main">{sub.name}</td>
+                    <td className="py-2 text-muted">{sub.companyName || '-'}</td>
                     <td className="py-2 text-right text-green-400">{formatCurrency(sub.totalPaid)}</td>
                     <td className="py-2 text-center">
                       <CheckCircle2 size={16} className="text-amber-400 mx-auto" />
@@ -464,41 +464,41 @@ export default function SubcontractorsPage() {
       {/* Add Sub Modal */}
       {showAdd && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={() => setShowAdd(false)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-surface border border-main rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-semibold text-lg">{t('subcontractors.add')}</h3>
-              <button onClick={() => setShowAdd(false)} className="text-zinc-500 hover:text-white"><X size={18} /></button>
+              <h3 className="text-main font-semibold text-lg">{t('subcontractors.add')}</h3>
+              <button onClick={() => setShowAdd(false)} className="text-muted hover:text-main"><X size={18} /></button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">{t('common.nameRequired')}</label>
-                <input value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted mb-1 block">{t('common.nameRequired')}</label>
+                <input value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
               </div>
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">{t('settings.companyName')}</label>
-                <input value={formCompany} onChange={(e) => setFormCompany(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted mb-1 block">{t('settings.companyName')}</label>
+                <input value={formCompany} onChange={(e) => setFormCompany(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.email')}</label>
-                  <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('common.email')}</label>
+                  <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.phone')}</label>
-                  <input value={formPhone} onChange={(e) => setFormPhone(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('common.phone')}</label>
+                  <input value={formPhone} onChange={(e) => setFormPhone(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.trades')}</label>
+                <label className="text-xs text-muted mb-1 block">{t('subcontractors.trades')}</label>
                 <div className="flex flex-wrap gap-1.5">
                   {TRADE_TYPE_OPTIONS.map((t) => (
                     <button
                       key={t}
                       onClick={() => toggleTrade(t)}
                       className={`text-xs px-2 py-1 rounded-full border ${
-                        formTrades.includes(t) ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-zinc-700 text-zinc-500'
+                        formTrades.includes(t) ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-main text-muted'
                       }`}
                     >
                       {formatTradeLabel(t)}
@@ -509,47 +509,47 @@ export default function SubcontractorsPage() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.license')}</label>
-                  <input value={formLicenseNum} onChange={(e) => setFormLicenseNum(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('subcontractors.license')}</label>
+                  <input value={formLicenseNum} onChange={(e) => setFormLicenseNum(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.licenseState')}</label>
-                  <input value={formLicenseState} onChange={(e) => setFormLicenseState(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('common.licenseState')}</label>
+                  <input value={formLicenseState} onChange={(e) => setFormLicenseState(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.licenseExpiry')}</label>
-                  <input type="date" value={formLicenseExpiry} onChange={(e) => setFormLicenseExpiry(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('subcontractors.licenseExpiry')}</label>
+                  <input type="date" value={formLicenseExpiry} onChange={(e) => setFormLicenseExpiry(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.insuranceCarrier')}</label>
-                  <input value={formInsCarrier} onChange={(e) => setFormInsCarrier(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('subcontractors.insuranceCarrier')}</label>
+                  <input value={formInsCarrier} onChange={(e) => setFormInsCarrier(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('common.policyNumber')}</label>
-                  <input value={formInsPolicy} onChange={(e) => setFormInsPolicy(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('common.policyNumber')}</label>
+                  <input value={formInsPolicy} onChange={(e) => setFormInsPolicy(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">{t('subcontractors.insuranceExpiry')}</label>
-                  <input type="date" value={formInsExpiry} onChange={(e) => setFormInsExpiry(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="text-xs text-muted mb-1 block">{t('subcontractors.insuranceExpiry')}</label>
+                  <input type="date" value={formInsExpiry} onChange={(e) => setFormInsExpiry(e.target.value)} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
                 </div>
               </div>
 
-              <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-muted cursor-pointer">
                 <input type="checkbox" checked={formW9} onChange={(e) => setFormW9(e.target.checked)} className="rounded" />
                 W-9 on file
               </label>
 
               <div>
-                <label className="text-xs text-zinc-500 mb-1 block">{t('common.notes')}</label>
-                <textarea value={formNotes} onChange={(e) => setFormNotes(e.target.value)} rows={2} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="text-xs text-muted mb-1 block">{t('common.notes')}</label>
+                <textarea value={formNotes} onChange={(e) => setFormNotes(e.target.value)} rows={2} className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main" />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
-              <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white">{t('common.cancel')}</button>
+            <div className="flex justify-end gap-2 pt-2 border-t border-main">
+              <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-muted hover:text-main">{t('common.cancel')}</button>
               <button onClick={handleAdd} disabled={saving || !formName.trim()} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-2 rounded-lg text-sm font-medium">
                 {saving ? 'Saving...' : 'Add Subcontractor'}
               </button>

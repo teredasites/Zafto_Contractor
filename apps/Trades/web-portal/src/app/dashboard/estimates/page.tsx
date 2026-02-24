@@ -14,9 +14,10 @@ import {
 } from '@/lib/hooks/use-estimates';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale } from '@/lib/format-locale';
+import { CommandPalette } from '@/components/command-palette';
 
 const STATUS_CONFIG: Record<EstimateStatus, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'bg-zinc-700/50 text-zinc-400' },
+  draft: { label: 'Draft', color: 'bg-surface-hover/50 text-muted' },
   sent: { label: 'Sent', color: 'bg-blue-500/10 text-blue-400' },
   approved: { label: 'Approved', color: 'bg-green-500/10 text-green-400' },
   declined: { label: 'Declined', color: 'bg-red-500/10 text-red-400' },
@@ -99,17 +100,18 @@ export default function EstimatesPage() {
 
   return (
     <div className="space-y-6">
+      <CommandPalette />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-100">{t('estimates.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">{t('estimates.manageDesc')}</p>
+          <h1 className="text-2xl font-semibold text-main">{t('estimates.title')}</h1>
+          <p className="text-sm text-muted mt-1">{t('estimates.manageDesc')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleImportEsx}
             disabled={importing}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 text-sm text-muted bg-secondary/50 border border-main/50 rounded-lg hover:bg-surface-hover transition-colors disabled:opacity-50"
           >
             {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {importing ? t('estimates.importing') : t('estimates.importEsx')}
@@ -127,17 +129,17 @@ export default function EstimatesPage() {
       {/* Stats Bar */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label: 'Drafts', value: String(stats.drafts), icon: FileText, color: 'text-zinc-400' },
+          { label: 'Drafts', value: String(stats.drafts), icon: FileText, color: 'text-muted' },
           { label: 'Sent', value: String(stats.sent), icon: DollarSign, color: 'text-blue-400' },
           { label: 'Approved', value: String(stats.approved), icon: Calculator, color: 'text-green-400' },
           { label: 'Approved Value', value: fmtCurrency(stats.approvedTotal), icon: DollarSign, color: 'text-emerald-400' },
         ].map((stat) => (
-          <div key={stat.label} className="bg-zinc-800/40 border border-zinc-700/30 rounded-xl p-4">
+          <div key={stat.label} className="bg-secondary/40 border border-main/30 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-1">
               <stat.icon className={cn('w-4 h-4', stat.color)} />
-              <span className="text-xs text-zinc-500">{stat.label}</span>
+              <span className="text-xs text-muted">{stat.label}</span>
             </div>
-            <p className="text-lg font-semibold text-zinc-100">{stat.value}</p>
+            <p className="text-lg font-semibold text-main">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -145,26 +147,26 @@ export default function EstimatesPage() {
       {/* Filters */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
           <input
             type="text"
             placeholder={t('estimates.searchEstimates')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+            className="w-full pl-9 pr-4 py-2 bg-secondary/50 border border-main/50 rounded-lg text-sm text-main placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-blue-500/50"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as EstimateStatus | 'all')}
-          className="px-3 py-2 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-sm text-zinc-200"
+          className="px-3 py-2 bg-secondary/50 border border-main/50 rounded-lg text-sm text-main"
         >
           <option value="all">{t('common.allStatus')}</option>
           {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
             <option key={key} value={key}>{cfg.label}</option>
           ))}
         </select>
-        <div className="flex items-center border border-zinc-700/50 rounded-lg overflow-hidden">
+        <div className="flex items-center border border-main/50 rounded-lg overflow-hidden">
           {(['all', 'regular', 'insurance'] as const).map((type) => (
             <button
               key={type}
@@ -173,7 +175,7 @@ export default function EstimatesPage() {
                 'px-3 py-2 text-xs transition-colors',
                 typeFilter === type
                   ? 'bg-blue-500/10 text-blue-400'
-                  : 'text-zinc-400 hover:text-zinc-200 bg-zinc-800/50'
+                  : 'text-muted hover:text-main bg-secondary/50'
               )}
             >
               {type === 'all' ? 'All' : type === 'regular' ? 'Regular' : 'Insurance'}
@@ -186,11 +188,11 @@ export default function EstimatesPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-zinc-800/50 rounded-lg animate-pulse" />
+            <div key={i} className="h-20 bg-secondary/50 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-zinc-500">
+        <div className="text-center py-16 text-muted">
           <Calculator className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="text-lg font-medium">{t('estimates.noEstimates')}</p>
           <p className="text-sm mt-1">{t('estimates.noEstimatesDesc')}</p>
@@ -226,7 +228,7 @@ function EstimateRow({ estimate, onClick }: { estimate: Estimate; onClick: () =>
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-4 p-4 bg-zinc-800/40 border border-zinc-700/30 rounded-lg hover:bg-zinc-800/60 transition-colors text-left"
+      className="w-full flex items-center gap-4 p-4 bg-secondary/40 border border-main/30 rounded-lg hover:bg-surface-hover transition-colors text-left"
     >
       <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
         {estimate.estimateType === 'insurance' ? (
@@ -237,7 +239,7 @@ function EstimateRow({ estimate, onClick }: { estimate: Estimate; onClick: () =>
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-zinc-100 truncate">
+          <span className="text-sm font-medium text-main truncate">
             {estimate.estimateNumber}
           </span>
           <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', statusCfg.color)}>
@@ -249,20 +251,20 @@ function EstimateRow({ estimate, onClick }: { estimate: Estimate; onClick: () =>
             </span>
           )}
         </div>
-        <p className="text-xs text-zinc-400 mt-0.5 truncate">
+        <p className="text-xs text-muted mt-0.5 truncate">
           {estimate.title || 'Untitled'} &middot; {estimate.customerName || 'No customer'}
         </p>
       </div>
       <div className="text-right flex-shrink-0">
-        <div className="flex items-center gap-1 text-sm font-medium text-zinc-200">
+        <div className="flex items-center gap-1 text-sm font-medium text-main">
           <DollarSign className="w-3.5 h-3.5" />
           {fmtCurrency(estimate.grandTotal)}
         </div>
-        <p className="text-xs text-zinc-500 mt-0.5">
+        <p className="text-xs text-muted mt-0.5">
           {formatDateLocale(estimate.createdAt)}
         </p>
       </div>
-      <ChevronRight className="w-4 h-4 text-zinc-600 flex-shrink-0" />
+      <ChevronRight className="w-4 h-4 text-muted flex-shrink-0" />
     </button>
   );
 }
@@ -300,8 +302,8 @@ function CreateEstimateModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-[480px]">
-        <h3 className="text-lg font-medium text-zinc-100 mb-4">{t('estimates.new')}</h3>
+      <div className="bg-surface border border-main rounded-xl p-6 w-[480px]">
+        <h3 className="text-lg font-medium text-main mb-4">{t('estimates.new')}</h3>
 
         {/* Type selector */}
         <div className="flex items-center gap-2 mb-4">
@@ -313,7 +315,7 @@ function CreateEstimateModal({
                 'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border transition-colors',
                 estimateType === type
                   ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
-                  : 'bg-zinc-800/50 border-zinc-700/50 text-zinc-400 hover:text-zinc-200'
+                  : 'bg-secondary/50 border-main/50 text-muted hover:text-main'
               )}
             >
               {type === 'regular' ? <Briefcase className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
@@ -328,7 +330,7 @@ function CreateEstimateModal({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Estimate title..."
-            className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500"
+            className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted"
             autoFocus
           />
           <input
@@ -336,19 +338,19 @@ function CreateEstimateModal({
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             placeholder="Customer name..."
-            className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500"
+            className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted"
           />
           <input
             type="text"
             value={propertyAddress}
             onChange={(e) => setPropertyAddress(e.target.value)}
             placeholder="Property address..."
-            className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500"
+            className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted"
           />
         </div>
 
         <div className="flex justify-end gap-2 mt-6">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-zinc-400 hover:text-zinc-200">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-muted hover:text-main">
             Cancel
           </button>
           <button
