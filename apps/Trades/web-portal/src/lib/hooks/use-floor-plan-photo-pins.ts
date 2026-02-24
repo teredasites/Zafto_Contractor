@@ -78,6 +78,7 @@ export function useFloorPlanPhotoPins(floorPlanId: string | null) {
         .from('floor_plan_photo_pins')
         .select('*')
         .eq('floor_plan_id', floorPlanId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
@@ -247,7 +248,7 @@ export function useFloorPlanPhotoPins(floorPlanId: string | null) {
         const supabase = getSupabase();
         const { error: deleteError } = await supabase
           .from('floor_plan_photo_pins')
-          .delete()
+          .update({ deleted_at: new Date().toISOString() })
           .eq('id', pinId);
 
         if (deleteError) throw deleteError;

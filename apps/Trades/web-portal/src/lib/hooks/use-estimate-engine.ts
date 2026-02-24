@@ -282,6 +282,7 @@ export function useEstimateLines(claimId: string | null) {
         .from('xactimate_estimate_lines')
         .select('*')
         .eq('claim_id', claimId)
+        .is('deleted_at', null)
         .order('room_name')
         .order('line_number');
 
@@ -369,7 +370,7 @@ export function useEstimateLines(claimId: string | null) {
     const supabase = getSupabase();
     const { error: err } = await supabase
       .from('xactimate_estimate_lines')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', lineId);
 
     if (err) console.error('Delete line failed:', err);

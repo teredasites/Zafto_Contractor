@@ -114,7 +114,7 @@ export default function BookingTypesPage() {
 
   const deleteType = async (id: string) => {
     const supabase = getSupabase();
-    await supabase.from('meeting_booking_types').delete().eq('id', id);
+    await supabase.from('meeting_booking_types').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     fetchTypes();
   };
 
