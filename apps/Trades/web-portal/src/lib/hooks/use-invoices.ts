@@ -198,6 +198,183 @@ export function useInvoices() {
     fetchInvoices();
   };
 
+  // Create invoice from approved estimate — one-click convert
+  const createInvoiceFromEstimate = async (estimateId: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    // Fetch estimate + line items
+    const [estRes, linesRes] = await Promise.all([
+      supabase.from('estimates').select('*').eq('id', estimateId).single(),
+      supabase.from('estimate_line_items').select('*').eq('estimate_id', estimateId).order('sort_order'),
+    ]);
+    if (estRes.error || !estRes.data) throw new Error('Estimate not found');
+    const est = estRes.data;
+    const lines = linesRes.data || [];
+
+    // Generate invoice number
+    const year = new Date().getFullYear();
+    const { count } = await supabase
+      .from('invoices')
+      .select('id', { count: 'exact', head: true })
+      .eq('company_id', companyId);
+    const seq = String((count || 0) + 1).padStart(4, '0');
+    const invoiceNumber = `INV-${year}-${seq}`;
+
+    // Map estimate line items to invoice line items
+    const invoiceLineItems = lines.map((li: Record<string, unknown>, idx: number) => ({
+      id: `li-${idx}`,
+      description: (li.description as string) || '',
+      quantity: Number(li.quantity) || 1,
+      unit_price: Number(li.unit_price) || 0,
+      amount: Number(li.line_total) || 0,
+      category: (li.action_type as string) || 'labor',
+    }));
+
+    const subtotal = Number(est.subtotal) || 0;
+    const taxRate = Number(est.tax_percent) || 0;
+    const taxAmount = Number(est.tax_amount) || 0;
+    const total = Number(est.grand_total) || 0;
+
+    const { data: inv, error: invErr } = await supabase
+      .from('invoices')
+      .insert({
+        company_id: companyId,
+        created_by_user_id: user.id,
+        invoice_number: invoiceNumber,
+        customer_id: est.customer_id || null,
+        job_id: est.job_id || null,
+        estimate_id: estimateId,
+        customer_name: (est.customer_name as string) || '',
+        customer_email: (est.customer_email as string) || '',
+        customer_phone: (est.customer_phone as string) || '',
+        title: (est.title as string) || 'Estimate Invoice',
+        status: 'draft',
+        line_items: invoiceLineItems,
+        subtotal,
+        tax_rate: taxRate,
+        tax_amount: taxAmount,
+        total,
+        amount_due: total,
+        amount_paid: 0,
+        due_date: new Date(Date.now() + 30 * 86400000).toISOString(),
+        notes: (est.notes as string) || null,
+      })
+      .select('id')
+      .single();
+    if (invErr) throw invErr;
+    fetchInvoices();
+    return inv?.id || null;
+  };
+
+  // Apply late fee to an overdue invoice
+  const applyLateFee = async (id: string, feeAmount: number, description?: string) => {
+    const supabase = getSupabase();
+    const { data: inv, error: fetchErr } = await supabase
+      .from('invoices')
+      .select('line_items, subtotal, tax_rate, tax_amount, total, amount_paid, amount_due')
+      .eq('id', id)
+      .single();
+    if (fetchErr) throw fetchErr;
+
+    const currentItems = (inv.line_items as Array<Record<string, unknown>>) || [];
+    const lateFeeItem = {
+      id: `late-fee-${Date.now()}`,
+      description: description || 'Late fee',
+      quantity: 1,
+      unit_price: feeAmount,
+      amount: feeAmount,
+      category: 'late_fee',
+    };
+    const newItems = [...currentItems, lateFeeItem];
+    const newTotal = Number(inv.total) + feeAmount;
+    const newAmountDue = Number(inv.amount_due) + feeAmount;
+
+    const { error: err } = await supabase.from('invoices').update({
+      line_items: newItems,
+      total: newTotal,
+      amount_due: Math.max(0, newAmountDue),
+    }).eq('id', id);
+    if (err) throw err;
+    fetchInvoices();
+  };
+
+  // Create a credit memo (negative invoice linked to original)
+  const createCreditMemo = async (originalInvoiceId: string, creditAmount: number, reason: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    // Fetch original invoice
+    const { data: orig, error: origErr } = await supabase
+      .from('invoices')
+      .select('*')
+      .eq('id', originalInvoiceId)
+      .single();
+    if (origErr || !orig) throw new Error('Original invoice not found');
+
+    // Generate credit memo number
+    const year = new Date().getFullYear();
+    const { count } = await supabase
+      .from('invoices')
+      .select('id', { count: 'exact', head: true })
+      .ilike('invoice_number', `CM-${year}-%`);
+    const seq = String((count || 0) + 1).padStart(4, '0');
+
+    const { data: memo, error: memoErr } = await supabase
+      .from('invoices')
+      .insert({
+        company_id: companyId,
+        created_by_user_id: user.id,
+        invoice_number: `CM-${year}-${seq}`,
+        customer_id: orig.customer_id || null,
+        job_id: orig.job_id || null,
+        customer_name: (orig.customer_name as string) || '',
+        customer_email: (orig.customer_email as string) || '',
+        title: `Credit Memo — ${reason}`,
+        status: 'paid',
+        line_items: [{ id: 'cm-1', description: reason, quantity: 1, unit_price: -creditAmount, amount: -creditAmount }],
+        subtotal: -creditAmount,
+        tax_rate: 0,
+        tax_amount: 0,
+        total: -creditAmount,
+        amount_due: 0,
+        amount_paid: -creditAmount,
+        notes: `Credit memo for invoice ${(orig.invoice_number as string) || originalInvoiceId}`,
+        parent_invoice_id: originalInvoiceId,
+      })
+      .select('id')
+      .single();
+    if (memoErr) throw memoErr;
+
+    // Apply credit to original invoice balance
+    const newAmountDue = Math.max(0, Number(orig.amount_due) - creditAmount);
+    const newAmountPaid = Number(orig.amount_paid) + creditAmount;
+    await supabase.from('invoices').update({
+      amount_due: newAmountDue,
+      amount_paid: newAmountPaid,
+      status: newAmountDue <= 0 ? 'paid' : orig.status,
+    }).eq('id', originalInvoiceId);
+
+    fetchInvoices();
+    return memo?.id || null;
+  };
+
+  // Batch create invoices from multiple jobs
+  const batchCreateInvoices = async (jobIds: string[]): Promise<string[]> => {
+    const results: string[] = [];
+    for (const jobId of jobIds) {
+      const id = await createInvoiceFromJob(jobId);
+      if (id) results.push(id);
+    }
+    return results;
+  };
+
   // Create draft invoice from completed job
   const createInvoiceFromJob = async (jobId: string): Promise<string | null> => {
     const supabase = getSupabase();
@@ -270,6 +447,10 @@ export function useInvoices() {
     recordPayment,
     sendInvoice,
     createInvoiceFromJob,
+    createInvoiceFromEstimate,
+    applyLateFee,
+    createCreditMemo,
+    batchCreateInvoices,
     deleteInvoice,
     refetch: fetchInvoices,
   };

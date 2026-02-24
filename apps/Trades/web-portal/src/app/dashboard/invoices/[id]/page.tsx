@@ -22,16 +22,89 @@ import {
   Copy,
   Printer,
   AlertCircle,
+  Ban,
+  FileText,
+  Percent,
+  ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useInvoice, useInvoices } from '@/lib/hooks/use-invoices';
+import type { InvoiceStatus } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 import type { Invoice, InvoiceLineItem } from '@/types';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency as fmtCurr } from '@/lib/format-locale';
+
+// ── Invoice Status Pipeline ──
+const PIPELINE_STAGES: { key: InvoiceStatus; label: string; color: string; bgActive: string }[] = [
+  { key: 'draft', label: 'Draft', color: 'text-zinc-400', bgActive: 'bg-zinc-500' },
+  { key: 'sent', label: 'Sent', color: 'text-blue-400', bgActive: 'bg-blue-500' },
+  { key: 'viewed', label: 'Viewed', color: 'text-purple-400', bgActive: 'bg-purple-500' },
+  { key: 'partial', label: 'Partial', color: 'text-amber-400', bgActive: 'bg-amber-500' },
+  { key: 'paid', label: 'Paid', color: 'text-emerald-400', bgActive: 'bg-emerald-500' },
+];
+
+function InvoicePipeline({ status }: { status: InvoiceStatus }) {
+  const isVoid = status === 'void' || status === 'refunded';
+  const isOverdue = status === 'overdue';
+
+  if (isVoid) {
+    return (
+      <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <Ban className="w-4 h-4 text-red-400" />
+        <span className="text-sm font-medium text-red-400">
+          {status === 'void' ? 'Voided' : 'Refunded'}
+        </span>
+      </div>
+    );
+  }
+
+  // Map overdue to sent stage (it's still in the sent state, just past due)
+  const activeStatus = isOverdue ? 'sent' : status;
+  const activeIdx = PIPELINE_STAGES.findIndex(s => s.key === activeStatus);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-1">
+        {PIPELINE_STAGES.map((stage, idx) => {
+          const isActive = idx === activeIdx;
+          const isPast = idx < activeIdx;
+          const isFuture = idx > activeIdx;
+          return (
+            <React.Fragment key={stage.key}>
+              {idx > 0 && (
+                <div className={cn(
+                  'flex-1 h-0.5 rounded',
+                  isPast || isActive ? (isOverdue && idx <= activeIdx ? 'bg-red-500' : stage.bgActive) : 'bg-zinc-800'
+                )} />
+              )}
+              <div className="flex flex-col items-center gap-1">
+                <div className={cn(
+                  'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all',
+                  isActive ? `${isOverdue ? 'bg-red-500/20 border-red-500 text-red-400' : `${stage.bgActive}/20 border-current ${stage.color}`}` :
+                  isPast ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' :
+                  'bg-zinc-900 border-zinc-700 text-zinc-600'
+                )}>
+                  {isPast ? <CheckCircle className="w-3.5 h-3.5" /> : (idx + 1)}
+                </div>
+                <span className={cn(
+                  'text-[10px] font-medium whitespace-nowrap',
+                  isActive ? (isOverdue ? 'text-red-400' : stage.color) :
+                  isPast ? 'text-emerald-400' : 'text-zinc-600'
+                )}>
+                  {isActive && isOverdue ? 'Overdue' : stage.label}
+                </span>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function InvoiceDetailPage() {
   const { t, formatDate } = useTranslation();
@@ -40,9 +113,12 @@ export default function InvoiceDetailPage() {
   const invoiceId = params.id as string;
 
   const { invoice, loading } = useInvoice(invoiceId);
-  const { sendInvoice, createInvoice, deleteInvoice } = useInvoices();
+  const { sendInvoice, createInvoice, deleteInvoice, applyLateFee, createCreditMemo } = useInvoices();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showCreditMemoModal, setShowCreditMemoModal] = useState(false);
+  const [showLateFeeModal, setShowLateFeeModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   if (loading) {
@@ -261,6 +337,13 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Status Pipeline */}
+      <Card>
+        <CardContent className="p-4">
+          <InvoicePipeline status={invoice.status} />
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
@@ -538,6 +621,107 @@ export default function InvoiceDetailPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Late Fee */}
+          {isOverdue && !isPaid && (
+            <Card className="border-red-300 dark:border-red-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base text-red-400 flex items-center gap-2">
+                  <AlertCircle size={16} />
+                  Late Fee
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {invoice.lateFeePerDay != null && invoice.lateFeePerDay > 0 ? (
+                  <>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted">Fee rate</span>
+                      <span className="text-main">{formatCurrency(invoice.lateFeePerDay)}/day</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted">Days overdue</span>
+                      <span className="text-red-400 font-medium">
+                        {Math.floor((new Date().getTime() - new Date(invoice.dueDate).getTime()) / 86400000)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm font-medium">
+                      <span className="text-muted">Accrued fee</span>
+                      <span className="text-red-400">
+                        {formatCurrency(
+                          invoice.lateFeePerDay * Math.floor((new Date().getTime() - new Date(invoice.dueDate).getTime()) / 86400000)
+                        )}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted">No late fee configured</p>
+                )}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full text-red-400 border-red-500/20 hover:bg-red-500/10"
+                  onClick={() => setShowLateFeeModal(true)}
+                >
+                  Apply Late Fee
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Progress Invoicing */}
+          {invoice.total > 0 && invoice.amountPaid > 0 && invoice.amountDue > 0 && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Percent size={16} className="text-muted" />
+                  Progress Billing
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    style={{ width: `${Math.min(100, (invoice.amountPaid / invoice.total) * 100)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-muted">
+                  <span>{Math.round((invoice.amountPaid / invoice.total) * 100)}% collected</span>
+                  <span>{formatCurrency(invoice.amountDue)} remaining</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Quick Actions */}
+          {!isPaid && invoice.status !== 'void' && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full justify-start"
+                  onClick={() => setShowCreditMemoModal(true)}
+                >
+                  <FileText size={14} className="mr-2" />
+                  Issue Credit Memo
+                </Button>
+                {(invoice.status === 'sent' || invoice.status === 'overdue' || invoice.status === 'partial') && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => setShowPaymentModal(true)}
+                  >
+                    <CreditCard size={14} className="mr-2" />
+                    Record Partial Payment
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
@@ -546,6 +730,24 @@ export default function InvoiceDetailPage() {
         <RecordPaymentModal
           invoice={invoice}
           onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+
+      {/* Late Fee Modal */}
+      {showLateFeeModal && (
+        <LateFeeModal
+          invoice={invoice}
+          onApply={applyLateFee}
+          onClose={() => setShowLateFeeModal(false)}
+        />
+      )}
+
+      {/* Credit Memo Modal */}
+      {showCreditMemoModal && (
+        <CreditMemoModal
+          invoice={invoice}
+          onCreateMemo={createCreditMemo}
+          onClose={() => setShowCreditMemoModal(false)}
         />
       )}
     </div>
@@ -632,6 +834,217 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
                 </Button>
                 <Button type="submit" className="flex-1">
                   Record Payment
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}
+
+function LateFeeModal({ invoice, onApply, onClose }: {
+  invoice: Invoice;
+  onApply: (id: string, amount: number, description?: string) => Promise<void>;
+  onClose: () => void;
+}) {
+  const daysOverdue = Math.max(0, Math.floor((new Date().getTime() - new Date(invoice.dueDate).getTime()) / 86400000));
+  const defaultRate = invoice.lateFeePerDay || 0;
+  const [feeType, setFeeType] = useState<'flat' | 'daily' | 'percent'>('flat');
+  const [feeValue, setFeeValue] = useState(defaultRate > 0 ? (defaultRate * daysOverdue).toString() : '25');
+  const [saving, setSaving] = useState(false);
+
+  const calculatedFee = (() => {
+    const val = parseFloat(feeValue) || 0;
+    if (feeType === 'flat') return val;
+    if (feeType === 'daily') return val * daysOverdue;
+    if (feeType === 'percent') return (val / 100) * invoice.amountDue;
+    return 0;
+  })();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (calculatedFee <= 0) return;
+    setSaving(true);
+    try {
+      const desc = feeType === 'daily'
+        ? `Late fee: $${parseFloat(feeValue).toFixed(2)}/day x ${daysOverdue} days`
+        : feeType === 'percent'
+        ? `Late fee: ${feeValue}% of balance`
+        : `Late fee`;
+      await onApply(invoice.id, calculatedFee, desc);
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to apply late fee');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
+        <Card>
+          <CardHeader>
+            <CardTitle>Apply Late Fee</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="text-sm text-muted">
+                This invoice is <span className="text-red-400 font-medium">{daysOverdue} days</span> overdue.
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Fee Type</label>
+                <select
+                  value={feeType}
+                  onChange={(e) => setFeeType(e.target.value as 'flat' | 'daily' | 'percent')}
+                  className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                >
+                  <option value="flat">Flat Amount</option>
+                  <option value="daily">Per Day</option>
+                  <option value="percent">% of Balance</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">
+                  {feeType === 'flat' ? 'Fee Amount' : feeType === 'daily' ? 'Daily Rate' : 'Percentage'}
+                </label>
+                <div className="relative">
+                  {feeType !== 'percent' && <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />}
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={feeValue}
+                    onChange={(e) => setFeeValue(e.target.value)}
+                    className={cn(
+                      "w-full pr-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50",
+                      feeType !== 'percent' ? 'pl-10' : 'pl-4'
+                    )}
+                  />
+                  {feeType === 'percent' && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted">%</span>}
+                </div>
+              </div>
+
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <div className="flex justify-between text-sm font-medium">
+                  <span className="text-muted">Late fee to add</span>
+                  <span className="text-red-400">{formatCurrency(calculatedFee)}</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted mt-1">
+                  <span>New total</span>
+                  <span>{formatCurrency(invoice.total + calculatedFee)}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+                <Button type="submit" className="flex-1 bg-red-600 hover:bg-red-500" disabled={saving || calculatedFee <= 0}>
+                  {saving ? 'Applying...' : 'Apply Late Fee'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}
+
+function CreditMemoModal({ invoice, onCreateMemo, onClose }: {
+  invoice: Invoice;
+  onCreateMemo: (invoiceId: string, amount: number, reason: string) => Promise<string | null>;
+  onClose: () => void;
+}) {
+  const [amount, setAmount] = useState('');
+  const [reason, setReason] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const creditAmount = parseFloat(amount);
+    if (isNaN(creditAmount) || creditAmount <= 0 || !reason.trim()) return;
+    if (creditAmount > invoice.amountDue) {
+      alert('Credit amount cannot exceed amount due');
+      return;
+    }
+    setSaving(true);
+    try {
+      await onCreateMemo(invoice.id, creditAmount, reason.trim());
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to create credit memo');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
+        <Card>
+          <CardHeader>
+            <CardTitle>Issue Credit Memo</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-sm text-muted">
+                Issue a credit against invoice <span className="font-mono text-main">{invoice.invoiceNumber}</span>.
+                Current balance: <span className="font-medium text-main">{formatCurrency(invoice.amountDue)}</span>
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Credit Amount</label>
+                <div className="relative">
+                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max={invoice.amountDue}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full pl-10 pr-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Reason</label>
+                <input
+                  type="text"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="e.g. Warranty work, disputed item, goodwill adjustment"
+                  className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+
+              {parseFloat(amount) > 0 && (
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                  <div className="flex justify-between text-sm font-medium">
+                    <span className="text-muted">Credit to apply</span>
+                    <span className="text-emerald-400">-{formatCurrency(parseFloat(amount))}</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted mt-1">
+                    <span>New balance due</span>
+                    <span>{formatCurrency(Math.max(0, invoice.amountDue - parseFloat(amount)))}</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={saving || !amount || !reason.trim()}>
+                  {saving ? 'Creating...' : 'Issue Credit Memo'}
                 </Button>
               </div>
             </form>
