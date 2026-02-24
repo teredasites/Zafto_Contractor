@@ -165,6 +165,7 @@ export function useEquipmentDeployments(jobId: string | null) {
           .from('restoration_equipment')
           .select('*')
           .eq('job_id', jobId)
+          .is('deleted_at', null)
           .order('deployed_at', { ascending: false }),
         supabase
           .from('equipment_calculations')

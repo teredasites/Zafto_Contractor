@@ -83,6 +83,7 @@ export function useSchedulePortfolio() {
         .from('schedule_projects')
         .select('id, name, status, planned_start, planned_finish')
         .neq('status', 'archived')
+        .is('deleted_at', null)
         .order('name');
 
       if (projErr) throw projErr;
@@ -194,7 +195,8 @@ export function useSchedulePortfolio() {
 
       const { data: resourcesRaw } = await supabase
         .from('schedule_resources')
-        .select('id, name, resource_type, max_units');
+        .select('id, name, resource_type, max_units')
+        .is('deleted_at', null);
 
       const assignments = (assignmentsRaw || []) as unknown as AssignRow[];
       const resources = (resourcesRaw || []) as unknown as ResourceRow[];

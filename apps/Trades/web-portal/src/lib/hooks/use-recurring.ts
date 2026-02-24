@@ -346,6 +346,7 @@ export function useRecurring() {
         .from('expense_records')
         .select('id, created_at, total, description')
         .ilike('notes', `%${searchNote}%`)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       for (const row of (expenses || []) as { id: string; created_at: string; total: number; description: string }[]) {

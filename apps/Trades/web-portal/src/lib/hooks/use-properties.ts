@@ -244,6 +244,7 @@ export function useProperty(id: string | undefined) {
           .from('properties')
           .select('*')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

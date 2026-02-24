@@ -233,6 +233,7 @@ export function useByocPhone() {
       .from('company_phone_numbers')
       .select('verification_code')
       .eq('id', numberId)
+      .is('deleted_at', null)
       .single();
 
     if (data?.verification_code !== code) return false;

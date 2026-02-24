@@ -87,7 +87,8 @@ export function useTimeClock(weekStart: Date) {
         const { data: jobs } = await supabase
           .from('jobs')
           .select('id, name')
-          .in('id', jobIds);
+          .in('id', jobIds)
+          .is('deleted_at', null);
 
         for (const j of jobs || []) {
           jobMap.set(j.id, j.name);

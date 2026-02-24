@@ -136,6 +136,7 @@ export function useZThread(threadId: string | null) {
           .from('z_threads')
           .select('*')
           .eq('id', threadId)
+          .is('deleted_at', null)
           .single();
 
         if (err) throw err;

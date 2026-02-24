@@ -18,6 +18,7 @@ export function useBids() {
       const { data, error: err } = await supabase
         .from('bids')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (err) throw err;
@@ -59,6 +60,7 @@ export function useBids() {
     const { count } = await supabase
       .from('bids')
       .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null)
       .ilike('bid_number', `BID-${dateStr}-%`);
 
     const seq = String((count || 0) + 1).padStart(3, '0');
@@ -175,7 +177,7 @@ export function useBids() {
     if (!companyId) throw new Error('No company associated');
 
     // Fetch bid data
-    const { data: bid, error: fetchErr } = await supabase.from('bids').select('*').eq('id', bidId).single();
+    const { data: bid, error: fetchErr } = await supabase.from('bids').select('*').eq('id', bidId).is('deleted_at', null).single();
     if (fetchErr) throw fetchErr;
 
     // Create job from bid
@@ -269,7 +271,8 @@ export function useBids() {
     const { count } = await supabase
       .from('bids')
       .select('id', { count: 'exact', head: true })
-      .eq('company_id', companyId);
+      .eq('company_id', companyId)
+      .is('deleted_at', null);
     const seq = String((count || 0) + 1).padStart(3, '0');
     const bidNumber = `BID-${dateStr}-${seq}`;
 
@@ -354,6 +357,7 @@ export function useBids() {
       .from('bid_templates')
       .select('*')
       .eq('id', templateId)
+      .is('deleted_at', null)
       .single();
     if (tErr || !template) throw new Error('Template not found');
 
@@ -361,6 +365,7 @@ export function useBids() {
     const { count } = await supabase
       .from('bids')
       .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null)
       .ilike('bid_number', `BID-${dateStr}-%`);
     const seq = String((count || 0) + 1).padStart(3, '0');
 

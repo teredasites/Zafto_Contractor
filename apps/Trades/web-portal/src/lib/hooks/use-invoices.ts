@@ -208,8 +208,8 @@ export function useInvoices() {
 
     // Fetch estimate + line items
     const [estRes, linesRes] = await Promise.all([
-      supabase.from('estimates').select('*').eq('id', estimateId).single(),
-      supabase.from('estimate_line_items').select('*').eq('estimate_id', estimateId).order('sort_order'),
+      supabase.from('estimates').select('*').eq('id', estimateId).is('deleted_at', null).single(),
+      supabase.from('estimate_line_items').select('*').eq('estimate_id', estimateId).is('deleted_at', null).order('sort_order'),
     ]);
     if (estRes.error || !estRes.data) throw new Error('Estimate not found');
     const est = estRes.data;
@@ -388,6 +388,7 @@ export function useInvoices() {
       .from('jobs')
       .select('*, customers(name, email, phone)')
       .eq('id', jobId)
+      .is('deleted_at', null)
       .single();
     if (jobErr || !job) throw new Error('Job not found');
 

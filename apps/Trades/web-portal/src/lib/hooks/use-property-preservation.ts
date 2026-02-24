@@ -866,6 +866,7 @@ export function usePpPricing(stateCode?: string) {
         .from('pp_pricing_matrices')
         .select()
         .eq('state_code', stateCode)
+        .is('deleted_at', null)
         .order('work_order_type');
       if (err) throw err;
       setPricing(mapRows<PpPricingMatrix>(data ?? []));

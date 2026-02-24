@@ -335,6 +335,7 @@ export function useEstimates() {
         .from('estimates')
         .select('estimate_number')
         .eq('company_id', profile.company_id)
+        .is('deleted_at', null)
         .like('estimate_number', `EST-${today}-%`)
         .order('estimate_number', { ascending: false })
         .limit(1)
@@ -410,6 +411,7 @@ export function useEstimates() {
       .from('walkthroughs')
       .select('*')
       .eq('id', walkthroughId)
+      .is('deleted_at', null)
       .single();
     if (wtErr || !wt) throw new Error('Walkthrough not found');
 
@@ -506,9 +508,9 @@ export function useEstimate(estimateId: string | null) {
     try {
       const supabase = getSupabase();
       const [estRes, areasRes, linesRes] = await Promise.all([
-        supabase.from('estimates').select('*').eq('id', estimateId).single(),
-        supabase.from('estimate_areas').select('*').eq('estimate_id', estimateId).order('sort_order'),
-        supabase.from('estimate_line_items').select('*').eq('estimate_id', estimateId).order('sort_order'),
+        supabase.from('estimates').select('*').eq('id', estimateId).is('deleted_at', null).single(),
+        supabase.from('estimate_areas').select('*').eq('estimate_id', estimateId).is('deleted_at', null).order('sort_order'),
+        supabase.from('estimate_line_items').select('*').eq('estimate_id', estimateId).is('deleted_at', null).order('sort_order'),
       ]);
 
       if (estRes.error) throw estRes.error;

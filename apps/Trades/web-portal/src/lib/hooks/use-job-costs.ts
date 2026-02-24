@@ -155,7 +155,8 @@ export function useJobCosts() {
       const { data: jobsData, error: jobsErr } = await supabase
         .from('jobs')
         .select('id, title, customer_name, status, estimated_amount, actual_amount, tags, trade_type, created_at, completed_at')
-        .not('status', 'in', '("completed","invoiced","cancelled")');
+        .not('status', 'in', '("completed","invoiced","cancelled")')
+        .is('deleted_at', null);
 
       if (jobsErr) throw jobsErr;
       const activeJobs: Record<string, unknown>[] = jobsData || [];
@@ -172,6 +173,7 @@ export function useJobCosts() {
         .select('id, title, customer_name, status, estimated_amount, actual_amount, tags, trade_type, created_at, completed_at')
         .in('status', ['completed', 'invoiced'])
         .gte('completed_at', sixMonthsAgo.toISOString())
+        .is('deleted_at', null)
         .order('completed_at', { ascending: false });
 
       if (completedJobsErr) throw completedJobsErr;
@@ -188,13 +190,13 @@ export function useJobCosts() {
           ? supabase.from('job_materials').select('job_id, name, category, total_cost').in('job_id', allJobIds).is('deleted_at', null)
           : Promise.resolve({ data: [], error: null }),
         allJobIds.length > 0
-          ? supabase.from('expense_records').select('job_id, amount, category, expense_date').in('job_id', allJobIds).neq('status', 'voided')
+          ? supabase.from('expense_records').select('job_id, amount, category, expense_date').in('job_id', allJobIds).neq('status', 'voided').is('deleted_at', null)
           : Promise.resolve({ data: [], error: null }),
         allJobIds.length > 0
           ? supabase.from('change_orders').select('job_id, amount, status').in('job_id', allJobIds)
           : Promise.resolve({ data: [], error: null }),
         // Overhead: company-level expenses (no job_id) from last 6 months
-        supabase.from('expense_records').select('amount, category, expense_date').is('job_id', null).neq('status', 'voided').gte('expense_date', sixMonthsAgo.toISOString().split('T')[0]),
+        supabase.from('expense_records').select('amount, category, expense_date').is('job_id', null).neq('status', 'voided').is('deleted_at', null).gte('expense_date', sixMonthsAgo.toISOString().split('T')[0]),
         // Crew performance log for line item accuracy
         supabase.from('crew_performance_log').select('task_name, trade, estimated_hours, actual_hours, crew_size, job_id'),
       ]);

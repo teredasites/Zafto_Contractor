@@ -19,6 +19,7 @@ export function useInspections() {
         .from('compliance_records')
         .select('*, jobs(title, customer_name, address, city, state)')
         .eq('record_type', 'inspection')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (err) throw err;

@@ -142,6 +142,7 @@ export function useFloorPlan(planId: string | null) {
         .from('floor_plan_layers')
         .select('*')
         .eq('floor_plan_id', planId)
+        .is('deleted_at', null)
         .order('layer_order');
 
       if (layerData) {

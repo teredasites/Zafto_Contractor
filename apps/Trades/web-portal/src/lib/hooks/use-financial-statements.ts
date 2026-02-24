@@ -279,6 +279,7 @@ export function useFinancialStatements() {
     const { data, error } = await supabase
       .from('expense_records')
       .select('id, description, total, expense_date, status, vendors(vendor_name)')
+      .is('deleted_at', null)
       .in('status', ['draft', 'approved']);
 
     if (error || !data) return [];

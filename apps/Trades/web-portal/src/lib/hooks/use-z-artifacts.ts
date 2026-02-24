@@ -150,6 +150,7 @@ export function useZArtifact(artifactId: string | null) {
           .from('z_artifacts')
           .select('*')
           .eq('id', artifactId)
+          .is('deleted_at', null)
           .single();
 
         if (err) throw err;

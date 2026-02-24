@@ -488,6 +488,7 @@ export function useConstructionAccounting() {
       const { data: jobsData, error: jobsErr } = await supabase
         .from('jobs')
         .select('id, title, customer_name, status')
+        .is('deleted_at', null)
         .not('status', 'in', '("completed","invoiced","cancelled","paid")');
 
       if (jobsErr) throw jobsErr;
@@ -502,8 +503,8 @@ export function useConstructionAccounting() {
 
       // Parallel queries for costs and billings
       const [materialsRes, expensesRes, timeRes, billingsRes] = await Promise.all([
-        supabase.from('job_materials').select('job_id, total_cost').in('job_id', jobIds),
-        supabase.from('expense_records').select('job_id, total').in('job_id', jobIds),
+        supabase.from('job_materials').select('job_id, total_cost').in('job_id', jobIds).is('deleted_at', null),
+        supabase.from('expense_records').select('job_id, total').in('job_id', jobIds).is('deleted_at', null),
         supabase.from('time_entries').select('job_id, hours, hourly_rate').in('job_id', jobIds),
         supabase.from('progress_billings').select('job_id, total_completed_to_date, status').in('job_id', jobIds),
       ]);

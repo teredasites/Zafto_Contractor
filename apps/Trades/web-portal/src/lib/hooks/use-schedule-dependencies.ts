@@ -23,6 +23,7 @@ export function useScheduleDependencies(projectId: string | undefined) {
         .from('schedule_dependencies')
         .select('*')
         .eq('project_id', projectId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: true });
 
       if (err) throw err;

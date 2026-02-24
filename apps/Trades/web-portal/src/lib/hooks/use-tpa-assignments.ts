@@ -300,6 +300,7 @@ export async function createTpaAssignment(input: {
     .from('tpa_programs')
     .select('sla_first_contact_minutes, sla_onsite_minutes, sla_estimate_minutes, sla_completion_days, referral_fee_type, referral_fee_pct, referral_fee_flat')
     .eq('id', input.tpaProgramId)
+    .is('deleted_at', null)
     .single();
 
   const now = new Date();

@@ -127,6 +127,7 @@ export function useLeases() {
       .from('leases')
       .select('property_id, unit_id, tenant_id, company_id')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     const { error: err } = await supabase
@@ -193,6 +194,7 @@ export function useLeases() {
       .from('leases')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (fetchErr) throw fetchErr;
@@ -334,6 +336,7 @@ export function useLease(id: string | undefined) {
           .from('leases')
           .select('*, properties(address_line1), units(unit_number), tenants(first_name, last_name)')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

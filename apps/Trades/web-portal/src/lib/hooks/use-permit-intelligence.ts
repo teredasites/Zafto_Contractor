@@ -122,6 +122,7 @@ export function useJurisdictions(stateCode?: string) {
     try {
       let query = supabase.from('permit_jurisdictions').select('*');
       if (stateCode) query = query.eq('state_code', stateCode);
+      query = query.is('deleted_at', null);
       const { data, error: err } = await query.order('jurisdiction_name');
       if (err) throw err;
       setJurisdictions(data || []);
@@ -172,6 +173,7 @@ export function useJobPermitRecords(jobId?: string) {
     try {
       let query = supabase.from('job_permits').select('*');
       if (jobId) query = query.eq('job_id', jobId);
+      query = query.is('deleted_at', null);
       const { data, error: err } = await query.order('created_at', { ascending: false });
       if (err) throw err;
       setPermits(data || []);
@@ -272,6 +274,7 @@ export function usePermitInspections(jobPermitId: string) {
         .from('permit_inspections')
         .select('*')
         .eq('job_permit_id', jobPermitId)
+        .is('deleted_at', null)
         .order('scheduled_date');
       if (err) throw err;
       setInspections(data || []);

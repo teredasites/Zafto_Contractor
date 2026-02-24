@@ -360,6 +360,7 @@ export function useSupplierDirectory(trade?: string) {
       let query = supabase
         .from('supplier_directory')
         .select('*')
+        .is('deleted_at', null)
         .order('name');
 
       if (trade) {
@@ -390,6 +391,7 @@ export function useSupplierDirectory(trade?: string) {
       const { data, error: err } = await supabase
         .from('supplier_directory')
         .select('*')
+        .is('deleted_at', null)
         .or(`name.ilike.%${query}%,name_normalized.ilike.%${query}%`)
         .order('receipt_count', { ascending: false })
         .limit(20);

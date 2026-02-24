@@ -243,6 +243,7 @@ export async function createInvoiceJournal(invoiceId: string): Promise<string | 
         .from('jobs')
         .select('job_type')
         .eq('id', inv.job_id)
+        .is('deleted_at', null)
         .single();
       if (job?.job_type) {
         revenueAccountNumber = REVENUE_ACCOUNT_MAP[job.job_type] || '4000';
@@ -364,6 +365,7 @@ export async function createExpenseJournal(expenseId: string): Promise<string | 
       .from('expense_records')
       .select('id, description, total, category, payment_method, job_id, account_id')
       .eq('id', expenseId)
+      .is('deleted_at', null)
       .single();
 
     if (!exp || Number(exp.total) <= 0) return null;
@@ -446,6 +448,7 @@ export async function createVendorPaymentJournal(paymentId: string): Promise<str
       .from('vendors')
       .select('vendor_name')
       .eq('id', pmt.vendor_id)
+      .is('deleted_at', null)
       .single();
 
     const vendorName = vendor?.vendor_name || 'Unknown vendor';
