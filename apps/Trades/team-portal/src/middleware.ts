@@ -52,6 +52,11 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Kiosk routes: /kiosk/* — public, no auth required (token-based device auth)
+  if (request.nextUrl.pathname.startsWith('/kiosk')) {
+    return supabaseResponse;
+  }
+
   // Protected routes: /dashboard/*
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (!user) {
