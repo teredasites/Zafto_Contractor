@@ -17,7 +17,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         </p>
         <button
           onClick={reset}
-          className="mt-4 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-4 rounded-md bg-surface px-4 py-2 text-sm font-medium text-main hover:bg-surface-hover"
         >
           Try again
         </button>

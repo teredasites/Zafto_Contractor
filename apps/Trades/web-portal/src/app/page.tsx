@@ -501,7 +501,7 @@ export default function LoginPage() {
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-3.5 h-3.5 rounded border-zinc-600 accent-emerald-500"
+                        className="w-3.5 h-3.5 rounded border-muted accent-emerald-500"
                       />
                       <span className="text-xs text-muted">Keep me signed in</span>
                     </label>
