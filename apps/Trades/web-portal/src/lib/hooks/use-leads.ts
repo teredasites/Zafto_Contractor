@@ -18,6 +18,7 @@ export function useLeads() {
       const { data, error: err } = await supabase
         .from('leads')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (err) throw err;

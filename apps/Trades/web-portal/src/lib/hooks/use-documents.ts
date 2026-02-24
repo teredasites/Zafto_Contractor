@@ -209,11 +209,13 @@ export function useDocuments() {
         supabase
           .from('document_folders')
           .select('*')
+          .is('deleted_at', null)
           .order('sort_order', { ascending: true }),
         supabase
           .from('document_templates')
           .select('*')
           .eq('is_active', true)
+          .is('deleted_at', null)
           .order('name'),
       ]);
 

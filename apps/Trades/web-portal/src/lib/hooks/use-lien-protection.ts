@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 export interface LienRule {
   id: string;
   state_code: string;
@@ -84,6 +82,7 @@ export interface LienSummary {
 }
 
 export function useLienProtection() {
+  const supabase = getSupabase();
   const [liens, setLiens] = useState<LienRecord[]>([]);
   const [rules, setRules] = useState<LienRule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -170,6 +169,7 @@ export function useLienProtection() {
 
 // ── State Rules Hook (read-only) ────────────────────────
 export function useLienRules() {
+  const supabase = getSupabase();
   const [rules, setRules] = useState<LienRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

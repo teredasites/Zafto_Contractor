@@ -87,9 +87,8 @@ function mapTpaProgram(row: Record<string, unknown>): TpaProgramData {
 
 // ==================== PROGRAMS LIST ====================
 
-const supabase = getSupabase();
-
 export function useTpaPrograms() {
+  const supabase = getSupabase();
   const [programs, setPrograms] = useState<TpaProgramData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -132,6 +131,7 @@ export function useTpaPrograms() {
 // ==================== SINGLE PROGRAM ====================
 
 export function useTpaProgram(programId: string | null) {
+  const supabase = getSupabase();
   const [program, setProgram] = useState<TpaProgramData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -177,6 +177,7 @@ export function useTpaProgram(programId: string | null) {
 // ==================== COMPANY FEATURES ====================
 
 export function useCompanyFeatures() {
+  const supabase = getSupabase();
   const [features, setFeatures] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
 
@@ -242,6 +243,7 @@ export async function createTpaProgram(input: {
   lossTypesCovered?: string[];
   notes?: string;
 }): Promise<string> {
+  const supabase = getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const companyId = user.app_metadata?.company_id;
@@ -315,6 +317,7 @@ export async function updateTpaProgram(programId: string, updates: {
   notes?: string | null;
   status?: TpaProgramStatus;
 }): Promise<void> {
+  const supabase = getSupabase();
   const updateData: Record<string, unknown> = {};
 
   if (updates.name !== undefined) updateData.name = updates.name;
@@ -349,6 +352,7 @@ export async function updateTpaProgram(programId: string, updates: {
 }
 
 export async function deleteTpaProgram(programId: string): Promise<void> {
+  const supabase = getSupabase();
   const { error } = await supabase
     .from('tpa_programs')
     .update({ deleted_at: new Date().toISOString() })
@@ -359,6 +363,7 @@ export async function deleteTpaProgram(programId: string): Promise<void> {
 // ==================== FEATURE FLAG TOGGLE ====================
 
 export async function toggleTpaFeature(enabled: boolean): Promise<void> {
+  const supabase = getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const companyId = user.app_metadata?.company_id;

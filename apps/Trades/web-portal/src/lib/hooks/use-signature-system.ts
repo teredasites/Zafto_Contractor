@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 // ── Types ──
 
 type SigningMode = 'sequential' | 'parallel' | 'any_one';
@@ -133,6 +131,7 @@ function mapRequest(row: Record<string, unknown>): SignatureRequest {
 // ── Hook: Signing Workflows ──
 
 export function useSigningWorkflows(opts?: { status?: WorkflowStatus }) {
+  const supabase = getSupabase();
   const [workflows, setWorkflows] = useState<SigningWorkflow[]>([]);
   const [summary, setSummary] = useState<SignatureSummary>({
     totalWorkflows: 0, activeWorkflows: 0, pendingSignatures: 0,
@@ -320,6 +319,7 @@ export function useSigningWorkflows(opts?: { status?: WorkflowStatus }) {
 // ── Hook: Signature Requests for a workflow ──
 
 export function useSignatureRequests(workflowId: string | null) {
+  const supabase = getSupabase();
   const [requests, setRequests] = useState<SignatureRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -384,6 +384,7 @@ export function useSignatureRequests(workflowId: string | null) {
 // ── Hook: Signature Audit Trail ──
 
 export function useSignatureAudit(opts: { renderId?: string; signatureRequestId?: string }) {
+  const supabase = getSupabase();
   const [events, setEvents] = useState<SignatureAuditEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -437,6 +438,7 @@ export function useProjectSignatures(opts: {
   invoiceId?: string;
   documentId?: string;
 }) {
+  const supabase = getSupabase();
   const [signatures, setSignatures] = useState<Array<{
     id: string;
     signerName: string;

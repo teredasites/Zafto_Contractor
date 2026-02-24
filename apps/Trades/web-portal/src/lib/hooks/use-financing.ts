@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 // ── Types ──
 
 export type ApplicationStatus = 'offered' | 'applied' | 'approved' | 'denied' | 'funded' | 'expired' | 'cancelled';
@@ -105,6 +103,7 @@ function mapProvider(row: Record<string, unknown>): FinancingProvider {
 // ── Main Hook ──
 
 export function useFinancing() {
+  const supabase = getSupabase();
   const [applications, setApplications] = useState<FinancingApplication[]>([]);
   const [providers, setProviders] = useState<FinancingProvider[]>([]);
   const [loading, setLoading] = useState(true);

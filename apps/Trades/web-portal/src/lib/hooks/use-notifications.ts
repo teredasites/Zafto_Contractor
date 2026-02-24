@@ -78,6 +78,7 @@ export function useNotifications() {
       .from('notifications')
       .select('*')
       .eq('user_id', user.id)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -218,6 +219,7 @@ export function useNotificationLog() {
       const { data, error: err } = await supabase
         .from('notification_log')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(100);
 

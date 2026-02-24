@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 export interface CECreditLog {
   id: string;
   company_id: string;
@@ -65,6 +63,7 @@ export interface RenewalSummary {
 }
 
 export function useCECredits(userId?: string) {
+  const supabase = getSupabase();
   const [credits, setCredits] = useState<CECreditLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,6 +145,7 @@ export function useCECredits(userId?: string) {
 }
 
 export function useLicenseRenewals(userId?: string) {
+  const supabase = getSupabase();
   const [renewals, setRenewals] = useState<LicenseRenewal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

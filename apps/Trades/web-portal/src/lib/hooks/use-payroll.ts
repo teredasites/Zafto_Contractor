@@ -166,6 +166,7 @@ export function usePayroll() {
       const { data, error: err } = await supabase
         .from('pay_periods')
         .select('*')
+        .is('deleted_at', null)
         .order('pay_date', { ascending: false });
 
       if (err) throw err;
@@ -202,6 +203,7 @@ export function usePayroll() {
       .from('pay_stubs')
       .select('*')
       .eq('pay_period_id', periodId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
     if (err) throw err;

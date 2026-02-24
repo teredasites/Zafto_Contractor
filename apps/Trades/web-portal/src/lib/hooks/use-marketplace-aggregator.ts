@@ -498,6 +498,10 @@ export function useSavedAggregatorListings(savedType?: string) {
     await fetch();
   }, [fetch]);
 
+  // Physical delete is acceptable here: marketplace_saved_listings is a
+  // bookmark/junction table with UNIQUE(user_id, listing_id) and no deleted_at
+  // column. Unsaving is semantically a removal, not archival. Soft delete would
+  // break the unique constraint if the user re-saves the same listing.
   const unsaveListing = useCallback(async (savedId: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase

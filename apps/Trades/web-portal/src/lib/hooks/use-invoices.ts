@@ -315,6 +315,7 @@ export function useInvoices() {
       .from('invoices')
       .select('*')
       .eq('id', originalInvoiceId)
+      .is('deleted_at', null)
       .single();
     if (origErr || !orig) throw new Error('Original invoice not found');
 
@@ -596,6 +597,7 @@ export function useInvoices() {
       .from('invoices')
       .select('*')
       .eq('id', templateId)
+      .is('deleted_at', null)
       .single();
     if (tplErr || !template) throw new Error('Template not found');
 
@@ -726,7 +728,7 @@ export function useInvoice(id: string | undefined) {
         setLoading(true);
         setError(null);
         const supabase = getSupabase();
-        const { data, error: err } = await supabase.from('invoices').select('*').eq('id', id).single();
+        const { data, error: err } = await supabase.from('invoices').select('*').eq('id', id).is('deleted_at', null).single();
 
         if (ignore) return;
         if (err) throw err;
