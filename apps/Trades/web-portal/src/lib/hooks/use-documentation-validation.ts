@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -166,7 +166,7 @@ export function useDocumentationValidation(jobId: string | null, jobType?: strin
     try {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       // Get template for job type
       const mappedType = mapJobType(jobType || 'general_restoration');
@@ -221,7 +221,7 @@ export function useDocumentationValidation(jobId: string | null, jobType?: strin
   useEffect(() => {
     fetch();
     if (!jobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`doc-validation-${jobId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'job_doc_progress', filter: `job_id=eq.${jobId}` }, () => { fetch(); })
@@ -278,7 +278,7 @@ export function useDocumentationValidation(jobId: string | null, jobType?: strin
 
   const markComplete = async (checklistItemId: string, evidencePaths?: string[], photoPhase?: string): Promise<void> => {
     if (!jobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
     const companyId = user.app_metadata?.company_id;
@@ -317,7 +317,7 @@ export function useDocumentationValidation(jobId: string | null, jobType?: strin
   const markIncomplete = async (checklistItemId: string): Promise<void> => {
     const existing = progress.find(p => p.checklistItemId === checklistItemId);
     if (!existing) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     await supabase
       .from('job_doc_progress')
       .update({ is_complete: false, completed_at: null })

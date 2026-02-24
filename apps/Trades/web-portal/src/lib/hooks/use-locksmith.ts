@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export interface LocksmithServiceLog {
   id: string;
@@ -51,7 +51,7 @@ export const LOCK_TYPE_LABELS: Record<string, string> = {
 };
 
 export function useLocksmithLogs() {
-  const supabase = createClient();
+  const supabase = getSupabase();
   const [logs, setLogs] = useState<LocksmithServiceLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

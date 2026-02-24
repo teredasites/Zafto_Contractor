@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 import { mapInsuranceClaim, mapClaimSupplement, mapTpiInspection, mapMoistureReading, mapDryingLog, mapRestorationEquipment } from './mappers';
 import type { InsuranceClaimData, ClaimSupplementData, TpiInspectionData, MoistureReadingData, DryingLogData, RestorationEquipmentData, ClaimStatus, ClaimCategory, LossType, SupplementReason, SupplementStatus } from '@/types';
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 // ==================== CLAIMS LIST ====================
 

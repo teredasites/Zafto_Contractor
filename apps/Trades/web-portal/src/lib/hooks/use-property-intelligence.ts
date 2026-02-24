@@ -5,7 +5,7 @@
 // from new recon-property-intelligence EF data.
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -223,7 +223,7 @@ export function usePropertyIntelligence(scanId: string) {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       // Fetch in parallel
       const [profileRes, weatherRes, permitsRes] = await Promise.all([
@@ -247,7 +247,7 @@ export function usePropertyIntelligence(scanId: string) {
   // Trigger intelligence gathering
   const triggerIntelligence = useCallback(async () => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 

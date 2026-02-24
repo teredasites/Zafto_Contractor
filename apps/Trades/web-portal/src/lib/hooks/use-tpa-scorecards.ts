@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -99,7 +99,7 @@ export function useTpaScorecards(programId?: string) {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       let query = supabase
         .from('tpa_scorecards')
         .select('*')
@@ -127,7 +127,7 @@ export function useTpaScorecards(programId?: string) {
   // Create scorecard
   const createScorecard = useCallback(async (input: CreateScorecardInput) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       // Calculate overall if not provided
       const scores = [
@@ -176,7 +176,7 @@ export function useTpaScorecards(programId?: string) {
   // Update scorecard
   const updateScorecard = useCallback(async (id: string, input: Partial<CreateScorecardInput>) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const updateData: Record<string, unknown> = {};
       if (input.responseTimeScore !== undefined) updateData.response_time_score = input.responseTimeScore;
       if (input.cycleTimeScore !== undefined) updateData.cycle_time_score = input.cycleTimeScore;
@@ -227,7 +227,7 @@ export function useTpaScorecards(programId?: string) {
   // Delete scorecard
   const deleteScorecard = useCallback(async (id: string) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { error: err } = await supabase
         .from('tpa_scorecards')
         .update({ deleted_at: new Date().toISOString() })

@@ -4,9 +4,9 @@
 // Tracks CE hours by user/certification, renewal deadlines, credit progress.
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '../supabase';
+import { getSupabase } from '@/lib/supabase';
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 export interface CECreditLog {
   id: string;

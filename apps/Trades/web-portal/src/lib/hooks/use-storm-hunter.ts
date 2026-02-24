@@ -5,7 +5,7 @@
 // for storm contractors. All from free NWS/NOAA/FEMA APIs.
 
 import { useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -82,7 +82,7 @@ export function useStormHunter() {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 

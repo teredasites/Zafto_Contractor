@@ -4,9 +4,9 @@
 // Real-time subscription on lien_tracking.
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '../supabase';
+import { getSupabase } from '@/lib/supabase';
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 export interface LienRule {
   id: string;

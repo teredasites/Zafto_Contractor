@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ── Types ──
 
@@ -86,7 +86,7 @@ export const TREATMENT_TYPE_LABELS: Record<TreatmentMethodType, string> = {
 // ── Hooks ──
 
 export function useTreatmentLogs() {
-  const supabase = createClient();
+  const supabase = getSupabase();
   const [logs, setLogs] = useState<TreatmentLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +128,7 @@ export function useTreatmentLogs() {
 }
 
 export function useBaitStations(propertyId?: string) {
-  const supabase = createClient();
+  const supabase = getSupabase();
   const [stations, setStations] = useState<BaitStation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -173,7 +173,7 @@ export function useBaitStations(propertyId?: string) {
 }
 
 export function useWdiReports() {
-  const supabase = createClient();
+  const supabase = getSupabase();
   const [reports, setReports] = useState<WdiReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

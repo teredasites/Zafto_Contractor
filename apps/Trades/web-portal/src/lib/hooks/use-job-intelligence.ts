@@ -4,9 +4,9 @@
 // Real-time subscription on job_cost_autopsies + estimate_adjustments.
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '../supabase';
+import { getSupabase } from '@/lib/supabase';
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 export interface JobCostAutopsy {
   id: string;
