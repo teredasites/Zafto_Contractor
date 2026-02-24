@@ -155,6 +155,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Compliance Packets', href: '/dashboard/compliance/packets', icon: Package },
       { name: 'Lien Protection', href: '/dashboard/lien-protection', icon: Scale },
       { name: 'Maintenance Pipeline', href: '/dashboard/maintenance-pipeline', icon: Wrench },
+      { name: 'Property Preservation', href: '/dashboard/property-preservation', icon: Home },
     ],
   },
   {
