@@ -28,6 +28,7 @@ import {
   CheckCircle,
   Users,
   User,
+  Library,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,7 @@ import {
   ZDOCS_ENTITY_TYPE_LABELS,
 } from '@/lib/hooks/use-zdocs';
 import { useTranslation } from '@/lib/translations';
+import { PREBUILT_TEMPLATES, PREBUILT_CATEGORIES, type PrebuiltTemplate } from '@/lib/zdocs-prebuilt-templates';
 
 // Sanitize HTML to prevent XSS from rendered templates
 function sanitizeHtml(html: string): string {
@@ -130,6 +132,7 @@ export default function ZDocsPage() {
   const [showSignatureModal, setShowSignatureModal] = useState<string | null>(null);
   const [preselectedTemplateId, setPreselectedTemplateId] = useState<string | null>(null);
   const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
+  const [showGallery, setShowGallery] = useState(false);
 
   const tabs: { id: TabId; label: string; count?: number }[] = [
     { id: 'templates', label: 'Templates', count: activeTemplates.length },
@@ -184,10 +187,16 @@ export default function ZDocsPage() {
         </div>
         <div className="flex items-center gap-3">
           {activeTab === 'templates' && (
-            <Button onClick={() => setShowCreateTemplateModal(true)}>
-              <Plus size={16} />
-              Create Template
-            </Button>
+            <>
+              <Button variant="secondary" onClick={() => setShowGallery(true)}>
+                <Library size={16} />
+                Template Gallery
+              </Button>
+              <Button onClick={() => setShowCreateTemplateModal(true)}>
+                <Plus size={16} />
+                Create Template
+              </Button>
+            </>
           )}
           {activeTab === 'documents' && (
             <Button onClick={() => { setPreselectedTemplateId(null); setShowGenerateModal(true); }}>
@@ -338,6 +347,23 @@ export default function ZDocsPage() {
           renderId={showSignatureModal}
           onClose={() => setShowSignatureModal(null)}
           onSend={sendForSignature}
+        />
+      )}
+      {showGallery && (
+        <TemplateGalleryModal
+          onClose={() => setShowGallery(false)}
+          onInstall={async (tpl) => {
+            const id = await createTemplate({
+              name: tpl.name,
+              description: tpl.description,
+              templateType: tpl.templateType,
+              contentHtml: tpl.contentHtml,
+              variables: tpl.variables,
+              requiresSignature: tpl.requiresSignature,
+            });
+            setEditingTemplateId(id);
+            setShowGallery(false);
+          }}
         />
       )}
     </div>
@@ -1131,6 +1157,111 @@ function SignaturesTab({
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ==================== TEMPLATE GALLERY MODAL ====================
+
+function TemplateGalleryModal({
+  onClose,
+  onInstall,
+}: {
+  onClose: () => void;
+  onInstall: (template: PrebuiltTemplate) => Promise<void>;
+}) {
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [installing, setInstalling] = useState<string | null>(null);
+
+  const filtered = useMemo(() => {
+    return PREBUILT_TEMPLATES.filter((t) => {
+      const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase()) ||
+        t.description.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+  }, [search, categoryFilter]);
+
+  const categoryOptions = [
+    { value: 'all', label: `All Templates (${PREBUILT_TEMPLATES.length})` },
+    ...PREBUILT_CATEGORIES.map((c) => ({ value: c.id, label: `${c.label} (${c.count})` })),
+  ];
+
+  const handleInstall = async (tpl: PrebuiltTemplate) => {
+    setInstalling(tpl.name);
+    try {
+      await onInstall(tpl);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to install template');
+    } finally {
+      setInstalling(null);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-3xl max-h-[85vh] flex flex-col">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Template Gallery</CardTitle>
+              <p className="text-sm text-muted mt-1">{PREBUILT_TEMPLATES.length} professional templates ready to install</p>
+            </div>
+            <button onClick={onClose} className="text-muted hover:text-main">
+              <X size={20} />
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4 overflow-hidden p-0 px-6 pb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search templates..."
+              className="sm:flex-1"
+            />
+            <Select
+              options={categoryOptions}
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="sm:w-56"
+            />
+          </div>
+          <div className="overflow-y-auto flex-1 space-y-2 min-h-0">
+            {filtered.map((tpl) => {
+              const typeConf = templateTypeConfig[tpl.templateType] || templateTypeConfig.other;
+              const typeLabel = ZDOCS_TEMPLATE_TYPE_LABELS[tpl.templateType] || tpl.templateType;
+              const isInstalling = installing === tpl.name;
+              return (
+                <div key={tpl.name} className="flex items-center gap-4 p-4 rounded-lg border border-main hover:border-accent/40 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-sm font-semibold text-main truncate">{tpl.name}</h4>
+                      <Badge variant={typeConf.variant}>{typeLabel}</Badge>
+                      {tpl.requiresSignature && (
+                        <span className="text-xs text-amber-500 flex items-center gap-0.5"><PenTool size={10} /> Sig</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted line-clamp-1">{tpl.description}</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => handleInstall(tpl)}
+                    disabled={isInstalling}
+                  >
+                    {isInstalling ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                    Install
+                  </Button>
+                </div>
+              );
+            })}
+            {filtered.length === 0 && (
+              <div className="text-center py-12 text-muted text-sm">No templates match your search.</div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
