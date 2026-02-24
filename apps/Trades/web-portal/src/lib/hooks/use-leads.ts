@@ -201,5 +201,99 @@ export function useLeads() {
     return customerId;
   };
 
-  return { leads, loading, error, createLead, updateLeadStage, updateLead, convertLeadToCustomer, deleteLead, refetch: fetchLeads };
+  // Convert lead to job — creates customer if needed, then creates job pre-filled from lead
+  const convertLeadToJob = async (leadId: string): Promise<{ customerId: string; jobId: string }> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    const lead = leads.find((l) => l.id === leadId);
+    if (!lead) throw new Error('Lead not found');
+
+    // Get or create customer
+    const customerId = await convertLeadToCustomer(leadId);
+    if (!customerId) throw new Error('Failed to convert lead to customer');
+
+    // Create job pre-filled from lead data
+    const { data: job, error: jobErr } = await supabase
+      .from('jobs')
+      .insert({
+        company_id: companyId,
+        customer_id: customerId,
+        created_by_user_id: user.id,
+        title: `${lead.name} - ${lead.notes?.substring(0, 50) || 'New Job'}`,
+        description: lead.notes || null,
+        status: 'pending',
+        address: lead.address || null,
+        city: lead.city || null,
+        state: lead.state || null,
+        zip_code: lead.zipCode || null,
+        trade: lead.tags?.[0] || null,
+        priority: lead.tags?.includes('urgent') ? 'high' : 'normal',
+      })
+      .select('id')
+      .single();
+
+    if (jobErr || !job) throw new Error('Failed to create job');
+
+    // Update lead with job link
+    await supabase.from('leads').update({ converted_to_job_id: job.id }).eq('id', leadId);
+
+    fetchLeads();
+    return { customerId, jobId: job.id };
+  };
+
+  // Mark lost with reason
+  const markLost = async (id: string, reason: string) => {
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('leads')
+      .update({
+        stage: 'lost',
+        lost_at: new Date().toISOString(),
+        lost_reason: reason,
+      })
+      .eq('id', id);
+    if (err) throw err;
+    fetchLeads();
+  };
+
+  // Log activity on lead
+  const logActivity = async (leadId: string, type: string, note: string) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Update last_contacted_at
+    await supabase.from('leads').update({ last_contacted_at: new Date().toISOString() }).eq('id', leadId);
+
+    // Try to insert into lead_activities if table exists, otherwise store in notes
+    try {
+      await supabase.from('lead_activities').insert({
+        lead_id: leadId,
+        company_id: user.app_metadata?.company_id,
+        user_id: user.id,
+        type,
+        note,
+      });
+    } catch {
+      // Table may not exist — append to lead notes as fallback
+      const lead = leads.find(l => l.id === leadId);
+      const timestamp = new Date().toLocaleString();
+      const updatedNotes = `${lead?.notes || ''}\n[${timestamp}] ${type}: ${note}`.trim();
+      await supabase.from('leads').update({ notes: updatedNotes }).eq('id', leadId);
+    }
+
+    fetchLeads();
+  };
+
+  return {
+    leads, loading, error,
+    createLead, updateLeadStage, updateLead,
+    convertLeadToCustomer, convertLeadToJob,
+    markLost, logActivity, deleteLead,
+    refetch: fetchLeads,
+  };
 }
