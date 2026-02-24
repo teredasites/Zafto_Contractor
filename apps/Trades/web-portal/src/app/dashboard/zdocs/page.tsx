@@ -40,6 +40,7 @@ import {
   type ZDocsTemplate,
   type ZDocsRender,
   type ZDocsSignatureRequest,
+  type TemplateVersion,
   ZDOCS_TEMPLATE_TYPES,
   ZDOCS_TEMPLATE_TYPE_LABELS,
   ZDOCS_ENTITY_TYPES,
@@ -112,6 +113,8 @@ export default function ZDocsPage() {
     renderDocument,
     sendForSignature,
     deleteRender,
+    fetchTemplateVersions,
+    revertToVersion,
     activeTemplates,
     totalRenders,
     pendingSignatures,
@@ -155,6 +158,8 @@ export default function ZDocsPage() {
         onBack={() => setEditingTemplateId(null)}
         onSave={updateTemplate}
         onGenerate={handleUseTemplate}
+        fetchVersions={fetchTemplateVersions}
+        revertToVersion={revertToVersion}
       />
     );
   }
@@ -344,6 +349,8 @@ function TemplateEditorView({
   onBack,
   onSave,
   onGenerate,
+  fetchVersions,
+  revertToVersion,
 }: {
   template: ZDocsTemplate;
   onBack: () => void;
@@ -354,8 +361,10 @@ function TemplateEditorView({
     contentHtml: string | null;
     isActive: boolean;
     requiresSignature: boolean;
-  }>) => Promise<void>;
+  }>, changeNote?: string) => Promise<void>;
   onGenerate: (templateId: string) => void;
+  fetchVersions: (templateId: string) => Promise<TemplateVersion[]>;
+  revertToVersion: (templateId: string, versionId: string) => Promise<void>;
 }) {
   const [name, setName] = useState(template.name);
   const [description, setDescription] = useState(template.description || '');
@@ -366,6 +375,9 @@ function TemplateEditorView({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showMetadata, setShowMetadata] = useState(false);
+  const [showVersions, setShowVersions] = useState(false);
+  const [versions, setVersions] = useState<TemplateVersion[]>([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
 
   const hasChanges = useMemo(() => {
     return (
@@ -435,6 +447,24 @@ function TemplateEditorView({
               Saved
             </span>
           )}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={async () => {
+              setShowVersions(!showVersions);
+              if (!showVersions && versions.length === 0) {
+                setLoadingVersions(true);
+                try {
+                  const v = await fetchVersions(template.id);
+                  setVersions(v);
+                } catch { /* ignore */ }
+                setLoadingVersions(false);
+              }
+            }}
+          >
+            <Clock size={14} />
+            Versions
+          </Button>
           <Button
             variant="secondary"
             size="sm"
@@ -525,6 +555,68 @@ function TemplateEditorView({
                 {isActive ? 'Active' : 'Inactive'}
               </button>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Version History Panel (collapsible) */}
+      {showVersions && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm">Version History</CardTitle>
+              <button onClick={() => setShowVersions(false)} className="text-muted hover:text-main">
+                <X size={16} />
+              </button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loadingVersions ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-muted" />
+              </div>
+            ) : versions.length === 0 ? (
+              <div className="text-center py-8 text-muted text-sm">
+                No version history yet. Versions are created each time you save content changes.
+              </div>
+            ) : (
+              <div className="divide-y divide-main/50 max-h-64 overflow-y-auto">
+                {versions.map((v) => (
+                  <div key={v.id} className="px-5 py-3 flex items-center justify-between hover:bg-surface-hover">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent text-xs font-semibold shrink-0">
+                        v{v.versionNumber}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-main truncate">
+                          {v.changeNote || `Version ${v.versionNumber}`}
+                        </p>
+                        <p className="text-xs text-muted">
+                          {formatDate(v.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        if (!confirm(`Revert to version ${v.versionNumber}? This will save the current content as a new version first.`)) return;
+                        try {
+                          await revertToVersion(template.id, v.id);
+                          setContent(v.contentHtml || '');
+                          const refreshed = await fetchVersions(template.id);
+                          setVersions(refreshed);
+                        } catch {
+                          alert('Failed to revert version');
+                        }
+                      }}
+                    >
+                      Revert
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
