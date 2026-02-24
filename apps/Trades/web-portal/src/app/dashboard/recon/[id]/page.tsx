@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -48,6 +48,8 @@ import {
   TreePine,
   Leaf,
   Gauge,
+  History,
+  Download,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -338,7 +340,119 @@ export default function ReconDetailPage() {
   const [estimating, setEstimating] = useState(false);
   const [imgView, setImgView] = useState<'satellite' | 'streets' | 'streetview'>('satellite');
 
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
   const { scan, features, roof, facets, walls, tradeBids, loading, error, triggerTradeEstimate } = usePropertyScan(scanId, 'scan');
+
+  const handlePdfExport = useCallback(async () => {
+    if (!scan) return;
+    setPdfGenerating(true);
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Build PDF content as structured HTML for print
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) return;
+
+      const hazards = scan.hazardFlags || [];
+      const redCount = hazards.filter((h: HazardFlagData) => h.severity === 'red').length;
+      const yellowCount = hazards.filter((h: HazardFlagData) => h.severity === 'yellow').length;
+      const env = scan.environmentalData || {};
+      const code = scan.codeRequirements || {};
+      const weather = scan.weatherHistory || {};
+      const measurements = scan.computedMeasurements || {};
+
+      printWindow.document.write(`<!DOCTYPE html>
+<html><head><title>Property Intelligence Report — ${scan.address}</title>
+<style>
+  body { font-family: 'Inter', -apple-system, sans-serif; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px 30px; font-size: 12px; line-height: 1.5; }
+  h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 14px; margin: 24px 0 8px; border-bottom: 1px solid #e5e5e5; padding-bottom: 4px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1a1a1a; padding-bottom: 12px; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px; } .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 24px; }
+  .row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #f5f5f5; }
+  .label { color: #666; } .value { font-weight: 600; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .red { background: #fee2e2; color: #dc2626; } .yellow { background: #fef3c7; color: #d97706; } .green { background: #dcfce7; color: #16a34a; }
+  .hazard { padding: 8px 12px; margin: 4px 0; border-radius: 6px; border-left: 3px solid; }
+  .hazard.severity-red { border-color: #dc2626; background: #fef2f2; } .hazard.severity-yellow { border-color: #d97706; background: #fffbeb; }
+  .footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid #e5e5e5; color: #999; font-size: 10px; text-align: center; }
+  @media print { body { padding: 20px; } }
+</style></head><body>
+<div class="header">
+  <div><h1>Property Intelligence Report</h1><div style="color:#666">${scan.address}</div>
+    <div style="color:#999;font-size:10px">${[scan.city, scan.state, scan.zip].filter(Boolean).join(', ')}</div></div>
+  <div style="text-align:right"><div style="font-size:10px;color:#666">Scan Date</div>
+    <div style="font-weight:600">${new Date(scan.createdAt).toLocaleDateString()}</div>
+    <div style="font-size:10px;color:#666;margin-top:4px">Confidence: <span style="font-weight:700">${scan.confidenceScore}%</span></div></div>
+</div>
+
+${features ? `<h2>Property Details</h2><div class="grid">
+  ${features.yearBuilt ? `<div class="row"><span class="label">Year Built</span><span class="value">${features.yearBuilt}</span></div>` : ''}
+  ${features.livingSqft ? `<div class="row"><span class="label">Living Area</span><span class="value">${features.livingSqft.toLocaleString()} sqft</span></div>` : ''}
+  ${features.lotSqft ? `<div class="row"><span class="label">Lot Size</span><span class="value">${features.lotSqft.toLocaleString()} sqft</span></div>` : ''}
+  ${features.stories ? `<div class="row"><span class="label">Stories</span><span class="value">${features.stories}</span></div>` : ''}
+  ${features.beds ? `<div class="row"><span class="label">Bedrooms</span><span class="value">${features.beds}</span></div>` : ''}
+  ${features.bathsFull || features.bathsHalf ? `<div class="row"><span class="label">Bathrooms</span><span class="value">${(features.bathsFull || 0) + (features.bathsHalf || 0) * 0.5}</span></div>` : ''}
+  ${features.constructionType ? `<div class="row"><span class="label">Construction</span><span class="value">${features.constructionType}</span></div>` : ''}
+  ${features.roofMaterial ? `<div class="row"><span class="label">Roof Material</span><span class="value">${features.roofMaterial}</span></div>` : ''}
+  ${features.foundationType ? `<div class="row"><span class="label">Foundation</span><span class="value">${features.foundationType}</span></div>` : ''}
+  ${features.heatingType ? `<div class="row"><span class="label">Heating</span><span class="value">${features.heatingType}</span></div>` : ''}
+  ${features.coolingType ? `<div class="row"><span class="label">Cooling</span><span class="value">${features.coolingType}</span></div>` : ''}
+</div>` : ''}
+
+${roof ? `<h2>Roof Measurements</h2><div class="grid">
+  <div class="row"><span class="label">Total Area</span><span class="value">${roof.totalAreaSqft.toLocaleString()} sqft (${roof.totalAreaSquares.toFixed(1)} squares)</span></div>
+  ${roof.pitchPrimary ? `<div class="row"><span class="label">Primary Pitch</span><span class="value">${roof.pitchPrimary}</span></div>` : ''}
+  <div class="row"><span class="label">Facets</span><span class="value">${roof.facetCount}</span></div>
+  <div class="row"><span class="label">Ridge</span><span class="value">${roof.ridgeLengthFt.toLocaleString()} ft</span></div>
+  <div class="row"><span class="label">Eave</span><span class="value">${roof.eaveLengthFt.toLocaleString()} ft</span></div>
+  <div class="row"><span class="label">Valley</span><span class="value">${roof.valleyLengthFt.toLocaleString()} ft</span></div>
+</div>` : ''}
+
+${hazards.length > 0 ? `<h2>Hazard Flags (${redCount} High Risk, ${yellowCount} Caution)</h2>
+${hazards.map((h: HazardFlagData) => `<div class="hazard severity-${h.severity}">
+  <div style="font-weight:600">${h.title} <span class="badge ${h.severity}">${h.severity === 'red' ? 'HIGH RISK' : h.severity === 'yellow' ? 'CAUTION' : 'LOW RISK'}</span></div>
+  <div style="margin-top:2px">${h.description}</div>
+  ${h.what_to_do ? `<div style="margin-top:4px;color:#666"><strong>Action:</strong> ${h.what_to_do}</div>` : ''}
+  ${h.cost_implications ? `<div style="color:#666"><strong>Cost Impact:</strong> ${h.cost_implications}</div>` : ''}
+</div>`).join('')}` : ''}
+
+${Object.keys(env).length > 0 || features?.climateZone ? `<h2>Environmental Data</h2><div class="grid">
+  ${features?.climateZone || env.climate_zone ? `<div class="row"><span class="label">Climate Zone</span><span class="value">${features?.climateZone || env.climate_zone}</span></div>` : ''}
+  ${features?.frostLineDepthIn || env.frost_line_depth_in ? `<div class="row"><span class="label">Frost Line</span><span class="value">${features?.frostLineDepthIn || env.frost_line_depth_in}" deep</span></div>` : ''}
+  ${features?.soilType || env.soil_type ? `<div class="row"><span class="label">Soil Type</span><span class="value">${features?.soilType || env.soil_type}</span></div>` : ''}
+  ${features?.radonZone ? `<div class="row"><span class="label">Radon Zone</span><span class="value">Zone ${features.radonZone}</span></div>` : ''}
+  ${features?.wildfireRisk ? `<div class="row"><span class="label">Wildfire Risk</span><span class="value">${String(features.wildfireRisk).replace(/_/g, ' ')}</span></div>` : ''}
+  ${features?.termiteZone ? `<div class="row"><span class="label">Termite Zone</span><span class="value">${String(features.termiteZone).replace(/_/g, ' ')}</span></div>` : ''}
+</div>` : ''}
+
+${Object.keys(code).length > 0 ? `<h2>Building Code Requirements</h2><div class="grid">
+  ${code.wind_speed_mph ? `<div class="row"><span class="label">Design Wind Speed</span><span class="value">${code.wind_speed_mph} mph</span></div>` : ''}
+  ${code.snow_load_psf ? `<div class="row"><span class="label">Snow Load</span><span class="value">${code.snow_load_psf} PSF</span></div>` : ''}
+  ${code.seismic_category ? `<div class="row"><span class="label">Seismic Category</span><span class="value">${code.seismic_category}</span></div>` : ''}
+  ${code.energy_code ? `<div class="row"><span class="label">Energy Code</span><span class="value">${code.energy_code}</span></div>` : ''}
+</div>` : ''}
+
+${Object.keys(weather).length > 0 ? `<h2>Weather History</h2><div class="grid">
+  ${weather.freeze_thaw_cycles ? `<div class="row"><span class="label">Freeze-Thaw Cycles</span><span class="value">${weather.freeze_thaw_cycles}/yr</span></div>` : ''}
+  ${weather.annual_precip_in ? `<div class="row"><span class="label">Annual Precip</span><span class="value">${weather.annual_precip_in}"</span></div>` : ''}
+  ${weather.temp_min_f != null && weather.temp_max_f != null ? `<div class="row"><span class="label">Temp Range</span><span class="value">${weather.temp_min_f}°F to ${weather.temp_max_f}°F</span></div>` : ''}
+  ${weather.avg_wind_mph ? `<div class="row"><span class="label">Avg Wind</span><span class="value">${weather.avg_wind_mph} mph</span></div>` : ''}
+</div>` : ''}
+
+<div class="footer">
+  Generated by Zafto Property Intelligence &bull; ${new Date().toLocaleDateString()} &bull; ${scan.scanSources.length} data sources &bull; ${scan.confidenceScore}% confidence
+</div>
+</body></html>`);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => printWindow.print(), 500);
+    } finally {
+      setPdfGenerating(false);
+    }
+  }, [scan, features, roof]);
 
   const handleEstimate = useCallback(async () => {
     if (!scan) return;
@@ -606,6 +720,16 @@ export default function ReconDetailPage() {
               >
                 <PenTool size={13} /> Sketch
               </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handlePdfExport}
+                disabled={pdfGenerating}
+                className="gap-1.5"
+              >
+                {pdfGenerating ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
+                PDF
+              </Button>
             </div>
           </div>
         </div>
@@ -695,6 +819,9 @@ export default function ReconDetailPage() {
       )}
       {activeTab === 'solar' && <SolarTab facets={facets} tradeBids={tradeBids} />}
       {activeTab === 'storm' && <StormTab scanId={scan.id} scanState={scan.state} />}
+
+      {/* ── SCAN HISTORY ──────────────────────────────── */}
+      <ScanHistory address={scan.address} currentScanId={scan.id} />
 
       {/* ── DISCLAIMER ─────────────────────────────────── */}
       <div className="flex items-start gap-2 px-4 py-2.5 rounded-lg bg-card border border-main">
@@ -2033,5 +2160,106 @@ function StormTab({ scanId, scanState }: { scanId: string; scanState: string | n
         </p>
       </div>
     </div>
+  );
+}
+
+// ============================================================================
+// SCAN HISTORY
+// ============================================================================
+
+interface ScanHistoryEntry {
+  id: string;
+  status: string;
+  confidenceScore: number;
+  confidenceGrade: string;
+  scanSources: string[];
+  createdAt: string;
+  hazardCount: number;
+}
+
+function ScanHistory({ address, currentScanId }: { address: string; currentScanId: string }) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [history, setHistory] = useState<ScanHistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!address) return;
+    const supabase = createClient();
+    supabase
+      .from('property_scans')
+      .select('id, status, confidence_score, confidence_grade, scan_sources, created_at, hazard_flags')
+      .eq('address', address)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        setHistory(
+          (data || [])
+            .filter((r) => r.id !== currentScanId)
+            .map((r) => ({
+              id: r.id as string,
+              status: r.status as string,
+              confidenceScore: Number(r.confidence_score) || 0,
+              confidenceGrade: (r.confidence_grade as string) || 'low',
+              scanSources: (r.scan_sources as string[]) || [],
+              createdAt: r.created_at as string,
+              hazardCount: Array.isArray(r.hazard_flags) ? r.hazard_flags.length : 0,
+            }))
+        );
+        setLoading(false);
+      });
+  }, [address, currentScanId]);
+
+  if (loading || history.length === 0) return null;
+
+  return (
+    <Panel title={`Scan History — ${history.length} previous`} icon={History} color="#8B5CF6">
+      <div className="space-y-0">
+        {history.map((entry, i) => {
+          const st = STATUS_CONFIG[entry.status] || STATUS_CONFIG.pending;
+          const gradeColor = entry.confidenceGrade === 'high' ? '#10B981' : entry.confidenceGrade === 'moderate' ? '#F59E0B' : '#EF4444';
+          return (
+            <button
+              key={entry.id}
+              onClick={() => router.push(`/dashboard/recon/${entry.id}`)}
+              className={cn(
+                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-surface/60',
+                i < history.length - 1 && 'border-b border-main/30'
+              )}
+            >
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                style={{ backgroundColor: `${st.color}15` }}>
+                <Satellite size={14} style={{ color: st.color }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-main">
+                    {new Date(entry.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                  <span className="text-[10px] text-muted">
+                    {new Date(entry.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold"
+                    style={{ color: st.color, backgroundColor: st.bg }}>
+                    {st.label}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 mt-0.5">
+                  <span className="text-[10px] text-muted">{entry.scanSources.length} sources</span>
+                  <span className="text-[10px] font-semibold" style={{ color: gradeColor }}>
+                    {entry.confidenceScore}% confidence
+                  </span>
+                  {entry.hazardCount > 0 && (
+                    <span className="text-[10px] text-red-400">{entry.hazardCount} hazards</span>
+                  )}
+                </div>
+              </div>
+              <ChevronRight size={14} className="text-muted shrink-0" />
+            </button>
+          );
+        })}
+      </div>
+    </Panel>
   );
 }

@@ -197,6 +197,98 @@ function mapSignatureRequest(row: Record<string, unknown>): ZDocsSignatureReques
   };
 }
 
+// ==================== PROPERTY TEMPLATE VARIABLES ====================
+
+/**
+ * Build template variables from property scan and features data.
+ * Use in ZDocs templates with {{property_year_built}}, {{property_sqft}}, etc.
+ */
+export function buildPropertyTemplateVariables(
+  scan: { address: string; city: string | null; state: string | null; zip: string | null; confidenceScore: number; floodZone: string | null; floodRisk: string | null; hazardFlags: Array<{ severity: string; title: string }>; environmentalData: Record<string, unknown>; codeRequirements: Record<string, unknown>; weatherHistory: Record<string, unknown>; computedMeasurements: Record<string, unknown> } | null,
+  features: { yearBuilt: number | null; livingSqft: number | null; lotSqft: number | null; stories: number | null; beds: number | null; bathsFull: number | null; bathsHalf: number | null; constructionType: string | null; roofMaterial: string | null; heatingType: string | null; coolingType: string | null; foundationType: string | null; basementType: string | null; exteriorMaterial: string | null; garageSpaces: number; assessedValue: number | null; lastSalePrice: number | null; lastSaleDate: string | null; climateZone: string | null; frostLineDepthIn: number | null; soilType: string | null; radonZone: number | null; wildfireRisk: string | null; termiteZone: string | null; designWindSpeedMph: number | null; snowLoadPsf: number | null; seismicCategory: string | null; lawnAreaSqft: number | null; wallAreaSqft: number | null; boundaryPerimeterFt: number | null } | null,
+  roof?: { totalAreaSqft: number; totalAreaSquares: number; pitchPrimary: string | null; facetCount: number; predominantShape: string | null } | null,
+): Record<string, string> {
+  const vars: Record<string, string> = {};
+  if (!scan) return vars;
+
+  // Property address
+  vars.property_address = scan.address;
+  vars.property_city = scan.city || '';
+  vars.property_state = scan.state || '';
+  vars.property_zip = scan.zip || '';
+  vars.property_full_address = [scan.address, scan.city, scan.state, scan.zip].filter(Boolean).join(', ');
+
+  // Confidence
+  vars.property_confidence_score = String(scan.confidenceScore);
+
+  // Flood
+  vars.property_flood_zone = scan.floodZone || 'N/A';
+  vars.property_flood_risk = scan.floodRisk || 'N/A';
+
+  // Hazards summary
+  const hazards = scan.hazardFlags || [];
+  vars.property_hazard_count = String(hazards.length);
+  vars.property_hazard_red_count = String(hazards.filter(h => h.severity === 'red').length);
+  vars.property_hazard_yellow_count = String(hazards.filter(h => h.severity === 'yellow').length);
+  vars.property_hazard_list = hazards.map(h => h.title).join(', ') || 'None';
+
+  // Features
+  if (features) {
+    vars.property_year_built = features.yearBuilt ? String(features.yearBuilt) : '';
+    vars.property_sqft = features.livingSqft ? features.livingSqft.toLocaleString() : '';
+    vars.property_lot_sqft = features.lotSqft ? features.lotSqft.toLocaleString() : '';
+    vars.property_stories = features.stories ? String(features.stories) : '';
+    vars.property_beds = features.beds ? String(features.beds) : '';
+    vars.property_baths = String((features.bathsFull || 0) + (features.bathsHalf || 0) * 0.5 || '');
+    vars.property_construction_type = features.constructionType || '';
+    vars.property_roof_material = features.roofMaterial || '';
+    vars.property_heating = features.heatingType || '';
+    vars.property_cooling = features.coolingType || '';
+    vars.property_foundation = features.foundationType || '';
+    vars.property_basement = features.basementType || '';
+    vars.property_exterior = features.exteriorMaterial || '';
+    vars.property_garage_spaces = String(features.garageSpaces);
+    vars.property_assessed_value = features.assessedValue ? `$${features.assessedValue.toLocaleString()}` : '';
+    vars.property_last_sale_price = features.lastSalePrice ? `$${features.lastSalePrice.toLocaleString()}` : '';
+    vars.property_last_sale_date = features.lastSaleDate || '';
+    // Environmental
+    vars.property_climate_zone = features.climateZone || '';
+    vars.property_frost_line = features.frostLineDepthIn ? `${features.frostLineDepthIn}"` : '';
+    vars.property_soil_type = features.soilType || '';
+    vars.property_radon_zone = features.radonZone ? `Zone ${features.radonZone}` : '';
+    vars.property_wildfire_risk = features.wildfireRisk ? features.wildfireRisk.replace(/_/g, ' ') : '';
+    vars.property_termite_zone = features.termiteZone ? features.termiteZone.replace(/_/g, ' ') : '';
+    vars.property_wind_speed = features.designWindSpeedMph ? `${features.designWindSpeedMph} mph` : '';
+    vars.property_snow_load = features.snowLoadPsf ? `${features.snowLoadPsf} PSF` : '';
+    vars.property_seismic_category = features.seismicCategory || '';
+    // Measurements
+    vars.property_lawn_area = features.lawnAreaSqft ? `${features.lawnAreaSqft.toLocaleString()} sqft` : '';
+    vars.property_wall_area = features.wallAreaSqft ? `${features.wallAreaSqft.toLocaleString()} sqft` : '';
+    vars.property_boundary_perimeter = features.boundaryPerimeterFt ? `${features.boundaryPerimeterFt.toLocaleString()} ft` : '';
+  }
+
+  // Roof
+  if (roof) {
+    vars.property_roof_area_sqft = roof.totalAreaSqft.toLocaleString();
+    vars.property_roof_area_squares = roof.totalAreaSquares.toFixed(1);
+    vars.property_roof_pitch = roof.pitchPrimary || '';
+    vars.property_roof_facets = String(roof.facetCount);
+    vars.property_roof_shape = roof.predominantShape || '';
+  }
+
+  // Weather
+  const w = scan.weatherHistory;
+  if (w.freeze_thaw_cycles) vars.property_freeze_thaw = `${w.freeze_thaw_cycles}/yr`;
+  if (w.annual_precip_in) vars.property_annual_precip = `${w.annual_precip_in}"`;
+  if (w.avg_wind_mph) vars.property_avg_wind = `${w.avg_wind_mph} mph`;
+
+  // Code
+  const c = scan.codeRequirements;
+  if (c.energy_code) vars.property_energy_code = String(c.energy_code);
+
+  return vars;
+}
+
 // ==================== HOOK ====================
 
 export function useZDocs() {

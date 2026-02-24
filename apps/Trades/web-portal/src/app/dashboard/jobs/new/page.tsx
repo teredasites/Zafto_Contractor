@@ -18,6 +18,7 @@ import {
   Clock,
   FileText,
   Wrench,
+  CloudLightning,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ import { Input, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
 import type { JobType } from '@/types';
@@ -81,9 +83,40 @@ export default function NewJobPage() {
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [stormSuggestions, setStormSuggestions] = useState<{ date: string; event_type: string; magnitude: string }[]>([]);
   const { customers } = useCustomers();
   const { team } = useTeam();
   const { createJob } = useJobs();
+
+  // Fetch NOAA storm events for insurance claim pre-fill when customer has address
+  useEffect(() => {
+    if (formData.jobType !== 'insurance_claim' || !formData.customerId) {
+      setStormSuggestions([]);
+      return;
+    }
+    const customer = customers.find(c => c.id === formData.customerId);
+    if (!customer?.address?.street) return;
+
+    const fullAddr = [customer.address.street, customer.address.city, customer.address.state, customer.address.zip].filter(Boolean).join(', ');
+    const supabase = createClient();
+    supabase
+      .from('property_scans')
+      .select('noaa_storm_events')
+      .eq('address', fullAddr)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.noaa_storm_events && Array.isArray(data.noaa_storm_events)) {
+          setStormSuggestions(
+            (data.noaa_storm_events as { date: string; event_type: string; magnitude: string }[])
+              .filter(e => e.date)
+              .slice(0, 10)
+          );
+        }
+      });
+  }, [formData.jobType, formData.customerId, customers]);
 
   // DEPTH27: Draft recovery — auto-save job form
   const draftRecovery = useDraftRecovery({
@@ -152,7 +185,11 @@ export default function NewJobPage() {
         ? new Date(`${formData.scheduledDate}T${formData.scheduledTime || '09:00'}`)
         : undefined;
 
-      await createJob({
+      const jobAddress = formData.useCustomerAddress && selectedCustomer
+        ? selectedCustomer.address
+        : formData.address;
+
+      const newJobId = await createJob({
         title: formData.title,
         description: formData.description || undefined,
         customerId: formData.customerId || undefined,
@@ -161,9 +198,7 @@ export default function NewJobPage() {
         status: 'lead',
         priority: formData.priority as 'low' | 'normal' | 'high' | 'urgent',
         tradeType: formData.tradeType || undefined,
-        address: formData.useCustomerAddress && selectedCustomer
-          ? selectedCustomer.address
-          : formData.address,
+        address: jobAddress,
         estimatedValue: formData.estimatedValue ? parseFloat(formData.estimatedValue) : 0,
         estimatedDuration: formData.estimatedHours ? Math.round(parseFloat(formData.estimatedHours) * 60) : undefined,
         internalNotes: formData.internalNotes || undefined,
@@ -171,6 +206,27 @@ export default function NewJobPage() {
         assignedTo: assignedMembers,
         customer: selectedCustomer,
       });
+
+      // Auto-trigger recon property scan in background (fire-and-forget)
+      const fullAddress = typeof jobAddress === 'string'
+        ? jobAddress
+        : [jobAddress.street, jobAddress.city, jobAddress.state, jobAddress.zip].filter(Boolean).join(', ');
+
+      if (fullAddress && newJobId) {
+        const supabase = createClient();
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (!session) return;
+          fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recon-property-lookup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ address: fullAddress, job_id: newJobId }),
+          }).catch(() => { /* silent — recon is best-effort on job creation */ });
+        });
+      }
+
       router.push('/dashboard/jobs');
     } catch (err) {
       console.error('Failed to create job:', err);
@@ -358,6 +414,36 @@ export default function NewJobPage() {
                     required
                   />
                 </div>
+                {/* NOAA Storm date suggestions from Recon */}
+                {stormSuggestions.length > 0 && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CloudLightning size={14} className="text-blue-600 dark:text-blue-400" />
+                      <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">NOAA Storm Events Near This Property</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {stormSuggestions.map((storm, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, dateOfLoss: storm.date })}
+                          className={cn(
+                            'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors border',
+                            formData.dateOfLoss === storm.date
+                              ? 'bg-blue-600 text-white border-blue-600'
+                              : 'bg-white dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800/40'
+                          )}
+                        >
+                          {storm.date}
+                          <span className="text-[10px] opacity-75">{storm.event_type}{storm.magnitude ? ` (${storm.magnitude})` : ''}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-blue-500 dark:text-blue-400/70 mt-1.5">
+                      Click a storm event to set as date of loss
+                    </p>
+                  </div>
+                )}
                 <div className="grid grid-cols-3 gap-4">
                   <Input
                     label="Adjuster Name"
