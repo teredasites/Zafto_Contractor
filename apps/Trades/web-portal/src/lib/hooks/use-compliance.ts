@@ -4,9 +4,9 @@
 // Aggregates company compliance posture: licenses, insurance, bonds, OSHA, EPA, vehicle regs.
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '../supabase';
+import { getSupabase } from '@/lib/supabase';
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 export interface Certification {
   id: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 import type { TpaProgramData } from './use-tpa-programs';
 
 // ==================== TYPES ====================
@@ -171,7 +171,7 @@ function mapTpaAssignment(row: Record<string, unknown>): TpaAssignmentData {
 
 // ==================== ASSIGNMENTS LIST ====================
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 export function useTpaAssignments(filters?: { status?: TpaAssignmentStatus; programId?: string }) {
   const [assignments, setAssignments] = useState<TpaAssignmentData[]>([]);

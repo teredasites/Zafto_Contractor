@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -100,7 +100,7 @@ export function useEquipmentInventory() {
     try {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('equipment_inventory')
         .select('*')
@@ -118,7 +118,7 @@ export function useEquipmentInventory() {
 
   useEffect(() => {
     fetch();
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel('equip-inventory')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'equipment_inventory' }, () => { fetch(); })
@@ -162,7 +162,7 @@ export function useEquipmentInventory() {
     purchasePrice?: number;
     dailyRentalRate?: number;
   }): Promise<string> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
     const companyId = user.app_metadata?.company_id;
@@ -204,7 +204,7 @@ export function useEquipmentInventory() {
     maintenanceNotes?: string;
     nextMaintenanceDate?: string | null;
   }): Promise<void> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row: Record<string, any> = {};
     if (updates.name !== undefined) row.name = updates.name;
@@ -227,7 +227,7 @@ export function useEquipmentInventory() {
   };
 
   const setStatus = async (id: string, status: InventoryStatus): Promise<void> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row: Record<string, any> = { status };
     if (status === 'available') {
@@ -247,7 +247,7 @@ export function useEquipmentInventory() {
   };
 
   const softDelete = async (id: string): Promise<void> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { error: err } = await supabase
       .from('equipment_inventory')
       .update({ deleted_at: new Date().toISOString() })

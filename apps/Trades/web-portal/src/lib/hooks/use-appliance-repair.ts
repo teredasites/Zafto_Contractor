@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export interface ApplianceServiceLog {
   id: string;
@@ -51,7 +51,7 @@ export const REPAIR_VS_REPLACE_LABELS: Record<string, string> = {
 };
 
 export function useApplianceRepairLogs() {
-  const supabase = createClient();
+  const supabase = getSupabase();
   const [logs, setLogs] = useState<ApplianceServiceLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

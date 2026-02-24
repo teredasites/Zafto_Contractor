@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export interface GarageDoorServiceLog {
   id: string;
@@ -59,7 +59,7 @@ export const DOOR_TYPE_LABELS: Record<string, string> = {
 };
 
 export function useGarageDoorLogs() {
-  const supabase = createClient();
+  const supabase = getSupabase();
   const [logs, setLogs] = useState<GarageDoorServiceLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

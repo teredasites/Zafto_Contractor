@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ==================== TYPES ====================
 
@@ -87,7 +87,7 @@ function mapTpaProgram(row: Record<string, unknown>): TpaProgramData {
 
 // ==================== PROGRAMS LIST ====================
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 export function useTpaPrograms() {
   const [programs, setPrograms] = useState<TpaProgramData[]>([]);

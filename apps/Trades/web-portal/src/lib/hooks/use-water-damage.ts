@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -326,7 +326,7 @@ export function useWaterDamageAssessments(jobId: string | null) {
     try {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('water_damage_assessments')
         .select('*')
@@ -346,7 +346,7 @@ export function useWaterDamageAssessments(jobId: string | null) {
   useEffect(() => {
     fetch();
     if (!jobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`wda-${jobId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'water_damage_assessments', filter: `job_id=eq.${jobId}` }, () => { fetch(); })
@@ -376,7 +376,7 @@ export function useWaterDamageAssessments(jobId: string | null) {
     estimatedDryingDays?: number;
     tpaAssignmentId?: string;
   }): Promise<string> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
     const companyId = user.app_metadata?.company_id;
@@ -429,7 +429,7 @@ export function useWaterDamageAssessments(jobId: string | null) {
     estimatedDryingDays: number;
     completedAt: string;
   }>): Promise<void> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row: Record<string, any> = {};
     if (updates.waterCategory !== undefined) row.water_category = updates.waterCategory;
@@ -467,7 +467,7 @@ export function useDryingMonitor(jobId: string | null) {
     try {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
+      const supabase = getSupabase();
       const [readingsRes, psychRes] = await Promise.all([
         supabase
           .from('moisture_readings')
@@ -498,7 +498,7 @@ export function useDryingMonitor(jobId: string | null) {
   useEffect(() => {
     fetch();
     if (!jobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`drying-monitor-${jobId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'moisture_readings', filter: `job_id=eq.${jobId}` }, () => { fetch(); })
@@ -559,7 +559,7 @@ export function useDryingMonitor(jobId: string | null) {
     tpaAssignmentId?: string;
     waterDamageAssessmentId?: string;
   }): Promise<string> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
     const companyId = user.app_metadata?.company_id;
@@ -628,7 +628,7 @@ export function useContentsInventory(jobId: string | null) {
     try {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('contents_inventory')
         .select('*')
@@ -649,7 +649,7 @@ export function useContentsInventory(jobId: string | null) {
   useEffect(() => {
     fetch();
     if (!jobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`contents-${jobId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'contents_inventory', filter: `job_id=eq.${jobId}` }, () => { fetch(); })
@@ -669,7 +669,7 @@ export function useContentsInventory(jobId: string | null) {
     replacementValue?: number;
     tpaAssignmentId?: string;
   }): Promise<string> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
     const companyId = user.app_metadata?.company_id;
@@ -713,7 +713,7 @@ export function useContentsInventory(jobId: string | null) {
     returnedAt: string;
     returnedCondition: string;
   }>): Promise<void> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row: Record<string, any> = {};
     if (updates.conditionAfter !== undefined) row.condition_after = updates.conditionAfter;

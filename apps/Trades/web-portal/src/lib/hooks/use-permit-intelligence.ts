@@ -5,9 +5,9 @@
 // Separate from use-permits.ts (old permits table).
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '../supabase';
+import { getSupabase } from '../supabase';
 
-const supabase = createClient();
+const supabase = getSupabase();
 
 // ── Interfaces ──────────────────────────────────────────
 

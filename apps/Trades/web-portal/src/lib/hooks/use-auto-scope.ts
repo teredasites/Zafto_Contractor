@@ -4,7 +4,7 @@
 // Calls recon-auto-scope EF and displays trade-specific scope data.
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -84,7 +84,7 @@ export function useAutoScope(scanId: string) {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('trade_auto_scopes')
         .select('*')
@@ -108,7 +108,7 @@ export function useAutoScope(scanId: string) {
     setGenerating(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 

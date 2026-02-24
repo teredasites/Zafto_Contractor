@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -151,7 +151,7 @@ export function useTpaFinancials(periodMonth?: number, periodYear?: number) {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       // Fetch programs for name mapping
       const { data: programRows, error: pErr } = await supabase
@@ -233,7 +233,7 @@ export function useTpaFinancials(periodMonth?: number, periodYear?: number) {
   const recalculate = useCallback(
     async (tpaProgramId?: string) => {
       try {
-        const supabase = createClient();
+        const supabase = getSupabase();
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) throw new Error('Not authenticated');
 

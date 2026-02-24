@@ -6,7 +6,7 @@
 // Converts all data into canvas-ready SitePlanData format.
 
 import { useState, useCallback, useRef } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 import type {
   SitePlanData,
   StructureOutline,
@@ -181,7 +181,7 @@ export function usePropertyLookup() {
     setStage('geocoding');
 
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -660,7 +660,7 @@ export function usePropertyLookup() {
     }
   ) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       if (updates.totalRoofAreaSqft != null || updates.primaryPitch != null) {
         const roofUpdate: Record<string, unknown> = {};

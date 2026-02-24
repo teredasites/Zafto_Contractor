@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -128,7 +128,7 @@ export function useTpaSupplements(assignmentId: string) {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('tpa_supplements')
         .select('*')
@@ -152,7 +152,7 @@ export function useTpaSupplements(assignmentId: string) {
   // Real-time subscription
   useEffect(() => {
     if (!assignmentId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`supplements-${assignmentId}`)
       .on(
@@ -168,7 +168,7 @@ export function useTpaSupplements(assignmentId: string) {
   // Create supplement
   const createSupplement = useCallback(async (input: CreateSupplementInput) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       // Get next supplement number
       const nextNumber = supplements.length > 0
         ? Math.max(...supplements.map((s) => s.supplementNumber)) + 1
@@ -203,7 +203,7 @@ export function useTpaSupplements(assignmentId: string) {
   // Update supplement
   const updateSupplement = useCallback(async (id: string, input: UpdateSupplementInput) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const updateData: Record<string, unknown> = {};
       if (input.title !== undefined) updateData.title = input.title;
       if (input.description !== undefined) updateData.description = input.description;
@@ -231,7 +231,7 @@ export function useTpaSupplements(assignmentId: string) {
   // Submit supplement
   const submitSupplement = useCallback(async (id: string) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { error: err } = await supabase
         .from('tpa_supplements')
         .update({ status: 'submitted', submitted_at: new Date().toISOString() })
@@ -256,7 +256,7 @@ export function useTpaSupplements(assignmentId: string) {
     denialReason?: string
   ) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { error: err } = await supabase
         .from('tpa_supplements')
         .update({
@@ -281,7 +281,7 @@ export function useTpaSupplements(assignmentId: string) {
   // Soft delete
   const deleteSupplement = useCallback(async (id: string) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { error: err } = await supabase
         .from('tpa_supplements')
         .update({ deleted_at: new Date().toISOString() })

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -111,7 +111,7 @@ export function useAreaScans() {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: err } = await supabase
         .from('area_scans')
         .select('*')
@@ -132,7 +132,7 @@ export function useAreaScans() {
 
   // Real-time subscription for status updates
   useEffect(() => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel('area-scans-list')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'area_scans' }, () => fetchScans())
@@ -159,7 +159,7 @@ export function useAreaScan(areaScanId: string) {
     setLoading(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
 
       // Fetch area scan
       const { data: scanRow, error: scanErr } = await supabase
@@ -198,7 +198,7 @@ export function useAreaScan(areaScanId: string) {
   // Real-time subscription for scanning progress
   useEffect(() => {
     if (!areaScanId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`area-scan-${areaScanId}`)
       .on('postgres_changes', {
@@ -222,7 +222,7 @@ export function useAreaScan(areaScanId: string) {
     storm_type?: string;
   }) => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -308,7 +308,7 @@ export function useLeadScore(propertyScanId: string) {
     const fetchScore = async () => {
       setLoading(true);
       try {
-        const supabase = createClient();
+        const supabase = getSupabase();
         const { data } = await supabase
           .from('property_lead_scores')
           .select('*')
@@ -331,7 +331,7 @@ export function useLeadScore(propertyScanId: string) {
   // Trigger lead score computation
   const computeScore = useCallback(async () => {
     try {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
@@ -351,7 +351,7 @@ export function useLeadScore(propertyScanId: string) {
       if (!res.ok) throw new Error(data.error || 'Scoring failed');
 
       // Refetch
-      const supabase2 = createClient();
+      const supabase2 = getSupabase();
       const { data: updated } = await supabase2
         .from('property_lead_scores')
         .select('*')

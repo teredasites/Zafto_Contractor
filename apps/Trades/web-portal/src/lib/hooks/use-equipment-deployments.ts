@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
@@ -159,7 +159,7 @@ export function useEquipmentDeployments(jobId: string | null) {
     try {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
+      const supabase = getSupabase();
       const [deplRes, calcRes] = await Promise.all([
         supabase
           .from('restoration_equipment')
@@ -189,7 +189,7 @@ export function useEquipmentDeployments(jobId: string | null) {
   useEffect(() => {
     fetch();
     if (!jobId) return;
-    const supabase = createClient();
+    const supabase = getSupabase();
     const channel = supabase
       .channel(`equip-deploy-${jobId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'restoration_equipment', filter: `job_id=eq.${jobId}` }, () => { fetch(); })
@@ -230,7 +230,7 @@ export function useEquipmentDeployments(jobId: string | null) {
     equipmentInventoryId?: string;
     tpaAssignmentId?: string;
   }): Promise<string> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
     const companyId = user.app_metadata?.company_id;
@@ -278,7 +278,7 @@ export function useEquipmentDeployments(jobId: string | null) {
   };
 
   const removeEquipment = async (deploymentId: string): Promise<void> => {
-    const supabase = createClient();
+    const supabase = getSupabase();
     const now = new Date().toISOString();
 
     const deployment = deployments.find(d => d.id === deploymentId);
