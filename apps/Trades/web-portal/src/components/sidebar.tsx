@@ -78,6 +78,7 @@ import {
   TreePine,
   Snowflake,
   Hammer,
+  Cloud,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -151,6 +152,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Subcontractors', href: '/dashboard/subcontractors', icon: HardHat },
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
       { name: 'Schedule', href: '/dashboard/scheduling', icon: ClipboardList },
+      { name: 'Weather Schedule', href: '/dashboard/weather-scheduling', icon: Cloud },
       { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
       { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock, permission: PERMISSIONS.TIMECLOCK_VIEW_ALL },
       { name: 'Inspections', href: '/dashboard/inspections', icon: ClipboardCheck },
