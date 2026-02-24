@@ -312,7 +312,7 @@ function PanelScheduleTab() {
             )}>
               {analysis.utilizationPercent}%
             </p>
-            <div className="w-full bg-zinc-800 rounded-full h-2 mt-2">
+            <div className="w-full bg-secondary rounded-full h-2 mt-2">
               <div
                 className={cn(
                   'h-2 rounded-full transition-all',
@@ -848,7 +848,7 @@ function ServiceUpgradeTab() {
                     <span className={cn('text-sm font-mono w-14 text-right', isCurrent && 'text-blue-400', isRecommended && 'text-emerald-400')}>
                       {size}A
                     </span>
-                    <div className="flex-1 bg-zinc-800 rounded-full h-3 relative">
+                    <div className="flex-1 bg-secondary rounded-full h-3 relative">
                       <div
                         className={cn(
                           'h-3 rounded-full',

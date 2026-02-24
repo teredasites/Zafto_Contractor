@@ -82,10 +82,10 @@ const STATUS_VARIANTS: Record<string, string> = {
   drying: 'bg-teal-500/10 text-teal-400',
   monitoring: 'bg-teal-500/10 text-teal-400',
   completed: 'bg-emerald-500/10 text-emerald-400',
-  closed: 'bg-zinc-500/10 text-zinc-400',
+  closed: 'bg-muted/10 text-muted',
   declined: 'bg-red-500/10 text-red-400',
   cancelled: 'bg-red-500/10 text-red-400',
-  reassigned: 'bg-zinc-500/10 text-zinc-400',
+  reassigned: 'bg-muted/10 text-muted',
 };
 
 const LOSS_TYPE_ICONS: Record<string, typeof Droplets> = {

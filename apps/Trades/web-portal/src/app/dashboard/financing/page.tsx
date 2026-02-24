@@ -830,7 +830,7 @@ function AnalyticsTab({ applications, providers }: { applications: FinancingAppl
                 </div>
                 <div className="h-4 bg-surface rounded-full overflow-hidden border border-main">
                   <div
-                    className="h-full bg-zinc-600 rounded-full transition-all duration-700"
+                    className="h-full bg-muted rounded-full transition-all duration-700"
                     style={{ width: `${closeRateWithout}%` }}
                   />
                 </div>
@@ -871,7 +871,7 @@ function AnalyticsTab({ applications, providers }: { applications: FinancingAppl
                 </div>
                 <div className="h-4 bg-surface rounded-full overflow-hidden border border-main">
                   <div
-                    className="h-full bg-zinc-600 rounded-full transition-all duration-700"
+                    className="h-full bg-muted rounded-full transition-all duration-700"
                     style={{ width: `${(avgNonFinancedJob / avgFinancedJob) * 100}%` }}
                   />
                 </div>

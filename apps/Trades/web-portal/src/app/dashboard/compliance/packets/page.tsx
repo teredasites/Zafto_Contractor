@@ -147,7 +147,7 @@ export default function CompliancePacketsPage() {
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-white">{t('compliancePackets.title')}</h1>
-          <p className="text-sm text-zinc-400 mt-1">Bundle certifications for sharing with GCs, inspectors, or clients</p>
+          <p className="text-sm text-muted mt-1">Bundle certifications for sharing with GCs, inspectors, or clients</p>
         </div>
         <Button onClick={() => setCreating(!creating)} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -163,18 +163,18 @@ export default function CompliancePacketsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm text-zinc-400 mb-1 block">{t('compliancePackets.packetName')}</label>
+              <label className="text-sm text-muted mb-1 block">{t('compliancePackets.packetName')}</label>
               <input
                 type="text"
                 value={packetName}
                 onChange={(e) => setPacketName(e.target.value)}
                 placeholder="e.g., GC Bid Package — ABC Construction"
-                className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-surface border border-main rounded-lg text-sm text-white placeholder:text-muted focus:outline-none focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="text-sm text-zinc-400 mb-2 block">
+              <label className="text-sm text-muted mb-2 block">
                 Select Certifications ({selectedCerts.size} selected)
               </label>
               <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -185,7 +185,7 @@ export default function CompliancePacketsPage() {
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
                       selectedCerts.has(cert.id)
                         ? 'border-blue-500 bg-blue-500/10'
-                        : 'border-zinc-700 bg-zinc-900 hover:border-zinc-600'
+                        : 'border-main bg-surface hover:border-muted'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -193,15 +193,15 @@ export default function CompliancePacketsPage() {
                         {selectedCerts.has(cert.id) ? (
                           <CheckCircle className="h-4 w-4 text-blue-400" />
                         ) : (
-                          <div className="h-4 w-4 rounded-full border border-zinc-600" />
+                          <div className="h-4 w-4 rounded-full border border-muted" />
                         )}
                         <div>
                           <p className="text-sm font-medium text-white">{cert.certification_name}</p>
-                          <p className="text-xs text-zinc-500">{cert.certification_type}</p>
+                          <p className="text-xs text-muted">{cert.certification_type}</p>
                         </div>
                       </div>
                       {cert.expiration_date && (
-                        <span className="text-xs text-zinc-500">
+                        <span className="text-xs text-muted">
                           Exp: {formatDate(cert.expiration_date)}
                         </span>
                       )}
@@ -209,7 +209,7 @@ export default function CompliancePacketsPage() {
                   </button>
                 ))}
                 {certs.length === 0 && (
-                  <p className="text-sm text-zinc-500 text-center py-4">{t('compliancePackets.noActiveCertificationsFound')}</p>
+                  <p className="text-sm text-muted text-center py-4">{t('compliancePackets.noActiveCertificationsFound')}</p>
                 )}
               </div>
             </div>
@@ -230,9 +230,9 @@ export default function CompliancePacketsPage() {
       {packets.length === 0 && !creating ? (
         <Card>
           <CardContent className="p-8 text-center">
-            <Package className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">{t('compliancePackets.noCompliancePacketsYet')}</p>
-            <p className="text-sm text-zinc-500 mt-1">{t('compliancePackets.createAPacketToBundleYourCertificationsForSharing')}</p>
+            <Package className="h-12 w-12 text-muted mx-auto mb-3" />
+            <p className="text-muted">{t('compliancePackets.noCompliancePacketsYet')}</p>
+            <p className="text-sm text-muted mt-1">{t('compliancePackets.createAPacketToBundleYourCertificationsForSharing')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -240,12 +240,12 @@ export default function CompliancePacketsPage() {
           {packets.map(packet => {
             const packetCerts = certs.filter(c => packet.certification_ids?.includes(c.id));
             return (
-              <Card key={packet.id} className="hover:border-zinc-600 transition-colors">
+              <Card key={packet.id} className="hover:border-muted transition-colors">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-zinc-800">
-                        <Package className="h-4 w-4 text-zinc-400" />
+                      <div className="p-2 rounded-lg bg-secondary">
+                        <Package className="h-4 w-4 text-muted" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function CompliancePacketsPage() {
                             {packet.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                        <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                           <span>{packetCerts.length} certification{packetCerts.length !== 1 ? 's' : ''}</span>
                           <span>Created {formatDate(packet.created_at)}</span>
                           {packet.shared_at && (

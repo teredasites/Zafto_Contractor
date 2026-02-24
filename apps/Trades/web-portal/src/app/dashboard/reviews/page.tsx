@@ -67,7 +67,7 @@ function StarRating({ rating }: { rating: number | null }) {
       {[1, 2, 3, 4, 5].map(i => (
         <Star
           key={i}
-          className={cn('h-3.5 w-3.5', i <= rating ? 'text-amber-500 fill-amber-500' : 'text-zinc-300 dark:text-zinc-600')}
+          className={cn('h-3.5 w-3.5', i <= rating ? 'text-amber-500 fill-amber-500' : 'text-muted')}
         />
       ))}
       <span className="ml-1 text-xs font-medium">{rating}/5</span>

@@ -718,7 +718,7 @@ function PhotoLightbox({
         </div>
 
         {/* Info bar */}
-        <div className="mt-3 bg-zinc-900/90 rounded-lg px-4 py-3 flex items-center justify-between text-sm">
+        <div className="mt-3 bg-surface/90 rounded-lg px-4 py-3 flex items-center justify-between text-sm">
           <div className="flex items-center gap-4">
             {photo.caption && (
               <span className="text-white">{photo.caption}</span>

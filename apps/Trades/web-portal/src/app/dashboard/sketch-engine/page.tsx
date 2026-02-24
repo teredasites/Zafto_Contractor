@@ -688,7 +688,7 @@ function PlanCard({
                   <button
                     onClick={(e) => { e.stopPropagation(); onCreateEstimate(); }}
                     disabled={loadingEstimate || plan.roomCount === 0}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-white/[0.06] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-main hover:bg-white/[0.06] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     title={plan.roomCount === 0 ? 'Draw rooms first to generate an estimate' : 'Create estimate from sketch measurements'}
                   >
                     {loadingEstimate ? <Loader2 size={12} className="animate-spin" /> : <Calculator size={12} />}

@@ -421,7 +421,7 @@ function DashboardTab({
                         {percentDry}% dry ({job.dryCount}/{job.dryCount + job.wetCount})
                       </span>
                     </div>
-                    <div className="w-full bg-zinc-800 rounded-full h-2">
+                    <div className="w-full bg-secondary rounded-full h-2">
                       <div
                         className={cn('h-2 rounded-full transition-all',
                           percentDry === 100 ? 'bg-emerald-500' : percentDry >= 75 ? 'bg-amber-500' : 'bg-red-500'
@@ -1048,7 +1048,7 @@ function PsychrometricCalculator() {
             </div>
             {outdoorGpp != null && (
               <>
-                <div className="p-3 bg-zinc-800/50 border border-zinc-700/30 rounded-lg">
+                <div className="p-3 bg-secondary/50 border border-main/30 rounded-lg">
                   <p className="text-xs text-muted uppercase tracking-wider mb-2">Outdoor</p>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted">GPP</span>

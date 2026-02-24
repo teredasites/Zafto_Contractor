@@ -166,7 +166,7 @@ export default function MoistureDryingMonitorPage() {
               </p>
               <p className="text-sm text-muted">{dryingProgress.dryLocations}/{dryingProgress.totalLocations}</p>
             </div>
-            <div className="w-full bg-zinc-800 rounded-full h-2 mt-2">
+            <div className="w-full bg-secondary rounded-full h-2 mt-2">
               <div
                 className={cn('h-2 rounded-full transition-all', dryingProgress.allDry ? 'bg-emerald-500' : dryingProgress.percentDry >= 75 ? 'bg-amber-500' : 'bg-red-500')}
                 style={{ width: `${dryingProgress.percentDry}%` }}
@@ -361,7 +361,7 @@ function OverviewTab({
                     GPP: {latestPsych.indoorGpp?.toFixed(1) ?? '—'} | Dew: {latestPsych.indoorDewPointF?.toFixed(1) ?? '—'}°F
                   </p>
                 </div>
-                <div className="p-3 bg-zinc-800/50 rounded-lg border border-zinc-700/30">
+                <div className="p-3 bg-secondary/50 rounded-lg border border-main/30">
                   <p className="text-xs text-muted uppercase tracking-wider mb-1">{t('common.outdoor')}</p>
                   {latestPsych.outdoorTempF != null ? (
                     <>

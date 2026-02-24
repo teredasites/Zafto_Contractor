@@ -98,13 +98,13 @@ interface RainDelay {
 
 const conditionConfig: Record<string, { icon: LucideIcon; label: string; color: string }> = {
   clear: { icon: Sun, label: 'Clear', color: 'text-amber-500' },
-  partly_cloudy: { icon: Cloud, label: 'Partly Cloudy', color: 'text-zinc-400' },
-  cloudy: { icon: Cloud, label: 'Cloudy', color: 'text-zinc-500' },
+  partly_cloudy: { icon: Cloud, label: 'Partly Cloudy', color: 'text-muted' },
+  cloudy: { icon: Cloud, label: 'Cloudy', color: 'text-muted' },
   rain: { icon: CloudRain, label: 'Rain', color: 'text-blue-500' },
   heavy_rain: { icon: CloudRain, label: 'Heavy Rain', color: 'text-blue-600' },
   snow: { icon: CloudSnow, label: 'Snow', color: 'text-sky-300' },
   thunderstorm: { icon: CloudLightning, label: 'Thunderstorm', color: 'text-purple-500' },
-  fog: { icon: Cloud, label: 'Fog', color: 'text-zinc-400' },
+  fog: { icon: Cloud, label: 'Fog', color: 'text-muted' },
 };
 
 // ── Demo data ──
@@ -599,7 +599,7 @@ export default function WeatherSchedulingPage() {
                           onClick={() => toggleRule(tr.trade, rule.id)}
                           className={cn(
                             'w-8 h-5 rounded-full transition-colors relative',
-                            rule.enabled ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-600'
+                            rule.enabled ? 'bg-emerald-500' : 'bg-muted/30 dark:bg-muted/60'
                           )}
                         >
                           <span className={cn(
@@ -647,7 +647,7 @@ export default function WeatherSchedulingPage() {
             {delays.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center text-muted-foreground">
-                  <CloudRain className="w-8 h-8 mx-auto mb-2 text-zinc-400" />
+                  <CloudRain className="w-8 h-8 mx-auto mb-2 text-muted" />
                   <p className="text-sm">No rain delays logged</p>
                   <p className="text-xs mt-1">When weather delays a job, log it here to track schedule impact</p>
                 </CardContent>

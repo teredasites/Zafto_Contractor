@@ -87,12 +87,12 @@ export default function PricingCoveragePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={() => router.push('/dashboard/estimates')} className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400">
+        <button onClick={() => router.push('/dashboard/estimates')} className="p-1.5 rounded-lg hover:bg-surface-hover text-muted">
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-xl font-semibold text-zinc-100">{t('estimatesPricing.title')}</h1>
-          <p className="text-sm text-zinc-500">{t('estimatesPricing.crowdsourcedPricingDataByRegionAndTradeCategory')}</p>
+          <h1 className="text-xl font-semibold text-main">{t('estimatesPricing.title')}</h1>
+          <p className="text-sm text-muted">{t('estimatesPricing.crowdsourcedPricingDataByRegionAndTradeCategory')}</p>
         </div>
       </div>
 
@@ -104,12 +104,12 @@ export default function PricingCoveragePage() {
           { label: 'With Data', value: withPricing, icon: Globe },
           { label: 'Regions', value: regions.length, icon: Globe },
         ].map(stat => (
-          <div key={stat.label} className="bg-zinc-800/40 border border-zinc-700/30 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-zinc-500 text-xs mb-1">
+          <div key={stat.label} className="bg-secondary border border-main rounded-lg p-4">
+            <div className="flex items-center gap-2 text-muted text-xs mb-1">
               <stat.icon className="w-3.5 h-3.5" />
               {stat.label}
             </div>
-            <p className="text-2xl font-semibold text-zinc-100">{stat.value}</p>
+            <p className="text-2xl font-semibold text-main">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -119,7 +119,7 @@ export default function PricingCoveragePage() {
         <select
           value={filterRegion}
           onChange={(e) => setFilterRegion(e.target.value)}
-          className="px-3 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-sm text-zinc-200"
+          className="px-3 py-1.5 bg-secondary border border-main rounded-lg text-sm text-main"
         >
           <option value="">{t('estimatesPricing.allRegions')}</option>
           {regions.map(r => <option key={r} value={r}>{r}</option>)}
@@ -130,14 +130,14 @@ export default function PricingCoveragePage() {
       {loading ? (
         <div className="space-y-2">
           {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="h-12 bg-zinc-800/50 rounded animate-pulse" />
+            <div key={i} className="h-12 bg-secondary rounded animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl overflow-hidden">
+        <div className="bg-secondary border border-main rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800">
+              <tr className="text-[10px] uppercase tracking-wider text-muted border-b border-main">
                 <th className="px-4 py-2.5 text-left">{t('common.category')}</th>
                 <th className="px-4 py-2.5 text-left">{t('common.region')}</th>
                 <th className="px-4 py-2.5 text-right">{t('estimatesPricing.entries')}</th>
@@ -147,16 +147,16 @@ export default function PricingCoveragePage() {
                 <th className="px-4 py-2.5 text-right">{t('common.lastUpdated')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/50">
+            <tbody className="divide-y divide-main">
               {filtered.map((row, i) => (
-                <tr key={i} className="hover:bg-zinc-800/30 transition-colors">
+                <tr key={i} className="hover:bg-secondary transition-colors">
                   <td className="px-4 py-2.5">
                     <span className="text-xs font-mono text-blue-400">{row.categoryCode}</span>
-                    <span className="text-xs text-zinc-400 ml-2">{row.categoryName}</span>
+                    <span className="text-xs text-muted ml-2">{row.categoryName}</span>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-zinc-400">{row.regionCode || '—'}</td>
-                  <td className="px-4 py-2.5 text-xs text-right text-zinc-200">{row.entryCount}</td>
-                  <td className="px-4 py-2.5 text-xs text-right text-zinc-200">
+                  <td className="px-4 py-2.5 text-xs text-muted">{row.regionCode || '—'}</td>
+                  <td className="px-4 py-2.5 text-xs text-right text-main">{row.entryCount}</td>
+                  <td className="px-4 py-2.5 text-xs text-right text-main">
                     {row.avgPrice !== null ? formatCurrency(row.avgPrice) : '—'}
                   </td>
                   <td className="px-4 py-2.5 text-center">
@@ -166,15 +166,15 @@ export default function PricingCoveragePage() {
                       </span>
                     ) : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-right text-zinc-400">{row.maxSources}</td>
-                  <td className="px-4 py-2.5 text-xs text-right text-zinc-500">
+                  <td className="px-4 py-2.5 text-xs text-right text-muted">{row.maxSources}</td>
+                  <td className="px-4 py-2.5 text-xs text-right text-muted">
                     {row.lastUpdated ? formatDate(row.lastUpdated) : '—'}
                   </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-zinc-500 text-sm">
+                  <td colSpan={7} className="px-4 py-8 text-center text-muted text-sm">
                     <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-30" />
                     No pricing data yet. Data populates as invoices are finalized.
                   </td>

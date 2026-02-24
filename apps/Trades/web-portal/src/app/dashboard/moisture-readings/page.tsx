@@ -47,7 +47,7 @@ const dryOptions = [
 ];
 
 function getReadingColor(reading: MoistureReadingWithJob): string {
-  if (reading.targetValue == null) return 'text-zinc-300';
+  if (reading.targetValue == null) return 'text-main';
   if (reading.readingValue <= reading.targetValue) return 'text-emerald-400';
   const threshold = reading.targetValue * 1.2;
   if (reading.readingValue <= threshold) return 'text-amber-400';
@@ -239,7 +239,7 @@ export default function MoistureReadingsPage() {
                         </span>
                       </>
                     ) : (
-                      <span className="text-zinc-500">--</span>
+                      <span className="text-muted">--</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-center">

@@ -128,37 +128,37 @@ export default function BookingTypesPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">{t('meetingsBookingTypes.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">{t('meetingsBooking.configureMeetingTypesForClientSelfscheduling')}</p>
+            <h1 className="text-2xl font-bold text-main">{t('meetingsBookingTypes.title')}</h1>
+            <p className="text-sm text-muted mt-1">{t('meetingsBooking.configureMeetingTypesForClientSelfscheduling')}</p>
           </div>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-12 text-zinc-500">
+          <div className="flex items-center justify-center py-12 text-muted">
             <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading...
           </div>
         ) : error ? (
           <div className="text-red-400 text-center py-12">{error}</div>
         ) : types.length === 0 ? (
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-surface border-main">
             <CardContent className="p-8 text-center">
-              <Video className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
-              <h3 className="font-medium text-zinc-100">{t('meetingsBooking.noBookingTypesConfigured')}</h3>
-              <p className="text-sm text-zinc-500 mt-1">{t('meetingsBooking.createBookingTypesToLetClientsScheduleMeetings')}</p>
+              <Video className="h-10 w-10 text-muted mx-auto mb-3" />
+              <h3 className="font-medium text-main">{t('meetingsBooking.noBookingTypesConfigured')}</h3>
+              <p className="text-sm text-muted mt-1">{t('meetingsBooking.createBookingTypesToLetClientsScheduleMeetings')}</p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
             {types.map(bt => (
-              <Card key={bt.id} className="bg-zinc-900 border-zinc-800">
+              <Card key={bt.id} className="bg-surface border-main">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-zinc-100">{bt.name}</h3>
+                        <h3 className="font-medium text-main">{bt.name}</h3>
                         <Badge className={bt.isActive
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                          : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+                          : 'bg-muted/10 text-muted border-muted/20'
                         }>
                           {bt.isActive ? 'Active' : 'Inactive'}
                         </Badge>
@@ -167,9 +167,9 @@ export default function BookingTypesPage() {
                         </Badge>
                       </div>
                       {bt.description && (
-                        <p className="text-sm text-zinc-400 mt-1">{bt.description}</p>
+                        <p className="text-sm text-muted mt-1">{bt.description}</p>
                       )}
-                      <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-zinc-500">
+                      <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-muted">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {bt.durationMinutes} min
@@ -216,7 +216,7 @@ export default function BookingTypesPage() {
                       >
                         {bt.isActive
                           ? <ToggleRight className="h-4 w-4 text-emerald-400" />
-                          : <ToggleLeft className="h-4 w-4 text-zinc-500" />
+                          : <ToggleLeft className="h-4 w-4 text-muted" />
                         }
                       </Button>
                       <Button
