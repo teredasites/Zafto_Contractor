@@ -42,7 +42,7 @@ const predictionTypeConfig: Record<string, { label: string; icon: typeof Wrench;
 };
 
 const outreachStatusConfig: Record<OutreachStatus, { label: string; bg: string; text: string }> = {
-  pending: { label: 'Pending', bg: 'bg-zinc-700/50', text: 'text-zinc-400' },
+  pending: { label: 'Pending', bg: 'bg-slate-700/50', text: 'text-slate-400' },
   sent: { label: 'Sent', bg: 'bg-blue-500/20', text: 'text-blue-400' },
   booked: { label: 'Booked', bg: 'bg-green-500/20', text: 'text-green-400' },
   declined: { label: 'Declined', bg: 'bg-red-500/20', text: 'text-red-400' },
@@ -87,7 +87,7 @@ export default function MaintenancePipelinePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-zinc-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted" />
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function MaintenancePipelinePage() {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <AlertTriangle className="w-12 h-12 text-red-400" />
-        <p className="text-zinc-400">{error}</p>
+        <p className="text-muted">{error}</p>
         <Button onClick={refresh} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" /> Retry
         </Button>
@@ -111,8 +111,8 @@ export default function MaintenancePipelinePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-100">{t('maintenancePipeline.title')}</h1>
-            <p className="text-sm text-zinc-400 mt-1">
+            <h1 className="text-2xl font-semibold text-main">{t('maintenancePipeline.title')}</h1>
+            <p className="text-sm text-muted mt-1">
               Predictive maintenance opportunities and revenue forecast
             </p>
           </div>
@@ -129,9 +129,9 @@ export default function MaintenancePipelinePage() {
 
         {/* Engine Result Toast */}
         {engineResult && (
-          <div className="p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-sm text-zinc-300 flex items-center justify-between">
+          <div className="p-3 rounded-lg bg-secondary border border-main text-sm text-main flex items-center justify-between">
             <span>{engineResult}</span>
-            <button onClick={() => setEngineResult(null)} className="text-zinc-500 hover:text-zinc-300">
+            <button onClick={() => setEngineResult(null)} className="text-muted hover:text-main">
               <XCircle className="w-4 h-4" />
             </button>
           </div>
@@ -147,7 +147,7 @@ export default function MaintenancePipelinePage() {
         </div>
 
         {/* View Mode Tabs */}
-        <div className="flex gap-1 border-b border-zinc-800 pb-px">
+        <div className="flex gap-1 border-b border-main pb-px">
           {([
             { key: 'pipeline' as const, label: 'Pipeline', icon: Wrench },
             { key: 'calendar' as const, label: 'Timeline', icon: Calendar },
@@ -159,8 +159,8 @@ export default function MaintenancePipelinePage() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors',
                 viewMode === tab.key
-                  ? 'bg-zinc-800 text-zinc-100 border-b-2 border-blue-500'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                  ? 'bg-secondary text-main border-b-2 border-blue-500'
+                  : 'text-muted hover:text-main hover:bg-secondary/50'
               )}
             >
               <tab.icon className="w-4 h-4" />
@@ -182,7 +182,7 @@ export default function MaintenancePipelinePage() {
                     'px-3 py-1.5 text-xs rounded-full transition-colors',
                     statusFilter === s
                       ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+                      : 'bg-secondary text-muted hover:text-main'
                   )}
                 >
                   {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -192,9 +192,9 @@ export default function MaintenancePipelinePage() {
 
             {filteredPredictions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16">
-                <Wrench className="w-12 h-12 text-zinc-600 mb-3" />
-                <p className="text-zinc-400">{t('maintenancePipeline.noPredictionsMatchFilter')}</p>
-                <p className="text-xs text-zinc-500 mt-1">{t('maintenancePipeline.runTheEngineToGeneratePredictionsFromYourEquipment')}</p>
+                <Wrench className="w-12 h-12 text-muted opacity-50 mb-3" />
+                <p className="text-muted">{t('maintenancePipeline.noPredictionsMatchFilter')}</p>
+                <p className="text-xs text-muted mt-1">{t('maintenancePipeline.runTheEngineToGeneratePredictionsFromYourEquipment')}</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -241,25 +241,25 @@ function PredictionCard({
     <Card className={cn(prediction.isOverdue && 'border-red-500/30')}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className={cn('p-2 rounded-lg bg-zinc-800', typeConfig.color)}>
+          <div className={cn('p-2 rounded-lg bg-secondary', typeConfig.color)}>
             <TypeIcon className="w-5 h-5" />
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm font-medium text-zinc-200 truncate">{prediction.recommendedAction}</p>
+              <p className="text-sm font-medium text-main truncate">{prediction.recommendedAction}</p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-zinc-400">
+            <div className="flex items-center gap-3 text-xs text-muted">
               <span>{prediction.equipmentName || 'Equipment'}</span>
               {prediction.equipmentManufacturer && (
                 <>
-                  <span className="text-zinc-600">|</span>
+                  <span className="text-muted opacity-50">|</span>
                   <span>{prediction.equipmentManufacturer}</span>
                 </>
               )}
               {prediction.customerName && (
                 <>
-                  <span className="text-zinc-600">|</span>
+                  <span className="text-muted opacity-50">|</span>
                   <span>{prediction.customerName}</span>
                 </>
               )}
@@ -268,7 +268,7 @@ function PredictionCard({
               <span className={cn(
                 'font-medium',
                 prediction.isOverdue ? 'text-red-400' :
-                prediction.daysUntil <= 7 ? 'text-yellow-400' : 'text-zinc-400'
+                prediction.daysUntil <= 7 ? 'text-yellow-400' : 'text-muted'
               )}>
                 {prediction.isOverdue
                   ? `${Math.abs(prediction.daysUntil)}d overdue`
@@ -276,13 +276,13 @@ function PredictionCard({
                     ? 'Today'
                     : `In ${prediction.daysUntil}d`}
               </span>
-              <span className="text-zinc-600">|</span>
-              <span className="text-zinc-500">
+              <span className="text-muted opacity-50">|</span>
+              <span className="text-muted">
                 Confidence: {Math.round(prediction.confidenceScore * 100)}%
               </span>
               {prediction.estimatedCost != null && (
                 <>
-                  <span className="text-zinc-600">|</span>
+                  <span className="text-muted opacity-50">|</span>
                   <span className="text-green-400">{formatCurrency(prediction.estimatedCost)}</span>
                 </>
               )}
@@ -357,8 +357,8 @@ function TimelineView({ predictions }: { predictions: MaintenancePrediction[] })
   if (months.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <Calendar className="w-12 h-12 text-zinc-600 mb-3" />
-        <p className="text-zinc-400">{t('maintenancePipeline.noUpcomingPredictions')}</p>
+        <Calendar className="w-12 h-12 text-muted opacity-50 mb-3" />
+        <p className="text-muted">{t('maintenancePipeline.noUpcomingPredictions')}</p>
       </div>
     );
   }
@@ -370,19 +370,19 @@ function TimelineView({ predictions }: { predictions: MaintenancePrediction[] })
         const label = formatDate(month + '-01');
         return (
           <div key={month}>
-            <h3 className="text-sm font-medium text-zinc-300 mb-3 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-zinc-500" />
+            <h3 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-muted" />
               {label} ({items.length})
             </h3>
-            <div className="space-y-1.5 pl-6 border-l border-zinc-800">
+            <div className="space-y-1.5 pl-6 border-l border-main">
               {items.map(p => {
                 const tc = predictionTypeConfig[p.predictionType] || predictionTypeConfig.maintenance_due;
                 return (
-                  <div key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
-                    <span className="text-xs text-zinc-500 w-16 shrink-0">{formatDate(p.predictedDate)}</span>
+                  <div key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-hover transition-colors">
+                    <span className="text-xs text-muted w-16 shrink-0">{formatDate(p.predictedDate)}</span>
                     <span className={cn('w-2 h-2 rounded-full shrink-0', tc.color.replace('text-', 'bg-'))} />
-                    <span className="text-sm text-zinc-300 truncate flex-1">{p.recommendedAction}</span>
-                    <span className="text-xs text-zinc-500 shrink-0">{p.customerName}</span>
+                    <span className="text-sm text-main truncate flex-1">{p.recommendedAction}</span>
+                    <span className="text-xs text-muted shrink-0">{p.customerName}</span>
                   </div>
                 );
               })}
@@ -429,13 +429,13 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-green-400">{formatCurrency(stats.totalEstimatedRevenue)}</p>
-            <p className="text-sm text-zinc-400 mt-1">{t('common.pipelineValue')}</p>
+            <p className="text-sm text-muted mt-1">{t('common.pipelineValue')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-blue-400">{stats.total - stats.booked}</p>
-            <p className="text-sm text-zinc-400 mt-1">{t('maintenancePipeline.openOpportunities')}</p>
+            <p className="text-sm text-muted mt-1">{t('maintenancePipeline.openOpportunities')}</p>
           </CardContent>
         </Card>
         <Card>
@@ -443,7 +443,7 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
             <p className="text-3xl font-bold text-emerald-400">
               {stats.total > 0 ? Math.round((stats.booked / stats.total) * 100) : 0}%
             </p>
-            <p className="text-sm text-zinc-400 mt-1">{t('maintenancePipeline.bookingRate')}</p>
+            <p className="text-sm text-muted mt-1">{t('maintenancePipeline.bookingRate')}</p>
           </CardContent>
         </Card>
       </div>
@@ -451,11 +451,11 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
       {/* Monthly Forecast */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium text-zinc-300">{t('maintenancePipeline.monthlyForecast')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-main">{t('maintenancePipeline.monthlyForecast')}</CardTitle>
         </CardHeader>
         <CardContent>
           {months.length === 0 ? (
-            <p className="text-sm text-zinc-500 text-center py-6">{t('maintenancePipeline.noForecastDataAvailable')}</p>
+            <p className="text-sm text-muted text-center py-6">{t('maintenancePipeline.noForecastDataAvailable')}</p>
           ) : (
             <div className="space-y-3">
               {months.map(month => {
@@ -466,8 +466,8 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
 
                 return (
                   <div key={month} className="flex items-center gap-3">
-                    <span className="text-xs text-zinc-400 w-16 shrink-0">{label}</span>
-                    <div className="flex-1 bg-zinc-800 rounded-full h-6 overflow-hidden">
+                    <span className="text-xs text-muted w-16 shrink-0">{label}</span>
+                    <div className="flex-1 bg-secondary rounded-full h-6 overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-green-500/30 to-green-500/60 rounded-full flex items-center px-2"
                         style={{ width: `${barWidth}%` }}
@@ -477,7 +477,7 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
                         </span>
                       </div>
                     </div>
-                    <span className="text-xs text-zinc-500 w-12 text-right">{data.count} jobs</span>
+                    <span className="text-xs text-muted w-12 text-right">{data.count} jobs</span>
                   </div>
                 );
               })}
@@ -489,7 +489,7 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
       {/* By Type */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium text-zinc-300">{t('maintenancePipeline.byPredictionType')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-main">{t('maintenancePipeline.byPredictionType')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -497,12 +497,12 @@ function RevenueView({ predictions, stats }: { predictions: MaintenancePredictio
               const config = predictionTypeConfig[type] || predictionTypeConfig.maintenance_due;
               const TypeIcon = config.icon;
               return (
-                <div key={type} className="p-3 bg-zinc-800/50 rounded-lg">
+                <div key={type} className="p-3 bg-secondary/50 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <TypeIcon className={cn('w-4 h-4', config.color)} />
-                    <span className="text-xs text-zinc-400">{config.label}</span>
+                    <span className="text-xs text-muted">{config.label}</span>
                   </div>
-                  <p className="text-lg font-bold text-zinc-200">{data.count}</p>
+                  <p className="text-lg font-bold text-main">{data.count}</p>
                   <p className="text-xs text-green-400">{formatCurrency(data.revenue)}</p>
                 </div>
               );
@@ -536,8 +536,8 @@ function StatCard({ icon: Icon, label, value, color }: {
             <Icon className={cn('w-5 h-5', iconColors[color] || iconColors.blue)} />
           </div>
           <div>
-            <p className="text-xl font-bold text-zinc-100">{value}</p>
-            <p className="text-xs text-zinc-400">{label}</p>
+            <p className="text-xl font-bold text-main">{value}</p>
+            <p className="text-xs text-muted">{label}</p>
           </div>
         </div>
       </CardContent>

@@ -48,6 +48,7 @@ import { SearchInput } from '@/components/ui/input';
 import { useLienProtection, type LienRecord } from '@/lib/hooks/use-lien-protection';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency, formatDateLocale } from '@/lib/format-locale';
+import { CommandPalette } from '@/components/command-palette';
 
 // ── Tab type ──────────────────────────────────────────────
 type Tab = 'dashboard' | 'rules' | 'waivers' | 'deadlines' | 'notices';
@@ -84,7 +85,7 @@ function urgencyColor(days: number): string {
   if (days <= 7) return 'text-red-400';
   if (days <= 14) return 'text-amber-400';
   if (days <= 30) return 'text-blue-400';
-  return 'text-zinc-400';
+  return 'text-muted';
 }
 
 function formatStatusLabel(status: string): string {
@@ -223,7 +224,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
     success: { text: 'text-emerald-400', bg: 'bg-emerald-500/10' },
     warning: { text: 'text-amber-400', bg: 'bg-amber-500/10' },
     error: { text: 'text-red-400', bg: 'bg-red-500/10' },
-    default: { text: 'text-zinc-400', bg: 'bg-zinc-800' },
+    default: { text: 'text-muted', bg: 'bg-secondary' },
   }[variant || 'default'];
 
   return (
@@ -235,7 +236,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
           </div>
           <div>
             <p className={`text-2xl font-bold ${colors.text}`}>{value}</p>
-            <p className="text-xs text-zinc-500">{label}</p>
+            <p className="text-xs text-muted">{label}</p>
           </div>
         </div>
       </CardContent>
@@ -246,17 +247,17 @@ function StatCard({ label, value, icon: Icon, variant }: {
 // ── Timeline Indicator ────────────────────────────────────
 function DeadlineTimeline({ daysRemaining, label }: { daysRemaining: number; label: string }) {
   const pct = daysRemaining <= 0 ? 100 : Math.min(100, Math.max(0, 100 - (daysRemaining / 120) * 100));
-  const barColor = daysRemaining <= 3 ? 'bg-red-500' : daysRemaining <= 14 ? 'bg-amber-500' : daysRemaining <= 30 ? 'bg-blue-500' : 'bg-zinc-600';
+  const barColor = daysRemaining <= 3 ? 'bg-red-500' : daysRemaining <= 14 ? 'bg-amber-500' : daysRemaining <= 30 ? 'bg-blue-500' : 'bg-slate-600';
 
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-zinc-500">{label}</span>
+        <span className="text-muted">{label}</span>
         <span className={urgencyColor(daysRemaining)}>
           {daysRemaining <= 0 ? `${Math.abs(daysRemaining)}d overdue` : `${daysRemaining}d remaining`}
         </span>
       </div>
-      <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -362,7 +363,7 @@ export default function LienProtectionPage() {
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-10 w-10 text-red-400 mx-auto mb-3" />
             <p className="text-red-400 font-medium">Failed to load lien data</p>
-            <p className="text-sm text-zinc-500 mt-1">{error}</p>
+            <p className="text-sm text-muted mt-1">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -377,14 +378,15 @@ export default function LienProtectionPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <CommandPalette />
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-main flex items-center gap-2">
             <Shield className="h-6 w-6 text-blue-400" />
             Lien Protection Engine
           </h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted mt-1">
             50-state rules, auto-deadline tracking, preliminary notices, waiver management
           </p>
         </div>
@@ -405,7 +407,7 @@ export default function LienProtectionPage() {
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-1 border-b border-zinc-800 pb-0">
+      <div className="flex items-center gap-1 border-b border-main pb-0">
         {TABS.map(tab => {
           const TabIcon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -416,7 +418,7 @@ export default function LienProtectionPage() {
               className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 isActive
                   ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                  : 'border-transparent text-muted hover:text-main'
               }`}
             >
               <TabIcon className="h-4 w-4" />
@@ -462,9 +464,9 @@ export default function LienProtectionPage() {
           {filteredLiens.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <Shield className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                <p className="text-zinc-400 font-medium">No active lien records</p>
-                <p className="text-sm text-zinc-500 mt-1">Lien tracking starts when jobs have outstanding payments</p>
+                <Shield className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
+                <p className="text-muted font-medium">No active lien records</p>
+                <p className="text-sm text-muted mt-1">Lien tracking starts when jobs have outstanding payments</p>
               </CardContent>
             </Card>
           ) : (
@@ -481,16 +483,16 @@ export default function LienProtectionPage() {
                 }
 
                 return (
-                  <Card key={lien.id} className="hover:border-zinc-600 transition-colors">
+                  <Card key={lien.id} className="hover:border-accent/30 transition-colors">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3 flex-1">
-                          <div className="p-2 rounded-lg bg-zinc-800 mt-0.5">
-                            <Shield className="h-4 w-4 text-zinc-400" />
+                          <div className="p-2 rounded-lg bg-secondary mt-0.5">
+                            <Shield className="h-4 w-4 text-muted" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="text-sm font-semibold text-white">{lien.property_address}</h3>
+                              <h3 className="text-sm font-semibold text-main">{lien.property_address}</h3>
                               <Badge variant={statusVariant(lien.status)} size="sm">
                                 {formatStatusLabel(lien.status)}
                               </Badge>
@@ -498,7 +500,7 @@ export default function LienProtectionPage() {
                                 <Badge variant="purple" size="sm">Lien Filed</Badge>
                               )}
                             </div>
-                            <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-500 flex-wrap">
+                            <div className="flex items-center gap-3 mt-1.5 text-xs text-muted flex-wrap">
                               <span className="flex items-center gap-1">
                                 <MapPin className="h-3 w-3" />{lien.state_code}
                               </span>
@@ -541,13 +543,13 @@ export default function LienProtectionPage() {
                             <div className={`text-xs font-semibold px-2 py-1 rounded ${
                               daysToDeadline <= 7 ? 'bg-red-500/10 text-red-400' :
                               daysToDeadline <= 30 ? 'bg-amber-500/10 text-amber-400' :
-                              'bg-zinc-800 text-zinc-400'
+                              'bg-secondary text-muted'
                             }`}>
                               {daysToDeadline}d to file
                             </div>
                           )}
                           <Button variant="ghost" className="h-8 w-8 p-0">
-                            <ChevronRight className="h-4 w-4 text-zinc-600" />
+                            <ChevronRight className="h-4 w-4 text-muted" />
                           </Button>
                         </div>
                       </div>
@@ -567,8 +569,8 @@ export default function LienProtectionPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">50-State Lien Rules Database</h2>
-              <p className="text-sm text-zinc-500">{STATE_RULES_DATA.length} states with detailed mechanic&apos;s lien requirements</p>
+              <h2 className="text-lg font-semibold text-main">50-State Lien Rules Database</h2>
+              <p className="text-sm text-muted">{STATE_RULES_DATA.length} states with detailed mechanic&apos;s lien requirements</p>
             </div>
           </div>
 
@@ -581,8 +583,8 @@ export default function LienProtectionPage() {
           {filteredRules.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <BookOpen className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                <p className="text-zinc-400 font-medium">No states match your search</p>
+                <BookOpen className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
+                <p className="text-muted font-medium">No states match your search</p>
               </CardContent>
             </Card>
           ) : (
@@ -602,8 +604,8 @@ export default function LienProtectionPage() {
                               <span className="text-sm font-bold text-blue-400">{rule.stateCode}</span>
                             </div>
                             <div>
-                              <h3 className="text-sm font-semibold text-white">{rule.stateName}</h3>
-                              <p className="text-xs text-zinc-500">{rule.statutoryRef}</p>
+                              <h3 className="text-sm font-semibold text-main">{rule.stateName}</h3>
+                              <p className="text-xs text-muted">{rule.statutoryRef}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
@@ -618,14 +620,14 @@ export default function LienProtectionPage() {
                                 <Badge variant="warning" size="sm">Res. Different</Badge>
                               )}
                             </div>
-                            <div className="flex items-center gap-4 text-xs text-zinc-400">
+                            <div className="flex items-center gap-4 text-xs text-muted">
                               <span className="hidden md:inline">{rule.lienFilingDeadlineDays}d filing</span>
                               <span className="hidden md:inline">{rule.lienEnforcementDeadlineDays}d enforcement</span>
                             </div>
                             {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 text-zinc-500" />
+                              <ChevronDown className="h-4 w-4 text-muted" />
                             ) : (
-                              <ChevronRight className="h-4 w-4 text-zinc-500" />
+                              <ChevronRight className="h-4 w-4 text-muted" />
                             )}
                           </div>
                         </div>
@@ -633,53 +635,53 @@ export default function LienProtectionPage() {
                     </button>
 
                     {isExpanded && (
-                      <div className="border-t border-zinc-800 bg-zinc-900/50">
+                      <div className="border-t border-main bg-surface/50">
                         <CardContent className="p-5 space-y-5">
                           {/* Key Deadlines Grid */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {/* Preliminary Notice */}
-                            <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                            <div className="p-3 rounded-lg bg-secondary/50 border border-main">
                               <div className="flex items-center gap-2 mb-2">
                                 <Send className="h-4 w-4 text-blue-400" />
                                 <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Preliminary Notice</span>
                               </div>
                               {rule.prelimNoticeRequired ? (
                                 <>
-                                  <p className="text-lg font-bold text-white">{rule.prelimNoticeDeadlineDays} days</p>
-                                  <p className="text-xs text-zinc-400 mt-1">From: {rule.prelimNoticeFrom}</p>
+                                  <p className="text-lg font-bold text-main">{rule.prelimNoticeDeadlineDays} days</p>
+                                  <p className="text-xs text-muted mt-1">From: {rule.prelimNoticeFrom}</p>
                                 </>
                               ) : (
-                                <p className="text-sm text-zinc-500">Not required in this state</p>
+                                <p className="text-sm text-muted">Not required in this state</p>
                               )}
                             </div>
                             {/* Lien Filing */}
-                            <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                            <div className="p-3 rounded-lg bg-secondary/50 border border-main">
                               <div className="flex items-center gap-2 mb-2">
                                 <Gavel className="h-4 w-4 text-amber-400" />
                                 <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Lien Filing</span>
                               </div>
-                              <p className="text-lg font-bold text-white">{rule.lienFilingDeadlineDays} days</p>
-                              <p className="text-xs text-zinc-400 mt-1">From: {rule.lienFilingFrom}</p>
+                              <p className="text-lg font-bold text-main">{rule.lienFilingDeadlineDays} days</p>
+                              <p className="text-xs text-muted mt-1">From: {rule.lienFilingFrom}</p>
                             </div>
                             {/* Enforcement */}
-                            <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                            <div className="p-3 rounded-lg bg-secondary/50 border border-main">
                               <div className="flex items-center gap-2 mb-2">
                                 <Scale className="h-4 w-4 text-red-400" />
                                 <span className="text-xs font-semibold text-red-400 uppercase tracking-wider">Enforcement</span>
                               </div>
-                              <p className="text-lg font-bold text-white">{rule.lienEnforcementDeadlineDays} days</p>
-                              <p className="text-xs text-zinc-400 mt-1">From: {rule.lienEnforcementFrom}</p>
+                              <p className="text-lg font-bold text-main">{rule.lienEnforcementDeadlineDays} days</p>
+                              <p className="text-xs text-muted mt-1">From: {rule.lienEnforcementFrom}</p>
                             </div>
                           </div>
 
                           {/* Required Forms */}
                           <div>
-                            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
                               <FileText className="h-3.5 w-3.5" /> Required Forms
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {rule.requiredForms.map((form, i) => (
-                                <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2.5 py-1 rounded-md border border-zinc-700/50">
+                                <span key={i} className="text-xs bg-secondary text-main px-2.5 py-1 rounded-md border border-main">
                                   {form}
                                 </span>
                               ))}
@@ -689,20 +691,20 @@ export default function LienProtectionPage() {
                           {/* Recording Office & Details */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
                                 <Landmark className="h-3.5 w-3.5" /> Recording Office
                               </h4>
-                              <p className="text-sm text-white">{rule.recordingOffice}</p>
+                              <p className="text-sm text-main">{rule.recordingOffice}</p>
                             </div>
                             <div>
-                              <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
                                 <Info className="h-3.5 w-3.5" /> Key Attributes
                               </h4>
                               <div className="flex flex-wrap gap-2 text-xs">
-                                <span className={`px-2 py-0.5 rounded ${rule.notarizationRequired ? 'bg-purple-500/10 text-purple-400' : 'bg-zinc-800 text-zinc-500'}`}>
+                                <span className={`px-2 py-0.5 rounded ${rule.notarizationRequired ? 'bg-purple-500/10 text-purple-400' : 'bg-secondary text-muted'}`}>
                                   {rule.notarizationRequired ? 'Notarization Required' : 'No Notarization'}
                                 </span>
-                                <span className={`px-2 py-0.5 rounded ${rule.residentialDifferent ? 'bg-amber-500/10 text-amber-400' : 'bg-zinc-800 text-zinc-500'}`}>
+                                <span className={`px-2 py-0.5 rounded ${rule.residentialDifferent ? 'bg-amber-500/10 text-amber-400' : 'bg-secondary text-muted'}`}>
                                   {rule.residentialDifferent ? 'Residential Rules Differ' : 'Same for All Projects'}
                                 </span>
                               </div>
@@ -711,13 +713,13 @@ export default function LienProtectionPage() {
 
                           {/* Special Requirements */}
                           <div>
-                            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
                               <AlertTriangle className="h-3.5 w-3.5" /> Special Requirements
                             </h4>
                             <ul className="space-y-1.5">
                               {rule.specialRequirements.map((req, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
-                                  <CircleDot className="h-3 w-3 text-zinc-600 mt-1 flex-shrink-0" />
+                                <li key={i} className="flex items-start gap-2 text-sm text-main">
+                                  <CircleDot className="h-3 w-3 text-muted opacity-50 mt-1 flex-shrink-0" />
                                   {req}
                                 </li>
                               ))}
@@ -741,8 +743,8 @@ export default function LienProtectionPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">Lien Waiver Management</h2>
-              <p className="text-sm text-zinc-500">Track conditional and unconditional waivers sent and received</p>
+              <h2 className="text-lg font-semibold text-main">Lien Waiver Management</h2>
+              <p className="text-sm text-muted">Track conditional and unconditional waivers sent and received</p>
             </div>
             <Button variant="primary" className="gap-2">
               <Plus className="h-4 w-4" />
@@ -754,39 +756,39 @@ export default function LienProtectionPage() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-white">{DEMO_WAIVERS.length}</p>
-                <p className="text-xs text-zinc-500">Total Waivers</p>
+                <p className="text-xl font-bold text-main">{DEMO_WAIVERS.length}</p>
+                <p className="text-xs text-muted">Total Waivers</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-emerald-400">{DEMO_WAIVERS.filter(w => w.status === 'received').length}</p>
-                <p className="text-xs text-zinc-500">Received</p>
+                <p className="text-xs text-muted">Received</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-blue-400">{DEMO_WAIVERS.filter(w => w.status === 'sent').length}</p>
-                <p className="text-xs text-zinc-500">Sent / Pending</p>
+                <p className="text-xs text-muted">Sent / Pending</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-red-400">{DEMO_WAIVERS.filter(w => w.status === 'overdue' || w.status === 'missing').length}</p>
-                <p className="text-xs text-zinc-500">Overdue / Missing</p>
+                <p className="text-xs text-muted">Overdue / Missing</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-amber-400">{flaggedWaiverCount}</p>
-                <p className="text-xs text-zinc-500">Payment w/o Waiver</p>
+                <p className="text-xs text-muted">Payment w/o Waiver</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Filter Pills */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-zinc-500 mr-1">Filter:</span>
+            <span className="text-xs text-muted mr-1">Filter:</span>
             {([
               { key: 'all', label: 'All' },
               { key: 'pending_send', label: 'Pending' },
@@ -802,7 +804,7 @@ export default function LienProtectionPage() {
                 className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                   waiverFilter === f.key
                     ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                    : 'border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                    : 'border-main text-muted hover:border-accent/30'
                 }`}
               >
                 {f.label}
@@ -820,8 +822,8 @@ export default function LienProtectionPage() {
           {filteredWaivers.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <ClipboardCheck className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                <p className="text-zinc-400 font-medium">No waivers match your filters</p>
+                <ClipboardCheck className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
+                <p className="text-muted font-medium">No waivers match your filters</p>
               </CardContent>
             </Card>
           ) : (
@@ -847,17 +849,17 @@ export default function LienProtectionPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3 flex-1 min-w-0">
                           <div className={`p-2 rounded-lg mt-0.5 ${
-                            waiver.paymentReleasedWithoutWaiver ? 'bg-amber-500/10' : 'bg-zinc-800'
+                            waiver.paymentReleasedWithoutWaiver ? 'bg-amber-500/10' : 'bg-secondary'
                           }`}>
                             {waiver.paymentReleasedWithoutWaiver ? (
                               <FileWarning className="h-4 w-4 text-amber-400" />
                             ) : (
-                              <ClipboardCheck className="h-4 w-4 text-zinc-400" />
+                              <ClipboardCheck className="h-4 w-4 text-muted" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="text-sm font-semibold text-white">{waiver.partyName}</h3>
+                              <h3 className="text-sm font-semibold text-main">{waiver.partyName}</h3>
                               <Badge variant={statusMap[waiver.status].variant} size="sm">
                                 {statusMap[waiver.status].label}
                               </Badge>
@@ -865,7 +867,7 @@ export default function LienProtectionPage() {
                                 {waiverTypeLabel[waiver.waiverType]}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500 flex-wrap">
+                            <div className="flex items-center gap-3 mt-1 text-xs text-muted flex-wrap">
                               <span>{waiver.jobName}</span>
                               <span className="flex items-center gap-1">
                                 <MapPin className="h-3 w-3" />{waiver.propertyAddress}
@@ -883,8 +885,8 @@ export default function LienProtectionPage() {
                           </div>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-sm font-semibold text-white">{formatCurrency(waiver.amount)}</p>
-                          <div className="text-xs text-zinc-500 mt-1 space-y-0.5">
+                          <p className="text-sm font-semibold text-main">{formatCurrency(waiver.amount)}</p>
+                          <div className="text-xs text-muted mt-1 space-y-0.5">
                             {waiver.dateSent && <p>Sent: {waiver.dateSent}</p>}
                             {waiver.dateReceived && <p className="text-emerald-400">Received: {waiver.dateReceived}</p>}
                           </div>
@@ -906,15 +908,15 @@ export default function LienProtectionPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">Deadline Calendar</h2>
-              <p className="text-sm text-zinc-500">Auto-calculated lien deadlines with urgency alerts</p>
+              <h2 className="text-lg font-semibold text-main">Deadline Calendar</h2>
+              <p className="text-sm text-muted">Auto-calculated lien deadlines with urgency alerts</p>
             </div>
           </div>
 
           {/* Urgency Summary Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <button onClick={() => setDeadlineFilter('overdue')} className="text-left">
-              <Card className={`${deadlineFilter === 'overdue' ? 'border-red-500/50' : ''} hover:border-zinc-600 transition-colors`}>
+              <Card className={`${deadlineFilter === 'overdue' ? 'border-red-500/50' : ''} hover:border-accent/30 transition-colors`}>
                 <CardContent className="p-3">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 rounded bg-red-500/10">
@@ -922,14 +924,14 @@ export default function LienProtectionPage() {
                     </div>
                     <div>
                       <p className="text-lg font-bold text-red-400">{overdueCount}</p>
-                      <p className="text-xs text-zinc-500">Overdue</p>
+                      <p className="text-xs text-muted">Overdue</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </button>
             <button onClick={() => setDeadlineFilter('critical')} className="text-left">
-              <Card className={`${deadlineFilter === 'critical' ? 'border-red-500/50' : ''} hover:border-zinc-600 transition-colors`}>
+              <Card className={`${deadlineFilter === 'critical' ? 'border-red-500/50' : ''} hover:border-accent/30 transition-colors`}>
                 <CardContent className="p-3">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 rounded bg-red-500/10">
@@ -937,14 +939,14 @@ export default function LienProtectionPage() {
                     </div>
                     <div>
                       <p className="text-lg font-bold text-red-400">{criticalCount}</p>
-                      <p className="text-xs text-zinc-500">Critical (0-7d)</p>
+                      <p className="text-xs text-muted">Critical (0-7d)</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </button>
             <button onClick={() => setDeadlineFilter('urgent')} className="text-left">
-              <Card className={`${deadlineFilter === 'urgent' ? 'border-amber-500/50' : ''} hover:border-zinc-600 transition-colors`}>
+              <Card className={`${deadlineFilter === 'urgent' ? 'border-amber-500/50' : ''} hover:border-accent/30 transition-colors`}>
                 <CardContent className="p-3">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 rounded bg-amber-500/10">
@@ -952,14 +954,14 @@ export default function LienProtectionPage() {
                     </div>
                     <div>
                       <p className="text-lg font-bold text-amber-400">{urgentCount}</p>
-                      <p className="text-xs text-zinc-500">Urgent (8-14d)</p>
+                      <p className="text-xs text-muted">Urgent (8-14d)</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </button>
             <button onClick={() => setDeadlineFilter(deadlineFilter === 'all' ? 'upcoming' : 'all')} className="text-left">
-              <Card className={`${deadlineFilter === 'upcoming' || deadlineFilter === 'all' ? 'border-zinc-600' : ''} hover:border-zinc-600 transition-colors`}>
+              <Card className={`${deadlineFilter === 'upcoming' || deadlineFilter === 'all' ? 'border-accent/30' : ''} hover:border-accent/30 transition-colors`}>
                 <CardContent className="p-3">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 rounded bg-blue-500/10">
@@ -967,7 +969,7 @@ export default function LienProtectionPage() {
                     </div>
                     <div>
                       <p className="text-lg font-bold text-blue-400">{DEMO_DEADLINES.filter(d => d.status === 'upcoming').length}</p>
-                      <p className="text-xs text-zinc-500">Upcoming (15+d)</p>
+                      <p className="text-xs text-muted">Upcoming (15+d)</p>
                     </div>
                   </div>
                 </CardContent>
@@ -979,7 +981,7 @@ export default function LienProtectionPage() {
           {deadlineFilter !== 'all' && (
             <div className="flex items-center gap-2">
               <Badge variant="info" size="sm">Filtered: {deadlineFilter}</Badge>
-              <button onClick={() => setDeadlineFilter('all')} className="text-xs text-zinc-500 hover:text-zinc-300">
+              <button onClick={() => setDeadlineFilter('all')} className="text-xs text-muted hover:text-main">
                 Clear filter
               </button>
             </div>
@@ -995,8 +997,8 @@ export default function LienProtectionPage() {
           {filteredDeadlines.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <CalendarClock className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                <p className="text-zinc-400 font-medium">No deadlines match your filters</p>
+                <CalendarClock className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
+                <p className="text-muted font-medium">No deadlines match your filters</p>
               </CardContent>
             </Card>
           ) : (
@@ -1031,7 +1033,7 @@ export default function LienProtectionPage() {
                               deadline.status === 'overdue' ? 'bg-red-500/10' :
                               deadline.status === 'critical' ? 'bg-red-500/10' :
                               deadline.status === 'urgent' ? 'bg-amber-500/10' :
-                              'bg-zinc-800'
+                              'bg-secondary'
                             }`}>
                               <TypeIcon className={`h-4 w-4 ${
                                 deadline.status === 'overdue' || deadline.status === 'critical' ? 'text-red-400' :
@@ -1041,7 +1043,7 @@ export default function LienProtectionPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="text-sm font-semibold text-white">{deadline.jobName}</h3>
+                                <h3 className="text-sm font-semibold text-main">{deadline.jobName}</h3>
                                 <Badge variant={urgencyVariant(deadline.daysRemaining)} size="sm">
                                   {typeLabels[deadline.deadlineType]}
                                 </Badge>
@@ -1049,7 +1051,7 @@ export default function LienProtectionPage() {
                                   <Badge variant="error" size="sm">OVERDUE</Badge>
                                 )}
                               </div>
-                              <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                              <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                                 <span className="flex items-center gap-1">
                                   <MapPin className="h-3 w-3" />{deadline.propertyAddress}
                                 </span>
@@ -1088,7 +1090,7 @@ export default function LienProtectionPage() {
                                 : `${deadline.daysRemaining}d`
                               }
                             </p>
-                            <p className="text-xs text-zinc-500 mt-0.5">
+                            <p className="text-xs text-muted mt-0.5">
                               {formatCurrency(deadline.amountAtRisk)} at risk
                             </p>
                             <Button variant="ghost" className="mt-2 h-7 text-xs gap-1 px-2">
@@ -1110,7 +1112,7 @@ export default function LienProtectionPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-amber-400" />
-                  <span className="text-sm font-medium text-zinc-300">Total Amount at Risk (Filtered)</span>
+                  <span className="text-sm font-medium text-main">Total Amount at Risk (Filtered)</span>
                 </div>
                 <span className="text-xl font-bold text-amber-400">
                   {formatCurrency(filteredDeadlines.reduce((s, d) => s + d.amountAtRisk, 0))}
@@ -1128,8 +1130,8 @@ export default function LienProtectionPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">Preliminary Notice Generation</h2>
-              <p className="text-sm text-zinc-500">Generate, track, and send preliminary notices pre-filled from job data</p>
+              <h2 className="text-lg font-semibold text-main">Preliminary Notice Generation</h2>
+              <p className="text-sm text-muted">Generate, track, and send preliminary notices pre-filled from job data</p>
             </div>
             <Button variant="primary" className="gap-2">
               <FilePlus className="h-4 w-4" />
@@ -1141,39 +1143,39 @@ export default function LienProtectionPage() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-white">{DEMO_NOTICES.length}</p>
-                <p className="text-xs text-zinc-500">Total Notices</p>
+                <p className="text-xl font-bold text-main">{DEMO_NOTICES.length}</p>
+                <p className="text-xs text-muted">Total Notices</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-zinc-400">{DEMO_NOTICES.filter(n => n.status === 'draft').length}</p>
-                <p className="text-xs text-zinc-500">Drafts</p>
+                <p className="text-xl font-bold text-muted">{DEMO_NOTICES.filter(n => n.status === 'draft').length}</p>
+                <p className="text-xs text-muted">Drafts</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-blue-400">{DEMO_NOTICES.filter(n => n.status === 'generated').length}</p>
-                <p className="text-xs text-zinc-500">Generated</p>
+                <p className="text-xs text-muted">Generated</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-amber-400">{DEMO_NOTICES.filter(n => n.status === 'sent').length}</p>
-                <p className="text-xs text-zinc-500">Sent</p>
+                <p className="text-xs text-muted">Sent</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-emerald-400">{DEMO_NOTICES.filter(n => n.status === 'confirmed').length}</p>
-                <p className="text-xs text-zinc-500">Confirmed</p>
+                <p className="text-xs text-muted">Confirmed</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Filter Pills */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-zinc-500 mr-1">Filter:</span>
+            <span className="text-xs text-muted mr-1">Filter:</span>
             {([
               { key: 'all', label: 'All' },
               { key: 'draft', label: 'Draft' },
@@ -1188,7 +1190,7 @@ export default function LienProtectionPage() {
                 className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                   noticeFilter === f.key
                     ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                    : 'border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                    : 'border-main text-muted hover:border-accent/30'
                 }`}
               >
                 {f.label}
@@ -1206,8 +1208,8 @@ export default function LienProtectionPage() {
           {filteredNotices.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <Send className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                <p className="text-zinc-400 font-medium">No notices match your filters</p>
+                <Send className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
+                <p className="text-muted font-medium">No notices match your filters</p>
               </CardContent>
             </Card>
           ) : (
@@ -1231,24 +1233,24 @@ export default function LienProtectionPage() {
                             notice.status === 'confirmed' ? 'bg-emerald-500/10' :
                             notice.status === 'sent' ? 'bg-amber-500/10' :
                             notice.status === 'generated' ? 'bg-blue-500/10' :
-                            'bg-zinc-800'
+                            'bg-secondary'
                           }`}>
                             <Send className={`h-4 w-4 ${
                               notice.status === 'confirmed' ? 'text-emerald-400' :
                               notice.status === 'sent' ? 'text-amber-400' :
                               notice.status === 'generated' ? 'text-blue-400' :
-                              'text-zinc-400'
+                              'text-muted'
                             }`} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="text-sm font-semibold text-white">{notice.jobName}</h3>
+                              <h3 className="text-sm font-semibold text-main">{notice.jobName}</h3>
                               <Badge variant={cfg.variant} size="sm">{cfg.label}</Badge>
                               <Badge variant="secondary" size="sm">{notice.stateCode}</Badge>
                             </div>
 
                             {/* Property & Parties */}
-                            <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-500 flex-wrap">
+                            <div className="flex items-center gap-3 mt-1.5 text-xs text-muted flex-wrap">
                               <span className="flex items-center gap-1">
                                 <MapPin className="h-3 w-3" />{notice.propertyAddress}
                               </span>
@@ -1267,12 +1269,12 @@ export default function LienProtectionPage() {
 
                             {/* Key Dates & Amount */}
                             <div className="flex items-center gap-4 mt-2 text-xs flex-wrap">
-                              <span className="text-zinc-400">
-                                First furnishing: <span className="text-zinc-300">{notice.firstFurnishingDate}</span>
+                              <span className="text-muted">
+                                First furnishing: <span className="text-main">{notice.firstFurnishingDate}</span>
                               </span>
-                              <span className="text-zinc-400">
+                              <span className="text-muted">
                                 Deadline: <span className={`font-medium ${
-                                  new Date(notice.noticeDeadline) < new Date() ? 'text-red-400' : 'text-zinc-300'
+                                  new Date(notice.noticeDeadline) < new Date() ? 'text-red-400' : 'text-main'
                                 }`}>{notice.noticeDeadline}</span>
                               </span>
                               <span className="text-amber-400 font-medium">
@@ -1283,7 +1285,7 @@ export default function LienProtectionPage() {
                             {/* Delivery Method */}
                             {notice.deliveryMethod && (
                               <div className="mt-2">
-                                <span className="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700/50">
+                                <span className="text-xs bg-secondary text-main px-2 py-0.5 rounded border border-main">
                                   {notice.deliveryMethod === 'certified_mail' ? 'Certified Mail' :
                                    notice.deliveryMethod === 'personal_service' ? 'Personal Service' :
                                    'Registered Mail'}
@@ -1295,8 +1297,8 @@ export default function LienProtectionPage() {
 
                         <div className="flex flex-col items-end gap-2 flex-shrink-0">
                           {notice.noticeSentDate && (
-                            <p className="text-xs text-zinc-500">
-                              Sent: <span className="text-zinc-300">{notice.noticeSentDate}</span>
+                            <p className="text-xs text-muted">
+                              Sent: <span className="text-main">{notice.noticeSentDate}</span>
                             </p>
                           )}
                           <div className="flex items-center gap-2">
@@ -1335,39 +1337,39 @@ export default function LienProtectionPage() {
           {/* Lien Filing Preparation Section */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+              <CardTitle className="text-sm font-semibold text-main flex items-center gap-2">
                 <Gavel className="h-4 w-4 text-amber-400" />
                 Lien Filing Preparation
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-muted">
                 When a payment dispute cannot be resolved and deadlines are approaching, prepare a formal mechanic&apos;s lien filing with all required information from the job record.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                <div className="p-3 rounded-lg bg-secondary/50 border border-main">
                   <div className="flex items-center gap-2 mb-2">
                     <FileText className="h-4 w-4 text-blue-400" />
                     <span className="text-xs font-semibold text-blue-400">Step 1</span>
                   </div>
-                  <p className="text-sm text-white font-medium">Verify Job Data</p>
-                  <p className="text-xs text-zinc-500 mt-1">Property address, owner info, work dates, and amounts are pulled from the job record automatically.</p>
+                  <p className="text-sm text-main font-medium">Verify Job Data</p>
+                  <p className="text-xs text-muted mt-1">Property address, owner info, work dates, and amounts are pulled from the job record automatically.</p>
                 </div>
-                <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                <div className="p-3 rounded-lg bg-secondary/50 border border-main">
                   <div className="flex items-center gap-2 mb-2">
                     <Download className="h-4 w-4 text-amber-400" />
                     <span className="text-xs font-semibold text-amber-400">Step 2</span>
                   </div>
-                  <p className="text-sm text-white font-medium">Generate Lien Document</p>
-                  <p className="text-xs text-zinc-500 mt-1">State-specific lien form is generated with all required fields, legal descriptions, and statutory references.</p>
+                  <p className="text-sm text-main font-medium">Generate Lien Document</p>
+                  <p className="text-xs text-muted mt-1">State-specific lien form is generated with all required fields, legal descriptions, and statutory references.</p>
                 </div>
-                <div className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                <div className="p-3 rounded-lg bg-secondary/50 border border-main">
                   <div className="flex items-center gap-2 mb-2">
                     <Landmark className="h-4 w-4 text-emerald-400" />
                     <span className="text-xs font-semibold text-emerald-400">Step 3</span>
                   </div>
-                  <p className="text-sm text-white font-medium">File with County</p>
-                  <p className="text-xs text-zinc-500 mt-1">Filing instructions for the specific state recording office, with notarization requirements if applicable.</p>
+                  <p className="text-sm text-main font-medium">File with County</p>
+                  <p className="text-xs text-muted mt-1">Filing instructions for the specific state recording office, with notarization requirements if applicable.</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 pt-2">
@@ -1375,7 +1377,7 @@ export default function LienProtectionPage() {
                   <Gavel className="h-4 w-4" />
                   Prepare Lien Filing
                 </Button>
-                <span className="text-xs text-zinc-500">Select a job with outstanding payment to begin</span>
+                <span className="text-xs text-muted">Select a job with outstanding payment to begin</span>
               </div>
             </CardContent>
           </Card>
