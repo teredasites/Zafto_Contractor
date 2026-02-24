@@ -130,19 +130,19 @@ interface SubEntry {
 // ── Config arrays (UI config, not data) ──
 
 const delayTypes = [
-  { value: 'weather', label: 'Weather' },
-  { value: 'material', label: 'Material Delay' },
-  { value: 'inspection', label: 'Inspection Hold' },
-  { value: 'sub', label: 'Subcontractor' },
-  { value: 'owner', label: 'Owner Decision' },
-  { value: 'other', label: 'Other' },
+  { value: 'weather', tKey: 'dailyLogs.delayTypeWeather' },
+  { value: 'material', tKey: 'dailyLogs.delayTypeMaterial' },
+  { value: 'inspection', tKey: 'dailyLogs.delayTypeInspection' },
+  { value: 'sub', tKey: 'dailyLogs.delayTypeSub' },
+  { value: 'owner', tKey: 'dailyLogs.delayTypeOwner' },
+  { value: 'other', tKey: 'dailyLogs.delayTypeOther' },
 ];
 
 const incidentTypes = [
-  { value: 'near_miss', label: 'Near Miss' },
-  { value: 'first_aid', label: 'First Aid' },
-  { value: 'recordable', label: 'Recordable' },
-  { value: 'observation', label: 'Safety Observation' },
+  { value: 'near_miss', tKey: 'dailyLogs.incidentNearMiss' },
+  { value: 'first_aid', tKey: 'dailyLogs.incidentFirstAid' },
+  { value: 'recordable', tKey: 'dailyLogs.incidentRecordable' },
+  { value: 'observation', tKey: 'dailyLogs.incidentSafetyObservation' },
 ];
 
 // ── Mapping functions ──
@@ -239,10 +239,10 @@ export default function DailyLogsPage() {
   // Map DB logs to display format
   const logs: DailyLog[] = useMemo(() => {
     return dbLogs.map(dbLog => {
-      const jobName = jobNameMap[dbLog.jobId] || 'Unknown Job';
+      const jobName = jobNameMap[dbLog.jobId] || t('dailyLogs.unknownJob');
       return mapDbLogToDisplay(dbLog, jobName);
     });
-  }, [dbLogs, jobNameMap]);
+  }, [dbLogs, jobNameMap, t]);
 
   const today = new Date().toISOString().split('T')[0];
   const todayLogs = useMemo(() => logs.filter(l => l.date === today), [logs, today]);
@@ -350,10 +350,10 @@ export default function DailyLogsPage() {
   // Debounced notes save — just update tradeData on blur
   const [localNotes, setLocalNotes] = useState<string | null>(null);
 
-  const tabs: { key: ViewTab; label: string; icon: LucideIcon }[] = [
-    { key: 'today', label: "Today's Logs", icon: Calendar },
-    { key: 'history', label: 'All Logs', icon: FileText },
-    { key: 'job_diary', label: 'Job Diary', icon: FileText },
+  const tabs: { key: ViewTab; tKey: string; icon: LucideIcon }[] = [
+    { key: 'today', tKey: 'dailyLogs.todaysLogs', icon: Calendar },
+    { key: 'history', tKey: 'dailyLogs.allLogs', icon: FileText },
+    { key: 'job_diary', tKey: 'dailyLogs.jobDiary', icon: FileText },
   ];
 
   function SectionHeader({ title, icon: Icon, section, count }: { title: string; icon: LucideIcon; section: string; count: number }) {
@@ -385,9 +385,9 @@ export default function DailyLogsPage() {
                 <FileText className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground">Daily Job Logs</h1>
+                <h1 className="text-lg font-semibold text-foreground">{t('dailyLogs.title')}</h1>
                 <p className="text-sm text-muted-foreground">
-                  Document every day on every job — crew, work, materials, safety, delays
+                  {t('dailyLogs.subtitle')}
                 </p>
               </div>
             </div>
@@ -396,7 +396,7 @@ export default function DailyLogsPage() {
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Loading daily logs...</p>
+            <p className="text-sm text-muted-foreground">{t('dailyLogs.loadingLogs')}</p>
           </div>
         </div>
       </div>
@@ -415,9 +415,9 @@ export default function DailyLogsPage() {
                 <FileText className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground">Daily Job Logs</h1>
+                <h1 className="text-lg font-semibold text-foreground">{t('dailyLogs.title')}</h1>
                 <p className="text-sm text-muted-foreground">
-                  Document every day on every job — crew, work, materials, safety, delays
+                  {t('dailyLogs.subtitle')}
                 </p>
               </div>
             </div>
@@ -427,10 +427,10 @@ export default function DailyLogsPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-destructive" />
-              <p className="text-sm font-medium text-foreground mb-1">Failed to load daily logs</p>
+              <p className="text-sm font-medium text-foreground mb-1">{t('dailyLogs.failedToLoad')}</p>
               <p className="text-xs text-muted-foreground mb-4">{error}</p>
               <Button variant="outline" size="sm" onClick={refresh}>
-                Try Again
+                {t('common.retry')}
               </Button>
             </CardContent>
           </Card>
@@ -451,16 +451,16 @@ export default function DailyLogsPage() {
               <FileText className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-foreground">Daily Job Logs</h1>
+              <h1 className="text-lg font-semibold text-foreground">{t('dailyLogs.title')}</h1>
               <p className="text-sm text-muted-foreground">
-                Document every day on every job — crew, work, materials, safety, delays
+                {t('dailyLogs.subtitle')}
               </p>
             </div>
           </div>
           {saving && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
-              Saving...
+              {t('common.saving')}
             </div>
           )}
         </div>
@@ -479,7 +479,7 @@ export default function DailyLogsPage() {
                 )}
               >
                 <Icon size={14} />
-                {tab.label}
+                {t(tab.tKey)}
               </button>
             );
           })}
@@ -497,7 +497,7 @@ export default function DailyLogsPage() {
                   onChange={e => setJobFilter(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                 >
-                  <option value="all">All Jobs</option>
+                  <option value="all">{t('dailyLogs.allJobs')}</option>
                   {jobIds.map(jid => {
                     const name = jobNameMap[jid] || logs.find(l => l.jobId === jid)?.jobName || jid;
                     return <option key={jid} value={jid}>{name}</option>;
@@ -511,12 +511,12 @@ export default function DailyLogsPage() {
                 <CardContent className="p-8 text-center text-muted-foreground">
                   <FileText className="w-8 h-8 mx-auto mb-2 text-muted" />
                   <p className="text-sm font-medium mb-1">
-                    {activeTab === 'today' ? 'No logs for today' : 'No logs found'}
+                    {activeTab === 'today' ? t('dailyLogs.noLogsToday') : t('dailyLogs.noLogsFound')}
                   </p>
                   <p className="text-xs">
                     {activeTab === 'today'
-                      ? 'Daily logs will appear here once created for today\'s jobs.'
-                      : 'Create a daily log from a job to start tracking work.'}
+                      ? t('dailyLogs.noLogsTodayDesc')
+                      : t('dailyLogs.noLogsFoundDesc')}
                   </p>
                 </CardContent>
               </Card>
@@ -537,29 +537,29 @@ export default function DailyLogsPage() {
                         <p className="text-xs text-muted-foreground">{log.date}</p>
                       </div>
                       <Badge variant={log.status === 'finalized' ? 'success' : 'warning'} size="sm">
-                        {log.status === 'finalized' ? 'Finalized' : 'Draft'}
+                        {log.status === 'finalized' ? t('dailyLogs.finalized') : t('common.draft')}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-4 gap-2 mt-3 text-center">
                       <div className="p-1.5 rounded bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Crew</p>
+                        <p className="text-xs text-muted-foreground">{t('common.crew')}</p>
                         <p className="text-sm font-medium">{log.crewOnSite.length}</p>
                       </div>
                       <div className="p-1.5 rounded bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Hours</p>
+                        <p className="text-xs text-muted-foreground">{t('common.hours')}</p>
                         <p className="text-sm font-medium">{log.totalHours}</p>
                       </div>
                       <div className="p-1.5 rounded bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Tasks</p>
+                        <p className="text-xs text-muted-foreground">{t('dailyLogs.tasks')}</p>
                         <p className="text-sm font-medium">{log.workPerformed.length}</p>
                       </div>
                       <div className="p-1.5 rounded bg-muted/40">
-                        <p className="text-xs text-muted-foreground">Delays</p>
+                        <p className="text-xs text-muted-foreground">{t('dailyLogs.delays')}</p>
                         <p className={cn('text-sm font-medium', log.delays.length > 0 && 'text-amber-500')}>{log.delays.length}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                      <Cloud size={10} /> {log.weather.condition || 'No weather data'} {log.weather.tempHigh ? <>&middot; {log.weather.tempHigh}&deg;/{log.weather.tempLow}&deg;F</> : null}
+                      <Cloud size={10} /> {log.weather.condition || t('dailyLogs.noWeatherData')} {log.weather.tempHigh ? <>&middot; {log.weather.tempHigh}&deg;/{log.weather.tempLow}&deg;F</> : null}
                     </div>
                   </CardContent>
                 </Card>
@@ -581,11 +581,11 @@ export default function DailyLogsPage() {
                     <div className="flex items-center gap-2">
                       {selectedLog.status === 'draft' && (
                         <Button size="sm" onClick={() => finalizeLog(selectedLog.id)} disabled={saving}>
-                          {saving ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5 mr-1" />} Finalize
+                          {saving ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5 mr-1" />} {t('dailyLogs.finalize')}
                         </Button>
                       )}
                       <Button variant="outline" size="sm">
-                        <Download className="w-3.5 h-3.5 mr-1" /> PDF
+                        <Download className="w-3.5 h-3.5 mr-1" /> {t('dailyLogs.pdf')}
                       </Button>
                     </div>
                   </div>
@@ -593,16 +593,16 @@ export default function DailyLogsPage() {
                   {/* Weather strip */}
                   <div className="flex items-center gap-4 mt-3 p-2 rounded-lg bg-muted/40">
                     <div className="flex items-center gap-1 text-xs">
-                      <Cloud size={12} className="text-muted-foreground" /> {selectedLog.weather.condition || 'N/A'}
+                      <Cloud size={12} className="text-muted-foreground" /> {selectedLog.weather.condition || t('dailyLogs.notAvailable')}
                     </div>
                     <div className="flex items-center gap-1 text-xs">
                       <Thermometer size={12} className="text-muted-foreground" /> {selectedLog.weather.tempHigh}&deg;/{selectedLog.weather.tempLow}&deg;F
                     </div>
                     <div className="flex items-center gap-1 text-xs">
-                      <Wind size={12} className="text-muted-foreground" /> {selectedLog.weather.windSpeed} mph
+                      <Wind size={12} className="text-muted-foreground" /> {selectedLog.weather.windSpeed} {t('dailyLogs.mph')}
                     </div>
                     <div className="flex items-center gap-1 text-xs">
-                      <Droplets size={12} className="text-muted-foreground" /> {selectedLog.weather.precipitation}
+                      <Droplets size={12} className="text-muted-foreground" /> {selectedLog.weather.precipitation || t('common.none')}
                     </div>
                   </div>
                 </CardContent>
@@ -610,7 +610,7 @@ export default function DailyLogsPage() {
 
               {/* Crew on site */}
               <div>
-                <SectionHeader title="Crew on Site" icon={Users} section="crew" count={selectedLog.crewOnSite.length} />
+                <SectionHeader title={t('dailyLogs.crewOnSite')} icon={Users} section="crew" count={selectedLog.crewOnSite.length} />
                 {expandedSections.has('crew') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.crewOnSite.map(crew => (
@@ -629,7 +629,7 @@ export default function DailyLogsPage() {
                     ))}
                     {selectedLog.status === 'draft' && (
                       <Button variant="ghost" size="sm" className="w-full mt-1" onClick={() => { setAddSection('crew'); setShowAddEntry(true); }}>
-                        <Plus className="w-3.5 h-3.5 mr-1" /> Add Crew Member
+                        <Plus className="w-3.5 h-3.5 mr-1" /> {t('dailyLogs.addCrewMember')}
                       </Button>
                     )}
                   </div>
@@ -638,7 +638,7 @@ export default function DailyLogsPage() {
 
               {/* Work performed */}
               <div>
-                <SectionHeader title="Work Performed" icon={Wrench} section="work" count={selectedLog.workPerformed.length} />
+                <SectionHeader title={t('dailyLogs.workPerformed')} icon={Wrench} section="work" count={selectedLog.workPerformed.length} />
                 {expandedSections.has('work') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.workPerformed.map(work => (
@@ -658,7 +658,7 @@ export default function DailyLogsPage() {
                     ))}
                     {selectedLog.status === 'draft' && (
                       <Button variant="ghost" size="sm" className="w-full mt-1" onClick={() => { setAddSection('work'); setShowAddEntry(true); }}>
-                        <Plus className="w-3.5 h-3.5 mr-1" /> Add Work Entry
+                        <Plus className="w-3.5 h-3.5 mr-1" /> {t('dailyLogs.addWorkEntry')}
                       </Button>
                     )}
                   </div>
@@ -667,11 +667,11 @@ export default function DailyLogsPage() {
 
               {/* Materials used */}
               <div>
-                <SectionHeader title="Materials Used" icon={Package} section="materials" count={selectedLog.materialsUsed.length} />
+                <SectionHeader title={t('dailyLogs.materialsUsed')} icon={Package} section="materials" count={selectedLog.materialsUsed.length} />
                 {expandedSections.has('materials') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.materialsUsed.length === 0 ? (
-                      <p className="text-xs text-muted-foreground p-2">No materials logged today</p>
+                      <p className="text-xs text-muted-foreground p-2">{t('dailyLogs.noMaterialsToday')}</p>
                     ) : (
                       selectedLog.materialsUsed.map(mat => (
                         <div key={mat.id} className="flex items-center justify-between p-2 rounded-lg border border-border/40 text-sm">
@@ -689,14 +689,14 @@ export default function DailyLogsPage() {
 
               {/* Equipment */}
               <div>
-                <SectionHeader title="Equipment" icon={Wrench} section="equipment" count={selectedLog.equipment.length} />
+                <SectionHeader title={t('common.equipment')} icon={Wrench} section="equipment" count={selectedLog.equipment.length} />
                 {expandedSections.has('equipment') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.equipment.map(eq => (
                       <div key={eq.id} className="flex items-center justify-between p-2 rounded-lg border border-border/40 text-sm">
                         <p className="font-medium">{eq.name}</p>
                         <div className="flex items-center gap-2">
-                          <Badge variant={eq.status === 'in_use' ? 'success' : eq.status === 'broken' ? 'error' : 'secondary'} size="sm">{eq.status.replace('_', ' ')}</Badge>
+                          <Badge variant={eq.status === 'in_use' ? 'success' : eq.status === 'broken' ? 'error' : 'secondary'} size="sm">{t(`dailyLogs.equipmentStatus_${eq.status}`)}</Badge>
                           <span className="text-xs text-muted-foreground">{eq.hours}h</span>
                         </div>
                       </div>
@@ -707,11 +707,11 @@ export default function DailyLogsPage() {
 
               {/* Visitors */}
               <div>
-                <SectionHeader title="Visitors / Inspections" icon={HardHat} section="visitors" count={selectedLog.visitors.length} />
+                <SectionHeader title={t('dailyLogs.visitorsInspections')} icon={HardHat} section="visitors" count={selectedLog.visitors.length} />
                 {expandedSections.has('visitors') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.visitors.length === 0 ? (
-                      <p className="text-xs text-muted-foreground p-2">No visitors today</p>
+                      <p className="text-xs text-muted-foreground p-2">{t('dailyLogs.noVisitorsToday')}</p>
                     ) : (
                       selectedLog.visitors.map(vis => (
                         <div key={vis.id} className="p-2 rounded-lg border border-border/40 text-sm">
@@ -727,21 +727,21 @@ export default function DailyLogsPage() {
 
               {/* Delays */}
               <div>
-                <SectionHeader title="Delays / Issues" icon={AlertTriangle} section="delays" count={selectedLog.delays.length} />
+                <SectionHeader title={t('dailyLogs.delaysIssues')} icon={AlertTriangle} section="delays" count={selectedLog.delays.length} />
                 {expandedSections.has('delays') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.delays.length === 0 ? (
                       <div className="flex items-center gap-2 p-2 text-xs text-emerald-600">
-                        <CheckCircle size={12} /> No delays today
+                        <CheckCircle size={12} /> {t('dailyLogs.noDelaysToday')}
                       </div>
                     ) : (
                       selectedLog.delays.map(delay => (
                         <div key={delay.id} className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 text-sm">
                           <div className="flex items-center justify-between">
                             <p className="font-medium">{delay.description}</p>
-                            <Badge variant="warning" size="sm">{delay.hoursLost}h lost</Badge>
+                            <Badge variant="warning" size="sm">{t('dailyLogs.hoursLost', { hours: String(delay.hoursLost) })}</Badge>
                           </div>
-                          <p className="text-xs text-muted-foreground capitalize">{delay.type} delay</p>
+                          <p className="text-xs text-muted-foreground capitalize">{t('dailyLogs.delayType', { type: delay.type })}</p>
                         </div>
                       ))
                     )}
@@ -751,19 +751,19 @@ export default function DailyLogsPage() {
 
               {/* Safety */}
               <div>
-                <SectionHeader title="Safety" icon={AlertTriangle} section="safety" count={selectedLog.safetyIncidents.length} />
+                <SectionHeader title={t('common.safety')} icon={AlertTriangle} section="safety" count={selectedLog.safetyIncidents.length} />
                 {expandedSections.has('safety') && (
                   <div className="mt-2 space-y-1">
                     {selectedLog.safetyIncidents.length === 0 ? (
                       <div className="flex items-center gap-2 p-2 text-xs text-emerald-600">
-                        <CheckCircle size={12} /> No safety incidents
+                        <CheckCircle size={12} /> {t('dailyLogs.noSafetyIncidents')}
                       </div>
                     ) : (
                       selectedLog.safetyIncidents.map(inc => (
                         <div key={inc.id} className="p-2 rounded-lg border border-border/40 text-sm">
-                          <Badge variant={inc.type === 'recordable' ? 'error' : inc.type === 'first_aid' ? 'warning' : 'info'} size="sm" className="mb-1">{inc.type.replace('_', ' ')}</Badge>
+                          <Badge variant={inc.type === 'recordable' ? 'error' : inc.type === 'first_aid' ? 'warning' : 'info'} size="sm" className="mb-1">{t(`dailyLogs.incidentType_${inc.type}`)}</Badge>
                           <p className="text-sm">{inc.description}</p>
-                          <p className="text-xs text-muted-foreground mt-1">Action: {inc.actionTaken}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{t('dailyLogs.actionTaken')}: {inc.actionTaken}</p>
                         </div>
                       ))
                     )}
@@ -774,13 +774,13 @@ export default function DailyLogsPage() {
               {/* Sub Activity */}
               {selectedLog.subActivity.length > 0 && (
                 <div>
-                  <SectionHeader title="Subcontractor Activity" icon={HardHat} section="subs" count={selectedLog.subActivity.length} />
+                  <SectionHeader title={t('dailyLogs.subcontractorActivity')} icon={HardHat} section="subs" count={selectedLog.subActivity.length} />
                   {expandedSections.has('subs') && (
                     <div className="mt-2 space-y-1">
                       {selectedLog.subActivity.map(sub => (
                         <div key={sub.id} className="p-2 rounded-lg border border-border/40 text-sm">
                           <p className="font-medium">{sub.company}</p>
-                          <p className="text-xs text-muted-foreground">{sub.trade} &middot; {sub.crewSize} workers</p>
+                          <p className="text-xs text-muted-foreground">{sub.trade} &middot; {sub.crewSize} {t('dailyLogs.workers')}</p>
                           <p className="text-xs mt-1">{sub.workPerformed}</p>
                         </div>
                       ))}
@@ -792,7 +792,7 @@ export default function DailyLogsPage() {
               {/* Notes */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Daily Notes</CardTitle>
+                  <CardTitle className="text-sm">{t('dailyLogs.dailyNotes')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {selectedLog.status === 'draft' ? (
@@ -806,10 +806,10 @@ export default function DailyLogsPage() {
                         setLocalNotes(null);
                       }}
                       className="w-full p-3 rounded-lg border border-border bg-background text-sm min-h-[100px] resize-y"
-                      placeholder="End-of-day notes..."
+                      placeholder={t('dailyLogs.endOfDayNotesPlaceholder')}
                     />
                   ) : (
-                    <p className="text-sm">{selectedLog.notes || 'No notes'}</p>
+                    <p className="text-sm">{selectedLog.notes || t('dailyLogs.noNotes')}</p>
                   )}
                 </CardContent>
               </Card>
@@ -824,7 +824,7 @@ export default function DailyLogsPage() {
           <div className="bg-background rounded-xl shadow-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-border/60">
               <h3 className="font-semibold">
-                {addSection === 'crew' ? 'Add Crew Member' : 'Add Work Entry'}
+                {addSection === 'crew' ? t('dailyLogs.addCrewMember') : t('dailyLogs.addWorkEntry')}
               </h3>
               <button onClick={() => setShowAddEntry(false)} className="text-muted-foreground hover:text-foreground">
                 <X size={16} />
@@ -834,26 +834,26 @@ export default function DailyLogsPage() {
               {addSection === 'crew' && (
                 <>
                   <div>
-                    <label className="text-xs text-muted-foreground block mb-1">Name</label>
-                    <input type="text" value={newCrewName} onChange={e => setNewCrewName(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="Team member name" />
+                    <label className="text-xs text-muted-foreground block mb-1">{t('common.name')}</label>
+                    <input type="text" value={newCrewName} onChange={e => setNewCrewName(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder={t('dailyLogs.teamMemberNamePlaceholder')} />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs text-muted-foreground block mb-1">Role</label>
-                      <input type="text" value={newCrewRole} onChange={e => setNewCrewRole(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="Lead, Carpenter..." />
+                      <label className="text-xs text-muted-foreground block mb-1">{t('common.role')}</label>
+                      <input type="text" value={newCrewRole} onChange={e => setNewCrewRole(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder={t('dailyLogs.rolePlaceholder')} />
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground block mb-1">Task</label>
-                      <input type="text" value={newCrewTask} onChange={e => setNewCrewTask(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="Cabinet install..." />
+                      <label className="text-xs text-muted-foreground block mb-1">{t('common.task')}</label>
+                      <input type="text" value={newCrewTask} onChange={e => setNewCrewTask(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder={t('dailyLogs.taskPlaceholder')} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs text-muted-foreground block mb-1">Time In</label>
+                      <label className="text-xs text-muted-foreground block mb-1">{t('dailyLogs.timeIn')}</label>
                       <input type="time" value={newCrewTimeIn} onChange={e => setNewCrewTimeIn(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground block mb-1">Time Out</label>
+                      <label className="text-xs text-muted-foreground block mb-1">{t('dailyLogs.timeOut')}</label>
                       <input type="time" value={newCrewTimeOut} onChange={e => setNewCrewTimeOut(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" />
                     </div>
                   </div>
@@ -862,31 +862,31 @@ export default function DailyLogsPage() {
               {addSection === 'work' && (
                 <>
                   <div>
-                    <label className="text-xs text-muted-foreground block mb-1">Description</label>
-                    <input type="text" value={newWorkDesc} onChange={e => setNewWorkDesc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="What work was done..." />
+                    <label className="text-xs text-muted-foreground block mb-1">{t('common.description')}</label>
+                    <input type="text" value={newWorkDesc} onChange={e => setNewWorkDesc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder={t('dailyLogs.workDescPlaceholder')} />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs text-muted-foreground block mb-1">Trade</label>
-                      <input type="text" value={newWorkTrade} onChange={e => setNewWorkTrade(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="Carpentry, Electrical..." />
+                      <label className="text-xs text-muted-foreground block mb-1">{t('common.trade')}</label>
+                      <input type="text" value={newWorkTrade} onChange={e => setNewWorkTrade(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder={t('dailyLogs.tradePlaceholder')} />
                     </div>
                     <div>
-                      <label className="text-xs text-muted-foreground block mb-1">% Complete</label>
+                      <label className="text-xs text-muted-foreground block mb-1">{t('dailyLogs.percentComplete')}</label>
                       <input type="number" min={0} max={100} value={newWorkPct} onChange={e => setNewWorkPct(Number(e.target.value))} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground block mb-1">Notes</label>
-                    <textarea value={newWorkNotes} onChange={e => setNewWorkNotes(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm min-h-[60px]" placeholder="Any issues, observations..." />
+                    <label className="text-xs text-muted-foreground block mb-1">{t('common.notes')}</label>
+                    <textarea value={newWorkNotes} onChange={e => setNewWorkNotes(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm min-h-[60px]" placeholder={t('dailyLogs.notesPlaceholder')} />
                   </div>
                 </>
               )}
             </div>
             <div className="flex justify-end gap-2 p-4 border-t border-border/60">
-              <Button variant="outline" size="sm" onClick={() => setShowAddEntry(false)}>Cancel</Button>
+              <Button variant="outline" size="sm" onClick={() => setShowAddEntry(false)}>{t('common.cancel')}</Button>
               <Button size="sm" disabled={saving} onClick={() => addSection === 'crew' ? addCrewEntry() : addWorkEntry()}>
                 {saving ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : null}
-                Add Entry
+                {t('dailyLogs.addEntry')}
               </Button>
             </div>
           </div>

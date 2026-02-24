@@ -65,26 +65,26 @@ interface Permit {
   notes?: string;
 }
 
-const statusConfig: Record<PermitStatus, { label: string; color: string; bgColor: string }> = {
-  draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-secondary' },
-  applied: { label: 'Applied', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
-  in_review: { label: 'In Review', color: 'text-purple-700 dark:text-purple-300', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
-  approved: { label: 'Approved', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  inspection_scheduled: { label: 'Inspection Scheduled', color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-100 dark:bg-cyan-900/30' },
-  passed: { label: 'Passed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  failed: { label: 'Failed', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  expired: { label: 'Expired', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
+const statusConfig: Record<PermitStatus, { tKey: string; color: string; bgColor: string }> = {
+  draft: { tKey: 'common.draft', color: 'text-muted', bgColor: 'bg-secondary' },
+  applied: { tKey: 'permits.statusApplied', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  in_review: { tKey: 'permits.statusInReview', color: 'text-purple-700 dark:text-purple-300', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
+  approved: { tKey: 'common.approved', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  inspection_scheduled: { tKey: 'permits.inspectionScheduled', color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-100 dark:bg-cyan-900/30' },
+  passed: { tKey: 'common.passed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  failed: { tKey: 'common.failed', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  expired: { tKey: 'common.expired', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
 };
 
-const typeConfig: Record<PermitType, { label: string; color: string; bgColor: string }> = {
-  electrical: { label: 'Electrical', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
-  plumbing: { label: 'Plumbing', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
-  mechanical: { label: 'Mechanical', color: 'text-orange-700 dark:text-orange-300', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
-  building: { label: 'Building', color: 'text-muted', bgColor: 'bg-secondary' },
-  roofing: { label: 'Roofing', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  solar: { label: 'Solar', color: 'text-yellow-700 dark:text-yellow-300', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
-  demolition: { label: 'Demolition', color: 'text-rose-700 dark:text-rose-300', bgColor: 'bg-rose-100 dark:bg-rose-900/30' },
-  other: { label: 'Other', color: 'text-muted', bgColor: 'bg-secondary' },
+const typeConfig: Record<PermitType, { tKey: string; color: string; bgColor: string }> = {
+  electrical: { tKey: 'common.electrical', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
+  plumbing: { tKey: 'common.plumbing', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  mechanical: { tKey: 'permits.mechanical', color: 'text-orange-700 dark:text-orange-300', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
+  building: { tKey: 'permits.building', color: 'text-muted', bgColor: 'bg-secondary' },
+  roofing: { tKey: 'common.roofing', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  solar: { tKey: 'common.solar', color: 'text-yellow-700 dark:text-yellow-300', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
+  demolition: { tKey: 'permits.demolition', color: 'text-rose-700 dark:text-rose-300', bgColor: 'bg-rose-100 dark:bg-rose-900/30' },
+  other: { tKey: 'common.other', color: 'text-muted', bgColor: 'bg-secondary' },
 };
 
 function toPermit(d: PermitData): Permit {
@@ -155,7 +155,7 @@ export default function PermitsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('permits.title')}</h1>
-          <p className="text-muted mt-1">Track permit applications, inspections, and compliance</p>
+          <p className="text-muted mt-1">{t('permits.subtitle')}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)}><Plus size={16} />{t('permits.newPermit')}</Button>
       </div>
@@ -181,8 +181,8 @@ export default function PermitsPage() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <SearchInput value={search} onChange={setSearch} placeholder={t('permits.searchPermits')} className="sm:w-80" />
-        <Select options={[{ value: 'all', label: 'All Statuses' }, ...Object.entries(statusConfig).map(([k, v]) => ({ value: k, label: v.label }))]} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="sm:w-48" />
-        <Select options={[{ value: 'all', label: 'All Types' }, ...Object.entries(typeConfig).map(([k, v]) => ({ value: k, label: v.label }))]} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="sm:w-48" />
+        <Select options={[{ value: 'all', label: t('permits.allStatuses') }, ...Object.entries(statusConfig).map(([k, v]) => ({ value: k, label: t(v.tKey) }))]} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="sm:w-48" />
+        <Select options={[{ value: 'all', label: t('permits.allTypes') }, ...Object.entries(typeConfig).map(([k, v]) => ({ value: k, label: t(v.tKey) }))]} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="sm:w-48" />
       </div>
 
       <Card>
@@ -204,7 +204,7 @@ export default function PermitsPage() {
                 <tr><td colSpan={7} className="px-6 py-12 text-center">
                   <FileCheck size={40} className="mx-auto mb-3 text-muted opacity-40" />
                   <p className="text-sm font-medium text-main">{t('permits.noPermits')}</p>
-                  <p className="text-xs text-muted mt-1">{allPermits.length === 0 ? 'Create your first permit to start tracking applications and inspections' : 'Try adjusting your search or filters'}</p>
+                  <p className="text-xs text-muted mt-1">{allPermits.length === 0 ? t('permits.emptyStateCreate') : t('permits.emptyStateFilter')}</p>
                 </td></tr>
               )}
               {filteredPermits.map((permit) => {
@@ -214,11 +214,11 @@ export default function PermitsPage() {
                 return (
                   <tr key={permit.id} className="border-b border-main/50 hover:bg-surface-hover cursor-pointer" onClick={() => setSelectedPermit(permit)}>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-main">{permit.permitNumber || 'Pending #'}</p>
+                      <p className="font-medium text-main">{permit.permitNumber || t('permits.pendingNumber')}</p>
                       <p className="text-sm text-muted line-clamp-1">{permit.description}</p>
                     </td>
-                    <td className="px-6 py-4"><span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', tConfig.bgColor, tConfig.color)}>{tConfig.label}</span></td>
-                    <td className="px-6 py-4"><span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span></td>
+                    <td className="px-6 py-4"><span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', tConfig.bgColor, tConfig.color)}>{t(tConfig.tKey)}</span></td>
+                    <td className="px-6 py-4"><span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{t(sConfig.tKey)}</span></td>
                     <td className="px-6 py-4">
                       <p className="text-sm font-medium text-main">{permit.jobName}</p>
                       <p className="text-xs text-muted">{permit.customerName}</p>
@@ -228,7 +228,7 @@ export default function PermitsPage() {
                       {nextInspection ? (
                         <div className="flex items-center gap-1 text-sm"><Calendar size={14} className="text-cyan-500" /><span className="text-main">{formatDate(nextInspection.date)}</span></div>
                       ) : (
-                        <span className="text-sm text-muted">{permit.inspections.filter((i) => i.result === 'pass').length} passed</span>
+                        <span className="text-sm text-muted">{t('permits.passedCount', { count: String(permit.inspections.filter((i) => i.result === 'pass').length) })}</span>
                       )}
                     </td>
                     <td className="px-6 py-4"><Button variant="ghost" size="sm"><ArrowRight size={16} /></Button></td>
@@ -262,8 +262,8 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
           <div>
             <div className="flex items-center gap-2 mb-1">
               {permit.permitNumber && <span className="text-lg font-mono font-medium text-main">{permit.permitNumber}</span>}
-              <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
-              <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', tConfig.bgColor, tConfig.color)}>{tConfig.label}</span>
+              <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{t(sConfig.tKey)}</span>
+              <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', tConfig.bgColor, tConfig.color)}>{t(tConfig.tKey)}</span>
             </div>
             <p className="text-muted">{permit.description}</p>
           </div>
@@ -300,13 +300,13 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
                         insp.result === 'fail' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' :
                         insp.result === 'scheduled' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300' :
                         'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
-                      )}>{insp.result}</span>
+                      )}>{t(`permits.inspectionResult_${insp.result}`)}</span>
                     </div>
-                    {insp.inspector && <p className="text-xs text-muted mt-1">Inspector: {insp.inspector}</p>}
+                    {insp.inspector && <p className="text-xs text-muted mt-1">{t('permits.inspectorLabel', { name: insp.inspector })}</p>}
                     {insp.notes && <p className="text-sm text-muted mt-1">{insp.notes}</p>}
                     {insp.corrections && insp.corrections.length > 0 && (
                       <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/10 rounded">
-                        <p className="text-xs font-medium text-red-700 dark:text-red-300 mb-1">Required Corrections:</p>
+                        <p className="text-xs font-medium text-red-700 dark:text-red-300 mb-1">{t('permits.requiredCorrections')}</p>
                         {insp.corrections.map((c, i) => <p key={i} className="text-xs text-red-600 dark:text-red-400">- {c}</p>)}
                       </div>
                     )}
@@ -352,7 +352,7 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
         <CardHeader><CardTitle>{t('permits.newPermitApplication')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Permit Type *</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('permits.permitTypeRequired')}</label>
             <select value={form.permitType} onChange={e => update('permitType', e.target.value)} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
               <option value="electrical">{t('common.electrical')}</option>
               <option value="plumbing">{t('common.plumbing')}</option>
@@ -365,23 +365,23 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Description *</label>
-            <input type="text" value={form.description} onChange={e => update('description', e.target.value)} placeholder="200A panel upgrade, new circuits for kitchen" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
+            <label className="block text-sm font-medium text-main mb-1.5">{t('permits.descriptionRequired')}</label>
+            <input type="text" value={form.description} onChange={e => update('description', e.target.value)} placeholder={t('permits.descriptionPlaceholder')} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Jurisdiction *</label>
-              <input type="text" value={form.jurisdiction} onChange={e => update('jurisdiction', e.target.value)} placeholder="City of Hartford" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <label className="block text-sm font-medium text-main mb-1.5">{t('permits.jurisdictionRequired')}</label>
+              <input type="text" value={form.jurisdiction} onChange={e => update('jurisdiction', e.target.value)} placeholder={t('permits.jurisdictionPlaceholder')} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{t('common.jobSiteAddress')}</label>
-              <input type="text" value={form.address} onChange={e => update('address', e.target.value)} placeholder="123 Oak Ave, Hartford, CT" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <input type="text" value={form.address} onChange={e => update('address', e.target.value)} placeholder={t('permits.addressPlaceholder')} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{t('permits.permitFee')}</label>
-              <input type="number" value={form.fee} onChange={e => update('fee', e.target.value.replace(/[^0-9.]/g, ''))} min="0" step="0.01" placeholder="350" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <input type="number" value={form.fee} onChange={e => update('fee', e.target.value.replace(/[^0-9.]/g, ''))} min="0" step="0.01" placeholder={t('permits.feePlaceholder')} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">{t('permits.applicationDate')}</label>
@@ -390,7 +390,7 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
-            <textarea rows={3} value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Additional details, special requirements..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
+            <textarea rows={3} value={form.notes} onChange={e => update('notes', e.target.value)} placeholder={t('permits.notesPlaceholder')} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
@@ -408,9 +408,9 @@ function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
                   status: 'draft',
                 });
                 onClose();
-              } catch (e) { alert(e instanceof Error ? e.message : 'Failed to create'); }
+              } catch (e) { alert(e instanceof Error ? e.message : t('permits.failedToCreate')); }
               setSaving(false);
-            }}><Plus size={16} />{saving ? 'Creating...' : 'Create Permit'}</Button>
+            }}><Plus size={16} />{saving ? t('permits.creating') : t('permits.createPermit')}</Button>
           </div>
         </CardContent>
       </Card>

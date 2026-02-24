@@ -32,24 +32,24 @@ import type { EquipmentStatus, EquipmentType } from '@/types';
 
 type RestorationStatus = 'deployed' | 'removed' | 'maintenance' | 'lost';
 
-const statusConfig: Record<RestorationStatus, { label: string; color: string; bgColor: string }> = {
-  deployed: { label: 'Deployed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  removed: { label: 'Removed', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
-  maintenance: { label: 'Maintenance', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
-  lost: { label: 'Lost', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+const statusConfig: Record<RestorationStatus, { tKey: string; color: string; bgColor: string }> = {
+  deployed: { tKey: 'equipment.statusDeployed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  removed: { tKey: 'equipment.statusRemoved', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  maintenance: { tKey: 'equipment.statusMaintenance', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
+  lost: { tKey: 'equipment.statusLost', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
 const typeOptions = [
-  { value: 'all', label: 'All Types' },
+  { value: 'all', tKey: 'equipment.allTypes' },
   ...Object.entries(EQUIPMENT_TYPE_LABELS).map(([value, label]) => ({ value, label })),
 ];
 
 const statusOptions = [
-  { value: 'all', label: 'All Statuses' },
-  { value: 'deployed', label: 'Deployed' },
-  { value: 'removed', label: 'Removed' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'lost', label: 'Lost' },
+  { value: 'all', tKey: 'common.allStatuses' },
+  { value: 'deployed', tKey: 'equipment.statusDeployed' },
+  { value: 'removed', tKey: 'equipment.statusRemoved' },
+  { value: 'maintenance', tKey: 'equipment.statusMaintenance' },
+  { value: 'lost', tKey: 'equipment.statusLost' },
 ];
 
 function getEquipmentIcon(type: string) {
@@ -188,13 +188,13 @@ export default function EquipmentPage() {
           className="sm:w-80"
         />
         <Select
-          options={typeOptions}
+          options={typeOptions.map((o) => ({ value: o.value, label: 'tKey' in o ? t(o.tKey) : o.label }))}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="sm:w-48"
         />
         <Select
-          options={statusOptions}
+          options={statusOptions.map((o) => ({ value: o.value, label: t(o.tKey) }))}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="sm:w-40"
@@ -270,7 +270,7 @@ function EquipmentCard({ equipment, onClick }: { equipment: RestorationEquipment
             </div>
           </div>
           <span className={cn('px-2 py-1 rounded-full text-xs font-medium', config.bgColor, config.color)}>
-            {config.label}
+            {t(config.tKey)}
           </span>
         </div>
 
@@ -290,14 +290,14 @@ function EquipmentCard({ equipment, onClick }: { equipment: RestorationEquipment
 
         {equipment.serialNumber && (
           <div className="text-xs text-muted font-mono mb-2">
-            S/N: {equipment.serialNumber}
+            {t('equipment.serialNumberShort', { sn: equipment.serialNumber })}
           </div>
         )}
 
         <div className="mt-3 pt-3 border-t border-main flex items-center justify-between">
           <div>
             <p className="text-lg font-semibold text-main">{formatCurrency(equipment.dailyRate)}</p>
-            <p className="text-xs text-muted">per day</p>
+            <p className="text-xs text-muted">{t('equipment.perDay')}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-muted">{t('equipment.deployed')}</p>
@@ -332,7 +332,7 @@ function EquipmentDetailModal({
                   {EQUIPMENT_TYPE_LABELS[equipment.equipmentType] || equipment.equipmentType}
                 </h2>
                 <span className={cn('px-2 py-1 rounded-full text-xs font-medium', config.bgColor, config.color)}>
-                  {config.label}
+                  {t(config.tKey)}
                 </span>
               </div>
               {equipment.make && equipment.model && (
@@ -384,7 +384,7 @@ function EquipmentDetailModal({
               <div>
                 <p className="text-sm text-muted mb-1">{t('common.removedAt')}</p>
                 <p className={cn(equipment.removedAt ? 'text-main' : 'text-muted')}>
-                  {equipment.removedAt ? formatDateTime(equipment.removedAt) : 'Still deployed'}
+                  {equipment.removedAt ? formatDateTime(equipment.removedAt) : t('equipment.stillDeployed')}
                 </p>
               </div>
             </div>
@@ -416,13 +416,13 @@ function EquipmentDetailModal({
             {equipment.status === 'deployed' && (
               <Button className="flex-1" onClick={() => onUpdateStatus(equipment.id, 'removed')}>
                 <X size={16} />
-                Remove Equipment
+                {t('equipment.removeEquipment')}
               </Button>
             )}
             {equipment.status === 'removed' && (
               <Button className="flex-1" onClick={() => onUpdateStatus(equipment.id, 'deployed')}>
                 <CheckCircle size={16} />
-                Re-Deploy
+                {t('equipment.reDeploy')}
               </Button>
             )}
             <Button
@@ -431,10 +431,10 @@ function EquipmentDetailModal({
               disabled={equipment.status === 'maintenance'}
             >
               <Wrench size={16} />
-              Maintenance
+              {t('equipment.maintenance')}
             </Button>
             <Button variant="ghost" onClick={onClose}>
-              Close
+              {t('common.close')}
             </Button>
           </div>
         </CardContent>
@@ -486,7 +486,7 @@ function AddEquipmentModal({ onClose, onAdd }: {
           .order('created_at', { ascending: false })
           .limit(200);
         if (!err && data) {
-          setJobs(data.map((j: Record<string, unknown>) => ({ id: j.id as string, title: (j.title as string) || 'Untitled Job' })));
+          setJobs(data.map((j: Record<string, unknown>) => ({ id: j.id as string, title: (j.title as string) || '' })));
         }
       } catch {
         // Non-critical
@@ -501,10 +501,10 @@ function AddEquipmentModal({ onClose, onAdd }: {
     setFormError(null);
 
     // Validation
-    if (!jobId) { setFormError('Please select a job.'); return; }
-    if (!areaDeployed.trim()) { setFormError('Area Deployed is required.'); return; }
+    if (!jobId) { setFormError(t('equipment.errorSelectJob')); return; }
+    if (!areaDeployed.trim()) { setFormError(t('equipment.errorAreaRequired')); return; }
     const rate = parseFloat(dailyRate);
-    if (isNaN(rate) || rate < 0) { setFormError('Please enter a valid daily rate.'); return; }
+    if (isNaN(rate) || rate < 0) { setFormError(t('equipment.errorValidRate')); return; }
 
     try {
       setSaving(true);
@@ -521,7 +521,7 @@ function AddEquipmentModal({ onClose, onAdd }: {
       });
       onClose();
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Failed to add equipment';
+      const msg = e instanceof Error ? e.message : t('equipment.errorAddFailed');
       setFormError(msg);
     } finally {
       setSaving(false);
@@ -542,22 +542,22 @@ function AddEquipmentModal({ onClose, onAdd }: {
         <CardContent className="space-y-4">
           {/* Job Selector */}
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Assign to Job *</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('equipment.assignToJob')} *</label>
             <select
               value={jobId}
               onChange={(e) => setJobId(e.target.value)}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main"
             >
-              <option value="">{jobsLoading ? 'Loading jobs...' : 'Select a job...'}</option>
+              <option value="">{jobsLoading ? t('equipment.loadingJobs') : t('common.selectJob')}</option>
               {jobs.map((j) => (
-                <option key={j.id} value={j.id}>{j.title}</option>
+                <option key={j.id} value={j.id}>{j.title || t('equipment.untitledJob')}</option>
               ))}
             </select>
           </div>
 
           {/* Equipment Type */}
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Equipment Type *</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('equipment.equipmentType')} *</label>
             <select
               value={equipmentType}
               onChange={(e) => setEquipmentType(e.target.value)}
@@ -570,20 +570,20 @@ function AddEquipmentModal({ onClose, onAdd }: {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Input label={t('fleet.make')} placeholder="Dri-Eaz" value={make} onChange={(e) => setMake(e.target.value)} />
-            <Input label={t('fleet.model')} placeholder="LGR 3500i" value={model} onChange={(e) => setModel(e.target.value)} />
+            <Input label={t('fleet.make')} placeholder={t('equipment.placeholderMake')} value={make} onChange={(e) => setMake(e.target.value)} />
+            <Input label={t('fleet.model')} placeholder={t('equipment.placeholderModel')} value={model} onChange={(e) => setModel(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input label={t('common.serialNumber')} placeholder={t('common.optional')} value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} />
-            <Input label="Asset Tag" placeholder={t('common.optional')} value={assetTag} onChange={(e) => setAssetTag(e.target.value)} />
+            <Input label={t('common.assetTag')} placeholder={t('common.optional')} value={assetTag} onChange={(e) => setAssetTag(e.target.value)} />
           </div>
-          <Input label="Area Deployed *" placeholder="Living Room - East Wall" value={areaDeployed} onChange={(e) => setAreaDeployed(e.target.value)} />
-          <Input label="Daily Rate ($)" type="number" placeholder="0.00" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
+          <Input label={`${t('common.areaDeployed')} *`} placeholder={t('equipment.placeholderArea')} value={areaDeployed} onChange={(e) => setAreaDeployed(e.target.value)} />
+          <Input label={`${t('common.dailyRate')} ($)`} type="number" placeholder="0.00" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea
               rows={2}
-              placeholder="Additional notes..."
+              placeholder={t('equipment.placeholderNotes')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none"
@@ -603,7 +603,7 @@ function AddEquipmentModal({ onClose, onAdd }: {
               {saving ? (
                 <span className="flex items-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Saving...
+                  {t('common.saving')}
                 </span>
               ) : (
                 <><Plus size={16} />{t('common.addEquipment')}</>

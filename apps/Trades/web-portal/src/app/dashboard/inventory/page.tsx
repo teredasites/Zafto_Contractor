@@ -75,11 +75,11 @@ export default function InventoryPage() {
   });
 
   const categoryOptions = [
-    { value: 'all', label: 'All Categories' },
-    { value: 'Electrical', label: 'Electrical' },
-    { value: 'Plumbing', label: 'Plumbing' },
-    { value: 'HVAC', label: 'HVAC' },
-    { value: 'General', label: 'General' },
+    { value: 'all', label: t('common.allCategories') },
+    { value: 'Electrical', label: t('common.electrical') },
+    { value: 'Plumbing', label: t('common.plumbing') },
+    { value: 'HVAC', label: t('inventory.hvac') },
+    { value: 'General', label: t('common.general') },
   ];
 
   // Stats
@@ -100,7 +100,7 @@ export default function InventoryPage() {
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
-          Add Item
+          {t('common.addItem')}
         </Button>
       </div>
 
@@ -165,7 +165,7 @@ export default function InventoryPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search items..."
+          placeholder={t('inventory.searchItems')}
           className="sm:w-80"
         />
         <Select
@@ -244,14 +244,14 @@ export default function InventoryPage() {
                         <button
                           onClick={() => setShowAdjustModal(item)}
                           className="p-1.5 hover:bg-surface-hover rounded-lg text-muted hover:text-main"
-                          title="Adjust quantity"
+                          title={t('inventory.adjustQuantity')}
                         >
                           <Edit size={16} />
                         </button>
                         <button
                           onClick={() => setShowHistoryModal(item)}
                           className="p-1.5 hover:bg-surface-hover rounded-lg text-muted hover:text-main"
-                          title="View history"
+                          title={t('inventory.viewHistory')}
                         >
                           <History size={16} />
                         </button>
@@ -297,25 +297,25 @@ function AddItemModal({ onClose }: { onClose: () => void }) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Input label="Item Name *" placeholder="20A Single Pole Breaker" />
+          <Input label={t('inventory.itemNameRequired')} placeholder={t('inventory.itemNamePlaceholder')} />
           <div className="grid grid-cols-2 gap-4">
-            <Input label={t('common.sku')} placeholder="SPB-20" />
+            <Input label={t('common.sku')} placeholder={t('inventory.skuPlaceholder')} />
             <Select
               label={t('common.category')}
               options={[
-                { value: 'Electrical', label: 'Electrical' },
-                { value: 'Plumbing', label: 'Plumbing' },
-                { value: 'HVAC', label: 'HVAC' },
-                { value: 'General', label: 'General' },
+                { value: 'Electrical', label: t('common.electrical') },
+                { value: 'Plumbing', label: t('common.plumbing') },
+                { value: 'HVAC', label: t('inventory.hvac') },
+                { value: 'General', label: t('common.general') },
               ]}
             />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <Input label="Quantity" type="number" placeholder="0" />
-            <Input label="Min Quantity" type="number" placeholder="10" />
-            <Input label={t('jobs.materials.unitCost')} type="number" placeholder="0.00" />
+            <Input label={t('common.quantity')} type="number" placeholder="0" />
+            <Input label={t('inventory.minQuantity')} type="number" placeholder="10" />
+            <Input label={t('common.unitCost')} type="number" placeholder="0.00" />
           </div>
-          <Input label={t('common.location')} placeholder="Shelf A1" />
+          <Input label={t('common.location')} placeholder={t('inventory.locationPlaceholder')} />
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1"><Plus size={16} />{t('common.addItem')}</Button>
@@ -346,7 +346,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
         <CardContent className="space-y-4">
           <div className="p-3 bg-secondary rounded-lg">
             <p className="font-medium text-main">{item.name}</p>
-            <p className="text-sm text-muted">Current: {item.quantity} units</p>
+            <p className="text-sm text-muted">{t('inventory.currentUnits', { count: item.quantity })}</p>
           </div>
 
           <div className="flex gap-2">
@@ -363,17 +363,17 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
               >
                 {type === 'in' && <ArrowUpRight size={14} className="inline mr-1" />}
                 {type === 'out' && <ArrowDownRight size={14} className="inline mr-1" />}
-                {type === 'in' ? 'Add' : type === 'out' ? 'Remove' : 'Set To'}
+                {type === 'in' ? t('common.add') : type === 'out' ? t('common.remove') : t('inventory.setTo')}
               </button>
             ))}
           </div>
 
           <Input
-            label="Quantity"
+            label={t('common.quantity')}
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            placeholder="Enter quantity"
+            placeholder={t('inventory.enterQuantity')}
           />
 
           <div>
@@ -458,7 +458,7 @@ function HistoryModal({ item, onClose }: { item: InventoryItem; onClose: () => v
                     {tx.jobName && (
                       <p className="text-xs text-muted">{tx.jobName}</p>
                     )}
-                    <p className="text-xs text-muted">by {tx.user}</p>
+                    <p className="text-xs text-muted">{tr('inventory.byUser', { user: tx.user })}</p>
                   </div>
                 </div>
               ))}

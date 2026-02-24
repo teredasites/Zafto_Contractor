@@ -46,30 +46,30 @@ const EXPENSE_COLORS = [
 
 // Navigation tabs for Ledger
 const BOOKS_TABS = [
-  { label: 'Overview', href: '/dashboard/books', active: true },
-  { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
-  { label: 'Expenses', href: '/dashboard/books/expenses', active: false },
-  { label: 'Vendors', href: '/dashboard/books/vendors', active: false },
-  { label: 'Banking', href: '/dashboard/books/banking', active: false },
-  { label: 'Reports', href: '/dashboard/books/reports', active: false },
-  { label: 'Tax & 1099', href: '/dashboard/books/tax-settings', active: false },
-  { label: 'Recurring', href: '/dashboard/books/recurring', active: false },
-  { label: 'Periods', href: '/dashboard/books/periods', active: false },
+  { tKey: 'common.overview', href: '/dashboard/books', active: true },
+  { tKey: 'books.tabChartOfAccounts', href: '/dashboard/books/accounts', active: false },
+  { tKey: 'common.expenses', href: '/dashboard/books/expenses', active: false },
+  { tKey: 'books.tabVendors', href: '/dashboard/books/vendors', active: false },
+  { tKey: 'books.tabBanking', href: '/dashboard/books/banking', active: false },
+  { tKey: 'books.tabReports', href: '/dashboard/books/reports', active: false },
+  { tKey: 'books.tabTax1099', href: '/dashboard/books/tax-settings', active: false },
+  { tKey: 'books.tabRecurring', href: '/dashboard/books/recurring', active: false },
+  { tKey: 'books.tabPeriods', href: '/dashboard/books/periods', active: false },
 ];
 
 // Quick links for Ledger sub-pages
 const QUICK_LINKS = [
-  { label: 'Chart of Accounts', href: '/dashboard/books/accounts', icon: BookOpen },
-  { label: 'Expenses', href: '/dashboard/books/expenses', icon: Receipt },
-  { label: 'Vendors', href: '/dashboard/books/vendors', icon: Users },
-  { label: 'Vendor Payments', href: '/dashboard/books/vendor-payments', icon: CreditCard },
-  { label: 'Banking', href: '/dashboard/books/banking', icon: Landmark },
-  { label: 'Reconciliation', href: '/dashboard/books/reconciliation', icon: Calculator },
-  { label: 'Reports', href: '/dashboard/books/reports', icon: BarChart3 },
-  { label: 'Tax & 1099', href: '/dashboard/books/tax-settings', icon: FileText },
-  { label: 'Recurring', href: '/dashboard/books/recurring', icon: Repeat },
-  { label: 'Periods', href: '/dashboard/books/periods', icon: CalendarCheck },
-  { label: 'Budget vs Actual', href: '/dashboard/books/budgets', icon: Scale },
+  { tKey: 'books.tabChartOfAccounts', href: '/dashboard/books/accounts', icon: BookOpen },
+  { tKey: 'common.expenses', href: '/dashboard/books/expenses', icon: Receipt },
+  { tKey: 'books.tabVendors', href: '/dashboard/books/vendors', icon: Users },
+  { tKey: 'books.linkVendorPayments', href: '/dashboard/books/vendor-payments', icon: CreditCard },
+  { tKey: 'books.tabBanking', href: '/dashboard/books/banking', icon: Landmark },
+  { tKey: 'books.linkReconciliation', href: '/dashboard/books/reconciliation', icon: Calculator },
+  { tKey: 'books.tabReports', href: '/dashboard/books/reports', icon: BarChart3 },
+  { tKey: 'books.tabTax1099', href: '/dashboard/books/tax-settings', icon: FileText },
+  { tKey: 'books.tabRecurring', href: '/dashboard/books/recurring', icon: Repeat },
+  { tKey: 'books.tabPeriods', href: '/dashboard/books/periods', icon: CalendarCheck },
+  { tKey: 'books.linkBudgetVsActual', href: '/dashboard/books/budgets', icon: Scale },
 ];
 
 interface PnLData {
@@ -175,10 +175,10 @@ export default function BooksPage() {
   // P&L summary bar chart data
   const pnlBarData = pnlData
     ? [
-        { label: 'Revenue', value: pnlData.totalRevenue, color: '#10b981' },
-        { label: 'COGS', value: pnlData.totalCogs, color: '#f59e0b' },
-        { label: 'Expenses', value: pnlData.totalExpenses, color: '#ef4444' },
-        { label: 'Net Income', value: Math.max(pnlData.netIncome, 0), color: '#3b82f6' },
+        { label: t('common.revenue'), value: pnlData.totalRevenue, color: '#10b981' },
+        { label: t('books.cogs'), value: pnlData.totalCogs, color: '#f59e0b' },
+        { label: t('common.expenses'), value: pnlData.totalExpenses, color: '#ef4444' },
+        { label: t('books.netIncome'), value: Math.max(pnlData.netIncome, 0), color: '#3b82f6' },
       ]
     : [];
 
@@ -200,11 +200,11 @@ export default function BooksPage() {
             onClick={() => router.push('/dashboard/books/expenses')}
           >
             <Receipt size={16} />
-            Record Expense
+            {t('books.recordExpense')}
           </Button>
           <Button onClick={() => router.push('/dashboard/books/reports')}>
             <BarChart3 size={16} />
-            Run P&L
+            {t('books.runPL')}
           </Button>
         </div>
       </div>
@@ -213,7 +213,7 @@ export default function BooksPage() {
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {BOOKS_TABS.map((tab) => (
           <button
-            key={tab.label}
+            key={tab.href}
             onClick={() => {
               if (!tab.active) router.push(tab.href);
             }}
@@ -224,7 +224,7 @@ export default function BooksPage() {
                 : 'bg-secondary text-muted hover:text-main'
             )}
           >
-            {tab.label}
+            {t(tab.tKey)}
           </button>
         ))}
       </div>
@@ -254,7 +254,7 @@ export default function BooksPage() {
                   {formatCurrency(totalBalance)}
                 </p>
                 <p className="text-xs text-muted mt-2">
-                  {bankAccounts.length} account{bankAccounts.length !== 1 ? 's' : ''}
+                  {t('books.accountCount', { count: bankAccounts.length })}
                 </p>
               </CardContent>
             </Card>
@@ -272,7 +272,7 @@ export default function BooksPage() {
                   {formatCurrency(totalAR)}
                 </p>
                 <p className="text-xs text-muted mt-2">
-                  {arAging.length} customer{arAging.length !== 1 ? 's' : ''}
+                  {t('books.customerCount', { count: arAging.length })}
                 </p>
               </CardContent>
             </Card>
@@ -290,7 +290,7 @@ export default function BooksPage() {
                   {formatCurrency(totalAP)}
                 </p>
                 <p className="text-xs text-muted mt-2">
-                  {apAging.length} vendor{apAging.length !== 1 ? 's' : ''}
+                  {t('books.vendorCount', { count: apAging.length })}
                 </p>
               </CardContent>
             </Card>
@@ -303,7 +303,7 @@ export default function BooksPage() {
                     <DollarSign size={20} className="text-purple-600 dark:text-purple-400" />
                   </div>
                 </div>
-                <p className="text-sm text-muted">Net Income (MTD)</p>
+                <p className="text-sm text-muted">{t('books.netIncomeMTD')}</p>
                 <p className={cn(
                   'text-2xl font-bold mt-1',
                   netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -311,7 +311,7 @@ export default function BooksPage() {
                   {formatCurrency(netIncome)}
                 </p>
                 <p className="text-xs text-muted mt-2">
-                  {formatCurrency(totalRevenue)} revenue
+                  {t('books.revenueAmount', { amount: formatCurrency(totalRevenue) })}
                 </p>
               </CardContent>
             </Card>
@@ -332,7 +332,7 @@ export default function BooksPage() {
                   {profitMargin.toFixed(1)}%
                 </p>
                 <p className="text-xs text-muted mt-2">
-                  Net income / revenue
+                  {t('books.netIncomeOverRevenue')}
                 </p>
               </CardContent>
             </Card>
@@ -352,7 +352,7 @@ export default function BooksPage() {
                   size="sm"
                   onClick={() => router.push('/dashboard/books/reports')}
                 >
-                  Full Report
+                  {t('books.fullReport')}
                   <ArrowRight size={14} />
                 </Button>
               </CardHeader>
@@ -381,10 +381,10 @@ export default function BooksPage() {
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <BarChart3 size={32} className="text-muted mb-3" />
                     <p className="text-sm text-muted">
-                      No P&L data for this period yet.
+                      {t('books.noPLDataYet')}
                     </p>
                     <p className="text-xs text-muted mt-1">
-                      Revenue and expenses will appear here once journal entries are posted.
+                      {t('books.plDataWillAppear')}
                     </p>
                   </div>
                 )}
@@ -406,7 +406,7 @@ export default function BooksPage() {
                         size={140}
                         thickness={20}
                         centerValue={formatCurrency(pnlData?.totalExpenses ?? 0)}
-                        centerLabel="Total"
+                        centerLabel={t('common.total')}
                       />
                     </div>
                     <DonutLegend
@@ -447,14 +447,14 @@ export default function BooksPage() {
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-main">Overdue AR (90+ days)</p>
+                      <p className="text-sm font-medium text-main">{t('books.overdueAR90Days')}</p>
                       {overdueARRows.length > 0 ? (
                         <>
                           <p className="text-lg font-bold text-red-600 mt-1">
                             {formatCurrency(overdueARTotal)}
                           </p>
                           <p className="text-xs text-muted mt-1">
-                            {overdueARRows.length} customer{overdueARRows.length !== 1 ? 's' : ''}
+                            {t('books.customerCount', { count: overdueARRows.length })}
                           </p>
                         </>
                       ) : (
@@ -491,7 +491,7 @@ export default function BooksPage() {
                             {unreviewedCount}
                           </p>
                           <p className="text-xs text-muted mt-1">
-                            Need categorization
+                            {t('books.needCategorization')}
                           </p>
                         </>
                       ) : (
@@ -528,7 +528,7 @@ export default function BooksPage() {
                             {unreconciledAccounts.length}
                           </p>
                           <p className="text-xs text-muted mt-1">
-                            Last sync &gt; 30 days ago
+                            {t('books.lastSyncOver30Days')}
                           </p>
                         </>
                       ) : (
@@ -565,7 +565,7 @@ export default function BooksPage() {
                             {formatCurrency(apCurrentTotal)}
                           </p>
                           <p className="text-xs text-muted mt-1">
-                            Current payables
+                            {t('books.currentPayables')}
                           </p>
                         </>
                       ) : (
@@ -598,7 +598,7 @@ export default function BooksPage() {
                           <Icon size={18} />
                         </div>
                       </div>
-                      <p className="text-sm font-medium text-main">{link.label}</p>
+                      <p className="text-sm font-medium text-main">{t(link.tKey)}</p>
                     </button>
                   );
                 })}

@@ -85,14 +85,7 @@ const formatWeekRange = (start: Date, end: Date) => {
   return `${formatDateLocale(start)} - ${formatDateLocale(end)}, ${end.getFullYear()}`;
 };
 
-const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: 'live', label: 'Live Clock', icon: <Signal size={16} /> },
-  { key: 'timesheets', label: 'Timesheets', icon: <ClipboardCheck size={16} /> },
-  { key: 'allocation', label: 'Job Allocation', icon: <Briefcase size={16} /> },
-  { key: 'adjustments', label: 'Adjustments', icon: <History size={16} /> },
-];
-
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+// TABS and DAY_LABELS moved inside component for i18n access
 
 function getDayOfWeek(iso: string, weekStart: Date): number {
   const d = new Date(iso);
@@ -226,6 +219,19 @@ function buildJobAllocations(entries: TimeEntry[]): JobAllocationRow[] {
 export default function TimeClockPage() {
   const { t, formatDate } = useTranslation();
   const { team } = useTeam();
+
+  const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = useMemo(() => [
+    { key: 'live', label: t('timeClock.tabLive'), icon: <Signal size={16} /> },
+    { key: 'timesheets', label: t('timeClock.tabTimesheets'), icon: <ClipboardCheck size={16} /> },
+    { key: 'allocation', label: t('timeClock.tabJobAllocation'), icon: <Briefcase size={16} /> },
+    { key: 'adjustments', label: t('timeClock.tabAdjustments'), icon: <History size={16} /> },
+  ], [t]);
+
+  const DAY_LABELS = useMemo(() => [
+    t('timeClock.dayMon'), t('timeClock.dayTue'), t('timeClock.dayWed'),
+    t('timeClock.dayThu'), t('timeClock.dayFri'), t('timeClock.daySat'), t('timeClock.daySun'),
+  ], [t]);
+
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>('live');
@@ -265,7 +271,7 @@ export default function TimeClockPage() {
   };
 
   const handleExport = () => {
-    const headers = ['Employee', 'Date', 'Clock In', 'Clock Out', 'Hours', 'Break (min)', 'Status', 'Job', 'Notes'];
+    const headers = [t('timeClock.csvEmployee'), t('timeClock.csvDate'), t('timeClock.csvClockIn'), t('timeClock.csvClockOut'), t('timeClock.csvHours'), t('timeClock.csvBreakMin'), t('timeClock.csvStatus'), t('timeClock.csvJob'), t('timeClock.csvNotes')];
     const rows = weekEntries.map(e => [
       e.userName,
       formatDate(e.clockIn),
@@ -357,14 +363,14 @@ export default function TimeClockPage() {
           value={summary.activeNow.toString()}
           icon={<Play size={20} className="text-green-500" />}
           trend="neutral"
-          changeLabel={`${onBreakCount} on break`}
+          changeLabel={t('timeClock.onBreak', { count: onBreakCount })}
         />
         <StatsCard
           title={t('timeClock.totalHoursThisWeek')}
           value={`${Math.floor(summary.totalHoursWeek)}h ${Math.round((summary.totalHoursWeek % 1) * 60)}m`}
           icon={<Timer size={20} />}
           trend="neutral"
-          changeLabel={`${Math.round(summary.totalHoursWeek / 8)} day equiv.`}
+          changeLabel={t('timeClock.dayEquiv', { count: Math.round(summary.totalHoursWeek / 8) })}
         />
         <StatsCard
           title={t('timeClock.pendingApproval')}
@@ -378,7 +384,7 @@ export default function TimeClockPage() {
           value={`${Math.floor(summary.totalOvertimeWeek)}h ${Math.round((summary.totalOvertimeWeek % 1) * 60)}m`}
           icon={<TrendingUp size={20} className="text-orange-500" />}
           trend="neutral"
-          changeLabel="total this week"
+          changeLabel={t('timeClock.totalThisWeek')}
         />
       </div>
 
@@ -414,10 +420,10 @@ export default function TimeClockPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500" />
                 </span>
-                <span className="text-sm font-medium text-main">{liveCount} employee{liveCount !== 1 ? 's' : ''} clocked in</span>
+                <span className="text-sm font-medium text-main">{liveCount !== 1 ? t('timeClock.employeesClockedInPlural', { count: liveCount }) : t('timeClock.employeesClockedIn', { count: liveCount })}</span>
               </div>
             </div>
-            <p className="text-xs text-muted">Auto-refreshes every 30 seconds</p>
+            <p className="text-xs text-muted">{t('timeClock.autoRefresh')}</p>
           </div>
 
           {/* Live employee cards */}
@@ -425,8 +431,8 @@ export default function TimeClockPage() {
             <Card>
               <CardContent className="py-16 text-center">
                 <Clock className="w-10 h-10 text-muted mx-auto mb-3" />
-                <p className="text-main font-medium mb-1">No employees clocked in</p>
-                <p className="text-sm text-muted">Active time entries will appear here in real time</p>
+                <p className="text-main font-medium mb-1">{t('timeClock.noEmployeesClockedIn')}</p>
+                <p className="text-sm text-muted">{t('timeClock.activeEntriesAppearHere')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -444,7 +450,7 @@ export default function TimeClockPage() {
                           </div>
                           <div className="text-right">
                             <p className="text-2xl font-bold text-main tabular-nums">{formatElapsed(emp.elapsed)}</p>
-                            <p className="text-xs text-muted">elapsed</p>
+                            <p className="text-xs text-muted">{t('timeClock.elapsed')}</p>
                           </div>
                         </div>
 
@@ -457,7 +463,7 @@ export default function TimeClockPage() {
                         ) : (
                           <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
                             <AlertCircle size={14} className="text-amber-500 flex-shrink-0" />
-                            <p className="text-sm text-amber-500">No job assigned</p>
+                            <p className="text-sm text-amber-500">{t('timeClock.noJobAssigned')}</p>
                           </div>
                         )}
 
@@ -467,12 +473,12 @@ export default function TimeClockPage() {
                             {emp.breakMinutes > 0 && (
                               <div className="flex items-center gap-1 text-xs text-muted">
                                 <Coffee size={12} />
-                                <span>{emp.breakMinutes}m break taken</span>
+                                <span>{t('timeClock.breakTaken', { count: emp.breakMinutes })}</span>
                               </div>
                             )}
                           </div>
                           <div className="text-xs text-muted">
-                            In: {formatTimeLocale(emp.clockedInAt)}
+                            {t('timeClock.clockInLabel', { time: formatTimeLocale(emp.clockedInAt) })}
                           </div>
                         </div>
                       </div>
@@ -489,20 +495,20 @@ export default function TimeClockPage() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 text-sm text-main">
                   <Clock size={16} className="text-accent" />
-                  <span className="font-medium">Time Clock</span>
+                  <span className="font-medium">{t('timeClock.flowTimeClock')}</span>
                 </div>
                 <ArrowRight size={16} className="text-muted" />
                 <div className="flex items-center gap-2 text-sm text-main">
                   <DollarSign size={16} className="text-green-500" />
-                  <span className="font-medium">Payroll</span>
+                  <span className="font-medium">{t('timeClock.flowPayroll')}</span>
                 </div>
                 <ArrowRight size={16} className="text-muted" />
                 <div className="flex items-center gap-2 text-sm text-main">
                   <Briefcase size={16} className="text-blue-500" />
-                  <span className="font-medium">Job Costing</span>
+                  <span className="font-medium">{t('timeClock.flowJobCosting')}</span>
                 </div>
                 <div className="ml-auto text-xs text-muted">
-                  Approved hours automatically flow to payroll and job cost reports
+                  {t('timeClock.flowDescription')}
                 </div>
               </div>
             </CardContent>
@@ -530,7 +536,7 @@ export default function TimeClockPage() {
                 </Button>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setCurrentWeek(new Date())} className="text-accent">
-                This Week
+                {t('timeClock.thisWeek')}
               </Button>
             </div>
 
@@ -553,8 +559,8 @@ export default function TimeClockPage() {
             <Card>
               <CardContent className="py-16 text-center">
                 <ClipboardCheck className="w-10 h-10 text-muted mx-auto mb-3" />
-                <p className="text-main font-medium mb-1">No time entries this week</p>
-                <p className="text-sm text-muted">Time entries will appear here once employees clock in</p>
+                <p className="text-main font-medium mb-1">{t('timeClock.noTimeEntriesThisWeek')}</p>
+                <p className="text-sm text-muted">{t('timeClock.timeEntriesAppearOnClockIn')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -564,7 +570,7 @@ export default function TimeClockPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-main">
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-56 sticky left-0 bg-surface z-10">Employee</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-56 sticky left-0 bg-surface z-10">{t('timeClock.tableEmployee')}</th>
                         {DAY_LABELS.map((day, i) => {
                           const isWeekend = i >= 5;
                           return (
@@ -573,10 +579,10 @@ export default function TimeClockPage() {
                             </th>
                           );
                         })}
-                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-20">Total</th>
-                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-16">OT</th>
-                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-28">Status</th>
-                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-24">Actions</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-20">{t('timeClock.tableTotal')}</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-16">{t('timeClock.tableOT')}</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-28">{t('timeClock.tableStatus')}</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-muted uppercase tracking-wider w-24">{t('timeClock.tableActions')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-main">
@@ -632,7 +638,7 @@ export default function TimeClockPage() {
                             </td>
                             <td className="text-center px-4 py-3">
                               <Badge variant={getTimesheetBadgeVariant(row.status)} dot>
-                                {row.status === 'pending' ? 'Pending' : row.status === 'approved' ? 'Approved' : 'Rejected'}
+                                {row.status === 'pending' ? t('timeClock.statusPending') : row.status === 'approved' ? t('timeClock.statusApproved') : t('timeClock.statusRejected')}
                               </Badge>
                             </td>
                             <td className="text-center px-4 py-3">
@@ -640,7 +646,7 @@ export default function TimeClockPage() {
                                 <div className="flex items-center justify-center gap-1">
                                   <button
                                     className="p-1.5 rounded-md hover:bg-green-500/10 text-green-500 transition-colors"
-                                    title="Approve"
+                                    title={t('timeClock.approve')}
                                     onClick={async () => {
                                       const userEntries = weekEntries.filter(e => e.userId === row.userId && e.status === 'completed');
                                       for (const entry of userEntries) await approveEntry(entry.id);
@@ -650,7 +656,7 @@ export default function TimeClockPage() {
                                   </button>
                                   <button
                                     className="p-1.5 rounded-md hover:bg-red-500/10 text-red-500 transition-colors"
-                                    title="Reject"
+                                    title={t('timeClock.reject')}
                                     onClick={async () => {
                                       const userEntries = weekEntries.filter(e => e.userId === row.userId && e.status === 'completed');
                                       for (const entry of userEntries) await rejectEntry(entry.id);
@@ -675,7 +681,7 @@ export default function TimeClockPage() {
                     <tfoot>
                       <tr className="border-t-2 border-main bg-secondary/30">
                         <td className="px-4 py-3 sticky left-0 bg-secondary/30 z-10">
-                          <p className="font-semibold text-sm text-main">Team Totals</p>
+                          <p className="font-semibold text-sm text-main">{t('timeClock.teamTotals')}</p>
                         </td>
                         {DAY_LABELS.map((_, i) => {
                           const dayTotal = timesheetRows.reduce((s, r) => s + (r.dailyHours[i] || 0), 0);
@@ -712,10 +718,9 @@ export default function TimeClockPage() {
                   <div className="flex items-center gap-3">
                     <TrendingUp size={20} className="text-orange-500" />
                     <div>
-                      <p className="font-medium text-main">Overtime Summary</p>
+                      <p className="font-medium text-main">{t('timeClock.overtimeSummary')}</p>
                       <p className="text-sm text-muted">
-                        {timesheetRows.filter(r => r.otTotal > 0).length} of {timesheetRows.length} employees with overtime this week.
-                        Daily OT threshold: 8h. Weekly OT threshold: 40h.
+                        {t('timeClock.overtimeSummaryDesc', { empCount: timesheetRows.filter(r => r.otTotal > 0).length, total: timesheetRows.length })}
                       </p>
                     </div>
                   </div>
@@ -723,7 +728,7 @@ export default function TimeClockPage() {
                     <p className="text-lg font-bold text-orange-500">
                       {timesheetRows.reduce((s, r) => s + r.otTotal, 0).toFixed(1)}h
                     </p>
-                    <p className="text-xs text-muted">total overtime</p>
+                    <p className="text-xs text-muted">{t('timeClock.totalOvertime')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -739,23 +744,23 @@ export default function TimeClockPage() {
                     <AlertCircle size={20} className="text-amber-500" />
                     <div>
                       <p className="font-medium text-main">
-                        {timesheetRows.filter(r => r.status === 'pending').length} timesheets pending approval
+                        {t('timeClock.timesheetsPendingApproval', { count: timesheetRows.filter(r => r.status === 'pending').length })}
                       </p>
-                      <p className="text-sm text-muted">Review hours and job allocations before approving</p>
+                      <p className="text-sm text-muted">{t('timeClock.reviewBeforeApproving')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button variant="secondary" size="sm">
                       <Eye size={14} />
-                      Review All
+                      {t('timeClock.reviewAllButton')}
                     </Button>
                     <Button size="sm" onClick={async () => {
-                      if (!confirm('Approve all pending timesheets?')) return;
+                      if (!confirm(t('timeClock.approveAllTimesheetsConfirm'))) return;
                       const pending = weekEntries.filter(e => e.status === 'completed');
                       for (const entry of pending) { await approveEntry(entry.id); }
                     }}>
                       <Check size={14} />
-                      Approve All Pending
+                      {t('timeClock.approveAllPending')}
                     </Button>
                   </div>
                 </div>
@@ -773,25 +778,25 @@ export default function TimeClockPage() {
           {/* Summary cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StatsCard
-              title="Total Jobs This Week"
+              title={t('timeClock.totalJobsThisWeek')}
               value={jobAllocations.length.toString()}
               icon={<Briefcase size={20} className="text-blue-500" />}
               trend="neutral"
-              changeLabel="active jobs"
+              changeLabel={t('timeClock.activeJobs')}
             />
             <StatsCard
-              title="Total Allocated Hours"
+              title={t('timeClock.totalAllocatedHours')}
               value={`${jobAllocations.reduce((s, j) => s + j.totalHours, 0).toFixed(1)}h`}
               icon={<Timer size={20} className="text-accent" />}
               trend="neutral"
-              changeLabel="across all jobs"
+              changeLabel={t('timeClock.acrossAllJobs')}
             />
             <StatsCard
-              title="Total Labor Cost"
+              title={t('timeClock.totalLaborCost')}
               value={formatCurrency(totalAllocatedCost)}
               icon={<DollarSign size={20} className="text-green-500" />}
               trend="neutral"
-              changeLabel="this week"
+              changeLabel={t('timeClock.thisWeekLabel')}
             />
           </div>
 
@@ -800,8 +805,8 @@ export default function TimeClockPage() {
             <Card>
               <CardContent className="py-16 text-center">
                 <Briefcase className="w-10 h-10 text-muted mx-auto mb-3" />
-                <p className="text-main font-medium mb-1">No job allocations this week</p>
-                <p className="text-sm text-muted">Time entries linked to jobs will appear here</p>
+                <p className="text-main font-medium mb-1">{t('timeClock.noJobAllocationsThisWeek')}</p>
+                <p className="text-sm text-muted">{t('timeClock.timeEntriesLinkedToJobs')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -826,15 +831,15 @@ export default function TimeClockPage() {
                         </div>
                         <div className="flex items-center gap-8">
                           <div className="text-right">
-                            <p className="text-sm text-muted">Hours</p>
+                            <p className="text-sm text-muted">{t('timeClock.hours')}</p>
                             <p className="text-lg font-bold text-main">{job.totalHours.toFixed(1)}h</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-muted">Labor Cost</p>
+                            <p className="text-sm text-muted">{t('timeClock.laborCost')}</p>
                             <p className="text-lg font-bold text-green-500">{formatCurrency(job.totalCost)}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-muted">Crew</p>
+                            <p className="text-sm text-muted">{t('timeClock.crew')}</p>
                             <p className="text-lg font-bold text-main">{job.employees.length}</p>
                           </div>
                           <ChevronDown size={18} className={cn('text-muted transition-transform', isExpanded && 'rotate-180')} />
@@ -847,10 +852,10 @@ export default function TimeClockPage() {
                           <table className="w-full">
                             <thead>
                               <tr className="border-b border-main bg-secondary/30">
-                                <th className="text-left px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Employee</th>
-                                <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Hours</th>
-                                <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Rate</th>
-                                <th className="text-right px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">Cost</th>
+                                <th className="text-left px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('timeClock.tableEmployee')}</th>
+                                <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('timeClock.hours')}</th>
+                                <th className="text-right px-4 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('timeClock.rate')}</th>
+                                <th className="text-right px-6 py-2.5 text-xs font-semibold text-muted uppercase tracking-wider">{t('timeClock.cost')}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-main">
@@ -870,7 +875,7 @@ export default function TimeClockPage() {
                             </tbody>
                             <tfoot>
                               <tr className="border-t-2 border-main bg-secondary/30">
-                                <td className="px-6 py-3 text-sm font-bold text-main">Total</td>
+                                <td className="px-6 py-3 text-sm font-bold text-main">{t('timeClock.total')}</td>
                                 <td className="text-right px-4 py-3 text-sm font-bold text-main">{job.totalHours.toFixed(1)}h</td>
                                 <td className="text-right px-4 py-3 text-sm text-muted">-</td>
                                 <td className="text-right px-6 py-3 text-sm font-bold text-green-500">{formatCurrency(job.totalCost)}</td>
@@ -892,20 +897,20 @@ export default function TimeClockPage() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 text-sm text-main">
                   <Timer size={16} className="text-accent" />
-                  <span className="font-medium">Allocated Hours</span>
+                  <span className="font-medium">{t('timeClock.allocatedHours')}</span>
                 </div>
                 <ArrowRight size={16} className="text-muted" />
                 <div className="flex items-center gap-2 text-sm text-main">
                   <DollarSign size={16} className="text-green-500" />
-                  <span className="font-medium">Employee Rate</span>
+                  <span className="font-medium">{t('timeClock.employeeRate')}</span>
                 </div>
                 <ArrowRight size={16} className="text-muted" />
                 <div className="flex items-center gap-2 text-sm text-main">
                   <BarChart3 size={16} className="text-blue-500" />
-                  <span className="font-medium">Job Cost Report</span>
+                  <span className="font-medium">{t('timeClock.jobCostReport')}</span>
                 </div>
                 <div className="ml-auto text-xs text-muted">
-                  Labor costs calculated at each employee's hourly rate
+                  {t('timeClock.laborCostsCalculated')}
                 </div>
               </div>
             </CardContent>
@@ -922,12 +927,11 @@ export default function TimeClockPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted">
-                All time clock adjustments are logged with original values, reasons, and approval chain.
-                This audit trail ensures compliance and transparency.
+                {t('timeClock.adjustmentsDescription')}
               </p>
             </div>
             <Badge variant="info" dot>
-              {adjustmentEntries.length} entries with notes
+              {t('timeClock.entriesWithNotes', { count: adjustmentEntries.length })}
             </Badge>
           </div>
 
@@ -936,8 +940,8 @@ export default function TimeClockPage() {
             <Card>
               <CardContent className="py-16 text-center">
                 <History className="w-10 h-10 text-muted mx-auto mb-3" />
-                <p className="text-main font-medium mb-1">No adjustments this period</p>
-                <p className="text-sm text-muted">Time entry adjustments and notes will appear here</p>
+                <p className="text-main font-medium mb-1">{t('timeClock.noAdjustmentsThisPeriod')}</p>
+                <p className="text-sm text-muted">{t('timeClock.adjustmentsAppearHere')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -963,7 +967,7 @@ export default function TimeClockPage() {
                             <p className="font-semibold text-main">{entry.userName}</p>
                             <span className="text-sm text-muted">{formatDate(entry.clockIn)}</span>
                             <Badge variant={entry.status === 'approved' ? 'success' : entry.status === 'rejected' ? 'error' : 'warning'} size="sm">
-                              {entry.status === 'approved' ? 'Approved' : entry.status === 'rejected' ? 'Rejected' : 'Pending'}
+                              {entry.status === 'approved' ? t('timeClock.statusApproved') : entry.status === 'rejected' ? t('timeClock.statusRejected') : t('timeClock.statusPending')}
                             </Badge>
                           </div>
                         </div>
@@ -971,24 +975,24 @@ export default function TimeClockPage() {
                         {/* Time info */}
                         <div className="grid grid-cols-2 gap-4 mt-3">
                           <div className="p-3 rounded-lg bg-secondary/50">
-                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1.5">Time</p>
+                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1.5">{t('timeClock.timeLabel')}</p>
                             <div className="flex items-center gap-3">
                               <div>
-                                <p className="text-xs text-muted">Clock In</p>
+                                <p className="text-xs text-muted">{t('timeClock.clockInTime')}</p>
                                 <p className="text-sm font-semibold text-main">{formatTimeLocale(entry.clockIn)}</p>
                               </div>
                               <ArrowRight size={14} className="text-muted" />
                               <div>
-                                <p className="text-xs text-muted">Clock Out</p>
-                                <p className="text-sm font-semibold text-main">{entry.clockOut ? formatTimeLocale(entry.clockOut) : 'Active'}</p>
+                                <p className="text-xs text-muted">{t('timeClock.clockOutTime')}</p>
+                                <p className="text-sm font-semibold text-main">{entry.clockOut ? formatTimeLocale(entry.clockOut) : t('timeClock.active')}</p>
                               </div>
                             </div>
                           </div>
                           <div className="p-3 rounded-lg bg-secondary/50">
-                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1.5">Duration</p>
+                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1.5">{t('timeClock.duration')}</p>
                             <p className="text-sm font-semibold text-main">{formatHours(entry.totalMinutes)}</p>
                             {entry.breakMinutes > 0 && (
-                              <p className="text-xs text-muted mt-1">{entry.breakMinutes}m break</p>
+                              <p className="text-xs text-muted mt-1">{t('timeClock.breakLabel', { count: entry.breakMinutes })}</p>
                             )}
                           </div>
                         </div>
@@ -996,7 +1000,7 @@ export default function TimeClockPage() {
                         {/* Notes */}
                         {entry.notes && (
                           <div className="mt-3 p-3 rounded-lg bg-secondary/50">
-                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1">Notes</p>
+                            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1">{t('timeClock.notes')}</p>
                             <p className="text-sm text-main">{entry.notes}</p>
                           </div>
                         )}
@@ -1015,11 +1019,11 @@ export default function TimeClockPage() {
                         <div className="flex flex-col gap-2 flex-shrink-0">
                           <Button size="sm" variant="ghost" className="text-green-500 hover:bg-green-500/10" onClick={() => approveEntry(entry.id)}>
                             <Check size={14} />
-                            Approve
+                            {t('timeClock.approve')}
                           </Button>
                           <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-500/10" onClick={() => rejectEntry(entry.id)}>
                             <X size={14} />
-                            Reject
+                            {t('timeClock.reject')}
                           </Button>
                         </div>
                       )}
@@ -1036,11 +1040,9 @@ export default function TimeClockPage() {
               <div className="flex items-center gap-3">
                 <Shield size={20} className="text-blue-500 flex-shrink-0" />
                 <div>
-                  <p className="font-medium text-main">Audit Compliance</p>
+                  <p className="font-medium text-main">{t('timeClock.auditCompliance')}</p>
                   <p className="text-sm text-muted">
-                    All time adjustments maintain a complete audit trail including original values, adjusted values,
-                    reason for adjustment, who made the change, and who approved it. Records are retained per your
-                    company's data retention policy and cannot be permanently deleted.
+                    {t('timeClock.auditComplianceDesc')}
                   </p>
                 </div>
               </div>

@@ -56,76 +56,76 @@ type FleetTab = 'vehicles' | 'maintenance' | 'fuel' | 'inspections';
 // Status config
 // ────────────────────────────────────────────────────────
 
-const vehicleStatusConfig: Record<VehicleStatus, { label: string; variant: 'success' | 'warning' | 'error' | 'secondary' }> = {
-  active: { label: 'Active', variant: 'success' },
-  maintenance: { label: 'Maintenance', variant: 'warning' },
-  out_of_service: { label: 'Out of Service', variant: 'error' },
-  retired: { label: 'Retired', variant: 'secondary' },
+const vehicleStatusConfig: Record<VehicleStatus, { tKey: string; variant: 'success' | 'warning' | 'error' | 'secondary' }> = {
+  active: { tKey: 'common.active', variant: 'success' },
+  maintenance: { tKey: 'fleet.statusMaintenance', variant: 'warning' },
+  out_of_service: { tKey: 'fleet.statusOutOfService', variant: 'error' },
+  retired: { tKey: 'fleet.statusRetired', variant: 'secondary' },
 };
 
-const maintenanceStatusConfig: Record<MaintenanceStatus, { label: string; variant: 'info' | 'warning' | 'success' | 'secondary' }> = {
-  scheduled: { label: 'Scheduled', variant: 'info' },
-  in_progress: { label: 'In Progress', variant: 'warning' },
-  completed: { label: 'Completed', variant: 'success' },
-  cancelled: { label: 'Cancelled', variant: 'secondary' },
+const maintenanceStatusConfig: Record<MaintenanceStatus, { tKey: string; variant: 'info' | 'warning' | 'success' | 'secondary' }> = {
+  scheduled: { tKey: 'common.scheduled', variant: 'info' },
+  in_progress: { tKey: 'common.inProgress', variant: 'warning' },
+  completed: { tKey: 'common.completed', variant: 'success' },
+  cancelled: { tKey: 'common.cancelled', variant: 'secondary' },
 };
 
-const vehicleTypeLabels: Record<string, string> = {
-  truck: 'Truck',
-  van: 'Van',
-  trailer: 'Trailer',
-  car: 'Car',
-  equipment: 'Equipment',
-  other: 'Other',
+const vehicleTypeTKeys: Record<string, string> = {
+  truck: 'fleet.typeTruck',
+  van: 'fleet.typeVan',
+  trailer: 'fleet.typeTrailer',
+  car: 'fleet.typeCar',
+  equipment: 'fleet.typeEquipment',
+  other: 'fleet.typeOther',
 };
 
-const maintenanceTypeLabels: Record<string, string> = {
-  oil_change: 'Oil Change',
-  tire_rotation: 'Tire Rotation',
-  brake_service: 'Brake Service',
-  inspection: 'Inspection',
-  engine: 'Engine',
-  transmission: 'Transmission',
-  electrical: 'Electrical',
-  body: 'Body',
-  scheduled_service: 'Scheduled Service',
-  other: 'Other',
+const maintenanceTypeTKeys: Record<string, string> = {
+  oil_change: 'fleet.maintOilChange',
+  tire_rotation: 'fleet.maintTireRotation',
+  brake_service: 'fleet.maintBrakeService',
+  inspection: 'fleet.maintInspection',
+  engine: 'fleet.maintEngine',
+  transmission: 'fleet.maintTransmission',
+  electrical: 'fleet.maintElectrical',
+  body: 'fleet.maintBody',
+  scheduled_service: 'fleet.maintScheduledService',
+  other: 'fleet.typeOther',
 };
 
-const priorityConfig: Record<string, { label: string; variant: 'secondary' | 'info' | 'warning' | 'error' }> = {
-  low: { label: 'Low', variant: 'secondary' },
-  medium: { label: 'Medium', variant: 'info' },
-  high: { label: 'High', variant: 'warning' },
-  critical: { label: 'Critical', variant: 'error' },
+const priorityConfig: Record<string, { tKey: string; variant: 'secondary' | 'info' | 'warning' | 'error' }> = {
+  low: { tKey: 'common.low', variant: 'secondary' },
+  medium: { tKey: 'common.medium', variant: 'info' },
+  high: { tKey: 'common.high', variant: 'warning' },
+  critical: { tKey: 'common.critical', variant: 'error' },
 };
 
-const DOT_CHECKLIST_ITEMS = [
-  'Engine oil level',
-  'Coolant level',
-  'Brake fluid level',
-  'Power steering fluid',
-  'Windshield washer fluid',
-  'Tire condition & pressure (all)',
-  'Lug nuts tight',
-  'Headlights (high/low)',
-  'Tail lights',
-  'Brake lights',
-  'Turn signals (front/rear)',
-  'Hazard lights',
-  'Backup lights',
-  'License plate light',
-  'Horn',
-  'Windshield wipers',
-  'Mirrors (both sides)',
-  'Windshield (no cracks)',
-  'Seat belts',
-  'Parking brake',
-  'Service brake test',
-  'Steering play',
-  'Exhaust system',
-  'Fire extinguisher',
-  'First aid kit',
-  'Reflective triangles/flares',
+const DOT_CHECKLIST_TKEYS = [
+  'fleet.dotEngineOil',
+  'fleet.dotCoolant',
+  'fleet.dotBrakeFluid',
+  'fleet.dotPowerSteering',
+  'fleet.dotWasherFluid',
+  'fleet.dotTireCondition',
+  'fleet.dotLugNuts',
+  'fleet.dotHeadlights',
+  'fleet.dotTailLights',
+  'fleet.dotBrakeLights',
+  'fleet.dotTurnSignals',
+  'fleet.dotHazardLights',
+  'fleet.dotBackupLights',
+  'fleet.dotLicensePlateLight',
+  'fleet.dotHorn',
+  'fleet.dotWipers',
+  'fleet.dotMirrors',
+  'fleet.dotWindshield',
+  'fleet.dotSeatBelts',
+  'fleet.dotParkingBrake',
+  'fleet.dotServiceBrake',
+  'fleet.dotSteeringPlay',
+  'fleet.dotExhaust',
+  'fleet.dotFireExtinguisher',
+  'fleet.dotFirstAid',
+  'fleet.dotReflectiveTriangles',
 ];
 
 // ────────────────────────────────────────────────────────
@@ -207,8 +207,9 @@ export default function FleetPage() {
 
         return {
           id: m.id,
-          vehicleName: vehicle?.vehicleName ?? 'Unknown Vehicle',
-          serviceType: maintenanceTypeLabels[m.maintenanceType] || m.title,
+          vehicleName: vehicle?.vehicleName ?? t('fleet.unknownVehicle'),
+          serviceTypeTKey: maintenanceTypeTKeys[m.maintenanceType] || null,
+          serviceTypeFallback: m.title,
           triggerType,
           nextDueDate: m.scheduledDate || m.nextDueDate,
           nextDueMileage: m.nextDueOdometer,
@@ -273,7 +274,7 @@ export default function FleetPage() {
       return {
         id: f.id,
         vehicleId: f.vehicleId,
-        vehicleName: vehicle?.vehicleName ?? 'Unknown Vehicle',
+        vehicleName: vehicle?.vehicleName ?? t('fleet.unknownVehicle'),
         fuelDate: f.fuelDate,
         gallons: f.gallons,
         pricePerGallon: f.pricePerGallon,
@@ -325,14 +326,14 @@ export default function FleetPage() {
           defects.push(...m.description.split('\n').filter(Boolean));
         }
 
-        const totalItems = DOT_CHECKLIST_ITEMS.length;
+        const totalItems = DOT_CHECKLIST_TKEYS.length;
         const itemsFailed = defects.length;
         const itemsPassed = totalItems - itemsFailed;
 
         return {
           id: m.id,
-          vehicleName: vehicle?.vehicleName ?? 'Unknown Vehicle',
-          inspectorName: m.completedByUserId ? m.completedByUserId.slice(0, 8) + '...' : 'Unassigned',
+          vehicleName: vehicle?.vehicleName ?? t('fleet.unknownVehicle'),
+          inspectorName: m.completedByUserId ? m.completedByUserId.slice(0, 8) + '...' : t('common.unassigned'),
           inspectionDate: m.completedDate || m.scheduledDate || m.createdAt,
           result,
           itemsPassed,
@@ -406,11 +407,11 @@ export default function FleetPage() {
   }, [vehicles, maintenance]);
 
   // ── Tab definitions ──
-  const tabs: { key: FleetTab; label: string; icon: React.ReactNode; count?: number }[] = [
-    { key: 'vehicles', label: 'Vehicles', icon: <Truck size={16} />, count: vehicles.length },
-    { key: 'maintenance', label: 'Maintenance', icon: <Wrench size={16} />, count: overdueCount > 0 ? overdueCount : undefined },
-    { key: 'fuel', label: 'Fuel Log', icon: <Fuel size={16} /> },
-    { key: 'inspections', label: 'Inspections', icon: <ClipboardCheck size={16} />, count: inspectionStats.failed > 0 ? inspectionStats.failed : undefined },
+  const tabs: { key: FleetTab; tKey: string; icon: React.ReactNode; count?: number }[] = [
+    { key: 'vehicles', tKey: 'fleet.tabVehicles', icon: <Truck size={16} />, count: vehicles.length },
+    { key: 'maintenance', tKey: 'fleet.tabMaintenance', icon: <Wrench size={16} />, count: overdueCount > 0 ? overdueCount : undefined },
+    { key: 'fuel', tKey: 'fleet.tabFuelLog', icon: <Fuel size={16} /> },
+    { key: 'inspections', tKey: 'fleet.tabInspections', icon: <ClipboardCheck size={16} />, count: inspectionStats.failed > 0 ? inspectionStats.failed : undefined },
   ];
 
   if (loading) {
@@ -522,7 +523,7 @@ export default function FleetPage() {
               )}
             >
               {tab.icon}
-              {tab.label}
+              {t(tab.tKey)}
               {tab.count !== undefined && tab.count > 0 && (
                 <span className={cn(
                   'ml-1 text-xs font-semibold px-1.5 py-0.5 rounded-full',
@@ -629,11 +630,11 @@ function VehiclesTab({
         />
         <Select
           options={[
-            { value: 'all', label: 'All Statuses' },
-            { value: 'active', label: 'Active' },
-            { value: 'maintenance', label: 'Maintenance' },
-            { value: 'out_of_service', label: 'Out of Service' },
-            { value: 'retired', label: 'Retired' },
+            { value: 'all', label: t('fleet.allStatuses') },
+            { value: 'active', label: t('common.active') },
+            { value: 'maintenance', label: t('fleet.statusMaintenance') },
+            { value: 'out_of_service', label: t('fleet.statusOutOfService') },
+            { value: 'retired', label: t('fleet.statusRetired') },
           ]}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -731,7 +732,7 @@ function VehicleRow({
         )}
       </div>
       <div className="col-span-1">
-        <span className="text-sm text-muted">{vehicleTypeLabels[vehicle.vehicleType] || vehicle.vehicleType}</span>
+        <span className="text-sm text-muted">{vehicleTypeTKeys[vehicle.vehicleType] ? t(vehicleTypeTKeys[vehicle.vehicleType]) : vehicle.vehicleType}</span>
       </div>
       <div className="col-span-2">
         <p className="text-sm text-main">
@@ -741,16 +742,16 @@ function VehicleRow({
       </div>
       <div className="col-span-2">
         <p className="text-sm text-muted truncate">
-          {vehicle.assignedToUserId ? vehicle.assignedToUserId.slice(0, 8) + '...' : 'Unassigned'}
+          {vehicle.assignedToUserId ? vehicle.assignedToUserId.slice(0, 8) + '...' : t('common.unassigned')}
         </p>
       </div>
       <div className="col-span-1">
-        <Badge variant={statusCfg.variant} dot>{statusCfg.label}</Badge>
+        <Badge variant={statusCfg.variant} dot>{t(statusCfg.tKey)}</Badge>
       </div>
       <div className="col-span-1">
         <p className="text-sm text-main">
           {vehicle.currentOdometer != null
-            ? vehicle.currentOdometer.toLocaleString() + ' mi'
+            ? vehicle.currentOdometer.toLocaleString() + ' ' + t('fleet.miAbbrev')
             : '--'}
         </p>
       </div>
@@ -802,23 +803,23 @@ function VehicleDetail({
       <div className="mb-6">
         <h4 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
           <FileText size={14} />
-          Vehicle Details
+          {t('fleet.vehicleDetails')}
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <DetailField icon={<Hash size={13} />} label="VIN" value={vehicle.vin || 'Not recorded'} />
-          <DetailField icon={<Car size={13} />} label="License Plate" value={vehicle.licensePlate || 'Not recorded'} />
-          <DetailField icon={<Gauge size={13} />} label="Odometer" value={vehicle.currentOdometer != null ? formatNumber(vehicle.currentOdometer) + ' mi' : 'Not recorded'} />
-          <DetailField icon={<User size={13} />} label="Assigned To" value={vehicle.assignedToUserId ? vehicle.assignedToUserId.slice(0, 8) + '...' : 'Unassigned'} />
+          <DetailField icon={<Hash size={13} />} label={t('fleet.vin')} value={vehicle.vin || t('fleet.notRecorded')} />
+          <DetailField icon={<Car size={13} />} label={t('fleet.licensePlate')} value={vehicle.licensePlate || t('fleet.notRecorded')} />
+          <DetailField icon={<Gauge size={13} />} label={t('common.odometer')} value={vehicle.currentOdometer != null ? formatNumber(vehicle.currentOdometer) + ' ' + t('fleet.miAbbrev') : t('fleet.notRecorded')} />
+          <DetailField icon={<User size={13} />} label={t('common.assignedTo')} value={vehicle.assignedToUserId ? vehicle.assignedToUserId.slice(0, 8) + '...' : t('common.unassigned')} />
           <div className="flex items-start gap-2">
             <Shield size={13} className="text-muted mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-muted">Insurance Policy</p>
-              <p className="text-sm text-main">{vehicle.insurancePolicyNumber || 'Not recorded'}</p>
+              <p className="text-xs text-muted">{t('fleet.insurancePolicy')}</p>
+              <p className="text-sm text-main">{vehicle.insurancePolicyNumber || t('fleet.notRecorded')}</p>
               {vehicle.insuranceExpiry && (
                 <div className="flex items-center gap-1 mt-0.5">
-                  <p className="text-xs text-muted">Expires: {formatDate(vehicle.insuranceExpiry)}</p>
-                  {isExpired(vehicle.insuranceExpiry) && <Badge variant="error" size="sm">Expired</Badge>}
-                  {!isExpired(vehicle.insuranceExpiry) && isExpiringSoon(vehicle.insuranceExpiry) && <Badge variant="warning" size="sm">Expiring Soon</Badge>}
+                  <p className="text-xs text-muted">{t('fleet.expires')}: {formatDate(vehicle.insuranceExpiry)}</p>
+                  {isExpired(vehicle.insuranceExpiry) && <Badge variant="error" size="sm">{t('common.expired')}</Badge>}
+                  {!isExpired(vehicle.insuranceExpiry) && isExpiringSoon(vehicle.insuranceExpiry) && <Badge variant="warning" size="sm">{t('fleet.expiringSoon')}</Badge>}
                 </div>
               )}
             </div>
@@ -826,19 +827,19 @@ function VehicleDetail({
           <div className="flex items-start gap-2">
             <FileText size={13} className="text-muted mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-muted">Registration</p>
-              <p className="text-sm text-main">{vehicle.registrationExpiry ? 'On file' : 'Not recorded'}</p>
+              <p className="text-xs text-muted">{t('fleet.registration')}</p>
+              <p className="text-sm text-main">{vehicle.registrationExpiry ? t('fleet.onFile') : t('fleet.notRecorded')}</p>
               {vehicle.registrationExpiry && (
                 <div className="flex items-center gap-1 mt-0.5">
-                  <p className="text-xs text-muted">Expires: {formatDate(vehicle.registrationExpiry)}</p>
-                  {isExpired(vehicle.registrationExpiry) && <Badge variant="error" size="sm">Expired</Badge>}
-                  {!isExpired(vehicle.registrationExpiry) && isExpiringSoon(vehicle.registrationExpiry) && <Badge variant="warning" size="sm">Expiring Soon</Badge>}
+                  <p className="text-xs text-muted">{t('fleet.expires')}: {formatDate(vehicle.registrationExpiry)}</p>
+                  {isExpired(vehicle.registrationExpiry) && <Badge variant="error" size="sm">{t('common.expired')}</Badge>}
+                  {!isExpired(vehicle.registrationExpiry) && isExpiringSoon(vehicle.registrationExpiry) && <Badge variant="warning" size="sm">{t('fleet.expiringSoon')}</Badge>}
                 </div>
               )}
             </div>
           </div>
-          <DetailField icon={<DollarSign size={13} />} label="Daily Rate" value={vehicle.dailyRate != null ? formatCurrency(vehicle.dailyRate) : 'Not set'} />
-          <DetailField icon={<CircleDot size={13} />} label="Color" value={vehicle.color || 'Not recorded'} />
+          <DetailField icon={<DollarSign size={13} />} label={t('fleet.dailyRate')} value={vehicle.dailyRate != null ? formatCurrency(vehicle.dailyRate) : t('fleet.notSet')} />
+          <DetailField icon={<CircleDot size={13} />} label={t('fleet.color')} value={vehicle.color || t('fleet.notRecorded')} />
         </div>
       </div>
 
@@ -847,7 +848,7 @@ function VehicleDetail({
         <div>
           <h4 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
             <Wrench size={14} />
-            Maintenance History ({maintenance.length})
+            {t('fleet.maintenanceHistory')} ({maintenance.length})
           </h4>
           {maintenance.length === 0 ? (
             <p className="text-sm text-muted py-2">{t('common.noMaintenanceRecords')}</p>
@@ -860,7 +861,7 @@ function VehicleDetail({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-main truncate">{m.title}</p>
-                        <Badge variant={statusCfg.variant} size="sm">{statusCfg.label}</Badge>
+                        <Badge variant={statusCfg.variant} size="sm">{t(statusCfg.tKey)}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                         {m.scheduledDate && (
@@ -870,7 +871,7 @@ function VehicleDetail({
                         )}
                         {m.vendorName && <span>{m.vendorName}</span>}
                         {m.odometerAtService != null && (
-                          <span>{formatNumber(m.odometerAtService)} mi</span>
+                          <span>{formatNumber(m.odometerAtService)} {t('fleet.miAbbrev')}</span>
                         )}
                       </div>
                     </div>
@@ -888,7 +889,7 @@ function VehicleDetail({
         <div>
           <h4 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
             <Fuel size={14} />
-            Fuel Logs ({fuelLogs.length})
+            {t('fleet.fuelLogs')} ({fuelLogs.length})
           </h4>
           {fuelLogs.length === 0 ? (
             <p className="text-sm text-muted py-2">{t('common.noFuelLogs')}</p>
@@ -898,12 +899,12 @@ function VehicleDetail({
                 <div key={f.id} className="flex items-center justify-between p-3 bg-surface border border-main rounded-lg">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-main">
-                      {f.gallons.toFixed(1)} gal @ {formatCurrency(f.pricePerGallon)}/gal
+                      {t('fleet.galAtPrice', { gallons: f.gallons.toFixed(1), price: formatCurrency(f.pricePerGallon) })}
                     </p>
                     <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                       <span>{formatDate(f.fuelDate)}</span>
                       {f.stationName && <span>{f.stationName}</span>}
-                      {f.odometer != null && <span>{f.odometer.toLocaleString()} mi</span>}
+                      {f.odometer != null && <span>{f.odometer.toLocaleString()} {t('fleet.miAbbrev')}</span>}
                     </div>
                   </div>
                   <p className="text-sm font-medium text-main ml-4">{formatCurrency(f.totalCost)}</p>
@@ -940,7 +941,8 @@ function DetailField({ icon, label, value }: { icon: React.ReactNode; label: str
 interface ScheduleItem {
   id: string;
   vehicleName: string;
-  serviceType: string;
+  serviceTypeTKey: string | null;
+  serviceTypeFallback: string;
   triggerType: 'mileage' | 'date' | 'both';
   nextDueDate: string | null;
   nextDueMileage: number | null;
@@ -968,10 +970,11 @@ function MaintenanceTab({
   maintenanceDue: VehicleMaintenance[];
   totalScheduled: number;
 }) {
-  const scheduleStatusConfig: Record<string, { label: string; variant: 'error' | 'warning' | 'info' }> = {
-    overdue: { label: 'Overdue', variant: 'error' },
-    due_soon: { label: 'Due Soon', variant: 'warning' },
-    upcoming: { label: 'Upcoming', variant: 'info' },
+  const { t } = useTranslation();
+  const scheduleStatusConfig: Record<string, { tKey: string; variant: 'error' | 'warning' | 'info' }> = {
+    overdue: { tKey: 'common.overdue', variant: 'error' },
+    due_soon: { tKey: 'fleet.dueSoon', variant: 'warning' },
+    upcoming: { tKey: 'fleet.upcoming', variant: 'info' },
   };
 
   return (
@@ -986,7 +989,7 @@ function MaintenanceTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{overdueCount}</p>
-                <p className="text-sm text-muted">Overdue Services</p>
+                <p className="text-sm text-muted">{t('fleet.overdueServices')}</p>
               </div>
             </div>
           </CardContent>
@@ -999,7 +1002,7 @@ function MaintenanceTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{dueSoonCount}</p>
-                <p className="text-sm text-muted">Due Soon</p>
+                <p className="text-sm text-muted">{t('fleet.dueSoon')}</p>
               </div>
             </div>
           </CardContent>
@@ -1012,7 +1015,7 @@ function MaintenanceTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalScheduled}</p>
-                <p className="text-sm text-muted">Total Scheduled</p>
+                <p className="text-sm text-muted">{t('fleet.totalScheduled')}</p>
               </div>
             </div>
           </CardContent>
@@ -1032,7 +1035,7 @@ function MaintenanceTab({
                 : 'bg-surface border-main text-muted hover:text-main hover:border-main'
             )}
           >
-            {f === 'all' ? 'All' : f === 'overdue' ? 'Overdue' : f === 'due_soon' ? 'Due Soon' : 'Upcoming'}
+            {f === 'all' ? t('common.all') : f === 'overdue' ? t('common.overdue') : f === 'due_soon' ? t('fleet.dueSoon') : t('fleet.upcoming')}
           </button>
         ))}
       </div>
@@ -1041,25 +1044,25 @@ function MaintenanceTab({
       <div>
         <h3 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
           <Calendar size={15} />
-          Upcoming Maintenance Schedule
+          {t('fleet.upcomingMaintenanceSchedule')}
         </h3>
         <Card>
           <CardContent className="p-0">
             {schedule.length === 0 ? (
               <div className="py-12 text-center text-muted">
                 <CheckCircle2 size={40} className="mx-auto mb-2 opacity-50" />
-                <p>No maintenance items match this filter</p>
+                <p>{t('fleet.noMaintenanceMatch')}</p>
               </div>
             ) : (
               <div className="divide-y divide-main">
                 {/* Table header */}
                 <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
-                  <div className="col-span-3">Vehicle</div>
-                  <div className="col-span-2">Service Type</div>
-                  <div className="col-span-2">Trigger</div>
-                  <div className="col-span-2">Next Due</div>
-                  <div className="col-span-1">Status</div>
-                  <div className="col-span-2">Last Service</div>
+                  <div className="col-span-3">{t('common.vehicle')}</div>
+                  <div className="col-span-2">{t('fleet.serviceType')}</div>
+                  <div className="col-span-2">{t('fleet.trigger')}</div>
+                  <div className="col-span-2">{t('fleet.nextDue')}</div>
+                  <div className="col-span-1">{t('common.status')}</div>
+                  <div className="col-span-2">{t('fleet.lastServiceDate')}</div>
                 </div>
                 {schedule.map((item) => {
                   const sCfg = scheduleStatusConfig[item.status];
@@ -1067,19 +1070,19 @@ function MaintenanceTab({
                     <div key={item.id} className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-surface-hover transition-colors">
                       <div className="col-span-3">
                         <p className="text-sm font-medium text-main truncate">{item.vehicleName}</p>
-                        <p className="text-xs text-muted mt-0.5">{formatNumber(item.currentMileage)} mi current</p>
+                        <p className="text-xs text-muted mt-0.5">{formatNumber(item.currentMileage)} {t('fleet.miCurrent')}</p>
                       </div>
                       <div className="col-span-2">
-                        <p className="text-sm text-main">{item.serviceType}</p>
+                        <p className="text-sm text-main">{item.serviceTypeTKey ? t(item.serviceTypeTKey) : item.serviceTypeFallback}</p>
                       </div>
                       <div className="col-span-2">
                         <div className="flex items-center gap-1 text-xs text-muted">
                           {item.triggerType === 'mileage' || item.triggerType === 'both' ? (
-                            <span className="flex items-center gap-1"><Gauge size={11} /> Mileage</span>
+                            <span className="flex items-center gap-1"><Gauge size={11} /> {t('fleet.triggerMileage')}</span>
                           ) : null}
                           {item.triggerType === 'both' && <span className="mx-0.5">+</span>}
                           {item.triggerType === 'date' || item.triggerType === 'both' ? (
-                            <span className="flex items-center gap-1"><Calendar size={11} /> Date</span>
+                            <span className="flex items-center gap-1"><Calendar size={11} /> {t('common.date')}</span>
                           ) : null}
                         </div>
                       </div>
@@ -1089,16 +1092,16 @@ function MaintenanceTab({
                             <p className="text-sm text-main">{formatDate(item.nextDueDate)}</p>
                           )}
                           {item.nextDueMileage != null && (
-                            <p className="text-xs text-muted">{formatNumber(item.nextDueMileage)} mi</p>
+                            <p className="text-xs text-muted">{formatNumber(item.nextDueMileage)} {t('fleet.miAbbrev')}</p>
                           )}
                         </div>
                       </div>
                       <div className="col-span-1">
-                        <Badge variant={sCfg.variant} size="sm" dot>{sCfg.label}</Badge>
+                        <Badge variant={sCfg.variant} size="sm" dot>{t(sCfg.tKey)}</Badge>
                       </div>
                       <div className="col-span-2">
                         <p className="text-sm text-muted">
-                          {item.lastServiceDate ? formatDate(item.lastServiceDate) : 'Never'}
+                          {item.lastServiceDate ? formatDate(item.lastServiceDate) : t('fleet.never')}
                         </p>
                       </div>
                     </div>
@@ -1114,25 +1117,25 @@ function MaintenanceTab({
       <div>
         <h3 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
           <Wrench size={15} />
-          Service History Log
+          {t('fleet.serviceHistoryLog')}
         </h3>
         <Card>
           <CardContent className="p-0">
             {history.length === 0 ? (
               <div className="py-12 text-center text-muted">
                 <Wrench size={40} className="mx-auto mb-2 opacity-50" />
-                <p>No service history recorded yet</p>
+                <p>{t('fleet.noServiceHistory')}</p>
               </div>
             ) : (
               <div className="divide-y divide-main">
                 <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
-                  <div className="col-span-3">Service</div>
-                  <div className="col-span-2">Type</div>
-                  <div className="col-span-2">Date</div>
-                  <div className="col-span-1">Priority</div>
-                  <div className="col-span-1">Status</div>
-                  <div className="col-span-1">Odometer</div>
-                  <div className="col-span-2">Cost</div>
+                  <div className="col-span-3">{t('fleet.service')}</div>
+                  <div className="col-span-2">{t('common.type')}</div>
+                  <div className="col-span-2">{t('common.date')}</div>
+                  <div className="col-span-1">{t('common.priority')}</div>
+                  <div className="col-span-1">{t('common.status')}</div>
+                  <div className="col-span-1">{t('common.odometer')}</div>
+                  <div className="col-span-2">{t('fleet.cost')}</div>
                 </div>
                 {history.slice(0, 20).map((m) => {
                   const statusCfg = maintenanceStatusConfig[m.status];
@@ -1144,19 +1147,19 @@ function MaintenanceTab({
                         {m.vendorName && <p className="text-xs text-muted mt-0.5">{m.vendorName}</p>}
                       </div>
                       <div className="col-span-2">
-                        <p className="text-sm text-muted">{maintenanceTypeLabels[m.maintenanceType] || m.maintenanceType}</p>
+                        <p className="text-sm text-muted">{maintenanceTypeTKeys[m.maintenanceType] ? t(maintenanceTypeTKeys[m.maintenanceType]) : m.maintenanceType}</p>
                       </div>
                       <div className="col-span-2">
                         <p className="text-sm text-main">{m.scheduledDate ? formatDate(m.scheduledDate) : '--'}</p>
                         {m.completedDate && (
-                          <p className="text-xs text-muted mt-0.5">Done: {formatDate(m.completedDate)}</p>
+                          <p className="text-xs text-muted mt-0.5">{t('fleet.done')}: {formatDate(m.completedDate)}</p>
                         )}
                       </div>
                       <div className="col-span-1">
-                        <Badge variant={priCfg.variant} size="sm">{priCfg.label}</Badge>
+                        <Badge variant={priCfg.variant} size="sm">{t(priCfg.tKey)}</Badge>
                       </div>
                       <div className="col-span-1">
-                        <Badge variant={statusCfg.variant} size="sm">{statusCfg.label}</Badge>
+                        <Badge variant={statusCfg.variant} size="sm">{t(statusCfg.tKey)}</Badge>
                       </div>
                       <div className="col-span-1">
                         <p className="text-sm text-muted">
@@ -1170,9 +1173,9 @@ function MaintenanceTab({
                               <p className="font-medium">{formatCurrency(m.totalCost)}</p>
                               {(m.partsCost != null || m.laborCost != null) && (
                                 <p className="text-xs text-muted mt-0.5">
-                                  {m.partsCost != null ? `Parts: ${formatCurrency(m.partsCost)}` : ''}
+                                  {m.partsCost != null ? `${t('fleet.parts')}: ${formatCurrency(m.partsCost)}` : ''}
                                   {m.partsCost != null && m.laborCost != null ? ' / ' : ''}
-                                  {m.laborCost != null ? `Labor: ${formatCurrency(m.laborCost)}` : ''}
+                                  {m.laborCost != null ? `${t('fleet.labor')}: ${formatCurrency(m.laborCost)}` : ''}
                                 </p>
                               )}
                             </div>
@@ -1227,6 +1230,8 @@ function FuelTab({
   setVehicleFilter: (v: string) => void;
   uniqueVehicles: string[];
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Fuel summary cards */}
@@ -1239,7 +1244,7 @@ function FuelTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.avgMpg.toFixed(1)}</p>
-                <p className="text-sm text-muted">Avg MPG</p>
+                <p className="text-sm text-muted">{t('fleet.avgMpg')}</p>
               </div>
             </div>
           </CardContent>
@@ -1252,7 +1257,7 @@ function FuelTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats.avgCostPerGal)}</p>
-                <p className="text-sm text-muted">Avg Cost/Gallon</p>
+                <p className="text-sm text-muted">{t('fleet.avgCostPerGallon')}</p>
               </div>
             </div>
           </CardContent>
@@ -1265,7 +1270,7 @@ function FuelTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(stats.totalSpent)}</p>
-                <p className="text-sm text-muted">Total Fuel Spend</p>
+                <p className="text-sm text-muted">{t('fleet.totalFuelSpend')}</p>
               </div>
             </div>
           </CardContent>
@@ -1286,7 +1291,7 @@ function FuelTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.anomalyCount}</p>
-                <p className="text-sm text-muted">Anomaly Alerts</p>
+                <p className="text-sm text-muted">{t('fleet.anomalyAlerts')}</p>
               </div>
             </div>
           </CardContent>
@@ -1297,7 +1302,7 @@ function FuelTab({
       <div className="flex items-center gap-4">
         <Select
           options={[
-            { value: 'all', label: 'All Vehicles' },
+            { value: 'all', label: t('fleet.allVehicles') },
             ...uniqueVehicles.map((v) => ({ value: v, label: v })),
           ]}
           value={vehicleFilter}
@@ -1312,20 +1317,20 @@ function FuelTab({
           {entries.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <Fuel size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No fuel logs recorded yet</p>
+              <p>{t('fleet.noFuelLogsRecorded')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
               <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
-                <div className="col-span-3">Vehicle</div>
-                <div className="col-span-1">Date</div>
-                <div className="col-span-1">Gallons</div>
-                <div className="col-span-1">Price/Gal</div>
-                <div className="col-span-1">Total</div>
-                <div className="col-span-1">Odometer</div>
-                <div className="col-span-1">MPG</div>
-                <div className="col-span-2">Station</div>
-                <div className="col-span-1">Alert</div>
+                <div className="col-span-3">{t('common.vehicle')}</div>
+                <div className="col-span-1">{t('common.date')}</div>
+                <div className="col-span-1">{t('fleet.gallons')}</div>
+                <div className="col-span-1">{t('fleet.pricePerGal')}</div>
+                <div className="col-span-1">{t('common.total')}</div>
+                <div className="col-span-1">{t('common.odometer')}</div>
+                <div className="col-span-1">{t('fleet.mpg')}</div>
+                <div className="col-span-2">{t('fleet.station')}</div>
+                <div className="col-span-1">{t('fleet.alert')}</div>
               </div>
               {entries.map((entry) => (
                 <div
@@ -1378,7 +1383,7 @@ function FuelTab({
                   </div>
                   <div className="col-span-1">
                     {entry.anomaly ? (
-                      <Badge variant="error" size="sm" dot>Anomaly</Badge>
+                      <Badge variant="error" size="sm" dot>{t('fleet.anomaly')}</Badge>
                     ) : (
                       <span className="text-xs text-muted">--</span>
                     )}
@@ -1395,10 +1400,10 @@ function FuelTab({
         <CardContent className="p-5">
           <h3 className="text-sm font-medium text-main mb-4 flex items-center gap-2">
             <TrendingUp size={15} />
-            MPG Trend Summary
+            {t('fleet.mpgTrendSummary')}
           </h3>
           {uniqueVehicles.length === 0 ? (
-            <p className="text-sm text-muted">No fuel data available to compute MPG trends.</p>
+            <p className="text-sm text-muted">{t('fleet.noFuelDataMpg')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {uniqueVehicles.map((vName) => {
@@ -1411,7 +1416,7 @@ function FuelTab({
                   <div key={vName} className="p-3 bg-secondary/30 border border-main rounded-lg">
                     <p className="text-xs text-muted truncate mb-1">{vName}</p>
                     <div className="flex items-center justify-between">
-                      <p className="text-lg font-semibold text-main">{avg.toFixed(1)} MPG</p>
+                      <p className="text-lg font-semibold text-main">{avg.toFixed(1)} {t('fleet.mpg')}</p>
                       <div className={cn(
                         'flex items-center gap-0.5 text-xs font-medium',
                         trend >= 0 ? 'text-emerald-400' : 'text-red-400'
@@ -1420,7 +1425,7 @@ function FuelTab({
                         {trend >= 0 ? '+' : ''}{trend.toFixed(1)}
                       </div>
                     </div>
-                    <p className="text-xs text-muted mt-1">Latest: {latest.toFixed(1)} MPG</p>
+                    <p className="text-xs text-muted mt-1">{t('fleet.latest')}: {latest.toFixed(1)} {t('fleet.mpg')}</p>
                   </div>
                 );
               })}
@@ -1434,13 +1439,13 @@ function FuelTab({
         <CardContent className="p-5">
           <h3 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
             <DollarSign size={15} />
-            IRS Mileage Deduction Estimate
+            {t('fleet.irsMileageDeduction')}
           </h3>
           <p className="text-xs text-muted mb-4">
-            Standard mileage rate for 2026: $0.70/mile (estimated). Consult your CPA for actual deduction amounts.
+            {t('fleet.irsMileageDisclaimer')}
           </p>
           {uniqueVehicles.length === 0 ? (
-            <p className="text-sm text-muted">No fuel data available to compute mileage deductions.</p>
+            <p className="text-sm text-muted">{t('fleet.noFuelDataDeductions')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {uniqueVehicles.map((vName) => {
@@ -1455,7 +1460,7 @@ function FuelTab({
                   <div key={vName} className="p-3 bg-secondary/30 border border-main rounded-lg">
                     <p className="text-xs text-muted truncate mb-1">{vName}</p>
                     <p className="text-lg font-semibold text-main">{formatCurrency(deduction)}</p>
-                    <p className="text-xs text-muted mt-1">{formatNumber(milesDriven)} miles tracked</p>
+                    <p className="text-xs text-muted mt-1">{t('fleet.milesTracked', { miles: formatNumber(milesDriven) })}</p>
                   </div>
                 );
               })}
@@ -1499,13 +1504,14 @@ function InspectionsTab({
   missingAlerts: { vehicle: string; lastInspection: string | null; daysMissing: number }[];
   activeVehicleCount: number;
 }) {
+  const { t } = useTranslation();
   const [expandedInspection, setExpandedInspection] = useState<string | null>(null);
   const [showChecklist, setShowChecklist] = useState(false);
 
-  const resultConfig: Record<string, { label: string; variant: 'success' | 'error' | 'warning' }> = {
-    pass: { label: 'Pass', variant: 'success' },
-    fail: { label: 'Fail', variant: 'error' },
-    missing: { label: 'Missing', variant: 'warning' },
+  const resultConfig: Record<string, { tKey: string; variant: 'success' | 'error' | 'warning' }> = {
+    pass: { tKey: 'fleet.resultPass', variant: 'success' },
+    fail: { tKey: 'fleet.resultFail', variant: 'error' },
+    missing: { tKey: 'fleet.resultMissing', variant: 'warning' },
   };
 
   return (
@@ -1520,7 +1526,7 @@ function InspectionsTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.total}</p>
-                <p className="text-sm text-muted">Total Inspections</p>
+                <p className="text-sm text-muted">{t('common.totalInspections')}</p>
               </div>
             </div>
           </CardContent>
@@ -1533,7 +1539,7 @@ function InspectionsTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.passed}</p>
-                <p className="text-sm text-muted">Passed</p>
+                <p className="text-sm text-muted">{t('fleet.passed')}</p>
               </div>
             </div>
           </CardContent>
@@ -1546,7 +1552,7 @@ function InspectionsTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.failed}</p>
-                <p className="text-sm text-muted">Failed</p>
+                <p className="text-sm text-muted">{t('common.failed')}</p>
               </div>
             </div>
           </CardContent>
@@ -1568,7 +1574,7 @@ function InspectionsTab({
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{stats.passRate.toFixed(0)}%</p>
-                <p className="text-sm text-muted">Pass Rate</p>
+                <p className="text-sm text-muted">{t('fleet.passRate')}</p>
               </div>
             </div>
           </CardContent>
@@ -1589,7 +1595,7 @@ function InspectionsTab({
                   : 'bg-surface border-main text-muted hover:text-main hover:border-main'
               )}
             >
-              {f === 'all' ? 'All' : f === 'pass' ? 'Passed' : f === 'fail' ? 'Failed' : 'Missing'}
+              {f === 'all' ? t('common.all') : f === 'pass' ? t('fleet.passed') : f === 'fail' ? t('common.failed') : t('fleet.resultMissing')}
             </button>
           ))}
         </div>
@@ -1598,7 +1604,7 @@ function InspectionsTab({
           onClick={() => setShowChecklist(!showChecklist)}
         >
           <Eye size={16} />
-          {showChecklist ? 'Hide' : 'View'} DOT Checklist
+          {showChecklist ? t('fleet.hideDotChecklist') : t('fleet.viewDotChecklist')}
         </Button>
       </div>
 
@@ -1608,16 +1614,16 @@ function InspectionsTab({
           <CardContent className="p-5">
             <h3 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
               <ClipboardCheck size={15} />
-              DOT Pre-Trip Inspection Checklist ({DOT_CHECKLIST_ITEMS.length} items)
+              {t('fleet.dotChecklistTitle', { count: String(DOT_CHECKLIST_TKEYS.length) })}
             </h3>
             <p className="text-xs text-muted mb-4">
-              Federal Motor Carrier Safety Administration (FMCSA) required daily vehicle inspection items. Drivers must complete this checklist before each trip.
+              {t('fleet.dotChecklistDesc')}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-              {DOT_CHECKLIST_ITEMS.map((item, idx) => (
+              {DOT_CHECKLIST_TKEYS.map((tKey, idx) => (
                 <div key={idx} className="flex items-center gap-2 p-2 bg-secondary/30 border border-main rounded-lg text-sm">
                   <span className="text-xs text-muted font-mono w-5 text-right shrink-0">{idx + 1}.</span>
-                  <span className="text-main">{item}</span>
+                  <span className="text-main">{t(tKey)}</span>
                 </div>
               ))}
             </div>
@@ -1631,17 +1637,17 @@ function InspectionsTab({
           {inspections.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <ClipboardCheck size={40} className="mx-auto mb-2 opacity-50" />
-              <p>No inspections recorded yet</p>
+              <p>{t('fleet.noInspections')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
               <div className="px-6 py-3 bg-secondary/50 grid grid-cols-12 gap-4 text-xs font-medium text-muted uppercase tracking-wider">
                 <div className="col-span-1" />
-                <div className="col-span-3">Vehicle</div>
-                <div className="col-span-2">Inspector</div>
-                <div className="col-span-2">Date</div>
-                <div className="col-span-1">Result</div>
-                <div className="col-span-3">Score</div>
+                <div className="col-span-3">{t('common.vehicle')}</div>
+                <div className="col-span-2">{t('fleet.inspector')}</div>
+                <div className="col-span-2">{t('common.date')}</div>
+                <div className="col-span-1">{t('fleet.result')}</div>
+                <div className="col-span-3">{t('fleet.score')}</div>
               </div>
               {inspections.map((insp) => {
                 const rCfg = resultConfig[insp.result];
@@ -1674,7 +1680,7 @@ function InspectionsTab({
                         <p className="text-sm text-main">{formatDate(insp.inspectionDate)}</p>
                       </div>
                       <div className="col-span-1">
-                        <Badge variant={rCfg.variant} dot>{rCfg.label}</Badge>
+                        <Badge variant={rCfg.variant} dot>{t(rCfg.tKey)}</Badge>
                       </div>
                       <div className="col-span-3">
                         <div className="flex items-center gap-3">
@@ -1702,12 +1708,12 @@ function InspectionsTab({
                           <div>
                             <h4 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
                               <AlertTriangle size={14} />
-                              Defects Found ({insp.defects.length})
+                              {t('fleet.defectsFound')} ({insp.defects.length})
                             </h4>
                             {insp.defects.length === 0 ? (
                               <div className="flex items-center gap-2 p-3 bg-emerald-950/20 border border-emerald-800/30 rounded-lg">
                                 <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                                <p className="text-sm text-emerald-300">No defects found. Vehicle passed all inspection items.</p>
+                                <p className="text-sm text-emerald-300">{t('fleet.noDefectsFound')}</p>
                               </div>
                             ) : (
                               <div className="space-y-2">
@@ -1725,31 +1731,31 @@ function InspectionsTab({
                           <div>
                             <h4 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
                               <FileText size={14} />
-                              Inspection Summary
+                              {t('fleet.inspectionSummary')}
                             </h4>
                             <div className="space-y-3">
                               <div className="grid grid-cols-3 gap-3">
                                 <div className="p-3 bg-surface border border-main rounded-lg text-center">
                                   <p className="text-lg font-semibold text-emerald-400">{insp.itemsPassed}</p>
-                                  <p className="text-xs text-muted">Passed</p>
+                                  <p className="text-xs text-muted">{t('fleet.passed')}</p>
                                 </div>
                                 <div className="p-3 bg-surface border border-main rounded-lg text-center">
                                   <p className="text-lg font-semibold text-red-400">{insp.itemsFailed}</p>
-                                  <p className="text-xs text-muted">Failed</p>
+                                  <p className="text-xs text-muted">{t('common.failed')}</p>
                                 </div>
                                 <div className="p-3 bg-surface border border-main rounded-lg text-center">
                                   <p className="text-lg font-semibold text-main">{insp.totalItems}</p>
-                                  <p className="text-xs text-muted">Total Items</p>
+                                  <p className="text-xs text-muted">{t('fleet.totalItems')}</p>
                                 </div>
                               </div>
                               {insp.notes && (
                                 <div className="p-3 bg-surface border border-main rounded-lg">
-                                  <p className="text-xs text-muted mb-1">Inspector Notes</p>
+                                  <p className="text-xs text-muted mb-1">{t('fleet.inspectorNotes')}</p>
                                   <p className="text-sm text-main">{insp.notes}</p>
                                 </div>
                               )}
                               <div className="p-3 bg-surface border border-main rounded-lg">
-                                <p className="text-xs text-muted mb-1">Overall Result</p>
+                                <p className="text-xs text-muted mb-1">{t('fleet.overallResult')}</p>
                                 <div className="flex items-center gap-2">
                                   {insp.result === 'pass' ? (
                                     <CheckCircle2 size={18} className="text-emerald-400" />
@@ -1761,8 +1767,8 @@ function InspectionsTab({
                                     insp.result === 'pass' ? 'text-emerald-400' : 'text-red-400'
                                   )}>
                                     {insp.result === 'pass'
-                                      ? 'Vehicle cleared for service'
-                                      : 'Vehicle requires repairs before dispatch'}
+                                      ? t('fleet.vehicleClearedForService')
+                                      : t('fleet.vehicleRequiresRepairs')}
                                   </p>
                                 </div>
                               </div>
@@ -1784,10 +1790,10 @@ function InspectionsTab({
         <CardContent className="p-5">
           <h3 className="text-sm font-medium text-main mb-3 flex items-center gap-2">
             <AlertTriangle size={15} className="text-amber-400" />
-            Missing Inspection Alerts
+            {t('fleet.missingInspectionAlerts')}
           </h3>
           <p className="text-xs text-muted mb-4">
-            Vehicles that have not completed their daily pre-trip inspection. DOT requires a pre-trip inspection before each trip.
+            {t('fleet.missingInspectionDesc')}
           </p>
           <div className="space-y-2">
             {missingAlerts.length > 0 ? (
@@ -1799,33 +1805,33 @@ function InspectionsTab({
                       <div>
                         <p className="text-sm font-medium text-main">{alert.vehicle}</p>
                         <p className="text-xs text-muted">
-                          {alert.lastInspection ? `Last inspection: ${formatDate(alert.lastInspection)}` : 'No inspections recorded'}
+                          {alert.lastInspection ? t('fleet.lastInspection', { date: formatDate(alert.lastInspection) }) : t('fleet.noInspectionsRecorded')}
                         </p>
                       </div>
                     </div>
                     <Badge variant="warning" size="sm">
                       {alert.daysMissing > 0
-                        ? `${alert.daysMissing} day${alert.daysMissing !== 1 ? 's' : ''} overdue`
-                        : 'Due today'}
+                        ? t('fleet.daysOverdue', { count: String(alert.daysMissing) })
+                        : t('fleet.dueToday')}
                     </Badge>
                   </div>
                 ))}
                 {missingAlerts.length < activeVehicleCount && (
                   <div className="flex items-center gap-2 p-3 bg-secondary/30 border border-main rounded-lg">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                    <p className="text-sm text-muted">All other vehicles have completed today&apos;s pre-trip inspection</p>
+                    <p className="text-sm text-muted">{t('fleet.allOtherVehiclesInspected')}</p>
                   </div>
                 )}
               </>
             ) : activeVehicleCount > 0 ? (
               <div className="flex items-center gap-2 p-3 bg-emerald-950/20 border border-emerald-800/30 rounded-lg">
                 <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                <p className="text-sm text-emerald-300">All active vehicles have completed today&apos;s pre-trip inspection</p>
+                <p className="text-sm text-emerald-300">{t('fleet.allVehiclesInspected')}</p>
               </div>
             ) : (
               <div className="flex items-center gap-2 p-3 bg-secondary/30 border border-main rounded-lg">
                 <ClipboardCheck size={16} className="text-muted shrink-0" />
-                <p className="text-sm text-muted">No active vehicles in fleet</p>
+                <p className="text-sm text-muted">{t('fleet.noActiveVehicles')}</p>
               </div>
             )}
           </div>

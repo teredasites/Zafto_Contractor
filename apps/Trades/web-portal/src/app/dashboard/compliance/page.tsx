@@ -40,33 +40,33 @@ import {
   getStatesRequiringStateLicense,
 } from '@/lib/official-state-licensing';
 
-const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ className?: string; size?: number }>; color: string }> = {
-  license: { label: 'Licenses', icon: Award, color: 'text-blue-400' },
-  insurance: { label: 'Insurance', icon: Shield, color: 'text-emerald-400' },
-  bond: { label: 'Bonds', icon: Building, color: 'text-purple-400' },
-  osha: { label: 'OSHA', icon: FileCheck, color: 'text-amber-400' },
-  epa: { label: 'EPA', icon: FileCheck, color: 'text-green-400' },
-  vehicle: { label: 'Vehicle', icon: FileCheck, color: 'text-cyan-400' },
-  certification: { label: 'Certifications', icon: Award, color: 'text-indigo-400' },
-  other: { label: 'Other', icon: FileCheck, color: 'text-muted' },
+const CATEGORY_CONFIG: Record<string, { tKey: string; icon: React.ComponentType<{ className?: string; size?: number }>; color: string }> = {
+  license: { tKey: 'compliance.categoryLicenses', icon: Award, color: 'text-blue-400' },
+  insurance: { tKey: 'compliance.categoryInsurance', icon: Shield, color: 'text-emerald-400' },
+  bond: { tKey: 'compliance.categoryBonds', icon: Building, color: 'text-purple-400' },
+  osha: { tKey: 'compliance.categoryOsha', icon: FileCheck, color: 'text-amber-400' },
+  epa: { tKey: 'compliance.categoryEpa', icon: FileCheck, color: 'text-green-400' },
+  vehicle: { tKey: 'compliance.categoryVehicle', icon: FileCheck, color: 'text-cyan-400' },
+  certification: { tKey: 'compliance.categoryCertifications', icon: Award, color: 'text-indigo-400' },
+  other: { tKey: 'compliance.categoryOther', icon: FileCheck, color: 'text-muted' },
 };
 
 const CATEGORY_OPTIONS = [
-  { value: 'license', label: 'License' },
-  { value: 'insurance', label: 'Insurance' },
-  { value: 'bond', label: 'Bond' },
-  { value: 'osha', label: 'OSHA' },
-  { value: 'epa', label: 'EPA' },
-  { value: 'vehicle', label: 'Vehicle' },
-  { value: 'certification', label: 'Certification' },
-  { value: 'other', label: 'Other' },
+  { value: 'license', tKey: 'compliance.categoryLicense' },
+  { value: 'insurance', tKey: 'compliance.categoryInsurance' },
+  { value: 'bond', tKey: 'compliance.categoryBond' },
+  { value: 'osha', tKey: 'compliance.categoryOsha' },
+  { value: 'epa', tKey: 'compliance.categoryEpa' },
+  { value: 'vehicle', tKey: 'compliance.categoryVehicle' },
+  { value: 'certification', tKey: 'compliance.categoryCertification' },
+  { value: 'other', tKey: 'compliance.categoryOther' },
 ];
 
 const STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'expired', label: 'Expired' },
-  { value: 'pending_renewal', label: 'Pending Renewal' },
-  { value: 'revoked', label: 'Revoked' },
+  { value: 'active', tKey: 'compliance.statusActive' },
+  { value: 'expired', tKey: 'compliance.statusExpired' },
+  { value: 'pending_renewal', tKey: 'compliance.statusPendingRenewal' },
+  { value: 'revoked', tKey: 'compliance.statusRevoked' },
 ];
 
 function StatCard({ label, value, icon: Icon, variant }: {
@@ -120,9 +120,18 @@ function certStatusVariant(status: string): 'success' | 'error' | 'warning' | 's
 const LICENSING_STATES_SORTED = Object.values(STATE_LICENSING_CONFIGS).sort((a, b) => a.stateName.localeCompare(b.stateName));
 
 function StateLicensingReference() {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const stateConfig = selectedState ? getStateLicensingConfig(selectedState) : null;
+
+  const TRADE_NAME_MAP: Record<string, string> = {
+    generalContractor: t('compliance.tradeGeneralContractor'),
+    electrician: t('compliance.tradeElectrician'),
+    plumber: t('compliance.tradePlumber'),
+    hvac: t('compliance.tradeHvac'),
+    roofing: t('compliance.tradeRoofing'),
+  };
 
   return (
     <Card>
@@ -130,14 +139,14 @@ function StateLicensingReference() {
         <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <MapPin size={18} className="text-blue-400" />
-            State Licensing Requirements — 50 States + DC
+            {t('compliance.stateLicensingTitle')}
           </CardTitle>
           {expanded ? <ChevronDown size={18} className="text-muted" /> : <ChevronRight size={18} className="text-muted" />}
         </button>
       </CardHeader>
       {expanded && (
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted">Official contractor licensing requirements by state. Select a state to view trade-specific licensing details.</p>
+          <p className="text-sm text-muted">{t('compliance.stateLicensingDesc')}</p>
           <div className="flex flex-wrap gap-1.5">
             {LICENSING_STATES_SORTED.map(s => (
               <button
@@ -166,31 +175,31 @@ function StateLicensingReference() {
               </div>
               <div className="flex flex-wrap gap-2">
                 <Badge variant={stateConfig.requiresStateLicense ? 'warning' : 'secondary'} size="sm">
-                  {stateConfig.licensingModel === 'state' ? 'State License Required' : stateConfig.licensingModel === 'local' ? 'Local Only' : stateConfig.licensingModel === 'registration' ? 'Registration' : 'Hybrid'}
+                  {stateConfig.licensingModel === 'state' ? t('compliance.stateLicenseRequired') : stateConfig.licensingModel === 'local' ? t('compliance.localOnly') : stateConfig.licensingModel === 'registration' ? t('compliance.registration') : t('compliance.hybrid')}
                 </Badge>
-                {stateConfig.examRequired && <Badge variant="info" size="sm">Exam Required</Badge>}
-                {stateConfig.bondRequired && <Badge variant="purple" size="sm">Bond Required</Badge>}
-                {stateConfig.insuranceRequired && <Badge variant="info" size="sm">Insurance Required</Badge>}
-                {stateConfig.ceRequired && <Badge variant="secondary" size="sm">CE Required</Badge>}
-                {stateConfig.monetaryThreshold && <Badge variant="secondary" size="sm">Threshold: ${stateConfig.monetaryThreshold.toLocaleString()}</Badge>}
+                {stateConfig.examRequired && <Badge variant="info" size="sm">{t('compliance.examRequired')}</Badge>}
+                {stateConfig.bondRequired && <Badge variant="purple" size="sm">{t('compliance.bondRequired')}</Badge>}
+                {stateConfig.insuranceRequired && <Badge variant="info" size="sm">{t('compliance.insuranceRequired')}</Badge>}
+                {stateConfig.ceRequired && <Badge variant="secondary" size="sm">{t('compliance.ceRequired')}</Badge>}
+                {stateConfig.monetaryThreshold && <Badge variant="secondary" size="sm">{t('compliance.threshold', { amount: `$${stateConfig.monetaryThreshold.toLocaleString()}` })}</Badge>}
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
                 {(['generalContractor', 'electrician', 'plumber', 'hvac', 'roofing'] as const).map(trade => {
                   const req = stateConfig[trade];
                   return (
                     <div key={trade} className="p-2 rounded border border-main">
-                      <p className="font-medium text-main capitalize mb-1">{trade === 'generalContractor' ? 'General Contractor' : trade === 'hvac' ? 'HVAC' : trade.charAt(0).toUpperCase() + trade.slice(1)}</p>
+                      <p className="font-medium text-main capitalize mb-1">{TRADE_NAME_MAP[trade] || trade}</p>
                       <Badge variant={req.requiresLicense ? 'warning' : 'success'} size="sm">
-                        {req.requiresLicense ? `${req.licenseLevel} license` : 'No license'}
+                        {req.requiresLicense ? t('compliance.licenseLevel', { level: req.licenseLevel }) : t('compliance.noLicense')}
                       </Badge>
-                      {req.experienceYears && <p className="text-muted mt-1">{req.experienceYears}yr exp</p>}
+                      {req.experienceYears && <p className="text-muted mt-1">{t('compliance.yrExp', { years: String(req.experienceYears) })}</p>}
                       {req.notes && <p className="text-muted mt-1 line-clamp-2">{req.notes}</p>}
                     </div>
                   );
                 })}
               </div>
               {stateConfig.reciprocityStates.length > 0 && (
-                <p className="text-xs text-muted">Reciprocity: {stateConfig.reciprocityStates.join(', ')}</p>
+                <p className="text-xs text-muted">{t('compliance.reciprocity', { states: stateConfig.reciprocityStates.join(', ') })}</p>
               )}
               {stateConfig.specialNotes.length > 0 && (
                 <div className="text-xs text-muted space-y-1">
@@ -208,6 +217,15 @@ function StateLicensingReference() {
 export default function CompliancePage() {
   const { t, formatDate } = useTranslation();
   const { certifications, summary, loading, error, createCertification, updateCertification, deleteCertification } = useCompliance();
+
+  const statusLabel = (status: string) => {
+    const opt = STATUS_OPTIONS.find(o => o.value === status);
+    return opt ? t(opt.tKey) : status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  };
+  const categoryLabel = (key: string) => {
+    const config = CATEGORY_CONFIG[key] || CATEGORY_CONFIG.other;
+    return t(config.tKey);
+  };
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -279,22 +297,22 @@ export default function CompliancePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('compliance.title')}</h1>
-          <p className="text-sm text-muted mt-1">Licenses, insurance, bonds, OSHA, and regulatory compliance at a glance</p>
+          <p className="text-sm text-muted mt-1">{t('compliance.subtitle')}</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
-          Add Certification
+          {t('compliance.addCertification')}
         </Button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard label="Total Certifications" value={summary.totalCerts} icon={FileCheck} />
-        <StatCard label="Active" value={summary.activeCerts} icon={CheckCircle} variant="success" />
-        <StatCard label="Expired" value={summary.expiredCerts} icon={XCircle} variant="error" />
-        <StatCard label="Expiring Soon" value={summary.expiringSoon} icon={AlertTriangle} variant="warning" />
+        <StatCard label={t('compliance.totalCertifications')} value={summary.totalCerts} icon={FileCheck} />
+        <StatCard label={t('common.active')} value={summary.activeCerts} icon={CheckCircle} variant="success" />
+        <StatCard label={t('compliance.expired')} value={summary.expiredCerts} icon={XCircle} variant="error" />
+        <StatCard label={t('compliance.expiringSoon')} value={summary.expiringSoon} icon={AlertTriangle} variant="warning" />
         <StatCard
-          label="Total Coverage"
+          label={t('compliance.totalCoverage')}
           value={summary.totalCoverage > 0 ? formatCompactCurrency(summary.totalCoverage) : '$0'}
           icon={Shield}
         />
@@ -306,7 +324,7 @@ export default function CompliancePage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base text-amber-400 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Expiring Within 30 Days ({expiringSoon.length})
+              {t('compliance.expiringWithinDays', { count: String(expiringSoon.length) })}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -330,14 +348,14 @@ export default function CompliancePage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant="warning" size="sm">
-                        {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
+                        {t('compliance.daysLeft', { count: String(daysLeft) })}
                       </Badge>
                       <Button variant="ghost" size="sm" onClick={(e) => {
                         e.stopPropagation();
                         setEditingCert(cert);
                       }}>
                         <RefreshCw size={14} />
-                        Renew
+                        {t('compliance.renew')}
                       </Button>
                     </div>
                   </div>
@@ -367,12 +385,12 @@ export default function CompliancePage() {
             >
               <div className="flex items-center gap-2 mb-2">
                 <Icon className={`h-4 w-4 ${config.color}`} />
-                <span className="text-sm font-medium text-main">{config.label}</span>
+                <span className="text-sm font-medium text-main">{t(config.tKey)}</span>
               </div>
               <div className="flex items-center gap-3 text-xs">
-                <span className="text-emerald-400">{data.active} active</span>
-                {data.expired > 0 && <span className="text-red-400">{data.expired} expired</span>}
-                {data.expiringSoon > 0 && <span className="text-amber-400">{data.expiringSoon} expiring</span>}
+                <span className="text-emerald-400">{t('compliance.nActive', { count: String(data.active) })}</span>
+                {data.expired > 0 && <span className="text-red-400">{t('compliance.nExpired', { count: String(data.expired) })}</span>}
+                {data.expiringSoon > 0 && <span className="text-amber-400">{t('compliance.nExpiring', { count: String(data.expiringSoon) })}</span>}
               </div>
             </button>
           );
@@ -382,15 +400,15 @@ export default function CompliancePage() {
       {/* Search + Status Filter */}
       <div className="flex flex-col sm:flex-row gap-4">
         <SearchInput
-          placeholder="Search certifications..."
+          placeholder={t('compliance.searchCertifications')}
           value={searchQuery}
           onChange={setSearchQuery}
           className="sm:w-80"
         />
         <Select
           options={[
-            { value: 'all', label: 'All Statuses' },
-            ...STATUS_OPTIONS,
+            { value: 'all', label: t('compliance.allStatuses') },
+            ...STATUS_OPTIONS.map(o => ({ value: o.value, label: t(o.tKey) })),
           ]}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -403,13 +421,13 @@ export default function CompliancePage() {
         <Card>
           <CardContent className="p-12 text-center">
             <Shield size={48} className="mx-auto text-muted mb-4" />
-            <h3 className="text-lg font-medium text-main mb-2">No certifications found</h3>
+            <h3 className="text-lg font-medium text-main mb-2">{t('compliance.noCertificationsFound')}</h3>
             <p className="text-muted mb-4">
-              {searchQuery ? 'Try adjusting your search' : 'Add certifications to track compliance'}
+              {searchQuery ? t('compliance.tryAdjustingSearch') : t('compliance.addCertificationsToTrack')}
             </p>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus size={16} />
-              Add Certification
+              {t('compliance.addCertification')}
             </Button>
           </CardContent>
         </Card>
@@ -439,7 +457,7 @@ export default function CompliancePage() {
                         <div className="flex items-center gap-2">
                           <h3 className="text-sm font-semibold text-main truncate">{cert.certification_name}</h3>
                           <Badge variant={certStatusVariant(cert.status)} size="sm">
-                            {cert.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                            {statusLabel(cert.status)}
                           </Badge>
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-xs text-muted">
@@ -454,7 +472,7 @@ export default function CompliancePage() {
                         {cert.expiration_date && (
                           <div className="flex items-center gap-1.5 text-muted">
                             <Calendar className="h-3 w-3" />
-                            <span>Exp: {formatDate(cert.expiration_date)}</span>
+                            <span>{t('compliance.expPrefix', { date: formatDate(cert.expiration_date) })}</span>
                           </div>
                         )}
                         {cert.coverage_amount != null && cert.coverage_amount > 0 && (
@@ -466,12 +484,12 @@ export default function CompliancePage() {
                       </div>
                       {daysLeft !== null && daysLeft > 0 && daysLeft <= 30 && (
                         <Badge variant="warning" size="sm">
-                          {daysLeft}d left
+                          {t('compliance.daysLeftShort', { count: String(daysLeft) })}
                         </Badge>
                       )}
                       {daysLeft !== null && daysLeft <= 0 && cert.status === 'active' && (
                         <Badge variant="error" size="sm">
-                          Overdue
+                          {t('compliance.overdue')}
                         </Badge>
                       )}
                       <ChevronRight size={16} className="text-muted" />
@@ -497,8 +515,8 @@ export default function CompliancePage() {
                   <DollarSign className="h-4 w-4 text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-main">Annual Renewal Cost</p>
-                  <p className="text-xs text-muted">Total cost to maintain all certifications</p>
+                  <p className="text-sm font-medium text-main">{t('compliance.annualRenewalCost')}</p>
+                  <p className="text-xs text-muted">{t('compliance.totalCostToMaintain')}</p>
                 </div>
               </div>
               <p className="text-xl font-semibold text-main">{formatCurrency(summary.totalRenewalCost)}</p>
@@ -531,7 +549,7 @@ export default function CompliancePage() {
           onClose={() => setSelectedCert(null)}
           onEdit={() => { setEditingCert(selectedCert); }}
           onDelete={async () => {
-            if (!confirm('Are you sure you want to remove this certification?')) return;
+            if (!confirm(t('compliance.confirmRemoveCertification'))) return;
             await deleteCertification(selectedCert.id);
             setSelectedCert(null);
           }}
@@ -551,6 +569,7 @@ function CertificationFormModal({
   onClose: () => void;
   onSave: (data: Partial<Certification>) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const isEdit = !!cert;
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState(cert?.certification_name || '');
@@ -601,7 +620,7 @@ function CertificationFormModal({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>{isEdit ? 'Edit Certification' : 'Add Certification'}</CardTitle>
+            <CardTitle>{isEdit ? t('compliance.editCertification') : t('compliance.addCertification')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -609,74 +628,74 @@ function CertificationFormModal({
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
-            label="Certification Name *"
+            label={`${t('compliance.certificationName')} *`}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g., General Contractor License"
+            placeholder={t('compliance.placeholderCertName')}
           />
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Category *</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.category')} *</label>
               <select
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
                 {CATEGORY_OPTIONS.map(o => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                  <option key={o.value} value={o.value}>{t(o.tKey)}</option>
                 ))}
               </select>
             </div>
             <Input
-              label="Type"
+              label={t('common.type')}
               value={type}
               onChange={(e) => setType(e.target.value)}
-              placeholder="e.g., state_license"
+              placeholder={t('compliance.placeholderType')}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Issuing Authority"
+              label={t('compliance.issuingAuthority')}
               value={issuingAuthority}
               onChange={(e) => setIssuingAuthority(e.target.value)}
-              placeholder="e.g., State Board of Contractors"
+              placeholder={t('compliance.placeholderAuthority')}
             />
             <Input
-              label="Certificate / License Number"
+              label={t('compliance.certLicenseNumber')}
               value={certNumber}
               onChange={(e) => setCertNumber(e.target.value)}
-              placeholder="e.g., GC-12345"
+              placeholder={t('compliance.placeholderCertNumber')}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Policy Number"
+              label={t('compliance.policyNumber')}
               value={policyNumber}
               onChange={(e) => setPolicyNumber(e.target.value)}
-              placeholder="Insurance policy #"
+              placeholder={t('compliance.placeholderPolicyNumber')}
             />
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Status</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.status')}</label>
               <select
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as Certification['status'])}
               >
                 {STATUS_OPTIONS.map(o => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                  <option key={o.value} value={o.value}>{t(o.tKey)}</option>
                 ))}
               </select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Issued Date"
+              label={t('compliance.issuedDate')}
               type="date"
               value={issuedDate}
               onChange={(e) => setIssuedDate(e.target.value)}
             />
             <Input
-              label="Expiration Date"
+              label={t('compliance.expirationDate')}
               type="date"
               value={expirationDate}
               onChange={(e) => setExpirationDate(e.target.value)}
@@ -684,14 +703,14 @@ function CertificationFormModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Coverage Amount ($)"
+              label={t('compliance.coverageAmountLabel')}
               type="number"
               value={coverageAmount}
               onChange={(e) => setCoverageAmount(e.target.value)}
               placeholder="0.00"
             />
             <Input
-              label="Annual Renewal Cost ($)"
+              label={t('compliance.annualRenewalCostLabel')}
               type="number"
               value={renewalCost}
               onChange={(e) => setRenewalCost(e.target.value)}
@@ -706,7 +725,7 @@ function CertificationFormModal({
                 onChange={(e) => setRenewalRequired(e.target.checked)}
                 className="rounded border-main"
               />
-              <span className="text-sm text-main">Renewal Required</span>
+              <span className="text-sm text-main">{t('compliance.renewalRequired')}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -715,23 +734,23 @@ function CertificationFormModal({
                 onChange={(e) => setAutoRenew(e.target.checked)}
                 className="rounded border-main"
               />
-              <span className="text-sm text-main">Auto-Renew</span>
+              <span className="text-sm text-main">{t('compliance.autoRenew')}</span>
             </label>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
             <textarea
               rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Additional notes about this certification..."
+              placeholder={t('compliance.placeholderNotes')}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none"
             />
           </div>
           <div className="flex items-center gap-3 pt-4 border-t border-main">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={saving || !name.trim()}>
-              {saving ? 'Saving...' : isEdit ? 'Update' : 'Add Certification'}
+              {saving ? t('common.saving') : isEdit ? t('common.update') : t('compliance.addCertification')}
             </Button>
           </div>
         </CardContent>
@@ -753,6 +772,7 @@ function CertificationDetailModal({
   onEdit: () => void;
   onDelete: () => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const cat = cert.compliance_category || 'other';
   const config = CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.other;
   const Icon = config.icon;
@@ -774,9 +794,9 @@ function CertificationDetailModal({
                 <h2 className="text-lg font-semibold text-main">{cert.certification_name}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant={certStatusVariant(cert.status)} size="sm">
-                    {cert.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                    {(() => { const opt = STATUS_OPTIONS.find(o => o.value === cert.status); return opt ? t(opt.tKey) : cert.status; })()}
                   </Badge>
-                  <span className="text-xs text-muted">{config.label}</span>
+                  <span className="text-xs text-muted">{t(config.tKey)}</span>
                 </div>
               </div>
             </div>
@@ -790,25 +810,25 @@ function CertificationDetailModal({
           <div className="grid grid-cols-2 gap-4">
             {cert.certification_type && (
               <div>
-                <p className="text-xs text-muted mb-1">Type</p>
+                <p className="text-xs text-muted mb-1">{t('compliance.detailType')}</p>
                 <p className="text-sm text-main">{cert.certification_type}</p>
               </div>
             )}
             {cert.issuing_authority && (
               <div>
-                <p className="text-xs text-muted mb-1">Issuing Authority</p>
+                <p className="text-xs text-muted mb-1">{t('compliance.detailIssuingAuthority')}</p>
                 <p className="text-sm text-main">{cert.issuing_authority}</p>
               </div>
             )}
             {cert.certification_number && (
               <div>
-                <p className="text-xs text-muted mb-1">Certificate Number</p>
+                <p className="text-xs text-muted mb-1">{t('compliance.detailCertificateNumber')}</p>
                 <p className="text-sm text-main font-mono">{cert.certification_number}</p>
               </div>
             )}
             {cert.policy_number && (
               <div>
-                <p className="text-xs text-muted mb-1">Policy Number</p>
+                <p className="text-xs text-muted mb-1">{t('compliance.detailPolicyNumber')}</p>
                 <p className="text-sm text-main font-mono">{cert.policy_number}</p>
               </div>
             )}
@@ -819,20 +839,20 @@ function CertificationDetailModal({
             <div className="grid grid-cols-2 gap-4">
               {cert.issued_date && (
                 <div>
-                  <p className="text-xs text-muted mb-1">Issued</p>
+                  <p className="text-xs text-muted mb-1">{t('compliance.detailIssued')}</p>
                   <p className="text-sm text-main">{formatDateLocale(cert.issued_date)}</p>
                 </div>
               )}
               {cert.expiration_date && (
                 <div>
-                  <p className="text-xs text-muted mb-1">Expires</p>
+                  <p className="text-xs text-muted mb-1">{t('compliance.detailExpires')}</p>
                   <p className={cn('text-sm font-medium', daysLeft !== null && daysLeft <= 30 ? 'text-amber-400' : daysLeft !== null && daysLeft <= 0 ? 'text-red-400' : 'text-main')}>
                     {formatDateLocale(cert.expiration_date)}
                     {daysLeft !== null && daysLeft > 0 && (
-                      <span className="text-xs text-muted ml-2">({daysLeft} days left)</span>
+                      <span className="text-xs text-muted ml-2">{t('compliance.detailDaysLeft', { count: String(daysLeft) })}</span>
                     )}
                     {daysLeft !== null && daysLeft <= 0 && (
-                      <span className="text-xs text-red-400 ml-2">(Expired)</span>
+                      <span className="text-xs text-red-400 ml-2">{t('compliance.detailExpired')}</span>
                     )}
                   </p>
                 </div>
@@ -846,13 +866,13 @@ function CertificationDetailModal({
               {cert.coverage_amount != null && cert.coverage_amount > 0 && (
                 <div className="text-center p-3 bg-secondary rounded-lg">
                   <p className="text-lg font-semibold text-main">{formatCurrency(cert.coverage_amount)}</p>
-                  <p className="text-xs text-muted">Coverage Amount</p>
+                  <p className="text-xs text-muted">{t('compliance.coverageAmount')}</p>
                 </div>
               )}
               {cert.renewal_cost != null && cert.renewal_cost > 0 && (
                 <div className="text-center p-3 bg-secondary rounded-lg">
                   <p className="text-lg font-semibold text-main">{formatCurrency(cert.renewal_cost)}</p>
-                  <p className="text-xs text-muted">Renewal Cost</p>
+                  <p className="text-xs text-muted">{t('compliance.renewalCost')}</p>
                 </div>
               )}
             </div>
@@ -866,7 +886,7 @@ function CertificationDetailModal({
               ) : (
                 <XCircle size={14} className="text-muted" />
               )}
-              <span className="text-muted">Renewal Required</span>
+              <span className="text-muted">{t('compliance.renewalRequired')}</span>
             </div>
             <div className="flex items-center gap-2">
               {cert.auto_renew ? (
@@ -874,13 +894,13 @@ function CertificationDetailModal({
               ) : (
                 <XCircle size={14} className="text-muted" />
               )}
-              <span className="text-muted">Auto-Renew</span>
+              <span className="text-muted">{t('compliance.autoRenew')}</span>
             </div>
           </div>
 
           {cert.notes && (
             <div>
-              <p className="text-xs text-muted mb-1">Notes</p>
+              <p className="text-xs text-muted mb-1">{t('common.notes')}</p>
               <p className="text-sm text-main whitespace-pre-wrap">{cert.notes}</p>
             </div>
           )}
@@ -889,14 +909,14 @@ function CertificationDetailModal({
           <div className="flex items-center gap-3 pt-4 border-t border-main">
             <Button className="flex-1" onClick={() => { onClose(); onEdit(); }}>
               <Edit size={16} />
-              Edit
+              {t('common.edit')}
             </Button>
             <Button variant="danger" onClick={onDelete}>
               <Trash2 size={16} />
-              Remove
+              {t('common.remove')}
             </Button>
             <Button variant="ghost" onClick={onClose}>
-              Close
+              {t('common.close')}
             </Button>
           </div>
         </CardContent>

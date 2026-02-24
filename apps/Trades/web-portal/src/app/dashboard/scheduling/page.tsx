@@ -28,17 +28,17 @@ import { useTranslation } from '@/lib/translations';
 import { getSupabase } from '@/lib/supabase';
 import type { ScheduleProject, ScheduleProjectStatus, ScheduleTask } from '@/lib/types/scheduling';
 
-const STATUS_CONFIG: Record<ScheduleProjectStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  draft: { label: 'Draft', color: 'text-secondary', bg: 'bg-surface-alt', icon: Clock },
-  active: { label: 'Active', color: 'text-success', bg: 'bg-success/10', icon: Activity },
-  on_hold: { label: 'On Hold', color: 'text-warning', bg: 'bg-warning/10', icon: PauseCircle },
-  complete: { label: 'Complete', color: 'text-info', bg: 'bg-info/10', icon: CheckCircle2 },
-  archived: { label: 'Archived', color: 'text-secondary', bg: 'bg-surface-alt', icon: Archive },
+const STATUS_CONFIG: Record<ScheduleProjectStatus, { labelKey: string; color: string; bg: string; icon: typeof Clock }> = {
+  draft: { labelKey: 'scheduling.statusDraft', color: 'text-secondary', bg: 'bg-surface-alt', icon: Clock },
+  active: { labelKey: 'scheduling.statusActive', color: 'text-success', bg: 'bg-success/10', icon: Activity },
+  on_hold: { labelKey: 'scheduling.statusOnHold', color: 'text-warning', bg: 'bg-warning/10', icon: PauseCircle },
+  complete: { labelKey: 'scheduling.statusComplete', color: 'text-info', bg: 'bg-info/10', icon: CheckCircle2 },
+  archived: { labelKey: 'scheduling.statusArchived', color: 'text-secondary', bg: 'bg-surface-alt', icon: Archive },
 };
 
 export default function SchedulingPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showNewModal, setShowNewModal] = useState(false);
@@ -165,7 +165,7 @@ export default function SchedulingPage() {
               className="flex items-center gap-2 px-4 py-2 bg-surface border border-main rounded-lg hover:border-accent/30 text-sm font-medium text-secondary hover:text-primary transition-colors"
             >
               <LayoutDashboard className="w-4 h-4" />
-              Portfolio
+              {t('scheduling.portfolio')}
             </button>
           )}
           <button
@@ -187,7 +187,7 @@ export default function SchedulingPage() {
           }`}
         >
           <GanttChart className="w-4 h-4" />
-          Schedules
+          {t('scheduling.schedules')}
         </button>
         <button
           onClick={() => setActiveTab('dispatch')}
@@ -196,7 +196,7 @@ export default function SchedulingPage() {
           }`}
         >
           <ClipboardList className="w-4 h-4" />
-          Today&apos;s Dispatch
+          {t('scheduling.todaysDispatch')}
         </button>
       </div>
 
@@ -213,8 +213,8 @@ export default function SchedulingPage() {
         <div className="flex items-center gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
           <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
           <p className="text-sm text-primary">
-            <span className="font-medium">{varianceStats.behind} project{varianceStats.behind > 1 ? 's' : ''}</span> behind schedule.
-            Review and adjust task assignments to get back on track.
+            <span className="font-medium">{varianceStats.behind > 1 ? t('scheduling.projectsBehindSchedule', { count: varianceStats.behind }) : t('scheduling.projectBehindSchedule', { count: varianceStats.behind })}</span>{' '}
+            {t('scheduling.reviewAndAdjust')}
           </p>
         </div>
       )}
@@ -242,7 +242,7 @@ export default function SchedulingPage() {
                     statusFilter === s ? 'bg-accent text-on-accent' : 'text-secondary hover:text-primary'
                   }`}
                 >
-                  {s === 'all' ? 'All' : s === 'on_hold' ? 'On Hold' : s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'all' ? t('scheduling.filterAll') : t(`scheduling.status${s === 'on_hold' ? 'OnHold' : s.charAt(0).toUpperCase() + s.slice(1)}`)}
                 </button>
               ))}
             </div>
@@ -261,7 +261,7 @@ export default function SchedulingPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
-                New Schedule
+                {t('scheduling.newSchedule')}
               </button>
             </div>
           ) : (
@@ -283,9 +283,9 @@ export default function SchedulingPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-primary">
-              Today&apos;s Dispatch — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              {t('scheduling.todaysDispatch')} — {formatDate(new Date(), { weekday: 'long', month: 'long', day: 'numeric' })}
             </h2>
-            <span className="text-sm text-secondary">{todayTasks.length} task{todayTasks.length !== 1 ? 's' : ''} scheduled</span>
+            <span className="text-sm text-secondary">{todayTasks.length !== 1 ? t('scheduling.tasksScheduled', { count: todayTasks.length }) : t('scheduling.taskScheduled', { count: todayTasks.length })}</span>
           </div>
 
           {loadingDispatch ? (
@@ -297,8 +297,8 @@ export default function SchedulingPage() {
               <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
                 <ClipboardList className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-lg font-semibold text-primary mb-1">No tasks scheduled today</h3>
-              <p className="text-sm text-secondary">Create schedule tasks and assign team members to see them here</p>
+              <h3 className="text-lg font-semibold text-primary mb-1">{t('scheduling.noTasksToday')}</h3>
+              <p className="text-sm text-secondary">{t('scheduling.noTasksTodayDesc')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -310,9 +310,9 @@ export default function SchedulingPage() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-primary">
-                        {userId === 'unassigned' ? 'Unassigned' : `Team Member`}
+                        {userId === 'unassigned' ? t('scheduling.unassigned') : t('scheduling.teamMember')}
                       </p>
-                      <p className="text-xs text-secondary">{tasks.length} task{tasks.length !== 1 ? 's' : ''}</p>
+                      <p className="text-xs text-secondary">{tasks.length} {tasks.length !== 1 ? t('scheduling.tasks') : t('scheduling.task')}</p>
                     </div>
                   </div>
                   <div className="divide-y divide-main">
@@ -343,7 +343,7 @@ export default function SchedulingPage() {
                               </div>
                             </div>
                             {task.is_critical && (
-                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-red-500/10 text-red-500">CRIT</span>
+                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-red-500/10 text-red-500">{t('scheduling.critical')}</span>
                             )}
                           </div>
                         </div>
@@ -364,7 +364,7 @@ export default function SchedulingPage() {
             <h2 className="text-lg font-semibold text-primary mb-4">{t('scheduling.newSchedule')}</h2>
             <input
               type="text"
-              placeholder="Schedule name"
+              placeholder={t('scheduling.scheduleName')}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -378,7 +378,7 @@ export default function SchedulingPage() {
                 disabled={!newName.trim() || creating}
                 className="px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium disabled:opacity-50"
               >
-                {creating ? 'Creating...' : 'Create'}
+                {creating ? t('scheduling.creating') : t('scheduling.create')}
               </button>
             </div>
           </div>
@@ -398,6 +398,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 }
 
 function ProjectCard({ project, onClick }: { project: ScheduleProject; onClick: () => void }) {
+  const { t } = useTranslation();
   const config = STATUS_CONFIG[project.status];
   const StatusIcon = config.icon;
 
@@ -409,7 +410,7 @@ function ProjectCard({ project, onClick }: { project: ScheduleProject; onClick: 
       <div className="flex items-start justify-between mb-3">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${config.bg} ${config.color}`}>
           <StatusIcon className="w-3 h-3" />
-          {config.label}
+          {t(config.labelKey)}
         </span>
         {project.overall_percent_complete > 0 && (
           <span className="text-sm font-semibold text-accent">{project.overall_percent_complete.toFixed(0)}%</span>
@@ -435,7 +436,7 @@ function ProjectCard({ project, onClick }: { project: ScheduleProject; onClick: 
         {project.actual_start && (
           <span className="flex items-center gap-1 text-success">
             <Activity className="w-3 h-3" />
-            Started {project.actual_start.slice(5, 10)}
+            {t('scheduling.started')} {project.actual_start.slice(5, 10)}
           </span>
         )}
       </div>
@@ -450,7 +451,7 @@ function ProjectCard({ project, onClick }: { project: ScheduleProject; onClick: 
             return (
               <div className="mt-2 flex items-center gap-1.5 text-xs text-warning">
                 <AlertTriangle className="w-3 h-3" />
-                {diffDays} day{diffDays > 1 ? 's' : ''} behind schedule
+                {diffDays > 1 ? t('scheduling.daysBehindSchedule', { count: diffDays }) : t('scheduling.dayBehindSchedule', { count: diffDays })}
               </div>
             );
           }
@@ -458,7 +459,7 @@ function ProjectCard({ project, onClick }: { project: ScheduleProject; onClick: 
             return (
               <div className="mt-2 flex items-center gap-1.5 text-xs text-success">
                 <TrendingUp className="w-3 h-3" />
-                {Math.abs(diffDays)} days ahead
+                {Math.abs(diffDays) > 1 ? t('scheduling.daysAhead', { count: Math.abs(diffDays) }) : t('scheduling.dayAhead', { count: Math.abs(diffDays) })}
               </div>
             );
           }
