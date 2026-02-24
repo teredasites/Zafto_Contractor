@@ -50,6 +50,7 @@ export function useJobSchedule(jobId: string | undefined) {
         .select('id, name, status, planned_start, planned_finish, overall_percent_complete')
         .eq('job_id', jobId)
         .neq('status', 'archived')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();

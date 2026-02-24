@@ -54,6 +54,7 @@ export function useInspectionTemplates() {
       const { data, error: err } = await supabase
         .from('inspection_templates')
         .select('*')
+        .is('deleted_at', null)
         .order('name');
 
       if (err) throw err;

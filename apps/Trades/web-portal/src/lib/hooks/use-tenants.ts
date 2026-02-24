@@ -146,6 +146,7 @@ export function useTenant(id: string | undefined) {
           .from('tenants')
           .select('*')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

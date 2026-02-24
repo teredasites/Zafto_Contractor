@@ -447,6 +447,7 @@ export function useWalkthrough(id: string | undefined) {
           .from('walkthroughs')
           .select('*')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

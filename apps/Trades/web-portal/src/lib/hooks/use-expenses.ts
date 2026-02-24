@@ -289,6 +289,7 @@ export function useExpenses(filters?: {
       .from('expense_records')
       .select('journal_entry_id')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (expense?.journal_entry_id) {

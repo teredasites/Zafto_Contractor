@@ -37,11 +37,13 @@ export function useVerticalDetection(): VerticalDetection {
           supabase
             .from('jobs')
             .select('id', { count: 'exact', head: true })
-            .contains('tags', ['storm:']),
+            .contains('tags', ['storm:'])
+            .is('deleted_at', null),
           // Claims by category
           supabase
             .from('insurance_claims')
-            .select('claim_category'),
+            .select('claim_category')
+            .is('deleted_at', null),
           // Warranty relationships
           supabase
             .from('company_warranty_relationships')
@@ -55,7 +57,8 @@ export function useVerticalDetection(): VerticalDetection {
         const stormFallback = await supabase
           .from('jobs')
           .select('tags')
-          .not('tags', 'eq', '{}');
+          .not('tags', 'eq', '{}')
+          .is('deleted_at', null);
         const stormCount = (stormFallback.data || []).filter(
           (j: { tags: string[] }) => j.tags?.some((t: string) => t.startsWith('storm:'))
         ).length;

@@ -220,7 +220,7 @@ export function useJob(id: string | undefined) {
         setLoading(true);
         setError(null);
         const supabase = getSupabase();
-        const { data, error: err } = await supabase.from('jobs').select('*').eq('id', id).single();
+        const { data, error: err } = await supabase.from('jobs').select('*').eq('id', id).is('deleted_at', null).single();
 
         if (ignore) return;
         if (err) throw err;

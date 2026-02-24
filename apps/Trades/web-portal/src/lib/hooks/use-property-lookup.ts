@@ -220,7 +220,7 @@ export function usePropertyLookup() {
 
       // Parallel fetch: scan + structures + parcel + features + roof + facets
       const [scanRow, structRows, parcelRows, featureRow, roofRow] = await Promise.all([
-        supabase.from('property_scans').select('*').eq('id', scanId).single(),
+        supabase.from('property_scans').select('*').eq('id', scanId).is('deleted_at', null).single(),
         supabase.from('property_structures').select('*').eq('property_scan_id', scanId),
         supabase.from('parcel_boundaries').select('*').eq('scan_id', scanId),
         supabase.from('property_features').select('*').eq('scan_id', scanId).maybeSingle(),

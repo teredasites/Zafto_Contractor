@@ -251,6 +251,7 @@ export function useRent() {
       .from('rent_payments')
       .select('*')
       .eq('rent_charge_id', chargeId)
+      .is('deleted_at', null)
       .order('paid_at', { ascending: false });
 
     if (err) throw err;
@@ -392,6 +393,7 @@ export function useRent() {
       .from('rent_payments')
       .select('*, tenants(first_name, last_name)')
       .eq('verification_status', 'pending_verification')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (err) throw err;
@@ -409,6 +411,7 @@ export function useRent() {
       .from('rent_payments')
       .select('rent_charge_id, amount, verification_status')
       .eq('id', paymentId)
+      .is('deleted_at', null)
       .single();
     if (fetchErr || !payment) throw fetchErr || new Error('Payment not found');
 
@@ -468,6 +471,7 @@ export function useRent() {
       .from('rent_payments')
       .select('verification_status')
       .eq('id', paymentId)
+      .is('deleted_at', null)
       .single();
 
     await supabase.from('rent_payments').update({
@@ -497,6 +501,7 @@ export function useRent() {
       .from('rent_payments')
       .select('verification_status')
       .eq('id', paymentId)
+      .is('deleted_at', null)
       .single();
 
     await supabase.from('rent_payments').update({
@@ -525,6 +530,7 @@ export function useRent() {
       .from('payment_verification_log')
       .select('*')
       .eq('payment_id', paymentId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
     if (err) throw err;
     return (data || []).map(mapVerificationLog);

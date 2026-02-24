@@ -462,6 +462,7 @@ export function useScrapPrices(material?: string) {
       let query = supabase
         .from('scrap_price_index')
         .select('*')
+        .is('deleted_at', null)
         .order('material')
         .order('effective_date', { ascending: false });
 

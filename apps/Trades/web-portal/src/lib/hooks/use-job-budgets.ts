@@ -184,7 +184,8 @@ export function useBudgetVsActual() {
         .from('expense_records')
         .select('job_id, category, amount')
         .not('job_id', 'is', null)
-        .in('status', ['approved', 'posted']);
+        .in('status', ['approved', 'posted'])
+        .is('deleted_at', null);
 
       if (expenseErr) throw expenseErr;
 

@@ -268,6 +268,7 @@ export function useSubcontractors() {
       .from('job_subcontractors')
       .select('paid_amount, subcontractor_id')
       .eq('id', jobSubId)
+      .is('deleted_at', null)
       .single();
     if (fetchErr) throw fetchErr;
 
@@ -295,6 +296,7 @@ export function useSubcontractors() {
       .from('job_subcontractors')
       .select('*, subcontractors(name)')
       .eq('job_id', jobId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
     if (err) throw err;

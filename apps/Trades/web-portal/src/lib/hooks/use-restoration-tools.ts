@@ -76,6 +76,7 @@ export function useRestorationTools() {
         supabase
           .from('restoration_equipment')
           .select('*, jobs(title)')
+          .is('deleted_at', null)
           .order('deployed_at', { ascending: false })
           .limit(200),
       ]);

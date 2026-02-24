@@ -393,6 +393,7 @@ export function usePropertyScan(scanIdOrJobId: string, mode: 'scan' | 'job' = 'j
           .from('property_scans')
           .select('*')
           .eq('id', scanIdOrJobId)
+          .is('deleted_at', null)
           .single();
         scanRow = data;
       } else {

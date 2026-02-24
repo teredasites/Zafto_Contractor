@@ -98,6 +98,7 @@ export function useInspectionEngine() {
           .from('inspection_templates')
           .select('*')
           .eq('is_active', true)
+          .is('deleted_at', null)
           .order('name'),
       ]);
 

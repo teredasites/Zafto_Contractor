@@ -80,7 +80,8 @@ export function useStormAssess() {
           const { data: scans } = await supabase
             .from('property_scans')
             .select('id, address, city, state')
-            .in('id', scanIds);
+            .in('id', scanIds)
+            .is('deleted_at', null);
 
           if (scans) {
             const scanMap = new Map(scans.map((s: Record<string, unknown>) => [s.id as string, s]));

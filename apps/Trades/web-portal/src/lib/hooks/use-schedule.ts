@@ -143,6 +143,7 @@ export function useScheduleProject(id: string | undefined) {
           .from('schedule_projects')
           .select('*')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

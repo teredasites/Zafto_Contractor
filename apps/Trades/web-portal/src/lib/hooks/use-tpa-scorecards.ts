@@ -195,7 +195,7 @@ export function useTpaScorecards(programId?: string) {
       // Recalculate overall if individual scores changed
       if (Object.keys(updateData).some((k) => k.endsWith('_score') && k !== 'overall_score') && input.overallScore === undefined) {
         // Fetch current to merge
-        const { data: current } = await supabase.from('tpa_scorecards').select('*').eq('id', id).single();
+        const { data: current } = await supabase.from('tpa_scorecards').select('*').eq('id', id).is('deleted_at', null).single();
         if (current) {
           const merged = { ...current, ...updateData };
           const scores = [

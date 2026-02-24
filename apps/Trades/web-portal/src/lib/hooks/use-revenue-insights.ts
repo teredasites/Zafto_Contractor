@@ -234,9 +234,9 @@ export function useRevenueInsights(period: Period = 'month') {
       // Parallel queries
       const [invoicesRes, jobsRes, materialsRes, customersRes] = await Promise.all([
         supabase.from('invoices').select('id, status, total, amount_paid, amount_due, paid_at, created_at, customer_id'),
-        supabase.from('jobs').select('id, status, title, estimated_amount, actual_amount, tags, customer_name, customer_id, completed_at, created_at'),
-        supabase.from('job_materials').select('id, job_id, total_cost, created_at'),
-        supabase.from('customers').select('id, name, created_at'),
+        supabase.from('jobs').select('id, status, title, estimated_amount, actual_amount, tags, customer_name, customer_id, completed_at, created_at').is('deleted_at', null),
+        supabase.from('job_materials').select('id, job_id, total_cost, created_at').is('deleted_at', null),
+        supabase.from('customers').select('id, name, created_at').is('deleted_at', null),
       ]);
 
       const invoices: Record<string, unknown>[] = invoicesRes.data || [];

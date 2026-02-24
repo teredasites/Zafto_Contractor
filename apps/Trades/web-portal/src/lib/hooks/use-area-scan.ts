@@ -166,6 +166,7 @@ export function useAreaScan(areaScanId: string) {
         .from('area_scans')
         .select('*')
         .eq('id', areaScanId)
+        .is('deleted_at', null)
         .single();
 
       if (scanErr || !scanRow) {

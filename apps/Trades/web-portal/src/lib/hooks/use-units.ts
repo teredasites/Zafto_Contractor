@@ -179,6 +179,7 @@ export function useUnit(id: string | undefined) {
           .from('units')
           .select('*, properties(address_line1)')
           .eq('id', id)
+          .is('deleted_at', null)
           .single();
 
         if (ignore) return;

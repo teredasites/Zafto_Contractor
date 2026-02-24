@@ -73,7 +73,7 @@ export function useClaim(claimId: string | null) {
         supabase.from('tpi_scheduling').select('*').eq('claim_id', claimId).order('scheduled_date', { ascending: false }),
         supabase.from('moisture_readings').select('*').eq('claim_id', claimId).order('recorded_at', { ascending: false }),
         supabase.from('drying_logs').select('*').eq('claim_id', claimId).order('recorded_at', { ascending: false }),
-        supabase.from('restoration_equipment').select('*').eq('claim_id', claimId).order('deployed_at', { ascending: false }),
+        supabase.from('restoration_equipment').select('*').eq('claim_id', claimId).is('deleted_at', null).order('deployed_at', { ascending: false }),
       ]);
 
       if (claimRes.error) throw claimRes.error;
