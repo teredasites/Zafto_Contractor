@@ -61,9 +61,9 @@ const STATUS_CONFIG: Record<string, { label: string; variant: string; bg: string
   archived: {
     label: 'Archived',
     variant: 'default',
-    bg: 'bg-slate-100 dark:bg-slate-800',
-    text: 'text-slate-600 dark:text-slate-400',
-    dot: 'bg-slate-400',
+    bg: 'bg-secondary',
+    text: 'text-muted',
+    dot: 'bg-muted',
   },
 };
 

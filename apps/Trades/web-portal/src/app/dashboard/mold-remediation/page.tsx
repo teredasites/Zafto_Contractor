@@ -88,7 +88,7 @@ const IICRC_LEVEL_INFO: Record<IicrcLevel, {
 ) as Record<IicrcLevel, { label: string; sqft: string; ppe: string[]; containment: string; airFiltration: string; description: string; clearance: string }>;
 
 const STATUS_COLORS: Record<string, string> = {
-  planned: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+  planned: 'bg-secondary text-muted border-main',
   in_progress: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
   completed: 'bg-green-500/15 text-green-400 border-green-500/30',
   on_hold: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
@@ -235,7 +235,7 @@ export default function MoldRemediationPage() {
                       ? 'bg-red-500/15 text-red-400 border-red-500/30'
                       : a.moistureSourceStatus === 'resolved'
                       ? 'bg-green-500/15 text-green-400 border-green-500/30'
-                      : 'bg-slate-500/15 text-slate-400 border-slate-500/30'
+                      : 'bg-secondary text-muted border-main'
                   }`}>
                     {a.moistureSourceStatus === 'active_leak' ? 'Active Leak' : a.moistureSourceStatus === 'resolved' ? 'Resolved' : 'Unknown Source'}
                   </span>
@@ -700,7 +700,7 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
             <div key={i} className="flex items-start gap-3 mb-4 last:mb-0">
               <div className={cn(
                 'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold flex-shrink-0',
-                step.done ? 'bg-green-500 text-white' : 'bg-slate-700 text-muted'
+                step.done ? 'bg-green-500 text-white' : 'bg-secondary text-muted'
               )}>
                 {step.done ? <CheckCircle size={14} /> : step.step}
               </div>
@@ -750,7 +750,7 @@ function ClearanceTab({ assessment: a }: { assessment: MoldAssessment }) {
                 {s.speciesFound && Array.isArray(s.speciesFound) && s.speciesFound.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {s.speciesFound.map((sp, i) => (
-                      <span key={i} className="text-xs bg-slate-700 text-main px-2 py-0.5 rounded">{String(sp)}</span>
+                      <span key={i} className="text-xs bg-secondary text-main px-2 py-0.5 rounded">{String(sp)}</span>
                     ))}
                   </div>
                 )}
@@ -831,7 +831,7 @@ function ClearanceItem({ label, pass }: { label: string; pass: boolean | null })
       ) : pass === false ? (
         <XCircle size={16} className="mx-auto text-red-400" />
       ) : (
-        <div className="h-4 w-4 mx-auto rounded-full bg-slate-700" />
+        <div className="h-4 w-4 mx-auto rounded-full bg-secondary" />
       )}
     </div>
   );

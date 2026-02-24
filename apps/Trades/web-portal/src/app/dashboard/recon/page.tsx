@@ -228,10 +228,10 @@ export default function ReconPage() {
               disabled={scanning}
               autoComplete="off"
               style={{ color: 'var(--text)', backgroundColor: 'var(--surface)', caretColor: 'var(--accent)' }}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-main text-sm placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-main text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
             />
             {autocomplete.loading && (
-              <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-neutral-400" />
+              <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted" />
             )}
 
             {autocomplete.isOpen && (
@@ -415,7 +415,7 @@ export default function ReconPage() {
                     </span>
                     <button
                       onClick={(e) => handleDeleteScan(scan.id, e)}
-                      className="w-5 h-5 rounded-md bg-black/60 backdrop-blur-sm flex items-center justify-center text-neutral-400 hover:text-red-400 hover:bg-red-900/60 transition-colors opacity-0 group-hover:opacity-100"
+                      className="w-5 h-5 rounded-md bg-black/60 backdrop-blur-sm flex items-center justify-center text-muted hover:text-red-400 hover:bg-red-900/60 transition-colors opacity-0 group-hover:opacity-100"
                       title="Delete scan"
                     >
                       <X size={10} />

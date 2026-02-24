@@ -490,7 +490,7 @@ export default function DispatchPage() {
       case 'medium':
         return 'text-blue-500 bg-blue-500/10';
       default:
-        return 'text-slate-400 bg-slate-500/10';
+        return 'text-muted bg-secondary';
     }
   };
 
@@ -664,7 +664,7 @@ export default function DispatchPage() {
                               ? 'bg-amber-500'
                               : t.isClockedIn
                               ? 'bg-emerald-500'
-                              : 'bg-slate-400'
+                              : 'bg-muted'
                           )}
                         />
                         <span className="text-main truncate flex-1">
@@ -1007,7 +1007,7 @@ export default function DispatchPage() {
               <Card>
                 <CardHeader className="py-2">
                   <CardTitle className="text-sm text-muted flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-slate-400" />
+                    <div className="w-2 h-2 rounded-full bg-muted" />
                     {t('dispatch.offline')} ({offlineTechs.length})
                   </CardTitle>
                 </CardHeader>

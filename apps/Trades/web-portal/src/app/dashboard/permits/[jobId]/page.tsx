@@ -72,9 +72,9 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
             <div className={`w-3 h-3 rounded-full mt-1.5 ${
               insp.result === 'pass' ? 'bg-emerald-500' :
               insp.result === 'fail' ? 'bg-red-500' :
-              insp.result ? 'bg-amber-500' : 'bg-slate-600'
+              insp.result ? 'bg-amber-500' : 'bg-secondary'
             }`} />
-            {i < inspections.length - 1 && <div className="w-0.5 flex-1 bg-slate-700 mt-1" />}
+            {i < inspections.length - 1 && <div className="w-0.5 flex-1 bg-secondary mt-1" />}
           </div>
           {/* Content */}
           <div className="flex-1 pb-4">

@@ -51,7 +51,7 @@ const meetingTypeColors: Record<string, string> = {
   insurance_conference: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   subcontractor_consult: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
   expert_consult: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-  async_video: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+  async_video: 'bg-secondary text-muted border-main',
 };
 
 function statusBadge(status: string) {
@@ -59,10 +59,10 @@ function statusBadge(status: string) {
     scheduled: { label: 'Scheduled', className: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
     in_progress: { label: 'Live', className: 'bg-red-500/10 text-red-400 border-red-500/20 animate-pulse' },
     completed: { label: 'Completed', className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    cancelled: { label: 'Cancelled', className: 'bg-slate-500/15 text-slate-400 border-slate-500/30' },
+    cancelled: { label: 'Cancelled', className: 'bg-secondary text-muted border-main' },
     no_show: { label: 'No Show', className: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
   };
-  const c = config[status] || { label: status, className: 'bg-slate-500/15 text-slate-400 border-slate-500/30' };
+  const c = config[status] || { label: status, className: 'bg-secondary text-muted border-main' };
   return <Badge className={c.className}>{c.label}</Badge>;
 }
 
@@ -244,7 +244,7 @@ export default function MeetingsPage() {
                     )}
                     {t}
                     {t === 'upcoming' && upcoming.length > 0 && (
-                      <span className="text-xs bg-slate-700 rounded-full px-1.5">{upcoming.length}</span>
+                      <span className="text-xs bg-secondary rounded-full px-1.5">{upcoming.length}</span>
                     )}
                   </Button>
                 ))}

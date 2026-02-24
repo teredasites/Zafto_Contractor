@@ -184,7 +184,7 @@ export default function JobDocumentationPage() {
             <span className="text-sm font-medium text-main">{t('jobsDocs.overallCompliance')}</span>
             <span className={cn('text-sm font-bold', complianceColor)}>{validation.compliancePercentage}%</span>
           </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+          <div className="w-full bg-secondary rounded-full h-3">
             <div
               className={cn(
                 'h-3 rounded-full transition-all duration-500',

@@ -42,7 +42,7 @@ const statusConfig: Record<ReviewStatus, { label: string; color: string; bgColor
   sent: { label: 'Sent', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30', icon: Send },
   opened: { label: 'Opened', color: 'text-indigo-700 dark:text-indigo-300', bgColor: 'bg-indigo-100 dark:bg-indigo-900/30', icon: ExternalLink },
   completed: { label: 'Completed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30', icon: CheckCircle },
-  skipped: { label: 'Skipped', color: 'text-slate-500 dark:text-slate-400', bgColor: 'bg-slate-100 dark:bg-slate-800/30', icon: SkipForward },
+  skipped: { label: 'Skipped', color: 'text-muted', bgColor: 'bg-secondary', icon: SkipForward },
   failed: { label: 'Failed', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30', icon: XCircle },
 };
 
@@ -50,7 +50,7 @@ const platformConfig: Record<ReviewPlatform, { label: string; color: string }> =
   google: { label: 'Google', color: 'text-blue-600 dark:text-blue-400' },
   yelp: { label: 'Yelp', color: 'text-red-600 dark:text-red-400' },
   facebook: { label: 'Facebook', color: 'text-indigo-600 dark:text-indigo-400' },
-  custom: { label: 'Custom', color: 'text-slate-600 dark:text-slate-400' },
+  custom: { label: 'Custom', color: 'text-muted' },
 };
 
 const channelIcon: Record<string, typeof Mail> = {

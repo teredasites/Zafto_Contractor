@@ -55,7 +55,7 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; d
   completed: { label: 'Completed', bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300', dot: 'bg-emerald-500' },
   uploaded: { label: 'Uploaded', bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', dot: 'bg-blue-500' },
   bid_generated: { label: 'Bid Generated', bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300', dot: 'bg-purple-500' },
-  archived: { label: 'Archived', bg: 'bg-slate-100 dark:bg-slate-800', text: 'text-slate-600 dark:text-slate-400', dot: 'bg-slate-400' },
+  archived: { label: 'Archived', bg: 'bg-secondary', text: 'text-muted', dot: 'bg-muted' },
 };
 
 
@@ -423,7 +423,7 @@ function RoomsTab({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium text-main truncate">{room.name}</h3>
-                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize">
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-secondary text-muted capitalize">
                       {room.floorLevel.replace(/_/g, ' ')}
                     </span>
                   </div>
@@ -894,7 +894,7 @@ function FloorPlanRenderer({ planData }: { planData: FloorPlanData | null }) {
         {/* Fixtures */}
         {planData.fixtures?.map((fixture, i) => (
           <g key={`fixture-${i}`}>
-            <circle cx={fixture.x} cy={fixture.y} r="6" fill="currentColor" className="text-slate-400/20" stroke="currentColor" strokeWidth="1" />
+            <circle cx={fixture.x} cy={fixture.y} r="6" fill="currentColor" className="text-muted/20" stroke="currentColor" strokeWidth="1" />
             {fixture.label && (
               <text
                 x={fixture.x}

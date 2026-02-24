@@ -177,7 +177,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
 // ── Timeline Indicator ────────────────────────────────────
 function DeadlineTimeline({ daysRemaining, label }: { daysRemaining: number; label: string }) {
   const pct = daysRemaining <= 0 ? 100 : Math.min(100, Math.max(0, 100 - (daysRemaining / 120) * 100));
-  const barColor = daysRemaining <= 3 ? 'bg-red-500' : daysRemaining <= 14 ? 'bg-amber-500' : daysRemaining <= 30 ? 'bg-blue-500' : 'bg-slate-600';
+  const barColor = daysRemaining <= 3 ? 'bg-red-500' : daysRemaining <= 14 ? 'bg-amber-500' : daysRemaining <= 30 ? 'bg-blue-500' : 'bg-secondary';
 
   return (
     <div className="space-y-1">

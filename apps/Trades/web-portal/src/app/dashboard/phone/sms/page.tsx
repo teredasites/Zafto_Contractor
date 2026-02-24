@@ -34,7 +34,7 @@ function ThreadItem({ thread, isActive, onClick }: { thread: SmsThread; isActive
       )}
     >
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
           <User className="h-4 w-4 text-muted" />
         </div>
         <div className="flex-1 min-w-0">
@@ -62,7 +62,7 @@ function MessageBubble({ message }: { message: SmsMessage }) {
         'max-w-[70%] rounded-2xl px-4 py-2',
         isOutbound
           ? 'bg-emerald-600 text-white rounded-br-md'
-          : 'bg-slate-700 text-main rounded-bl-md'
+          : 'bg-secondary text-main rounded-bl-md'
       )}>
         <p className="text-sm whitespace-pre-wrap">{message.body}</p>
         {message.mediaUrls.length > 0 && (
@@ -174,7 +174,7 @@ export default function SmsPage() {
                     >
                       <ArrowLeft className="h-4 w-4" />
                     </Button>
-                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
                       <User className="h-4 w-4 text-muted" />
                     </div>
                     <div className="flex-1">

@@ -565,7 +565,7 @@ function OnboardingTab({ checklists, search, onSearchChange }: {
                       <span className="text-sm font-medium text-main">{completedCount}/{totalCount}</span>
                       <div className="w-24 h-2 bg-secondary rounded-full overflow-hidden mt-1">
                         <div
-                          className={cn('h-full rounded-full transition-all', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-gray-300')}
+                          className={cn('h-full rounded-full transition-all', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-secondary')}
                           style={{ width: `${progress}%` }}
                         />
                       </div>
@@ -824,7 +824,7 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
                             className={cn(
                               star <= (review.overallRating || 0)
                                 ? 'text-amber-400 fill-amber-400'
-                                : 'text-gray-300 dark:text-gray-600'
+                                : 'text-muted'
                             )}
                           />
                         ))}
@@ -858,7 +858,7 @@ function ReviewsTab({ reviews, search, onSearchChange }: {
                                   className={cn(
                                     star <= (item.value || 0)
                                       ? 'text-amber-400 fill-amber-400'
-                                      : 'text-gray-300 dark:text-gray-600'
+                                      : 'text-muted'
                                   )}
                                 />
                               ))}

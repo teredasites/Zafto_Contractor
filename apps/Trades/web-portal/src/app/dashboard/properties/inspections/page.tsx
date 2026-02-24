@@ -29,7 +29,7 @@ const statusConfig: Record<InspectionStatus, { label: string; color: string; bgC
   scheduled: { label: 'Scheduled', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
   in_progress: { label: 'In Progress', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
   completed: { label: 'Completed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  cancelled: { label: 'Cancelled', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  cancelled: { label: 'Cancelled', color: 'text-muted', bgColor: 'bg-secondary' },
 };
 
 const typeConfig: Record<InspectionType, { label: string; color: string; bgColor: string }> = {
@@ -47,7 +47,7 @@ const conditionConfig: Record<string, { label: string; color: string; bgColor: s
   fair: { label: 'Fair', color: 'text-yellow-700 dark:text-yellow-300', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
   poor: { label: 'Poor', color: 'text-orange-700 dark:text-orange-300', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
   damaged: { label: 'Damaged', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  missing: { label: 'Missing', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  missing: { label: 'Missing', color: 'text-muted', bgColor: 'bg-secondary' },
 };
 
 export default function PmInspectionsPage() {

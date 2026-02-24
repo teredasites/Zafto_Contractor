@@ -518,7 +518,7 @@ export default function FleetPage() {
                 'flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors',
                 activeTab === tab.key
                   ? 'border-brand text-brand'
-                  : 'border-transparent text-muted hover:text-main hover:border-gray-600'
+                  : 'border-transparent text-muted hover:text-main hover:border-main'
               )}
             >
               {tab.icon}
@@ -1029,7 +1029,7 @@ function MaintenanceTab({
               'px-3 py-1.5 text-sm rounded-lg border transition-colors',
               maintenanceFilter === f
                 ? 'bg-brand/10 border-brand text-brand'
-                : 'bg-surface border-main text-muted hover:text-main hover:border-gray-500'
+                : 'bg-surface border-main text-muted hover:text-main hover:border-main'
             )}
           >
             {f === 'all' ? 'All' : f === 'overdue' ? 'Overdue' : f === 'due_soon' ? 'Due Soon' : 'Upcoming'}
@@ -1586,7 +1586,7 @@ function InspectionsTab({
                 'px-3 py-1.5 text-sm rounded-lg border transition-colors',
                 filter === f
                   ? 'bg-brand/10 border-brand text-brand'
-                  : 'bg-surface border-main text-muted hover:text-main hover:border-gray-500'
+                  : 'bg-surface border-main text-muted hover:text-main hover:border-main'
               )}
             >
               {f === 'all' ? 'All' : f === 'pass' ? 'Passed' : f === 'fail' ? 'Failed' : 'Missing'}

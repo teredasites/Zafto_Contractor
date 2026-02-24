@@ -183,9 +183,9 @@ export default function JobAutopsyDetailPage() {
         {autopsy.actual_drive_time_hours > 0 && (
           <Callout
             icon={Car}
-            color="text-slate-400"
-            bgColor="bg-slate-500/15"
-            borderColor="border-slate-500/30"
+            color="text-muted"
+            bgColor="bg-secondary"
+            borderColor="border-main"
             title={`${autopsy.actual_drive_time_hours.toFixed(1)}h drive time`}
             subtitle={`${fmtMoney(autopsy.actual_drive_cost)} in mileage costs`}
           />
@@ -272,7 +272,7 @@ function ComparisonBar({
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-muted w-8">{t('jobIntel.est')}</span>
-          <div className="flex-1 h-3 bg-slate-700/30 rounded">
+          <div className="flex-1 h-3 bg-secondary rounded">
             <div
               className="h-full bg-blue-500/50 rounded"
               style={{ width: `${(estimated / max) * 100}%` }}
@@ -282,7 +282,7 @@ function ComparisonBar({
         </div>
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-muted w-8">{t('jobIntel.act')}</span>
-          <div className="flex-1 h-3 bg-slate-700/30 rounded">
+          <div className="flex-1 h-3 bg-secondary rounded">
             <div
               className={`h-full rounded ${isOver ? 'bg-red-500/50' : 'bg-emerald-500/50'}`}
               style={{ width: `${(actual / max) * 100}%` }}

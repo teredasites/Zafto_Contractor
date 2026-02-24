@@ -37,7 +37,7 @@ import { useTranslation } from '@/lib/translations';
 
 const CATEGORY_OPTIONS: { value: string; label: string; color: string; icon: typeof Camera }[] = [
   { value: '', label: 'All Categories', color: '', icon: Camera },
-  { value: 'general', label: 'General', color: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300', icon: Image },
+  { value: 'general', label: 'General', color: 'bg-secondary text-muted', icon: Image },
   { value: 'before', label: 'Before', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300', icon: Camera },
   { value: 'after', label: 'After', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300', icon: Camera },
   { value: 'defect', label: 'Defect', color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300', icon: AlertTriangle },
@@ -360,7 +360,7 @@ export default function PhotosGalleryPage() {
         <Card>
           <CardContent className="py-16">
             <div className="text-center">
-              <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
                 <Camera size={24} className="text-muted" />
               </div>
               <h3 className="text-base font-semibold text-main mb-1">
@@ -485,7 +485,7 @@ function PhotoCard({
       className="group relative rounded-xl border border-main bg-secondary overflow-hidden cursor-pointer hover:border-[var(--accent)]/30 transition-all"
     >
       {/* Thumbnail */}
-      <div className="aspect-square bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+      <div className="aspect-square bg-secondary relative overflow-hidden">
         {photo.signedUrl ? (
           <img
             src={photo.signedUrl}
@@ -513,7 +513,7 @@ function PhotoCard({
               <Eye size={10} className="text-white" />
             </div>
           ) : (
-            <div className="p-1 bg-slate-500/60 rounded-full" title="Hidden from client">
+            <div className="p-1 bg-surface-hover/60 rounded-full" title="Hidden from client">
               <EyeOff size={10} className="text-white" />
             </div>
           )}
@@ -568,7 +568,7 @@ function PhotoListRow({
       onClick={onClick}
     >
       {/* Thumbnail */}
-      <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 overflow-hidden flex-shrink-0">
+      <div className="w-12 h-12 rounded-lg bg-secondary overflow-hidden flex-shrink-0">
         {photo.signedUrl ? (
           <img
             src={photo.signedUrl}
@@ -679,7 +679,7 @@ function PhotoDetailModal({
         </div>
 
         {/* Image */}
-        <div className="flex-1 overflow-auto bg-slate-950 flex items-center justify-center min-h-[300px]">
+        <div className="flex-1 overflow-auto bg-surface flex items-center justify-center min-h-[300px]">
           {photo.signedUrl ? (
             <img
               src={photo.signedUrl}
@@ -688,8 +688,8 @@ function PhotoDetailModal({
             />
           ) : (
             <div className="text-center">
-              <Image size={48} className="text-slate-500 mx-auto mb-2" />
-              <p className="text-sm text-slate-400">Image not available</p>
+              <Image size={48} className="text-muted mx-auto mb-2" />
+              <p className="text-sm text-muted">Image not available</p>
             </div>
           )}
         </div>

@@ -146,7 +146,7 @@ function ReactionDisplay({
         return (
           <span
             key={r.type}
-            className="inline-flex items-center gap-0.5 bg-slate-700/50 rounded-full px-1.5 py-0.5 text-[10px] text-slate-400"
+            className="inline-flex items-center gap-0.5 bg-secondary rounded-full px-1.5 py-0.5 text-[10px] text-muted"
             title={r.userIds
               .map(id => {
                 const m = memberMap.get(id);
@@ -359,7 +359,7 @@ function MessageBubble({
               return (
                 <div
                   key={receipt.userId}
-                  className="w-4 h-4 rounded-full bg-slate-700 flex items-center justify-center text-[8px] text-main border border-surface"
+                  className="w-4 h-4 rounded-full bg-secondary flex items-center justify-center text-[8px] text-main border border-surface"
                   title={m ? `${m.firstName} ${m.lastName}` : 'Read'}
                 >
                   {initial}
@@ -386,9 +386,9 @@ function TypingIndicator({ name }: { name: string }) {
       <div className="bg-secondary rounded-xl px-3 py-2 flex items-center gap-1.5">
         <span className="text-xs text-muted">{name} is typing</span>
         <span className="flex gap-0.5">
-          <span className="w-1 h-1 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-1 h-1 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-1 h-1 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <span className="w-1 h-1 bg-muted rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-1 h-1 bg-muted rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-1 h-1 bg-muted rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
         </span>
       </div>
     </div>
@@ -431,7 +431,7 @@ function MentionsDropdown({
             onClick={() => onSelect(member)}
             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-hover transition-colors text-left"
           >
-            <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-medium text-main">
+            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-medium text-main">
               {name[0]?.toUpperCase() || '?'}
             </div>
             <div className="min-w-0">
@@ -481,7 +481,7 @@ function PhotoPreview({
           />
           <button
             onClick={onCancel}
-            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center hover:bg-slate-600"
+            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-secondary rounded-full flex items-center justify-center hover:bg-surface-hover"
           >
             <X className="h-3 w-3 text-main" />
           </button>
@@ -604,7 +604,7 @@ function ConversationInfoPanel({
                     </div>
                     <div className={cn(
                       'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-surface',
-                      isOnline ? 'bg-emerald-500' : 'bg-slate-600',
+                      isOnline ? 'bg-emerald-500' : 'bg-secondary',
                     )} />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -709,7 +709,7 @@ function SharedImagesStrip({ messages }: { messages: ChatMessage[] }) {
       {images.map(img => (
         <div
           key={img.id}
-          className="w-6 h-6 rounded overflow-hidden border border-main flex-shrink-0 cursor-pointer hover:border-slate-500 transition-colors"
+          className="w-6 h-6 rounded overflow-hidden border border-main flex-shrink-0 cursor-pointer hover:border-accent transition-colors"
         >
           <img
             src={img.fileUrl!}

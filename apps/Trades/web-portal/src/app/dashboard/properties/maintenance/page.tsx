@@ -34,7 +34,7 @@ const statusConfig: Record<MaintenanceStatus, { label: string; color: string; bg
   scheduled: { label: 'Scheduled', color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-100 dark:bg-cyan-900/30' },
   in_progress: { label: 'In Progress', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
   completed: { label: 'Completed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  cancelled: { label: 'Cancelled', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  cancelled: { label: 'Cancelled', color: 'text-muted', bgColor: 'bg-secondary' },
 };
 
 const urgencyConfig: Record<Urgency, { label: string; color: string; bgColor: string }> = {
@@ -260,7 +260,7 @@ export default function MaintenancePage() {
                         </div>
 
                         <div className="flex items-center gap-1 text-xs text-muted mb-2">
-                          <span className={cn('px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400')}>
+                          <span className={cn('px-1.5 py-0.5 rounded text-[10px] font-medium bg-secondary text-muted')}>
                             {categoryLabels[req.category]}
                           </span>
                         </div>

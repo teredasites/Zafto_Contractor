@@ -463,7 +463,7 @@ function ActiveWorkDropdown() {
                         <span className={cn(
                           'text-[10px] font-medium px-1.5 py-0.5 rounded',
                           item.status === 'in_progress' ? 'bg-emerald-50 text-emerald-600' :
-                          item.status === 'draft' ? 'bg-gray-100 text-gray-600' :
+                          item.status === 'draft' ? 'bg-secondary text-muted' :
                           item.status === 'sent' || item.status === 'pending' ? 'bg-amber-50 text-amber-600' :
                           'bg-blue-50 text-blue-600',
                         )}>

@@ -29,7 +29,7 @@ const statusConfig: Record<ChargeStatus, { label: string; color: string; bgColor
   partial: { label: 'Partial', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
   paid: { label: 'Paid', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
   overdue: { label: 'Overdue', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  waived: { label: 'Waived', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  waived: { label: 'Waived', color: 'text-muted', bgColor: 'bg-secondary' },
   credited: { label: 'Credited', color: 'text-purple-700 dark:text-purple-300', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
 };
 

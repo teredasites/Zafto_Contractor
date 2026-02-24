@@ -151,8 +151,8 @@ function SummaryCards({
       title: 'AR Outstanding',
       value: formatCurrency(totalArOutstanding),
       icon: Clock,
-      color: totalArOutstanding > 0 ? 'text-orange-400' : 'text-slate-400',
-      bg: totalArOutstanding > 0 ? 'bg-orange-500/10' : 'bg-slate-500/10',
+      color: totalArOutstanding > 0 ? 'text-orange-400' : 'text-muted',
+      bg: totalArOutstanding > 0 ? 'bg-orange-500/10' : 'bg-secondary',
     },
     {
       title: 'SLA Violations',

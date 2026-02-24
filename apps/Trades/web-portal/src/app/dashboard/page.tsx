@@ -823,7 +823,7 @@ function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: 
           {types.map((t) => (
             <div
               key={t}
-              className={cn('h-full', JOB_TYPE_REVENUE_CONFIG[t]?.bg || 'bg-gray-400')}
+              className={cn('h-full', JOB_TYPE_REVENUE_CONFIG[t]?.bg || 'bg-muted')}
               style={{ width: `${(typeRevenue[t] / grandTotal) * 100}%` }}
             />
           ))}
@@ -832,7 +832,7 @@ function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: 
         {/* Breakdown rows */}
         <div className="space-y-2">
           {types.map((t) => {
-            const cfg = JOB_TYPE_REVENUE_CONFIG[t] || { label: t, color: 'text-main', bg: 'bg-gray-400' };
+            const cfg = JOB_TYPE_REVENUE_CONFIG[t] || { label: t, color: 'text-main', bg: 'bg-muted' };
             const pct = ((typeRevenue[t] / grandTotal) * 100).toFixed(1);
             const avg = typeCount[t] ? typeRevenue[t] / typeCount[t] : 0;
             return (

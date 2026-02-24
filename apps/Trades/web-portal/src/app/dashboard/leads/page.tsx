@@ -111,7 +111,7 @@ function getScoreLabel(score: number): { label: string; color: string } {
   if (score >= 80) return { label: 'Hot', color: 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400' };
   if (score >= 60) return { label: 'Warm', color: 'text-amber-600 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400' };
   if (score >= 40) return { label: 'Cool', color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400' };
-  return { label: 'Cold', color: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400' };
+  return { label: 'Cold', color: 'text-muted bg-secondary' };
 }
 
 export default function LeadsPage() {

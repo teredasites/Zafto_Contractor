@@ -28,7 +28,7 @@ import { useTranslation } from '@/lib/translations';
 type TurnStatus = UnitTurnData['status'];
 
 const statusConfig: Record<TurnStatus, { label: string; color: string; bgColor: string }> = {
-  pending: { label: 'Pending', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  pending: { label: 'Pending', color: 'text-muted', bgColor: 'bg-secondary' },
   in_progress: { label: 'In Progress', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
   ready: { label: 'Ready', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
   listed: { label: 'Listed', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
@@ -227,7 +227,7 @@ export default function UnitTurnsPage() {
                             <div
                               className={cn(
                                 'h-full rounded-full transition-all',
-                                completedTasks === totalTasks ? 'bg-emerald-500' : completedTasks > 0 ? 'bg-amber-500' : 'bg-gray-300'
+                                completedTasks === totalTasks ? 'bg-emerald-500' : completedTasks > 0 ? 'bg-amber-500' : 'bg-secondary'
                               )}
                               style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}
                             />

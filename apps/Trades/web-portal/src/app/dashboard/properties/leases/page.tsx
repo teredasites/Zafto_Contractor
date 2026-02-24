@@ -24,10 +24,10 @@ import { useTranslation } from '@/lib/translations';
 type LeaseStatus = LeaseData['status'];
 
 const statusConfig: Record<LeaseStatus, { label: string; color: string; bgColor: string }> = {
-  draft: { label: 'Draft', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
+  draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-secondary' },
   active: { label: 'Active', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
   expired: { label: 'Expired', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  terminated: { label: 'Terminated', color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-100 dark:bg-slate-900/30' },
+  terminated: { label: 'Terminated', color: 'text-muted', bgColor: 'bg-secondary' },
   renewed: { label: 'Renewed', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
 };
 

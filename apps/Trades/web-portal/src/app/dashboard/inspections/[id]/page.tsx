@@ -127,7 +127,7 @@ export default function InspectionDetailPage({ params }: { params: Promise<{ id:
             <span className="text-sm font-semibold text-main">{progress}%</span>
           </div>
           <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
-            <div className={cn('h-full rounded-full transition-all', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-gray-300')} style={{ width: `${progress}%` }} />
+            <div className={cn('h-full rounded-full transition-all', progress === 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-secondary')} style={{ width: `${progress}%` }} />
           </div>
           <div className="flex items-center gap-6 mt-4 text-sm">
             <span className="flex items-center gap-1.5"><CheckCircle size={14} className="text-emerald-500" />{passedItems} passed</span>

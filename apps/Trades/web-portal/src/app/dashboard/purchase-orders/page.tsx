@@ -196,8 +196,8 @@ export default function PurchaseOrdersPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                <FileText size={20} className="text-slate-600 dark:text-slate-400" />
+              <div className="p-2 bg-secondary rounded-lg">
+                <FileText size={20} className="text-muted" />
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalPOs}</p>

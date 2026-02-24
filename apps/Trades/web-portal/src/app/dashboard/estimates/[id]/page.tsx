@@ -45,7 +45,7 @@ const ROOM_PRESETS = [
 ];
 
 const TIER_CONFIG: { value: MaterialTier; label: string; color: string; bgColor: string; borderColor: string }[] = [
-  { value: 'economy', label: 'Economy', color: 'text-slate-400', bgColor: 'bg-slate-500/10', borderColor: 'border-slate-500/20' },
+  { value: 'economy', label: 'Economy', color: 'text-muted', bgColor: 'bg-secondary', borderColor: 'border-main' },
   { value: 'standard', label: 'Standard', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/20' },
   { value: 'premium', label: 'Premium', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20' },
   { value: 'elite', label: 'Elite', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20' },
@@ -516,10 +516,10 @@ export default function EstimateEditorPage() {
                   <h1 className="text-lg font-semibold text-main">{estimate.estimateNumber}</h1>
                   <span className={cn(
                     'text-[10px] px-1.5 py-0.5 rounded-full capitalize',
-                    estimate.status === 'draft' ? 'bg-slate-700/50 text-muted' :
+                    estimate.status === 'draft' ? 'bg-secondary text-muted' :
                     estimate.status === 'approved' ? 'bg-green-500/10 text-green-400' :
                     estimate.status === 'sent' ? 'bg-blue-500/10 text-blue-400' :
-                    'bg-slate-700/50 text-muted'
+                    'bg-secondary text-muted'
                   )}>
                     {estimate.status}
                   </span>
@@ -1567,7 +1567,7 @@ function LineItemRow({
               {ACTION_TYPES.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
             </select>
           ) : (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700/50 text-muted capitalize">{line.actionType}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted capitalize">{line.actionType}</span>
           )}
         </div>
 
@@ -1669,7 +1669,7 @@ function ItemRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] font-mono font-medium text-blue-400">{item.zaftoCode}</span>
-            <span className="text-[10px] px-1 py-0.5 rounded bg-slate-700/50 text-muted">{item.trade}</span>
+            <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-muted">{item.trade}</span>
           </div>
           <p className="text-xs text-main mt-0.5 line-clamp-2">{item.name}</p>
           <div className="flex items-center gap-2 mt-1">
@@ -2187,7 +2187,7 @@ function EstimatePreview({
                   <div className="flex items-center gap-2 mb-2">
                     <span className={`text-xs font-bold text-${color}-400`}>{label}</span>
                     <span className="text-[10px] text-muted">{desc}</span>
-                    {isActive && <span className="text-[9px] bg-slate-700 text-main px-1.5 py-0.5 rounded">{t('common.current')}</span>}
+                    {isActive && <span className="text-[9px] bg-secondary text-main px-1.5 py-0.5 rounded">{t('common.current')}</span>}
                   </div>
                   <div className="text-lg font-bold text-main">${fmtCurrency(tier.grand)}</div>
                   <div className="text-[10px] text-muted mt-1">{tier.items.length} items priced</div>
@@ -2224,7 +2224,7 @@ function EstimatePreview({
                     <td className="py-1.5 px-3 text-right text-muted">{(rate.burdenMultiplier * 100 - 100).toFixed(1)}%</td>
                     <td className="py-1.5 px-3 text-right text-main font-medium">${fmtCurrency(rate.burdenedRate)}/hr</td>
                     <td className="py-1.5 px-3">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${rate.source === 'company' ? 'bg-blue-500/10 text-blue-400' : rate.source === 'msa' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-700 text-muted'}`}>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${rate.source === 'company' ? 'bg-blue-500/10 text-blue-400' : rate.source === 'msa' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-secondary text-muted'}`}>
                         {rate.source === 'msa' ? rate.regionName || 'Regional' : rate.source === 'company' ? 'Company' : 'National'}
                       </span>
                     </td>
@@ -2985,7 +2985,7 @@ function TemplatePanel({
                   {tpl.description && <p className="text-[10px] text-muted truncate mt-0.5">{tpl.description}</p>}
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-[10px] text-muted">{tpl.itemCount} items</span>
-                    {tpl.trade && <span className="text-[10px] px-1 py-0.5 rounded bg-slate-700/50 text-muted">{tpl.trade}</span>}
+                    {tpl.trade && <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-muted">{tpl.trade}</span>}
                     <span className={cn(
                       'text-[10px] px-1 py-0.5 rounded',
                       TIER_CONFIG.find(t => t.value === tpl.defaultTier)?.bgColor,
