@@ -1,8 +1,13 @@
 # ZAFTO — Claude Code Instructions
 
-## RULE ZERO — NO SUBAGENTS — NEVER SKIP
+## AGENTS — ENABLED (re-disable if crashes return)
 
+<!-- TO RE-ENABLE THE BAN: uncomment the block below and delete the "ENABLED" header above
+## RULE ZERO — NO SUBAGENTS — NEVER SKIP
 **NEVER use the `Task` tool. NEVER spawn subagents.** They crash the session instantly (V8 use-after-free). Do ALL work sequentially with safe tools: Bash, Read, Write, Edit, Grep, Glob, WebSearch, WebFetch. The ONLY exception: user explicitly asks for subagents. This rule overrides everything.
+-->
+
+Agents/subagents are fully ENABLED with no concurrency limit. Use Task tool as needed — spawn as many parallel agents as the task requires. If V8 crashes return, owner will re-enable the ban above.
 
 ---
 
