@@ -49,6 +49,11 @@ import { useLienProtection, type LienRecord } from '@/lib/hooks/use-lien-protect
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency, formatDateLocale } from '@/lib/format-locale';
 import { CommandPalette } from '@/components/command-palette';
+import {
+  STATE_LIEN_WAIVER_CONFIGS,
+  getLienWaiverConfig,
+  getStatutoryFormStates,
+} from '@/lib/official-lien-waivers';
 
 // ── Tab type ──────────────────────────────────────────────
 type Tab = 'dashboard' | 'rules' | 'waivers' | 'deadlines' | 'notices';
@@ -133,6 +138,9 @@ const STATE_RULES_DATA: StateRule[] = [
   { stateCode: 'MN', stateName: 'Minnesota', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 45, prelimNoticeFrom: 'first furnishing (for subcontractors)', lienFilingDeadlineDays: 120, lienFilingFrom: 'last date of labor/materials', lienEnforcementDeadlineDays: 365, lienEnforcementFrom: 'recording of lien statement', requiredForms: ['Pre-Lien Notice', 'Mechanic\'s Lien Statement', 'Notice of Lien Filing'], recordingOffice: 'County Recorder', specialRequirements: ['Pre-lien notice within 45 days for subs/suppliers', 'Must serve copy on owner within 5 days of recording', 'Residential: owner may demand sworn statement of amounts'], notarizationRequired: false, residentialDifferent: true, statutoryRef: 'Minn. Stat. 514.01-514.17' },
   { stateCode: 'NV', stateName: 'Nevada', prelimNoticeRequired: true, prelimNoticeDeadlineDays: 31, prelimNoticeFrom: 'first furnishing of labor/materials', lienFilingDeadlineDays: 90, lienFilingFrom: 'completion/cessation of work', lienEnforcementDeadlineDays: 180, lienEnforcementFrom: 'recording of notice of lien', requiredForms: ['Notice of Right to Lien', 'Notice of Mechanic\'s Lien', 'Notice to Owner of Pending Lien'], recordingOffice: 'County Recorder', specialRequirements: ['Must serve Notice of Right to Lien within 31 days', 'Must give owner 15-day pre-filing notice', 'Recording within 90 days after notice of completion or 180 if none'], notarizationRequired: true, residentialDifferent: false, statutoryRef: 'Nev. Rev. Stat. 108.221-108.246' },
 ];
+
+// Statutory vs non-statutory waiver states from official data
+const STATUTORY_WAIVER_STATES = getStatutoryFormStates();
 
 // ── Demo Data: Waivers ────────────────────────────────────
 type WaiverType = 'conditional_progress' | 'unconditional_progress' | 'conditional_final' | 'unconditional_final';
@@ -725,6 +733,45 @@ export default function LienProtectionPage() {
                               ))}
                             </ul>
                           </div>
+
+                          {/* Official Waiver Form Status */}
+                          {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode] && (
+                            <div className="mt-2 pt-2 border-t border-main">
+                              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <Stamp className="h-3.5 w-3.5" /> Lien Waiver Forms
+                              </h4>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Badge variant={STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].hasStatutoryForm ? 'warning' : 'secondary'} className="text-xs">
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].hasStatutoryForm ? 'Statutory (Mandatory Form)' : 'Non-Statutory'}
+                                </Badge>
+                                {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].notarizationRequired && (
+                                  <Badge variant="purple" size="sm">Notarization Required for Waivers</Badge>
+                                )}
+                                <span className="text-xs text-muted">
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].statuteCitation}
+                                </span>
+                              </div>
+                              {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].forms.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].forms.map((form, i) => (
+                                    <span key={i} className="text-xs bg-secondary text-main px-2 py-0.5 rounded border border-main">
+                                      {form.title}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].specialRequirements.length > 0 && (
+                                <ul className="mt-2 space-y-1">
+                                  {STATE_LIEN_WAIVER_CONFIGS[rule.stateCode].specialRequirements.map((req, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-xs text-muted">
+                                      <CircleDot className="h-2.5 w-2.5 opacity-50 mt-0.5 flex-shrink-0" />
+                                      {req}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          )}
                         </CardContent>
                       </div>
                     )}

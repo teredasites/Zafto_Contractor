@@ -16,11 +16,14 @@ import {
   Building,
   XCircle,
   ChevronRight,
+  ChevronDown,
   Plus,
   X,
   Edit,
   Trash2,
   RefreshCw,
+  MapPin,
+  ExternalLink,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,6 +34,11 @@ import { formatCurrency, cn } from '@/lib/utils';
 import { formatCompactCurrency, formatDateLocale } from '@/lib/format-locale';
 import { useTranslation } from '@/lib/translations';
 import { useCompliance, type Certification, type ComplianceCategory } from '@/lib/hooks/use-compliance';
+import {
+  STATE_LICENSING_CONFIGS,
+  getStateLicensingConfig,
+  getStatesRequiringStateLicense,
+} from '@/lib/official-state-licensing';
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ className?: string; size?: number }>; color: string }> = {
   license: { label: 'Licenses', icon: Award, color: 'text-blue-400' },
@@ -40,7 +48,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ComponentType
   epa: { label: 'EPA', icon: FileCheck, color: 'text-green-400' },
   vehicle: { label: 'Vehicle', icon: FileCheck, color: 'text-cyan-400' },
   certification: { label: 'Certifications', icon: Award, color: 'text-indigo-400' },
-  other: { label: 'Other', icon: FileCheck, color: 'text-zinc-400' },
+  other: { label: 'Other', icon: FileCheck, color: 'text-muted' },
 };
 
 const CATEGORY_OPTIONS = [
@@ -71,13 +79,13 @@ function StatCard({ label, value, icon: Icon, variant }: {
     success: 'text-emerald-400',
     warning: 'text-amber-400',
     error: 'text-red-400',
-    default: 'text-zinc-400',
+    default: 'text-muted',
   };
   const bgMap = {
     success: 'bg-emerald-500/10',
     warning: 'bg-amber-500/10',
     error: 'bg-red-500/10',
-    default: 'bg-zinc-800',
+    default: 'bg-secondary',
   };
   const v = variant || 'default';
 
@@ -90,7 +98,7 @@ function StatCard({ label, value, icon: Icon, variant }: {
           </div>
           <div>
             <p className={`text-2xl font-bold ${colorMap[v]}`}>{value}</p>
-            <p className="text-xs text-zinc-500">{label}</p>
+            <p className="text-xs text-muted">{label}</p>
           </div>
         </div>
       </CardContent>
@@ -106,6 +114,95 @@ function certStatusVariant(status: string): 'success' | 'error' | 'warning' | 's
     case 'revoked': return 'error';
     default: return 'secondary';
   }
+}
+
+// ── State Licensing Reference (official 50-state data) ──
+const LICENSING_STATES_SORTED = Object.values(STATE_LICENSING_CONFIGS).sort((a, b) => a.stateName.localeCompare(b.stateName));
+
+function StateLicensingReference() {
+  const [expanded, setExpanded] = useState(false);
+  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const stateConfig = selectedState ? getStateLicensingConfig(selectedState) : null;
+
+  return (
+    <Card>
+      <CardHeader>
+        <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <MapPin size={18} className="text-blue-400" />
+            State Licensing Requirements — 50 States + DC
+          </CardTitle>
+          {expanded ? <ChevronDown size={18} className="text-muted" /> : <ChevronRight size={18} className="text-muted" />}
+        </button>
+      </CardHeader>
+      {expanded && (
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted">Official contractor licensing requirements by state. Select a state to view trade-specific licensing details.</p>
+          <div className="flex flex-wrap gap-1.5">
+            {LICENSING_STATES_SORTED.map(s => (
+              <button
+                key={s.stateCode}
+                onClick={() => setSelectedState(selectedState === s.stateCode ? null : s.stateCode)}
+                className={cn(
+                  'px-2 py-1 text-xs rounded border transition-colors',
+                  selectedState === s.stateCode
+                    ? 'bg-blue-900/30 border-blue-700/50 text-blue-300'
+                    : s.requiresStateLicense
+                    ? 'bg-surface border-main text-main hover:border-muted'
+                    : 'bg-surface border-main text-muted hover:border-muted'
+                )}
+              >
+                {s.stateCode}
+              </button>
+            ))}
+          </div>
+          {stateConfig && (
+            <div className="border border-main rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-semibold text-main">{stateConfig.stateName}</h4>
+                <a href={stateConfig.boardUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-400 hover:underline">
+                  <ExternalLink size={12} /> {stateConfig.licensingBoard}
+                </a>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant={stateConfig.requiresStateLicense ? 'warning' : 'secondary'} size="sm">
+                  {stateConfig.licensingModel === 'state' ? 'State License Required' : stateConfig.licensingModel === 'local' ? 'Local Only' : stateConfig.licensingModel === 'registration' ? 'Registration' : 'Hybrid'}
+                </Badge>
+                {stateConfig.examRequired && <Badge variant="info" size="sm">Exam Required</Badge>}
+                {stateConfig.bondRequired && <Badge variant="purple" size="sm">Bond Required</Badge>}
+                {stateConfig.insuranceRequired && <Badge variant="info" size="sm">Insurance Required</Badge>}
+                {stateConfig.ceRequired && <Badge variant="secondary" size="sm">CE Required</Badge>}
+                {stateConfig.monetaryThreshold && <Badge variant="secondary" size="sm">Threshold: ${stateConfig.monetaryThreshold.toLocaleString()}</Badge>}
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+                {(['generalContractor', 'electrician', 'plumber', 'hvac', 'roofing'] as const).map(trade => {
+                  const req = stateConfig[trade];
+                  return (
+                    <div key={trade} className="p-2 rounded border border-main">
+                      <p className="font-medium text-main capitalize mb-1">{trade === 'generalContractor' ? 'General Contractor' : trade === 'hvac' ? 'HVAC' : trade.charAt(0).toUpperCase() + trade.slice(1)}</p>
+                      <Badge variant={req.requiresLicense ? 'warning' : 'success'} size="sm">
+                        {req.requiresLicense ? `${req.licenseLevel} license` : 'No license'}
+                      </Badge>
+                      {req.experienceYears && <p className="text-muted mt-1">{req.experienceYears}yr exp</p>}
+                      {req.notes && <p className="text-muted mt-1 line-clamp-2">{req.notes}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+              {stateConfig.reciprocityStates.length > 0 && (
+                <p className="text-xs text-muted">Reciprocity: {stateConfig.reciprocityStates.join(', ')}</p>
+              )}
+              {stateConfig.specialNotes.length > 0 && (
+                <div className="text-xs text-muted space-y-1">
+                  {stateConfig.specialNotes.map((note, i) => <p key={i}>• {note}</p>)}
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      )}
+    </Card>
+  );
 }
 
 export default function CompliancePage() {
@@ -386,6 +483,9 @@ export default function CompliancePage() {
           })}
         </div>
       )}
+
+      {/* State Licensing Requirements — official data from 50 states */}
+      <StateLicensingReference />
 
       {/* Annual Renewal Cost */}
       {summary.totalRenewalCost > 0 && (

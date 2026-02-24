@@ -8,6 +8,10 @@ import {
   AlertTriangle,
   Building,
   Loader2,
+  ChevronDown,
+  ChevronRight,
+  FileCheck,
+  BarChart3,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +24,13 @@ import {
   type ViolationResult,
 } from '@/lib/hooks/use-osha-standards';
 import { useTranslation } from '@/lib/translations';
+import {
+  OSHA_SUBPARTS,
+  TOP_CITED_VIOLATIONS,
+  OSHA_CHECKLISTS,
+  getChecklistsForTrade,
+  getCriticalItems,
+} from '@/lib/official-osha-checklists';
 
 const tradeOptions = [
   { value: 'all', label: 'All Trades' },
@@ -95,6 +106,44 @@ const US_STATES = [
   { value: 'WI', label: 'Wisconsin' },
   { value: 'WY', label: 'Wyoming' },
 ];
+
+function OshaChecklistSectionRow({ section }: { section: typeof OSHA_CHECKLISTS[number] }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="border border-main rounded-lg overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface-hover transition-colors text-left"
+      >
+        {expanded ? <ChevronDown size={16} className="text-muted" /> : <ChevronRight size={16} className="text-muted" />}
+        <div className="flex-1">
+          <span className="font-medium text-main">{section.title}</span>
+          <span className="ml-2 text-xs text-muted">({section.cfrSection})</span>
+        </div>
+        <Badge variant="secondary" size="sm">{section.items.length} items</Badge>
+      </button>
+      {expanded && (
+        <div className="border-t border-main divide-y divide-main">
+          {section.items.map((item) => (
+            <div key={item.id} className="px-4 py-2.5 flex items-start gap-3">
+              <Badge
+                variant={item.criticality === 'critical' ? 'error' : item.criticality === 'high' ? 'warning' : 'secondary'}
+                size="sm"
+                className="mt-0.5 flex-shrink-0"
+              >
+                {item.criticality}
+              </Badge>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-main">{item.requirement}</p>
+                <p className="text-xs text-muted mt-0.5">{item.cfrReference}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function OshaStandardsPage() {
   const { t } = useTranslation();
@@ -406,6 +455,53 @@ export default function OshaStandardsPage() {
               ))}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Top 10 Most Cited Violations — real OSHA data */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 size={18} className="text-red-400" />
+            Top 10 Most Cited OSHA Violations (FY 2024)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {TOP_CITED_VIOLATIONS.map((v) => (
+              <div key={v.cfrSection} className="flex items-center gap-4 p-3 rounded-lg bg-main border border-main hover:bg-surface-hover transition-colors">
+                <span className="text-lg font-bold text-muted w-8 text-center">#{v.rank}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="font-mono text-sm font-semibold text-main">{v.cfrSection}</span>
+                    <Badge variant="error" size="sm">{v.citations2024.toLocaleString()} citations</Badge>
+                  </div>
+                  <p className="text-sm text-muted">{v.standard}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xs text-muted">Per Violation</p>
+                  <p className="font-semibold text-amber-400">{v.penaltyPerViolation}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* OSHA Safety Checklists by Trade */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileCheck size={18} className="text-emerald-400" />
+            Safety Checklists — 29 CFR 1926 (by Section)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {OSHA_CHECKLISTS.map((section) => (
+              <OshaChecklistSectionRow key={section.id} section={section} />
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
