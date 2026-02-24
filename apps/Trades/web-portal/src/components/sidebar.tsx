@@ -153,6 +153,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
       { name: 'Schedule', href: '/dashboard/scheduling', icon: ClipboardList },
       { name: 'Weather Schedule', href: '/dashboard/weather-scheduling', icon: Cloud },
+      { name: 'Daily Logs', href: '/dashboard/daily-logs', icon: ClipboardList },
       { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
       { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock, permission: PERMISSIONS.TIMECLOCK_VIEW_ALL },
       { name: 'Inspections', href: '/dashboard/inspections', icon: ClipboardCheck },
