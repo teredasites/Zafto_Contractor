@@ -274,7 +274,10 @@ export interface Invoice {
   customerId: string;
   customer?: Customer;
   jobId?: string;
+  estimateId?: string;
+  parentInvoiceId?: string;
   invoiceNumber: string;
+  title?: string;
   status: InvoiceStatus;
   lineItems: InvoiceLineItem[];
   subtotal: number;
@@ -294,6 +297,22 @@ export interface Invoice {
   lateFeePerDay?: number;
   discountPercent?: number;
   paymentTerms?: string;
+  // Progress invoicing
+  progressGroupId?: string;
+  isProgressInvoice?: boolean;
+  milestoneName?: string;
+  milestonePercent?: number;
+  // Recurring invoicing
+  isRecurringTemplate?: boolean;
+  recurringFrequency?: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'semi_annual' | 'annual';
+  recurringNextDate?: Date;
+  recurringEndDate?: Date;
+  recurringCount?: number;
+  recurringTemplateId?: string;
+  serviceAgreementId?: string;
+  // Online payment
+  paymentLinkToken?: string;
+  paymentLinkUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
