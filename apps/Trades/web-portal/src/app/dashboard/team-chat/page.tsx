@@ -120,17 +120,17 @@ const REACTION_OPTIONS: { type: ReactionType; icon: typeof ThumbsUp; label: stri
 
 function ReactionPicker({ onReact }: { onReact: (type: ReactionType) => void }) {
   return (
-    <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-700 rounded-lg px-1 py-0.5 shadow-lg">
+    <div className="flex items-center gap-0.5 bg-secondary border border-main rounded-lg px-1 py-0.5 shadow-lg">
       {REACTION_OPTIONS.map(r => {
         const Icon = r.icon;
         return (
           <button
             key={r.type}
             onClick={() => onReact(r.type)}
-            className="p-1 rounded hover:bg-zinc-700 transition-colors"
+            className="p-1 rounded hover:bg-surface-hover transition-colors"
             title={r.label}
           >
-            <Icon className="h-3.5 w-3.5 text-zinc-400 hover:text-zinc-200" />
+            <Icon className="h-3.5 w-3.5 text-muted hover:text-main" />
           </button>
         );
       })}
@@ -153,7 +153,7 @@ function ReactionDisplay({
         return (
           <span
             key={r.type}
-            className="inline-flex items-center gap-0.5 bg-zinc-700/50 rounded-full px-1.5 py-0.5 text-[10px] text-zinc-400"
+            className="inline-flex items-center gap-0.5 bg-slate-700/50 rounded-full px-1.5 py-0.5 text-[10px] text-slate-400"
             title={r.userIds
               .map(id => {
                 const m = memberMap.get(id);
@@ -212,21 +212,21 @@ function ConversationItem({
     <button
       onClick={onClick}
       className={cn(
-        'w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-zinc-800/50 transition-colors',
-        isActive && 'bg-zinc-800',
+        'w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-surface-hover transition-colors',
+        isActive && 'bg-secondary',
       )}
     >
       <div className={cn(
         'flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0',
-        isActive ? 'bg-emerald-500/20' : 'bg-zinc-800',
+        isActive ? 'bg-emerald-500/20' : 'bg-secondary',
       )}>
-        <Icon className={cn('h-4 w-4', isActive ? 'text-emerald-400' : 'text-zinc-500')} />
+        <Icon className={cn('h-4 w-4', isActive ? 'text-emerald-400' : 'text-muted')} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between">
           <span className={cn(
             'text-sm truncate',
-            conversation.unreadCount > 0 ? 'text-zinc-100 font-semibold' : isActive ? 'text-zinc-100' : 'text-zinc-300',
+            conversation.unreadCount > 0 ? 'text-main font-semibold' : isActive ? 'text-main' : 'text-main',
           )}>
             {displayTitle}
           </span>
@@ -234,7 +234,7 @@ function ConversationItem({
             {timeLabel && (
               <span className={cn(
                 'text-[10px]',
-                conversation.unreadCount > 0 ? 'text-emerald-400' : 'text-zinc-600',
+                conversation.unreadCount > 0 ? 'text-emerald-400' : 'text-muted',
               )}>
                 {timeLabel}
               </span>
@@ -249,7 +249,7 @@ function ConversationItem({
         {conversation.lastMessagePreview && (
           <p className={cn(
             'text-xs truncate mt-0.5',
-            conversation.unreadCount > 0 ? 'text-zinc-400' : 'text-zinc-600',
+            conversation.unreadCount > 0 ? 'text-muted' : 'text-muted',
           )}>
             {conversation.lastMessagePreview}
           </p>
@@ -285,7 +285,7 @@ function MessageBubble({
   if (message.messageType === 'system') {
     return (
       <div className="text-center py-1.5">
-        <span className="text-[11px] text-zinc-600 bg-zinc-800/50 px-2.5 py-1 rounded-full">
+        <span className="text-[11px] text-muted bg-secondary/50 px-2.5 py-1 rounded-full">
           {message.content}
         </span>
       </div>
@@ -313,7 +313,7 @@ function MessageBubble({
 
         <div className={cn(
           'rounded-xl px-3.5 py-2',
-          isOwn ? 'bg-emerald-600/20 text-zinc-100' : 'bg-zinc-800 text-zinc-200',
+          isOwn ? 'bg-emerald-600/20 text-main' : 'bg-secondary text-main',
         )}>
           {!isOwn && (
             <p className="text-[11px] text-emerald-400 font-medium mb-0.5">{message.senderName}</p>
@@ -329,7 +329,7 @@ function MessageBubble({
             </div>
           )}
           {message.fileUrl && message.messageType === 'file' && (
-            <div className="flex items-center gap-1.5 text-xs text-zinc-400 mb-1">
+            <div className="flex items-center gap-1.5 text-xs text-muted mb-1">
               <Paperclip className="h-3 w-3" />
               <span className="truncate underline">{message.fileName || 'File'}</span>
             </div>
@@ -340,13 +340,13 @@ function MessageBubble({
             </p>
           )}
           <div className="flex items-center gap-1 mt-1">
-            <span className="text-[10px] text-zinc-500">
+            <span className="text-[10px] text-muted">
               {formatTimeLocale(message.createdAt)}
             </span>
-            {message.isEdited && <span className="text-[10px] text-zinc-600">(edited)</span>}
+            {message.isEdited && <span className="text-[10px] text-muted">(edited)</span>}
             {/* Read receipt indicator for own messages */}
             {isOwn && readCount > 0 && (
-              <span className="flex items-center gap-0.5 text-[10px] text-zinc-500 ml-1">
+              <span className="flex items-center gap-0.5 text-[10px] text-muted ml-1">
                 <Eye className="h-2.5 w-2.5" />
                 {readCount}
               </span>
@@ -366,7 +366,7 @@ function MessageBubble({
               return (
                 <div
                   key={receipt.userId}
-                  className="w-4 h-4 rounded-full bg-zinc-700 flex items-center justify-center text-[8px] text-zinc-300 border border-zinc-900"
+                  className="w-4 h-4 rounded-full bg-slate-700 flex items-center justify-center text-[8px] text-main border border-surface"
                   title={m ? `${m.firstName} ${m.lastName}` : 'Read'}
                 >
                   {initial}
@@ -374,7 +374,7 @@ function MessageBubble({
               );
             })}
             {readReceipts.length > 5 && (
-              <span className="text-[9px] text-zinc-500 ml-0.5">+{readReceipts.length - 5}</span>
+              <span className="text-[9px] text-muted ml-0.5">+{readReceipts.length - 5}</span>
             )}
           </div>
         )}
@@ -390,12 +390,12 @@ function MessageBubble({
 function TypingIndicator({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-2 px-4 py-1">
-      <div className="bg-zinc-800 rounded-xl px-3 py-2 flex items-center gap-1.5">
-        <span className="text-xs text-zinc-500">{name} is typing</span>
+      <div className="bg-secondary rounded-xl px-3 py-2 flex items-center gap-1.5">
+        <span className="text-xs text-muted">{name} is typing</span>
         <span className="flex gap-0.5">
-          <span className="w-1 h-1 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-1 h-1 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-1 h-1 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <span className="w-1 h-1 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-1 h-1 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-1 h-1 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
         </span>
       </div>
     </div>
@@ -427,7 +427,7 @@ function MentionsDropdown({
 
   return (
     <div
-      className="absolute z-20 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-48 overflow-y-auto w-56"
+      className="absolute z-20 bg-secondary border border-main rounded-lg shadow-xl max-h-48 overflow-y-auto w-56"
       style={{ bottom: position.bottom, left: position.left }}
     >
       {filtered.slice(0, 8).map(member => {
@@ -436,14 +436,14 @@ function MentionsDropdown({
           <button
             key={member.id}
             onClick={() => onSelect(member)}
-            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-zinc-700/50 transition-colors text-left"
+            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-hover transition-colors text-left"
           >
-            <div className="w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-[10px] font-medium text-zinc-300">
+            <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-medium text-main">
               {name[0]?.toUpperCase() || '?'}
             </div>
             <div className="min-w-0">
-              <p className="text-sm text-zinc-200 truncate">{name}</p>
-              <p className="text-[10px] text-zinc-500">{member.role}</p>
+              <p className="text-sm text-main truncate">{name}</p>
+              <p className="text-[10px] text-muted">{member.role}</p>
             </div>
           </button>
         );
@@ -478,24 +478,24 @@ function PhotoPreview({
   if (!preview) return null;
 
   return (
-    <div className="p-3 border-t border-zinc-800 bg-zinc-900/50">
+    <div className="p-3 border-t border-main bg-surface/50">
       <div className="flex items-end gap-3">
         <div className="relative">
           <img
             src={preview}
             alt="Preview"
-            className="h-20 w-20 object-cover rounded-lg border border-zinc-700"
+            className="h-20 w-20 object-cover rounded-lg border border-main"
           />
           <button
             onClick={onCancel}
-            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-zinc-700 rounded-full flex items-center justify-center hover:bg-zinc-600"
+            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center hover:bg-slate-600"
           >
-            <X className="h-3 w-3 text-zinc-300" />
+            <X className="h-3 w-3 text-main" />
           </button>
         </div>
         <div className="flex-1">
-          <p className="text-xs text-zinc-400 truncate mb-1">{file.name}</p>
-          <p className="text-[10px] text-zinc-600">{(file.size / 1024).toFixed(1)} KB</p>
+          <p className="text-xs text-muted truncate mb-1">{file.name}</p>
+          <p className="text-[10px] text-muted">{(file.size / 1024).toFixed(1)} KB</p>
         </div>
         <Button size="sm" onClick={onSend} disabled={sending}>
           {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
@@ -514,19 +514,19 @@ function JobThreadCard({ conversation }: { conversation: Conversation }) {
   const jobData = DEMO_JOB_DATA.default;
 
   return (
-    <div className="px-4 py-2.5 border-b border-zinc-800 bg-zinc-800/30">
+    <div className="px-4 py-2.5 border-b border-main bg-secondary/30">
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
           <Briefcase className="h-4 w-4 text-emerald-400" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-zinc-100 truncate">{jobData.title}</span>
+            <span className="text-sm font-medium text-main truncate">{jobData.title}</span>
             <Badge variant="success" className="text-[10px] px-1.5 py-0">{jobData.status}</Badge>
           </div>
-          <p className="text-xs text-zinc-500 mt-0.5">Customer: {jobData.customer}</p>
+          <p className="text-xs text-muted mt-0.5">Customer: {jobData.customer}</p>
         </div>
-        <ChevronRight className="h-4 w-4 text-zinc-600 flex-shrink-0" />
+        <ChevronRight className="h-4 w-4 text-muted flex-shrink-0" />
       </div>
     </div>
   );
@@ -568,17 +568,17 @@ function ConversationInfoPanel({
   ];
 
   return (
-    <div className="w-72 border-l border-zinc-800 flex flex-col bg-zinc-900">
+    <div className="w-72 border-l border-main flex flex-col bg-surface">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-zinc-100">Conversation Info</h3>
-        <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded">
-          <X className="h-4 w-4 text-zinc-500" />
+      <div className="px-4 py-3 border-b border-main flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-main">Conversation Info</h3>
+        <button onClick={onClose} className="p-1 hover:bg-surface-hover rounded">
+          <X className="h-4 w-4 text-muted" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-zinc-800">
+      <div className="flex border-b border-main">
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -587,7 +587,7 @@ function ConversationInfoPanel({
               'flex-1 py-2 text-[11px] font-medium transition-colors',
               activeTab === tab.key
                 ? 'text-emerald-400 border-b-2 border-emerald-400'
-                : 'text-zinc-500 hover:text-zinc-300',
+                : 'text-muted hover:text-main',
             )}
           >
             {tab.label}
@@ -605,26 +605,26 @@ function ConversationInfoPanel({
               return (
                 <div key={member.id} className="flex items-center gap-2.5 px-4 py-2">
                   <div className="relative">
-                    <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-medium text-zinc-400">
+                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-medium text-muted">
                       {name[0]?.toUpperCase() || '?'}
                     </div>
                     <div className={cn(
-                      'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-zinc-900',
-                      isOnline ? 'bg-emerald-500' : 'bg-zinc-600',
+                      'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-surface',
+                      isOnline ? 'bg-emerald-500' : 'bg-slate-600',
                     )} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-zinc-200 truncate">{name}</p>
-                    <p className="text-[10px] text-zinc-500">{member.role}</p>
+                    <p className="text-sm text-main truncate">{name}</p>
+                    <p className="text-[10px] text-muted">{member.role}</p>
                   </div>
-                  <span className={cn('text-[10px]', isOnline ? 'text-emerald-400' : 'text-zinc-600')}>
+                  <span className={cn('text-[10px]', isOnline ? 'text-emerald-400' : 'text-muted')}>
                     {isOnline ? 'Online' : 'Offline'}
                   </span>
                 </div>
               );
             })}
             {participants.length === 0 && (
-              <p className="text-xs text-zinc-500 text-center py-6">No participants</p>
+              <p className="text-xs text-muted text-center py-6">No participants</p>
             )}
           </div>
         )}
@@ -633,16 +633,16 @@ function ConversationInfoPanel({
           <div className="py-1">
             {sharedFiles.length === 0 ? (
               <div className="text-center py-8">
-                <FileText className="h-6 w-6 mx-auto mb-2 text-zinc-600" />
-                <p className="text-xs text-zinc-500">No shared files yet</p>
+                <FileText className="h-6 w-6 mx-auto mb-2 text-muted" />
+                <p className="text-xs text-muted">No shared files yet</p>
               </div>
             ) : (
               sharedFiles.map(f => (
-                <div key={f.id} className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-800/50">
-                  <Paperclip className="h-3.5 w-3.5 text-zinc-500 flex-shrink-0" />
+                <div key={f.id} className="flex items-center gap-2 px-4 py-2 hover:bg-surface-hover">
+                  <Paperclip className="h-3.5 w-3.5 text-muted flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-zinc-200 truncate">{f.fileName || 'Unnamed'}</p>
-                    <p className="text-[10px] text-zinc-500">{formatTimeLocale(f.createdAt)}</p>
+                    <p className="text-xs text-main truncate">{f.fileName || 'Unnamed'}</p>
+                    <p className="text-[10px] text-muted">{formatTimeLocale(f.createdAt)}</p>
                   </div>
                 </div>
               ))
@@ -654,8 +654,8 @@ function ConversationInfoPanel({
           <div className="p-2">
             {sharedImages.length === 0 ? (
               <div className="text-center py-8">
-                <ImageIcon className="h-6 w-6 mx-auto mb-2 text-zinc-600" />
-                <p className="text-xs text-zinc-500">No shared images yet</p>
+                <ImageIcon className="h-6 w-6 mx-auto mb-2 text-muted" />
+                <p className="text-xs text-muted">No shared images yet</p>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-1">
@@ -678,18 +678,18 @@ function ConversationInfoPanel({
           <div className="py-1">
             {pinnedMessages.length === 0 ? (
               <div className="text-center py-8">
-                <Pin className="h-6 w-6 mx-auto mb-2 text-zinc-600" />
-                <p className="text-xs text-zinc-500">No pinned messages</p>
+                <Pin className="h-6 w-6 mx-auto mb-2 text-muted" />
+                <p className="text-xs text-muted">No pinned messages</p>
               </div>
             ) : (
               pinnedMessages.map(msg => (
-                <div key={msg.id} className="px-4 py-2 border-b border-zinc-800/50">
+                <div key={msg.id} className="px-4 py-2 border-b border-main/50">
                   <div className="flex items-center gap-1 mb-1">
                     <Pin className="h-2.5 w-2.5 text-emerald-400" />
                     <span className="text-[10px] text-emerald-400 font-medium">{msg.senderName}</span>
                   </div>
-                  <p className="text-xs text-zinc-300 line-clamp-2">{msg.content}</p>
-                  <span className="text-[10px] text-zinc-600 mt-0.5 block">
+                  <p className="text-xs text-main line-clamp-2">{msg.content}</p>
+                  <span className="text-[10px] text-muted mt-0.5 block">
                     {formatTimeLocale(msg.createdAt)}
                   </span>
                 </div>
@@ -715,7 +715,7 @@ function SharedImagesStrip({ messages }: { messages: ChatMessage[] }) {
       {images.map(img => (
         <div
           key={img.id}
-          className="w-6 h-6 rounded overflow-hidden border border-zinc-700 flex-shrink-0 cursor-pointer hover:border-zinc-500 transition-colors"
+          className="w-6 h-6 rounded overflow-hidden border border-main flex-shrink-0 cursor-pointer hover:border-slate-500 transition-colors"
         >
           <img
             src={img.fileUrl!}
@@ -799,10 +799,10 @@ function NewConversationModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <Card className="bg-zinc-900 border-zinc-800 w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden">
+      <Card className="bg-surface border-main w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-100">
+        <div className="px-4 py-3 border-b border-main flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-main">
             {mode === 'direct' ? 'New Message' : 'New Group'}
           </h2>
           <div className="flex items-center gap-2">
@@ -819,20 +819,20 @@ function NewConversationModal({
                 {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create'}
               </Button>
             )}
-            <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded">
-              <X className="h-4 w-4 text-zinc-500" />
+            <button onClick={onClose} className="p-1 hover:bg-surface-hover rounded">
+              <X className="h-4 w-4 text-muted" />
             </button>
           </div>
         </div>
 
         {/* Group name input */}
         {mode === 'group' && (
-          <div className="px-4 py-2 border-b border-zinc-800">
+          <div className="px-4 py-2 border-b border-main">
             <input
               value={groupName}
               onChange={e => setGroupName(e.target.value)}
               placeholder="Group name..."
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+              className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
             />
             {selectedIds.size > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -857,14 +857,14 @@ function NewConversationModal({
         )}
 
         {/* Search */}
-        <div className="px-4 py-2 border-b border-zinc-800">
+        <div className="px-4 py-2 border-b border-main">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search team members..."
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-9 pr-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+              className="w-full bg-secondary border border-main rounded-lg pl-9 pr-3 py-2 text-sm text-main placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
             />
           </div>
         </div>
@@ -873,10 +873,10 @@ function NewConversationModal({
         <div className="flex-1 overflow-y-auto">
           {creating && mode === 'direct' ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
+              <Loader2 className="h-5 w-5 animate-spin text-muted" />
             </div>
           ) : filteredMembers.length === 0 ? (
-            <div className="text-center py-8 text-zinc-500 text-sm">{t('dispatch.noTeamMembers')}</div>
+            <div className="text-center py-8 text-muted text-sm">{t('dispatch.noTeamMembers')}</div>
           ) : (
             filteredMembers.map(member => {
               const isSelected = selectedIds.has(member.id);
@@ -886,19 +886,19 @@ function NewConversationModal({
                 <button
                   key={member.id}
                   onClick={() => mode === 'direct' ? handleDirectSelect(member) : toggleMember(member.id)}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-800/50 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-hover transition-colors text-left"
                 >
-                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-medium text-zinc-400">
+                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-medium text-muted">
                     {name[0]?.toUpperCase() || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-zinc-200 truncate">{name}</p>
-                    <p className="text-xs text-zinc-600 truncate">{member.role}</p>
+                    <p className="text-sm text-main truncate">{name}</p>
+                    <p className="text-xs text-muted truncate">{member.role}</p>
                   </div>
                   {mode === 'group' && (
                     <div className={cn(
                       'w-5 h-5 rounded border flex items-center justify-center',
-                      isSelected ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-700',
+                      isSelected ? 'bg-emerald-500 border-emerald-500' : 'border-main',
                     )}>
                       {isSelected && <Check className="h-3 w-3 text-white" />}
                     </div>
@@ -1177,8 +1177,8 @@ export default function TeamChatPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">{t('teamChat.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">
+            <h1 className="text-2xl font-bold text-main">{t('teamChat.title')}</h1>
+            <p className="text-sm text-muted mt-1">
               Internal messaging — direct, group, and job conversations
               {totalUnread > 0 && (
                 <Badge className="ml-2 bg-emerald-500/20 text-emerald-400 border-0">
@@ -1193,19 +1193,19 @@ export default function TeamChatPage() {
           </Button>
         </div>
 
-        <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
+        <Card className="bg-surface border-main overflow-hidden">
           <div className="flex h-[calc(100vh-220px)]">
             {/* Conversation List (Left Panel) */}
-            <div className="w-80 border-r border-zinc-800 flex flex-col">
+            <div className="w-80 border-r border-main flex flex-col">
               {/* Search */}
-              <div className="p-3 border-b border-zinc-800">
+              <div className="p-3 border-b border-main">
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted" />
                   <input
                     value={searchFilter}
                     onChange={e => setSearchFilter(e.target.value)}
                     placeholder="Search conversations..."
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-8 pr-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                    className="w-full bg-secondary border border-main rounded-lg pl-8 pr-3 py-1.5 text-sm text-main placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                   />
                 </div>
               </div>
@@ -1213,7 +1213,7 @@ export default function TeamChatPage() {
               {/* Conversations */}
               <div className="flex-1 overflow-y-auto">
                 {loading ? (
-                  <div className="flex items-center justify-center py-8 text-zinc-500">
+                  <div className="flex items-center justify-center py-8 text-muted">
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     Loading...
                   </div>
@@ -1223,7 +1223,7 @@ export default function TeamChatPage() {
                     <Button variant="ghost" size="sm" onClick={refetch} className="mt-2">{t('common.retry')}</Button>
                   </div>
                 ) : filteredConversations.length === 0 ? (
-                  <div className="p-4 text-center text-zinc-500 text-sm">
+                  <div className="p-4 text-center text-muted text-sm">
                     <MessageSquare className="h-6 w-6 mx-auto mb-2 opacity-50" />
                     {searchFilter ? 'No matching conversations' : 'No conversations yet'}
                   </div>
@@ -1247,17 +1247,17 @@ export default function TeamChatPage() {
               {activeConv ? (
                 <>
                   {/* Chat Header */}
-                  <div className="px-4 py-3 border-b border-zinc-800 flex items-center gap-2">
+                  <div className="px-4 py-3 border-b border-main flex items-center gap-2">
                     {(() => {
                       const Icon = typeIcons[activeConv.type] || MessageSquare;
-                      return <Icon className="h-4 w-4 text-zinc-500 flex-shrink-0" />;
+                      return <Icon className="h-4 w-4 text-muted flex-shrink-0" />;
                     })()}
-                    <span className="font-medium text-zinc-100 truncate">{activeChatTitle}</span>
-                    <Badge className="bg-zinc-800 text-zinc-400 border-zinc-700 text-xs flex-shrink-0">
+                    <span className="font-medium text-main truncate">{activeChatTitle}</span>
+                    <Badge className="bg-secondary text-muted border-main text-xs flex-shrink-0">
                       {activeConv.type}
                     </Badge>
                     {activeConv.participantIds.length > 2 && (
-                      <span className="text-xs text-zinc-600 flex-shrink-0">
+                      <span className="text-xs text-muted flex-shrink-0">
                         {activeConv.participantIds.length} members
                       </span>
                     )}
@@ -1269,12 +1269,12 @@ export default function TeamChatPage() {
                     <button
                       onClick={() => setShowInfoPanel(prev => !prev)}
                       className={cn(
-                        'p-1.5 rounded hover:bg-zinc-800 transition-colors flex-shrink-0 ml-auto',
-                        showInfoPanel && 'bg-zinc-800 text-emerald-400',
+                        'p-1.5 rounded hover:bg-surface-hover transition-colors flex-shrink-0 ml-auto',
+                        showInfoPanel && 'bg-secondary text-emerald-400',
                       )}
                       title="Conversation info"
                     >
-                      <Info className={cn('h-4 w-4', showInfoPanel ? 'text-emerald-400' : 'text-zinc-500')} />
+                      <Info className={cn('h-4 w-4', showInfoPanel ? 'text-emerald-400' : 'text-muted')} />
                     </button>
                   </div>
 
@@ -1286,11 +1286,11 @@ export default function TeamChatPage() {
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto py-2">
                     {messagesLoading ? (
-                      <div className="flex items-center justify-center h-full text-zinc-500">
+                      <div className="flex items-center justify-center h-full text-muted">
                         <Loader2 className="h-5 w-5 animate-spin" />
                       </div>
                     ) : messages.length === 0 ? (
-                      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
+                      <div className="flex items-center justify-center h-full text-muted text-sm">
                         <div className="text-center">
                           <MessageSquare className="h-6 w-6 mx-auto mb-2 opacity-50" />
                           <p>{t('common.noMessagesYetStartTheConversation')}</p>
@@ -1328,7 +1328,7 @@ export default function TeamChatPage() {
                   )}
 
                   {/* Compose Bar */}
-                  <div className="p-3 border-t border-zinc-800 relative">
+                  <div className="p-3 border-t border-main relative">
                     {/* Mentions dropdown */}
                     {showMentions && (
                       <MentionsDropdown
@@ -1343,10 +1343,10 @@ export default function TeamChatPage() {
                       {/* Photo button */}
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="p-2 rounded-lg hover:bg-zinc-800 transition-colors flex-shrink-0"
+                        className="p-2 rounded-lg hover:bg-surface-hover transition-colors flex-shrink-0"
                         title="Share image"
                       >
-                        <Camera className="h-4 w-4 text-zinc-500 hover:text-zinc-300" />
+                        <Camera className="h-4 w-4 text-muted hover:text-main" />
                       </button>
                       <input
                         ref={fileInputRef}
@@ -1362,7 +1362,7 @@ export default function TeamChatPage() {
                         onChange={handleComposeChange}
                         onKeyDown={handleKeyDown}
                         placeholder={`${t('teamChat.typeMessage')} — type @ to mention`}
-                        className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                        className="flex-1 bg-secondary border border-main rounded-xl px-3.5 py-2 text-sm text-main placeholder:text-muted resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
                         rows={1}
                       />
                       <Button
@@ -1382,7 +1382,7 @@ export default function TeamChatPage() {
                   </div>
                 </>
               ) : (
-                <div className="flex items-center justify-center h-full text-zinc-500">
+                <div className="flex items-center justify-center h-full text-muted">
                   <div className="text-center">
                     <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-50" />
                     <p className="text-sm">{t('common.selectAConversationToStartChatting')}</p>

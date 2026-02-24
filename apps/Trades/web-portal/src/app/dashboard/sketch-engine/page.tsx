@@ -143,8 +143,8 @@ const statusConfig: Record<
 > = {
   draft: {
     label: 'Draft',
-    color: 'text-zinc-400',
-    bgColor: 'bg-zinc-800',
+    color: 'text-slate-400',
+    bgColor: 'bg-slate-800',
   },
   in_progress: {
     label: 'In Progress',
@@ -315,7 +315,7 @@ function ListView({
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white tracking-tight">{t('sketchEngine.title')}</h1>
-                <p className="text-sm text-zinc-400 mt-1 max-w-lg">
+                <p className="text-sm text-muted mt-1 max-w-lg">
                   Professional floor plans, trade layer overlays, 3D visualization, and auto-generated estimates — all in one canvas.
                 </p>
               </div>
@@ -340,31 +340,31 @@ function ListView({
             <div className="flex items-center gap-6 mt-6 pt-5 border-t border-white/[0.06]">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center">
-                  <FolderOpen size={14} className="text-zinc-400" />
+                  <FolderOpen size={14} className="text-muted" />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white leading-none">{plans.length}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">{t('sketchEngine.floorPlans')}</p>
+                  <p className="text-[11px] text-muted mt-0.5">{t('sketchEngine.floorPlans')}</p>
                 </div>
               </div>
               <div className="w-px h-8 bg-white/[0.06]" />
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center">
-                  <RulerIcon size={14} className="text-zinc-400" />
+                  <RulerIcon size={14} className="text-muted" />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white leading-none">{totalWalls}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">{t('sketchEngine.totalWalls')}</p>
+                  <p className="text-[11px] text-muted mt-0.5">{t('sketchEngine.totalWalls')}</p>
                 </div>
               </div>
               <div className="w-px h-8 bg-white/[0.06]" />
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center">
-                  <Grid3X3 size={14} className="text-zinc-400" />
+                  <Grid3X3 size={14} className="text-muted" />
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white leading-none">{totalRooms}</p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">{t('common.totalRooms')}</p>
+                  <p className="text-[11px] text-muted mt-0.5">{t('common.totalRooms')}</p>
                 </div>
               </div>
               {inProgress > 0 && (
@@ -376,7 +376,7 @@ function ListView({
                     </div>
                     <div>
                       <p className="text-lg font-bold text-amber-400 leading-none">{inProgress}</p>
-                      <p className="text-[11px] text-zinc-500 mt-0.5">{t('common.inProgress')}</p>
+                      <p className="text-[11px] text-muted mt-0.5">{t('common.inProgress')}</p>
                     </div>
                   </div>
                 </>
@@ -408,12 +408,12 @@ function ListView({
         >
           <div className="flex items-center gap-2.5">
             <Sparkles size={14} className="text-emerald-400" />
-            <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">{t('sketchEngine.engineCapabilities')}</span>
-            <span className="text-[10px] text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">{SK_FEATURES.length} tools</span>
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">{t('sketchEngine.engineCapabilities')}</span>
+            <span className="text-[10px] text-muted bg-secondary px-2 py-0.5 rounded-full">{SK_FEATURES.length} tools</span>
           </div>
           <ChevronRight
             size={14}
-            className={`text-zinc-500 transition-transform duration-200 ${showCapabilities ? 'rotate-90' : ''}`}
+            className={`text-muted transition-transform duration-200 ${showCapabilities ? 'rotate-90' : ''}`}
           />
         </button>
 
@@ -434,8 +434,8 @@ function ListView({
                       <Icon size={14} style={{ color: feat.color }} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-semibold text-zinc-200 leading-tight truncate">{feat.label}</p>
-                      <p className="text-[10px] text-zinc-500 leading-tight truncate">{feat.detail}</p>
+                      <p className="text-[11px] font-semibold text-main leading-tight truncate">{feat.label}</p>
+                      <p className="text-[10px] text-muted leading-tight truncate">{feat.detail}</p>
                     </div>
                   </div>
                 );
@@ -450,7 +450,7 @@ function ListView({
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-3">
             <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
-            <span className="text-sm text-zinc-400">{t('sketchEngine.loadingFloorPlans')}</span>
+            <span className="text-sm text-muted">{t('sketchEngine.loadingFloorPlans')}</span>
           </div>
         </div>
       )}
@@ -459,10 +459,10 @@ function ListView({
       {!loading && plans.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-muted uppercase tracking-wider">
               Your Floor Plans
             </h2>
-            <span className="text-xs text-zinc-500">{plans.length} plan{plans.length !== 1 ? 's' : ''}</span>
+            <span className="text-xs text-muted">{plans.length} plan{plans.length !== 1 ? 's' : ''}</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {plans.map((plan) => (
@@ -484,16 +484,16 @@ function ListView({
             <button
               onClick={handleCreate}
               disabled={creating}
-              className="group rounded-xl border-2 border-dashed border-zinc-800 hover:border-emerald-500/30 bg-transparent hover:bg-emerald-500/[0.03] transition-all flex flex-col items-center justify-center py-12 min-h-[180px] disabled:opacity-50"
+              className="group rounded-xl border-2 border-dashed border-main hover:border-emerald-500/30 bg-transparent hover:bg-emerald-500/[0.03] transition-all flex flex-col items-center justify-center py-12 min-h-[180px] disabled:opacity-50"
             >
-              <div className="w-12 h-12 rounded-xl bg-zinc-800/60 group-hover:bg-emerald-500/10 flex items-center justify-center transition-colors mb-3">
+              <div className="w-12 h-12 rounded-xl bg-secondary/60 group-hover:bg-emerald-500/10 flex items-center justify-center transition-colors mb-3">
                 {creating ? (
-                  <Loader2 size={20} className="text-zinc-400 animate-spin" />
+                  <Loader2 size={20} className="text-muted animate-spin" />
                 ) : (
-                  <Plus size={20} className="text-zinc-500 group-hover:text-emerald-400 transition-colors" />
+                  <Plus size={20} className="text-muted group-hover:text-emerald-400 transition-colors" />
                 )}
               </div>
-              <p className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300 transition-colors">{t('sketchEngine.newFloorPlan')}</p>
+              <p className="text-sm font-medium text-muted group-hover:text-main transition-colors">{t('sketchEngine.newFloorPlan')}</p>
             </button>
           </div>
         </div>
@@ -507,7 +507,7 @@ function ListView({
               <PenTool size={28} className="text-emerald-400" />
             </div>
             <h3 className="text-lg font-bold text-white mb-2">{t('sketchEngine.createYourFirstFloorPlan')}</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+            <p className="text-sm text-muted leading-relaxed mb-6">
               Draw walls, place doors and windows, define rooms with auto-measurements,
               add trade layers, and generate estimates — all from one canvas.
             </p>
@@ -529,8 +529,8 @@ function ListView({
                 { icon: Box, label: '3D Preview' },
                 { icon: Calculator, label: 'Auto Estimates' },
               ].map((f) => (
-                <div key={f.label} className="flex items-center gap-1.5 text-[11px] text-zinc-500">
-                  <f.icon size={12} className="text-zinc-600" />
+                <div key={f.label} className="flex items-center gap-1.5 text-[11px] text-muted">
+                  <f.icon size={12} className="text-muted opacity-50" />
                   {f.label}
                 </div>
               ))}
@@ -563,16 +563,16 @@ function ListView({
               </div>
               <div>
                 <h3 className="text-sm font-bold text-white">{t('sketchEngine.deleteFloorPlan')}</h3>
-                <p className="text-xs text-zinc-400">{t('common.cannotUndo')}</p>
+                <p className="text-xs text-muted">{t('common.cannotUndo')}</p>
               </div>
             </div>
-            <p className="text-sm text-zinc-300 mb-6">
+            <p className="text-sm text-main mb-6">
               Are you sure you want to delete &ldquo;{plans.find(p => p.id === deleteConfirmId)?.name || 'this plan'}&rdquo;?
             </p>
             <div className="flex items-center gap-3 justify-end">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-muted hover:text-main transition-colors"
               >
                 Cancel
               </button>
@@ -619,7 +619,7 @@ function PlanCard({
       className="group rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] hover:border-emerald-500/30 transition-all cursor-pointer"
     >
       {/* Plan preview area */}
-      <div className="relative h-32 bg-gradient-to-br from-zinc-900 to-zinc-800/50 border-b border-[var(--border)] flex items-center justify-center overflow-hidden rounded-t-xl">
+      <div className="relative h-32 bg-gradient-to-br from-surface to-secondary/50 border-b border-[var(--border)] flex items-center justify-center overflow-hidden rounded-t-xl">
         {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.05]"
@@ -629,13 +629,13 @@ function PlanCard({
           }}
         />
         {/* Floor plan icon */}
-        <div className="relative flex items-center gap-3 text-zinc-600">
+        <div className="relative flex items-center gap-3 text-muted opacity-50">
           <PenTool size={28} className="opacity-30" />
           <div className="text-left">
-            <p className="text-xs font-medium text-zinc-500">
+            <p className="text-xs font-medium text-muted">
               {plan.wallCount}W / {plan.roomCount}R
             </p>
-            <p className="text-[10px] text-zinc-600">Floor {plan.floorLevel}</p>
+            <p className="text-[10px] text-muted opacity-50">Floor {plan.floorLevel}</p>
           </div>
         </div>
 
@@ -657,13 +657,13 @@ function PlanCard({
       {/* Plan details */}
       <div className="px-4 py-3">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-semibold text-zinc-100 truncate group-hover:text-emerald-300 transition-colors">
+          <h3 className="text-sm font-semibold text-main truncate group-hover:text-emerald-300 transition-colors">
             {plan.name}
           </h3>
           <div className="relative flex-shrink-0">
             <button
               onClick={(e) => { e.stopPropagation(); onMenuToggle(); }}
-              className="p-1 rounded-md text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors opacity-0 group-hover:opacity-100"
+              className="p-1 rounded-md text-muted hover:text-main hover:bg-surface-hover transition-colors opacity-0 group-hover:opacity-100"
             >
               <MoreHorizontal size={14} />
             </button>
@@ -673,14 +673,14 @@ function PlanCard({
                 <div className="absolute right-0 top-full mt-1 z-50 w-40 bg-[#1a1a2e] border border-[#2a2a4a] rounded-lg shadow-2xl py-1 overflow-hidden">
                   <button
                     onClick={(e) => { e.stopPropagation(); onMenuClose(); onOpen(); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-white/[0.06] transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-main hover:bg-white/[0.06] transition-colors"
                   >
                     <Pencil size={12} />
                     Open Editor
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-white/[0.06] transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-main hover:bg-white/[0.06] transition-colors"
                   >
                     <Copy size={12} />
                     Duplicate
@@ -708,7 +708,7 @@ function PlanCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mt-2 text-[11px] text-zinc-500">
+        <div className="flex items-center gap-3 mt-2 text-[11px] text-muted">
           <span className="flex items-center gap-1">
             <RulerIcon size={10} />
             {plan.wallCount} walls
@@ -1812,30 +1812,30 @@ function EditorView({
       {/* Right-Click Context Menu */}
       {contextMenu && (
         <div
-          className="fixed z-[10001] min-w-[180px] bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl py-1 text-sm"
+          className="fixed z-[10001] min-w-[180px] bg-surface border border-main rounded-lg shadow-2xl py-1 text-sm"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onClick={(e) => e.stopPropagation()}
         >
           {contextMenu.elementId ? (
             <>
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-muted uppercase tracking-wider">
                 {contextMenu.elementType}
               </div>
               <button
                 onClick={handleContextMenuSelect}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <MousePointer className="h-3.5 w-3.5" />
                 Select
               </button>
               <button
                 onClick={handleContextMenuDuplicate}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Copy className="h-3.5 w-3.5" />
                 Duplicate
               </button>
-              <div className="border-t border-zinc-700 my-1" />
+              <div className="border-t border-main my-1" />
               <button
                 onClick={handleContextMenuDelete}
                 className="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-colors"
@@ -1846,55 +1846,55 @@ function EditorView({
             </>
           ) : (
             <>
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-muted uppercase tracking-wider">
                 Canvas
               </div>
               <button
                 onClick={() => { handleToolChange('wall' as SketchTool); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <PenTool className="h-3.5 w-3.5" />
                 Draw Wall Here
               </button>
               <button
                 onClick={() => { handleToolChange('door' as SketchTool); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Maximize2 className="h-3.5 w-3.5" />
                 Place Door
               </button>
               <button
                 onClick={() => { handleToolChange('window' as SketchTool); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Grid3X3 className="h-3.5 w-3.5" />
                 Place Window
               </button>
               <button
                 onClick={() => { handleToolChange('fixture' as SketchTool); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Box className="h-3.5 w-3.5" />
                 Place Fixture
               </button>
               <button
                 onClick={() => { handleToolChange('label' as SketchTool); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Add Label
               </button>
-              <div className="border-t border-zinc-700 my-1" />
+              <div className="border-t border-main my-1" />
               <button
                 onClick={() => { setEditorState(prev => ({ ...prev, showGrid: !prev.showGrid })); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Grid3X3 className="h-3.5 w-3.5" />
                 {editorState.showGrid ? 'Hide Grid' : 'Show Grid'}
               </button>
               <button
                 onClick={() => { setShowLayers(prev => !prev); setContextMenu(null); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-main hover:bg-surface-hover hover:text-main transition-colors"
               >
                 <Layers className="h-3.5 w-3.5" />
                 {showLayers ? 'Hide Layers' : 'Show Layers'}

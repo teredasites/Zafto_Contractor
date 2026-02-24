@@ -9,6 +9,7 @@ import {
 import { useDataImport, parseCSV, parseIIF, TARGET_FIELDS } from '@/lib/hooks/use-data-import';
 import type { ImportError } from '@/lib/hooks/use-data-import';
 import { useTranslation } from '@/lib/translations';
+import { CommandPalette } from '@/components/command-palette';
 
 type ImportType = 'customers' | 'jobs' | 'invoices' | 'contacts' | 'estimates';
 
@@ -190,8 +191,8 @@ export default function DataImportPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">{t('settingsImport.title')}</h1>
-          <p className="text-zinc-400 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-main">{t('settingsImport.title')}</h1>
+          <p className="text-muted text-sm mt-1">
             Import your data from CSV files, Jobber, HousecallPro, ServiceTitan, or QuickBooks
           </p>
         </div>
@@ -202,24 +203,24 @@ export default function DataImportPage() {
 
       {/* Import History */}
       {showHistory && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-white">{t('settingsImport.importHistory')}</h3>
+        <div className="bg-secondary/50 border border-main rounded-lg p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-main">{t('settingsImport.importHistory')}</h3>
           {loading ? (
-            <p className="text-zinc-500 text-sm">{t('common.loading')}</p>
+            <p className="text-muted text-sm">{t('common.loading')}</p>
           ) : batches.length === 0 ? (
-            <p className="text-zinc-500 text-sm">{t('settingsImport.noImportsYet')}</p>
+            <p className="text-muted text-sm">{t('settingsImport.noImportsYet')}</p>
           ) : (
             <div className="space-y-2">
               {batches.map((b) => (
                 <div key={b.id}>
-                  <div className="flex items-center justify-between bg-zinc-800 rounded-lg px-4 py-3">
+                  <div className="flex items-center justify-between bg-secondary rounded-lg px-4 py-3">
                     <div className="flex items-center gap-3">
                       {b.status === 'completed' && <CheckCircle2 size={16} className="text-green-400" />}
                       {b.status === 'failed' && <XCircle size={16} className="text-red-400" />}
                       {b.status === 'processing' && <Loader2 size={16} className="text-blue-400 animate-spin" />}
                       <div>
-                        <span className="text-sm text-white">{b.fileName}</span>
-                        <span className="text-xs text-zinc-500 ml-2">({b.importType})</span>
+                        <span className="text-sm text-main">{b.fileName}</span>
+                        <span className="text-xs text-muted ml-2">({b.importType})</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -229,7 +230,7 @@ export default function DataImportPage() {
                           {b.errorCount} errors
                         </button>
                       )}
-                      <span className="text-xs text-zinc-500">
+                      <span className="text-xs text-muted">
                         <Clock size={12} className="inline mr-1" />
                         {formatDate(b.createdAt)}
                       </span>
@@ -246,11 +247,11 @@ export default function DataImportPage() {
                     </div>
                   </div>
                   {batchErrors[b.id] && (
-                    <div className="mt-1 bg-zinc-950 border border-zinc-800 rounded-lg p-3 max-h-40 overflow-y-auto">
+                    <div className="mt-1 bg-surface border border-main rounded-lg p-3 max-h-40 overflow-y-auto">
                       {batchErrors[b.id].map((e) => (
-                        <div key={e.id} className="text-xs text-zinc-400 py-1 border-b border-zinc-800 last:border-0">
+                        <div key={e.id} className="text-xs text-muted py-1 border-b border-main last:border-0">
                           <span className="text-red-400">Row {e.rowNumber}:</span> {e.errorMessage}
-                          {e.fieldName && <span className="text-zinc-600 ml-1">({e.fieldName})</span>}
+                          {e.fieldName && <span className="text-muted ml-1">({e.fieldName})</span>}
                         </div>
                       ))}
                     </div>
@@ -264,13 +265,13 @@ export default function DataImportPage() {
 
       {/* Steps Progress Bar */}
       {!showHistory && (
-        <div className="flex items-center gap-2 text-xs text-zinc-500">
+        <div className="flex items-center gap-2 text-xs text-muted">
           {(['type', 'upload', 'mapping', 'preview', 'results'] as const).map((s, i) => (
             <React.Fragment key={s}>
-              <div className={`px-3 py-1 rounded-full border ${step === s ? 'border-blue-500 text-blue-400 bg-blue-500/10' : 'border-zinc-700'}`}>
+              <div className={`px-3 py-1 rounded-full border ${step === s ? 'border-blue-500 text-blue-400 bg-blue-500/10' : 'border-main'}`}>
                 {i + 1}. {s.charAt(0).toUpperCase() + s.slice(1)}
               </div>
-              {i < 4 && <ArrowRight size={12} className="text-zinc-700" />}
+              {i < 4 && <ArrowRight size={12} className="text-muted" />}
             </React.Fragment>
           ))}
         </div>
@@ -283,13 +284,13 @@ export default function DataImportPage() {
             <button
               key={t.key}
               onClick={() => handleTypeSelect(t.key)}
-              className="bg-zinc-900 border border-zinc-800 hover:border-blue-500/50 rounded-lg p-5 text-left transition-colors"
+              className="bg-secondary/50 border border-main hover:border-blue-500/50 rounded-lg p-5 text-left transition-colors"
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className="text-blue-400">{t.icon}</div>
-                <span className="text-white font-medium">{t.label}</span>
+                <span className="text-main font-medium">{t.label}</span>
               </div>
-              <p className="text-zinc-500 text-xs">{t.description}</p>
+              <p className="text-muted text-xs">{t.description}</p>
             </button>
           ))}
         </div>
@@ -297,15 +298,15 @@ export default function DataImportPage() {
 
       {/* Step: Upload File */}
       {step === 'upload' && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 text-center space-y-4">
+        <div className="bg-secondary/50 border border-main rounded-lg p-8 text-center space-y-4">
           <div className="flex justify-center">
             <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center">
               <Upload size={28} className="text-blue-400" />
             </div>
           </div>
           <div>
-            <h3 className="text-white font-medium">Upload your {importType} file</h3>
-            <p className="text-zinc-500 text-sm mt-1">Supported formats: CSV, QBO, IIF (QuickBooks)</p>
+            <h3 className="text-main font-medium">Upload your {importType} file</h3>
+            <p className="text-muted text-sm mt-1">Supported formats: CSV, QBO, IIF (QuickBooks)</p>
           </div>
           <div>
             <input
@@ -322,7 +323,7 @@ export default function DataImportPage() {
               Choose File
             </button>
           </div>
-          <button onClick={() => setStep('type')} className="text-sm text-zinc-500 hover:text-zinc-300 flex items-center gap-1 mx-auto">
+          <button onClick={() => setStep('type')} className="text-sm text-muted hover:text-main flex items-center gap-1 mx-auto">
             <ArrowLeft size={14} /> Back
           </button>
         </div>
@@ -330,31 +331,31 @@ export default function DataImportPage() {
 
       {/* Step: Column Mapping */}
       {step === 'mapping' && parsedFile && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+        <div className="bg-secondary/50 border border-main rounded-lg p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-white font-medium flex items-center gap-2">
+              <h3 className="text-main font-medium flex items-center gap-2">
                 <FileSpreadsheet size={18} className="text-blue-400" />
                 Map Columns — {parsedFile.name}
               </h3>
-              <p className="text-zinc-500 text-xs mt-1">{parsedFile.rows.length} rows detected. Map your columns to ZAFTO fields.</p>
+              <p className="text-muted text-xs mt-1">{parsedFile.rows.length} rows detected. Map your columns to ZAFTO fields.</p>
             </div>
           </div>
 
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
             {parsedFile.headers.map((header) => (
-              <div key={header} className="flex items-center gap-4 bg-zinc-800 rounded-lg px-4 py-3">
+              <div key={header} className="flex items-center gap-4 bg-secondary rounded-lg px-4 py-3">
                 <div className="w-1/3">
-                  <span className="text-sm text-white font-mono">{header}</span>
+                  <span className="text-sm text-main font-mono">{header}</span>
                   {parsedFile.rows[0]?.[header] && (
-                    <span className="text-xs text-zinc-600 block truncate">{parsedFile.rows[0][header]}</span>
+                    <span className="text-xs text-muted block truncate">{parsedFile.rows[0][header]}</span>
                   )}
                 </div>
-                <ArrowRight size={14} className="text-zinc-600 shrink-0" />
+                <ArrowRight size={14} className="text-muted shrink-0" />
                 <select
                   value={columnMapping[header] || ''}
                   onChange={(e) => handleMappingChange(header, e.target.value)}
-                  className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white"
+                  className="flex-1 bg-surface border border-main rounded-lg px-3 py-2 text-sm text-main"
                 >
                   <option value="">-- Skip this column --</option>
                   {targetFields.map((f) => (
@@ -367,8 +368,8 @@ export default function DataImportPage() {
             ))}
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
-            <button onClick={() => setStep('upload')} className="text-sm text-zinc-500 hover:text-zinc-300 flex items-center gap-1">
+          <div className="flex items-center justify-between pt-4 border-t border-main">
+            <button onClick={() => setStep('upload')} className="text-sm text-muted hover:text-main flex items-center gap-1">
               <ArrowLeft size={14} /> Back
             </button>
             <button onClick={handleMappingNext} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
@@ -380,10 +381,10 @@ export default function DataImportPage() {
 
       {/* Step: Preview */}
       {step === 'preview' && parsedFile && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+        <div className="bg-secondary/50 border border-main rounded-lg p-6 space-y-4">
           <div>
-            <h3 className="text-white font-medium">Preview — First 10 Rows</h3>
-            <p className="text-zinc-500 text-xs mt-1">
+            <h3 className="text-main font-medium">Preview — First 10 Rows</h3>
+            <p className="text-muted text-xs mt-1">
               {parsedFile.rows.length} total rows will be imported as <span className="text-blue-400">{importType}</span>
             </p>
           </div>
@@ -391,12 +392,12 @@ export default function DataImportPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-zinc-700">
-                  <th className="text-left py-2 px-2 text-zinc-500">#</th>
+                <tr className="border-b border-main">
+                  <th className="text-left py-2 px-2 text-muted">#</th>
                   {Object.entries(columnMapping)
                     .filter(([, t]) => t)
                     .map(([source, target]) => (
-                      <th key={source} className="text-left py-2 px-2 text-zinc-400">
+                      <th key={source} className="text-left py-2 px-2 text-muted">
                         {targetFields.find((f) => f.key === target)?.label || target}
                       </th>
                     ))}
@@ -404,12 +405,12 @@ export default function DataImportPage() {
               </thead>
               <tbody>
                 {previewRows.map((row, i) => (
-                  <tr key={i} className="border-b border-zinc-800">
-                    <td className="py-2 px-2 text-zinc-600">{i + 1}</td>
+                  <tr key={i} className="border-b border-main">
+                    <td className="py-2 px-2 text-muted">{i + 1}</td>
                     {Object.entries(columnMapping)
                       .filter(([, t]) => t)
                       .map(([source]) => (
-                        <td key={source} className="py-2 px-2 text-white truncate max-w-[200px]">
+                        <td key={source} className="py-2 px-2 text-main truncate max-w-[200px]">
                           {row[source] || '-'}
                         </td>
                       ))}
@@ -426,8 +427,8 @@ export default function DataImportPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
-            <button onClick={() => setStep('mapping')} className="text-sm text-zinc-500 hover:text-zinc-300 flex items-center gap-1">
+          <div className="flex items-center justify-between pt-4 border-t border-main">
+            <button onClick={() => setStep('mapping')} className="text-sm text-muted hover:text-main flex items-center gap-1">
               <ArrowLeft size={14} /> Back
             </button>
             <button
@@ -442,17 +443,17 @@ export default function DataImportPage() {
 
       {/* Step: Importing */}
       {step === 'importing' && importProgress && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 text-center space-y-4">
+        <div className="bg-secondary/50 border border-main rounded-lg p-8 text-center space-y-4">
           <Loader2 size={40} className="text-blue-400 animate-spin mx-auto" />
-          <h3 className="text-white font-medium">{t('estimates.importing')}</h3>
-          <div className="w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
+          <h3 className="text-main font-medium">{t('estimates.importing')}</h3>
+          <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
             <div
               className="bg-blue-500 h-3 rounded-full transition-all"
               style={{ width: `${Math.round((importProgress.current / importProgress.total) * 100)}%` }}
             />
           </div>
           <div className="flex items-center justify-center gap-6 text-sm">
-            <span className="text-zinc-400">{importProgress.current} / {importProgress.total}</span>
+            <span className="text-muted">{importProgress.current} / {importProgress.total}</span>
             <span className="text-green-400">{importProgress.successCount} success</span>
             {importProgress.errorCount > 0 && <span className="text-red-400">{importProgress.errorCount} errors</span>}
           </div>
@@ -461,7 +462,7 @@ export default function DataImportPage() {
 
       {/* Step: Results */}
       {step === 'results' && importResult && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 space-y-6">
+        <div className="bg-secondary/50 border border-main rounded-lg p-8 space-y-6">
           <div className="text-center space-y-2">
             {importResult.errorCount === 0 ? (
               <CheckCircle2 size={48} className="text-green-400 mx-auto" />
@@ -470,21 +471,21 @@ export default function DataImportPage() {
             ) : (
               <AlertTriangle size={48} className="text-amber-400 mx-auto" />
             )}
-            <h3 className="text-white text-lg font-medium">{t('common.importComplete')}</h3>
+            <h3 className="text-main text-lg font-medium">{t('common.importComplete')}</h3>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-zinc-800 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white">{parsedFile?.rows.length || 0}</div>
-              <div className="text-xs text-zinc-500">{t('settingsImport.totalRows')}</div>
+            <div className="bg-secondary rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold text-main">{parsedFile?.rows.length || 0}</div>
+              <div className="text-xs text-muted">{t('settingsImport.totalRows')}</div>
             </div>
-            <div className="bg-zinc-800 rounded-lg p-4 text-center">
+            <div className="bg-secondary rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-green-400">{importResult.successCount}</div>
-              <div className="text-xs text-zinc-500">{t('settingsImport.imported')}</div>
+              <div className="text-xs text-muted">{t('settingsImport.imported')}</div>
             </div>
-            <div className="bg-zinc-800 rounded-lg p-4 text-center">
+            <div className="bg-secondary rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-400">{importResult.errorCount}</div>
-              <div className="text-xs text-zinc-500">{t('settingsImport.errors')}</div>
+              <div className="text-xs text-muted">{t('settingsImport.errors')}</div>
             </div>
           </div>
 
@@ -492,7 +493,7 @@ export default function DataImportPage() {
           {importErrors.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-white">{t('settingsImport.errorDetails')}</h4>
+                <h4 className="text-sm font-medium text-main">{t('settingsImport.errorDetails')}</h4>
                 <button
                   onClick={() => handleDownloadErrors(importResult.batchId)}
                   className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
@@ -502,22 +503,22 @@ export default function DataImportPage() {
               </div>
               <div className="max-h-48 overflow-y-auto space-y-1">
                 {importErrors.slice(0, 50).map((e) => (
-                  <div key={e.id} className="flex items-start gap-2 bg-zinc-800 rounded-lg px-3 py-2 text-xs">
+                  <div key={e.id} className="flex items-start gap-2 bg-secondary rounded-lg px-3 py-2 text-xs">
                     <X size={12} className="text-red-400 mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-zinc-400">Row {e.rowNumber}:</span>{' '}
-                      <span className="text-white">{e.errorMessage}</span>
+                      <span className="text-muted">Row {e.rowNumber}:</span>{' '}
+                      <span className="text-main">{e.errorMessage}</span>
                     </div>
                   </div>
                 ))}
                 {importErrors.length > 50 && (
-                  <p className="text-zinc-600 text-xs text-center">...and {importErrors.length - 50} more</p>
+                  <p className="text-muted text-xs text-center">...and {importErrors.length - 50} more</p>
                 )}
               </div>
             </div>
           )}
 
-          <div className="flex items-center justify-center gap-4 pt-4 border-t border-zinc-800">
+          <div className="flex items-center justify-center gap-4 pt-4 border-t border-main">
             <button
               onClick={() => handleUndo(importResult.batchId)}
               className="text-sm text-orange-400 hover:text-orange-300 flex items-center gap-2 border border-orange-500/30 rounded-lg px-4 py-2"
@@ -533,6 +534,7 @@ export default function DataImportPage() {
           </div>
         </div>
       )}
+      <CommandPalette />
     </div>
   );
 }

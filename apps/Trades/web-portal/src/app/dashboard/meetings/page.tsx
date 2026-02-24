@@ -51,7 +51,7 @@ const meetingTypeColors: Record<string, string> = {
   insurance_conference: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   subcontractor_consult: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
   expert_consult: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-  async_video: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+  async_video: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
 };
 
 function statusBadge(status: string) {
@@ -59,10 +59,10 @@ function statusBadge(status: string) {
     scheduled: { label: 'Scheduled', className: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
     in_progress: { label: 'Live', className: 'bg-red-500/10 text-red-400 border-red-500/20 animate-pulse' },
     completed: { label: 'Completed', className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    cancelled: { label: 'Cancelled', className: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' },
+    cancelled: { label: 'Cancelled', className: 'bg-slate-500/15 text-slate-400 border-slate-500/30' },
     no_show: { label: 'No Show', className: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
   };
-  const c = config[status] || { label: status, className: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' };
+  const c = config[status] || { label: status, className: 'bg-slate-500/15 text-slate-400 border-slate-500/30' };
   return <Badge className={c.className}>{c.label}</Badge>;
 }
 
@@ -72,18 +72,18 @@ function MeetingRow({ meeting, onJoin }: { meeting: Meeting; onJoin: (code: stri
   };
 
   return (
-    <div className="flex items-center gap-4 px-4 py-3 hover:bg-zinc-800/50 border-b border-zinc-800">
+    <div className="flex items-center gap-4 px-4 py-3 hover:bg-surface-hover border-b border-main">
       <div className="flex-shrink-0">
-        <Video className={cn('h-5 w-5', meeting.status === 'in_progress' ? 'text-red-400' : 'text-zinc-500')} />
+        <Video className={cn('h-5 w-5', meeting.status === 'in_progress' ? 'text-red-400' : 'text-muted')} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-zinc-100 truncate">{meeting.title}</span>
+          <span className="font-medium text-main truncate">{meeting.title}</span>
           <Badge className={meetingTypeColors[meeting.meetingType] || meetingTypeColors.team_huddle}>
             {meetingTypeLabels[meeting.meetingType] || meeting.meetingType}
           </Badge>
         </div>
-        <div className="flex items-center gap-3 text-xs text-zinc-500 mt-0.5">
+        <div className="flex items-center gap-3 text-xs text-muted mt-0.5">
           {meeting.scheduledAt && (
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
@@ -106,7 +106,7 @@ function MeetingRow({ meeting, onJoin }: { meeting: Meeting; onJoin: (code: stri
           )}
         </div>
         {meeting.aiSummary && (
-          <p className="text-xs text-zinc-400 mt-1 line-clamp-1">{meeting.aiSummary}</p>
+          <p className="text-xs text-muted mt-1 line-clamp-1">{meeting.aiSummary}</p>
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
@@ -168,8 +168,8 @@ export default function MeetingsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">{t('meetings.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">Video meetings, site walks, and async video</p>
+            <h1 className="text-2xl font-bold text-main">{t('meetings.title')}</h1>
+            <p className="text-sm text-muted mt-1">Video meetings, site walks, and async video</p>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/dashboard/meetings/async-videos">
@@ -189,45 +189,45 @@ export default function MeetingsPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4">
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-secondary/50 border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Video className="h-4 w-4 text-red-400" />
                 Live Now
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{active.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{active.length}</p>
             </CardContent>
           </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-secondary/50 border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Calendar className="h-4 w-4" />
                 Upcoming
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{upcoming.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{upcoming.length}</p>
             </CardContent>
           </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-secondary/50 border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <CheckCircle2 className="h-4 w-4" />
                 Completed
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{past.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{past.length}</p>
             </CardContent>
           </Card>
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-secondary/50 border-main">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Users className="h-4 w-4" />
                 Total
               </div>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{meetings.length}</p>
+              <p className="text-2xl font-bold text-main mt-1">{meetings.length}</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-secondary/50 border-main">
           <CardHeader className="pb-0">
             <div className="flex items-center justify-between">
               <div className="flex gap-1">
@@ -244,7 +244,7 @@ export default function MeetingsPage() {
                     )}
                     {t}
                     {t === 'upcoming' && upcoming.length > 0 && (
-                      <span className="text-xs bg-zinc-700 rounded-full px-1.5">{upcoming.length}</span>
+                      <span className="text-xs bg-slate-700 rounded-full px-1.5">{upcoming.length}</span>
                     )}
                   </Button>
                 ))}
@@ -259,11 +259,11 @@ export default function MeetingsPage() {
           </CardHeader>
           <CardContent className="p-0 mt-4">
             {loading ? (
-              <div className="flex items-center justify-center py-12 text-zinc-500">{t('common.loading')}</div>
+              <div className="flex items-center justify-center py-12 text-muted">{t('common.loading')}</div>
             ) : error ? (
               <div className="flex items-center justify-center py-12 text-red-400">{error}</div>
             ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+              <div className="flex flex-col items-center justify-center py-12 text-muted">
                 <Video className="h-8 w-8 mb-2 opacity-50" />
                 <p>No {tab} meetings</p>
                 <p className="text-xs mt-1">{t('common.createAMeetingFromAnyJobOrCustomerPage')}</p>

@@ -53,12 +53,12 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
   const { t } = useTranslation();
   const { inspections, loading } = usePermitInspections(jobPermitId);
 
-  if (loading) return <div className="p-4 text-center text-zinc-500 text-sm">{t('permits.loadingInspections')}</div>;
+  if (loading) return <div className="p-4 text-center text-muted text-sm">{t('permits.loadingInspections')}</div>;
   if (!inspections.length) {
     return (
       <div className="p-6 text-center">
-        <ClipboardCheck className="h-8 w-8 text-zinc-600 mx-auto mb-2" />
-        <p className="text-zinc-500 text-sm">{t('permits.noInspectionsScheduled')}</p>
+        <ClipboardCheck className="h-8 w-8 text-muted opacity-50 mx-auto mb-2" />
+        <p className="text-muted text-sm">{t('permits.noInspectionsScheduled')}</p>
       </div>
     );
   }
@@ -72,19 +72,19 @@ function InspectionTimeline({ jobPermitId }: { jobPermitId: string }) {
             <div className={`w-3 h-3 rounded-full mt-1.5 ${
               insp.result === 'pass' ? 'bg-emerald-500' :
               insp.result === 'fail' ? 'bg-red-500' :
-              insp.result ? 'bg-amber-500' : 'bg-zinc-600'
+              insp.result ? 'bg-amber-500' : 'bg-slate-600'
             }`} />
-            {i < inspections.length - 1 && <div className="w-0.5 flex-1 bg-zinc-700 mt-1" />}
+            {i < inspections.length - 1 && <div className="w-0.5 flex-1 bg-slate-700 mt-1" />}
           </div>
           {/* Content */}
           <div className="flex-1 pb-4">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-medium text-white">{insp.inspection_type}</span>
+              <span className="text-sm font-medium text-main">{insp.inspection_type}</span>
               <Badge variant={resultBadgeVariant(insp.result)} size="sm">
                 {insp.result ? insp.result.charAt(0).toUpperCase() + insp.result.slice(1) : 'Scheduled'}
               </Badge>
             </div>
-            <div className="space-y-1 text-xs text-zinc-400">
+            <div className="space-y-1 text-xs text-muted">
               {insp.scheduled_date && (
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3 w-3" />
@@ -156,7 +156,7 @@ export default function PermitDetailPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-red-400 mb-2">{t('permits.failedToLoadPermits')}</p>
-            <p className="text-sm text-zinc-500">{error}</p>
+            <p className="text-sm text-muted">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -173,16 +173,16 @@ export default function PermitDetailPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">{t('permits.title')}</h1>
-          <p className="text-sm text-zinc-400">{permits.length} permit{permits.length !== 1 ? 's' : ''} for this job</p>
+          <h1 className="text-2xl font-bold text-main">{t('permits.title')}</h1>
+          <p className="text-sm text-muted">{permits.length} permit{permits.length !== 1 ? 's' : ''} for this job</p>
         </div>
       </div>
 
       {permits.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center">
-            <FileCheck className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400">{t('permits.noPermitsForThisJob')}</p>
+            <FileCheck className="h-12 w-12 text-muted opacity-50 mx-auto mb-3" />
+            <p className="text-muted">{t('permits.noPermitsForThisJob')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -195,18 +195,18 @@ export default function PermitDetailPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-zinc-800">
-                        <FileCheck className="h-5 w-5 text-zinc-400" />
+                      <div className="p-2 rounded-lg bg-secondary">
+                        <FileCheck className="h-5 w-5 text-muted" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-semibold text-white">{permit.permit_type}</h3>
+                          <h3 className="text-base font-semibold text-main">{permit.permit_type}</h3>
                           <Badge variant={statusBadgeVariant(permit.status)}>
                             {permit.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                           </Badge>
                         </div>
                         {permit.permit_number && (
-                          <p className="text-xs text-zinc-500 mt-0.5">#{permit.permit_number}</p>
+                          <p className="text-xs text-muted mt-0.5">#{permit.permit_number}</p>
                         )}
                       </div>
                     </div>
@@ -222,8 +222,8 @@ export default function PermitDetailPage() {
                   {/* Permit Details */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-sm">
                     {permit.application_date && (
-                      <div className="flex items-center gap-2 text-zinc-400">
-                        <Send className="h-3.5 w-3.5 text-zinc-500" />
+                      <div className="flex items-center gap-2 text-muted">
+                        <Send className="h-3.5 w-3.5 text-muted" />
                         <span>Applied: {formatDate(permit.application_date)}</span>
                       </div>
                     )}
@@ -234,29 +234,29 @@ export default function PermitDetailPage() {
                       </div>
                     )}
                     {permit.expiration_date && (
-                      <div className="flex items-center gap-2 text-zinc-400">
-                        <Clock className="h-3.5 w-3.5 text-zinc-500" />
+                      <div className="flex items-center gap-2 text-muted">
+                        <Clock className="h-3.5 w-3.5 text-muted" />
                         <span>Expires: {formatDate(permit.expiration_date)}</span>
                       </div>
                     )}
                     {permit.fee_paid != null && (
-                      <div className="flex items-center gap-2 text-zinc-400">
-                        <DollarSign className="h-3.5 w-3.5 text-zinc-500" />
+                      <div className="flex items-center gap-2 text-muted">
+                        <DollarSign className="h-3.5 w-3.5 text-muted" />
                         <span>Fee: {formatCurrency(permit.fee_paid)}</span>
                       </div>
                     )}
                   </div>
 
                   {permit.notes && (
-                    <p className="text-xs text-zinc-500 mt-3">{permit.notes}</p>
+                    <p className="text-xs text-muted mt-3">{permit.notes}</p>
                   )}
                 </CardContent>
 
                 {/* Inspection Timeline (expanded) */}
                 {isExpanded && (
-                  <div className="border-t border-zinc-800">
+                  <div className="border-t border-main">
                     <div className="px-4 pt-3 pb-1">
-                      <h4 className="text-sm font-medium text-zinc-300">{t('permits.inspectionTimeline')}</h4>
+                      <h4 className="text-sm font-medium text-main">{t('permits.inspectionTimeline')}</h4>
                     </div>
                     <InspectionTimeline jobPermitId={permit.id} />
                   </div>
