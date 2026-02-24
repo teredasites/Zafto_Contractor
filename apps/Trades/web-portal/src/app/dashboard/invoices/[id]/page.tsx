@@ -43,6 +43,7 @@ import { getSupabase } from '@/lib/supabase';
 import type { Invoice, InvoiceLineItem } from '@/types';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency as fmtCurr } from '@/lib/format-locale';
+import { EntityDocumentsPanel } from '@/components/entity-documents-panel';
 
 // ── Invoice Status Pipeline ──
 const PIPELINE_STAGES: { key: InvoiceStatus; label: string; color: string; bgActive: string }[] = [
@@ -537,6 +538,13 @@ export default function InvoiceDetailPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Linked Documents (ZDocs) */}
+          <EntityDocumentsPanel
+            entityType="invoice"
+            entityId={invoice.id}
+            onGenerateDocument={() => router.push('/dashboard/zdocs')}
+          />
         </div>
 
         {/* Sidebar */}
