@@ -37,6 +37,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { TemplateEditor } from '@/components/template-editor';
 import DOMPurify from 'dompurify';
+import { SignaturePad, type SignatureData } from '@/components/signature-pad';
 import { formatDate, cn } from '@/lib/utils';
 import {
   useZDocs,
@@ -119,6 +120,7 @@ export default function ZDocsPage() {
     deleteRender,
     generatePdf,
     downloadPdf,
+    captureSignature,
     fetchTemplateVersions,
     revertToVersion,
     activeTemplates,
@@ -135,6 +137,7 @@ export default function ZDocsPage() {
   const [preselectedTemplateId, setPreselectedTemplateId] = useState<string | null>(null);
   const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
   const [showGallery, setShowGallery] = useState(false);
+  const [signingRequest, setSigningRequest] = useState<{ renderId: string; requestId: string; signerName: string } | null>(null);
 
   const tabs: { id: TabId; label: string; count?: number }[] = [
     { id: 'templates', label: 'Templates', count: activeTemplates.length },
@@ -321,6 +324,7 @@ export default function ZDocsPage() {
           renders={renders}
           search={search}
           setSearch={setSearch}
+          onSign={(renderId, requestId, signerName) => setSigningRequest({ renderId, requestId, signerName })}
         />
       )}
 
@@ -377,6 +381,16 @@ export default function ZDocsPage() {
             setEditingTemplateId(id);
             setShowGallery(false);
           }}
+        />
+      )}
+      {signingRequest && (
+        <SignDocumentModal
+          renderId={signingRequest.renderId}
+          requestId={signingRequest.requestId}
+          signerName={signingRequest.signerName}
+          render={renders.find(r => r.id === signingRequest.renderId)}
+          onClose={() => setSigningRequest(null)}
+          onSign={captureSignature}
         />
       )}
     </div>
@@ -1092,11 +1106,13 @@ function SignaturesTab({
   renders,
   search,
   setSearch,
+  onSign,
 }: {
   signatureRequests: ZDocsSignatureRequest[];
   renders: ZDocsRender[];
   search: string;
   setSearch: (v: string) => void;
+  onSign: (renderId: string, requestId: string, signerName: string) => void;
 }) {
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
@@ -1182,11 +1198,13 @@ function SignaturesTab({
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.status')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.sent')}</th>
                       <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.signed')}</th>
+                      <th className="text-left text-sm font-medium text-muted px-6 py-3">{t('common.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {requests.map((req) => {
                       const sigConf = signatureStatusConfig[req.status] || signatureStatusConfig.pending;
+                      const canSign = req.status === 'sent' || req.status === 'viewed' || req.status === 'pending';
                       return (
                         <tr key={req.id} className="border-b border-main/50 hover:bg-surface-hover">
                           <td className="px-6 py-4 text-sm font-medium text-main">{req.signerName}</td>
@@ -1200,6 +1218,18 @@ function SignaturesTab({
                           </td>
                           <td className="px-6 py-4 text-sm text-muted">
                             {req.signedAt ? formatDate(req.signedAt) : '-'}
+                          </td>
+                          <td className="px-6 py-4">
+                            {canSign && (
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => onSign(req.renderId, req.id, req.signerName)}
+                              >
+                                <PenTool size={14} />
+                                Sign Now
+                              </Button>
+                            )}
                           </td>
                         </tr>
                       );
@@ -1564,6 +1594,104 @@ function GenerateDocumentModal({
               {saving ? 'Generating...' : 'Generate'}
             </Button>
           </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function SignDocumentModal({
+  renderId,
+  requestId,
+  signerName,
+  render,
+  onClose,
+  onSign,
+}: {
+  renderId: string;
+  requestId: string;
+  signerName: string;
+  render?: ZDocsRender;
+  onClose: () => void;
+  onSign: (renderId: string, requestId: string, imageDataUrl: string, signerName: string) => Promise<void>;
+}) {
+  const [signing, setSigning] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
+  const handleCapture = async (data: SignatureData) => {
+    setSigning(true);
+    try {
+      await onSign(renderId, requestId, data.imageDataUrl, signerName);
+      onClose();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to apply signature');
+    } finally {
+      setSigning(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Sign Document</CardTitle>
+              <p className="text-sm text-muted mt-1">
+                Signing as <span className="font-semibold text-main">{signerName}</span>
+              </p>
+            </div>
+            <button onClick={onClose} className="text-muted hover:text-main" disabled={signing}>
+              <X size={20} />
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Document preview toggle */}
+          {render?.renderedHtml && (
+            <div>
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="flex items-center gap-2 text-sm text-accent hover:underline"
+              >
+                <Eye size={14} />
+                {showPreview ? 'Hide Document Preview' : 'Review Document Before Signing'}
+              </button>
+              {showPreview && (
+                <div className="mt-3 border border-main rounded-lg overflow-hidden">
+                  <div
+                    className="p-4 bg-white text-black text-sm max-h-48 overflow-y-auto"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(render.renderedHtml) }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Document info */}
+          <div className="bg-secondary rounded-lg p-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted">Document</span>
+              <span className="text-main font-medium">{render?.title || 'Unknown'}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted">Date</span>
+              <span className="text-main">{new Date().toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          {/* Signature capture */}
+          {signing ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted" />
+              <span className="ml-3 text-sm text-muted">Applying signature and generating certificate...</span>
+            </div>
+          ) : (
+            <SignaturePad
+              onCapture={handleCapture}
+              signerName={signerName}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

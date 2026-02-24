@@ -922,6 +922,112 @@ export function useZDocs() {
     document.body.removeChild(a);
   };
 
+  const captureSignature = async (
+    renderId: string,
+    signatureRequestId: string,
+    signatureImageDataUrl: string,
+    signerName: string,
+  ): Promise<void> => {
+    const supabase = getSupabase();
+    const render = renders.find(r => r.id === renderId);
+    if (!render) throw new Error('Render not found');
+
+    // 1. Compute SHA-256 document hash for tamper evidence
+    const docContent = render.renderedHtml || '';
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(docContent));
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const documentHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    // 2. Upload signature image to storage
+    const { data: { user } } = await supabase.auth.getUser();
+    const companyId = user?.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company associated');
+
+    // Convert data URL to blob
+    const response = await fetch(signatureImageDataUrl);
+    const signatureBlob = await response.blob();
+    const sigPath = `${companyId}/signatures/${renderId}_${Date.now()}.png`;
+
+    await supabase.storage
+      .from('signatures')
+      .upload(sigPath, signatureBlob, { contentType: 'image/png', upsert: true });
+
+    // 3. Update signature request
+    const now = new Date().toISOString();
+    const { error: reqErr } = await supabase
+      .from('zdocs_signature_requests')
+      .update({
+        status: 'signed',
+        signed_at: now,
+        document_hash: documentHash,
+        device_info: navigator.userAgent.substring(0, 200),
+      })
+      .eq('id', signatureRequestId);
+
+    if (reqErr) throw reqErr;
+
+    // 4. Check if all signers for this render have signed
+    const { data: allReqs } = await supabase
+      .from('zdocs_signature_requests')
+      .select('id, status')
+      .eq('render_id', renderId);
+
+    const allSigned = (allReqs || []).every((r: { id: string; status: string }) => r.status === 'signed');
+
+    // 5. Generate certificate of completion HTML
+    const certificateHtml = `
+      <div style="font-family: Inter, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px;">
+        <h2 style="text-align: center; color: #1a1a1a; border-bottom: 2px solid #e5e7eb; padding-bottom: 16px;">
+          Certificate of Completion
+        </h2>
+        <p style="text-align: center; color: #6b7280; font-size: 14px; margin-top: 8px;">
+          Electronic Signature Verification
+        </p>
+        <table style="width: 100%; margin-top: 24px; border-collapse: collapse;">
+          <tr><td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Document</td><td style="padding: 8px 0; font-weight: 600;">${render.title}</td></tr>
+          <tr><td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Document Hash (SHA-256)</td><td style="padding: 8px 0; font-family: monospace; font-size: 11px; word-break: break-all;">${documentHash}</td></tr>
+          <tr><td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Signer</td><td style="padding: 8px 0; font-weight: 600;">${signerName}</td></tr>
+          <tr><td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Signed At</td><td style="padding: 8px 0;">${new Date().toLocaleString()}</td></tr>
+          <tr><td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Status</td><td style="padding: 8px 0; color: #059669; font-weight: 600;">${allSigned ? 'All Parties Signed' : 'Partially Signed'}</td></tr>
+        </table>
+        <div style="margin-top: 24px; padding: 16px; background: #f9fafb; border-radius: 8px; font-size: 12px; color: #6b7280;">
+          This document was electronically signed in compliance with the ESIGN Act (15 U.S.C. § 7001)
+          and the Uniform Electronic Transactions Act (UETA). The SHA-256 hash above can be used to verify
+          document integrity — any modification to the document after signing will produce a different hash.
+        </div>
+      </div>
+    `;
+
+    // 6. Update render status
+    const renderUpdate: Record<string, unknown> = {
+      document_hash: documentHash,
+    };
+    if (allSigned) {
+      renderUpdate.signature_status = 'signed';
+      renderUpdate.signed_at = now;
+      renderUpdate.certificate_html = certificateHtml;
+      renderUpdate.status = 'signed';
+    }
+    await supabase.from('zdocs_renders').update(renderUpdate).eq('id', renderId);
+
+    // 7. Log audit event
+    await supabase.from('signature_audit_events').insert({
+      company_id: companyId,
+      signature_request_id: signatureRequestId,
+      render_id: renderId,
+      event_type: 'signed',
+      actor_type: 'signer',
+      actor_name: signerName,
+      ip_address: null, // Would need server-side to get real IP
+      user_agent: navigator.userAgent.substring(0, 500),
+      document_hash: documentHash,
+    });
+
+    // Refresh data
+    await fetchAll();
+  };
+
   const deleteRender = async (id: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase.from('zdocs_renders').update({ deleted_at: new Date().toISOString() }).eq('id', id);
@@ -964,6 +1070,8 @@ export function useZDocs() {
     // PDF
     generatePdf,
     downloadPdf,
+    // Signatures
+    captureSignature,
     // Versioning
     fetchTemplateVersions,
     revertToVersion,
