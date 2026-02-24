@@ -46,6 +46,7 @@ import {
 } from '@/lib/hooks/use-floor-plan';
 import { useFloorPlanSnapshots } from '@/lib/hooks/use-floor-plan-snapshots';
 import { useFloorPlanPhotoPins } from '@/lib/hooks/use-floor-plan-photo-pins';
+import { getSupabase } from '@/lib/supabase';
 import {
   createEmptyFloorPlan,
   createEmptySelection,
@@ -229,6 +230,9 @@ function ListView({
   const [showCapabilities, setShowCapabilities] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const [estimatePlanData, setEstimatePlanData] = useState<FloorPlanData | null>(null);
+  const [estimatePlanId, setEstimatePlanId] = useState<string | null>(null);
+  const [loadingEstimate, setLoadingEstimate] = useState<string | null>(null);
 
   const handleCreate = async () => {
     setCreating(true);
@@ -255,6 +259,38 @@ function ListView({
     const newId = await duplicatePlan(id);
     if (newId) {
       refetch();
+    }
+  };
+
+  const handleCreateEstimate = async (id: string) => {
+    setMenuOpenId(null);
+    setLoadingEstimate(id);
+    try {
+      const supabase = getSupabase();
+      const { data, error: fetchErr } = await supabase
+        .from('property_floor_plans')
+        .select('plan_data')
+        .eq('id', id)
+        .single();
+
+      if (fetchErr || !data?.plan_data) {
+        console.error('Failed to load plan data for estimate', fetchErr);
+        return;
+      }
+
+      const planData = data.plan_data as unknown as FloorPlanData;
+      if (!planData.rooms || planData.rooms.length === 0) {
+        // No rooms — open editor instead so user can draw rooms
+        onOpenEditor(id);
+        return;
+      }
+
+      setEstimatePlanData(planData);
+      setEstimatePlanId(id);
+    } catch (e) {
+      console.error('Failed to load plan for estimate:', e);
+    } finally {
+      setLoadingEstimate(null);
     }
   };
 
@@ -439,6 +475,8 @@ function ListView({
                 onMenuClose={() => setMenuOpenId(null)}
                 onDelete={() => setDeleteConfirmId(plan.id)}
                 onDuplicate={() => handleDuplicate(plan.id)}
+                onCreateEstimate={() => handleCreateEstimate(plan.id)}
+                loadingEstimate={loadingEstimate === plan.id}
               />
             ))}
 
@@ -501,6 +539,20 @@ function ListView({
         </div>
       )}
 
+      {/* Generate Estimate Modal from List View */}
+      {estimatePlanData && estimatePlanId && (
+        <GenerateEstimateModal
+          planData={estimatePlanData}
+          floorPlanId={estimatePlanId}
+          onClose={() => { setEstimatePlanData(null); setEstimatePlanId(null); }}
+          onGenerated={(estimateId) => {
+            setEstimatePlanData(null);
+            setEstimatePlanId(null);
+            window.location.href = `/dashboard/estimates/${estimateId}`;
+          }}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -546,6 +598,8 @@ function PlanCard({
   onMenuClose,
   onDelete,
   onDuplicate,
+  onCreateEstimate,
+  loadingEstimate,
 }: {
   plan: FloorPlanListItem;
   onOpen: () => void;
@@ -554,6 +608,8 @@ function PlanCard({
   onMenuClose: () => void;
   onDelete: () => void;
   onDuplicate: () => void;
+  onCreateEstimate: () => void;
+  loadingEstimate?: boolean;
 }) {
   const status = statusConfig[plan.status] || statusConfig.draft;
 
@@ -628,6 +684,15 @@ function PlanCard({
                   >
                     <Copy size={12} />
                     Duplicate
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onCreateEstimate(); }}
+                    disabled={loadingEstimate || plan.roomCount === 0}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-white/[0.06] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={plan.roomCount === 0 ? 'Draw rooms first to generate an estimate' : 'Create estimate from sketch measurements'}
+                  >
+                    {loadingEstimate ? <Loader2 size={12} className="animate-spin" /> : <Calculator size={12} />}
+                    Create Estimate
                   </button>
                   <div className="mx-2 my-1 h-px bg-[#2a2a4a]" />
                   <button
