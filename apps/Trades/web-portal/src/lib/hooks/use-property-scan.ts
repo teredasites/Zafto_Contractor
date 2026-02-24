@@ -37,6 +37,30 @@ export interface PropertyScanData {
   propertyType: string | null;
   floodZone: string | null;
   floodRisk: string | null;
+  // Phase 3A+3B: Hazard flags, environmental, code, weather
+  hazardFlags: HazardFlagData[];
+  environmentalData: Record<string, unknown>;
+  codeRequirements: Record<string, unknown>;
+  weatherHistory: Record<string, unknown>;
+  computedMeasurements: Record<string, unknown>;
+  noaaStormEvents: StormEventData[];
+}
+
+export interface HazardFlagData {
+  type: string;
+  severity: 'red' | 'yellow' | 'green';
+  title: string;
+  description: string;
+  what_to_do: string;
+  cost_implications: string;
+  regulatory: string;
+}
+
+export interface StormEventData {
+  date: string;
+  event_type: string;
+  magnitude: string;
+  description: string;
 }
 
 export interface RoofMeasurementData {
@@ -157,6 +181,23 @@ export interface PropertyFeaturesData {
   neighborhoodType: string | null;
   estimatedValue: number | null;
   censusData: Record<string, unknown>;
+  // Phase 3A environmental fields
+  radonZone: number | null;
+  wildfireRisk: string | null;
+  seismicCategory: string | null;
+  climateZone: string | null;
+  frostLineDepthIn: number | null;
+  designWindSpeedMph: number | null;
+  snowLoadPsf: number | null;
+  soilType: string | null;
+  soilDrainage: string | null;
+  soilBearingCapacity: string | null;
+  treeCanopyPct: number | null;
+  lawnAreaSqft: number | null;
+  wallAreaSqft: number | null;
+  roofComplexityFactor: number | null;
+  boundaryPerimeterFt: number | null;
+  termiteZone: string | null;
 }
 
 // ============================================================================
@@ -190,6 +231,13 @@ function mapScan(row: Record<string, unknown>): PropertyScanData {
     propertyType: row.property_type as string | null,
     floodZone: row.flood_zone as string | null,
     floodRisk: row.flood_risk as string | null,
+    // Phase 3A+3B
+    hazardFlags: (row.hazard_flags as HazardFlagData[]) || [],
+    environmentalData: (row.environmental_data as Record<string, unknown>) || {},
+    codeRequirements: (row.code_requirements as Record<string, unknown>) || {},
+    weatherHistory: (row.weather_history as Record<string, unknown>) || {},
+    computedMeasurements: (row.computed_measurements as Record<string, unknown>) || {},
+    noaaStormEvents: (row.noaa_storm_events as StormEventData[]) || [],
   };
 }
 
@@ -296,6 +344,23 @@ function mapPropertyFeatures(row: Record<string, unknown>): PropertyFeaturesData
     neighborhoodType: row.neighborhood_type as string | null,
     estimatedValue: row.estimated_value != null ? Number(row.estimated_value) : null,
     censusData: (row.census_data as Record<string, unknown>) || {},
+    // Phase 3A environmental fields
+    radonZone: row.radon_zone != null ? Number(row.radon_zone) : null,
+    wildfireRisk: row.wildfire_risk as string | null,
+    seismicCategory: row.seismic_category as string | null,
+    climateZone: row.climate_zone as string | null,
+    frostLineDepthIn: row.frost_line_depth_in != null ? Number(row.frost_line_depth_in) : null,
+    designWindSpeedMph: row.design_wind_speed_mph != null ? Number(row.design_wind_speed_mph) : null,
+    snowLoadPsf: row.snow_load_psf != null ? Number(row.snow_load_psf) : null,
+    soilType: row.soil_type as string | null,
+    soilDrainage: row.soil_drainage as string | null,
+    soilBearingCapacity: row.soil_bearing_capacity as string | null,
+    treeCanopyPct: row.tree_canopy_pct != null ? Number(row.tree_canopy_pct) : null,
+    lawnAreaSqft: row.lawn_area_sqft != null ? Number(row.lawn_area_sqft) : null,
+    wallAreaSqft: row.wall_area_sqft != null ? Number(row.wall_area_sqft) : null,
+    roofComplexityFactor: row.roof_complexity_factor != null ? Number(row.roof_complexity_factor) : null,
+    boundaryPerimeterFt: row.boundary_perimeter_ft != null ? Number(row.boundary_perimeter_ft) : null,
+    termiteZone: row.termite_zone as string | null,
   };
 }
 
