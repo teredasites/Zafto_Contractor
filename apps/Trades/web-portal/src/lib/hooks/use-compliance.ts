@@ -155,6 +155,63 @@ export function useCompliance() {
     };
   }, [certifications]);
 
+  const createCertification = useCallback(async (cert: Partial<Certification>) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const { error: err } = await supabase.from('certifications').insert({
+      company_id: user.app_metadata?.company_id,
+      user_id: user.id,
+      certification_type: cert.certification_type || 'license',
+      certification_name: cert.certification_name || '',
+      issuing_authority: cert.issuing_authority || null,
+      certification_number: cert.certification_number || null,
+      issued_date: cert.issued_date || null,
+      expiration_date: cert.expiration_date || null,
+      renewal_required: cert.renewal_required ?? true,
+      renewal_reminder_days: cert.renewal_reminder_days ?? 30,
+      status: cert.status || 'active',
+      notes: cert.notes || null,
+      compliance_category: cert.compliance_category || 'other',
+      policy_number: cert.policy_number || null,
+      coverage_amount: cert.coverage_amount ?? null,
+      renewal_cost: cert.renewal_cost ?? null,
+      auto_renew: cert.auto_renew ?? false,
+    });
+    if (err) throw err;
+    await load();
+  }, [load]);
+
+  const updateCertification = useCallback(async (id: string, updates: Partial<Certification>) => {
+    const payload: Record<string, unknown> = {};
+    if (updates.certification_name !== undefined) payload.certification_name = updates.certification_name;
+    if (updates.certification_type !== undefined) payload.certification_type = updates.certification_type;
+    if (updates.issuing_authority !== undefined) payload.issuing_authority = updates.issuing_authority;
+    if (updates.certification_number !== undefined) payload.certification_number = updates.certification_number;
+    if (updates.issued_date !== undefined) payload.issued_date = updates.issued_date;
+    if (updates.expiration_date !== undefined) payload.expiration_date = updates.expiration_date;
+    if (updates.status !== undefined) payload.status = updates.status;
+    if (updates.notes !== undefined) payload.notes = updates.notes;
+    if (updates.compliance_category !== undefined) payload.compliance_category = updates.compliance_category;
+    if (updates.policy_number !== undefined) payload.policy_number = updates.policy_number;
+    if (updates.coverage_amount !== undefined) payload.coverage_amount = updates.coverage_amount;
+    if (updates.renewal_cost !== undefined) payload.renewal_cost = updates.renewal_cost;
+    if (updates.auto_renew !== undefined) payload.auto_renew = updates.auto_renew;
+    if (updates.renewal_required !== undefined) payload.renewal_required = updates.renewal_required;
+    if (updates.renewal_reminder_days !== undefined) payload.renewal_reminder_days = updates.renewal_reminder_days;
+
+    const { error: err } = await supabase.from('certifications').update(payload).eq('id', id);
+    if (err) throw err;
+    await load();
+  }, [load]);
+
+  const deleteCertification = useCallback(async (id: string) => {
+    const { error: err } = await supabase.from('certifications')
+      .update({ deleted_at: new Date().toISOString() } as Record<string, unknown>)
+      .eq('id', id);
+    if (err) throw err;
+    await load();
+  }, [load]);
+
   const createPacket = useCallback(async (packet: Partial<CompliancePacket>) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -200,6 +257,9 @@ export function useCompliance() {
     summary,
     loading,
     error,
+    createCertification,
+    updateCertification,
+    deleteCertification,
     createPacket,
     getRequirementsForTrade,
     checkCompliance,
