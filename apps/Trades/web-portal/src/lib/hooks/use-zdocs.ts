@@ -27,6 +27,7 @@ export interface ZDocsTemplate {
   isActive: boolean;
   isSystem: boolean;
   requiresSignature: boolean;
+  isShared: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -166,6 +167,7 @@ function mapTemplate(row: Record<string, unknown>): ZDocsTemplate {
     isActive: (row.is_active as boolean) ?? true,
     isSystem: (row.is_system as boolean) ?? false,
     requiresSignature: (row.requires_signature as boolean) ?? false,
+    isShared: (row.is_shared as boolean) ?? true,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -439,6 +441,7 @@ export function useZDocs() {
     variables: TemplateVariable[];
     isActive: boolean;
     requiresSignature: boolean;
+    isShared: boolean;
   }>, changeNote?: string) => {
     const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
@@ -477,6 +480,7 @@ export function useZDocs() {
     if (data.variables !== undefined) update.variables = data.variables;
     if (data.isActive !== undefined) update.is_active = data.isActive;
     if (data.requiresSignature !== undefined) update.requires_signature = data.requiresSignature;
+    if (data.isShared !== undefined) update.is_shared = data.isShared;
 
     const { error: err } = await supabase.from('document_templates').update(update).eq('id', id);
     if (err) throw err;

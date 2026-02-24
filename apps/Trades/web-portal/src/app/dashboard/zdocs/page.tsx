@@ -26,6 +26,8 @@ import {
   ToggleLeft,
   ToggleRight,
   CheckCircle,
+  Users,
+  User,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -361,6 +363,7 @@ function TemplateEditorView({
     contentHtml: string | null;
     isActive: boolean;
     requiresSignature: boolean;
+    isShared: boolean;
   }>, changeNote?: string) => Promise<void>;
   onGenerate: (templateId: string) => void;
   fetchVersions: (templateId: string) => Promise<TemplateVersion[]>;
@@ -370,6 +373,7 @@ function TemplateEditorView({
   const [description, setDescription] = useState(template.description || '');
   const [templateType, setTemplateType] = useState(template.templateType);
   const [requiresSignature, setRequiresSignature] = useState(template.requiresSignature);
+  const [isShared, setIsShared] = useState(template.isShared);
   const [isActive, setIsActive] = useState(template.isActive);
   const [content, setContent] = useState(template.contentHtml || '');
   const [saving, setSaving] = useState(false);
@@ -385,10 +389,11 @@ function TemplateEditorView({
       description !== (template.description || '') ||
       templateType !== template.templateType ||
       requiresSignature !== template.requiresSignature ||
+      isShared !== template.isShared ||
       isActive !== template.isActive ||
       content !== (template.contentHtml || '')
     );
-  }, [name, description, templateType, requiresSignature, isActive, content, template]);
+  }, [name, description, templateType, requiresSignature, isShared, isActive, content, template]);
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -401,6 +406,7 @@ function TemplateEditorView({
         contentHtml: content || null,
         isActive,
         requiresSignature,
+        isShared,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -409,7 +415,7 @@ function TemplateEditorView({
     } finally {
       setSaving(false);
     }
-  }, [onSave, template.id, name, description, templateType, content, isActive, requiresSignature]);
+  }, [onSave, template.id, name, description, templateType, content, isActive, requiresSignature, isShared]);
 
   const typeOptions = ZDOCS_TEMPLATE_TYPES.map((t) => ({
     value: t,
@@ -536,7 +542,7 @@ function TemplateEditorView({
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] resize-none"
               />
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 flex-wrap">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -546,6 +552,14 @@ function TemplateEditorView({
                 />
                 <span className="text-sm text-main">Requires Signature</span>
               </label>
+              <button
+                type="button"
+                onClick={() => setIsShared(!isShared)}
+                className="flex items-center gap-2 text-sm text-main"
+              >
+                {isShared ? <Users size={16} className="text-blue-500" /> : <User size={16} className="text-muted" />}
+                {isShared ? 'Company-Wide' : 'Personal Only'}
+              </button>
               <button
                 type="button"
                 onClick={() => setIsActive(!isActive)}
