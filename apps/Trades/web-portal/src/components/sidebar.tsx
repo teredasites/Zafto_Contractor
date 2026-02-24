@@ -70,6 +70,14 @@ import {
   ShieldAlert,
   Scale,
   Package,
+  Flame,
+  Thermometer,
+  Pipette,
+  Plug2,
+  Paintbrush,
+  TreePine,
+  Snowflake,
+  Hammer,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -247,6 +255,30 @@ const navigationGroups: NavGroup[] = [
       { name: 'Inspections', href: '/dashboard/properties/inspections', icon: ScanSearch },
       { name: 'Assets', href: '/dashboard/properties/assets', icon: Cog },
       { name: 'Unit Turns', href: '/dashboard/properties/turns', icon: RotateCcw },
+    ],
+  },
+  {
+    label: 'Trade Tools',
+    key: 'trade-tools',
+    railIcon: Hammer,
+    items: [
+      { name: 'HVAC', href: '/dashboard/trade-tools/hvac', icon: Snowflake },
+      { name: 'Plumbing', href: '/dashboard/trade-tools/plumbing', icon: Pipette },
+      { name: 'Electrical', href: '/dashboard/trade-tools/electrical', icon: Plug2 },
+      { name: 'Roofing', href: '/dashboard/trade-tools/roofing', icon: Home },
+      { name: 'General Contractor', href: '/dashboard/trade-tools/general-contractor', icon: Hammer },
+      { name: 'Painting', href: '/dashboard/trade-tools/painting', icon: Paintbrush },
+      { name: 'Landscaping', href: '/dashboard/trade-tools/landscaping', icon: TreePine },
+    ],
+  },
+  {
+    label: 'Specialty',
+    key: 'specialty',
+    railIcon: Flame,
+    items: [
+      { name: 'Fire Restoration', href: '/dashboard/fire-restoration', icon: Flame },
+      { name: 'Mold Remediation', href: '/dashboard/mold-remediation', icon: Thermometer },
+      { name: 'Water Damage', href: '/dashboard/water-damage', icon: Droplets },
     ],
   },
   // Z Intelligence — Phase E (AI). Hidden until AI layer is built.
