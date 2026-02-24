@@ -42,17 +42,22 @@ import {
   usePpChargebacks,
   usePpVendorApps,
   usePpReferenceData,
+  usePpBoilerModels,
+  usePpPricing,
   type PpWorkOrder,
   type PpWorkOrderStatus,
   type PpChargeback,
   type PpNationalCompany,
   type PpWorkOrderType,
   type PpVendorApplication,
+  type BoilerFurnaceModel,
+  type PpPricingMatrix,
+  type EquipmentType,
 } from '@/lib/hooks/use-property-preservation';
 
 // ── Types ──
 
-type TabKey = 'board' | 'deadlines' | 'daily' | 'revenue' | 'nationals';
+type TabKey = 'board' | 'deadlines' | 'daily' | 'revenue' | 'nationals' | 'tools';
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { key: 'board', label: 'Work Orders', icon: ClipboardList },
@@ -60,6 +65,7 @@ const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ size?: num
   { key: 'daily', label: 'Daily Summary', icon: Calendar },
   { key: 'revenue', label: 'Revenue', icon: DollarSign },
   { key: 'nationals', label: 'Nationals', icon: Building2 },
+  { key: 'tools', label: 'PP Tools', icon: Wrench },
 ];
 
 const KANBAN_COLUMNS: { key: PpWorkOrderStatus; label: string; color: string; bg: string }[] = [
@@ -469,6 +475,9 @@ export default function PropertyPreservationPage() {
           workOrders={workOrders}
           chargebacks={chargebacks}
         />
+      )}
+      {activeTab === 'tools' && (
+        <ToolsTab />
       )}
 
       {/* Create Modal */}
@@ -1140,5 +1149,551 @@ function NationalsTab({ nationals, vendorApps, workOrders, chargebacks }: Nation
         })
       )}
     </div>
+  );
+}
+
+// ── PP Tools Tab ──
+
+const ROOM_TYPES = [
+  'Living Room', 'Bedroom', 'Kitchen', 'Bathroom', 'Basement',
+  'Garage', 'Dining Room', 'Den/Office', 'Hallway', 'Attic',
+  'Laundry Room', 'Utility Room', 'Closet', 'Porch/Patio',
+];
+
+const FILL_LEVELS: { key: string; label: string; min: number; max: number }[] = [
+  { key: 'broom_clean', label: 'Broom Clean', min: 0.5, max: 1.0 },
+  { key: 'normal', label: 'Normal Cleanout', min: 1.5, max: 3.0 },
+  { key: 'heavy', label: 'Heavy', min: 3.0, max: 5.0 },
+  { key: 'hoarder', label: 'Hoarder', min: 5.0, max: 10.0 },
+];
+
+const HOARDING_SCALE = [
+  { level: 1, label: 'Light', min: 10, max: 20, desc: 'Some clutter, accessible pathways' },
+  { level: 2, label: 'Noticeable', min: 20, max: 40, desc: 'Blocked pathways, difficult navigation' },
+  { level: 3, label: 'Significant', min: 40, max: 70, desc: 'PPE required, structural concern' },
+  { level: 4, label: 'Severe', min: 70, max: 100, desc: 'Biohazard PPE, heavy equipment needed' },
+  { level: 5, label: 'Extreme', min: 100, max: 150, desc: 'Full hazmat, structural assessment required' },
+];
+
+const DUMPSTER_RECS = [
+  { maxCy: 10, name: 'Trailer', costMin: 100, costMax: 200 },
+  { maxCy: 15, name: '10-yd Dumpster', costMin: 220, costMax: 580 },
+  { maxCy: 25, name: '20-yd Dumpster', costMin: 280, costMax: 700 },
+  { maxCy: 35, name: '30-yd Dumpster', costMin: 311, costMax: 718 },
+  { maxCy: Infinity, name: '40-yd Dumpster', costMin: 350, costMax: 780 },
+];
+
+const STRIPPED_ITEMS = [
+  { item: 'Copper Piping (per LF)', hudRate: 4.50 },
+  { item: 'Water Heater', hudRate: 450 },
+  { item: 'Furnace', hudRate: 1200 },
+  { item: 'AC Condenser', hudRate: 900 },
+  { item: 'Kitchen Sink', hudRate: 175 },
+  { item: 'Bathroom Sink', hudRate: 125 },
+  { item: 'Toilet', hudRate: 150 },
+  { item: 'Bathtub', hudRate: 350 },
+  { item: 'Electrical Panel', hudRate: 800 },
+  { item: 'Light Fixtures (each)', hudRate: 35 },
+  { item: 'Kitchen Cabinets (per LF)', hudRate: 85 },
+  { item: 'Countertops (per LF)', hudRate: 45 },
+  { item: 'Interior Door (each)', hudRate: 95 },
+  { item: 'Refrigerator', hudRate: 500 },
+  { item: 'Stove/Range', hudRate: 350 },
+  { item: 'Dishwasher', hudRate: 300 },
+  { item: 'Washer', hudRate: 350 },
+  { item: 'Dryer', hudRate: 300 },
+];
+
+interface RoomEntry {
+  room: string;
+  sqft: number;
+  level: string;
+}
+
+function ToolsTab() {
+  const [activeTool, setActiveTool] = useState<'debris' | 'hoarding' | 'stripped' | 'boiler' | 'pricing'>('debris');
+
+  const tools: { key: typeof activeTool; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+    { key: 'debris', label: 'Debris Calculator', icon: Trash2 },
+    { key: 'hoarding', label: 'Hoarding Scale', icon: AlertTriangle },
+    { key: 'stripped', label: 'Stripped Estimator', icon: Home },
+    { key: 'boiler', label: 'Boiler/Furnace DB', icon: Snowflake },
+    { key: 'pricing', label: 'HUD Pricing', icon: DollarSign },
+  ];
+
+  return (
+    <div className="space-y-4">
+      {/* Tool Selector */}
+      <div className="flex gap-2 flex-wrap">
+        {tools.map(tool => {
+          const Icon = tool.icon;
+          return (
+            <button
+              key={tool.key}
+              onClick={() => setActiveTool(tool.key)}
+              className={cn(
+                'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                activeTool === tool.key
+                  ? 'bg-accent/10 text-accent border border-accent/30'
+                  : 'bg-secondary text-muted hover:text-main border border-transparent'
+              )}
+            >
+              <Icon size={14} />
+              {tool.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {activeTool === 'debris' && <RoomByRoomDebrisCalc />}
+      {activeTool === 'hoarding' && <HoardingScaleTool />}
+      {activeTool === 'stripped' && <StrippedEstimator />}
+      {activeTool === 'boiler' && <BoilerModelSearch />}
+      {activeTool === 'pricing' && <HudPricingLookup />}
+    </div>
+  );
+}
+
+// ── Room-by-Room Debris Calculator ──
+
+function RoomByRoomDebrisCalc() {
+  const [rooms, setRooms] = useState<RoomEntry[]>([]);
+  const [hudRate, setHudRate] = useState(40);
+  const [nationalCut, setNationalCut] = useState(30);
+
+  const addRoom = () => {
+    setRooms(r => [...r, { room: ROOM_TYPES[0], sqft: 0, level: 'normal' }]);
+  };
+
+  const removeRoom = (idx: number) => {
+    setRooms(r => r.filter((_, i) => i !== idx));
+  };
+
+  const updateRoom = (idx: number, patch: Partial<RoomEntry>) => {
+    setRooms(r => r.map((room, i) => i === idx ? { ...room, ...patch } : room));
+  };
+
+  const results = useMemo(() => {
+    let totalMinCy = 0;
+    let totalMaxCy = 0;
+    const roomResults = rooms.map(room => {
+      const fillLevel = FILL_LEVELS.find(f => f.key === room.level) || FILL_LEVELS[1];
+      const minCy = (room.sqft / 100) * fillLevel.min;
+      const maxCy = (room.sqft / 100) * fillLevel.max;
+      totalMinCy += minCy;
+      totalMaxCy += maxCy;
+      return { ...room, minCy, maxCy, avgCy: (minCy + maxCy) / 2 };
+    });
+    const avgCy = (totalMinCy + totalMaxCy) / 2;
+    const dumpster = DUMPSTER_RECS.find(d => avgCy <= d.maxCy) || DUMPSTER_RECS[DUMPSTER_RECS.length - 1];
+    const grossRevenue = avgCy * hudRate;
+    const nationalCutAmt = grossRevenue * (nationalCut / 100);
+    const dumpsterCost = (dumpster.costMin + dumpster.costMax) / 2;
+    const profit = grossRevenue - nationalCutAmt - dumpsterCost;
+
+    return { roomResults, totalMinCy, totalMaxCy, avgCy, dumpster, grossRevenue, nationalCutAmt, dumpsterCost, profit };
+  }, [rooms, hudRate, nationalCut]);
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base">Room-by-Room Debris Calculator</CardTitle>
+            <Button variant="secondary" size="sm" onClick={addRoom}>
+              <Plus size={14} /> Add Room
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {rooms.length === 0 ? (
+            <div className="text-center py-6 text-muted text-sm">
+              <Trash2 size={32} className="mx-auto mb-2 opacity-30" />
+              <p>Add rooms to calculate debris volume</p>
+              <Button variant="secondary" size="sm" className="mt-3" onClick={addRoom}>
+                <Plus size={14} /> Add First Room
+              </Button>
+            </div>
+          ) : (
+            rooms.map((room, idx) => (
+              <div key={idx} className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
+                <select
+                  className="px-2 py-1.5 bg-surface border border-main rounded text-main text-sm min-w-[120px]"
+                  value={room.room}
+                  onChange={e => updateRoom(idx, { room: e.target.value })}
+                >
+                  {ROOM_TYPES.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+                <input
+                  type="number"
+                  className="px-2 py-1.5 bg-surface border border-main rounded text-main text-sm w-20"
+                  placeholder="Sq ft"
+                  value={room.sqft || ''}
+                  onChange={e => updateRoom(idx, { sqft: Number(e.target.value) || 0 })}
+                />
+                <select
+                  className="px-2 py-1.5 bg-surface border border-main rounded text-main text-sm"
+                  value={room.level}
+                  onChange={e => updateRoom(idx, { level: e.target.value })}
+                >
+                  {FILL_LEVELS.map(f => <option key={f.key} value={f.key}>{f.label}</option>)}
+                </select>
+                <span className="text-sm text-muted ml-auto whitespace-nowrap">
+                  {results.roomResults[idx]?.avgCy.toFixed(1) || '0'} CY
+                </span>
+                <button onClick={() => removeRoom(idx)} className="text-muted hover:text-red-400">
+                  <X size={14} />
+                </button>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      {rooms.length > 0 && (
+        <>
+          {/* Profit Calculator */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-muted mb-1">HUD Rate ($/CY)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
+                value={hudRate}
+                onChange={e => setHudRate(Number(e.target.value) || 0)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-muted mb-1">National&apos;s Cut (%)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
+                value={nationalCut}
+                onChange={e => setNationalCut(Number(e.target.value) || 0)}
+              />
+            </div>
+          </div>
+
+          {/* Results */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Calculation Results</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div>
+                  <span className="text-xs text-muted block">Total CY Range</span>
+                  <span className="text-lg font-bold text-main">{results.totalMinCy.toFixed(1)} - {results.totalMaxCy.toFixed(1)}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted block">Average CY</span>
+                  <span className="text-lg font-bold text-main">{results.avgCy.toFixed(1)}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted block">Dumpster</span>
+                  <span className="text-sm font-medium text-main">{results.dumpster.name}</span>
+                  <span className="text-xs text-muted block">${results.dumpster.costMin}-${results.dumpster.costMax}</span>
+                </div>
+              </div>
+
+              {results.avgCy > 12 && (
+                <div className="flex items-center gap-2 p-2 bg-orange-500/10 rounded-lg text-orange-400 text-sm">
+                  <AlertTriangle size={14} />
+                  Exceeds 12 CY — pre-approval required from national
+                </div>
+              )}
+
+              <div className="border-t border-main/50 pt-3 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">HUD Allowable ({results.avgCy.toFixed(1)} CY x ${hudRate})</span>
+                  <span className="text-main">{formatCurrency(results.grossRevenue)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">National&apos;s Cut ({nationalCut}%)</span>
+                  <span className="text-red-400">-{formatCurrency(results.nationalCutAmt)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Dumpster Cost (avg)</span>
+                  <span className="text-red-400">-{formatCurrency(results.dumpsterCost)}</span>
+                </div>
+                <div className="flex justify-between text-sm font-bold border-t border-main/50 pt-2">
+                  <span className="text-main">Estimated Profit</span>
+                  <span className={results.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                    {formatCurrency(results.profit)}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── Hoarding Scale Assessment ──
+
+function HoardingScaleTool() {
+  const [propertySqft, setPropertySqft] = useState(1500);
+  const [selectedLevel, setSelectedLevel] = useState(1);
+
+  const results = useMemo(() => {
+    const scale = HOARDING_SCALE.find(h => h.level === selectedLevel) || HOARDING_SCALE[0];
+    const factor = propertySqft / 1000;
+    const minCy = scale.min * factor;
+    const maxCy = scale.max * factor;
+    const avgCy = (minCy + maxCy) / 2;
+    const dumpster = DUMPSTER_RECS.find(d => avgCy <= d.maxCy) || DUMPSTER_RECS[DUMPSTER_RECS.length - 1];
+    const pulls = Math.ceil(avgCy / (dumpster.maxCy === Infinity ? 40 : dumpster.maxCy));
+    return { scale, minCy, maxCy, avgCy, dumpster, pulls };
+  }, [propertySqft, selectedLevel]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Hoarding Scale Assessment</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <label className="block text-xs font-medium text-muted mb-1">Property Size (sq ft)</label>
+          <input
+            type="number"
+            className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm max-w-xs"
+            value={propertySqft}
+            onChange={e => setPropertySqft(Number(e.target.value) || 0)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          {HOARDING_SCALE.map(scale => (
+            <div
+              key={scale.level}
+              onClick={() => setSelectedLevel(scale.level)}
+              className={cn(
+                'p-3 rounded-lg border cursor-pointer transition-colors',
+                selectedLevel === scale.level
+                  ? 'border-accent bg-accent/5'
+                  : 'border-main hover:border-accent/30'
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-sm font-medium text-main">Level {scale.level}: {scale.label}</span>
+                  <p className="text-xs text-muted">{scale.desc}</p>
+                </div>
+                <span className="text-xs text-muted">{scale.min}-{scale.max} CY/1k sqft</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="p-4 bg-secondary rounded-lg space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted">CY Range ({propertySqft} sqft)</span>
+            <span className="text-main font-bold">{results.minCy.toFixed(0)} - {results.maxCy.toFixed(0)} CY</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted">Recommended</span>
+            <span className="text-main">{results.dumpster.name} x {results.pulls}</span>
+          </div>
+          {selectedLevel >= 3 && (
+            <div className="flex items-center gap-2 text-xs text-orange-400 mt-2">
+              <AlertTriangle size={12} />
+              {selectedLevel >= 4 ? 'Biohazard PPE required' : 'PPE required'}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Stripped Property Estimator ──
+
+function StrippedEstimator() {
+  const [items, setItems] = useState<Record<string, number>>({});
+
+  const total = useMemo(() => {
+    return STRIPPED_ITEMS.reduce((sum, si) => sum + (items[si.item] || 0) * si.hudRate, 0);
+  }, [items]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Stripped Property Estimator</CardTitle>
+        <p className="text-xs text-muted mt-1">Estimate replacement costs for stripped items using HUD allowable rates</p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-1">
+          <div className="grid grid-cols-[1fr,80px,80px,80px] gap-2 px-2 py-1 text-xs font-medium text-muted border-b border-main/50">
+            <span>Item</span>
+            <span className="text-right">HUD Rate</span>
+            <span className="text-center">Qty</span>
+            <span className="text-right">Total</span>
+          </div>
+          {STRIPPED_ITEMS.map(si => (
+            <div key={si.item} className="grid grid-cols-[1fr,80px,80px,80px] gap-2 px-2 py-1.5 items-center hover:bg-surface-hover rounded">
+              <span className="text-sm text-main">{si.item}</span>
+              <span className="text-xs text-muted text-right">{formatCurrency(si.hudRate)}</span>
+              <input
+                type="number"
+                min="0"
+                className="w-full px-2 py-1 bg-secondary border border-main rounded text-main text-sm text-center"
+                value={items[si.item] || ''}
+                onChange={e => setItems(prev => ({ ...prev, [si.item]: Number(e.target.value) || 0 }))}
+              />
+              <span className="text-sm text-main text-right">
+                {(items[si.item] || 0) > 0 ? formatCurrency((items[si.item] || 0) * si.hudRate) : '--'}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-between items-center mt-4 pt-3 border-t border-main/50">
+          <span className="text-sm font-medium text-main">Total Estimated Replacement</span>
+          <span className="text-lg font-bold text-emerald-400">{formatCurrency(total)}</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Boiler/Furnace Model Search ──
+
+function BoilerModelSearch() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [equipType, setEquipType] = useState<EquipmentType | ''>('');
+  const { models, loading } = usePpBoilerModels({
+    equipmentType: equipType || undefined,
+    search: searchTerm || undefined,
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Boiler/Furnace Model Database</CardTitle>
+        <p className="text-xs text-muted mt-1">Search equipment models for winterization procedure guidance</p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <input
+              className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
+              placeholder="Search manufacturer or model..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <select
+            className="px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm"
+            value={equipType}
+            onChange={e => setEquipType(e.target.value as EquipmentType | '')}
+          >
+            <option value="">All Types</option>
+            <option value="boiler">Boiler</option>
+            <option value="furnace">Furnace</option>
+            <option value="heat_pump">Heat Pump</option>
+            <option value="water_heater">Water Heater</option>
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted" />
+          </div>
+        ) : models.length === 0 ? (
+          <div className="text-center py-8 text-muted text-sm">
+            <Snowflake size={32} className="mx-auto mb-2 opacity-30" />
+            <p>{searchTerm ? 'No models found' : 'Equipment models will appear when the reference database is seeded'}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {models.slice(0, 20).map(model => (
+              <div key={model.id} className="p-3 bg-secondary rounded-lg">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-main">{model.manufacturer} {model.modelName}</span>
+                  <Badge variant="default" className="text-xs capitalize">{model.equipmentType.replace('_', ' ')}</Badge>
+                </div>
+                {model.modelNumber && (
+                  <p className="text-xs text-muted font-mono">Model: {model.modelNumber}</p>
+                )}
+                {model.fuelType && (
+                  <p className="text-xs text-muted capitalize">Fuel: {model.fuelType.replace('_', ' ')}</p>
+                )}
+                {model.winterizationNotes && (
+                  <p className="text-xs text-blue-400 mt-1">{model.winterizationNotes}</p>
+                )}
+                {model.isDiscontinued && (
+                  <Badge variant="warning" className="text-xs mt-1">Discontinued</Badge>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── HUD Pricing Lookup ──
+
+function HudPricingLookup() {
+  const [stateCode, setStateCode] = useState('');
+  const { pricing, loading } = usePpPricing(stateCode || undefined);
+
+  const US_STATES = [
+    'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS',
+    'KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY',
+    'NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC',
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">HUD Pricing Matrix</CardTitle>
+        <p className="text-xs text-muted mt-1">Look up HUD allowable rates by state and work order type</p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <label className="block text-xs font-medium text-muted mb-1">State</label>
+          <select
+            className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm max-w-xs"
+            value={stateCode}
+            onChange={e => setStateCode(e.target.value)}
+          >
+            <option value="">Select state...</option>
+            {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted" />
+          </div>
+        ) : !stateCode ? (
+          <div className="text-center py-8 text-muted text-sm">
+            <DollarSign size={32} className="mx-auto mb-2 opacity-30" />
+            <p>Select a state to view HUD pricing</p>
+          </div>
+        ) : pricing.length === 0 ? (
+          <div className="text-center py-8 text-muted text-sm">
+            <p>No pricing data for {stateCode}</p>
+            <p className="text-xs mt-1">Pricing data will appear when the reference tables are seeded</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-main/50">
+            {pricing.map(p => (
+              <div key={p.id} className="py-2 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-main capitalize">{p.workOrderType.replace(/_/g, ' ')}</p>
+                  <p className="text-xs text-muted capitalize">{p.pricingSource} — {p.rateUnit.replace(/_/g, ' ')}</p>
+                </div>
+                <span className="text-sm font-bold text-emerald-400">{formatCurrency(p.rate)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
