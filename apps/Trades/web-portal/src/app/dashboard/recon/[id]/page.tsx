@@ -690,7 +690,8 @@ export default function ReconDetailPage() {
       {activeTab === 'walls' && <WallsTab walls={walls} onEstimate={handleEstimate} estimating={estimating} />}
       {activeTab === 'trades' && (
         <TradesTab tradeBids={tradeBids} selectedTrade={selectedTrade}
-          onSelectTrade={setSelectedTrade} onEstimate={handleEstimate} estimating={estimating} />
+          onSelectTrade={setSelectedTrade} onEstimate={handleEstimate} estimating={estimating}
+          scan={scan} features={features} />
       )}
       {activeTab === 'solar' && <SolarTab facets={facets} tradeBids={tradeBids} />}
       {activeTab === 'storm' && <StormTab scanId={scan.id} scanState={scan.state} />}
@@ -1527,9 +1528,10 @@ function WallsTab({ walls, onEstimate, estimating }: {
 // TRADES TAB
 // ============================================================================
 
-function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estimating }: {
+function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estimating, scan, features }: {
   tradeBids: TradeBidData[]; selectedTrade: TradeType | null;
   onSelectTrade: (t: TradeType | null) => void; onEstimate: () => void; estimating: boolean;
+  scan: PropertyScanData; features: PropertyFeaturesData | null;
 }) {
   const { t: tr } = useTranslation();
   const activeTrade = selectedTrade ? tradeBids.find(t => t.trade === selectedTrade) : null;
@@ -1606,14 +1608,101 @@ function TradesTab({ tradeBids, selectedTrade, onSelectTrade, onEstimate, estima
       )}
 
       {/* Trade detail */}
-      {activeTrade && <TradeDetail trade={activeTrade} />}
+      {activeTrade && <TradeDetail trade={activeTrade} scan={scan} features={features} />}
     </div>
   );
 }
 
-function TradeDetail({ trade }: { trade: TradeBidData }) {
+function TradeDetail({ trade, scan, features }: {
+  trade: TradeBidData; scan: PropertyScanData; features: PropertyFeaturesData | null;
+}) {
   const { t } = useTranslation();
   const color = TRADE_COLORS[trade.trade] || '#6B7280';
+  const env = (scan.environmentalData || {}) as Record<string, unknown>;
+  const code = (scan.codeRequirements || {}) as Record<string, unknown>;
+  const weather = (scan.weatherHistory || {}) as Record<string, unknown>;
+  const measurements = (scan.computedMeasurements || {}) as Record<string, unknown>;
+  const hazards = scan.hazardFlags || [];
+
+  // Build trade-specific intelligence items
+  const intel: { label: string; value: string; highlight?: boolean }[] = [];
+
+  const tradeName = trade.trade;
+  const yearBuilt = features?.yearBuilt;
+  const propertyAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
+  const tradeHazards = hazards.filter(h => {
+    if (tradeName === 'roofing') return ['wildfire'].includes(h.type);
+    if (tradeName === 'siding' || tradeName === 'painting') return ['lead_paint', 'asbestos'].includes(h.type);
+    if (tradeName === 'electrical') return ['knob_and_tube', 'problem_panels'].includes(h.type);
+    if (tradeName === 'plumbing') return ['polybutylene_pipe', 'galvanized_pipe'].includes(h.type);
+    if (tradeName === 'insulation') return ['asbestos', 'radon'].includes(h.type);
+    if (tradeName === 'hvac') return ['asbestos', 'radon'].includes(h.type);
+    if (tradeName === 'concrete') return ['seismic'].includes(h.type);
+    if (tradeName === 'landscaping' || tradeName === 'fencing' || tradeName === 'irrigation') return [];
+    return [];
+  });
+
+  // Common intelligence for all trades
+  if (propertyAge != null) intel.push({ label: 'Property Age', value: `${propertyAge} years (${yearBuilt})` });
+  if (features?.livingSqft) intel.push({ label: 'Living Area', value: `${features.livingSqft.toLocaleString()} sqft` });
+
+  // Trade-specific rows
+  if (tradeName === 'roofing') {
+    if (weather.hail_events != null) intel.push({ label: 'Hail Events (2yr)', value: String(weather.hail_events), highlight: Number(weather.hail_events) > 0 });
+    if (weather.wind_events != null) intel.push({ label: 'Severe Wind Events', value: String(weather.wind_events), highlight: Number(weather.wind_events) > 0 });
+    if (features?.treeCanopyPct != null) intel.push({ label: 'Tree Shading', value: `${features.treeCanopyPct.toFixed(0)}%` });
+    if (code.wind_speed_mph != null) intel.push({ label: 'Design Wind Speed', value: `${code.wind_speed_mph} mph` });
+    if (measurements.roof_complexity_factor != null) intel.push({ label: 'Complexity Factor', value: `${Number(measurements.roof_complexity_factor).toFixed(2)}x`, highlight: Number(measurements.roof_complexity_factor) >= 1.5 });
+  } else if (tradeName === 'siding') {
+    if (measurements.wall_area_sqft != null) intel.push({ label: 'Wall Area (est)', value: `${Math.round(Number(measurements.wall_area_sqft)).toLocaleString()} sqft` });
+    if (features?.stories) intel.push({ label: 'Stories', value: String(features.stories) });
+    if (features?.exteriorMaterial) intel.push({ label: 'Existing Material', value: formatLabel(features.exteriorMaterial) });
+  } else if (tradeName === 'hvac') {
+    if (features?.climateZone) intel.push({ label: 'Climate Zone', value: features.climateZone });
+    if (features?.heatingType) intel.push({ label: 'Existing Heating', value: formatLabel(features.heatingType) });
+    if (features?.coolingType) intel.push({ label: 'Existing Cooling', value: formatLabel(features.coolingType) });
+    if (code.energy_code) intel.push({ label: 'Energy Code', value: String(code.energy_code) });
+    if (code.insulation_r_values) {
+      const rv = code.insulation_r_values as Record<string, number>;
+      if (rv.attic) intel.push({ label: 'Required R-Value (Attic)', value: `R-${rv.attic}` });
+    }
+  } else if (tradeName === 'plumbing') {
+    if (propertyAge != null && propertyAge > 30) intel.push({ label: 'Pipe Age Risk', value: propertyAge > 50 ? 'High — likely galvanized' : 'Moderate — inspect', highlight: true });
+  } else if (tradeName === 'electrical') {
+    if (propertyAge != null && propertyAge > 40) intel.push({ label: 'Wiring Age Risk', value: propertyAge > 60 ? 'High — likely knob & tube era' : 'Moderate — inspect', highlight: true });
+  } else if (tradeName === 'painting') {
+    if (measurements.wall_area_sqft != null) intel.push({ label: 'Exterior Wall Area', value: `${Math.round(Number(measurements.wall_area_sqft)).toLocaleString()} sqft` });
+    if (features?.livingSqft) intel.push({ label: 'Interior Area (est)', value: `${Math.round(features.livingSqft * 3.5).toLocaleString()} sqft` });
+  } else if (tradeName === 'fencing') {
+    if (measurements.boundary_perimeter_ft != null) intel.push({ label: 'Property Boundary', value: `${Math.round(Number(measurements.boundary_perimeter_ft)).toLocaleString()} LF` });
+    if (features?.soilType) intel.push({ label: 'Soil Type', value: formatLabel(features.soilType) });
+    if (features?.frostLineDepthIn != null) intel.push({ label: 'Post Depth (frost line)', value: `${features.frostLineDepthIn}"` });
+  } else if (tradeName === 'concrete') {
+    if (measurements.driveway_area_sqft != null) intel.push({ label: 'Driveway Area (est)', value: `${Math.round(Number(measurements.driveway_area_sqft)).toLocaleString()} sqft` });
+    if (features?.soilBearingCapacity) intel.push({ label: 'Soil Bearing', value: formatLabel(features.soilBearingCapacity) });
+    if (features?.frostLineDepthIn != null) intel.push({ label: 'Frost Line Depth', value: `${features.frostLineDepthIn}"` });
+    if (features?.seismicCategory) intel.push({ label: 'Seismic Category', value: features.seismicCategory, highlight: ['D0', 'D1', 'D2', 'E', 'F'].includes(features.seismicCategory) });
+  } else if (tradeName === 'landscaping' || tradeName === 'irrigation') {
+    if (measurements.lawn_area_sqft != null) intel.push({ label: 'Yard Area', value: `${Math.round(Number(measurements.lawn_area_sqft)).toLocaleString()} sqft` });
+    if (features?.treeCanopyPct != null) intel.push({ label: 'Tree Canopy', value: `${features.treeCanopyPct.toFixed(0)}%` });
+    if (features?.soilType) intel.push({ label: 'Soil Type', value: formatLabel(features.soilType) });
+    if (features?.soilDrainage) intel.push({ label: 'Soil Drainage', value: formatLabel(features.soilDrainage) });
+  } else if (tradeName === 'solar') {
+    if (features?.treeCanopyPct != null) intel.push({ label: 'Tree Shading', value: `${features.treeCanopyPct.toFixed(0)}%` });
+    if (weather.avg_wind_mph != null) intel.push({ label: 'Avg Wind', value: `${Number(weather.avg_wind_mph).toFixed(1)} mph` });
+  } else if (tradeName === 'insulation') {
+    if (features?.climateZone) intel.push({ label: 'Climate Zone', value: features.climateZone });
+    if (code.insulation_r_values) {
+      const rv = code.insulation_r_values as Record<string, number>;
+      if (rv.attic) intel.push({ label: 'Required: Attic', value: `R-${rv.attic}` });
+      if (rv.wall) intel.push({ label: 'Required: Wall', value: `R-${rv.wall}` });
+      if (rv.floor) intel.push({ label: 'Required: Floor', value: `R-${rv.floor}` });
+    }
+    if (weather.freeze_thaw_cycles != null) intel.push({ label: 'Freeze-Thaw Cycles', value: `${weather.freeze_thaw_cycles}/yr`, highlight: Number(weather.freeze_thaw_cycles) > 40 });
+  } else if (['waterproofing', 'demolition'].includes(tradeName)) {
+    if (scan.floodZone) intel.push({ label: 'Flood Zone', value: `Zone ${scan.floodZone}`, highlight: true });
+    if (weather.annual_precip_in != null) intel.push({ label: 'Annual Precipitation', value: `${Number(weather.annual_precip_in).toFixed(1)}"` });
+  }
 
   return (
     <div className="space-y-4">
@@ -1625,7 +1714,7 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
         { label: 'Complexity', value: `${trade.complexityScore}/10`, icon: Activity, color: '#EC4899' },
       ]} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Measurements */}
         <Panel title={`${TRADE_LABELS[trade.trade]} Measurements`} icon={Ruler} color={color}>
           <div className="space-y-0">
@@ -1636,6 +1725,30 @@ function TradeDetail({ trade }: { trade: TradeBidData }) {
             ))}
             {Object.keys(trade.measurements).length === 0 && (
               <p className="text-xs text-muted py-4 text-center">{t('recon.noDetailedMeasurements')}</p>
+            )}
+          </div>
+        </Panel>
+
+        {/* Trade-Specific Intelligence */}
+        <Panel title="Property Intelligence" icon={Satellite} color={color}>
+          <div className="space-y-0">
+            {intel.map((item, i) => (
+              <DataRow key={i} label={item.label} value={item.value} highlight={item.highlight} />
+            ))}
+            {intel.length === 0 && (
+              <p className="text-xs text-muted py-4 text-center">No trade-specific intelligence available</p>
+            )}
+            {/* Trade-relevant hazard warnings */}
+            {tradeHazards.length > 0 && (
+              <div className="pt-2 mt-2 border-t border-main space-y-1.5">
+                <p className="text-[10px] font-semibold text-red-400 uppercase tracking-wider">Hazard Warnings</p>
+                {tradeHazards.map((h, i) => (
+                  <div key={i} className="flex items-start gap-2 text-[11px]">
+                    <AlertTriangle size={10} className="text-red-400 mt-0.5 shrink-0" />
+                    <span className="text-main">{h.title}: {h.what_to_do || h.description}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </Panel>
