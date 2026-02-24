@@ -18,6 +18,7 @@ import {
 import { useJobIntelligence } from '@/lib/hooks/use-job-intelligence';
 import { useTranslation } from '@/lib/translations';
 import { formatCompactCurrency } from '@/lib/format-locale';
+import { CommandPalette } from '@/components/command-palette';
 
 export default function JobAutopsyDetailPage() {
   const { t, formatDate } = useTranslation();
@@ -40,12 +41,12 @@ export default function JobAutopsyDetailPage() {
       <div className="p-6 max-w-4xl mx-auto">
         <Link
           href="/dashboard/job-intelligence"
-          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-200 mb-6"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-main mb-6"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Intelligence
         </Link>
-        <div className="flex flex-col items-center justify-center h-64 text-zinc-400">
-          <FileBarChart className="h-12 w-12 mb-4 text-zinc-600" />
+        <div className="flex flex-col items-center justify-center h-64 text-muted">
+          <FileBarChart className="h-12 w-12 mb-4 text-muted opacity-50" />
           <p>{error ? 'Error loading data' : 'No autopsy found for this job'}</p>
         </div>
       </div>
@@ -57,16 +58,18 @@ export default function JobAutopsyDetailPage() {
   const isOverBudget = (autopsy.variance_pct || 0) > 0;
 
   return (
+    <>
+    <CommandPalette />
     <div className="p-6 max-w-4xl mx-auto">
       <Link
         href="/dashboard/job-intelligence"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-200 mb-6"
+        className="inline-flex items-center gap-2 text-sm text-muted hover:text-main mb-6"
       >
         <ArrowLeft className="h-4 w-4" /> Back to Intelligence
       </Link>
 
-      <h1 className="text-2xl font-semibold text-white mb-1">{t('jobIntelligence.title')}</h1>
-      <p className="text-sm text-zinc-500 mb-6">
+      <h1 className="text-2xl font-semibold text-main mb-1">{t('jobIntelligence.title')}</h1>
+      <p className="text-sm text-muted mb-6">
         {(autopsy.job_type || 'Unknown').replace(/_/g, ' ')}
         {autopsy.completed_at && ` — ${formatDate(autopsy.completed_at)}`}
       </p>
@@ -101,7 +104,7 @@ export default function JobAutopsyDetailPage() {
             >
               {isProfitable ? 'Profitable' : 'Unprofitable'}
             </p>
-            <p className="text-sm text-zinc-400 mt-1">
+            <p className="text-sm text-muted mt-1">
               Revenue: {fmtMoney(autopsy.revenue || 0)} | Profit:{' '}
               {fmtMoney(autopsy.gross_profit || 0)}
             </p>
@@ -110,8 +113,8 @@ export default function JobAutopsyDetailPage() {
       </div>
 
       {/* Cost Comparison */}
-      <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5 mb-6">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('jobIntel.costComparison')}</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5 mb-6">
+        <h3 className="text-sm font-medium text-main mb-4">{t('jobIntel.costComparison')}</h3>
         <div className="space-y-6">
           <ComparisonBar
             label={t('estimates.labor')}
@@ -133,7 +136,7 @@ export default function JobAutopsyDetailPage() {
 
       {/* Variance Callouts */}
       <div className="space-y-3 mb-6">
-        <h3 className="text-sm font-medium text-zinc-300">{t('jobIntel.varianceAnalysis')}</h3>
+        <h3 className="text-sm font-medium text-main">{t('jobIntel.varianceAnalysis')}</h3>
 
         {isOverBudget ? (
           <Callout
@@ -180,9 +183,9 @@ export default function JobAutopsyDetailPage() {
         {autopsy.actual_drive_time_hours > 0 && (
           <Callout
             icon={Car}
-            color="text-zinc-400"
-            bgColor="bg-zinc-700/30"
-            borderColor="border-zinc-700/50"
+            color="text-slate-400"
+            bgColor="bg-slate-500/15"
+            borderColor="border-slate-500/30"
             title={`${autopsy.actual_drive_time_hours.toFixed(1)}h drive time`}
             subtitle={`${fmtMoney(autopsy.actual_drive_cost)} in mileage costs`}
           />
@@ -190,8 +193,8 @@ export default function JobAutopsyDetailPage() {
       </div>
 
       {/* Cost Breakdown */}
-      <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5 mb-6">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('jobIntel.actualCostBreakdown')}</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5 mb-6">
+        <h3 className="text-sm font-medium text-main mb-4">{t('jobIntel.actualCostBreakdown')}</h3>
         <div className="space-y-3">
           {[
             { label: 'Labor', value: autopsy.actual_labor_cost || 0 },
@@ -205,12 +208,12 @@ export default function JobAutopsyDetailPage() {
               const pct = ((item.value / total) * 100).toFixed(0);
               return (
                 <div key={item.label} className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">{item.label}</span>
+                  <span className="text-sm text-muted">{item.label}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-zinc-200">
+                    <span className="text-sm font-medium text-main">
                       {fmtMoney(item.value)}
                     </span>
-                    <span className="text-xs text-zinc-600 w-10 text-right">{pct}%</span>
+                    <span className="text-xs text-muted w-10 text-right">{pct}%</span>
                   </div>
                 </div>
               );
@@ -219,8 +222,8 @@ export default function JobAutopsyDetailPage() {
       </div>
 
       {/* Metadata */}
-      <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-5">
-        <h3 className="text-sm font-medium text-zinc-300 mb-4">{t('jobIntel.jobInfo')}</h3>
+      <div className="bg-secondary/50 border border-main rounded-xl p-5">
+        <h3 className="text-sm font-medium text-main mb-4">{t('jobIntel.jobInfo')}</h3>
         <div className="grid grid-cols-2 gap-4">
           <MetaRow label={t('hiring.jobType')} value={(autopsy.job_type || 'N/A').replace(/_/g, ' ')} />
           <MetaRow label={t('common.trade')} value={autopsy.trade_type || 'N/A'} />
@@ -239,6 +242,7 @@ export default function JobAutopsyDetailPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
@@ -260,31 +264,31 @@ function ComparisonBar({
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs text-zinc-500">{label}</span>
+        <span className="text-xs text-muted">{label}</span>
         <span className={`text-xs font-medium ${isOver ? 'text-red-400' : 'text-emerald-400'}`}>
           {isOver ? '+' : '-'}{fmtMoney(Math.abs(actual - estimated))}
         </span>
       </div>
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-600 w-8">{t('jobIntel.est')}</span>
-          <div className="flex-1 h-3 bg-zinc-700/30 rounded">
+          <span className="text-[10px] text-muted w-8">{t('jobIntel.est')}</span>
+          <div className="flex-1 h-3 bg-slate-700/30 rounded">
             <div
               className="h-full bg-blue-500/50 rounded"
               style={{ width: `${(estimated / max) * 100}%` }}
             />
           </div>
-          <span className="text-[10px] text-zinc-500 w-16 text-right">{fmtMoney(estimated)}</span>
+          <span className="text-[10px] text-muted w-16 text-right">{fmtMoney(estimated)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-600 w-8">{t('jobIntel.act')}</span>
-          <div className="flex-1 h-3 bg-zinc-700/30 rounded">
+          <span className="text-[10px] text-muted w-8">{t('jobIntel.act')}</span>
+          <div className="flex-1 h-3 bg-slate-700/30 rounded">
             <div
               className={`h-full rounded ${isOver ? 'bg-red-500/50' : 'bg-emerald-500/50'}`}
               style={{ width: `${(actual / max) * 100}%` }}
             />
           </div>
-          <span className="text-[10px] text-zinc-500 w-16 text-right">{fmtMoney(actual)}</span>
+          <span className="text-[10px] text-muted w-16 text-right">{fmtMoney(actual)}</span>
         </div>
       </div>
     </div>
@@ -311,7 +315,7 @@ function Callout({
       <Icon className={`h-5 w-5 ${color} flex-shrink-0`} />
       <div>
         <p className={`text-sm font-medium ${color}`}>{title}</p>
-        <p className="text-xs text-zinc-500 mt-0.5">{subtitle}</p>
+        <p className="text-xs text-muted mt-0.5">{subtitle}</p>
       </div>
     </div>
   );
@@ -320,8 +324,8 @@ function Callout({
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-zinc-500">{label}</p>
-      <p className="text-sm text-zinc-300 capitalize">{value}</p>
+      <p className="text-xs text-muted">{label}</p>
+      <p className="text-sm text-main capitalize">{value}</p>
     </div>
   );
 }

@@ -78,7 +78,7 @@ interface MeasurementEntry {
 // ---------------------------------------------------------------------------
 
 const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: typeof Clock }> = {
-  draft: { label: 'Draft', color: 'text-zinc-400', bgColor: 'bg-zinc-800', icon: FileText },
+  draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-secondary', icon: FileText },
   in_progress: { label: 'In Progress', color: 'text-amber-400', bgColor: 'bg-amber-900/30', icon: Clock },
   completed: { label: 'Completed', color: 'text-emerald-400', bgColor: 'bg-emerald-900/30', icon: CheckCircle },
   submitted: { label: 'Submitted', color: 'text-blue-400', bgColor: 'bg-blue-900/30', icon: FileText },
@@ -178,30 +178,30 @@ const DEMO_REPORTS: SurveyReport[] = [
 
 function SurveyRow({ survey, onSelect, isSelected }: { survey: SiteSurvey; onSelect: () => void; isSelected: boolean }) {
   const status = statusConfig[survey.status] || statusConfig.draft;
-  const type = surveyTypeConfig[survey.surveyType] || { label: survey.surveyType, color: 'text-zinc-400' };
+  const type = surveyTypeConfig[survey.surveyType] || { label: survey.surveyType, color: 'text-muted' };
   const StatusIcon = status.icon;
 
   return (
     <div
       className={cn(
-        'flex items-center gap-4 p-4 border-b border-zinc-800 hover:bg-zinc-800/50 cursor-pointer transition-colors',
-        isSelected && 'bg-zinc-800/70'
+        'flex items-center gap-4 p-4 border-b border-main hover:bg-surface-hover cursor-pointer transition-colors',
+        isSelected && 'bg-secondary/70'
       )}
       onClick={onSelect}
     >
       <StatusIcon className={cn('h-4 w-4 flex-shrink-0', status.color)} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-zinc-100 truncate">{survey.title}</span>
-          <Badge className={cn('text-[10px] border-0', type.color, 'bg-zinc-800')}>{type.label}</Badge>
+          <span className="text-sm font-medium text-main truncate">{survey.title}</span>
+          <Badge className={cn('text-[10px] border-0', type.color, 'bg-secondary')}>{type.label}</Badge>
         </div>
-        <div className="flex items-center gap-3 mt-0.5 text-xs text-zinc-500">
+        <div className="flex items-center gap-3 mt-0.5 text-xs text-muted">
           {survey.jobTitle && <span className="flex items-center gap-1"><Briefcase className="h-3 w-3" />{survey.jobTitle}</span>}
           <span>{survey.surveyorName}</span>
           {survey.propertyType && <span className="capitalize">{survey.propertyType.replace('_', ' ')}</span>}
         </div>
       </div>
-      <div className="flex items-center gap-3 text-xs text-zinc-500">
+      <div className="flex items-center gap-3 text-xs text-muted">
         {survey.hazards.length > 0 && (
           <span className="flex items-center gap-1 text-red-400"><AlertTriangle className="h-3 w-3" />{survey.hazards.length}</span>
         )}
@@ -214,7 +214,7 @@ function SurveyRow({ survey, onSelect, isSelected }: { survey: SiteSurvey; onSel
         <Badge className={cn('text-xs border-0', status.color, status.bgColor)}>{status.label}</Badge>
         <span className="w-20 text-right">{formatDate(survey.createdAt)}</span>
       </div>
-      {isSelected ? <ChevronDown className="h-4 w-4 text-zinc-500" /> : <ChevronRight className="h-4 w-4 text-zinc-600" />}
+      {isSelected ? <ChevronDown className="h-4 w-4 text-muted" /> : <ChevronRight className="h-4 w-4 text-muted" />}
     </div>
   );
 }
@@ -253,11 +253,11 @@ function MeasurementsPanel({ survey }: { survey: SiteSurvey }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs text-zinc-500 flex items-center gap-1">
+        <p className="text-xs text-muted flex items-center gap-1">
           <Ruler className="h-3 w-3" />
           {t('siteSurveys.measurements')} ({survey.measurements.length})
           {totalSqft > 0 && (
-            <span className="ml-2 text-zinc-400 font-medium">{totalSqft.toLocaleString()} sqft total</span>
+            <span className="ml-2 text-muted font-medium">{totalSqft.toLocaleString()} sqft total</span>
           )}
         </p>
         {!adding && (
@@ -273,50 +273,50 @@ function MeasurementsPanel({ survey }: { survey: SiteSurvey }) {
       {survey.measurements.length > 0 && (
         <div className="grid grid-cols-2 gap-1 mb-2">
           {survey.measurements.map((m, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-zinc-800">
-              <span className="text-zinc-300 font-medium">{m.area}</span>
-              <span className="text-zinc-500">{m.length} x {m.width}{m.height ? ` x ${m.height}` : ''} ft</span>
-              <span className="text-zinc-400 ml-auto">{(m.length * m.width).toLocaleString()} sqft</span>
+            <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-secondary">
+              <span className="text-main font-medium">{m.area}</span>
+              <span className="text-muted">{m.length} x {m.width}{m.height ? ` x ${m.height}` : ''} ft</span>
+              <span className="text-muted ml-auto">{(m.length * m.width).toLocaleString()} sqft</span>
             </div>
           ))}
         </div>
       )}
 
       {adding && (
-        <div className="p-3 rounded-lg bg-zinc-800/60 border border-zinc-700 space-y-2">
+        <div className="p-3 rounded-lg bg-secondary/60 border border-main space-y-2">
           <div className="grid grid-cols-4 gap-2">
             <div>
-              <label className="text-[10px] text-zinc-500 mb-0.5 block">Area Name</label>
+              <label className="text-[10px] text-muted mb-0.5 block">Area Name</label>
               <input
                 type="text"
                 value={entry.area}
                 onChange={e => setEntry(prev => ({ ...prev, area: e.target.value }))}
                 placeholder="e.g. Living Room"
-                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+                className="w-full px-2 py-1.5 bg-surface border border-main rounded text-xs text-main placeholder:text-muted"
               />
             </div>
             <div>
-              <label className="text-[10px] text-zinc-500 mb-0.5 block">Length (ft)</label>
+              <label className="text-[10px] text-muted mb-0.5 block">Length (ft)</label>
               <input
                 type="number"
                 value={entry.length || ''}
                 onChange={e => setEntry(prev => ({ ...prev, length: parseFloat(e.target.value) || 0 }))}
                 placeholder="0"
-                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+                className="w-full px-2 py-1.5 bg-surface border border-main rounded text-xs text-main placeholder:text-muted"
               />
             </div>
             <div>
-              <label className="text-[10px] text-zinc-500 mb-0.5 block">Width (ft)</label>
+              <label className="text-[10px] text-muted mb-0.5 block">Width (ft)</label>
               <input
                 type="number"
                 value={entry.width || ''}
                 onChange={e => setEntry(prev => ({ ...prev, width: parseFloat(e.target.value) || 0 }))}
                 placeholder="0"
-                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+                className="w-full px-2 py-1.5 bg-surface border border-main rounded text-xs text-main placeholder:text-muted"
               />
             </div>
             <div>
-              <label className="text-[10px] text-zinc-500 mb-0.5 block">Height (ft, opt.)</label>
+              <label className="text-[10px] text-muted mb-0.5 block">Height (ft, opt.)</label>
               <input
                 type="number"
                 value={entry.height ?? ''}
@@ -325,12 +325,12 @@ function MeasurementsPanel({ survey }: { survey: SiteSurvey }) {
                   setEntry(prev => ({ ...prev, height: val ? parseFloat(val) : undefined }));
                 }}
                 placeholder="8"
-                className="w-full px-2 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600"
+                className="w-full px-2 py-1.5 bg-surface border border-main rounded text-xs text-main placeholder:text-muted"
               />
             </div>
           </div>
           {entry.length > 0 && entry.width > 0 && (
-            <p className="text-[10px] text-zinc-400">
+            <p className="text-[10px] text-muted">
               Calculated: {(entry.length * entry.width).toLocaleString()} sqft
               {entry.height ? ` | ${(2 * (entry.length + entry.width) * entry.height).toLocaleString()} wall sqft` : ''}
             </p>
@@ -363,8 +363,8 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
         onClick={e => e.stopPropagation()}
       >
         {/* Toolbar */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 bg-zinc-900 rounded-t-xl border-b border-zinc-800">
-          <h3 className="text-sm font-semibold text-zinc-100">PDF Report Preview</h3>
+        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 bg-surface rounded-t-xl border-b border-main">
+          <h3 className="text-sm font-semibold text-main">PDF Report Preview</h3>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="secondary" onClick={() => window.print()}>
               <Printer className="h-3.5 w-3.5 mr-1" />Print
@@ -372,8 +372,8 @@ function PdfPreviewModal({ survey, onClose }: { survey: SiteSurvey; onClose: () 
             <Button size="sm" variant="secondary">
               <Download className="h-3.5 w-3.5 mr-1" />Download PDF
             </Button>
-            <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded-lg">
-              <X size={18} className="text-zinc-400" />
+            <button onClick={onClose} className="p-1 hover:bg-surface-hover rounded-lg">
+              <X size={18} className="text-muted" />
             </button>
           </div>
         </div>
@@ -691,7 +691,7 @@ function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: ()
   };
 
   return (
-    <div className="p-4 bg-zinc-800/30 border-b border-zinc-800 space-y-4">
+    <div className="p-4 bg-secondary/30 border-b border-main space-y-4">
       {/* Actions */}
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={handleGenerateEstimate} disabled={generating}>
@@ -706,42 +706,42 @@ function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: ()
       {/* Property overview */}
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <p className="text-xs text-zinc-500 mb-1">{t('common.property')}</p>
-          <p className="text-sm text-zinc-200">{survey.propertyType ? survey.propertyType.replace('_', ' ') : '—'}</p>
-          {survey.yearBuilt && <p className="text-xs text-zinc-500">Built {survey.yearBuilt}</p>}
-          {survey.stories && <p className="text-xs text-zinc-500">{survey.stories} {survey.stories === 1 ? 'story' : 'stories'}</p>}
-          {survey.totalSqft && <p className="text-xs text-zinc-500">{survey.totalSqft.toLocaleString()} sqft</p>}
+          <p className="text-xs text-muted mb-1">{t('common.property')}</p>
+          <p className="text-sm text-main">{survey.propertyType ? survey.propertyType.replace('_', ' ') : '—'}</p>
+          {survey.yearBuilt && <p className="text-xs text-muted">Built {survey.yearBuilt}</p>}
+          {survey.stories && <p className="text-xs text-muted">{survey.stories} {survey.stories === 1 ? 'story' : 'stories'}</p>}
+          {survey.totalSqft && <p className="text-xs text-muted">{survey.totalSqft.toLocaleString()} sqft</p>}
         </div>
         <div>
-          <p className="text-xs text-zinc-500 mb-1">{t('siteSurveys.conditions')}</p>
+          <p className="text-xs text-muted mb-1">{t('siteSurveys.conditions')}</p>
           <div className="space-y-1">
             {survey.exteriorCondition && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-400 w-16">Exterior:</span>
+                <span className="text-xs text-muted w-16">Exterior:</span>
                 <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[survey.exteriorCondition])}>{survey.exteriorCondition}</Badge>
               </div>
             )}
             {survey.interiorCondition && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-400 w-16">Interior:</span>
+                <span className="text-xs text-muted w-16">Interior:</span>
                 <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[survey.interiorCondition])}>{survey.interiorCondition}</Badge>
               </div>
             )}
             {survey.roofCondition && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-400 w-16">Roof:</span>
+                <span className="text-xs text-muted w-16">Roof:</span>
                 <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[survey.roofCondition])}>{survey.roofCondition}</Badge>
               </div>
             )}
           </div>
         </div>
         <div>
-          <p className="text-xs text-zinc-500 mb-1">{t('common.utilities')}</p>
-          <div className="space-y-0.5 text-xs text-zinc-400">
+          <p className="text-xs text-muted mb-1">{t('common.utilities')}</p>
+          <div className="space-y-0.5 text-xs text-muted">
             {survey.electricalService && <p>Electrical: {survey.electricalService}</p>}
             {survey.plumbingType && <p>Plumbing: {survey.plumbingType}</p>}
             {survey.hvacType && <p>HVAC: {survey.hvacType}</p>}
-            {!survey.electricalService && !survey.plumbingType && !survey.hvacType && <p className="text-zinc-600">{t('common.notRecorded')}</p>}
+            {!survey.electricalService && !survey.plumbingType && !survey.hvacType && <p className="text-muted">{t('common.notRecorded')}</p>}
           </div>
         </div>
       </div>
@@ -749,13 +749,13 @@ function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: ()
       {/* Hazards */}
       {survey.hazards.length > 0 && (
         <div>
-          <p className="text-xs text-zinc-500 mb-1 flex items-center gap-1"><AlertTriangle className="h-3 w-3 text-red-400" />Hazards ({survey.hazards.length})</p>
+          <p className="text-xs text-muted mb-1 flex items-center gap-1"><AlertTriangle className="h-3 w-3 text-red-400" />Hazards ({survey.hazards.length})</p>
           <div className="space-y-1">
             {survey.hazards.map((h, i) => (
               <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-red-900/10 border border-red-900/30">
                 <span className="text-red-400 font-medium">{h.type}</span>
-                <span className="text-zinc-500">—</span>
-                <span className="text-zinc-400">{h.location}</span>
+                <span className="text-muted">—</span>
+                <span className="text-muted">{h.location}</span>
                 <Badge className="text-[10px] bg-red-900/30 text-red-400 border-0 capitalize">{h.severity}</Badge>
               </div>
             ))}
@@ -766,13 +766,13 @@ function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: ()
       {/* Conditions list */}
       {survey.conditions.length > 0 && (
         <div>
-          <p className="text-xs text-zinc-500 mb-1">Conditions ({survey.conditions.length})</p>
+          <p className="text-xs text-muted mb-1">Conditions ({survey.conditions.length})</p>
           <div className="grid grid-cols-2 gap-1">
             {survey.conditions.map((c, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-zinc-800">
-                <span className="text-zinc-300">{c.area}</span>
-                <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[c.condition] || 'text-zinc-400 bg-zinc-700')}>{c.condition}</Badge>
-                {c.notes && <span className="text-zinc-500 truncate">{c.notes}</span>}
+              <div key={i} className="flex items-center gap-2 text-xs p-2 rounded bg-secondary">
+                <span className="text-main">{c.area}</span>
+                <Badge className={cn('text-[10px] border-0 capitalize', conditionColors[c.condition] || 'text-muted bg-slate-700')}>{c.condition}</Badge>
+                {c.notes && <span className="text-muted truncate">{c.notes}</span>}
               </div>
             ))}
           </div>
@@ -785,14 +785,14 @@ function SurveyDetail({ survey, onShowPdf }: { survey: SiteSurvey; onShowPdf: ()
       {/* Notes */}
       {survey.notes && (
         <div>
-          <p className="text-xs text-zinc-500 mb-1">{t('common.notes')}</p>
-          <p className="text-sm text-zinc-300 whitespace-pre-wrap">{survey.notes}</p>
+          <p className="text-xs text-muted mb-1">{t('common.notes')}</p>
+          <p className="text-sm text-main whitespace-pre-wrap">{survey.notes}</p>
         </div>
       )}
       {survey.accessNotes && (
         <div>
-          <p className="text-xs text-zinc-500 mb-1">{t('siteSurveys.accessNotes')}</p>
-          <p className="text-sm text-zinc-300">{survey.accessNotes}</p>
+          <p className="text-xs text-muted mb-1">{t('siteSurveys.accessNotes')}</p>
+          <p className="text-sm text-main">{survey.accessNotes}</p>
         </div>
       )}
     </div>
@@ -810,33 +810,33 @@ function TemplatesTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-semibold text-zinc-100">Survey Templates</h2>
-          <p className="text-xs text-zinc-500 mt-0.5">Pre-built templates to standardize your site surveys</p>
+          <h2 className="text-sm font-semibold text-main">Survey Templates</h2>
+          <p className="text-xs text-muted mt-0.5">Pre-built templates to standardize your site surveys</p>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {SURVEY_TEMPLATES.map(tpl => (
-          <Card key={tpl.id} className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+          <Card key={tpl.id} className="bg-surface border-main hover:border-accent/30 transition-colors">
             <CardContent className="p-5 space-y-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400">
+                  <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center text-muted">
                     {tpl.icon}
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-zinc-100">{tpl.name}</h3>
-                    <p className="text-[10px] text-zinc-500">{tpl.sections.length} sections | {tpl.itemCount} items</p>
+                    <h3 className="text-sm font-semibold text-main">{tpl.name}</h3>
+                    <p className="text-[10px] text-muted">{tpl.sections.length} sections | {tpl.itemCount} items</p>
                   </div>
                 </div>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed">{tpl.description}</p>
+              <p className="text-xs text-muted leading-relaxed">{tpl.description}</p>
               <div className="flex flex-wrap gap-1">
                 {tpl.sections.map(s => (
                   <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>
                 ))}
               </div>
-              <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
-                <span className="text-[10px] text-zinc-500 flex items-center gap-1">
+              <div className="flex items-center justify-between pt-2 border-t border-main">
+                <span className="text-[10px] text-muted flex items-center gap-1">
                   <Clock size={10} />Est. {tpl.estimatedMinutes} min
                 </span>
                 <Button size="sm" variant="secondary">
@@ -860,20 +860,20 @@ function ReportsTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-semibold text-zinc-100">Generated Reports</h2>
-          <p className="text-xs text-zinc-500 mt-0.5">PDF reports generated from completed surveys</p>
+          <h2 className="text-sm font-semibold text-main">Generated Reports</h2>
+          <p className="text-xs text-muted mt-0.5">PDF reports generated from completed surveys</p>
         </div>
       </div>
-      <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
+      <Card className="bg-surface border-main overflow-hidden">
         {DEMO_REPORTS.length === 0 ? (
           <CardContent className="p-8 text-center">
-            <FileText className="h-8 w-8 mx-auto mb-3 text-zinc-600" />
-            <p className="text-zinc-400 text-sm">No reports generated yet</p>
+            <FileText className="h-8 w-8 mx-auto mb-3 text-muted" />
+            <p className="text-muted text-sm">No reports generated yet</p>
           </CardContent>
         ) : (
           <div>
             {/* Table header */}
-            <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-zinc-800/50 text-xs text-zinc-500 font-medium border-b border-zinc-800">
+            <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-secondary/50 text-xs text-muted font-medium border-b border-main">
               <div className="col-span-4">Report</div>
               <div className="col-span-2">Surveyor</div>
               <div className="col-span-2">Property</div>
@@ -882,22 +882,22 @@ function ReportsTab() {
               <div className="col-span-1 text-right">Actions</div>
             </div>
             {DEMO_REPORTS.map(report => (
-              <div key={report.id} className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-zinc-800 hover:bg-zinc-800/30 transition-colors items-center">
+              <div key={report.id} className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-main hover:bg-surface-hover transition-colors items-center">
                 <div className="col-span-4 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-zinc-500 flex-shrink-0" />
-                  <span className="text-sm text-zinc-200 truncate">{report.surveyTitle}</span>
+                  <FileText className="h-4 w-4 text-muted flex-shrink-0" />
+                  <span className="text-sm text-main truncate">{report.surveyTitle}</span>
                 </div>
-                <div className="col-span-2 text-sm text-zinc-400">{report.surveyorName}</div>
+                <div className="col-span-2 text-sm text-muted">{report.surveyorName}</div>
                 <div className="col-span-2">
                   <Badge variant="secondary" className="text-[10px]">{report.propertyType}</Badge>
                 </div>
-                <div className="col-span-1 text-sm text-zinc-400 text-center">{report.pageCount}</div>
-                <div className="col-span-2 text-xs text-zinc-500">{formatDate(report.generatedAt)}</div>
+                <div className="col-span-1 text-sm text-muted text-center">{report.pageCount}</div>
+                <div className="col-span-2 text-xs text-muted">{formatDate(report.generatedAt)}</div>
                 <div className="col-span-1 flex items-center justify-end gap-1">
-                  <button className="p-1.5 rounded hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  <button className="p-1.5 rounded hover:bg-surface-hover text-muted hover:text-main transition-colors">
                     <Eye size={14} />
                   </button>
-                  <button className="p-1.5 rounded hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  <button className="p-1.5 rounded hover:bg-surface-hover text-muted hover:text-main transition-colors">
                     <Download size={14} />
                   </button>
                 </div>
@@ -956,8 +956,8 @@ export default function SiteSurveysPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">{t('siteSurveys.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">Property assessments, conditions, measurements, and hazard tracking</p>
+            <h1 className="text-2xl font-bold text-main">{t('siteSurveys.title')}</h1>
+            <p className="text-sm text-muted mt-1">Property assessments, conditions, measurements, and hazard tracking</p>
           </div>
           <Button size="sm" onClick={() => setShowNewModal(true)}>
             <Plus className="h-3.5 w-3.5 mr-1" />{t('siteSurveys.new')}
@@ -994,7 +994,7 @@ export default function SiteSurveysPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 border-b border-zinc-800">
+        <div className="flex items-center gap-1 border-b border-main">
           {tabs.map(tab => (
             <button
               key={tab.value}
@@ -1002,8 +1002,8 @@ export default function SiteSurveysPage() {
               className={cn(
                 'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px',
                 activeTab === tab.value
-                  ? 'border-blue-500 text-zinc-100'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
+                  ? 'border-blue-500 text-main'
+                  : 'border-transparent text-muted hover:text-main hover:border-accent/30'
               )}
             >
               {tab.icon}
@@ -1011,7 +1011,7 @@ export default function SiteSurveysPage() {
               {tab.count !== undefined && (
                 <span className={cn(
                   'ml-1 text-xs px-1.5 py-0.5 rounded-full',
-                  activeTab === tab.value ? 'bg-blue-900/40 text-blue-400' : 'bg-zinc-800 text-zinc-500'
+                  activeTab === tab.value ? 'bg-blue-900/40 text-blue-400' : 'bg-secondary text-muted'
                 )}>{tab.count}</span>
               )}
             </button>
@@ -1056,15 +1056,15 @@ export default function SiteSurveysPage() {
             )}
 
             {/* Survey list */}
-            <Card className="bg-zinc-900 border-zinc-800 overflow-hidden">
+            <Card className="bg-surface border-main overflow-hidden">
               {loading ? (
-                <div className="flex items-center justify-center py-12 text-zinc-500">
+                <div className="flex items-center justify-center py-12 text-muted">
                   <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading surveys...
                 </div>
               ) : filtered.length === 0 ? (
                 <CardContent className="p-8 text-center">
-                  <MapPin className="h-8 w-8 mx-auto mb-3 text-zinc-600" />
-                  <p className="text-zinc-400 text-sm">{t('siteSurveys.noSurveysYetCreateOneToStartDocumentingSiteConditi')}</p>
+                  <MapPin className="h-8 w-8 mx-auto mb-3 text-muted" />
+                  <p className="text-muted text-sm">{t('siteSurveys.noSurveysYetCreateOneToStartDocumentingSiteConditi')}</p>
                 </CardContent>
               ) : (
                 filtered.map(survey => (

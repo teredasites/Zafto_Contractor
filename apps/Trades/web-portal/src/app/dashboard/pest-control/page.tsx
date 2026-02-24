@@ -12,6 +12,7 @@ import {
   type PestServiceType,
 } from '@/lib/hooks/use-pest-control';
 import { SearchInput } from '@/components/ui/input';
+import { CommandPalette } from '@/components/command-palette';
 
 const SERVICE_COLORS: Record<string, string> = {
   general_pest: 'bg-green-500/15 text-green-400',
@@ -56,28 +57,30 @@ export default function PestControlPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <>
+      <CommandPalette />
+      <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">{t('pestControl.title')}</h1>
-        <p className="text-sm text-zinc-400 mt-1">Treatment logs, bait stations, WDI/NPMA-33 reports</p>
+        <h1 className="text-2xl font-bold text-main">{t('pestControl.title')}</h1>
+        <p className="text-sm text-muted mt-1">Treatment logs, bait stations, WDI/NPMA-33 reports</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.treatments')}</p>
-          <p className="text-2xl font-bold text-white">{totalTreatments}</p>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.treatments')}</p>
+          <p className="text-2xl font-bold text-main">{totalTreatments}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.activeStations')}</p>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.activeStations')}</p>
           <p className="text-2xl font-bold text-yellow-400">{activeStations}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.pendingWdi')}</p>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.pendingWdi')}</p>
           <p className="text-2xl font-bold text-purple-400">{pendingWdi}</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <p className="text-xs text-zinc-500 mb-1">{t('common.upcomingServices')}</p>
+        <div className="bg-secondary/50 border border-main rounded-xl p-4">
+          <p className="text-xs text-muted mb-1">{t('common.upcomingServices')}</p>
           <p className="text-2xl font-bold text-blue-400">{upcoming}</p>
         </div>
       </div>
@@ -89,7 +92,7 @@ export default function PestControlPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-              tab === t ? 'bg-white/10 text-white border-white/20' : 'text-zinc-400 border-zinc-700 hover:border-zinc-600'
+              tab === t ? 'bg-white/10 text-white border-white/20' : 'text-muted border-main hover:border-accent/30'
             }`}
           >
             {t === 'treatments' ? 'Treatments' : t === 'stations' ? 'Bait Stations' : 'WDI Reports'}
@@ -107,25 +110,25 @@ export default function PestControlPage() {
       {tab === 'treatments' && (
         <div className="space-y-3">
           {filteredLogs.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500"><p>{t('pestControl.noRecords')}</p></div>
+            <div className="text-center py-12 text-muted"><p>{t('pestControl.noRecords')}</p></div>
           ) : (
             filteredLogs.map((l) => (
-              <div key={l.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div key={l.id} className="bg-secondary/50 border border-main rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded ${SERVICE_COLORS[l.service_type] ?? 'bg-zinc-700 text-zinc-300'}`}>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded ${SERVICE_COLORS[l.service_type] ?? 'bg-secondary text-main'}`}>
                       {SERVICE_TYPE_LABELS[l.service_type] ?? l.service_type}
                     </span>
-                    <span className="text-xs text-zinc-500">
+                    <span className="text-xs text-muted">
                       {TREATMENT_TYPE_LABELS[l.treatment_type] ?? l.treatment_type}
                     </span>
                   </div>
-                  <span className="text-xs text-zinc-500">{formatDate(l.created_at)}</span>
+                  <span className="text-xs text-muted">{formatDate(l.created_at)}</span>
                 </div>
                 {l.chemical_name && (
-                  <p className="text-sm text-white font-medium">{l.chemical_name}</p>
+                  <p className="text-sm text-main font-medium">{l.chemical_name}</p>
                 )}
-                <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                   {l.epa_registration_number && <span>EPA #{l.epa_registration_number}</span>}
                   {l.target_area_sqft && <span>{l.target_area_sqft} sqft</span>}
                   {l.re_entry_time_hours && <span>Re-entry: {l.re_entry_time_hours}h</span>}
@@ -145,7 +148,7 @@ export default function PestControlPage() {
       {tab === 'stations' && (
         <div className="space-y-3">
           {stations.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500"><p>{t('common.noBaitStations')}</p></div>
+            <div className="text-center py-12 text-muted"><p>{t('common.noBaitStations')}</p></div>
           ) : (
             stations.map((s) => {
               const color = s.activity_level === 'critical' ? 'text-red-400' :
@@ -153,17 +156,17 @@ export default function PestControlPage() {
                            s.activity_level === 'moderate' ? 'text-yellow-400' :
                            s.activity_level === 'low' ? 'text-blue-400' : 'text-green-400';
               return (
-                <div key={s.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-sm font-bold text-zinc-300">
+                <div key={s.id} className="bg-secondary/50 border border-main rounded-xl p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-sm font-bold text-main">
                     #{s.station_number}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-white font-medium capitalize">{s.station_type.replace('_', ' ')} Station</p>
-                    <p className="text-xs text-zinc-500">{s.location_description ?? 'No location'} • {s.placement_zone ?? 'Unknown zone'}</p>
+                    <p className="text-sm text-main font-medium capitalize">{s.station_type.replace('_', ' ')} Station</p>
+                    <p className="text-xs text-muted">{s.location_description ?? 'No location'} • {s.placement_zone ?? 'Unknown zone'}</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-xs font-semibold capitalize ${color}`}>{s.activity_level}</p>
-                    <p className="text-[10px] text-zinc-600">Serviced: {s.last_serviced_at ? formatDate(s.last_serviced_at) : '—'}</p>
+                    <p className="text-[10px] text-muted">Serviced: {s.last_serviced_at ? formatDate(s.last_serviced_at) : '—'}</p>
                   </div>
                 </div>
               );
@@ -175,10 +178,10 @@ export default function PestControlPage() {
       {tab === 'wdi' && (
         <div className="space-y-3">
           {reports.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500"><p>{t('common.noWdiReports')}</p></div>
+            <div className="text-center py-12 text-muted"><p>{t('common.noWdiReports')}</p></div>
           ) : (
             reports.map((r) => (
-              <div key={r.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div key={r.id} className="bg-secondary/50 border border-main rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-semibold px-2 py-0.5 rounded bg-purple-500/15 text-purple-400">
@@ -187,17 +190,17 @@ export default function PestControlPage() {
                     <span className={`text-xs font-medium px-2 py-0.5 rounded ${
                       r.report_status === 'accepted' ? 'bg-green-500/15 text-green-400' :
                       r.report_status === 'rejected' ? 'bg-red-500/15 text-red-400' :
-                      'bg-zinc-700 text-zinc-300'
+                      'bg-secondary text-main'
                     }`}>
                       {r.report_status.charAt(0).toUpperCase() + r.report_status.slice(1)}
                     </span>
                   </div>
-                  <span className="text-xs text-zinc-500">{r.inspection_date ? formatDate(r.inspection_date) : '—'}</span>
+                  <span className="text-xs text-muted">{r.inspection_date ? formatDate(r.inspection_date) : '—'}</span>
                 </div>
-                <p className="text-sm text-white font-medium">
+                <p className="text-sm text-main font-medium">
                   {r.property_address ?? 'Address pending'} • {r.inspector_name ?? 'Inspector TBD'}
                 </p>
-                <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                <div className="flex items-center gap-3 mt-1 text-xs text-muted">
                   <span className={r.infestation_found ? 'text-red-400 font-semibold' : ''}>
                     Infestation: {r.infestation_found ? 'YES' : 'No'}
                   </span>
@@ -214,5 +217,6 @@ export default function PestControlPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

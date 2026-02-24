@@ -118,13 +118,13 @@ function CallRow({ call }: { call: CallRecord }) {
   const contactNumber = call.direction === 'inbound' ? call.fromNumber : call.toNumber;
 
   return (
-    <div className="flex items-center gap-4 px-4 py-3 hover:bg-zinc-800/50 border-b border-zinc-800">
+    <div className="flex items-center gap-4 px-4 py-3 hover:bg-surface-hover border-b border-main">
       <DirectionIcon direction={call.direction} status={call.status} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-zinc-100 truncate">{contactName}</span>
+          <span className="font-medium text-main truncate">{contactName}</span>
           {call.customerName && (
-            <span className="text-xs text-zinc-500">{contactNumber}</span>
+            <span className="text-xs text-muted">{contactNumber}</span>
           )}
           {call.customerId && (
             <a
@@ -136,7 +136,7 @@ function CallRow({ call }: { call: CallRecord }) {
             </a>
           )}
         </div>
-        <div className="flex items-center gap-3 text-xs text-zinc-500 mt-0.5">
+        <div className="flex items-center gap-3 text-xs text-muted mt-0.5">
           {call.jobId && call.jobTitle && (
             <a
               href={`/dashboard/jobs/${call.jobId}`}
@@ -160,9 +160,9 @@ function CallRow({ call }: { call: CallRecord }) {
       <div className="flex items-center gap-3 text-sm">
         {statusBadge(call.status)}
         {call.durationSeconds > 0 && (
-          <span className="text-zinc-500 tabular-nums w-12 text-right">{formatDuration(call.durationSeconds)}</span>
+          <span className="text-muted tabular-nums w-12 text-right">{formatDuration(call.durationSeconds)}</span>
         )}
-        <span className="text-zinc-500 text-xs w-20 text-right">{formatRelativeTime(call.startedAt)}</span>
+        <span className="text-muted text-xs w-20 text-right">{formatRelativeTime(call.startedAt)}</span>
         {call.recordingPath && (
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
             <Play className="h-3.5 w-3.5" />
@@ -187,20 +187,20 @@ function VoicemailRow({
 }) {
   return (
     <div className={cn(
-      'flex items-start gap-4 px-4 py-3 hover:bg-zinc-800/50 border-b border-zinc-800',
-      !vm.isRead && 'bg-zinc-800/30'
+      'flex items-start gap-4 px-4 py-3 hover:bg-surface-hover border-b border-main',
+      !vm.isRead && 'bg-secondary/30'
     )}>
       <div className="mt-1">
-        <Voicemail className={cn('h-4 w-4', vm.isRead ? 'text-zinc-500' : 'text-blue-400')} />
+        <Voicemail className={cn('h-4 w-4', vm.isRead ? 'text-muted' : 'text-blue-400')} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           {!vm.isRead && <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />}
-          <span className="font-medium text-zinc-100">{vm.customerName || vm.fromNumber}</span>
-          {vm.customerName && <span className="text-xs text-zinc-500">{vm.fromNumber}</span>}
+          <span className="font-medium text-main">{vm.customerName || vm.fromNumber}</span>
+          {vm.customerName && <span className="text-xs text-muted">{vm.fromNumber}</span>}
         </div>
         {vm.transcript && (
-          <p className="text-sm text-zinc-400 mt-1 line-clamp-2">{vm.transcript}</p>
+          <p className="text-sm text-muted mt-1 line-clamp-2">{vm.transcript}</p>
         )}
         {vm.aiIntent && (
           <p className="text-xs text-violet-400 mt-1">Intent: {vm.aiIntent}</p>
@@ -208,9 +208,9 @@ function VoicemailRow({
       </div>
       <div className="flex items-center gap-2 text-sm flex-shrink-0">
         {vm.durationSeconds && (
-          <span className="text-zinc-500 tabular-nums">{formatDuration(vm.durationSeconds)}</span>
+          <span className="text-muted tabular-nums">{formatDuration(vm.durationSeconds)}</span>
         )}
-        <span className="text-zinc-500 text-xs">{formatRelativeTime(vm.createdAt)}</span>
+        <span className="text-muted text-xs">{formatRelativeTime(vm.createdAt)}</span>
         <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
           <Play className="h-3.5 w-3.5" />
         </Button>
@@ -249,26 +249,26 @@ function ThreadListItem({
     <button
       onClick={onClick}
       className={cn(
-        'w-full text-left px-4 py-3 border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors',
-        isActive && 'bg-zinc-800/70'
+        'w-full text-left px-4 py-3 border-b border-main hover:bg-surface-hover transition-colors',
+        isActive && 'bg-secondary/70'
       )}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center flex-shrink-0">
-            <User className="h-4 w-4 text-zinc-400" />
+          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+            <User className="h-4 w-4 text-muted" />
           </div>
           <div className="min-w-0">
-            <p className="font-medium text-zinc-100 text-sm truncate">
+            <p className="font-medium text-main text-sm truncate">
               {thread.contactName || thread.contactNumber}
             </p>
             {thread.contactName && (
-              <p className="text-xs text-zinc-500 truncate">{thread.contactNumber}</p>
+              <p className="text-xs text-muted truncate">{thread.contactNumber}</p>
             )}
           </div>
         </div>
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
-          <span className="text-xs text-zinc-500">{formatRelativeTime(thread.lastMessageAt)}</span>
+          <span className="text-xs text-muted">{formatRelativeTime(thread.lastMessageAt)}</span>
           {thread.unreadCount > 0 && (
             <span className="bg-blue-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
               {thread.unreadCount}
@@ -276,7 +276,7 @@ function ThreadListItem({
           )}
         </div>
       </div>
-      <p className="text-xs text-zinc-500 mt-1 truncate pl-10">{thread.lastMessage}</p>
+      <p className="text-xs text-muted mt-1 truncate pl-10">{thread.lastMessage}</p>
     </button>
   );
 }
@@ -292,12 +292,12 @@ function MessageBubble({ message }: { message: SmsMessage }) {
         'max-w-[70%] rounded-2xl px-4 py-2.5',
         isOutbound
           ? 'bg-blue-600 text-white rounded-br-md'
-          : 'bg-zinc-800 text-zinc-100 rounded-bl-md'
+          : 'bg-secondary text-main rounded-bl-md'
       )}>
         <p className="text-sm whitespace-pre-wrap break-words">{message.body}</p>
         <div className={cn(
           'flex items-center gap-2 mt-1 text-xs',
-          isOutbound ? 'text-blue-200' : 'text-zinc-500'
+          isOutbound ? 'text-blue-200' : 'text-muted'
         )}>
           <span>{formatRelativeTime(message.createdAt)}</span>
           {message.isAutomated && <Badge variant="secondary">Auto</Badge>}
@@ -377,7 +377,7 @@ function SmsPanel() {
 
   if (smsLoading) {
     return (
-      <div className="flex items-center justify-center py-12 text-zinc-500">
+      <div className="flex items-center justify-center py-12 text-muted">
         {t('common.loading')}
       </div>
     );
@@ -393,7 +393,7 @@ function SmsPanel() {
 
   if (threads.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+      <div className="flex flex-col items-center justify-center py-12 text-muted">
         <MessageSquare className="h-8 w-8 mb-2 opacity-50" />
         <p>No SMS conversations</p>
         <p className="text-xs mt-1">Messages will appear here when your phone system is active</p>
@@ -404,8 +404,8 @@ function SmsPanel() {
   return (
     <div className="flex h-[520px]">
       {/* Thread list */}
-      <div className="w-80 border-r border-zinc-800 flex flex-col">
-        <div className="p-3 border-b border-zinc-800">
+      <div className="w-80 border-r border-main flex flex-col">
+        <div className="p-3 border-b border-main">
           <SearchInput
             placeholder="Search conversations..."
             value={threadSearch}
@@ -423,7 +423,7 @@ function SmsPanel() {
             />
           ))}
           {filteredThreads.length === 0 && (
-            <p className="text-center text-xs text-zinc-500 py-8">No threads match your search</p>
+            <p className="text-center text-xs text-muted py-8">No threads match your search</p>
           )}
         </div>
       </div>
@@ -433,17 +433,17 @@ function SmsPanel() {
         {activeThread ? (
           <>
             {/* Thread header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-main">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
-                  <User className="h-4 w-4 text-zinc-400" />
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                  <User className="h-4 w-4 text-muted" />
                 </div>
                 <div>
-                  <p className="font-medium text-zinc-100 text-sm">
+                  <p className="font-medium text-main text-sm">
                     {activeThread.contactName || activeThread.contactNumber}
                   </p>
                   {activeThread.contactName && (
-                    <p className="text-xs text-zinc-500">{activeThread.contactNumber}</p>
+                    <p className="text-xs text-muted">{activeThread.contactNumber}</p>
                   )}
                 </div>
               </div>
@@ -467,7 +467,7 @@ function SmsPanel() {
             </div>
 
             {/* Compose bar */}
-            <div className="border-t border-zinc-800 p-3">
+            <div className="border-t border-main p-3">
               <div className="flex items-end gap-2">
                 <div className="relative flex-1">
                   <textarea
@@ -476,7 +476,7 @@ function SmsPanel() {
                     onChange={e => setComposeText(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Type a message... (Enter to send, Shift+Enter for new line)"
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[40px] max-h-[120px]"
+                    className="w-full bg-secondary border border-main rounded-lg px-3 py-2 text-sm text-main placeholder-muted resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[40px] max-h-[120px]"
                     rows={1}
                   />
                 </div>
@@ -491,15 +491,15 @@ function SmsPanel() {
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                   {showTemplates && (
-                    <div className="absolute bottom-full right-0 mb-1 w-64 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-20">
-                      <p className="px-3 py-2 text-xs font-medium text-zinc-400 border-b border-zinc-700">
+                    <div className="absolute bottom-full right-0 mb-1 w-64 bg-surface border border-main rounded-lg shadow-xl z-20">
+                      <p className="px-3 py-2 text-xs font-medium text-muted border-b border-main">
                         Quick Templates
                       </p>
                       {SMS_TEMPLATES.map((tpl, i) => (
                         <button
                           key={i}
                           onClick={() => insertTemplate(tpl.body)}
-                          className="w-full text-left px-3 py-2 text-sm text-zinc-100 hover:bg-zinc-800 transition-colors"
+                          className="w-full text-left px-3 py-2 text-sm text-main hover:bg-surface-hover transition-colors"
                         >
                           {tpl.label}
                         </button>
@@ -521,7 +521,7 @@ function SmsPanel() {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-zinc-500">
+          <div className="flex-1 flex items-center justify-center text-muted">
             <div className="text-center">
               <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">Select a conversation</p>
@@ -550,13 +550,13 @@ function ActivityLogEntry({ entry }: { entry: ActivityEntry }) {
   };
 
   return (
-    <div className="flex items-center gap-4 px-4 py-3 hover:bg-zinc-800/50 border-b border-zinc-800">
+    <div className="flex items-center gap-4 px-4 py-3 hover:bg-surface-hover border-b border-main">
       <div className="flex-shrink-0">{typeIcon()}</div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-zinc-100 text-sm truncate">{entry.contactName}</span>
+          <span className="font-medium text-main text-sm truncate">{entry.contactName}</span>
           {entry.contactName !== entry.contactNumber && (
-            <span className="text-xs text-zinc-500">{entry.contactNumber}</span>
+            <span className="text-xs text-muted">{entry.contactNumber}</span>
           )}
           {entry.customerId && (
             <a
@@ -569,12 +569,12 @@ function ActivityLogEntry({ entry }: { entry: ActivityEntry }) {
           )}
         </div>
         {entry.preview && (
-          <p className="text-xs text-zinc-500 mt-0.5 truncate max-w-md">{entry.preview}</p>
+          <p className="text-xs text-muted mt-0.5 truncate max-w-md">{entry.preview}</p>
         )}
         {entry.jobId && entry.jobTitle && (
           <a
             href={`/dashboard/jobs/${entry.jobId}`}
-            className="flex items-center gap-1 text-xs text-zinc-500 mt-0.5 hover:text-blue-400 transition-colors"
+            className="flex items-center gap-1 text-xs text-muted mt-0.5 hover:text-blue-400 transition-colors"
           >
             <Briefcase className="h-3 w-3" />
             {entry.jobTitle}
@@ -588,9 +588,9 @@ function ActivityLogEntry({ entry }: { entry: ActivityEntry }) {
         {directionBadge(entry.direction)}
         {entry.status && entry.type === 'call' && statusBadge(entry.status)}
         {entry.durationSeconds !== undefined && entry.durationSeconds > 0 && (
-          <span className="text-zinc-500 tabular-nums text-xs">{formatDuration(entry.durationSeconds)}</span>
+          <span className="text-muted tabular-nums text-xs">{formatDuration(entry.durationSeconds)}</span>
         )}
-        <span className="text-zinc-500 text-xs w-20 text-right">{formatRelativeTime(entry.timestamp)}</span>
+        <span className="text-muted text-xs w-20 text-right">{formatRelativeTime(entry.timestamp)}</span>
       </div>
     </div>
   );
@@ -739,8 +739,8 @@ export default function PhonePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-100">{t('phone.title')}</h1>
-            <p className="text-sm text-zinc-500 mt-1">{lines.length} active lines</p>
+            <h1 className="text-2xl font-bold text-main">{t('phone.title')}</h1>
+            <p className="text-sm text-muted mt-1">{lines.length} active lines</p>
           </div>
         </div>
 
@@ -775,7 +775,7 @@ export default function PhonePage() {
         </div>
 
         {/* Tab bar + filters */}
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-surface border-main">
           <CardHeader className="pb-0">
             <div className="flex items-center justify-between">
               <div className="flex gap-1">
@@ -864,19 +864,19 @@ export default function PhonePage() {
             {/* ============ CALLS TAB ============ */}
             {tab === 'calls' && (
               loading ? (
-                <div className="flex items-center justify-center py-12 text-zinc-500">
+                <div className="flex items-center justify-center py-12 text-muted">
                   {t('common.loading')}
                 </div>
               ) : error ? (
                 <div className="flex items-center justify-center py-12 text-red-400">{error}</div>
               ) : filteredCalls.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+                <div className="flex flex-col items-center justify-center py-12 text-muted">
                   <Phone className="h-8 w-8 mb-2 opacity-50" />
                   <p>{t('phone.noCallsTitle')}</p>
                   <p className="text-xs mt-1">{t('common.callsWillAppearHereOnceYourPhoneSystemIsActive')}</p>
                 </div>
               ) : (
-                <div className="divide-y divide-zinc-800">
+                <div className="divide-y divide-main">
                   {filteredCalls.map(call => (
                     <CallRow key={call.id} call={call} />
                   ))}
@@ -887,18 +887,18 @@ export default function PhonePage() {
             {/* ============ VOICEMAIL TAB ============ */}
             {tab === 'voicemail' && (
               loading ? (
-                <div className="flex items-center justify-center py-12 text-zinc-500">
+                <div className="flex items-center justify-center py-12 text-muted">
                   {t('common.loading')}
                 </div>
               ) : error ? (
                 <div className="flex items-center justify-center py-12 text-red-400">{error}</div>
               ) : filteredVm.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+                <div className="flex flex-col items-center justify-center py-12 text-muted">
                   <Voicemail className="h-8 w-8 mb-2 opacity-50" />
                   <p>{t('common.noVoicemails')}</p>
                 </div>
               ) : (
-                <div className="divide-y divide-zinc-800">
+                <div className="divide-y divide-main">
                   {filteredVm.map(vm => (
                     <VoicemailRow
                       key={vm.id}
@@ -917,19 +917,19 @@ export default function PhonePage() {
             {/* ============ ACTIVITY LOG TAB ============ */}
             {tab === 'activity' && (
               (loading || smsLoading) ? (
-                <div className="flex items-center justify-center py-12 text-zinc-500">
+                <div className="flex items-center justify-center py-12 text-muted">
                   {t('common.loading')}
                 </div>
               ) : error ? (
                 <div className="flex items-center justify-center py-12 text-red-400">{error}</div>
               ) : filteredActivity.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+                <div className="flex flex-col items-center justify-center py-12 text-muted">
                   <Activity className="h-8 w-8 mb-2 opacity-50" />
                   <p>No activity to display</p>
                   <p className="text-xs mt-1">Call, SMS, and voicemail activity will appear here</p>
                 </div>
               ) : (
-                <div className="divide-y divide-zinc-800">
+                <div className="divide-y divide-main">
                   {filteredActivity.map(entry => (
                     <ActivityLogEntry key={entry.id} entry={entry} />
                   ))}

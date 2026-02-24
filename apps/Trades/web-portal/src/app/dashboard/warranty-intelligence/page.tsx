@@ -76,7 +76,7 @@ export default function WarrantyIntelligencePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-zinc-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted" />
       </div>
     );
   }
@@ -85,7 +85,7 @@ export default function WarrantyIntelligencePage() {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <AlertTriangle className="w-12 h-12 text-red-400" />
-        <p className="text-zinc-400">{error}</p>
+        <p className="text-muted">{error}</p>
         <Button onClick={refresh} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" /> Retry
         </Button>
@@ -100,8 +100,8 @@ export default function WarrantyIntelligencePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-100">{t('warrantyIntelligence.title')}</h1>
-            <p className="text-sm text-zinc-400 mt-1">
+            <h1 className="text-2xl font-semibold text-main">{t('warrantyIntelligence.title')}</h1>
+            <p className="text-sm text-muted mt-1">
               Track equipment warranties, claims, recalls, and outreach
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function WarrantyIntelligencePage() {
         </div>
 
         {/* Tab Bar */}
-        <div className="flex gap-1 border-b border-zinc-800 pb-px">
+        <div className="flex gap-1 border-b border-main pb-px">
           {([
             { key: 'dashboard', label: 'Dashboard', icon: BarChart3 },
             { key: 'equipment', label: 'Equipment', icon: Shield },
@@ -125,8 +125,8 @@ export default function WarrantyIntelligencePage() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors',
                 activeTab === tab.key
-                  ? 'bg-zinc-800 text-zinc-100 border-b-2 border-blue-500'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                  ? 'bg-secondary text-main border-b-2 border-blue-500'
+                  : 'text-muted hover:text-main hover:bg-surface-hover'
               )}
             >
               <tab.icon className="w-4 h-4" />
@@ -259,10 +259,10 @@ function DashboardView({
                     className="flex items-center justify-between w-full p-2 rounded-lg hover:bg-red-500/10 transition-colors text-left"
                   >
                     <div>
-                      <p className="text-sm font-medium text-zinc-200">{eq.name}</p>
-                      <p className="text-xs text-zinc-400">{eq.manufacturer} — {eq.customerName}</p>
+                      <p className="text-sm font-medium text-main">{eq.name}</p>
+                      <p className="text-xs text-muted">{eq.manufacturer} — {eq.customerName}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-zinc-500" />
+                    <ChevronRight className="w-4 h-4 text-muted" />
                   </button>
                 ))}
               </CardContent>
@@ -284,12 +284,12 @@ function DashboardView({
                     className="flex items-center justify-between w-full p-2 rounded-lg hover:bg-yellow-500/10 transition-colors text-left"
                   >
                     <div>
-                      <p className="text-sm font-medium text-zinc-200">{eq.name}</p>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-sm font-medium text-main">{eq.name}</p>
+                      <p className="text-xs text-muted">
                         {eq.daysRemaining} days — {eq.customerName}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-zinc-500" />
+                    <ChevronRight className="w-4 h-4 text-muted" />
                   </button>
                 ))}
               </CardContent>
@@ -303,18 +303,18 @@ function DashboardView({
         {/* Recent Claims */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-zinc-300">{t('warrantyIntel.recentClaims')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted">{t('warrantyIntel.recentClaims')}</CardTitle>
           </CardHeader>
           <CardContent>
             {recentClaims.length === 0 ? (
-              <p className="text-sm text-zinc-500 text-center py-4">{t('warrantyIntel.noClaimsFiled')}</p>
+              <p className="text-sm text-muted text-center py-4">{t('warrantyIntel.noClaimsFiled')}</p>
             ) : (
               <div className="space-y-2">
                 {recentClaims.map(claim => (
-                  <div key={claim.id} className="flex items-center justify-between p-2 rounded-lg bg-zinc-800/50">
+                  <div key={claim.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
                     <div>
-                      <p className="text-sm text-zinc-200">{claim.claimReason}</p>
-                      <p className="text-xs text-zinc-400">{claim.equipmentName} — {formatDate(claim.claimDate)}</p>
+                      <p className="text-sm text-main">{claim.claimReason}</p>
+                      <p className="text-xs text-muted">{claim.equipmentName} — {formatDate(claim.claimDate)}</p>
                     </div>
                     <ClaimStatusBadge status={claim.claimStatus} />
                   </div>
@@ -327,18 +327,18 @@ function DashboardView({
         {/* Recent Outreach */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-zinc-300">{t('warrantyIntel.recentOutreach')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted">{t('warrantyIntel.recentOutreach')}</CardTitle>
           </CardHeader>
           <CardContent>
             {recentOutreach.length === 0 ? (
-              <p className="text-sm text-zinc-500 text-center py-4">{t('warrantyIntel.noOutreachSent')}</p>
+              <p className="text-sm text-muted text-center py-4">{t('warrantyIntel.noOutreachSent')}</p>
             ) : (
               <div className="space-y-2">
                 {recentOutreach.map(log => (
-                  <div key={log.id} className="flex items-center justify-between p-2 rounded-lg bg-zinc-800/50">
+                  <div key={log.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
                     <div>
-                      <p className="text-sm text-zinc-200">{outreachTypeLabel(log.outreachType)}</p>
-                      <p className="text-xs text-zinc-400">{log.customerName} — {log.sentAt ? formatDate(log.sentAt) : 'Pending'}</p>
+                      <p className="text-sm text-main">{outreachTypeLabel(log.outreachType)}</p>
+                      <p className="text-xs text-muted">{log.customerName} — {log.sentAt ? formatDate(log.sentAt) : 'Pending'}</p>
                     </div>
                     {log.responseStatus && <ResponseBadge status={log.responseStatus} />}
                   </div>
@@ -352,23 +352,23 @@ function DashboardView({
       {/* Outreach Pipeline Stats */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-300">{t('warrantyIntel.outreachPipeline')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted">{t('warrantyIntel.outreachPipeline')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 rounded-lg bg-zinc-800/50">
+            <div className="text-center p-4 rounded-lg bg-secondary/50">
               <p className="text-2xl font-bold text-blue-400">{stats.outreachPendingCount}</p>
-              <p className="text-xs text-zinc-400 mt-1">{t('common.pending')}</p>
+              <p className="text-xs text-muted mt-1">{t('common.pending')}</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-zinc-800/50">
+            <div className="text-center p-4 rounded-lg bg-secondary/50">
               <p className="text-2xl font-bold text-green-400">{stats.outreachBookedCount}</p>
-              <p className="text-xs text-zinc-400 mt-1">{t('warrantyIntel.booked')}</p>
+              <p className="text-xs text-muted mt-1">{t('warrantyIntel.booked')}</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-zinc-800/50">
+            <div className="text-center p-4 rounded-lg bg-secondary/50">
               <p className="text-2xl font-bold text-emerald-400">
                 {formatCurrency(stats.outreachBookedCount * 350)}
               </p>
-              <p className="text-xs text-zinc-400 mt-1">{t('warrantyIntel.estRevenue')}</p>
+              <p className="text-xs text-muted mt-1">{t('warrantyIntel.estRevenue')}</p>
             </div>
           </div>
         </CardContent>
@@ -426,43 +426,43 @@ function EquipmentView({
       {/* Equipment Table */}
       {equipment.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <Shield className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">{t('equipment.noEquipment')}</p>
+          <Shield className="w-12 h-12 text-slate-600 mb-3" />
+          <p className="text-muted">{t('equipment.noEquipment')}</p>
         </div>
       ) : (
-        <div className="border border-zinc-800 rounded-lg overflow-hidden">
+        <div className="border border-main rounded-lg overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-zinc-800/50">
+            <thead className="bg-secondary/50">
               <tr>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.warranty')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.status')}</th>
-                <th className="text-right px-4 py-3 text-zinc-400 font-medium">{t('common.actions')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.equipment')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.customer')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.warranty')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.status')}</th>
+                <th className="text-right px-4 py-3 text-muted font-medium">{t('common.actions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800">
+            <tbody className="divide-y divide-main">
               {equipment.map(eq => (
-                <tr key={eq.id} className="hover:bg-zinc-800/30 transition-colors">
+                <tr key={eq.id} className="hover:bg-surface-hover transition-colors">
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-zinc-200 font-medium">{eq.name}</p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-main font-medium">{eq.name}</p>
+                      <p className="text-xs text-muted">
                         {[eq.manufacturer, eq.modelNumber].filter(Boolean).join(' — ')}
                       </p>
                       {eq.serialNumber && (
-                        <p className="text-xs text-zinc-600">SN: {eq.serialNumber}</p>
+                        <p className="text-xs text-slate-600">SN: {eq.serialNumber}</p>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">{eq.customerName || '—'}</td>
+                  <td className="px-4 py-3 text-muted">{eq.customerName || '—'}</td>
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-zinc-300 text-xs">
+                      <p className="text-muted text-xs">
                         {eq.warrantyType ? warrantyTypeLabel(eq.warrantyType) : '—'}
                       </p>
                       {eq.warrantyEndDate && (
-                        <p className="text-xs text-zinc-500">Expires {formatDate(eq.warrantyEndDate)}</p>
+                        <p className="text-xs text-muted">Expires {formatDate(eq.warrantyEndDate)}</p>
                       )}
                     </div>
                   </td>
@@ -517,7 +517,7 @@ function ClaimsView({
               'px-3 py-1.5 text-xs rounded-full transition-colors',
               filter === s
                 ? 'bg-blue-500/20 text-blue-400'
-                : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+                : 'bg-secondary text-muted hover:text-main'
             )}
           >
             {s === 'all' ? 'All' : s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
@@ -527,8 +527,8 @@ function ClaimsView({
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <FileText className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">{t('insurance.noClaims')}</p>
+          <FileText className="w-12 h-12 text-slate-600 mb-3" />
+          <p className="text-muted">{t('insurance.noClaims')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -538,14 +538,14 @@ function ClaimsView({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-medium text-zinc-200">{claim.claimReason}</p>
+                      <p className="text-sm font-medium text-main">{claim.claimReason}</p>
                       <ClaimStatusBadge status={claim.claimStatus} />
                     </div>
-                    <p className="text-xs text-zinc-400">
+                    <p className="text-xs text-muted">
                       {claim.equipmentName} — Filed {formatDate(claim.claimDate)}
                       {claim.manufacturerClaimNumber && ` — Claim #${claim.manufacturerClaimNumber}`}
                     </p>
-                    <div className="flex gap-4 mt-2 text-xs text-zinc-500">
+                    <div className="flex gap-4 mt-2 text-xs text-muted">
                       {claim.amountClaimed != null && (
                         <span>Claimed: {formatCurrency(claim.amountClaimed)}</span>
                       )}
@@ -554,7 +554,7 @@ function ClaimsView({
                       )}
                     </div>
                     {claim.resolutionNotes && (
-                      <p className="text-xs text-zinc-400 mt-2 italic">{claim.resolutionNotes}</p>
+                      <p className="text-xs text-muted mt-2 italic">{claim.resolutionNotes}</p>
                     )}
                   </div>
                   {(claim.claimStatus === 'submitted' || claim.claimStatus === 'under_review') && (
@@ -605,38 +605,38 @@ function OutreachView({ outreach }: { outreach: OutreachLog[] }) {
     <div className="space-y-4">
       {outreach.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <Send className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">{t('warrantyIntel.noOutreachHistory')}</p>
-          <p className="text-xs text-zinc-500 mt-1">{t('warrantyIntel.automatedOutreachWillAppearHereWhenTheSchedulerRun')}</p>
+          <Send className="w-12 h-12 text-slate-600 mb-3" />
+          <p className="text-muted">{t('warrantyIntel.noOutreachHistory')}</p>
+          <p className="text-xs text-muted mt-1">{t('warrantyIntel.automatedOutreachWillAppearHereWhenTheSchedulerRun')}</p>
         </div>
       ) : (
-        <div className="border border-zinc-800 rounded-lg overflow-hidden">
+        <div className="border border-main rounded-lg overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-zinc-800/50">
+            <thead className="bg-secondary/50">
               <tr>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.type')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.customer')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.equipment')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.sent')}</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">{t('common.response')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.type')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.customer')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.equipment')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.sent')}</th>
+                <th className="text-left px-4 py-3 text-muted font-medium">{t('common.response')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800">
+            <tbody className="divide-y divide-main">
               {outreach.map(log => (
-                <tr key={log.id} className="hover:bg-zinc-800/30 transition-colors">
+                <tr key={log.id} className="hover:bg-surface-hover transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <OutreachTypeIcon type={log.outreachType} />
-                      <span className="text-zinc-200">{outreachTypeLabel(log.outreachType)}</span>
+                      <span className="text-main">{outreachTypeLabel(log.outreachType)}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">{log.customerName || '—'}</td>
-                  <td className="px-4 py-3 text-zinc-400">{log.equipmentName || '—'}</td>
-                  <td className="px-4 py-3 text-zinc-400 text-xs">
+                  <td className="px-4 py-3 text-muted">{log.customerName || '—'}</td>
+                  <td className="px-4 py-3 text-muted">{log.equipmentName || '—'}</td>
+                  <td className="px-4 py-3 text-muted text-xs">
                     {log.sentAt ? formatDate(log.sentAt) : 'Pending'}
                   </td>
                   <td className="px-4 py-3">
-                    {log.responseStatus ? <ResponseBadge status={log.responseStatus} /> : <span className="text-zinc-600">—</span>}
+                    {log.responseStatus ? <ResponseBadge status={log.responseStatus} /> : <span className="text-slate-600">—</span>}
                   </td>
                 </tr>
               ))}
@@ -665,8 +665,8 @@ function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; aff
 
       {recalls.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <ShieldCheck className="w-12 h-12 text-zinc-600 mb-3" />
-          <p className="text-zinc-400">{t('warrantyIntel.noActiveRecalls')}</p>
+          <ShieldCheck className="w-12 h-12 text-slate-600 mb-3" />
+          <p className="text-muted">{t('warrantyIntel.noActiveRecalls')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -679,19 +679,19 @@ function RecallsView({ recalls, affectedCount }: { recalls: ProductRecall[]; aff
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-medium text-zinc-200">{recall.recallTitle}</p>
+                      <p className="text-sm font-medium text-main">{recall.recallTitle}</p>
                       <SeverityBadge severity={recall.severity} />
                     </div>
-                    <p className="text-xs text-zinc-400">
+                    <p className="text-xs text-muted">
                       {recall.manufacturer}
                       {recall.modelPattern && ` — Model: ${recall.modelPattern}`}
                       {' — '}Issued {formatDate(recall.recallDate)}
                     </p>
                     {recall.recallDescription && (
-                      <p className="text-xs text-zinc-500 mt-2">{recall.recallDescription}</p>
+                      <p className="text-xs text-muted mt-2">{recall.recallDescription}</p>
                     )}
                     {recall.affectedSerialRange && (
-                      <p className="text-xs text-zinc-500 mt-1">Serial range: {recall.affectedSerialRange}</p>
+                      <p className="text-xs text-muted mt-1">Serial range: {recall.affectedSerialRange}</p>
                     )}
                   </div>
                   {recall.sourceUrl && (
@@ -742,23 +742,23 @@ function ClaimModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
-      <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
-        <h2 className="text-lg font-semibold text-zinc-100 mb-1">{t('warrantyIntel.fileWarrantyClaim')}</h2>
-        <p className="text-sm text-zinc-400 mb-4">{equipment.name} — {equipment.manufacturer}</p>
+      <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <h2 className="text-lg font-semibold text-main mb-1">{t('warrantyIntel.fileWarrantyClaim')}</h2>
+        <p className="text-sm text-muted mb-4">{equipment.name} — {equipment.manufacturer}</p>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Claim Reason *</label>
+            <label className="block text-xs text-muted mb-1">Claim Reason *</label>
             <textarea
               value={reason}
               onChange={e => setReason(e.target.value)}
               placeholder="Describe the issue..."
               rows={3}
-              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-200 placeholder:text-zinc-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Amount Claimed ($)</label>
+            <label className="block text-xs text-muted mb-1">Amount Claimed ($)</label>
             <input
               type="number"
               value={amount}
@@ -766,7 +766,7 @@ function ClaimModal({
               placeholder="0.00"
               step="0.01"
               min="0"
-              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-200 placeholder:text-zinc-500 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
@@ -806,8 +806,8 @@ function StatCard({ icon: Icon, label, value, color }: { icon: React.ComponentTy
             <Icon className={cn('w-5 h-5', iconColors[color] || iconColors.blue)} />
           </div>
           <div>
-            <p className="text-xl font-bold text-zinc-100">{value}</p>
-            <p className="text-xs text-zinc-400">{label}</p>
+            <p className="text-xl font-bold text-main">{value}</p>
+            <p className="text-xs text-muted">{label}</p>
           </div>
         </div>
       </CardContent>
@@ -819,8 +819,8 @@ function WarrantyStatusBadge({ status, daysRemaining }: { status: string; daysRe
   const config: Record<string, { bg: string; text: string; label: string }> = {
     active: { bg: 'bg-green-500/20', text: 'text-green-400', label: daysRemaining ? `${Math.round(daysRemaining / 30)}mo left` : 'Active' },
     expiring_soon: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: daysRemaining != null ? `${daysRemaining}d left` : 'Expiring' },
-    expired: { bg: 'bg-zinc-700/50', text: 'text-zinc-400', label: 'Expired' },
-    no_warranty: { bg: 'bg-zinc-800', text: 'text-zinc-500', label: 'None' },
+    expired: { bg: 'bg-secondary/50', text: 'text-muted', label: 'Expired' },
+    no_warranty: { bg: 'bg-secondary', text: 'text-muted', label: 'None' },
   };
   const c = config[status] || config.no_warranty;
   return <Badge className={cn(c.bg, c.text, 'text-[10px]')}>{c.label}</Badge>;
@@ -833,7 +833,7 @@ function ClaimStatusBadge({ status }: { status: ClaimStatus }) {
     approved: { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Approved' },
     denied: { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Denied' },
     resolved: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Resolved' },
-    closed: { bg: 'bg-zinc-700/50', text: 'text-zinc-400', label: 'Closed' },
+    closed: { bg: 'bg-secondary/50', text: 'text-muted', label: 'Closed' },
   };
   const c = config[status] || config.submitted;
   return <Badge className={cn(c.bg, c.text, 'text-[10px]')}>{c.label}</Badge>;
@@ -846,7 +846,7 @@ function ResponseBadge({ status }: { status: string }) {
     clicked: { bg: 'bg-blue-500/20', text: 'text-blue-400' },
     booked: { bg: 'bg-green-500/20', text: 'text-green-400' },
     declined: { bg: 'bg-red-500/20', text: 'text-red-400' },
-    no_response: { bg: 'bg-zinc-700/50', text: 'text-zinc-400' },
+    no_response: { bg: 'bg-secondary/50', text: 'text-muted' },
   };
   const c = config[status] || config.pending;
   return (
@@ -858,7 +858,7 @@ function ResponseBadge({ status }: { status: string }) {
 
 function SeverityBadge({ severity }: { severity: string }) {
   const config: Record<string, { bg: string; text: string }> = {
-    low: { bg: 'bg-zinc-700/50', text: 'text-zinc-400' },
+    low: { bg: 'bg-secondary/50', text: 'text-muted' },
     medium: { bg: 'bg-yellow-500/20', text: 'text-yellow-400' },
     high: { bg: 'bg-orange-500/20', text: 'text-orange-400' },
     critical: { bg: 'bg-red-500/20', text: 'text-red-400' },
@@ -874,7 +874,7 @@ function OutreachTypeIcon({ type }: { type: string }) {
     case 'recall_notice': return <AlertTriangle className="w-4 h-4 text-red-400" />;
     case 'upsell_extended': return <ShieldCheck className="w-4 h-4 text-green-400" />;
     case 'seasonal_check': return <Bell className="w-4 h-4 text-orange-400" />;
-    default: return <Send className="w-4 h-4 text-zinc-400" />;
+    default: return <Send className="w-4 h-4 text-muted" />;
   }
 }
 

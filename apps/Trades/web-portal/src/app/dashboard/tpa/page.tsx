@@ -33,6 +33,7 @@ import {
   type ProgramFinancialSummary,
 } from '@/lib/hooks/use-tpa-financials';
 import { useTranslation } from '@/lib/translations';
+import { CommandPalette } from '@/components/command-palette';
 
 // ============================================================================
 // CONSTANTS
@@ -150,8 +151,8 @@ function SummaryCards({
       title: 'AR Outstanding',
       value: formatCurrency(totalArOutstanding),
       icon: Clock,
-      color: totalArOutstanding > 0 ? 'text-orange-400' : 'text-zinc-400',
-      bg: totalArOutstanding > 0 ? 'bg-orange-500/10' : 'bg-zinc-500/10',
+      color: totalArOutstanding > 0 ? 'text-orange-400' : 'text-slate-400',
+      bg: totalArOutstanding > 0 ? 'bg-orange-500/10' : 'bg-slate-500/10',
     },
     {
       title: 'SLA Violations',
@@ -172,15 +173,15 @@ function SummaryCards({
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
       {cards.map((card) => (
-        <Card key={card.title} className="bg-zinc-900 border-zinc-800">
+        <Card key={card.title} className="bg-surface border-main">
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-1">
               <div className={cn('p-1 rounded', card.bg)}>
                 <card.icon className={cn('h-3.5 w-3.5', card.color)} />
               </div>
-              <span className="text-[11px] text-zinc-400 truncate">{card.title}</span>
+              <span className="text-[11px] text-muted truncate">{card.title}</span>
             </div>
-            <p className="text-lg font-semibold text-white">{card.value}</p>
+            <p className="text-lg font-semibold text-main">{card.value}</p>
           </CardContent>
         </Card>
       ))}
@@ -199,18 +200,18 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
   const marginHealthy = summary.grossMarginPercent >= 30;
 
   return (
-    <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+    <Card className="bg-surface border-main hover:border-accent/30 transition-colors">
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="min-w-0 flex-1">
-            <h3 className="font-medium text-white truncate">{summary.programName}</h3>
+            <h3 className="font-medium text-main truncate">{summary.programName}</h3>
             <Badge variant="secondary" className={cn('mt-1 text-[10px]', typeColor)}>
               {typeLabel}
             </Badge>
           </div>
           <Link href={`/dashboard/tpa/assignments?program=${summary.programId}`}>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-400 hover:text-white">
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted hover:text-main">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -219,11 +220,11 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
         {/* Revenue + Margin */}
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <span className="text-[11px] text-zinc-500">{t('common.revenue')}</span>
-            <p className="text-sm font-semibold text-white">{formatCurrency(summary.totalRevenue)}</p>
+            <span className="text-[11px] text-muted">{t('common.revenue')}</span>
+            <p className="text-sm font-semibold text-main">{formatCurrency(summary.totalRevenue)}</p>
           </div>
           <div>
-            <span className="text-[11px] text-zinc-500">{t('common.margin')}</span>
+            <span className="text-[11px] text-muted">{t('common.margin')}</span>
             <div className="flex items-center gap-1">
               {marginHealthy ? (
                 <ArrowUpRight className="h-3 w-3 text-emerald-400" />
@@ -238,29 +239,29 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-zinc-800">
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-main">
           <div className="text-center">
-            <span className="text-[10px] text-zinc-500 block">{t('common.jobs')}</span>
-            <span className="text-xs font-medium text-white">
+            <span className="text-[10px] text-muted block">{t('common.jobs')}</span>
+            <span className="text-xs font-medium text-main">
               {summary.assignmentsCompleted}/{summary.assignmentsReceived}
             </span>
           </div>
           <div className="text-center">
-            <span className="text-[10px] text-zinc-500 block">{t('common.referral')}</span>
+            <span className="text-[10px] text-muted block">{t('common.referral')}</span>
             <span className="text-xs font-medium text-amber-400">
               {formatCurrency(summary.referralFeesPaid)}
             </span>
           </div>
           <div className="text-center">
-            <span className="text-[10px] text-zinc-500 block">{t('common.score')}</span>
-            <span className="text-xs font-medium text-white flex items-center justify-center gap-0.5">
+            <span className="text-[10px] text-muted block">{t('common.score')}</span>
+            <span className="text-xs font-medium text-main flex items-center justify-center gap-0.5">
               {summary.avgScorecardRating != null ? (
                 <>
                   <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
                   {summary.avgScorecardRating.toFixed(1)}
                 </>
               ) : (
-                <span className="text-zinc-500">--</span>
+                <span className="text-muted">--</span>
               )}
             </span>
           </div>
@@ -268,7 +269,7 @@ function ProgramCard({ summary }: { summary: ProgramFinancialSummary }) {
 
         {/* Warnings */}
         {(summary.slaViolationsCount > 0 || summary.arTotal > 0) && (
-          <div className="mt-3 pt-3 border-t border-zinc-800 flex flex-wrap gap-2">
+          <div className="mt-3 pt-3 border-t border-main flex flex-wrap gap-2">
             {summary.slaViolationsCount > 0 && (
               <Badge variant="secondary" className="bg-red-500/10 text-red-400 border-red-500/20 text-[10px]">
                 <AlertTriangle className="h-3 w-3 mr-1" />
@@ -305,9 +306,9 @@ function PnLTable({
   if (summaries.length === 0) return null;
 
   return (
-    <Card className="bg-zinc-900 border-zinc-800">
+    <Card className="bg-surface border-main">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-main flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-blue-400" />
           P&L by Program
         </CardTitle>
@@ -316,7 +317,7 @@ function PnLTable({
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-400">
+              <tr className="border-b border-main text-muted">
                 <th className="text-left px-4 py-2 font-medium">{t('tpa.program')}</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.revenue')}</th>
                 <th className="text-right px-4 py-2 font-medium">{t('common.cost')}</th>
@@ -330,10 +331,10 @@ function PnLTable({
               {summaries.map((s) => {
                 const margin = s.totalRevenue - s.totalCost;
                 return (
-                  <tr key={s.programId} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
-                    <td className="px-4 py-2 text-white font-medium">{s.programName}</td>
-                    <td className="text-right px-4 py-2 text-white">{formatCurrency(s.totalRevenue)}</td>
-                    <td className="text-right px-4 py-2 text-zinc-400">{formatCurrency(s.totalCost)}</td>
+                  <tr key={s.programId} className="border-b border-main/50 hover:bg-surface-hover">
+                    <td className="px-4 py-2 text-main font-medium">{s.programName}</td>
+                    <td className="text-right px-4 py-2 text-main">{formatCurrency(s.totalRevenue)}</td>
+                    <td className="text-right px-4 py-2 text-muted">{formatCurrency(s.totalCost)}</td>
                     <td className={cn('text-right px-4 py-2 font-medium', margin >= 0 ? 'text-emerald-400' : 'text-red-400')}>
                       {formatCurrency(margin)}
                     </td>
@@ -341,26 +342,26 @@ function PnLTable({
                       {formatPercent(s.grossMarginPercent)}
                     </td>
                     <td className="text-right px-4 py-2 text-amber-400">{formatCurrency(s.referralFeesPaid)}</td>
-                    <td className="text-right px-4 py-2 text-zinc-300">{formatPercent(s.supplementApprovalRate)}</td>
+                    <td className="text-right px-4 py-2 text-main">{formatPercent(s.supplementApprovalRate)}</td>
                   </tr>
                 );
               })}
             </tbody>
             <tfoot>
-              <tr className="border-t border-zinc-700 font-medium">
-                <td className="px-4 py-2 text-white">{t('common.total')}</td>
-                <td className="text-right px-4 py-2 text-white">{formatCurrency(totalRevenue)}</td>
-                <td className="text-right px-4 py-2 text-zinc-400">{formatCurrency(totalCost)}</td>
+              <tr className="border-t border-main font-medium">
+                <td className="px-4 py-2 text-main">{t('common.total')}</td>
+                <td className="text-right px-4 py-2 text-main">{formatCurrency(totalRevenue)}</td>
+                <td className="text-right px-4 py-2 text-muted">{formatCurrency(totalCost)}</td>
                 <td className={cn('text-right px-4 py-2', totalRevenue - totalCost >= 0 ? 'text-emerald-400' : 'text-red-400')}>
                   {formatCurrency(totalRevenue - totalCost)}
                 </td>
-                <td className="text-right px-4 py-2 text-zinc-400">
+                <td className="text-right px-4 py-2 text-muted">
                   {totalRevenue > 0 ? formatPercent(((totalRevenue - totalCost) / totalRevenue) * 100) : '--'}
                 </td>
                 <td className="text-right px-4 py-2 text-amber-400">
                   {formatCurrency(summaries.reduce((s, p) => s + p.referralFeesPaid, 0))}
                 </td>
-                <td className="text-right px-4 py-2 text-zinc-400">--</td>
+                <td className="text-right px-4 py-2 text-muted">--</td>
               </tr>
             </tfoot>
           </table>
@@ -384,9 +385,9 @@ function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[
   const completionRate = Math.round((totalCompleted / totalReceived) * 100);
 
   return (
-    <Card className="bg-zinc-900 border-zinc-800">
+    <Card className="bg-surface border-main">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-main flex items-center gap-2">
           <PieChart className="h-4 w-4 text-purple-400" />
           Assignment Pipeline
         </CardTitle>
@@ -395,10 +396,10 @@ function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[
         <div className="flex items-center gap-4 mb-4">
           <div className="flex-1">
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-zinc-400">{t('common.completionRate')}</span>
-              <span className="text-white font-medium">{completionRate}%</span>
+              <span className="text-muted">{t('common.completionRate')}</span>
+              <span className="text-main font-medium">{completionRate}%</span>
             </div>
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-secondary rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all"
                 style={{ width: `${completionRate}%` }}
@@ -406,8 +407,8 @@ function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xl font-bold text-white">{totalReceived}</span>
-            <span className="text-xs text-zinc-400 block">total</span>
+            <span className="text-xl font-bold text-main">{totalReceived}</span>
+            <span className="text-xs text-muted block">total</span>
           </div>
         </div>
 
@@ -419,14 +420,14 @@ function AssignmentPipeline({ summaries }: { summaries: ProgramFinancialSummary[
               : 0;
             return (
               <div key={s.programId} className="flex items-center gap-3">
-                <span className="text-[11px] text-zinc-400 min-w-[100px] truncate">{s.programName}</span>
-                <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                <span className="text-[11px] text-muted min-w-[100px] truncate">{s.programName}</span>
+                <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-500 rounded-full"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <span className="text-[11px] text-zinc-300 min-w-[40px] text-right">
+                <span className="text-[11px] text-main min-w-[40px] text-right">
                   {s.assignmentsCompleted}/{s.assignmentsReceived}
                 </span>
               </div>
@@ -459,14 +460,15 @@ export default function TpaDashboardPage() {
 
   return (
     <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
+      <CommandPalette />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+          <h1 className="text-xl font-semibold text-main flex items-center gap-2">
             <Building2 className="h-5 w-5 text-blue-400" />
             {t('tpaDashboard.title')}
           </h1>
-          <p className="text-sm text-zinc-400 mt-0.5">
+          <p className="text-sm text-muted mt-0.5">
             Program performance, financials, and compliance overview
           </p>
         </div>
@@ -497,8 +499,8 @@ export default function TpaDashboardPage() {
       {/* Loading State */}
       {loading && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-          <span className="ml-2 text-sm text-zinc-400">{t('common.loadingFinancialData')}</span>
+          <Loader2 className="h-6 w-6 animate-spin text-muted" />
+          <span className="ml-2 text-sm text-muted">{t('common.loadingFinancialData')}</span>
         </div>
       )}
 
@@ -532,11 +534,11 @@ export default function TpaDashboardPage() {
 
           {/* Empty State */}
           {overview.programSummaries.length === 0 && (
-            <Card className="bg-zinc-900 border-zinc-800">
+            <Card className="bg-surface border-main">
               <CardContent className="py-12 text-center">
-                <Building2 className="h-10 w-10 text-zinc-600 mx-auto mb-3" />
-                <p className="text-sm text-zinc-400">No financial data for {MONTH_NAMES[month - 1]} {year}</p>
-                <p className="text-xs text-zinc-500 mt-1">
+                <Building2 className="h-10 w-10 text-muted opacity-50 mx-auto mb-3" />
+                <p className="text-sm text-muted">No financial data for {MONTH_NAMES[month - 1]} {year}</p>
+                <p className="text-xs text-muted mt-1">
                   Click &quot;Recalculate&quot; to generate data from assignments and invoices
                 </p>
               </CardContent>
@@ -547,7 +549,7 @@ export default function TpaDashboardPage() {
           {overview.programSummaries.length > 0 && (
             <>
               <div>
-                <h2 className="text-sm font-medium text-zinc-300 mb-3">Programs ({overview.programSummaries.length})</h2>
+                <h2 className="text-sm font-medium text-main mb-3">Programs ({overview.programSummaries.length})</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {overview.programSummaries.map((s) => (
                     <ProgramCard key={s.programId} summary={s} />
