@@ -37,12 +37,12 @@ import { formatCurrency } from '@/lib/format-locale';
 
 type ChangeOrderStatus = 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'voided';
 
-const statusConfig: Record<ChangeOrderStatus, { label: string; color: string; bgColor: string }> = {
-  draft: { label: 'Draft', color: 'text-muted', bgColor: 'bg-secondary' },
-  pending_approval: { label: 'Pending Approval', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
-  approved: { label: 'Approved', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  rejected: { label: 'Rejected', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  voided: { label: 'Voided', color: 'text-muted', bgColor: 'bg-secondary' },
+const statusConfig: Record<ChangeOrderStatus, { tKey: string; color: string; bgColor: string }> = {
+  draft: { tKey: 'changeOrders.statusDraft', color: 'text-muted', bgColor: 'bg-secondary' },
+  pending_approval: { tKey: 'changeOrders.statusPendingApproval', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
+  approved: { tKey: 'changeOrders.statusApproved', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  rejected: { tKey: 'changeOrders.statusRejected', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  voided: { tKey: 'changeOrders.statusVoided', color: 'text-muted', bgColor: 'bg-secondary' },
 };
 
 const REASON_LABELS: Record<string, string> = {
@@ -54,10 +54,10 @@ const REASON_LABELS: Record<string, string> = {
 };
 
 const tabs = [
-  { key: 'orders', label: 'Change Orders', icon: FileDiff },
-  { key: 'cumulative', label: 'Cumulative', icon: TrendingUp },
-  { key: 'scope-diff', label: 'Scope Diff', icon: FileDiff },
-  { key: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { key: 'orders', tKey: 'changeOrders.tabOrders', icon: FileDiff },
+  { key: 'cumulative', tKey: 'changeOrders.tabCumulative', icon: TrendingUp },
+  { key: 'scope-diff', tKey: 'changeOrders.tabScopeDiff', icon: FileDiff },
+  { key: 'analytics', tKey: 'changeOrders.tabAnalytics', icon: BarChart3 },
 ] as const;
 
 type TabKey = typeof tabs[number]['key'];
@@ -144,7 +144,7 @@ export default function ChangeOrdersPage() {
               )}
             >
               <Icon size={16} />
-              {tab.label}
+              {t(tab.tKey)}
             </button>
           );
         })}
@@ -188,8 +188,8 @@ function OrdersTab({ filteredCOs, search, setSearch, statusFilter, setStatusFilt
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search change orders..." className="sm:w-80" />
-        <Select options={[{ value: 'all', label: 'All Statuses' }, ...Object.entries(statusConfig).map(([k, v]) => ({ value: k, label: v.label }))]} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="sm:w-48" />
+        <SearchInput value={search} onChange={setSearch} placeholder={t('changeOrders.searchPlaceholder')} className="sm:w-80" />
+        <Select options={[{ value: 'all', label: t('changeOrders.allStatuses') }, ...Object.entries(statusConfig).map(([k, v]) => ({ value: k, label: t(v.tKey) }))]} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="sm:w-48" />
       </div>
 
       <div className="space-y-3">
@@ -207,7 +207,7 @@ function OrdersTab({ filteredCOs, search, setSearch, statusFilter, setStatusFilt
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-mono text-muted">{co.number}</span>
-                        <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
+                        <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{t(sConfig.tKey)}</span>
                         {co.approvedByName && co.status === 'approved' && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">{t('common.approved')}</span>}
                       </div>
                       <h3 className="font-medium text-main mb-1">{co.title}</h3>
@@ -222,7 +222,7 @@ function OrdersTab({ filteredCOs, search, setSearch, statusFilter, setStatusFilt
                     <p className={cn('text-lg font-semibold', isIncrease ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
                       {isIncrease ? '+' : ''}{formatCurrency(co.amount)}
                     </p>
-                    <p className="text-sm text-muted">{co.items.length} item{co.items.length !== 1 ? 's' : ''}</p>
+                    <p className="text-sm text-muted">{co.items.length} {co.items.length !== 1 ? t('common.items') : t('common.item')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -246,6 +246,7 @@ function OrdersTab({ filteredCOs, search, setSearch, statusFilter, setStatusFilt
 // ── Cumulative Tracking Tab ──
 
 function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
+  const { t } = useTranslation();
   const [expandedJob, setExpandedJob] = useState<string | null>(null);
 
   const cumulativeJobs = useMemo(() => {
@@ -298,8 +299,8 @@ function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
     return (
       <Card><CardContent className="p-12 text-center">
         <TrendingUp size={48} className="mx-auto text-muted mb-4" />
-        <h3 className="text-lg font-medium text-main mb-2">No cumulative data yet</h3>
-        <p className="text-muted">Create change orders to see cumulative job-level tracking here.</p>
+        <h3 className="text-lg font-medium text-main mb-2">{t('changeOrders.noCumulativeData')}</h3>
+        <p className="text-muted">{t('changeOrders.noCumulativeDataDesc')}</p>
       </CardContent></Card>
     );
   }
@@ -308,21 +309,21 @@ function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
     <div className="space-y-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Jobs with COs</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.jobsWithCOs')}</p>
           <p className="text-xl font-semibold text-main mt-1">{totals.jobCount}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Net Approved</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.netApproved')}</p>
           <p className={cn('text-xl font-semibold mt-1', totals.totalApproved >= 0 ? 'text-emerald-400' : 'text-red-400')}>
             {totals.totalApproved >= 0 ? '+' : ''}{formatCurrency(totals.totalApproved)}
           </p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Total COs</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.totalCos')}</p>
           <p className="text-xl font-semibold text-main mt-1">{totals.totalCOs}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Avg COs per Job</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.avgCOsPerJob')}</p>
           <p className="text-xl font-semibold text-main mt-1">
             {totals.jobCount > 0 ? (totals.totalCOs / totals.jobCount).toFixed(1) : '0'}
           </p>
@@ -351,13 +352,13 @@ function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <p className="text-sm text-muted">Net Change</p>
+                      <p className="text-sm text-muted">{t('changeOrders.netChange')}</p>
                       <p className={cn('font-semibold', jobTotal >= 0 ? 'text-emerald-400' : 'text-red-400')}>
                         {jobTotal >= 0 ? '+' : ''}{formatCurrency(jobTotal)}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-muted">{job.changeOrders.length} CO{job.changeOrders.length !== 1 ? 's' : ''}</p>
+                      <p className="text-xs text-muted">{job.changeOrders.length} {t('changeOrders.coAbbrev')}</p>
                     </div>
                   </div>
                 </div>
@@ -376,13 +377,13 @@ function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
                             : <ArrowDownRight size={14} className="text-red-400" />
                           }
                           <span className="font-mono text-xs text-muted w-20">{co.coNumber}</span>
-                          <span className={cn('px-1.5 py-0.5 rounded text-xs', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
+                          <span className={cn('px-1.5 py-0.5 rounded text-xs', sConfig.bgColor, sConfig.color)}>{t(sConfig.tKey)}</span>
                           <span className="text-xs text-muted">{co.date}</span>
                           <span className="flex-1" />
                           <span className={cn('font-medium', co.amount >= 0 ? 'text-emerald-400' : 'text-red-400')}>
                             {co.amount >= 0 ? '+' : ''}{formatCurrency(co.amount)}
                           </span>
-                          <span className="text-xs text-muted w-24 text-right">Running: {formatCurrency(acc.runningTotal)}</span>
+                          <span className="text-xs text-muted w-24 text-right">{t('changeOrders.running')}: {formatCurrency(acc.runningTotal)}</span>
                         </div>
                       );
                       return acc;
@@ -390,8 +391,8 @@ function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
 
                     <div className="flex items-center gap-3 text-sm p-2 bg-secondary/50 rounded-lg border border-main">
                       <DollarSign size={14} className="text-accent" />
-                      <span className="font-mono text-xs text-accent w-20">Total</span>
-                      <span className="text-main font-medium flex-1">Net Change Order Value</span>
+                      <span className="font-mono text-xs text-accent w-20">{t('common.total')}</span>
+                      <span className="text-main font-medium flex-1">{t('changeOrders.netChangeOrderValue')}</span>
                       <span className="font-bold text-accent">{formatCurrency(jobTotal)}</span>
                     </div>
                   </div>
@@ -408,6 +409,7 @@ function CumulativeTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
 // ── Scope Diff Tab ──
 
 function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
+  const { t } = useTranslation();
   const scopeItems = useMemo(() => {
     const allItems: { category: string; item: string; quantity: number; unitPrice: number; total: number; coNumber: string; coStatus: string }[] = [];
     changeOrders.forEach(co => {
@@ -446,8 +448,8 @@ function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
     return (
       <Card><CardContent className="p-12 text-center">
         <FileDiff size={48} className="mx-auto text-muted mb-4" />
-        <h3 className="text-lg font-medium text-main mb-2">No scope items yet</h3>
-        <p className="text-muted">Add line items to change orders to see a scope breakdown here.</p>
+        <h3 className="text-lg font-medium text-main mb-2">{t('changeOrders.noScopeItems')}</h3>
+        <p className="text-muted">{t('changeOrders.noScopeItemsDesc')}</p>
       </CardContent></Card>
     );
   }
@@ -456,22 +458,22 @@ function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
     <div className="space-y-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Total Value</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.totalValue')}</p>
           <p className="text-xl font-semibold text-main mt-1">{formatCurrency(totalValue)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Approved Value</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.approvedValue')}</p>
           <p className="text-xl font-semibold text-emerald-400 mt-1">{formatCurrency(approvedValue)}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
           <div className="flex items-center gap-2">
-            <Badge variant="success" size="sm">{approvedItems.length} approved</Badge>
-            <Badge variant="warning" size="sm">{pendingItems.length} pending</Badge>
+            <Badge variant="success" size="sm">{approvedItems.length} {t('common.approved').toLowerCase()}</Badge>
+            <Badge variant="warning" size="sm">{pendingItems.length} {t('common.pending').toLowerCase()}</Badge>
           </div>
-          <p className="text-xs text-muted mt-2">Line Item Statuses</p>
+          <p className="text-xs text-muted mt-2">{t('changeOrders.lineItemStatuses')}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Total Items</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.totalItems')}</p>
           <p className="text-xl font-semibold text-main mt-1">{totalItems}</p>
         </CardContent></Card>
       </div>
@@ -486,12 +488,12 @@ function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
               <table className="w-full">
                 <thead>
                   <tr className="bg-secondary text-left text-xs font-medium text-muted">
-                    <th className="px-4 py-2">Item</th>
-                    <th className="px-4 py-2 text-center">CO #</th>
-                    <th className="px-4 py-2 text-right">Qty</th>
-                    <th className="px-4 py-2 text-right">Unit Price</th>
-                    <th className="px-4 py-2 text-right">Total</th>
-                    <th className="px-4 py-2 text-center">Status</th>
+                    <th className="px-4 py-2">{t('changeOrders.item')}</th>
+                    <th className="px-4 py-2 text-center">{t('changeOrders.coNumber')}</th>
+                    <th className="px-4 py-2 text-right">{t('common.qty')}</th>
+                    <th className="px-4 py-2 text-right">{t('common.unitPrice')}</th>
+                    <th className="px-4 py-2 text-right">{t('common.total')}</th>
+                    <th className="px-4 py-2 text-center">{t('common.status')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -505,7 +507,7 @@ function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
                         <td className="px-4 py-2 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
                         <td className="px-4 py-2 text-right font-medium text-main">{formatCurrency(item.total)}</td>
                         <td className="px-4 py-2 text-center">
-                          <span className={cn('px-1.5 py-0.5 rounded text-xs', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
+                          <span className={cn('px-1.5 py-0.5 rounded text-xs', sConfig.bgColor, sConfig.color)}>{t(sConfig.tKey)}</span>
                         </td>
                       </tr>
                     );
@@ -523,6 +525,7 @@ function ScopeDiffTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
 // ── Analytics Tab ──
 
 function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
+  const { t } = useTranslation();
   const analytics = useMemo(() => {
     const total = changeOrders.length;
     const approved = changeOrders.filter(co => co.status === 'approved');
@@ -582,8 +585,8 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
     return (
       <Card><CardContent className="p-12 text-center">
         <BarChart3 size={48} className="mx-auto text-muted mb-4" />
-        <h3 className="text-lg font-medium text-main mb-2">No analytics data yet</h3>
-        <p className="text-muted">Create change orders to see analytics and trends here.</p>
+        <h3 className="text-lg font-medium text-main mb-2">{t('changeOrders.noAnalyticsData')}</h3>
+        <p className="text-muted">{t('changeOrders.noAnalyticsDataDesc')}</p>
       </CardContent></Card>
     );
   }
@@ -595,17 +598,17 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
     <div className="space-y-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Approval Rate</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.approvalRate')}</p>
           <p className="text-2xl font-bold text-emerald-400 mt-1">{analytics.approvalRate.toFixed(1)}%</p>
-          <p className="text-xs text-muted mt-1">{analytics.totalCOs} total change orders</p>
+          <p className="text-xs text-muted mt-1">{analytics.totalCOs} {t('changeOrders.totalChangeOrders')}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Average CO Amount</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.averageCOAmount')}</p>
           <p className="text-2xl font-bold text-main mt-1">{formatCurrency(analytics.avgAmount)}</p>
-          <p className="text-xs text-muted mt-1">Avg {analytics.avgApprovalDays.toFixed(1)} days to approve</p>
+          <p className="text-xs text-muted mt-1">{t('changeOrders.avgDaysToApprove', { days: analytics.avgApprovalDays.toFixed(1) })}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Net Contract Change</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.netContractChange')}</p>
           <p className={cn('text-2xl font-bold mt-1', analytics.netChange >= 0 ? 'text-emerald-400' : 'text-red-400')}>
             {analytics.netChange >= 0 ? '+' : ''}{formatCurrency(analytics.netChange)}
           </p>
@@ -616,23 +619,23 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
           </p>
         </CardContent></Card>
         <Card><CardContent className="p-4">
-          <p className="text-xs text-muted uppercase tracking-wider">Avg Approval Time</p>
-          <p className="text-2xl font-bold text-amber-400 mt-1">{analytics.avgApprovalDays.toFixed(1)} days</p>
-          <p className="text-xs text-muted mt-1">per change order</p>
+          <p className="text-xs text-muted uppercase tracking-wider">{t('changeOrders.avgApprovalTime')}</p>
+          <p className="text-2xl font-bold text-amber-400 mt-1">{analytics.avgApprovalDays.toFixed(1)} {t('common.days')}</p>
+          <p className="text-xs text-muted mt-1">{t('changeOrders.perChangeOrder')}</p>
         </CardContent></Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader><CardTitle className="text-base">By Reason</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('changeOrders.byReason')}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            {analytics.byReason.length === 0 && <p className="text-sm text-muted">No data available</p>}
+            {analytics.byReason.length === 0 && <p className="text-sm text-muted">{t('common.noData')}</p>}
             {analytics.byReason.map((r, i) => (
               <div key={i}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-main">{r.reason}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted">{r.count} COs</span>
+                    <span className="text-xs text-muted">{r.count} {t('changeOrders.coAbbrev')}</span>
                     <span className="text-sm font-medium text-main">{formatCurrency(r.totalAmount)}</span>
                   </div>
                 </div>
@@ -648,10 +651,10 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-base">Monthly Trend</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('changeOrders.monthlyTrend')}</CardTitle></CardHeader>
           <CardContent>
             {analytics.byMonth.length === 0 ? (
-              <p className="text-sm text-muted">No data available</p>
+              <p className="text-sm text-muted">{t('common.noData')}</p>
             ) : (
               <div className="flex items-end gap-2 h-40">
                 {analytics.byMonth.map((m, i) => (
@@ -673,17 +676,17 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
 
       {analytics.totalCOs > 0 && (
         <Card>
-          <CardHeader><CardTitle className="text-base">Insights</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('changeOrders.insights')}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {analytics.approvalRate > 0 && (
               <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
                 <TrendingUp size={16} className="text-emerald-400 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-main">
-                    {analytics.netChange >= 0 ? 'Change orders increase revenue' : 'Change orders have net reductions'}
+                    {analytics.netChange >= 0 ? t('changeOrders.insightRevenueIncrease') : t('changeOrders.insightNetReductions')}
                   </p>
                   <p className="text-xs text-muted mt-1">
-                    Net change of {formatCurrency(Math.abs(analytics.netChange))} across {analytics.totalCOs} change orders. {analytics.approvalRate.toFixed(0)}% approval rate.
+                    {t('changeOrders.insightNetChangeDetail', { amount: formatCurrency(Math.abs(analytics.netChange)), count: String(analytics.totalCOs), rate: analytics.approvalRate.toFixed(0) })}
                   </p>
                 </div>
               </div>
@@ -692,8 +695,8 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
               <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
                 <Clock size={16} className="text-blue-400 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-main">Average approval time: {analytics.avgApprovalDays.toFixed(1)} days</p>
-                  <p className="text-xs text-muted mt-1">Faster approvals reduce crew idle time and improve schedule predictability.</p>
+                  <p className="text-sm font-medium text-main">{t('changeOrders.insightAvgApprovalTime', { days: analytics.avgApprovalDays.toFixed(1) })}</p>
+                  <p className="text-xs text-muted mt-1">{t('changeOrders.insightApprovalBenefit')}</p>
                 </div>
               </div>
             )}
@@ -701,9 +704,9 @@ function AnalyticsTab({ changeOrders }: { changeOrders: ChangeOrderData[] }) {
               <div className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
                 <AlertTriangle size={16} className="text-amber-400 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-main">Top reason: {analytics.byReason[0].reason}</p>
+                  <p className="text-sm font-medium text-main">{t('changeOrders.insightTopReason', { reason: analytics.byReason[0].reason })}</p>
                   <p className="text-xs text-muted mt-1">
-                    {analytics.byReason[0].count} change orders totaling {formatCurrency(analytics.byReason[0].totalAmount)} attributed to {analytics.byReason[0].reason.toLowerCase()}.
+                    {t('changeOrders.insightTopReasonDetail', { count: String(analytics.byReason[0].count), amount: formatCurrency(analytics.byReason[0].totalAmount), reason: analytics.byReason[0].reason.toLowerCase() })}
                   </p>
                 </div>
               </div>
@@ -729,7 +732,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-mono text-muted">{co.number}</span>
-              <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
+              <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{t(sConfig.tKey)}</span>
             </div>
             <CardTitle>{co.title}</CardTitle>
           </div>
@@ -779,7 +782,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
           {co.approvedByName && (
             <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
               <CheckCircle size={16} className="text-emerald-600" />
-              <span className="text-sm text-emerald-700 dark:text-emerald-300">Approved by {co.approvedByName} on {co.approvedAt ? formatDate(co.approvedAt) : 'N/A'}</span>
+              <span className="text-sm text-emerald-700 dark:text-emerald-300">{t('changeOrders.approvedByOn', { name: co.approvedByName, date: co.approvedAt ? formatDate(co.approvedAt) : 'N/A' })}</span>
             </div>
           )}
 
@@ -787,7 +790,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => vo
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.close')}</Button>
-            <Button variant="outline" className="gap-2"><Download size={14} />Export PDF</Button>
+            <Button variant="outline" className="gap-2"><Download size={14} />{t('common.exportPDF')}</Button>
             {co.status === 'draft' && <Button className="flex-1"><Send size={16} />{t('changeOrders.sendForApproval')}</Button>}
             {co.status === 'pending_approval' && <Button className="flex-1"><CheckCircle size={16} />{t('changeOrders.markApproved')}</Button>}
           </div>
@@ -871,7 +874,7 @@ function NewCOModal({ onClose, onCreate }: {
       });
       onClose();
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to create change order');
+      alert(e instanceof Error ? e.message : t('changeOrders.failedToCreate'));
     } finally {
       setSaving(false);
     }
@@ -885,7 +888,7 @@ function NewCOModal({ onClose, onCreate }: {
         <CardHeader><CardTitle>{t('changeOrders.newChangeOrder')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('changeOrders.jobLabel')} *</label>
             <select value={jobId} onChange={(e) => setJobId(e.target.value)} className={inputCls}>
               <option value="">{t('common.selectJob')}</option>
               {jobs.map((j) => (
@@ -894,12 +897,12 @@ function NewCOModal({ onClose, onCreate }: {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Title *</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add EV charger circuit" className={inputCls} />
+            <label className="block text-sm font-medium text-main mb-1.5">{t('changeOrders.titleLabel')} *</label>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('changeOrders.titlePlaceholder')} className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Description *</label>
-            <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Detailed description of the scope change..." className={`${inputCls} resize-none`} />
+            <label className="block text-sm font-medium text-main mb-1.5">{t('changeOrders.descriptionLabel')} *</label>
+            <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('changeOrders.descriptionPlaceholder')} className={`${inputCls} resize-none`} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -913,7 +916,7 @@ function NewCOModal({ onClose, onCreate }: {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Schedule Impact (days)</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('changeOrders.scheduleImpactLabel')}</label>
               <input type="number" value={scheduleImpact} onChange={(e) => setScheduleImpact(e.target.value)} placeholder="0" className={inputCls} />
             </div>
           </div>
@@ -922,7 +925,7 @@ function NewCOModal({ onClose, onCreate }: {
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-main">{t('estimates.lineItems')}</label>
               <button type="button" onClick={addLineItem} className="text-xs text-accent hover:underline flex items-center gap-1">
-                <Plus size={12} /> Add Item
+                <Plus size={12} /> {t('changeOrders.addItem')}
               </button>
             </div>
             <div className="space-y-2">
@@ -938,19 +941,19 @@ function NewCOModal({ onClose, onCreate }: {
               ))}
             </div>
             <div className="flex justify-end mt-2">
-              <span className="text-sm font-semibold text-main">Total: {formatCurrency(computedTotal)}</span>
+              <span className="text-sm font-semibold text-main">{t('common.total')}: {formatCurrency(computedTotal)}</span>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.notes')}</label>
-            <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Internal notes..." className={`${inputCls} resize-none`} />
+            <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('changeOrders.notesPlaceholder')} className={`${inputCls} resize-none`} />
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>{t('common.cancel')}</Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={saving || !jobId || !title.trim() || !description.trim()}>
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-              {saving ? 'Creating...' : 'Create Change Order'}
+              {saving ? t('common.creating') : t('changeOrders.createChangeOrder')}
             </Button>
           </div>
         </CardContent>

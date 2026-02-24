@@ -140,22 +140,22 @@ export default function ReportsPage() {
   const taxSummary = useMemo(() => deriveTaxSummary(), []);
 
   const reports: { id: ReportType; label: string; icon: React.ReactNode }[] = [
-    { id: 'revenue', label: 'Revenue', icon: <DollarSign size={16} /> },
-    { id: 'jobs', label: 'Jobs', icon: <Briefcase size={16} /> },
-    { id: 'team', label: 'Team', icon: <Users size={16} /> },
-    { id: 'invoices', label: 'Invoices', icon: <FileText size={16} /> },
-    { id: 'jobcost', label: 'Job Costing', icon: <Hammer size={16} /> },
-    { id: 'wip', label: 'WIP Report', icon: <Scale size={16} /> },
-    { id: 'tax', label: 'Tax & 1099', icon: <Receipt size={16} /> },
-    { id: 'cpa', label: 'CPA Export', icon: <FileSpreadsheet size={16} /> },
+    { id: 'revenue', label: t('reports.tabRevenue'), icon: <DollarSign size={16} /> },
+    { id: 'jobs', label: t('reports.tabJobs'), icon: <Briefcase size={16} /> },
+    { id: 'team', label: t('reports.tabTeam'), icon: <Users size={16} /> },
+    { id: 'invoices', label: t('reports.tabInvoices'), icon: <FileText size={16} /> },
+    { id: 'jobcost', label: t('reports.tabJobCosting'), icon: <Hammer size={16} /> },
+    { id: 'wip', label: t('reports.tabWipReport'), icon: <Scale size={16} /> },
+    { id: 'tax', label: t('reports.tabTax1099'), icon: <Receipt size={16} /> },
+    { id: 'cpa', label: t('reports.tabCpaExport'), icon: <FileSpreadsheet size={16} /> },
   ];
 
   const dateRanges: { value: DateRange; label: string }[] = [
-    { value: '7d', label: 'Last 7 days' },
-    { value: '30d', label: 'Last 30 days' },
-    { value: '90d', label: 'Last 90 days' },
-    { value: '12m', label: 'Last 12 months' },
-    { value: 'ytd', label: 'Year to date' },
+    { value: '7d', label: t('reports.last7Days') },
+    { value: '30d', label: t('reports.last30Days') },
+    { value: '90d', label: t('reports.last90Days') },
+    { value: '12m', label: t('reports.last12Months') },
+    { value: 'ytd', label: t('reports.yearToDate') },
   ];
 
   if (loading) {
@@ -203,13 +203,13 @@ export default function ReportsPage() {
           <Button variant="secondary" onClick={() => {
             if (!data) return;
             const rows = data.monthlyRevenue.map(m => `${m.date},${m.revenue},${m.expenses},${m.profit}`);
-            const csv = 'Month,Revenue,Expenses,Profit\n' + rows.join('\n');
+            const csv = `${t('reports.csvHeaderMonth')},${t('reports.csvHeaderRevenue')},${t('reports.csvHeaderExpenses')},${t('reports.csvHeaderProfit')}\n` + rows.join('\n');
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `report-${activeReport}-${dateRange}.csv`; a.click();
             URL.revokeObjectURL(url);
           }}>
-            <Download size={16} />Export
+            <Download size={16} />{t('common.export')}
           </Button>
         </div>
       </div>
@@ -266,7 +266,7 @@ function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categorie
         <StatsCard title={t('customers.totalRevenue')} value={formatCurrency(totals.revenue)} icon={<TrendingUp size={20} />} />
         <StatsCard title={t('reports.materialCosts')} value={formatCurrency(totals.expenses)} icon={<TrendingDown size={20} />} />
         <StatsCard title={t('dashboard.netProfit')} value={formatCurrency(totals.profit)} icon={<DollarSign size={20} />} />
-        <StatsCard title={t('jobs.profitMargin')} value={`${profitMargin.toFixed(1)}%`} icon={<BarChart3 size={20} />} changeLabel={`Avg monthly: ${formatCurrency(avgMonthlyRevenue)}`} />
+        <StatsCard title={t('jobs.profitMargin')} value={`${profitMargin.toFixed(1)}%`} icon={<BarChart3 size={20} />} changeLabel={t('reports.avgMonthly', { amount: formatCurrency(avgMonthlyRevenue) })} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -465,6 +465,7 @@ function InvoicesReport({ stats }: { stats: InvoiceStats }) {
 // ════════════════════════════════════════════════════════
 
 function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
+  const { t } = useTranslation();
   const totalContract = jobs.reduce((s, j) => s + j.contractAmount, 0);
   const totalCost = jobs.reduce((s, j) => s + j.totalCost, 0);
   const totalProfit = jobs.reduce((s, j) => s + j.profit, 0);
@@ -479,22 +480,22 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
     <div className="space-y-6">
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard title="Total Contract Value" value={formatCurrency(totalContract)} icon={<DollarSign size={20} />} />
-        <StatsCard title="Total Costs" value={formatCurrency(totalCost)} icon={<TrendingDown size={20} />} />
-        <StatsCard title="Total Profit" value={formatCurrency(totalProfit)} icon={<TrendingUp size={20} />} />
-        <StatsCard title="Avg Profit Margin" value={`${avgMargin.toFixed(1)}%`} icon={<BarChart3 size={20} />} />
+        <StatsCard title={t('reports.totalContractValue')} value={formatCurrency(totalContract)} icon={<DollarSign size={20} />} />
+        <StatsCard title={t('reports.totalCosts')} value={formatCurrency(totalCost)} icon={<TrendingDown size={20} />} />
+        <StatsCard title={t('reports.totalProfit')} value={formatCurrency(totalProfit)} icon={<TrendingUp size={20} />} />
+        <StatsCard title={t('reports.avgProfitMargin')} value={`${avgMargin.toFixed(1)}%`} icon={<BarChart3 size={20} />} />
       </div>
 
       {/* Cost Breakdown Summary */}
       <Card>
-        <CardHeader><CardTitle className="text-base">Cost Breakdown</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{t('reports.costBreakdown')}</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Labor', value: totalLabor, color: 'bg-blue-500', pct: totalCost > 0 ? (totalLabor / totalCost * 100) : 0 },
-              { label: 'Materials', value: totalMaterial, color: 'bg-emerald-500', pct: totalCost > 0 ? (totalMaterial / totalCost * 100) : 0 },
-              { label: 'Subcontractors', value: totalSub, color: 'bg-purple-500', pct: totalCost > 0 ? (totalSub / totalCost * 100) : 0 },
-              { label: 'Overhead', value: totalOverhead, color: 'bg-amber-500', pct: totalCost > 0 ? (totalOverhead / totalCost * 100) : 0 },
+              { label: t('reports.labor'), value: totalLabor, color: 'bg-blue-500', pct: totalCost > 0 ? (totalLabor / totalCost * 100) : 0 },
+              { label: t('reports.materials'), value: totalMaterial, color: 'bg-emerald-500', pct: totalCost > 0 ? (totalMaterial / totalCost * 100) : 0 },
+              { label: t('reports.subcontractors'), value: totalSub, color: 'bg-purple-500', pct: totalCost > 0 ? (totalSub / totalCost * 100) : 0 },
+              { label: t('reports.overhead'), value: totalOverhead, color: 'bg-amber-500', pct: totalCost > 0 ? (totalOverhead / totalCost * 100) : 0 },
             ].map((item) => (
               <div key={item.label} className="p-4 bg-secondary rounded-xl">
                 <div className="flex items-center gap-2 mb-2">
@@ -502,7 +503,7 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
                   <span className="text-xs text-muted">{item.label}</span>
                 </div>
                 <p className="text-lg font-semibold text-main">{formatCurrency(item.value)}</p>
-                <p className="text-xs text-muted mt-1">{item.pct.toFixed(1)}% of costs</p>
+                <p className="text-xs text-muted mt-1">{t('reports.ofCosts', { pct: item.pct.toFixed(1) })}</p>
               </div>
             ))}
           </div>
@@ -520,8 +521,8 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Job-Level P&L</CardTitle>
-            <Button variant="secondary" size="sm"><Download size={14} />Export CSV</Button>
+            <CardTitle className="text-base">{t('reports.jobLevelPL')}</CardTitle>
+            <Button variant="secondary" size="sm"><Download size={14} />{t('reports.exportCsv')}</Button>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -529,15 +530,15 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-main bg-secondary/50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Job</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Status</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Contract</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Labor</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Material</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Sub</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Overhead</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Profit</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Margin</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.jobHeader')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.statusHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.contractHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.laborHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.materialHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.subHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.overheadHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.profitHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.marginHeader')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-main">
@@ -549,7 +550,7 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={job.status === 'completed' ? 'success' : job.status === 'in_progress' ? 'info' : 'secondary'}>
-                        {job.status === 'in_progress' ? 'In Progress' : job.status === 'completed' ? 'Completed' : 'Scheduled'}
+                        {job.status === 'in_progress' ? t('common.inProgress') : job.status === 'completed' ? t('common.completed') : t('common.scheduled')}
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-right font-medium text-main">{formatCurrency(job.contractAmount)}</td>
@@ -570,7 +571,7 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-main bg-secondary/50 font-semibold">
-                  <td className="px-4 py-3 text-main" colSpan={2}>Totals</td>
+                  <td className="px-4 py-3 text-main" colSpan={2}>{t('reports.totals')}</td>
                   <td className="px-4 py-3 text-right text-main">{formatCurrency(totalContract)}</td>
                   <td className="px-4 py-3 text-right text-muted">{formatCurrency(totalLabor)}</td>
                   <td className="px-4 py-3 text-right text-muted">{formatCurrency(totalMaterial)}</td>
@@ -593,6 +594,7 @@ function JobCostingReport({ jobs }: { jobs: JobCostReport[] }) {
 // ════════════════════════════════════════════════════════
 
 function WIPReport({ entries }: { entries: WIPEntry[] }) {
+  const { t } = useTranslation();
   const totalEstimated = entries.reduce((s, e) => s + e.estimatedTotal, 0);
   const totalCosts = entries.reduce((s, e) => s + e.costsToDate, 0);
   const totalBilled = entries.reduce((s, e) => s + e.billedToDate, 0);
@@ -605,22 +607,21 @@ function WIPReport({ entries }: { entries: WIPEntry[] }) {
       <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl">
         <Scale size={20} className="text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
         <div>
-          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Work in Progress Report</p>
+          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">{t('reports.wipTitle')}</p>
           <p className="text-xs text-blue-700 dark:text-blue-400 mt-1">
-            Critical for construction accrual accounting. Shows earned revenue vs billed amounts on active projects.
-            Over-billed jobs have recognized less revenue than billed (liability). Under-billed jobs have earned more than billed (asset).
+            {t('reports.wipDescription')}
           </p>
         </div>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatsCard title="Total Estimated" value={formatCurrency(totalEstimated)} icon={<DollarSign size={20} />} />
-        <StatsCard title="Costs to Date" value={formatCurrency(totalCosts)} icon={<TrendingDown size={20} />} />
-        <StatsCard title="Billed to Date" value={formatCurrency(totalBilled)} icon={<FileText size={20} />} />
-        <StatsCard title="Earned Revenue" value={formatCurrency(totalEarned)} icon={<TrendingUp size={20} />} />
+        <StatsCard title={t('reports.totalEstimated')} value={formatCurrency(totalEstimated)} icon={<DollarSign size={20} />} />
+        <StatsCard title={t('reports.costsToDate')} value={formatCurrency(totalCosts)} icon={<TrendingDown size={20} />} />
+        <StatsCard title={t('reports.billedToDate')} value={formatCurrency(totalBilled)} icon={<FileText size={20} />} />
+        <StatsCard title={t('reports.earnedRevenue')} value={formatCurrency(totalEarned)} icon={<TrendingUp size={20} />} />
         <StatsCard
-          title="Net Over/(Under)"
+          title={t('reports.netOverUnder')}
           value={formatCurrency(Math.abs(netOverUnder))}
           icon={<Scale size={20} />}
           className={netOverUnder > 0 ? 'border-amber-200 dark:border-amber-800/30' : 'border-blue-200 dark:border-blue-800/30'}
@@ -631,8 +632,8 @@ function WIPReport({ entries }: { entries: WIPEntry[] }) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">WIP Schedule</CardTitle>
-            <Button variant="secondary" size="sm"><Download size={14} />Export</Button>
+            <CardTitle className="text-base">{t('reports.wipSchedule')}</CardTitle>
+            <Button variant="secondary" size="sm"><Download size={14} />{t('common.export')}</Button>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -640,13 +641,13 @@ function WIPReport({ entries }: { entries: WIPEntry[] }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-main bg-secondary/50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">Job</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Est. Total</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Costs</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">% Complete</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Earned Rev.</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Billed</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">Over/(Under)</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.jobHeader')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.estTotal')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.costs')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.percentComplete')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.earnedRev')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.billed')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-muted uppercase">{t('reports.overUnder')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-main">
@@ -676,7 +677,7 @@ function WIPReport({ entries }: { entries: WIPEntry[] }) {
                         {entry.overUnderBilled > 0 ? '' : '('}{formatCurrency(Math.abs(entry.overUnderBilled))}{entry.overUnderBilled < 0 ? ')' : ''}
                       </span>
                       <p className="text-[10px] text-muted mt-0.5">
-                        {entry.overUnderBilled > 0 ? 'Over-billed' : entry.overUnderBilled < 0 ? 'Under-billed' : 'Even'}
+                        {entry.overUnderBilled > 0 ? t('reports.overBilled') : entry.overUnderBilled < 0 ? t('reports.underBilled') : t('reports.even')}
                       </p>
                     </td>
                   </tr>
@@ -684,7 +685,7 @@ function WIPReport({ entries }: { entries: WIPEntry[] }) {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-main bg-secondary/50 font-semibold">
-                  <td className="px-4 py-3 text-main">Totals</td>
+                  <td className="px-4 py-3 text-main">{t('reports.totals')}</td>
                   <td className="px-4 py-3 text-right text-main">{formatCurrency(totalEstimated)}</td>
                   <td className="px-4 py-3 text-right text-muted">{formatCurrency(totalCosts)}</td>
                   <td className="px-4 py-3" />
@@ -710,35 +711,36 @@ function WIPReport({ entries }: { entries: WIPEntry[] }) {
 // ════════════════════════════════════════════════════════
 
 function TaxReport({ periods }: { periods: TaxSummary[] }) {
+  const { t } = useTranslation();
   const currentPeriod = periods[0];
 
   return (
     <div className="space-y-6">
       {/* Current Quarter Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard title="Sales Tax Collected" value={formatCurrency(currentPeriod.salesTaxCollected)} icon={<Receipt size={20} />} />
+        <StatsCard title={t('reports.salesTaxCollected')} value={formatCurrency(currentPeriod.salesTaxCollected)} icon={<Receipt size={20} />} />
         <StatsCard
-          title="Sales Tax Owed"
+          title={t('reports.salesTaxOwed')}
           value={formatCurrency(currentPeriod.salesTaxOwed)}
           icon={<AlertTriangle size={20} />}
           className={currentPeriod.salesTaxOwed > 0 ? 'border-amber-200 dark:border-amber-800/30' : ''}
         />
-        <StatsCard title="Est. Income Tax" value={formatCurrency(currentPeriod.estimatedIncomeTax)} icon={<Building size={20} />} />
-        <StatsCard title="1099 Vendors" value={String(currentPeriod.vendorCount1099)} icon={<Users size={20} />} />
+        <StatsCard title={t('reports.estIncomeTax')} value={formatCurrency(currentPeriod.estimatedIncomeTax)} icon={<Building size={20} />} />
+        <StatsCard title={t('reports.vendors1099')} value={String(currentPeriod.vendorCount1099)} icon={<Users size={20} />} />
       </div>
 
       {/* Sales Tax by Quarter */}
       <Card>
-        <CardHeader><CardTitle className="text-base">Sales Tax Summary</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{t('reports.salesTaxSummary')}</CardTitle></CardHeader>
         <CardContent className="p-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-main bg-secondary/50">
-                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase">Period</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">Collected</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">Remitted</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">Owed</th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">Status</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted uppercase">{t('reports.period')}</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">{t('reports.collected')}</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">{t('reports.remitted')}</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">{t('reports.owed')}</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-muted uppercase">{t('common.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">
@@ -754,7 +756,7 @@ function TaxReport({ periods }: { periods: TaxSummary[] }) {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Badge variant={period.salesTaxOwed === 0 ? 'success' : 'warning'}>
-                      {period.salesTaxOwed === 0 ? 'Filed' : 'Due'}
+                      {period.salesTaxOwed === 0 ? t('reports.filed') : t('reports.due')}
                     </Badge>
                   </td>
                 </tr>
@@ -769,10 +771,10 @@ function TaxReport({ periods }: { periods: TaxSummary[] }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">1099 Preparation</CardTitle>
-              <p className="text-xs text-muted mt-1">Vendors paid $600+ who need 1099-NEC</p>
+              <CardTitle className="text-base">{t('reports.preparation1099')}</CardTitle>
+              <p className="text-xs text-muted mt-1">{t('reports.preparation1099Desc')}</p>
             </div>
-            <Button variant="secondary" size="sm"><Download size={14} />Export 1099 Data</Button>
+            <Button variant="secondary" size="sm"><Download size={14} />{t('reports.export1099Data')}</Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -781,11 +783,11 @@ function TaxReport({ periods }: { periods: TaxSummary[] }) {
               <div key={period.period} className="flex items-center justify-between p-4 bg-secondary rounded-xl">
                 <div>
                   <p className="text-sm font-medium text-main">{period.period}</p>
-                  <p className="text-xs text-muted">{period.vendorCount1099} vendor{period.vendorCount1099 !== 1 ? 's' : ''} qualify</p>
+                  <p className="text-xs text-muted">{t('reports.vendorsQualify', { count: period.vendorCount1099 })}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-main">{formatCurrency(period.vendorPayments1099)}</p>
-                  <p className="text-xs text-muted">total payments</p>
+                  <p className="text-xs text-muted">{t('reports.totalPayments')}</p>
                 </div>
               </div>
             ))}
@@ -795,14 +797,14 @@ function TaxReport({ periods }: { periods: TaxSummary[] }) {
 
       {/* Estimated Tax */}
       <Card>
-        <CardHeader><CardTitle className="text-base">Quarterly Estimated Tax</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{t('reports.quarterlyEstimatedTax')}</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {periods.map((period) => (
               <div key={period.period} className="p-4 bg-secondary rounded-xl">
                 <p className="text-xs text-muted mb-1">{period.period}</p>
                 <p className="text-xl font-bold text-main">{formatCurrency(period.estimatedIncomeTax)}</p>
-                <p className="text-xs text-muted mt-2">Based on year-to-date income</p>
+                <p className="text-xs text-muted mt-2">{t('reports.basedOnYtdIncome')}</p>
               </div>
             ))}
           </div>
@@ -817,22 +819,23 @@ function TaxReport({ periods }: { periods: TaxSummary[] }) {
 // ════════════════════════════════════════════════════════
 
 function CPAExportTab() {
+  const { t } = useTranslation();
   const exportFormats = [
-    { id: 'qb-iif', label: 'QuickBooks IIF', description: 'Import directly into QuickBooks Desktop via IIF format. Includes chart of accounts, journal entries, invoices, and vendor bills.', icon: FileSpreadsheet },
-    { id: 'qbo-csv', label: 'QuickBooks Online CSV', description: 'CSV format compatible with QuickBooks Online import. Bank transactions, invoices, and bills.', icon: FileSpreadsheet },
-    { id: 'csv-full', label: 'Full Data Export (CSV)', description: 'Complete export of all financial data in CSV format. Chart of accounts, transactions, customers, vendors, invoices, bills, payments.', icon: Download },
-    { id: 'pdf-reports', label: 'PDF Report Package', description: 'Generate a full PDF package: P&L, Balance Sheet, Cash Flow Statement, AR/AP Aging, Trial Balance, Job Costing Summary, WIP Schedule.', icon: Printer },
+    { id: 'qb-iif', label: t('reports.qbIifLabel'), description: t('reports.qbIifDescription'), icon: FileSpreadsheet },
+    { id: 'qbo-csv', label: t('reports.qboCSVLabel'), description: t('reports.qboCSVDescription'), icon: FileSpreadsheet },
+    { id: 'csv-full', label: t('reports.csvFullLabel'), description: t('reports.csvFullDescription'), icon: Download },
+    { id: 'pdf-reports', label: t('reports.pdfReportsLabel'), description: t('reports.pdfReportsDescription'), icon: Printer },
   ];
 
   const dataSections = [
-    { label: 'Chart of Accounts', count: 87, checked: true },
-    { label: 'Journal Entries', count: 1284, checked: true },
-    { label: 'Invoices', count: 342, checked: true },
-    { label: 'Vendor Bills', count: 198, checked: true },
-    { label: 'Payments Received', count: 289, checked: true },
-    { label: 'Bank Transactions', count: 2156, checked: true },
-    { label: 'Payroll Records', count: 96, checked: true },
-    { label: '1099 Vendor Payments', count: 45, checked: true },
+    { label: t('reports.chartOfAccounts'), count: 87, checked: true },
+    { label: t('reports.journalEntries'), count: 1284, checked: true },
+    { label: t('reports.invoices'), count: 342, checked: true },
+    { label: t('reports.vendorBills'), count: 198, checked: true },
+    { label: t('reports.paymentsReceived'), count: 289, checked: true },
+    { label: t('reports.bankTransactions'), count: 2156, checked: true },
+    { label: t('reports.payrollRecords'), count: 96, checked: true },
+    { label: t('reports.vendorPayments1099'), count: 45, checked: true },
   ];
 
   return (
@@ -841,9 +844,9 @@ function CPAExportTab() {
       <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl">
         <FileSpreadsheet size={20} className="text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
         <div>
-          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">CPA Export Center</p>
+          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">{t('reports.cpaExportCenter')}</p>
           <p className="text-xs text-blue-700 dark:text-blue-400 mt-1">
-            Export your financial data for your accountant. Choose from QuickBooks-compatible formats, full CSV exports, or a comprehensive PDF report package.
+            {t('reports.cpaExportDescription')}
           </p>
         </div>
       </div>
@@ -851,7 +854,7 @@ function CPAExportTab() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Export Formats */}
         <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-sm font-semibold text-main">Export Formats</h3>
+          <h3 className="text-sm font-semibold text-main">{t('reports.exportFormats')}</h3>
           {exportFormats.map((format) => {
             const Icon = format.icon;
             return (
@@ -865,7 +868,7 @@ function CPAExportTab() {
                       <p className="text-sm font-semibold text-main">{format.label}</p>
                       <p className="text-xs text-muted mt-1 leading-relaxed">{format.description}</p>
                     </div>
-                    <Button variant="secondary" size="sm"><Download size={14} />Export</Button>
+                    <Button variant="secondary" size="sm"><Download size={14} />{t('common.export')}</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -875,7 +878,7 @@ function CPAExportTab() {
 
         {/* Data Summary */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-main">Included Data</h3>
+          <h3 className="text-sm font-semibold text-main">{t('reports.includedData')}</h3>
           <Card>
             <CardContent className="p-4">
               <div className="space-y-3">
@@ -891,7 +894,7 @@ function CPAExportTab() {
               </div>
               <div className="mt-4 pt-4 border-t border-main">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-main">Total Records</span>
+                  <span className="text-sm font-medium text-main">{t('reports.totalRecords')}</span>
                   <span className="text-sm font-bold text-main">
                     {dataSections.reduce((s, d) => s + d.count, 0).toLocaleString()}
                   </span>
@@ -902,14 +905,14 @@ function CPAExportTab() {
 
           <Card>
             <CardContent className="p-4">
-              <h4 className="text-xs font-medium text-muted uppercase mb-3">Date Range</h4>
+              <h4 className="text-xs font-medium text-muted uppercase mb-3">{t('reports.dateRange')}</h4>
               <div className="space-y-2">
                 <div>
-                  <label className="text-xs text-muted">From</label>
+                  <label className="text-xs text-muted">{t('reports.dateFrom')}</label>
                   <input type="date" defaultValue="2025-01-01" className="w-full mt-1 px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm" />
                 </div>
                 <div>
-                  <label className="text-xs text-muted">To</label>
+                  <label className="text-xs text-muted">{t('reports.dateTo')}</label>
                   <input type="date" defaultValue="2026-02-24" className="w-full mt-1 px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm" />
                 </div>
               </div>

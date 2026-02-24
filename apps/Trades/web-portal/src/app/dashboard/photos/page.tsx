@@ -28,24 +28,35 @@ import { Card, CardContent } from '@/components/ui/card';
 import { SearchInput, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
-import { formatDate, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { usePhotos, type PhotoCategory, type PhotoData } from '@/lib/hooks/use-photos';
 import { useJobs } from '@/lib/hooks/use-jobs';
 import { useTranslation } from '@/lib/translations';
 
 // ── Category config ──
 
-const CATEGORY_OPTIONS: { value: string; label: string; color: string; icon: typeof Camera }[] = [
-  { value: '', label: 'All Categories', color: '', icon: Camera },
-  { value: 'general', label: 'General', color: 'bg-secondary text-muted', icon: Image },
-  { value: 'before', label: 'Before', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300', icon: Camera },
-  { value: 'after', label: 'After', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300', icon: Camera },
-  { value: 'defect', label: 'Defect', color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300', icon: AlertTriangle },
-  { value: 'markup', label: 'Markup', color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300', icon: Tag },
-  { value: 'receipt', label: 'Receipt', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300', icon: Tag },
-  { value: 'inspection', label: 'Inspection', color: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300', icon: Search },
-  { value: 'completion', label: 'Completion', color: 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300', icon: Camera },
+const CATEGORY_OPTIONS: { value: string; tKey: string; color: string; icon: typeof Camera }[] = [
+  { value: '', tKey: 'photos.allCategories', color: '', icon: Camera },
+  { value: 'general', tKey: 'photos.categoryGeneral', color: 'bg-secondary text-muted', icon: Image },
+  { value: 'before', tKey: 'photos.categoryBefore', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300', icon: Camera },
+  { value: 'after', tKey: 'photos.categoryAfter', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300', icon: Camera },
+  { value: 'defect', tKey: 'photos.categoryDefect', color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300', icon: AlertTriangle },
+  { value: 'markup', tKey: 'photos.categoryMarkup', color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300', icon: Tag },
+  { value: 'receipt', tKey: 'photos.categoryReceipt', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300', icon: Tag },
+  { value: 'inspection', tKey: 'photos.categoryInspection', color: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300', icon: Search },
+  { value: 'completion', tKey: 'photos.categoryCompletion', color: 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300', icon: Camera },
 ];
+
+const CATEGORY_TKEY_MAP: Record<string, string> = {
+  general: 'photos.categoryGeneral',
+  before: 'photos.categoryBefore',
+  after: 'photos.categoryAfter',
+  defect: 'photos.categoryDefect',
+  markup: 'photos.categoryMarkup',
+  receipt: 'photos.categoryReceipt',
+  inspection: 'photos.categoryInspection',
+  completion: 'photos.categoryCompletion',
+};
 
 const CATEGORY_BADGE_VARIANTS: Record<string, 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'> = {
   general: 'default',
@@ -61,7 +72,7 @@ const CATEGORY_BADGE_VARIANTS: Record<string, 'default' | 'secondary' | 'success
 // ── Main page ──
 
 export default function PhotosGalleryPage() {
-  const { t } = useTranslation();
+  const { t, formatDate } = useTranslation();
   const router = useRouter();
 
   // Fetch ALL company photos (no jobId filter)
@@ -85,22 +96,22 @@ export default function PhotosGalleryPage() {
   const jobMap = useMemo(() => {
     const map = new Map<string, string>();
     for (const job of jobs) {
-      map.set(job.id, job.title || 'Untitled Job');
+      map.set(job.id, job.title || t('photos.untitledJob'));
     }
     return map;
-  }, [jobs]);
+  }, [jobs, t]);
 
   // Job dropdown options
   const jobOptions = useMemo(() => {
     const uniqueJobIds = new Set(photos.map(p => p.jobId).filter(Boolean));
     return [
-      { value: '', label: 'All Jobs' },
+      { value: '', label: t('photos.allJobs') },
       ...Array.from(uniqueJobIds).map(id => ({
         value: id,
         label: jobMap.get(id) || id.slice(0, 8),
       })),
     ];
-  }, [photos, jobMap]);
+  }, [photos, jobMap, t]);
 
   // Filtered photos
   const filteredPhotos = useMemo(() => {
@@ -173,7 +184,7 @@ export default function PhotosGalleryPage() {
         <div className="flex items-center justify-center py-20">
           <div className="flex items-center gap-3">
             <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
-            <span className="text-sm text-muted">Loading photos...</span>
+            <span className="text-sm text-muted">{t('photos.loadingPhotos')}</span>
           </div>
         </div>
       </div>
@@ -187,9 +198,9 @@ export default function PhotosGalleryPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Photo Gallery</h1>
+          <h1 className="text-2xl font-semibold text-main">{t('photos.pageTitle')}</h1>
           <p className="text-[13px] text-muted mt-1">
-            Browse and manage all company photos across jobs
+            {t('photos.pageSubtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -201,7 +212,7 @@ export default function PhotosGalleryPage() {
                 ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)]'
                 : 'border-main text-muted hover:text-main'
             )}
-            title="Grid view"
+            title={t('photos.gridView')}
           >
             <Grid3X3 size={16} />
           </button>
@@ -213,7 +224,7 @@ export default function PhotosGalleryPage() {
                 ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)]'
                 : 'border-main text-muted hover:text-main'
             )}
-            title="List view"
+            title={t('photos.listView')}
           >
             <List size={16} />
           </button>
@@ -230,7 +241,7 @@ export default function PhotosGalleryPage() {
               </div>
               <div>
                 <p className="text-lg font-semibold text-main">{stats.total}</p>
-                <p className="text-[11px] text-muted">Total Photos</p>
+                <p className="text-[11px] text-muted">{t('photos.totalPhotos')}</p>
               </div>
             </div>
           </CardContent>
@@ -243,7 +254,7 @@ export default function PhotosGalleryPage() {
               <CardContent className="p-3">
                 <div className="flex items-center gap-2.5">
                   <Badge variant={CATEGORY_BADGE_VARIANTS[cat.value] || 'default'} size="sm">
-                    {cat.label}
+                    {t(cat.tKey)}
                   </Badge>
                   <p className="text-lg font-semibold text-main ml-auto">{count}</p>
                 </div>
@@ -259,7 +270,7 @@ export default function PhotosGalleryPage() {
               </div>
               <div>
                 <p className="text-lg font-semibold text-main">{stats.clientVisibleCount}</p>
-                <p className="text-[11px] text-muted">Client Visible</p>
+                <p className="text-[11px] text-muted">{t('photos.clientVisible')}</p>
               </div>
             </div>
           </CardContent>
@@ -271,16 +282,16 @@ export default function PhotosGalleryPage() {
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
             <Filter size={14} className="text-muted" />
-            <span className="text-xs font-semibold text-muted uppercase tracking-wider">Filters</span>
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">{t('photos.filters')}</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
             <SearchInput
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder="Search caption, filename, tags..."
+              placeholder={t('photos.searchPlaceholder')}
             />
             <Select
-              options={CATEGORY_OPTIONS.map(c => ({ value: c.value, label: c.label }))}
+              options={CATEGORY_OPTIONS.map(c => ({ value: c.value, label: t(c.tKey) }))}
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             />
@@ -291,9 +302,9 @@ export default function PhotosGalleryPage() {
             />
             <Select
               options={[
-                { value: 'all', label: 'All Visibility' },
-                { value: 'visible', label: 'Client Visible' },
-                { value: 'hidden', label: 'Hidden from Client' },
+                { value: 'all', label: t('photos.allVisibility') },
+                { value: 'visible', label: t('photos.clientVisible') },
+                { value: 'hidden', label: t('photos.hiddenFromClient') },
               ]}
               value={clientVisibleFilter}
               onChange={(e) => setClientVisibleFilter(e.target.value as 'all' | 'visible' | 'hidden')}
@@ -304,7 +315,7 @@ export default function PhotosGalleryPage() {
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
                 className="w-full px-3 py-2 bg-main border border-main rounded-lg text-main text-sm focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-colors"
-                placeholder="From date"
+                placeholder={t('photos.fromDate')}
               />
             </div>
             <div className="space-y-1.5">
@@ -313,14 +324,14 @@ export default function PhotosGalleryPage() {
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
                 className="w-full px-3 py-2 bg-main border border-main rounded-lg text-main text-sm focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-colors"
-                placeholder="To date"
+                placeholder={t('photos.toDate')}
               />
             </div>
           </div>
           {(searchQuery || categoryFilter || jobFilter || clientVisibleFilter !== 'all' || dateFrom || dateTo) && (
             <div className="flex items-center gap-2 mt-3 pt-3 border-t border-main">
               <span className="text-xs text-muted">
-                Showing {filteredPhotos.length} of {photos.length} photos
+                {t('photos.showingOfPhotos', { shown: String(filteredPhotos.length), total: String(photos.length) })}
               </span>
               <button
                 onClick={() => {
@@ -333,7 +344,7 @@ export default function PhotosGalleryPage() {
                 }}
                 className="text-xs text-[var(--accent)] hover:underline ml-auto"
               >
-                Clear all filters
+                {t('photos.clearAllFilters')}
               </button>
             </div>
           )}
@@ -348,7 +359,7 @@ export default function PhotosGalleryPage() {
               <AlertTriangle size={16} />
               <span className="text-sm">{error}</span>
               <button onClick={refresh} className="ml-auto text-xs text-red-400 hover:text-red-300 underline">
-                Retry
+                {t('common.retry')}
               </button>
             </div>
           </CardContent>
@@ -364,12 +375,12 @@ export default function PhotosGalleryPage() {
                 <Camera size={24} className="text-muted" />
               </div>
               <h3 className="text-base font-semibold text-main mb-1">
-                {photos.length === 0 ? 'No photos yet' : 'No photos match your filters'}
+                {photos.length === 0 ? t('photos.noPhotosYet') : t('photos.noPhotosMatchFilters')}
               </h3>
               <p className="text-sm text-muted max-w-sm mx-auto">
                 {photos.length === 0
-                  ? 'Photos uploaded from job sites will appear here. Upload photos from a job detail page.'
-                  : 'Try adjusting your filters to see more results.'}
+                  ? t('photos.noPhotosYetDesc')
+                  : t('photos.noPhotosMatchFiltersDesc')}
               </p>
             </div>
           </CardContent>
@@ -438,25 +449,25 @@ export default function PhotosGalleryPage() {
                 <Trash2 size={18} className="text-red-500" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-main">Delete Photo</h3>
-                <p className="text-xs text-muted">This action cannot be undone</p>
+                <h3 className="text-sm font-bold text-main">{t('photos.deletePhoto')}</h3>
+                <p className="text-xs text-muted">{t('common.cannotUndo')}</p>
               </div>
             </div>
             <p className="text-sm text-muted mb-6">
-              Are you sure you want to delete this photo?
+              {t('photos.deletePhotoConfirm')}
             </p>
             <div className="flex items-center gap-3 justify-end">
               <button
                 onClick={() => setDeleteConfirmId(null)}
                 className="px-4 py-2 text-sm font-medium text-muted hover:text-main transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirmId)}
                 className="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-500 rounded-lg transition-colors"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -479,6 +490,7 @@ function PhotoCard({
   jobName: string | null;
   onClick: () => void;
 }) {
+  const { t, formatDate } = useTranslation();
   return (
     <div
       onClick={onClick}
@@ -502,18 +514,18 @@ function PhotoCard({
         {/* Category badge — top left */}
         <div className="absolute top-2 left-2">
           <Badge variant={CATEGORY_BADGE_VARIANTS[photo.category] || 'default'} size="sm">
-            {photo.category}
+            {t(CATEGORY_TKEY_MAP[photo.category] || 'photos.categoryGeneral')}
           </Badge>
         </div>
 
         {/* Client visibility indicator — top right */}
         <div className="absolute top-2 right-2">
           {photo.isClientVisible ? (
-            <div className="p-1 bg-emerald-500/80 rounded-full" title="Client visible">
+            <div className="p-1 bg-emerald-500/80 rounded-full" title={t('photos.clientVisible')}>
               <Eye size={10} className="text-white" />
             </div>
           ) : (
-            <div className="p-1 bg-surface-hover/60 rounded-full" title="Hidden from client">
+            <div className="p-1 bg-surface-hover/60 rounded-full" title={t('photos.hiddenFromClient')}>
               <EyeOff size={10} className="text-white" />
             </div>
           )}
@@ -562,6 +574,7 @@ function PhotoListRow({
   onToggleClientVisible: (visible: boolean) => void;
   onNavigateToJob: () => void;
 }) {
+  const { t, formatDate } = useTranslation();
   return (
     <div
       className="flex items-center gap-4 px-4 py-3 hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
@@ -590,7 +603,7 @@ function PhotoListRow({
             {photo.caption || photo.fileName}
           </p>
           <Badge variant={CATEGORY_BADGE_VARIANTS[photo.category] || 'default'} size="sm">
-            {photo.category}
+            {t(CATEGORY_TKEY_MAP[photo.category] || 'photos.categoryGeneral')}
           </Badge>
         </div>
         <div className="flex items-center gap-3 mt-0.5">
@@ -623,7 +636,7 @@ function PhotoListRow({
               ? 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400'
               : 'border-main text-muted hover:text-main'
           )}
-          title={photo.isClientVisible ? 'Visible to client — click to hide' : 'Hidden from client — click to show'}
+          title={photo.isClientVisible ? t('photos.visibleClickToHide') : t('photos.hiddenClickToShow')}
         >
           {photo.isClientVisible ? <Eye size={14} /> : <EyeOff size={14} />}
         </button>
@@ -651,6 +664,7 @@ function PhotoDetailModal({
   onDelete: () => void;
   onNavigateToJob: () => void;
 }) {
+  const { t, formatDate } = useTranslation();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
       <div
@@ -667,7 +681,7 @@ function PhotoDetailModal({
               </h2>
               <div className="flex items-center gap-2 mt-0.5">
                 <Badge variant={CATEGORY_BADGE_VARIANTS[photo.category] || 'default'} size="sm">
-                  {photo.category}
+                  {t(CATEGORY_TKEY_MAP[photo.category] || 'photos.categoryGeneral')}
                 </Badge>
                 <span className="text-[11px] text-muted">{formatDate(photo.createdAt)}</span>
               </div>
@@ -689,7 +703,7 @@ function PhotoDetailModal({
           ) : (
             <div className="text-center">
               <Image size={48} className="text-muted mx-auto mb-2" />
-              <p className="text-sm text-muted">Image not available</p>
+              <p className="text-sm text-muted">{t('photos.imageNotAvailable')}</p>
             </div>
           )}
         </div>
@@ -698,22 +712,22 @@ function PhotoDetailModal({
         <div className="px-5 py-4 border-t border-main space-y-3">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div>
-              <span className="text-muted block">File Name</span>
+              <span className="text-muted block">{t('photos.fileName')}</span>
               <span className="text-main font-medium truncate block">{photo.fileName}</span>
             </div>
             <div>
-              <span className="text-muted block">Size</span>
+              <span className="text-muted block">{t('photos.fileSize')}</span>
               <span className="text-main font-medium">{formatFileSize(photo.fileSize)}</span>
             </div>
             <div>
-              <span className="text-muted block">Dimensions</span>
+              <span className="text-muted block">{t('photos.dimensions')}</span>
               <span className="text-main font-medium">
-                {photo.width && photo.height ? `${photo.width} x ${photo.height}` : 'Unknown'}
+                {photo.width && photo.height ? `${photo.width} x ${photo.height}` : t('common.unknown')}
               </span>
             </div>
             <div>
-              <span className="text-muted block">Type</span>
-              <span className="text-main font-medium">{photo.mimeType || 'Unknown'}</span>
+              <span className="text-muted block">{t('common.type')}</span>
+              <span className="text-main font-medium">{photo.mimeType || t('common.unknown')}</span>
             </div>
           </div>
 
@@ -728,7 +742,7 @@ function PhotoDetailModal({
 
           {photo.latitude && photo.longitude && (
             <div className="text-xs text-muted">
-              GPS: {photo.latitude.toFixed(6)}, {photo.longitude.toFixed(6)}
+              {t('photos.gpsCoordinates', { lat: photo.latitude.toFixed(6), lng: photo.longitude.toFixed(6) })}
             </div>
           )}
         </div>
@@ -742,7 +756,7 @@ function PhotoDetailModal({
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--accent)] border border-[var(--accent)]/30 rounded-lg hover:bg-[var(--accent)]/10 transition-colors"
               >
                 <ExternalLink size={12} />
-                Go to Job
+                {t('photos.goToJob')}
               </button>
             )}
             <button
@@ -755,7 +769,7 @@ function PhotoDetailModal({
               )}
             >
               {photo.isClientVisible ? <Eye size={12} /> : <EyeOff size={12} />}
-              {photo.isClientVisible ? 'Client Visible' : 'Hidden from Client'}
+              {photo.isClientVisible ? t('photos.clientVisible') : t('photos.hiddenFromClient')}
             </button>
           </div>
           <button
@@ -763,7 +777,7 @@ function PhotoDetailModal({
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-500 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             <Trash2 size={12} />
-            Delete
+            {t('common.delete')}
           </button>
         </div>
       </div>

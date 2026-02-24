@@ -121,7 +121,9 @@ export default function CommunicationsPage() {
         customerId: '',
         customerName: (c.contact_name as string) || (c.phone_number as string) || '',
         customerPhone: c.phone_number as string,
-        body: `Call ${(c.direction as string) === 'inbound' ? 'from' : 'to'} ${(c.contact_name as string) || (c.phone_number as string)}`,
+        body: (c.direction as string) === 'inbound'
+          ? t('communications.callFrom', { contact: (c.contact_name as string) || (c.phone_number as string) })
+          : t('communications.callTo', { contact: (c.contact_name as string) || (c.phone_number as string) }),
         status: (c.status as Communication['status']) || 'sent',
         duration: c.duration_seconds as number | undefined,
         timestamp: new Date(c.created_at as string),
@@ -132,7 +134,7 @@ export default function CommunicationsPage() {
     results.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     setComms(results);
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchComms();
@@ -158,16 +160,16 @@ export default function CommunicationsPage() {
   });
 
   const typeOptions = [
-    { value: 'all', label: 'All Types' },
-    { value: 'email', label: 'Email' },
-    { value: 'sms', label: 'SMS' },
-    { value: 'call', label: 'Calls' },
+    { value: 'all', label: t('communications.allTypes') },
+    { value: 'email', label: t('common.email') },
+    { value: 'sms', label: t('communications.sms') },
+    { value: 'call', label: t('communications.calls') },
   ];
 
   const directionOptions = [
-    { value: 'all', label: 'All' },
-    { value: 'inbound', label: 'Inbound' },
-    { value: 'outbound', label: 'Outbound' },
+    { value: 'all', label: t('common.all') },
+    { value: 'inbound', label: t('communications.inbound') },
+    { value: 'outbound', label: t('communications.outbound') },
   ];
 
   // Stats
@@ -200,11 +202,11 @@ export default function CommunicationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('communications.title')}</h1>
-          <p className="text-muted mt-1">Email, SMS, and call history with customers</p>
+          <p className="text-muted mt-1">{t('communications.subtitle')}</p>
         </div>
         <Button onClick={() => setShowComposeModal(true)}>
           <Plus size={16} />
-          New Message
+          {t('communications.newMessage')}
         </Button>
       </div>
 
@@ -269,7 +271,7 @@ export default function CommunicationsPage() {
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search messages..."
+          placeholder={t('communications.searchMessages')}
           className="sm:w-80"
         />
         <Select
@@ -372,7 +374,7 @@ export default function CommunicationsPage() {
                   )}
                   <div className="flex items-center gap-2 mb-4 text-sm text-muted">
                     <Badge variant={selectedComm.direction === 'inbound' ? 'info' : 'success'} size="sm">
-                      {selectedComm.direction === 'inbound' ? 'Received' : 'Sent'}
+                      {selectedComm.direction === 'inbound' ? t('common.received') : t('common.sent')}
                     </Badge>
                     <span>{formatDate(selectedComm.timestamp)}</span>
                     {selectedComm.jobName && (
@@ -386,7 +388,7 @@ export default function CommunicationsPage() {
 
                   {selectedComm.attachments && selectedComm.attachments.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-main">
-                      <p className="text-sm text-muted mb-2">{t('permits.attachments')}</p>
+                      <p className="text-sm text-muted mb-2">{t('common.attachments')}</p>
                       <div className="space-y-2">
                         {selectedComm.attachments.map((att, i) => (
                           <div key={i} className="flex items-center gap-2 p-2 bg-secondary rounded-lg">
@@ -404,11 +406,11 @@ export default function CommunicationsPage() {
                   <div className="flex gap-2">
                     <Button className="flex-1">
                       <Send size={14} />
-                      Reply
+                      {t('common.reply')}
                     </Button>
                     <Button variant="secondary">
                       <Phone size={14} />
-                      Call
+                      {t('communications.call')}
                     </Button>
                   </div>
                 </div>
@@ -440,7 +442,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>{t('phone.newMessage')}</CardTitle>
+            <CardTitle>{t('communications.newMessage')}</CardTitle>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
               <X size={18} className="text-muted" />
             </button>
@@ -457,7 +459,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
               )}
             >
               <Mail size={16} />
-              Email
+              {t('common.email')}
             </button>
             <button
               onClick={() => setType('sms')}
@@ -467,7 +469,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
               )}
             >
               <MessageSquare size={16} />
-              SMS
+              {t('communications.sms')}
             </button>
           </div>
 
@@ -485,7 +487,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
               <label className="block text-sm font-medium text-main mb-1.5">{t('common.subject')}</label>
               <input
                 type="text"
-                placeholder="Enter subject..."
+                placeholder={t('communications.enterSubject')}
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
               />
             </div>
@@ -495,7 +497,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
             <label className="block text-sm font-medium text-main mb-1.5">{t('common.message')}</label>
             <textarea
               rows={type === 'sms' ? 3 : 6}
-              placeholder={type === 'sms' ? 'Enter message (160 chars)...' : 'Enter your message...'}
+              placeholder={type === 'sms' ? t('communications.enterSmsMessage') : t('communications.enterEmailMessage')}
               maxLength={type === 'sms' ? 160 : undefined}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent resize-none"
             />
@@ -504,7 +506,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
           {type === 'email' && (
             <button className="flex items-center gap-2 text-sm text-muted hover:text-main">
               <Paperclip size={14} />
-              Attach file
+              {t('communications.attachFile')}
             </button>
           )}
 
@@ -512,7 +514,7 @@ function ComposeModal({ onClose }: { onClose: () => void }) {
             <Button variant="secondary" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
             <Button className="flex-1">
               <Send size={16} />
-              Send
+              {t('common.send')}
             </Button>
           </div>
         </CardContent>

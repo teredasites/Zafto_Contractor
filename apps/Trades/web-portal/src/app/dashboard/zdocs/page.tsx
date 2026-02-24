@@ -68,20 +68,20 @@ function sanitizeHtml(html: string): string {
 
 type BadgeVariant = 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple';
 
-const renderStatusConfig: Record<string, { label: string; variant: BadgeVariant }> = {
-  draft: { label: 'Draft', variant: 'default' },
-  rendered: { label: 'Rendered', variant: 'info' },
-  sent: { label: 'Sent', variant: 'purple' },
-  signed: { label: 'Signed', variant: 'success' },
+const renderStatusConfig: Record<string, { tKey: string; variant: BadgeVariant }> = {
+  draft: { tKey: 'common.draft', variant: 'default' },
+  rendered: { tKey: 'zdocs.rendered', variant: 'info' },
+  sent: { tKey: 'common.sent', variant: 'purple' },
+  signed: { tKey: 'common.signed', variant: 'success' },
 };
 
-const signatureStatusConfig: Record<string, { label: string; variant: BadgeVariant }> = {
-  pending: { label: 'Pending', variant: 'default' },
-  sent: { label: 'Sent', variant: 'info' },
-  viewed: { label: 'Viewed', variant: 'purple' },
-  signed: { label: 'Signed', variant: 'success' },
-  declined: { label: 'Declined', variant: 'error' },
-  expired: { label: 'Expired', variant: 'warning' },
+const signatureStatusConfig: Record<string, { tKey: string; variant: BadgeVariant }> = {
+  pending: { tKey: 'common.pending', variant: 'default' },
+  sent: { tKey: 'common.sent', variant: 'info' },
+  viewed: { tKey: 'zdocs.viewed', variant: 'purple' },
+  signed: { tKey: 'common.signed', variant: 'success' },
+  declined: { tKey: 'zdocs.declined', variant: 'error' },
+  expired: { tKey: 'common.expired', variant: 'warning' },
 };
 
 const templateTypeConfig: Record<string, { variant: BadgeVariant }> = {
@@ -139,10 +139,10 @@ export default function ZDocsPage() {
   const [showGallery, setShowGallery] = useState(false);
   const [signingRequest, setSigningRequest] = useState<{ renderId: string; requestId: string; signerName: string } | null>(null);
 
-  const tabs: { id: TabId; label: string; count?: number }[] = [
-    { id: 'templates', label: 'Templates', count: activeTemplates.length },
-    { id: 'documents', label: 'Generated Documents', count: totalRenders },
-    { id: 'signatures', label: 'Signatures', count: pendingSignatures.length },
+  const tabs: { id: TabId; tKey: string; count?: number }[] = [
+    { id: 'templates', tKey: 'common.templates', count: activeTemplates.length },
+    { id: 'documents', tKey: 'zdocs.generatedDocuments', count: totalRenders },
+    { id: 'signatures', tKey: 'zdocs.signatures', count: pendingSignatures.length },
   ];
 
   const handleUseTemplate = (templateId: string) => {
@@ -188,25 +188,25 @@ export default function ZDocsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">{t('zdocs.title')}</h1>
-          <p className="text-muted mt-1">PDF-first document authoring, generation, and e-signatures</p>
+          <p className="text-muted mt-1">{t('zdocs.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           {activeTab === 'templates' && (
             <>
               <Button variant="secondary" onClick={() => setShowGallery(true)}>
                 <Library size={16} />
-                Template Gallery
+                {t('zdocs.templateGallery')}
               </Button>
               <Button onClick={() => setShowCreateTemplateModal(true)}>
                 <Plus size={16} />
-                Create Template
+                {t('common.createTemplate')}
               </Button>
             </>
           )}
           {activeTab === 'documents' && (
             <Button onClick={() => { setPreselectedTemplateId(null); setShowGenerateModal(true); }}>
               <FileText size={16} />
-              Generate Document
+              {t('zdocs.generateDocument')}
             </Button>
           )}
         </div>
@@ -282,7 +282,7 @@ export default function ZDocsPage() {
               activeTab === tab.id ? 'bg-surface shadow-sm text-main' : 'text-muted hover:text-main'
             )}
           >
-            {tab.label}
+            {t(tab.tKey)}
             {tab.count !== undefined && (
               <span className={cn(
                 'text-xs px-1.5 py-0.5 rounded-full',
@@ -422,6 +422,7 @@ function TemplateEditorView({
   fetchVersions: (templateId: string) => Promise<TemplateVersion[]>;
   revertToVersion: (templateId: string, versionId: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState(template.name);
   const [description, setDescription] = useState(template.description || '');
   const [templateType, setTemplateType] = useState(template.templateType);
@@ -464,7 +465,7 @@ function TemplateEditorView({
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to save template');
+      alert(e instanceof Error ? e.message : t('zdocs.failedToSaveTemplate'));
     } finally {
       setSaving(false);
     }
@@ -485,16 +486,16 @@ function TemplateEditorView({
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft size={16} />
-            Back
+            {t('common.back')}
           </Button>
           <div className="w-px h-6 bg-main/20" />
           <div className="flex items-center gap-2">
             <Badge variant={typeConf.variant}>{typeLabel}</Badge>
-            {template.isSystem && <Badge variant="secondary">System</Badge>}
+            {template.isSystem && <Badge variant="secondary">{t('common.system')}</Badge>}
             {requiresSignature && (
               <span className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
                 <PenTool size={12} />
-                Signature Required
+                {t('zdocs.signatureRequired')}
               </span>
             )}
           </div>
@@ -503,7 +504,7 @@ function TemplateEditorView({
           {saved && (
             <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in">
               <CheckCircle size={14} />
-              Saved
+              {t('common.saved')}
             </span>
           )}
           <Button
@@ -522,14 +523,14 @@ function TemplateEditorView({
             }}
           >
             <Clock size={14} />
-            Versions
+            {t('zdocs.versions')}
           </Button>
           <Button
             variant="secondary"
             size="sm"
             onClick={() => setShowMetadata(!showMetadata)}
           >
-            Settings
+            {t('common.settings')}
           </Button>
           <Button
             variant="secondary"
@@ -537,7 +538,7 @@ function TemplateEditorView({
             onClick={() => onGenerate(template.id)}
           >
             <FileText size={14} />
-            Generate Document
+            {t('zdocs.generateDocument')}
           </Button>
           <Button
             size="sm"
@@ -545,7 +546,7 @@ function TemplateEditorView({
             disabled={saving || !hasChanges}
           >
             {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('common.saving') : t('common.save')}
           </Button>
         </div>
       </div>
@@ -557,7 +558,7 @@ function TemplateEditorView({
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="text-2xl font-semibold text-main bg-transparent border-none focus:outline-none focus:ring-0 w-full placeholder:text-muted"
-          placeholder="Template name..."
+          placeholder={t('zdocs.templateNamePlaceholder')}
         />
         {description && !showMetadata && (
           <p className="text-sm text-muted mt-1">{description}</p>
@@ -570,7 +571,7 @@ function TemplateEditorView({
           <CardContent className="p-5 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-main mb-1.5">Template Name</label>
+                <label className="block text-sm font-medium text-main mb-1.5">{t('zdocs.templateName')}</label>
                 <input
                   type="text"
                   value={name}
@@ -579,18 +580,18 @@ function TemplateEditorView({
                 />
               </div>
               <Select
-                label="Template Type"
+                label={t('zdocs.templateType')}
                 options={typeOptions}
                 value={templateType}
                 onChange={(e) => setTemplateType(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Description</label>
+              <label className="block text-sm font-medium text-main mb-1.5">{t('common.description')}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief description of this template..."
+                placeholder={t('zdocs.templateDescriptionPlaceholder')}
                 rows={2}
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] resize-none"
               />
@@ -603,7 +604,7 @@ function TemplateEditorView({
                   onChange={(e) => setRequiresSignature(e.target.checked)}
                   className="w-4 h-4 rounded border-main text-emerald-600 focus:ring-emerald-500"
                 />
-                <span className="text-sm text-main">Requires Signature</span>
+                <span className="text-sm text-main">{t('zdocs.requiresSignature')}</span>
               </label>
               <button
                 type="button"
@@ -611,7 +612,7 @@ function TemplateEditorView({
                 className="flex items-center gap-2 text-sm text-main"
               >
                 {isShared ? <Users size={16} className="text-blue-500" /> : <User size={16} className="text-muted" />}
-                {isShared ? 'Company-Wide' : 'Personal Only'}
+                {isShared ? t('zdocs.companyWide') : t('zdocs.personalOnly')}
               </button>
               <button
                 type="button"
@@ -619,7 +620,7 @@ function TemplateEditorView({
                 className="flex items-center gap-2 text-sm text-main"
               >
                 {isActive ? <ToggleRight size={20} className="text-emerald-500" /> : <ToggleLeft size={20} className="text-muted" />}
-                {isActive ? 'Active' : 'Inactive'}
+                {isActive ? t('common.active') : t('common.inactive')}
               </button>
             </div>
           </CardContent>
@@ -631,7 +632,7 @@ function TemplateEditorView({
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">Version History</CardTitle>
+              <CardTitle className="text-sm">{t('zdocs.versionHistory')}</CardTitle>
               <button onClick={() => setShowVersions(false)} className="text-muted hover:text-main">
                 <X size={16} />
               </button>
@@ -644,7 +645,7 @@ function TemplateEditorView({
               </div>
             ) : versions.length === 0 ? (
               <div className="text-center py-8 text-muted text-sm">
-                No version history yet. Versions are created each time you save content changes.
+                {t('zdocs.noVersionHistoryYet')}
               </div>
             ) : (
               <div className="divide-y divide-main/50 max-h-64 overflow-y-auto">
@@ -656,7 +657,7 @@ function TemplateEditorView({
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-main truncate">
-                          {v.changeNote || `Version ${v.versionNumber}`}
+                          {v.changeNote || t('zdocs.versionNumber', { number: String(v.versionNumber) })}
                         </p>
                         <p className="text-xs text-muted">
                           {formatDate(v.createdAt)}
@@ -667,18 +668,18 @@ function TemplateEditorView({
                       variant="outline"
                       size="sm"
                       onClick={async () => {
-                        if (!confirm(`Revert to version ${v.versionNumber}? This will save the current content as a new version first.`)) return;
+                        if (!confirm(t('zdocs.revertConfirm', { version: String(v.versionNumber) }))) return;
                         try {
                           await revertToVersion(template.id, v.id);
                           setContent(v.contentHtml || '');
                           const refreshed = await fetchVersions(template.id);
                           setVersions(refreshed);
                         } catch {
-                          alert('Failed to revert version');
+                          alert(t('zdocs.failedToRevertVersion'));
                         }
                       }}
                     >
-                      Revert
+                      {t('zdocs.revert')}
                     </Button>
                   </div>
                 ))}
@@ -696,7 +697,7 @@ function TemplateEditorView({
 
       {/* Keyboard shortcut hint */}
       <div className="text-center text-xs text-muted">
-        Click &quot;Insert Variable&quot; in the toolbar to add merge tags like {'{{customer_name}}'}
+        {t('zdocs.insertVariableHint')}
       </div>
     </div>
   );
@@ -725,7 +726,7 @@ function TemplatesTab({
   const [typeFilter, setTypeFilter] = useState('all');
 
   const typeOptions = [
-    { value: 'all', label: 'All Types' },
+    { value: 'all', label: tr('zdocs.allTypes') },
     ...ZDOCS_TEMPLATE_TYPES.map((t) => ({ value: t, label: ZDOCS_TEMPLATE_TYPE_LABELS[t] || t })),
   ];
 
@@ -762,7 +763,7 @@ function TemplatesTab({
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search templates..."
+          placeholder={tr('zdocs.searchTemplates')}
           className="sm:w-80"
         />
         <Select
@@ -789,14 +790,14 @@ function TemplatesTab({
                       <Badge variant={typeConf.variant}>{typeLabel}</Badge>
                       {template.isSystem && <Badge variant="secondary">{tr('common.system')}</Badge>}
                       {template.contentHtml ? (
-                        <Badge variant="success">Has Content</Badge>
+                        <Badge variant="success">{tr('zdocs.hasContent')}</Badge>
                       ) : (
-                        <Badge variant="warning">No Content</Badge>
+                        <Badge variant="warning">{tr('zdocs.noContent')}</Badge>
                       )}
                     </div>
                   </div>
                   {template.requiresSignature && (
-                    <div className="p-1 text-amber-500 shrink-0 ml-2" title="Requires Signature">
+                    <div className="p-1 text-amber-500 shrink-0 ml-2" title={tr('zdocs.requiresSignature')}>
                       <PenTool size={14} />
                     </div>
                   )}
@@ -810,7 +811,7 @@ function TemplatesTab({
                   {varCount > 0 && (
                     <span className="flex items-center gap-1">
                       <Variable size={12} />
-                      {varCount} variable{varCount !== 1 ? 's' : ''}
+                      {tr('zdocs.variableCount', { count: String(varCount) })}
                     </span>
                   )}
                   <span className="flex items-center gap-1">
@@ -826,7 +827,7 @@ function TemplatesTab({
                     onClick={() => onEdit(template.id)}
                   >
                     <Edit3 size={14} />
-                    Edit
+                    {tr('common.edit')}
                   </Button>
                   <Button
                     variant="secondary"
@@ -834,7 +835,7 @@ function TemplatesTab({
                     onClick={() => onGenerate(template.id)}
                   >
                     <FileText size={14} />
-                    Use
+                    {tr('zdocs.use')}
                   </Button>
                   <Button
                     variant="outline"
@@ -900,7 +901,7 @@ function DocumentsTab({
     try {
       await onGeneratePdf(renderId);
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to generate PDF');
+      alert(e instanceof Error ? e.message : t('zdocs.failedToGeneratePdf'));
     } finally {
       setGeneratingPdfId(null);
     }
@@ -910,16 +911,16 @@ function DocumentsTab({
     try {
       await onDownloadPdf(renderId);
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to download PDF');
+      alert(e instanceof Error ? e.message : t('zdocs.failedToDownloadPdf'));
     }
   };
 
   const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'draft', label: 'Draft' },
-    { value: 'rendered', label: 'Rendered' },
-    { value: 'sent', label: 'Sent' },
-    { value: 'signed', label: 'Signed' },
+    { value: 'all', label: t('zdocs.allStatuses') },
+    { value: 'draft', label: t('common.draft') },
+    { value: 'rendered', label: t('zdocs.rendered') },
+    { value: 'sent', label: t('common.sent') },
+    { value: 'signed', label: t('common.signed') },
   ];
 
   const filtered = useMemo(() => {
@@ -1013,7 +1014,7 @@ function DocumentsTab({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        <Badge variant={statusConf.variant} dot>{statusConf.label}</Badge>
+                        <Badge variant={statusConf.variant} dot>{t(statusConf.tKey)}</Badge>
                         {render.pdfStoragePath && (
                           <Badge variant="success">PDF</Badge>
                         )}
@@ -1021,7 +1022,7 @@ function DocumentsTab({
                     </td>
                     <td className="px-6 py-4">
                       {sigConf ? (
-                        <Badge variant={sigConf.variant} dot>{sigConf.label}</Badge>
+                        <Badge variant={sigConf.variant} dot>{t(sigConf.tKey)}</Badge>
                       ) : (
                         <span className="text-sm text-muted">-</span>
                       )}
@@ -1042,7 +1043,7 @@ function DocumentsTab({
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDownloadPdf(render.id)}
-                            title="Download PDF"
+                            title={t('zdocs.downloadPdf')}
                           >
                             <Download size={14} />
                           </Button>
@@ -1052,7 +1053,7 @@ function DocumentsTab({
                             size="sm"
                             onClick={() => handleGeneratePdf(render.id)}
                             disabled={generatingPdfId === render.id}
-                            title="Generate PDF"
+                            title={t('zdocs.generatePdf')}
                           >
                             {generatingPdfId === render.id ? (
                               <Loader2 size={14} className="animate-spin" />
@@ -1066,7 +1067,7 @@ function DocumentsTab({
                             variant="ghost"
                             size="sm"
                             onClick={() => onSendForSignature(render.id)}
-                            title="Send for Signature"
+                            title={t('zdocs.sendForSignature')}
                           >
                             <Send size={14} />
                           </Button>
@@ -1118,12 +1119,12 @@ function SignaturesTab({
   const [statusFilter, setStatusFilter] = useState('all');
 
   const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'sent', label: 'Sent' },
-    { value: 'viewed', label: 'Viewed' },
-    { value: 'signed', label: 'Signed' },
-    { value: 'declined', label: 'Declined' },
-    { value: 'expired', label: 'Expired' },
+    { value: 'all', label: t('zdocs.allStatuses') },
+    { value: 'sent', label: t('common.sent') },
+    { value: 'viewed', label: t('zdocs.viewed') },
+    { value: 'signed', label: t('common.signed') },
+    { value: 'declined', label: t('zdocs.declined') },
+    { value: 'expired', label: t('common.expired') },
   ];
 
   const renderMap = useMemo(() => {
@@ -1161,7 +1162,7 @@ function SignaturesTab({
         <SearchInput
           value={search}
           onChange={setSearch}
-          placeholder="Search signatures..."
+          placeholder={t('zdocs.searchSignatures')}
           className="sm:w-80"
         />
         <Select
@@ -1181,7 +1182,7 @@ function SignaturesTab({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <FileSignature size={18} className="text-muted" />
-                    <CardTitle>{render?.title || 'Unknown Document'}</CardTitle>
+                    <CardTitle>{render?.title || t('zdocs.unknownDocument')}</CardTitle>
                   </div>
                   {render?.templateName && (
                     <Badge variant="secondary">{render.templateName}</Badge>
@@ -1211,7 +1212,7 @@ function SignaturesTab({
                           <td className="px-6 py-4 text-sm text-muted">{req.signerEmail}</td>
                           <td className="px-6 py-4 text-sm text-muted">{req.signerRole || '-'}</td>
                           <td className="px-6 py-4">
-                            <Badge variant={sigConf.variant} dot>{sigConf.label}</Badge>
+                            <Badge variant={sigConf.variant} dot>{t(sigConf.tKey)}</Badge>
                           </td>
                           <td className="px-6 py-4 text-sm text-muted">
                             {req.sentAt ? formatDate(req.sentAt) : '-'}
@@ -1227,7 +1228,7 @@ function SignaturesTab({
                                 onClick={() => onSign(req.renderId, req.id, req.signerName)}
                               >
                                 <PenTool size={14} />
-                                Sign Now
+                                {t('zdocs.signNow')}
                               </Button>
                             )}
                           </td>
@@ -1261,6 +1262,7 @@ function TemplateGalleryModal({
   onClose: () => void;
   onInstall: (template: PrebuiltTemplate) => Promise<void>;
 }) {
+  const { t: tr } = useTranslation();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [installing, setInstalling] = useState<string | null>(null);
@@ -1275,7 +1277,7 @@ function TemplateGalleryModal({
   }, [search, categoryFilter]);
 
   const categoryOptions = [
-    { value: 'all', label: `All Templates (${PREBUILT_TEMPLATES.length})` },
+    { value: 'all', label: `${tr('zdocs.allTemplates')} (${PREBUILT_TEMPLATES.length})` },
     ...PREBUILT_CATEGORIES.map((c) => ({ value: c.id, label: `${c.label} (${c.count})` })),
   ];
 
@@ -1284,7 +1286,7 @@ function TemplateGalleryModal({
     try {
       await onInstall(tpl);
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to install template');
+      alert(e instanceof Error ? e.message : tr('zdocs.failedToInstallTemplate'));
     } finally {
       setInstalling(null);
     }
@@ -1296,8 +1298,8 @@ function TemplateGalleryModal({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Template Gallery</CardTitle>
-              <p className="text-sm text-muted mt-1">{PREBUILT_TEMPLATES.length} professional templates ready to install</p>
+              <CardTitle>{tr('zdocs.templateGallery')}</CardTitle>
+              <p className="text-sm text-muted mt-1">{tr('zdocs.professionalTemplatesReady', { count: String(PREBUILT_TEMPLATES.length) })}</p>
             </div>
             <button onClick={onClose} className="text-muted hover:text-main">
               <X size={20} />
@@ -1309,7 +1311,7 @@ function TemplateGalleryModal({
             <SearchInput
               value={search}
               onChange={setSearch}
-              placeholder="Search templates..."
+              placeholder={tr('zdocs.searchTemplates')}
               className="sm:flex-1"
             />
             <Select
@@ -1331,7 +1333,7 @@ function TemplateGalleryModal({
                       <h4 className="text-sm font-semibold text-main truncate">{tpl.name}</h4>
                       <Badge variant={typeConf.variant}>{typeLabel}</Badge>
                       {tpl.requiresSignature && (
-                        <span className="text-xs text-amber-500 flex items-center gap-0.5"><PenTool size={10} /> Sig</span>
+                        <span className="text-xs text-amber-500 flex items-center gap-0.5"><PenTool size={10} /> {tr('zdocs.sig')}</span>
                       )}
                     </div>
                     <p className="text-xs text-muted line-clamp-1">{tpl.description}</p>
@@ -1342,13 +1344,13 @@ function TemplateGalleryModal({
                     disabled={isInstalling}
                   >
                     {isInstalling ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
-                    Install
+                    {tr('zdocs.install')}
                   </Button>
                 </div>
               );
             })}
             {filtered.length === 0 && (
-              <div className="text-center py-12 text-muted text-sm">No templates match your search.</div>
+              <div className="text-center py-12 text-muted text-sm">{tr('zdocs.noTemplatesMatchSearch')}</div>
             )}
           </div>
         </CardContent>
@@ -1395,7 +1397,7 @@ function CreateTemplateModal({
       });
       onClose();
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to create template');
+      alert(e instanceof Error ? e.message : t('zdocs.failedToCreateTemplate'));
     } finally {
       setSaving(false);
     }
@@ -1409,17 +1411,17 @@ function CreateTemplateModal({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Template Name *</label>
+            <label className="block text-sm font-medium text-main mb-1.5">{t('zdocs.templateNameRequired')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Standard Service Agreement"
+              placeholder={t('zdocs.templateNameExample')}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             />
           </div>
           <Select
-            label="Template Type"
+            label={t('zdocs.templateType')}
             options={typeOptions}
             value={templateType}
             onChange={(e) => setTemplateType(e.target.value)}
@@ -1429,7 +1431,7 @@ function CreateTemplateModal({
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Brief description of this template..."
+              placeholder={t('zdocs.templateDescriptionPlaceholder')}
               rows={3}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] resize-none"
             />
@@ -1445,11 +1447,11 @@ function CreateTemplateModal({
           </label>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={saving || !name.trim()}>
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-              {saving ? 'Creating...' : 'Create Template'}
+              {saving ? t('zdocs.creating') : t('common.createTemplate')}
             </Button>
           </div>
         </CardContent>
@@ -1488,7 +1490,7 @@ function GenerateDocumentModal({
   }));
 
   const entityTypeOptions = [
-    { value: '', label: 'None (standalone)' },
+    { value: '', label: tr('zdocs.noneStandalone') },
     ...ZDOCS_ENTITY_TYPES.map((t) => ({ value: t, label: ZDOCS_ENTITY_TYPE_LABELS[t] || t })),
   ];
 
@@ -1506,7 +1508,7 @@ function GenerateDocumentModal({
       });
       onClose();
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to generate document');
+      alert(e instanceof Error ? e.message : tr('zdocs.failedToGenerateDocument'));
     } finally {
       setSaving(false);
     }
@@ -1521,7 +1523,7 @@ function GenerateDocumentModal({
         <CardContent className="space-y-4">
           {templateOptions.length > 0 ? (
             <Select
-              label="Template *"
+              label={tr('zdocs.templateRequired')}
               options={templateOptions}
               value={templateId}
               onChange={(e) => setTemplateId(e.target.value)}
@@ -1535,13 +1537,13 @@ function GenerateDocumentModal({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={selectedTemplate ? selectedTemplate.name : 'Custom title...'}
+              placeholder={selectedTemplate ? selectedTemplate.name : tr('zdocs.customTitlePlaceholder')}
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Select
-              label="Link to Entity"
+              label={tr('zdocs.linkToEntity')}
               options={entityTypeOptions}
               value={entityType}
               onChange={(e) => setEntityType(e.target.value)}
@@ -1553,7 +1555,7 @@ function GenerateDocumentModal({
                   type="text"
                   value={entityId}
                   onChange={(e) => setEntityId(e.target.value)}
-                  placeholder="Paste ID..."
+                  placeholder={tr('zdocs.pasteIdPlaceholder')}
                   className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
                 />
               </div>
@@ -1587,11 +1589,11 @@ function GenerateDocumentModal({
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
-              Cancel
+              {tr('common.cancel')}
             </Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={saving || !templateId}>
               {saving ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
-              {saving ? 'Generating...' : 'Generate'}
+              {saving ? tr('zdocs.generating') : tr('common.generate')}
             </Button>
           </div>
         </CardContent>
@@ -1615,6 +1617,7 @@ function SignDocumentModal({
   onClose: () => void;
   onSign: (renderId: string, requestId: string, imageDataUrl: string, signerName: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [signing, setSigning] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
@@ -1624,7 +1627,7 @@ function SignDocumentModal({
       await onSign(renderId, requestId, data.imageDataUrl, signerName);
       onClose();
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to apply signature');
+      alert(e instanceof Error ? e.message : t('zdocs.failedToApplySignature'));
     } finally {
       setSigning(false);
     }
@@ -1636,9 +1639,9 @@ function SignDocumentModal({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Sign Document</CardTitle>
+              <CardTitle>{t('zdocs.signDocument')}</CardTitle>
               <p className="text-sm text-muted mt-1">
-                Signing as <span className="font-semibold text-main">{signerName}</span>
+                {t('zdocs.signingAs')} <span className="font-semibold text-main">{signerName}</span>
               </p>
             </div>
             <button onClick={onClose} className="text-muted hover:text-main" disabled={signing}>
@@ -1655,7 +1658,7 @@ function SignDocumentModal({
                 className="flex items-center gap-2 text-sm text-accent hover:underline"
               >
                 <Eye size={14} />
-                {showPreview ? 'Hide Document Preview' : 'Review Document Before Signing'}
+                {showPreview ? t('zdocs.hideDocumentPreview') : t('zdocs.reviewDocumentBeforeSigning')}
               </button>
               {showPreview && (
                 <div className="mt-3 border border-main rounded-lg overflow-hidden">
@@ -1671,11 +1674,11 @@ function SignDocumentModal({
           {/* Document info */}
           <div className="bg-secondary rounded-lg p-4 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted">Document</span>
-              <span className="text-main font-medium">{render?.title || 'Unknown'}</span>
+              <span className="text-muted">{t('common.document')}</span>
+              <span className="text-main font-medium">{render?.title || t('common.unknown')}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-muted">Date</span>
+              <span className="text-muted">{t('common.date')}</span>
               <span className="text-main">{new Date().toLocaleDateString()}</span>
             </div>
           </div>
@@ -1684,7 +1687,7 @@ function SignDocumentModal({
           {signing ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-muted" />
-              <span className="ml-3 text-sm text-muted">Applying signature and generating certificate...</span>
+              <span className="ml-3 text-sm text-muted">{t('zdocs.applyingSignature')}</span>
             </div>
           ) : (
             <SignaturePad
@@ -1743,7 +1746,7 @@ function SendForSignatureModal({
       );
       onClose();
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to send for signature');
+      alert(e instanceof Error ? e.message : t('zdocs.failedToSendForSignature'));
     } finally {
       setSaving(false);
     }
@@ -1761,7 +1764,7 @@ function SendForSignatureModal({
           {signers.map((signer, index) => (
             <div key={index} className="bg-secondary rounded-lg p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-main">Signer {index + 1}</span>
+                <span className="text-sm font-medium text-main">{t('zdocs.signerNumber', { number: String(index + 1) })}</span>
                 {signers.length > 1 && (
                   <button
                     onClick={() => removeSigner(index)}
@@ -1773,33 +1776,33 @@ function SendForSignatureModal({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-muted mb-1">Name *</label>
+                  <label className="block text-xs font-medium text-muted mb-1">{t('zdocs.nameRequired')}</label>
                   <input
                     type="text"
                     value={signer.name}
                     onChange={(e) => updateSigner(index, 'name', e.target.value)}
-                    placeholder="John Smith"
+                    placeholder={t('zdocs.signerNamePlaceholder')}
                     className="w-full px-3 py-2 bg-main border border-main rounded-lg text-main placeholder:text-muted text-sm focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-muted mb-1">Email *</label>
+                  <label className="block text-xs font-medium text-muted mb-1">{t('zdocs.emailRequired')}</label>
                   <input
                     type="email"
                     value={signer.email}
                     onChange={(e) => updateSigner(index, 'email', e.target.value)}
-                    placeholder="john@example.com"
+                    placeholder={t('zdocs.signerEmailPlaceholder')}
                     className="w-full px-3 py-2 bg-main border border-main rounded-lg text-main placeholder:text-muted text-sm focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">Role (optional)</label>
+                <label className="block text-xs font-medium text-muted mb-1">{t('zdocs.roleOptional')}</label>
                 <input
                   type="text"
                   value={signer.role}
                   onChange={(e) => updateSigner(index, 'role', e.target.value)}
-                  placeholder="e.g. Homeowner, Contractor, Witness"
+                  placeholder={t('zdocs.rolePlaceholder')}
                   className="w-full px-3 py-2 bg-main border border-main rounded-lg text-main placeholder:text-muted text-sm focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
                 />
               </div>
@@ -1808,16 +1811,16 @@ function SendForSignatureModal({
 
           <Button variant="outline" size="sm" onClick={addSigner}>
             <Plus size={14} />
-            Add Another Signer
+            {t('zdocs.addAnotherSigner')}
           </Button>
 
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button className="flex-1" onClick={handleSubmit} disabled={saving || validSigners.length === 0}>
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-              {saving ? 'Sending...' : `Send to ${validSigners.length} signer${validSigners.length !== 1 ? 's' : ''}`}
+              {saving ? t('zdocs.sending') : t('zdocs.sendToSigners', { count: String(validSigners.length) })}
             </Button>
           </div>
         </CardContent>

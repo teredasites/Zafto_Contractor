@@ -25,15 +25,9 @@ import { useSchedule, useTeam } from '@/lib/hooks/use-jobs';
 import { useTranslation } from '@/lib/translations';
 import { formatCurrency, formatDateLocale, formatNumber, formatPercent, formatDateTimeLocale, formatRelativeTimeLocale, formatCompactCurrency, formatTimeLocale } from '@/lib/format-locale';
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
 export default function CalendarPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { schedule } = useSchedule();
   const { team } = useTeam();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -43,6 +37,26 @@ export default function CalendarPage() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
+
+  // Locale-aware day abbreviations (Sun, Mon, ...) and month names
+  const intlLocale = locale || 'en';
+  const DAYS = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(intlLocale, { weekday: 'short' });
+    // Jan 4, 2026 is a Sunday
+    return Array.from({ length: 7 }, (_, i) => fmt.format(new Date(2026, 0, 4 + i)));
+  }, [intlLocale]);
+
+  const monthYearLabel = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(intlLocale, { month: 'long', year: 'numeric' });
+    return fmt.format(new Date(year, month, 1));
+  }, [intlLocale, year, month]);
+
+  // View mode labels mapped through t()
+  const viewLabels: Record<string, string> = useMemo(() => ({
+    day: t('scheduling.day'),
+    week: t('scheduling.week'),
+    month: t('scheduling.month'),
+  }), [t]);
 
   const goToPreviousMonth = () => {
     setCurrentDate(new Date(year, month - 1, 1));
@@ -118,13 +132,13 @@ export default function CalendarPage() {
           // Check if any assignee overlaps
           const sharedAssignees = a.assignedTo.filter((id: string) => b.assignedTo.includes(id));
           if (sharedAssignees.length > 0) {
-            result.push({ event1: a.title, event2: b.title, date: new Date(a.start).toLocaleDateString() });
+            result.push({ event1: a.title, event2: b.title, date: new Intl.DateTimeFormat(intlLocale).format(new Date(a.start)) });
           }
         }
       }
     }
     return result;
-  }, [schedule]);
+  }, [schedule, intlLocale]);
 
   // Navigate to the appropriate page based on event type
   const navigateToEvent = (event: typeof schedule[0]) => {
@@ -169,7 +183,7 @@ export default function CalendarPage() {
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={() => setShowNewEvent(true)}>
             <Plus size={16} />
-            New Event
+            {t('calendar.newEvent')}
           </Button>
           <Button onClick={() => router.push('/dashboard/jobs/new')}>
             <Plus size={16} />
@@ -203,10 +217,10 @@ export default function CalendarPage() {
                 </div>
                 <h2 className="text-lg font-semibold text-main">
                   {view === 'day'
-                    ? currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+                    ? new Intl.DateTimeFormat(intlLocale, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(currentDate)
                     : view === 'week'
-                    ? `${weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} — ${weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-                    : `${MONTHS[month]} ${year}`}
+                    ? `${new Intl.DateTimeFormat(intlLocale, { month: 'short', day: 'numeric' }).format(weekDays[0])} — ${new Intl.DateTimeFormat(intlLocale, { month: 'short', day: 'numeric', year: 'numeric' }).format(weekDays[6])}`
+                    : monthYearLabel}
                 </h2>
               </div>
               <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg">
@@ -221,7 +235,7 @@ export default function CalendarPage() {
                         : 'text-muted hover:text-main'
                     )}
                   >
-                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                    {viewLabels[v]}
                   </button>
                 ))}
               </div>
@@ -307,7 +321,7 @@ export default function CalendarPage() {
                               </div>
                             ))}
                             {dayEvents.length === 0 && (
-                              <p className="text-xs text-muted/50 text-center mt-8">No events</p>
+                              <p className="text-xs text-muted/50 text-center mt-8">{t('calendar.noEvents')}</p>
                             )}
                           </div>
                         </div>
@@ -328,7 +342,7 @@ export default function CalendarPage() {
                     return (
                       <div key={hour} className="flex border-b border-main last:border-0">
                         <div className="w-16 py-3 text-xs text-muted text-right pr-3 flex-shrink-0">
-                          {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
+                          {new Intl.DateTimeFormat(intlLocale, { hour: 'numeric' }).format(new Date(2026, 0, 1, hour))}
                         </div>
                         <div className="flex-1 py-2 px-2 min-h-[48px] hover:bg-surface-hover transition-colors">
                           {hourEvents.map((event) => (
@@ -345,7 +359,7 @@ export default function CalendarPage() {
                               {event.assignedTo.length > 0 && (
                                 <div className="flex items-center gap-1 mt-1">
                                   <User size={12} className="text-muted" />
-                                  <span className="text-xs text-muted">{event.assignedTo.length} assigned</span>
+                                  <span className="text-xs text-muted">{t('calendar.countAssigned', { count: event.assignedTo.length })}</span>
                                 </div>
                               )}
                             </div>
@@ -400,21 +414,21 @@ export default function CalendarPage() {
                           </div>
                           {event.type !== 'job' && event.type !== 'appointment' && event.type !== 'reminder' && (
                             <span className="inline-block mt-1 text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${event.color}20`, color: event.color }}>
-                              {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                              {t(`calendar.eventType_${event.type}`)}
                             </span>
                           )}
                           <div className="flex items-center gap-3 mt-2 text-sm text-muted">
                             <span className="flex items-center gap-1">
                               <Clock size={14} />
-                              {event.allDay ? 'All Day' : `${formatTime(event.start)} - ${formatTime(event.end)}`}
+                              {event.allDay ? t('calendar.allDay') : `${formatTime(event.start)} - ${formatTime(event.end)}`}
                             </span>
                           </div>
                           {event.assignedTo.length > 0 && (
                             <div className="mt-2">
                               <AvatarGroup
                                 avatars={event.assignedTo.map((id) => {
-                                  const member = team.find((t) => t.id === id);
-                                  return { name: member?.name || 'Unknown' };
+                                  const member = team.find((m) => m.id === id);
+                                  return { name: member?.name || t('common.unknown') };
                                 })}
                                 size="sm"
                               />
@@ -443,19 +457,19 @@ export default function CalendarPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Inspections</span>
+                  <span className="text-sm text-muted">{t('calendar.inspections')}</span>
                   <span className="font-semibold text-main">
                     {schedule.filter((e) => e.type === 'inspection').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Permits</span>
+                  <span className="text-sm text-muted">{t('calendar.permits')}</span>
                   <span className="font-semibold text-main">
                     {schedule.filter((e) => e.type === 'permit').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted">Compliance</span>
+                  <span className="text-sm text-muted">{t('calendar.compliance')}</span>
                   <span className="font-semibold text-main">
                     {schedule.filter((e) => e.type === 'compliance').length}
                   </span>
@@ -463,7 +477,7 @@ export default function CalendarPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted">{t('calendar.teamMembers')}</span>
                   <span className="font-semibold text-main">
-                    {team.filter((t) => t.isActive).length} active
+                    {t('calendar.countActive', { count: team.filter((m) => m.isActive).length })}
                   </span>
                 </div>
               </div>
@@ -487,15 +501,15 @@ export default function CalendarPage() {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
-                  <span className="text-muted">Inspections</span>
+                  <span className="text-muted">{t('calendar.inspections')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }} />
-                  <span className="text-muted">Permits</span>
+                  <span className="text-muted">{t('calendar.permits')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#8b5cf6' }} />
-                  <span className="text-muted">Compliance</span>
+                  <span className="text-muted">{t('calendar.compliance')}</span>
                 </div>
               </div>
             </CardContent>
@@ -508,14 +522,14 @@ export default function CalendarPage() {
                 <div className="flex items-start gap-2">
                   <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-main">Schedule Conflicts</p>
+                    <p className="text-sm font-medium text-main">{t('calendar.scheduleConflicts')}</p>
                     {conflicts.slice(0, 3).map((c, i) => (
                       <p key={i} className="text-xs text-muted mt-1">
-                        {c.date}: &quot;{c.event1}&quot; overlaps with &quot;{c.event2}&quot;
+                        {t('calendar.conflictOverlap', { date: c.date, event1: c.event1, event2: c.event2 })}
                       </p>
                     ))}
                     {conflicts.length > 3 && (
-                      <p className="text-xs text-muted mt-1">+{conflicts.length - 3} more conflicts</p>
+                      <p className="text-xs text-muted mt-1">{t('calendar.moreConflicts', { count: conflicts.length - 3 })}</p>
                     )}
                   </div>
                 </div>
@@ -530,20 +544,19 @@ export default function CalendarPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowNewEvent(false)}>
           <div className="bg-surface border border-main rounded-xl shadow-2xl w-full max-w-md p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-main">Create Event</h3>
+              <h3 className="text-lg font-semibold text-main">{t('calendar.createEvent')}</h3>
               <button onClick={() => setShowNewEvent(false)} className="p-1 hover:bg-surface-hover rounded-lg">
                 <X size={18} className="text-muted" />
               </button>
             </div>
             <p className="text-sm text-muted">
-              To create a scheduled event, create or edit a job and set the scheduled date.
-              All jobs with scheduled dates appear on this calendar automatically.
+              {t('calendar.createEventDesc')}
             </p>
             <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setShowNewEvent(false)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => setShowNewEvent(false)}>{t('common.cancel')}</Button>
               <Button onClick={() => { setShowNewEvent(false); router.push('/dashboard/jobs/new'); }}>
                 <Plus size={16} />
-                Create Job
+                {t('calendar.createJob')}
               </Button>
             </div>
           </div>
