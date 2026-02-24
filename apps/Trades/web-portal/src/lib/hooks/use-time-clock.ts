@@ -6,8 +6,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
-const supabase = getSupabase();
-
 export interface TimeEntry {
   id: string;
   userId: string;
@@ -50,6 +48,7 @@ export function useTimeClock(weekStart: Date) {
     try {
       setLoading(true);
       setError(null);
+      const supabase = getSupabase();
 
       const { data, error: fetchErr } = await supabase
         .from('time_entries')
@@ -69,7 +68,7 @@ export function useTimeClock(weekStart: Date) {
       const userMap = new Map<string, { name: string; avatar: string | null }>();
 
       if (userIds.length > 0) {
-        const { data: profiles } = await supabase
+        const { data: profiles } = await getSupabase()
           .from('profiles')
           .select('id, full_name, avatar_url')
           .in('id', userIds);
@@ -84,7 +83,7 @@ export function useTimeClock(weekStart: Date) {
       const jobMap = new Map<string, string>();
 
       if (jobIds.length > 0) {
-        const { data: jobs } = await supabase
+        const { data: jobs } = await getSupabase()
           .from('jobs')
           .select('id, name')
           .in('id', jobIds)
@@ -142,28 +141,31 @@ export function useTimeClock(weekStart: Date) {
   useEffect(() => { fetchEntries(); }, [fetchEntries]);
 
   useEffect(() => {
-    const channel = supabase
+    const sb = getSupabase();
+    const channel = sb
       .channel('time-clock-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'time_entries' }, () => fetchEntries())
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { sb.removeChannel(channel); };
   }, [fetchEntries]);
 
   const approveEntry = useCallback(async (entryId: string) => {
-    const { error: err } = await supabase
+    const { error: err } = await getSupabase()
       .from('time_entries')
       .update({ status: 'approved', approved_at: new Date().toISOString() })
       .eq('id', entryId);
     if (err) throw err;
-  }, []);
+    await fetchEntries();
+  }, [fetchEntries]);
 
   const rejectEntry = useCallback(async (entryId: string) => {
-    const { error: err } = await supabase
+    const { error: err } = await getSupabase()
       .from('time_entries')
       .update({ status: 'rejected' })
       .eq('id', entryId);
     if (err) throw err;
-  }, []);
+    await fetchEntries();
+  }, [fetchEntries]);
 
   return { entries, summary, loading, error, refresh: fetchEntries, approveEntry, rejectEntry };
 }

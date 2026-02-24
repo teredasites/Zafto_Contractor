@@ -18,6 +18,7 @@ export function useChangeOrders() {
       const { data, error: err } = await supabase
         .from('change_orders')
         .select('*, jobs(title, customer_name)')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (err) throw err;

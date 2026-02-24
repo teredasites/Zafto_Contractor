@@ -80,11 +80,10 @@ export interface DeploymentSummary {
 // MAPPERS
 // ============================================================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapDeployment(row: any): EquipmentDeploymentData {
-  const deployedAt = row.deployed_at;
-  const removedAt = row.removed_at;
-  const dailyRate = parseFloat(row.daily_rate) || 0;
+function mapDeployment(row: Record<string, unknown>): EquipmentDeploymentData {
+  const deployedAt = row.deployed_at as string;
+  const removedAt = (row.removed_at as string) ?? null;
+  const dailyRate = parseFloat(String(row.daily_rate)) || 0;
 
   // Calculate billable days
   const startDate = new Date(deployedAt);
@@ -93,54 +92,53 @@ function mapDeployment(row: any): EquipmentDeploymentData {
   const billableDays = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 
   return {
-    id: row.id,
-    companyId: row.company_id,
-    jobId: row.job_id,
-    tpaAssignmentId: row.tpa_assignment_id ?? null,
-    equipmentInventoryId: row.equipment_inventory_id ?? null,
-    equipmentType: row.equipment_type,
-    make: row.make ?? null,
-    model: row.model ?? null,
-    serialNumber: row.serial_number ?? null,
-    assetTag: row.asset_tag ?? null,
-    areaDeployed: row.area_deployed,
-    roomName: row.room_name ?? null,
-    placementLocation: row.placement_location ?? null,
-    ahamPpd: row.aham_ppd != null ? parseFloat(row.aham_ppd) : null,
-    ahamCfm: row.aham_cfm != null ? parseFloat(row.aham_cfm) : null,
+    id: row.id as string,
+    companyId: row.company_id as string,
+    jobId: row.job_id as string,
+    tpaAssignmentId: (row.tpa_assignment_id as string) ?? null,
+    equipmentInventoryId: (row.equipment_inventory_id as string) ?? null,
+    equipmentType: row.equipment_type as EquipmentType,
+    make: (row.make as string) ?? null,
+    model: (row.model as string) ?? null,
+    serialNumber: (row.serial_number as string) ?? null,
+    assetTag: (row.asset_tag as string) ?? null,
+    areaDeployed: row.area_deployed as string,
+    roomName: (row.room_name as string) ?? null,
+    placementLocation: (row.placement_location as string) ?? null,
+    ahamPpd: row.aham_ppd != null ? parseFloat(String(row.aham_ppd)) : null,
+    ahamCfm: row.aham_cfm != null ? parseFloat(String(row.aham_cfm)) : null,
     deployedAt,
-    removedAt: removedAt ?? null,
+    removedAt,
     dailyRate,
-    status: row.status,
-    calculatedByFormula: row.calculated_by_formula ?? false,
-    notes: row.notes ?? null,
-    createdAt: row.created_at,
+    status: row.status as DeploymentStatus,
+    calculatedByFormula: (row.calculated_by_formula as boolean) ?? false,
+    notes: (row.notes as string) ?? null,
+    createdAt: row.created_at as string,
     billableDays,
     billableAmount: billableDays * dailyRate,
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapCalculation(row: any): EquipmentCalculationData {
+function mapCalculation(row: Record<string, unknown>): EquipmentCalculationData {
   return {
-    id: row.id,
-    jobId: row.job_id,
-    roomName: row.room_name,
-    roomLengthFt: parseFloat(row.room_length_ft) || 0,
-    roomWidthFt: parseFloat(row.room_width_ft) || 0,
-    roomHeightFt: parseFloat(row.room_height_ft) || 0,
-    floorSqft: parseFloat(row.floor_sqft) || 0,
-    wallLinearFt: parseFloat(row.wall_linear_ft) || 0,
-    cubicFt: parseFloat(row.cubic_ft) || 0,
-    waterClass: row.water_class,
-    dehuUnitsRequired: row.dehu_units_required ?? 0,
-    amUnitsRequired: row.am_units_required ?? 0,
-    scrubberUnitsRequired: row.scrubber_units_required ?? 0,
-    actualDehuPlaced: row.actual_dehu_placed ?? 0,
-    actualAmPlaced: row.actual_am_placed ?? 0,
-    actualScrubberPlaced: row.actual_scrubber_placed ?? 0,
-    varianceNotes: row.variance_notes ?? null,
-    createdAt: row.created_at,
+    id: row.id as string,
+    jobId: row.job_id as string,
+    roomName: row.room_name as string,
+    roomLengthFt: parseFloat(String(row.room_length_ft)) || 0,
+    roomWidthFt: parseFloat(String(row.room_width_ft)) || 0,
+    roomHeightFt: parseFloat(String(row.room_height_ft)) || 0,
+    floorSqft: parseFloat(String(row.floor_sqft)) || 0,
+    wallLinearFt: parseFloat(String(row.wall_linear_ft)) || 0,
+    cubicFt: parseFloat(String(row.cubic_ft)) || 0,
+    waterClass: (row.water_class as number) || 0,
+    dehuUnitsRequired: (row.dehu_units_required as number) ?? 0,
+    amUnitsRequired: (row.am_units_required as number) ?? 0,
+    scrubberUnitsRequired: (row.scrubber_units_required as number) ?? 0,
+    actualDehuPlaced: (row.actual_dehu_placed as number) ?? 0,
+    actualAmPlaced: (row.actual_am_placed as number) ?? 0,
+    actualScrubberPlaced: (row.actual_scrubber_placed as number) ?? 0,
+    varianceNotes: (row.variance_notes as string) ?? null,
+    createdAt: row.created_at as string,
   };
 }
 

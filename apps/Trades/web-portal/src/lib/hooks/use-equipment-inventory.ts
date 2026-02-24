@@ -57,33 +57,32 @@ export interface InventorySummary {
 // MAPPER
 // ============================================================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapInventoryItem(row: any): EquipmentInventoryData {
+function mapInventoryItem(row: Record<string, unknown>): EquipmentInventoryData {
   return {
-    id: row.id,
-    companyId: row.company_id,
-    equipmentType: row.equipment_type,
-    name: row.name,
-    make: row.make ?? null,
-    model: row.model ?? null,
-    serialNumber: row.serial_number ?? null,
-    assetTag: row.asset_tag ?? null,
-    ahamPpd: row.aham_ppd != null ? parseFloat(row.aham_ppd) : null,
-    ahamCfm: row.aham_cfm != null ? parseFloat(row.aham_cfm) : null,
-    purchaseDate: row.purchase_date ?? null,
-    purchasePrice: row.purchase_price != null ? parseFloat(row.purchase_price) : null,
-    dailyRentalRate: parseFloat(row.daily_rental_rate) || 0,
-    status: row.status,
-    currentJobId: row.current_job_id ?? null,
-    currentDeploymentId: row.current_deployment_id ?? null,
-    lastMaintenanceDate: row.last_maintenance_date ?? null,
-    nextMaintenanceDate: row.next_maintenance_date ?? null,
-    maintenanceNotes: row.maintenance_notes ?? null,
-    totalDeployDays: row.total_deploy_days ?? 0,
-    photoStoragePath: row.photo_storage_path ?? null,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    deletedAt: row.deleted_at ?? null,
+    id: row.id as string,
+    companyId: row.company_id as string,
+    equipmentType: row.equipment_type as InventoryEquipmentType,
+    name: row.name as string,
+    make: (row.make as string) ?? null,
+    model: (row.model as string) ?? null,
+    serialNumber: (row.serial_number as string) ?? null,
+    assetTag: (row.asset_tag as string) ?? null,
+    ahamPpd: row.aham_ppd != null ? parseFloat(String(row.aham_ppd)) : null,
+    ahamCfm: row.aham_cfm != null ? parseFloat(String(row.aham_cfm)) : null,
+    purchaseDate: (row.purchase_date as string) ?? null,
+    purchasePrice: row.purchase_price != null ? parseFloat(String(row.purchase_price)) : null,
+    dailyRentalRate: parseFloat(String(row.daily_rental_rate)) || 0,
+    status: row.status as InventoryStatus,
+    currentJobId: (row.current_job_id as string) ?? null,
+    currentDeploymentId: (row.current_deployment_id as string) ?? null,
+    lastMaintenanceDate: (row.last_maintenance_date as string) ?? null,
+    nextMaintenanceDate: (row.next_maintenance_date as string) ?? null,
+    maintenanceNotes: (row.maintenance_notes as string) ?? null,
+    totalDeployDays: (row.total_deploy_days as number) ?? 0,
+    photoStoragePath: (row.photo_storage_path as string) ?? null,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+    deletedAt: (row.deleted_at as string) ?? null,
   };
 }
 
