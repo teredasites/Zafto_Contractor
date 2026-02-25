@@ -108,7 +108,7 @@ interface PaymentItem {
 /** Compute payment behavior stats from customer's invoices */
 function computePaymentBehavior(invoices: { sentAt?: Date | string; paidAt?: Date | string; dueDate?: Date | string; total: number; status: string }[]) {
   const paid = invoices.filter((i) => i.paidAt && i.sentAt);
-  if (paid.length === 0) return { avgDaysToPay: 0, onTimeRate: 0, totalLifetimeSpend: 0, paidCount: 0, label: 'New' };
+  if (paid.length === 0) return { avgDaysToPay: 0, onTimeRate: 0, totalLifetimeSpend: 0, paidCount: 0, labelKey: 'customers.paymentNew' };
 
   let totalDays = 0;
   let onTimeCount = 0;
@@ -126,12 +126,12 @@ function computePaymentBehavior(invoices: { sentAt?: Date | string; paidAt?: Dat
   const avgDays = Math.round(totalDays / paid.length);
   const onTimeRate = Math.round((onTimeCount / paid.length) * 100);
 
-  let label = 'Regular';
-  if (paid.length < 2) label = 'New';
-  else if (avgDays > 30) label = 'Slow Payer';
-  else if (onTimeRate >= 90) label = 'Reliable';
+  let labelKey = 'customers.paymentRegular';
+  if (paid.length < 2) labelKey = 'customers.paymentNew';
+  else if (avgDays > 30) labelKey = 'customers.paymentSlowPayer';
+  else if (onTimeRate >= 90) labelKey = 'customers.paymentReliable';
 
-  return { avgDaysToPay: avgDays, onTimeRate, totalLifetimeSpend: totalSpend, paidCount: paid.length, label };
+  return { avgDaysToPay: avgDays, onTimeRate, totalLifetimeSpend: totalSpend, paidCount: paid.length, labelKey };
 }
 
 /** Compute customer health score (0-100) from payment, engagement, and value metrics */
@@ -177,11 +177,11 @@ function computeHealthScore(customer: Customer, invoices: Invoice[], jobs: Job[]
   return Math.max(0, Math.min(100, score));
 }
 
-function getHealthLabel(score: number): { label: string; color: string; bgColor: string } {
-  if (score >= 80) return { label: 'Excellent', color: 'text-emerald-500', bgColor: 'bg-emerald-500' };
-  if (score >= 60) return { label: 'Good', color: 'text-blue-500', bgColor: 'bg-blue-500' };
-  if (score >= 40) return { label: 'Fair', color: 'text-amber-500', bgColor: 'bg-amber-500' };
-  return { label: 'At Risk', color: 'text-red-500', bgColor: 'bg-red-500' };
+function getHealthLabel(score: number): { labelKey: string; color: string; bgColor: string } {
+  if (score >= 80) return { labelKey: 'customers.healthExcellent', color: 'text-emerald-500', bgColor: 'bg-emerald-500' };
+  if (score >= 60) return { labelKey: 'customers.healthGood', color: 'text-blue-500', bgColor: 'bg-blue-500' };
+  if (score >= 40) return { labelKey: 'customers.healthFair', color: 'text-amber-500', bgColor: 'bg-amber-500' };
+  return { labelKey: 'customers.healthAtRisk', color: 'text-red-500', bgColor: 'bg-red-500' };
 }
 
 // ---------------------------------------------------------------------------
@@ -237,10 +237,10 @@ export default function CustomerDetailPage() {
 
   const handleSaveEdit = async () => {
     const errs: Record<string, string> = {};
-    if (!editData.firstName.trim()) errs.firstName = 'First name required';
-    if (!editData.lastName.trim()) errs.lastName = 'Last name required';
-    if (editData.email && !isValidEmail(editData.email)) errs.email = 'Invalid email';
-    if (editData.phone && !isValidPhone(editData.phone)) errs.phone = 'Invalid phone';
+    if (!editData.firstName.trim()) errs.firstName = t('customers.firstNameRequired');
+    if (!editData.lastName.trim()) errs.lastName = t('customers.lastNameRequired');
+    if (editData.email && !isValidEmail(editData.email)) errs.email = t('customers.invalidEmail');
+    if (editData.phone && !isValidPhone(editData.phone)) errs.phone = t('customers.invalidPhone');
     if (Object.keys(errs).length > 0) { setEditErrors(errs); return; }
 
     try {
@@ -256,14 +256,14 @@ export default function CustomerDetailPage() {
       setIsEditing(false);
       refetch();
     } catch (err) {
-      setEditErrors({ submit: err instanceof Error ? err.message : 'Failed to update' });
+      setEditErrors({ submit: err instanceof Error ? err.message : t('customers.failedToUpdate') });
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete ${customer?.firstName} ${customer?.lastName}? This cannot be undone.`)) return;
+    if (!window.confirm(t('customers.deleteConfirm'))) return;
     try {
       await deleteCustomer(customerId);
       router.push('/dashboard/customers');
@@ -293,7 +293,7 @@ export default function CustomerDetailPage() {
   };
 
   const sendPortalInvite = async () => {
-    if (!customer?.email) { alert('Customer has no email address'); return; }
+    if (!customer?.email) { alert(t('customers.noEmailAddress')); return; }
     setPortalLoading(true);
     try {
       const supabase = getSupabase();
@@ -301,10 +301,10 @@ export default function CustomerDetailPage() {
         body: { customerId, email: customer.email, name: `${customer.firstName} ${customer.lastName}` },
       });
       if (err) throw err;
-      alert('Portal invitation sent!');
+      alert(t('customers.portalInvitationSent'));
       setShowPortalInvite(false);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to send invite');
+      alert(err instanceof Error ? err.message : t('customers.failedToSendInvite'));
     } finally {
       setPortalLoading(false);
     }
@@ -325,7 +325,7 @@ export default function CustomerDetailPage() {
         <h2 className="text-xl font-semibold text-main">{t('customers.customerNotFound')}</h2>
         <p className="text-muted mt-2">{t('customers.customerDoesntExist')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/customers')}>
-          Back to Customers
+          {t('customers.backToCustomers')}
         </Button>
       </div>
     );
@@ -382,17 +382,17 @@ export default function CustomerDetailPage() {
   }, [customerInvoices]);
 
   const tabs: { id: TabType; label: string; count: number }[] = [
-    { id: 'overview', label: 'Overview', count: 0 },
-    { id: 'bids', label: 'Bids', count: customerBids.length },
-    { id: 'estimates', label: 'Estimates', count: customerEstimates.length },
-    { id: 'jobs', label: 'Jobs', count: customerJobs.length },
-    { id: 'invoices', label: 'Invoices', count: customerInvoices.length },
-    { id: 'payments', label: 'Payments', count: customerPayments.length },
-    { id: 'properties', label: 'Properties', count: customerPropertyAddresses.length },
-    { id: 'communications', label: 'Comms', count: 0 },
-    { id: 'documents', label: 'Documents', count: 0 },
-    { id: 'notes', label: 'Notes', count: 0 },
-    { id: 'activity', label: 'Activity', count: 0 },
+    { id: 'overview', label: t('customers.tabs.overview'), count: 0 },
+    { id: 'bids', label: t('customers.tabs.bids'), count: customerBids.length },
+    { id: 'estimates', label: t('customers.tabs.estimates'), count: customerEstimates.length },
+    { id: 'jobs', label: t('customers.tabs.jobs'), count: customerJobs.length },
+    { id: 'invoices', label: t('customers.tabs.invoices'), count: customerInvoices.length },
+    { id: 'payments', label: t('customers.tabs.payments'), count: customerPayments.length },
+    { id: 'properties', label: t('customers.tabs.properties'), count: customerPropertyAddresses.length },
+    { id: 'communications', label: t('customers.tabs.comms'), count: 0 },
+    { id: 'documents', label: t('customers.tabs.documents'), count: 0 },
+    { id: 'notes', label: t('customers.tabs.notes'), count: 0 },
+    { id: 'activity', label: t('customers.tabs.activity'), count: 0 },
   ];
 
   const paymentStats = computePaymentBehavior(customerInvoices);
@@ -436,7 +436,7 @@ export default function CustomerDetailPage() {
         <div className="flex items-center gap-2">
           <Button onClick={() => router.push(`/dashboard/bids/new?customerId=${customer.id}`)}>
             <Plus size={16} />
-            New Bid
+            {t('dashboard.newBid')}
           </Button>
           <div className="relative">
             <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
@@ -448,42 +448,42 @@ export default function CustomerDetailPage() {
                 <div className="absolute right-0 top-full mt-1 w-56 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
                   <button onClick={startEditing} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Edit size={16} />
-                    Edit Customer
+                    {t('customers.edit')}
                   </button>
                   <hr className="my-1 border-main" />
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/jobs/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Briefcase size={16} />
-                    Create Job
+                    {t('customers.createJob')}
                   </button>
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/bids/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <FileText size={16} />
-                    Create Estimate
+                    {t('customers.createEstimate')}
                   </button>
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/invoices/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Receipt size={16} />
-                    Create Invoice
+                    {t('customers.createInvoice')}
                   </button>
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/zdocs/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <FileText size={16} />
-                    Send Document
+                    {t('customers.sendDocument')}
                   </button>
                   <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/scheduling/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Calendar size={16} />
-                    Schedule Appointment
+                    {t('customers.scheduleAppointment')}
                   </button>
                   <hr className="my-1 border-main" />
                   <button onClick={() => { setMenuOpen(false); setShowPortalInvite(true); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <ExternalLink size={16} />
-                    Send Portal Invite
+                    {t('customers.sendPortalInvite')}
                   </button>
-                  <button onClick={() => { setMenuOpen(false); navigator.clipboard.writeText(`${customer.firstName} ${customer.lastName}\n${customer.email}\n${customer.phone}`); alert('Contact copied!'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={() => { setMenuOpen(false); navigator.clipboard.writeText(`${customer.firstName} ${customer.lastName}\n${customer.email}\n${customer.phone}`); alert(t('customers.contactCopied')); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Copy size={16} />
-                    Copy Contact Info
+                    {t('customers.copyContactInfo')}
                   </button>
                   <hr className="my-1 border-main" />
                   <button onClick={handleDelete} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                     <Trash2 size={16} />
-                    Delete
+                    {t('common.delete')}
                   </button>
                 </div>
               </>
@@ -507,14 +507,14 @@ export default function CustomerDetailPage() {
               <Input label={t('customers.lastName')} value={editData.lastName} onChange={(e) => setEditData({ ...editData, lastName: e.target.value })} error={editErrors.lastName} />
               <Input label={t('email.title')} type="email" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} error={editErrors.email} />
               <Input label={t('phone.title')} value={editData.phone} onChange={(e) => setEditData({ ...editData, phone: e.target.value })} error={editErrors.phone} />
-              <Input label="Alternate Phone" value={editData.alternatePhone} onChange={(e) => setEditData({ ...editData, alternatePhone: e.target.value })} />
-              <Select label={t('common.type')} value={editData.customerType} onChange={(e) => setEditData({ ...editData, customerType: e.target.value as 'residential' | 'commercial' })} options={[{ value: 'residential', label: 'Residential' }, { value: 'commercial', label: 'Commercial' }]} />
+              <Input label={t('customers.alternatePhone')} value={editData.alternatePhone} onChange={(e) => setEditData({ ...editData, alternatePhone: e.target.value })} />
+              <Select label={t('common.type')} value={editData.customerType} onChange={(e) => setEditData({ ...editData, customerType: e.target.value as 'residential' | 'commercial' })} options={[{ value: 'residential', label: t('customers.residential') }, { value: 'commercial', label: t('customers.commercial') }]} />
               <Input label={t('common.street')} value={editData.street} onChange={(e) => setEditData({ ...editData, street: e.target.value })} />
               <Input label={t('common.city')} value={editData.city} onChange={(e) => setEditData({ ...editData, city: e.target.value })} />
               <Input label={t('common.state')} value={editData.state} onChange={(e) => setEditData({ ...editData, state: e.target.value })} />
               <Input label={t('common.zip')} value={editData.zip} onChange={(e) => setEditData({ ...editData, zip: e.target.value })} />
               <div className="md:col-span-2">
-                <Input label="Access Instructions" value={editData.accessInstructions} onChange={(e) => setEditData({ ...editData, accessInstructions: e.target.value })} />
+                <Input label={t('customers.accessInstructions')} value={editData.accessInstructions} onChange={(e) => setEditData({ ...editData, accessInstructions: e.target.value })} />
               </div>
               <div className="md:col-span-2">
                 <Input label={t('walkthroughs.notes')} value={editData.notes} onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
@@ -523,7 +523,7 @@ export default function CustomerDetailPage() {
             {editErrors.submit && <p className="text-sm text-red-500 mt-2">{editErrors.submit}</p>}
             <div className="flex items-center justify-end gap-3 mt-4">
               <Button variant="ghost" onClick={() => setIsEditing(false)}>{t('common.cancel')}</Button>
-              <Button onClick={handleSaveEdit} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
+              <Button onClick={handleSaveEdit} disabled={saving}>{saving ? t('common.saving') : t('common.saveChanges')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -580,7 +580,7 @@ export default function CustomerDetailPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
                 <Heart size={16} className={health.color} />
-                Customer Health
+                {t('customers.customerHealth')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -590,7 +590,7 @@ export default function CustomerDetailPage() {
                   <span className="text-sm text-muted">/100</span>
                 </div>
                 <span className={cn('text-sm font-medium px-2 py-0.5 rounded-full', health.color, health.bgColor + '/10')}>
-                  {health.label}
+                  {t(health.labelKey)}
                 </span>
               </div>
               <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -607,7 +607,7 @@ export default function CustomerDetailPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
                 <DollarSign size={16} className="text-emerald-500" />
-                Lifetime Value
+                {t('customers.lifetimeValue')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -624,7 +624,7 @@ export default function CustomerDetailPage() {
                 <span className="font-medium text-main">{formatCurrency(avgJobValue)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Annual Value</span>
+                <span className="text-muted">{t('customers.annualValue')}</span>
                 <span className="font-medium text-main">{formatCurrency(annualValue)}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -640,21 +640,21 @@ export default function CustomerDetailPage() {
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <TrendingUp size={16} className="text-muted" />
-                  Payment Behavior
+                  {t('customers.paymentBehavior')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted">{t('common.status')}</span>
-                  <Badge variant={paymentStats.label === 'Slow Payer' ? 'warning' : paymentStats.label === 'Reliable' ? 'success' : 'default'}>
-                    {paymentStats.label === 'Slow Payer' && <AlertTriangle size={10} className="mr-1" />}
-                    {paymentStats.label}
+                  <Badge variant={paymentStats.labelKey === 'customers.paymentSlowPayer' ? 'warning' : paymentStats.labelKey === 'customers.paymentReliable' ? 'success' : 'default'}>
+                    {paymentStats.labelKey === 'customers.paymentSlowPayer' && <AlertTriangle size={10} className="mr-1" />}
+                    {t(paymentStats.labelKey)}
                   </Badge>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted">{t('common.avgDaysToPay')}</span>
                   <span className={cn('font-medium', paymentStats.avgDaysToPay > 30 ? 'text-amber-500' : 'text-main')}>
-                    {paymentStats.avgDaysToPay} days
+                    {paymentStats.avgDaysToPay} {t('customers.daysUnit')}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -709,7 +709,7 @@ export default function CustomerDetailPage() {
               <CardTitle className="text-base">{t('common.tags')}</CardTitle>
               <Button variant="ghost" size="sm" onClick={() => setShowTagInput(true)}>
                 <Plus size={14} />
-                Add
+                {t('common.add')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -735,12 +735,12 @@ export default function CustomerDetailPage() {
                     type="text"
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    placeholder="Tag name..."
+                    placeholder={t('customers.tagNamePlaceholder')}
                     className="flex-1 px-3 py-1.5 bg-secondary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
                     onKeyDown={(e) => { if (e.key === 'Enter') addTag(newTag); if (e.key === 'Escape') setShowTagInput(false); }}
                     autoFocus
                   />
-                  <Button size="sm" onClick={() => addTag(newTag)}>Add</Button>
+                  <Button size="sm" onClick={() => addTag(newTag)}>{t('common.add')}</Button>
                   <button onClick={() => { setShowTagInput(false); setNewTag(''); }} className="p-1 hover:bg-surface-hover rounded">
                     <X size={14} className="text-muted" />
                   </button>
@@ -780,22 +780,22 @@ export default function CustomerDetailPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <UserPlus size={16} className="text-muted" />
-                Source & Referral
+                {t('customers.sourceReferral')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Lead Source</span>
-                <Badge variant="default" className="capitalize">{customer.source || 'Direct'}</Badge>
+                <span className="text-muted">{t('customers.leadSource')}</span>
+                <Badge variant="default" className="capitalize">{customer.source || t('customers.direct')}</Badge>
               </div>
               {customer.source === 'referral' && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted">Referred By</span>
+                  <span className="text-muted">{t('customers.referredBy')}</span>
                   <span className="text-main font-medium">--</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Referrals Made</span>
+                <span className="text-muted">{t('customers.referralsMade')}</span>
                 <span className="text-main font-medium">0</span>
               </div>
             </CardContent>
@@ -806,12 +806,12 @@ export default function CustomerDetailPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
                 <ExternalLink size={16} className="text-muted" />
-                Client Portal
+                {t('customers.clientPortal')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-xs text-muted">
-                Give this customer access to view their jobs, invoices, and documents at client.zafto.cloud
+                {t('customers.clientPortalDesc')}
               </p>
               <Button
                 variant="secondary"
@@ -821,10 +821,10 @@ export default function CustomerDetailPage() {
                 onClick={() => setShowPortalInvite(true)}
               >
                 <Send size={14} className="mr-1" />
-                Send Portal Invite
+                {t('customers.sendPortalInvite')}
               </Button>
               {!customer.email && (
-                <p className="text-xs text-amber-500">Add an email to send portal invites</p>
+                <p className="text-xs text-amber-500">{t('customers.addEmailToInvite')}</p>
               )}
             </CardContent>
           </Card>
@@ -840,31 +840,31 @@ export default function CustomerDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ExternalLink size={18} />
-                  Send Portal Invitation
+                  {t('customers.sendPortalInvitation')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-muted">
-                  Send a magic link to <span className="text-main font-medium">{customer.email}</span> so they can access their client portal at client.zafto.cloud
+                  {t('customers.sendPortalInvitationDescPrefix')} <span className="text-main font-medium">{customer.email}</span> {t('customers.sendPortalInvitationDescSuffix')}
                 </p>
                 <div className="p-3 bg-secondary rounded-lg space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted">Customer</span>
+                    <span className="text-muted">{t('jobs.customer')}</span>
                     <span className="text-main">{customer.firstName} {customer.lastName}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted">Email</span>
+                    <span className="text-muted">{t('email.title')}</span>
                     <span className="text-main">{customer.email}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted">Portal access</span>
-                    <span className="text-main">Jobs, Invoices, Documents, Payments</span>
+                    <span className="text-muted">{t('customers.portalAccess')}</span>
+                    <span className="text-main">{t('customers.portalAccessList')}</span>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <Button variant="secondary" className="flex-1" onClick={() => setShowPortalInvite(false)}>Cancel</Button>
+                  <Button variant="secondary" className="flex-1" onClick={() => setShowPortalInvite(false)}>{t('common.cancel')}</Button>
                   <Button className="flex-1" disabled={portalLoading} onClick={sendPortalInvite}>
-                    {portalLoading ? 'Sending...' : 'Send Invite'}
+                    {portalLoading ? t('customers.sendingEllipsis') : t('customers.sendInvite')}
                   </Button>
                 </div>
               </CardContent>
@@ -965,7 +965,7 @@ function BidsTab({ bids }: { bids: Bid[] }) {
         <CardTitle className="text-base">{t('bidsPage.title')}</CardTitle>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
-          New Bid
+          {t('dashboard.newBid')}
         </Button>
       </CardHeader>
       <CardContent className="p-0">
@@ -1011,7 +1011,7 @@ function JobsTab({ jobs }: { jobs: Job[] }) {
         <CardTitle className="text-base">{t('customers.tabs.jobs')}</CardTitle>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
-          New Job
+          {t('dashboard.newJob')}
         </Button>
       </CardHeader>
       <CardContent className="p-0">
@@ -1057,7 +1057,7 @@ function InvoicesTab({ invoices }: { invoices: Invoice[] }) {
         <CardTitle className="text-base">{t('customers.tabs.invoices')}</CardTitle>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
-          New Invoice
+          {t('dashboard.newInvoice')}
         </Button>
       </CardHeader>
       <CardContent className="p-0">
@@ -1077,7 +1077,7 @@ function InvoicesTab({ invoices }: { invoices: Invoice[] }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium text-main">{invoice.invoiceNumber}</p>
-                    <p className="text-sm text-muted">Due {formatDate(invoice.dueDate)}</p>
+                    <p className="text-sm text-muted">{t('customers.duePrefix')} {formatDate(invoice.dueDate)}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-main">{formatCurrency(invoice.total)}</span>
@@ -1121,13 +1121,15 @@ function ActivityTimeline({ customerId, bids, jobs, invoices }: {
         const items: typeof comms = [];
 
         for (const c of (callsRes.data || [])) {
-          items.push({ type: 'call', title: `Phone Call (${c.direction})`, date: c.created_at, detail: c.duration ? `${Math.round(c.duration / 60)}min` : undefined, icon: 'phone' });
+          const callTitle = c.direction === 'inbound' ? t('customers.incomingCall') : t('customers.outgoingCall');
+          items.push({ type: 'call', title: callTitle, date: c.created_at, detail: c.duration ? `${Math.round(c.duration / 60)}min` : undefined, icon: 'phone' });
         }
         for (const m of (messagesRes.data || [])) {
-          items.push({ type: 'sms', title: `Text (${m.direction})`, date: m.created_at, detail: m.body?.slice(0, 80), icon: 'message' });
+          const msgTitle = m.direction === 'inbound' ? t('customers.incomingText') : t('customers.outgoingText');
+          items.push({ type: 'sms', title: msgTitle, date: m.created_at, detail: m.body?.slice(0, 80), icon: 'message' });
         }
         for (const e of (emailsRes.data || [])) {
-          items.push({ type: 'email', title: e.subject || `Email (${e.direction})`, date: e.created_at, icon: 'mail' });
+          items.push({ type: 'email', title: e.subject || t('customers.noSubject'), date: e.created_at, icon: 'mail' });
         }
 
         setComms(items);
@@ -1143,9 +1145,9 @@ function ActivityTimeline({ customerId, bids, jobs, invoices }: {
 
   // Merge all activity into one timeline
   const timeline = [
-    ...bids.map((b) => ({ type: 'bid', title: `Bid: ${b.title}`, date: b.createdAt, status: b.status, id: b.id, link: `/dashboard/bids/${b.id}` })),
-    ...jobs.map((j) => ({ type: 'job', title: `Job: ${j.title}`, date: j.createdAt, status: j.status, id: j.id, link: `/dashboard/jobs/${j.id}` })),
-    ...invoices.map((i) => ({ type: 'invoice', title: `Invoice: ${i.invoiceNumber}`, date: i.createdAt, status: i.status, id: i.id, link: `/dashboard/invoices/${i.id}` })),
+    ...bids.map((b) => ({ type: 'bid', title: `${t('bidsPage.title')}: ${b.title}`, date: b.createdAt, status: b.status, id: b.id, link: `/dashboard/bids/${b.id}` })),
+    ...jobs.map((j) => ({ type: 'job', title: `${t('customers.tabs.jobs')}: ${j.title}`, date: j.createdAt, status: j.status, id: j.id, link: `/dashboard/jobs/${j.id}` })),
+    ...invoices.map((i) => ({ type: 'invoice', title: `${t('customers.tabs.invoices')}: ${i.invoiceNumber}`, date: i.createdAt, status: i.status, id: i.id, link: `/dashboard/invoices/${i.id}` })),
     ...comms.map((c, idx) => ({ type: c.type, title: c.title, date: c.date, status: c.detail, id: `comm-${idx}`, link: '' })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -1157,7 +1159,7 @@ function ActivityTimeline({ customerId, bids, jobs, invoices }: {
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Clock size={16} className="text-muted" />
-          Communication Timeline
+          {t('customers.communicationTimeline')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -1232,7 +1234,7 @@ function DocumentsTab({ customerId }: { customerId: string }) {
         if (cancelled) return;
         setDocs((data || []).map((d: Record<string, string>) => ({
           id: d.id,
-          title: d.title || 'Untitled',
+          title: d.title || t('customers.untitled'),
           type: d.document_type || 'document',
           createdAt: d.created_at,
           status: d.status || 'draft',
@@ -1271,17 +1273,17 @@ function DocumentsTab({ customerId }: { customerId: string }) {
       {/* Uploaded/Legacy Documents */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Uploaded Documents</CardTitle>
+          <CardTitle className="text-base">{t('customers.uploadedDocuments')}</CardTitle>
           <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/zdocs/new?customerId=${customerId}`)}>
             <Plus size={14} />
-            New Document
+            {t('customers.newDocument')}
           </Button>
         </CardHeader>
         <CardContent className="p-0">
           {docs.length === 0 ? (
             <div className="py-12 text-center">
               <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
-              <p className="text-muted">No uploaded documents yet</p>
+              <p className="text-muted">{t('customers.noUploadedDocuments')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -1332,16 +1334,16 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
     : 0;
 
   function getEstimateStatusBadge(status: string) {
-    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
-      draft: { variant: 'secondary', label: 'Draft' },
-      sent: { variant: 'info', label: 'Sent' },
-      approved: { variant: 'success', label: 'Approved' },
-      declined: { variant: 'error', label: 'Declined' },
-      revised: { variant: 'purple', label: 'Revised' },
-      completed: { variant: 'success', label: 'Completed' },
+    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; labelKey: string }> = {
+      draft: { variant: 'secondary', labelKey: 'common.draft' },
+      sent: { variant: 'info', labelKey: 'common.sent' },
+      approved: { variant: 'success', labelKey: 'common.approved' },
+      declined: { variant: 'error', labelKey: 'customers.declined' },
+      revised: { variant: 'purple', labelKey: 'customers.revised' },
+      completed: { variant: 'success', labelKey: 'common.completed' },
     };
-    const cfg = map[status] || { variant: 'default' as const, label: status };
-    return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
+    const cfg = map[status] || { variant: 'default' as const, labelKey: '' };
+    return <Badge variant={cfg.variant}>{cfg.labelKey ? t(cfg.labelKey) : status}</Badge>;
   }
 
   return (
@@ -1350,47 +1352,47 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Pipeline</p>
+            <p className="text-xs text-muted uppercase tracking-wider">{t('customers.pipelineLabel')}</p>
             <p className="text-xl font-semibold text-main mt-1">{formatCurrency(totalPipeline)}</p>
-            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'sent').length} open estimates</p>
+            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'sent').length} {t('customers.openEstimates')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Won</p>
+            <p className="text-xs text-muted uppercase tracking-wider">{t('customers.won')}</p>
             <p className="text-xl font-semibold text-emerald-500 mt-1">{formatCurrency(totalApproved)}</p>
-            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'approved').length} approved</p>
+            <p className="text-xs text-muted">{estimates.filter(e => e.status === 'approved').length} {t('common.approved').toLowerCase()}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Win Rate</p>
+            <p className="text-xs text-muted uppercase tracking-wider">{t('customers.winRate')}</p>
             <p className="text-xl font-semibold text-main mt-1">{conversionRate}%</p>
-            <p className="text-xs text-muted">{estimates.length} total estimates</p>
+            <p className="text-xs text-muted">{estimates.length} {t('customers.totalEstimates')}</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Estimates</CardTitle>
+          <CardTitle className="text-base">{t('customers.tabs.estimates')}</CardTitle>
           <div className="flex items-center gap-2">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="text-xs bg-secondary border border-main rounded-md px-2 py-1 text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
             >
-              <option value="all">All Statuses</option>
-              <option value="draft">Draft</option>
-              <option value="sent">Sent</option>
-              <option value="approved">Approved</option>
-              <option value="declined">Declined</option>
-              <option value="revised">Revised</option>
-              <option value="completed">Completed</option>
+              <option value="all">{t('customers.allStatuses')}</option>
+              <option value="draft">{t('common.draft')}</option>
+              <option value="sent">{t('common.sent')}</option>
+              <option value="approved">{t('common.approved')}</option>
+              <option value="declined">{t('customers.declined')}</option>
+              <option value="revised">{t('customers.revised')}</option>
+              <option value="completed">{t('common.completed')}</option>
             </select>
             <Button variant="secondary" size="sm" onClick={() => router.push(`/dashboard/bids/new?customerId=${customerId}`)}>
               <Plus size={14} />
-              New Estimate
+              {t('dashboard.newEstimate')}
             </Button>
           </div>
         </CardHeader>
@@ -1398,7 +1400,7 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
           {filtered.length === 0 ? (
             <div className="py-12 text-center">
               <FileText size={40} className="mx-auto text-muted mb-2 opacity-50" />
-              <p className="text-muted">No estimates found</p>
+              <p className="text-muted">{t('customers.noEstimatesFound')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -1411,14 +1413,14 @@ function EstimatesTab({ customerId, estimates }: { customerId: string; estimates
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-main">{est.title || 'Untitled Estimate'}</p>
+                        <p className="font-medium text-main">{est.title || t('customers.untitledEstimate')}</p>
                         <span className="text-xs text-muted">{est.estimateNumber}</span>
                       </div>
                       {est.notes && <p className="text-sm text-muted mt-0.5 truncate">{est.notes}</p>}
                       <div className="flex items-center gap-3 mt-1">
                         <span className="text-xs text-muted capitalize">{est.estimateType}</span>
-                        <span className="text-xs text-muted">Created {formatDate(est.createdAt)}</span>
-                        {est.validUntil && <span className="text-xs text-muted">Expires {formatDate(est.validUntil)}</span>}
+                        <span className="text-xs text-muted">{t('customers.createdPrefix')} {formatDate(est.createdAt)}</span>
+                        {est.validUntil && <span className="text-xs text-muted">{t('customers.expiresPrefix')} {formatDate(est.validUntil)}</span>}
                       </div>
                     </div>
                     <div className="flex items-center gap-3 ml-4">
@@ -1488,8 +1490,8 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
             id: c.id,
             type: 'call',
             direction: c.direction === 'inbound' ? 'inbound' : 'outbound',
-            subject: c.direction === 'inbound' ? 'Incoming Call' : 'Outgoing Call',
-            preview: c.ai_summary || 'No summary',
+            subject: c.direction === 'inbound' ? t('customers.incomingCall') : t('customers.outgoingCall'),
+            preview: c.ai_summary || t('customers.noSummary'),
             timestamp: c.started_at || '',
             duration: c.duration_seconds ?? undefined,
             status: c.status || 'completed',
@@ -1501,7 +1503,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
             id: m.id,
             type: 'sms',
             direction: m.direction === 'inbound' ? 'inbound' : 'outbound',
-            subject: m.direction === 'inbound' ? 'Incoming Text' : 'Outgoing Text',
+            subject: m.direction === 'inbound' ? t('customers.incomingText') : t('customers.outgoingText'),
             preview: m.body || '',
             timestamp: m.created_at || '',
             status: m.status || 'delivered',
@@ -1513,7 +1515,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
             id: e.id,
             type: 'email',
             direction: (e as { direction?: string }).direction === 'inbound' ? 'inbound' : 'outbound',
-            subject: e.subject || 'No Subject',
+            subject: e.subject || t('customers.noSubject'),
             preview: '',
             timestamp: e.created_at || '',
             status: e.status || 'sent',
@@ -1551,17 +1553,17 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
   }
 
   function getCommStatusBadge(status: string) {
-    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
-      completed: { variant: 'success', label: 'Completed' },
-      missed: { variant: 'error', label: 'Missed' },
-      sent: { variant: 'info', label: 'Sent' },
-      delivered: { variant: 'success', label: 'Delivered' },
-      read: { variant: 'purple', label: 'Read' },
-      bounced: { variant: 'error', label: 'Bounced' },
-      failed: { variant: 'error', label: 'Failed' },
+    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; labelKey: string }> = {
+      completed: { variant: 'success', labelKey: 'common.completed' },
+      missed: { variant: 'error', labelKey: 'customers.commMissed' },
+      sent: { variant: 'info', labelKey: 'common.sent' },
+      delivered: { variant: 'success', labelKey: 'customers.commDelivered' },
+      read: { variant: 'purple', labelKey: 'customers.commRead' },
+      bounced: { variant: 'error', labelKey: 'customers.commBounced' },
+      failed: { variant: 'error', labelKey: 'common.failed' },
     };
-    const cfg = map[status] || { variant: 'default' as const, label: status };
-    return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
+    const cfg = map[status] || { variant: 'default' as const, labelKey: '' };
+    return <Badge variant={cfg.variant}>{cfg.labelKey ? t(cfg.labelKey) : status}</Badge>;
   }
 
   function formatDuration(seconds: number): string {
@@ -1590,7 +1592,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
             </div>
             <div>
               <p className="text-lg font-semibold text-main">{callCount}</p>
-              <p className="text-xs text-muted">Phone Calls</p>
+              <p className="text-xs text-muted">{t('customers.phoneCalls')}</p>
             </div>
           </CardContent>
         </Card>
@@ -1601,7 +1603,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
             </div>
             <div>
               <p className="text-lg font-semibold text-main">{emailCount}</p>
-              <p className="text-xs text-muted">Emails</p>
+              <p className="text-xs text-muted">{t('customers.emails')}</p>
             </div>
           </CardContent>
         </Card>
@@ -1612,7 +1614,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
             </div>
             <div>
               <p className="text-lg font-semibold text-main">{smsCount}</p>
-              <p className="text-xs text-muted">Text Messages</p>
+              <p className="text-xs text-muted">{t('customers.textMessages')}</p>
             </div>
           </CardContent>
         </Card>
@@ -1620,17 +1622,17 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Communications</CardTitle>
+          <CardTitle className="text-base">{t('customers.tabs.communications')}</CardTitle>
           <div className="flex items-center gap-2">
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="text-xs bg-secondary border border-main rounded-md px-2 py-1 text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
             >
-              <option value="all">All Types</option>
-              <option value="call">Calls</option>
-              <option value="email">Emails</option>
-              <option value="sms">Text Messages</option>
+              <option value="all">{t('customers.allTypes')}</option>
+              <option value="call">{t('customers.calls')}</option>
+              <option value="email">{t('customers.emails')}</option>
+              <option value="sms">{t('customers.textMessages')}</option>
             </select>
           </div>
         </CardHeader>
@@ -1638,7 +1640,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
           {filtered.length === 0 ? (
             <div className="py-12 text-center">
               <MessageSquare size={40} className="mx-auto text-muted mb-2 opacity-50" />
-              <p className="text-muted">No communications recorded</p>
+              <p className="text-muted">{t('customers.noCommunications')}</p>
             </div>
           ) : (
             <div className="relative">
@@ -1654,7 +1656,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium text-main">{comm.subject}</p>
                           <Badge variant={comm.direction === 'inbound' ? 'info' : 'default'}>
-                            {comm.direction === 'inbound' ? 'Inbound' : 'Outbound'}
+                            {comm.direction === 'inbound' ? t('customers.inbound') : t('customers.outbound')}
                           </Badge>
                         </div>
                         {getCommStatusBadge(comm.status)}
@@ -1690,6 +1692,7 @@ function CommunicationsTab({ customerId }: { customerId: string }) {
 /** Properties tab — derived from customer job addresses */
 function PropertiesTab({ customerId, properties }: { customerId: string; properties: PropertyItem[] }) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   function getPropertyTypeIcon(type: string) {
     if (type === 'commercial') return <Building2 size={18} className="text-blue-500" />;
@@ -1700,15 +1703,15 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-main">Properties ({properties.length})</h3>
+        <h3 className="text-sm font-medium text-main">{t('customers.tabs.properties')} ({properties.length})</h3>
       </div>
 
       {properties.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <Home size={40} className="mx-auto text-muted mb-2 opacity-50" />
-            <p className="text-muted">No properties linked to this customer</p>
-            <p className="text-xs text-muted mt-1">Properties are derived from job addresses</p>
+            <p className="text-muted">{t('customers.noPropertiesLinked')}</p>
+            <p className="text-xs text-muted mt-1">{t('customers.propertiesDerived')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -1724,16 +1727,16 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
                     <CardTitle className="text-base">{prop.address}</CardTitle>
                     <p className="text-sm text-muted mt-0.5">{prop.city}, {prop.state} {prop.zip}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      {prop.yearBuilt && <span className="text-xs text-muted">Built {prop.yearBuilt}</span>}
-                      {prop.sqft && <span className="text-xs text-muted">{prop.sqft.toLocaleString()} sq ft</span>}
+                      {prop.yearBuilt && <span className="text-xs text-muted">{t('customers.builtPrefix')} {prop.yearBuilt}</span>}
+                      {prop.sqft && <span className="text-xs text-muted">{prop.sqft.toLocaleString()} {t('customers.sqFt')}</span>}
                       <Badge variant="default" className="capitalize">{prop.propertyType}</Badge>
-                      <span className="text-xs text-muted">{prop.jobCount} {prop.jobCount === 1 ? 'job' : 'jobs'}</span>
+                      <span className="text-xs text-muted">{prop.jobCount} {prop.jobCount === 1 ? t('customers.jobSingular') : t('customers.jobPlural')}</span>
                     </div>
                   </div>
                 </div>
                 {prop.lastScanDate && (
                   <div className="text-right">
-                    <p className="text-xs text-muted">Last Scan</p>
+                    <p className="text-xs text-muted">{t('customers.lastScan')}</p>
                     <p className="text-xs text-main">{formatDate(prop.lastScanDate)}</p>
                   </div>
                 )}
@@ -1749,21 +1752,22 @@ function PropertiesTab({ customerId, properties }: { customerId: string; propert
 /** Payments tab — payment history derived from paid invoices */
 function PaymentsTab({ customerId, payments }: { customerId: string; payments: PaymentItem[] }) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const totalReceived = payments.filter(p => p.status === 'completed').reduce((s, p) => s + p.amount, 0);
   const totalPartial = payments.filter(p => p.status === 'partial').reduce((s, p) => s + p.amount, 0);
 
   function getPaymentMethodLabel(method: string): string {
     const map: Record<string, string> = {
-      credit_card: 'Credit Card',
-      ach: 'ACH Transfer',
-      check: 'Check',
-      cash: 'Cash',
-      wire: 'Wire Transfer',
-      stripe: 'Stripe',
-      other: 'Other',
+      credit_card: 'customers.creditCard',
+      ach: 'customers.achTransfer',
+      check: 'customers.check',
+      cash: 'customers.cash',
+      wire: 'customers.wireTransfer',
+      stripe: 'customers.stripePayment',
+      other: 'customers.otherPayment',
     };
-    return map[method] || method;
+    return map[method] ? t(map[method]) : method;
   }
 
   function getPaymentMethodIcon(method: string) {
@@ -1775,15 +1779,15 @@ function PaymentsTab({ customerId, payments }: { customerId: string; payments: P
   }
 
   function getPaymentStatusBadge(status: string) {
-    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; label: string }> = {
-      completed: { variant: 'success', label: 'Paid in Full' },
-      partial: { variant: 'warning', label: 'Partial' },
-      pending: { variant: 'warning', label: 'Pending' },
-      failed: { variant: 'error', label: 'Failed' },
-      refunded: { variant: 'info', label: 'Refunded' },
+    const map: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple'; labelKey: string }> = {
+      completed: { variant: 'success', labelKey: 'customers.paidInFull' },
+      partial: { variant: 'warning', labelKey: 'customers.partialStatus' },
+      pending: { variant: 'warning', labelKey: 'common.pending' },
+      failed: { variant: 'error', labelKey: 'common.failed' },
+      refunded: { variant: 'info', labelKey: 'customers.refunded' },
     };
-    const cfg = map[status] || { variant: 'default' as const, label: status };
-    return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
+    const cfg = map[status] || { variant: 'default' as const, labelKey: '' };
+    return <Badge variant={cfg.variant}>{cfg.labelKey ? t(cfg.labelKey) : status}</Badge>;
   }
 
   return (
@@ -1792,30 +1796,30 @@ function PaymentsTab({ customerId, payments }: { customerId: string; payments: P
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Total Received</p>
+            <p className="text-xs text-muted uppercase tracking-wider">{t('customers.totalReceived')}</p>
             <p className="text-xl font-semibold text-emerald-500 mt-1">{formatCurrency(totalReceived)}</p>
-            <p className="text-xs text-muted">{payments.filter(p => p.status === 'completed').length} payments</p>
+            <p className="text-xs text-muted">{payments.filter(p => p.status === 'completed').length} {t('customers.tabs.payments').toLowerCase()}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted uppercase tracking-wider">Partial Payments</p>
+            <p className="text-xs text-muted uppercase tracking-wider">{t('customers.partialPayments')}</p>
             <p className="text-xl font-semibold text-amber-500 mt-1">{formatCurrency(totalPartial)}</p>
-            <p className="text-xs text-muted">{payments.filter(p => p.status === 'partial').length} partial</p>
+            <p className="text-xs text-muted">{payments.filter(p => p.status === 'partial').length} {t('customers.partialStatus').toLowerCase()}</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Payment History</CardTitle>
+          <CardTitle className="text-base">{t('customers.paymentHistory')}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {payments.length === 0 ? (
             <div className="py-12 text-center">
               <CreditCard size={40} className="mx-auto text-muted mb-2 opacity-50" />
-              <p className="text-muted">No payments recorded</p>
-              <p className="text-xs text-muted mt-1">Payments appear here when invoices are paid</p>
+              <p className="text-muted">{t('customers.noPaymentsRecorded')}</p>
+              <p className="text-xs text-muted mt-1">{t('customers.paymentsAppearWhenPaid')}</p>
             </div>
           ) : (
             <div className="divide-y divide-main">
@@ -1836,9 +1840,9 @@ function PaymentsTab({ customerId, payments }: { customerId: string; payments: P
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-xs text-muted">{getPaymentMethodLabel(payment.method)}</span>
                           {payment.cardLast4 && (
-                            <span className="text-xs text-muted">ending {payment.cardLast4}</span>
+                            <span className="text-xs text-muted">{t('customers.endingCard')} {payment.cardLast4}</span>
                           )}
-                          <span className="text-xs text-muted">for {payment.invoiceNumber}</span>
+                          <span className="text-xs text-muted">{t('customers.forInvoice')} {payment.invoiceNumber}</span>
                         </div>
                       </div>
                     </div>
@@ -1899,11 +1903,11 @@ function NotesTab({ customerId, customerNotes, updateCustomer, refetch }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-main">Customer Notes</h3>
+        <h3 className="text-sm font-medium text-main">{t('customers.customerNotes')}</h3>
         {!isEditing && (
           <Button variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
             <Edit size={14} />
-            {noteText ? 'Edit Notes' : 'Add Notes'}
+            {noteText ? t('customers.editNotes') : t('customers.addNotes')}
           </Button>
         )}
       </div>
@@ -1911,13 +1915,13 @@ function NotesTab({ customerId, customerNotes, updateCustomer, refetch }: {
       {isEditing ? (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">{noteText ? 'Edit Notes' : 'Add Notes'}</CardTitle>
+            <CardTitle className="text-base">{noteText ? t('customers.editNotes') : t('customers.addNotes')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <textarea
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Write notes about this customer — preferences, site access details, follow-up reminders..."
+              placeholder={t('customers.notesPlaceholder')}
               rows={8}
               className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y"
               autoFocus
@@ -1927,7 +1931,7 @@ function NotesTab({ customerId, customerNotes, updateCustomer, refetch }: {
                 {t('common.cancel')}
               </Button>
               <Button size="sm" onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving...' : 'Save Notes'}
+                {saving ? t('common.saving') : t('customers.saveNotes')}
               </Button>
             </div>
           </CardContent>
@@ -1942,8 +1946,8 @@ function NotesTab({ customerId, customerNotes, updateCustomer, refetch }: {
         <Card>
           <CardContent className="py-12 text-center">
             <StickyNote size={40} className="mx-auto text-muted mb-2 opacity-50" />
-            <p className="text-muted">No notes yet</p>
-            <p className="text-xs text-muted mt-1">Add notes to keep track of important customer details</p>
+            <p className="text-muted">{t('customers.noNotesYet')}</p>
+            <p className="text-xs text-muted mt-1">{t('customers.noNotesDesc')}</p>
           </CardContent>
         </Card>
       )}
