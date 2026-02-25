@@ -3,6 +3,14 @@
 
 -- 1) Expand template_type CHECK constraint to include new categories
 ALTER TABLE document_templates DROP CONSTRAINT IF EXISTS document_templates_template_type_check;
+-- Reclassify any non-conforming rows before adding constraint
+UPDATE document_templates SET template_type = 'other'
+  WHERE template_type NOT IN (
+    'contract','proposal','lien_waiver','change_order','invoice',
+    'warranty','scope_of_work','safety_plan','daily_report',
+    'inspection_report','completion_cert','notice','insurance',
+    'letter','property_preservation','permit','compliance','other'
+  );
 ALTER TABLE document_templates ADD CONSTRAINT document_templates_template_type_check
   CHECK (template_type IN (
     'contract','proposal','lien_waiver','change_order','invoice',
