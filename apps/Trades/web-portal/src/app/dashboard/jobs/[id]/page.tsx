@@ -97,7 +97,7 @@ export default function JobDetailPage() {
 
       // Prompt to auto-generate invoice
       const shouldInvoice = window.confirm(
-        'Job marked as completed. Would you like to generate a draft invoice for this job?'
+        t('jobs.completeConfirm')
       );
       if (shouldInvoice) {
         const invoiceId = await createInvoiceFromJob(jobId);
@@ -117,7 +117,7 @@ export default function JobDetailPage() {
 
   const handleCloneJob = async () => {
     if (!job) return;
-    const confirmed = window.confirm(`Clone "${job.title}" with all settings? A new draft job will be created.`);
+    const confirmed = window.confirm(t('jobs.cloneConfirm'));
     if (!confirmed) return;
     try {
       const supabase = getSupabase();
@@ -127,7 +127,7 @@ export default function JobDetailPage() {
       const { data: newJob, error } = await supabase.from('jobs').insert({
         company_id: companyId,
         customer_id: job.customerId,
-        title: `${job.title} (Copy)`,
+        title: `${job.title} ${t('jobs.copySuffix')}`,
         description: job.description,
         status: 'lead',
         priority: job.priority,
@@ -147,7 +147,7 @@ export default function JobDetailPage() {
         router.push(`/dashboard/jobs/${newJob.id}`);
       }
     } catch (err) {
-      alert('Failed to clone job. Please try again.');
+      alert(t('jobs.cloneFailed'));
     }
   };
 
@@ -303,7 +303,7 @@ export default function JobDetailPage() {
         <h2 className="text-xl font-semibold text-main">{t('jobs.jobNotFound')}</h2>
         <p className="text-muted mt-2">{t('jobs.jobDoesntExist')}</p>
         <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/jobs')}>
-          Back to Jobs
+          {t('jobs.backToJobs')}
         </Button>
       </div>
     );
@@ -359,25 +359,25 @@ export default function JobDetailPage() {
           {job.status === 'scheduled' && (
             <Button>
               <PlayCircle size={16} />
-              Start Job
+              {t('jobs.startJob')}
             </Button>
           )}
           {job.status === 'in_progress' && (
             <>
               <Button variant="secondary">
                 <PauseCircle size={16} />
-                Pause
+                {t('jobs.pause')}
               </Button>
               <Button onClick={handleComplete} disabled={completing}>
                 <CheckCircle size={16} />
-                {completing ? 'Completing...' : 'Complete'}
+                {completing ? t('jobs.completing') : t('jobs.completeJob')}
               </Button>
             </>
           )}
           {job.status === 'completed' && (
             <Button onClick={() => router.push(`/dashboard/invoices/new?jobId=${job.id}`)}>
               <Receipt size={16} />
-              Create Invoice
+              {t('jobs.createInvoice')}
             </Button>
           )}
           <div className="relative">
@@ -390,16 +390,16 @@ export default function JobDetailPage() {
                 <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
                   <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Edit size={16} />
-                    Edit Job
+                    {t('jobs.editJob')}
                   </button>
                   <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <FileText size={16} />
-                    View Bid
+                    {t('jobs.viewBid')}
                   </button>
                   <hr className="my-1 border-main" />
                   <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                     <Trash2 size={16} />
-                    Delete
+                    {t('common.delete')}
                   </button>
                 </div>
               </>
@@ -503,7 +503,7 @@ export default function JobDetailPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <User size={18} className="text-muted" />
-                Customer
+                {t('jobs.customer')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -527,7 +527,7 @@ export default function JobDetailPage() {
                 </div>
               )}
               <Button variant="secondary" size="sm" className="w-full" onClick={() => router.push(`/dashboard/customers/${job.customerId}`)}>
-                View Customer
+                {t('jobs.viewCustomer')}
               </Button>
             </CardContent>
           </Card>
@@ -537,7 +537,7 @@ export default function JobDetailPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <MapPin size={18} className="text-muted" />
-                Location
+                {t('jobs.location')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -546,7 +546,7 @@ export default function JobDetailPage() {
                 {job.address.city}, {job.address.state} {job.address.zip}
               </p>
               <Button variant="secondary" size="sm" className="w-full mt-3">
-                Get Directions
+                {t('jobs.getDirections')}
               </Button>
             </CardContent>
           </Card>
@@ -560,7 +560,7 @@ export default function JobDetailPage() {
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <GanttChart size={18} className="text-muted" />
-                  Schedule
+                  {t('jobs.schedule')}
                   <span className="ml-auto text-sm font-semibold text-accent">{schedule.overall_percent_complete?.toFixed(0) || 0}%</span>
                 </CardTitle>
               </CardHeader>
@@ -585,7 +585,7 @@ export default function JobDetailPage() {
                   onClick={() => router.push(`/dashboard/scheduling/${schedule.id}`)}
                   className="flex items-center justify-center gap-1 w-full mt-3 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
                 >
-                  View Full Schedule
+                  {t('jobs.viewFullSchedule')}
                   <ChevronRight size={14} />
                 </button>
               </CardContent>
@@ -600,7 +600,7 @@ export default function JobDetailPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <User size={18} className="text-muted" />
-                Assigned Team
+                {t('jobs.assignedTeam')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -621,7 +621,7 @@ export default function JobDetailPage() {
               )}
               <Button variant="secondary" size="sm" className="w-full mt-3">
                 <Plus size={14} />
-                Assign Member
+                {t('jobs.assignMember')}
               </Button>
             </CardContent>
           </Card>
