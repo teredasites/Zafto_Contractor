@@ -1,0 +1,26 @@
+Business Source License 1.1
+
+License text copyright (c) 2025-2026 Tereda Software LLC. All rights reserved.
+"Licensed Work" shall mean ZAFTO Contractor Platform.
+"Licensor" shall mean Tereda Software LLC.
+"Change Date" shall mean four years from the date the Licensed Work is first made available.
+"Change License" shall mean the Apache License, Version 2.0.
+
+Terms
+
+The Licensed Work is provided under the terms of this Business Source License (this "License").
+The Licensor grants you a non-exclusive, worldwide, non-transferable license to use, copy, and
+modify the Licensed Work solely for your internal, non-production purposes. Any use of the
+Licensed Work in a production environment, or any use that competes with the Licensed Work or
+Licensor's products and services, requires a separate commercial license from the Licensor.
+
+The Licensed Work is NOT open source software. You may NOT:
+- Host or deploy the Licensed Work as a service for third parties
+- Offer the Licensed Work as a managed service or SaaS product
+- Redistribute the Licensed Work in any form without written permission
+
+On the Change Date, the Licensed Work will be made available under the Change License.
+
+THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+For licensing inquiries: admin@zafto.app
