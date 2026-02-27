@@ -597,7 +597,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="text-center text-[11px] text-muted/40 mt-6">
-            &copy; {new Date().getFullYear()} Tereda Software LLC &middot; All rights reserved
+            &copy; {new Date().getFullYear()} Zafto &middot; All rights reserved
           </p>
         </div>
       </div>

@@ -240,7 +240,7 @@ class _DisclaimerScreenState extends ConsumerState<DisclaimerScreen> {
           bullets: ['Use machine learning which may produce incorrect results', 'Should NEVER be the sole basis for electrical decisions', 'Cannot detect all hazards, code violations, or safety issues', 'Are provided as a learning and reference tool only']),
         const SizedBox(height: 20),
         _buildSection(colors, 'LIMITATION OF LIABILITY',
-          'Tereda Software LLC, its developers, and affiliates accept NO LIABILITY for any damages, injuries, or losses resulting from the use of this App. By using this App, you agree to hold harmless all parties involved in its creation and distribution.'),
+          'Zafto, its developers, and affiliates accept NO LIABILITY for any damages, injuries, or losses resulting from the use of this App. By using this App, you agree to hold harmless all parties involved in its creation and distribution.'),
         const SizedBox(height: 20),
         _buildSection(colors, 'YOUR RESPONSIBILITY', 'You acknowledge that:',
           bullets: ['All electrical work must be performed by qualified, licensed professionals', 'All calculations must be verified against the current NEC and local codes', 'You will not rely solely on this App for any electrical decisions', 'You assume all risk associated with using this information']),

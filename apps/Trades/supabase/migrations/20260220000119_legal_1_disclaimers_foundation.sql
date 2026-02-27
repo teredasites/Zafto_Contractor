@@ -162,7 +162,7 @@ INSERT INTO legal_disclaimers (key, category, short_text, long_text, display_con
 -- General disclaimers
 ('general_tool', 'general',
   'Professional tool — not professional advice',
-  'Zafto provides professional-grade tools for licensed tradespeople, contractors, inspectors, adjusters, and real estate professionals. Our tools are designed to support your expertise — not replace it. All outputs should be verified against current local requirements and professional standards. Use of Zafto does not create a professional-client relationship with Tereda Software LLC.',
+  'Zafto provides professional-grade tools for licensed tradespeople, contractors, inspectors, adjusters, and real estate professionals. Our tools are designed to support your expertise — not replace it. All outputs should be verified against current local requirements and professional standards. Use of Zafto does not create a professional-client relationship with Zafto.',
   'general_footer'),
 
 ('data_freshness', 'general',

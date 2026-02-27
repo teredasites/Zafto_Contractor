@@ -624,7 +624,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         const SizedBox(height: 4),
         Text('Version 1.0.0 · Build 1', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
         const SizedBox(height: 4),
-        Text('© 2026 Tereda Software LLC', style: TextStyle(fontSize: 12, color: colors.textQuaternary)),
+        Text('© 2026 Zafto', style: TextStyle(fontSize: 12, color: colors.textQuaternary)),
       ],
     );
   }
