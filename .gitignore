@@ -9,6 +9,10 @@ apps/Trades/Build Documentation/
 **/HANDOFF.md
 **/*HANDOFF*.md
 
+# === INTERNAL DOCUMENTATION — NOT PUBLIC ===
+apps/Trades/SPRINT_STATUS.md
+apps/Trades/MIGRATION_QUICKREF.md
+
 # === SECRETS & CREDENTIALS ===
 **/firebase_options.dart
 **/GoogleService-Info.plist
@@ -54,3 +58,4 @@ desktop.ini
 *.log
 *.tmp
 *.bak
+nul
