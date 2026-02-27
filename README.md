@@ -1,112 +1,47 @@
-# ZAFTO Platform
+# ZAFTO Contractor Platform
 
-**Multi-Trade Professional App Ecosystem**
+**Multi-tenant SaaS platform for skilled trades professionals**
 
 ## Overview
 
-ZAFTO is a platform for skilled trades professionals combining:
-- Field reference tools (calculators, code tables, diagrams)
-- Job management (create, track, complete)
-- Invoicing (generate, send, track payments)
-- Customer management (CRM)
-- Exam preparation (trade-specific licensing exams)
-- AI scanning (equipment identification, code compliance)
+ZAFTO is a comprehensive platform for trades contractors combining:
+- Full CRM with customer management, lead tracking, and sales pipeline
+- Job management with scheduling, dispatch, and field operations
+- Invoicing, estimates, and Stripe Connect payment processing
+- Real-time collaboration across web and mobile
+- AI-powered features (equipment scanning, scope analysis, property intelligence)
+- Multi-trade support across 18+ trade categories
 
-## Structure
+## Architecture
 
-```
-Zafto/
-├── packages/                    # SHARED CODE
-│   ├── zafto_core/              # Business logic, models, services
-│   │   ├── models/              # Job, Invoice, Customer, User
-│   │   ├── services/            # Auth, sync, payments
-│   │   └── providers/           # Riverpod state management
-│   │
-│   ├── zafto_ui/                # Design System v2.6
-│   │   ├── theme/               # ZaftoColors, themes, builder
-│   │   ├── widgets/             # Shared UI components
-│   │   └── screens/             # Settings, profile, jobs, invoices
-│   │
-│   └── zafto_exam/              # Exam engine
-│       ├── models/              # Question, Quiz, Progress
-│       ├── services/            # Progress tracking, scoring
-│       └── screens/             # Quiz UI, results, dashboard
-│
-├── apps/                        # INDIVIDUAL TRADE APPS
-│   ├── electrical/              # ZAFTO Electrical
-│   │   ├── calculators/         # 35 electrical calculators
-│   │   ├── diagrams/            # Wiring diagrams
-│   │   ├── data/                # NEC tables, exam questions
-│   │   └── ...
-│   │
-│   ├── plumbing/                # ZAFTO Plumbing (future)
-│   ├── hvac/                    # ZAFTO HVAC (future)
-│   └── spellbook/               # Spellbook Legal (future)
-│
-├── web/                         # WEB PORTAL
-│   └── zafto_portal/            # zafto.app - Office dashboard
-│       ├── dashboard/           # Job overview, stats
-│       ├── dispatch/            # Team scheduling
-│       └── reports/             # Analytics, revenue
-│
-└── melos.yaml                   # Monorepo configuration
-```
-
-## Shared vs Trade-Specific
-
-| Shared (packages/)              | Trade-Specific (apps/)           |
-|---------------------------------|----------------------------------|
-| Job/Invoice/Customer models     | Calculators                      |
-| Auth & user management          | Code tables (NEC, IPC, etc.)     |
-| Design system (10 themes)       | Diagrams                         |
-| Exam engine (framework)         | Exam questions                   |
-| Payment processing              | Trade-specific AI prompts        |
+- **293 PostgreSQL tables** with row-level security on every table
+- **5 Next.js web portals** (290+ routes) — contractor, team, client, ops, admin
+- **Cross-platform Flutter mobile app** (1,523 screens)
+- **107 serverless Edge Functions** for business logic and integrations
+- **7-layer security architecture** — JWT-based RBAC (7 roles), immutable audit trails (207 triggers), webhook idempotency, fail-closed auth
 
 ## Tech Stack
 
-- **Framework:** Flutter (iOS, Android, Web, Desktop)
-- **State:** Riverpod
-- **Local Storage:** Hive
-- **Cloud:** Supabase (Auth, PostgreSQL + RLS, Edge Functions, Storage, Realtime)
-- **AI:** Claude API (equipment scanning)
-- **Monorepo:** Melos
+- **Mobile:** Flutter/Dart, Riverpod
+- **Web:** Next.js 15, React 19, TypeScript, Tailwind CSS
+- **Backend:** PostgreSQL, Supabase (Auth, RLS, Storage, Realtime, Edge Functions)
+- **Payments:** Stripe Connect
+- **Communications:** SignalWire (VoIP/SMS)
+- **Banking:** Plaid
+- **Deployment:** Vercel, GitHub Actions CI/CD
 
-## Getting Started
+## Key Features
 
-```bash
-# Install melos globally
-dart pub global activate melos
+- **Sketch Engine** — CAD-grade browser-based floor plan editor with 2D/3D views, trade-specific layers, and automated estimate generation from drawn dimensions
+- **Property Intelligence (Recon)** — Address-to-estimate pipeline via satellite imagery, public records, weather exposure scoring, and lead scoring
+- **Z Intelligence** — Agentic AI features (26 Edge Functions) for troubleshooting, scope analysis, bid generation, and equipment identification
+- **Multi-trade calculators** — 1,186 trade-specific calculators with disclaimers and save-to-job functionality
+- **Kiosk time clock** — Touch-optimized team check-in/out with GPS stamping
 
-# Bootstrap all packages
-melos bootstrap
+## Live Demo
 
-# Run electrical app
-melos run:electrical
-
-# Analyze all packages
-melos analyze
-
-# Run all tests
-melos test
-```
-
-## Bundle IDs
-
-| App | Bundle ID |
-|-----|-----------|
-| Electrical | com.teredasoftware.zafto.electrical |
-| Plumbing | com.teredasoftware.zafto.plumbing |
-| HVAC | com.teredasoftware.zafto.hvac |
-| Spellbook | com.teredasoftware.spellbook |
-
-## Backend (Supabase)
-
-Single Supabase project with multi-tenant architecture:
-- Users create ONE account, access all purchased trades
-- Data syncs across apps via Supabase Realtime
-- PostgreSQL + RLS for all business data, 92 Edge Functions
+Visit [zafto.cloud](https://zafto.cloud) to see the platform in action.
 
 ---
 
-**Owner:** Tereda Software LLC
-**Repository:** https://github.com/teredasoftware/Zafto
+**Built by Damian Tereda** | [zafto.app](https://zafto.app)

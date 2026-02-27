@@ -1,5 +1,11 @@
 # === STRATEGIC IP — NEVER COMMIT ===
 apps/Trades/Build Documentation/
+**/CLAUDE.md
+**/MEMORY.md
+**/HANDOFF.md
+**/*HANDOFF*.md
+**/ACCOUNTS.md
+**/*BUILD_PROGRESS*.md
 
 # === SECRETS & CREDENTIALS ===
 **/firebase_options.dart
