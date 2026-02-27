@@ -1,11 +1,13 @@
-# === STRATEGIC IP — NEVER COMMIT ===
+# === INTERNAL DOCS — NOT FOR SOURCE CONTROL ===
 apps/Trades/Build Documentation/
+**/ACCOUNTS.md
+**/*BUILD_PROGRESS*.md
+
+# === LOCAL DEV NOTES ===
 **/CLAUDE.md
 **/MEMORY.md
 **/HANDOFF.md
 **/*HANDOFF*.md
-**/ACCOUNTS.md
-**/*BUILD_PROGRESS*.md
 
 # === SECRETS & CREDENTIALS ===
 **/firebase_options.dart
