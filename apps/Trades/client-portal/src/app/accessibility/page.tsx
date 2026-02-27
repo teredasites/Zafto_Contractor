@@ -79,7 +79,7 @@ export default function AccessibilityPage() {
 
         <div className="mt-12 pt-6 border-t border-zinc-200">
           <p className="text-xs text-zinc-400 text-center">
-            &copy; {new Date().getFullYear()} Tereda Software LLC. All rights reserved.
+            &copy; {new Date().getFullYear()} Zafto. All rights reserved.
           </p>
         </div>
       </div>

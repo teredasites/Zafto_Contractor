@@ -111,7 +111,7 @@ export default function AccessibilityPage() {
 
         <div className="mt-12 pt-6 border-t border-[var(--border-light)]">
           <p className="text-xs text-muted text-center">
-            &copy; {new Date().getFullYear()} Tereda Software LLC. All rights reserved.
+            &copy; {new Date().getFullYear()} Zafto. All rights reserved.
           </p>
         </div>
       </div>

@@ -230,7 +230,7 @@ export default function SettingsPage() {
           </div>
           <div className="border-t border-main pt-3 mt-3">
             <p className="text-xs text-muted text-center">
-              ZAFTO Employee Field Portal &middot; Tereda Software LLC
+              ZAFTO Employee Field Portal
             </p>
           </div>
         </CardContent>
